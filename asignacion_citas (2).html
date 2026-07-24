@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>Asignación de Citas · HIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0065CD;
+    --primary-dark:#004E9E;
+    --primary-50:#eef4ff;
+    --primary-100:#dbe8fe;
+    --sidebar:#0065CD;
+    --sidebar-active:rgba(255,255,255,.20);
+    --accent-teal:#58c2dc;
+    --ink-900:#101827;
+    --ink-700:#374151;
+    --ink-500:#6b7280;
+    --ink-400:#9aa3b2;
+    --border:#e5e8ef;
+    --surface:#ffffff;
+    --bg:#f4f6fb;
+    --amber-bg:#fff4e0;
+    --amber-fg:#a45a05;
+    --green:#12a150;
+    --green-bg:#e6f8ee;
+    --red:#c02b2b;
+    --red-bg:#fdeceb;
+    --gray-fg:#6b7280;
+    --gray-bg:#eef0f4;
+    --violet-bg:#f1ecff;
+    --violet-fg:#6d3fd6;
+    --radius:8px;
+    --radius-lg:12px;
+  }
+
+  html[data-theme="dark"]{
+    --primary-50:rgba(0,101,205,.16);
+    --primary-100:rgba(0,101,205,.30);
+    --ink-900:#f1f4f9;
+    --ink-700:#c6cbd6;
+    --ink-500:#8b93a3;
+    --ink-400:#5b6272;
+    --border:#2a3242;
+    --surface:#161c2b;
+    --bg:#0c0f17;
+    --amber-bg:rgba(224,138,0,.18);
+    --amber-fg:#f5b942;
+    --green:#34d399;
+    --green-bg:rgba(52,211,153,.16);
+    --red:#ff8a8a;
+    --red-bg:rgba(192,43,43,.20);
+    --gray-fg:#9aa3b2;
+    --gray-bg:#242c3d;
+    --violet-bg:rgba(109,63,214,.24);
+    --violet-fg:#b79bf7;
+  }
+  html[data-theme="dark"] body{background:var(--bg);}
+  html[data-theme="dark"] thead th{background:#1c2333;}
+  html[data-theme="dark"] tbody tr:hover{background:#1a2130;}
+  html[data-theme="dark"] .badge.neutral{background:#242c3d;color:var(--ink-700);}
+  html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#333e54;}
+  html[data-theme="dark"] .service-item:hover{background:#1a2130;}
+  html[data-theme="dark"] .service-item.active{background:var(--primary-50);}
+  html[data-theme="dark"] .theme-icon-sun{display:none;}
+  html:not([data-theme="dark"]) .theme-icon-moon{display:none;}
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--ink-900);
+    font-size:14px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .icon{
+    width:20px;height:20px;
+    display:inline-block;
+    vertical-align:middle;
+    flex-shrink:0;
+    stroke:currentColor;
+  }
+  .app{
+    display:flex;
+    height:100vh;
+    min-width:1440px;
+    overflow:hidden;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:272px;
+    background:var(--sidebar);
+    display:flex;
+    flex-direction:column;
+    flex-shrink:0;
+    overflow:hidden;
+    transition:width .2s ease;
+  }
+  .sidebar.collapsed{width:64px;}
+
+  .sidebar-brand{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 16px 16px;flex-shrink:0;
+  }
+  .sidebar-brand .wordmark{display:flex;align-items:center;gap:8px;min-width:0;}
+  .sidebar-brand .wordmark .symbol{width:26px;height:26px;flex-shrink:0;display:flex;cursor:pointer;border-radius:8px;transition:background .15s;}
+  .sidebar.collapsed .sidebar-brand .symbol:hover{background:rgba(255,255,255,.14);}
+  .sidebar-brand .wordmark .symbol svg{width:100%;height:100%;}
+  .sidebar-brand .wordmark .brand-text{
+    color:#fff;font-size:18px;font-weight:600;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;
+  }
+  .sidebar.collapsed .sidebar-brand{padding:16px 0;justify-content:center;}
+  .sidebar.collapsed .sidebar-brand .brand-text{display:none;}
+  .sidebar.collapsed .sidebar-brand .collapse-btn{display:none;}
+
+  .collapse-btn{
+    width:26px;height:26px;border-radius:8px;flex-shrink:0;
+    background:rgba(255,255,255,.14);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;cursor:pointer;transition:background .15s;
+  }
+  .collapse-btn:hover{background:rgba(255,255,255,.22);}
+  .collapse-btn .icon{width:18px;height:18px;}
+
+  .sidebar-divider{height:1px;background:rgba(255,255,255,.14);margin:2px 16px 8px;flex-shrink:0;}
+
+  .sidebar-nav{
+    flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+    padding:4px 12px 12px;
+    display:flex;flex-direction:column;gap:1px;
+  }
+  .sidebar-nav::-webkit-scrollbar{width:5px;}
+  .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:10px;}
+
+  .nav-group{
+    display:grid;grid-template-rows:auto 0fr;
+    transition:grid-template-rows .22s ease;
+  }
+  .nav-group.open{grid-template-rows:auto 1fr;}
+  .nav-head{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 12px;border-radius:9px;cursor:pointer;
+    color:#fff;font-size:14px;font-weight:500;
+    transition:background .15s;user-select:none;
+  }
+  .nav-head:hover{background:rgba(255,255,255,.09);}
+  .nav-head:focus-visible{outline:2px solid #fff;outline-offset:1px;}
+  .nav-head .nav-icon{width:19px;height:19px;flex-shrink:0;color:#fff;}
+  .nav-head .label{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .nav-head .chev{width:19px;height:19px;flex-shrink:0;color:rgba(255,255,255,.65);transition:transform .18s;}
+  .nav-group.open > .nav-head .chev{transform:rotate(180deg);}
+
+  .nav-body{
+    overflow:hidden;min-height:0;
+    display:flex;flex-direction:column;
+  }
+
+  .nav-group.sub{margin:2px 0 2px 12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.16);}
+  .nav-group.sub > .nav-head{font-size:13px;padding:8px 12px;}
+
+  .nav-subitem{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 12px 8px 32px;border-radius:9px;
+    font-size:13px;font-weight:600;color:rgba(255,255,255,.88);
+    cursor:pointer;position:relative;margin:1px 0;
+  }
+  .nav-group.sub .nav-subitem{padding-left:16px;}
+  .nav-subitem:hover{background:rgba(255,255,255,.09);color:#fff;}
+  .nav-subitem:focus-visible{outline:2px solid #fff;outline-offset:1px;}
+  .nav-subitem.active{background:rgba(255,255,255,.16);color:#fff;}
+  .nav-subitem.active::before{
+    content:'';position:absolute;left:-13px;top:6px;bottom:6px;width:3px;
+    border-radius:3px;background:#7dd4ea;
+  }
+  .nav-group.sub .nav-subitem.active::before{left:-13px;}
+  .nav-subitem .icon{width:17px;height:17px;flex-shrink:0;}
+
+  .sidebar.collapsed .nav-head .label,
+  .sidebar.collapsed .nav-head .chev,
+  .sidebar.collapsed .nav-body,
+  .sidebar.collapsed .sidebar-divider,
+  .sidebar.collapsed .theme-toggle-row .theme-label,
+  .sidebar.collapsed .theme-toggle-row .switch{display:none;}
+  .sidebar.collapsed .nav-head{justify-content:center;padding:12px;}
+  .sidebar.collapsed .nav-group.sub{margin:0;padding:0;border:none;}
+
+  .theme-toggle-row{
+    display:flex;align-items:center;gap:12px;flex-shrink:0;
+    margin:8px 12px 16px;padding:8px 12px;
+    background:rgba(255,255,255,.09);border-radius:12px;
+  }
+  .sidebar.collapsed .theme-toggle-row{justify-content:center;margin:8px;padding:8px;}
+  .theme-toggle-icon{
+    width:32px;height:32px;border-radius:9px;flex-shrink:0;
+    background:rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    cursor:pointer;
+  }
+  .theme-toggle-icon .icon{width:18px;height:18px;}
+  .theme-label{
+    flex:1;min-width:0;font-size:13px;font-weight:500;color:#fff;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .switch{position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;position:absolute;}
+  .switch-slider{
+    position:absolute;inset:0;cursor:pointer;
+    background:rgba(255,255,255,.28);border-radius:20px;transition:background .2s;
+  }
+  .switch-slider::before{
+    content:'';position:absolute;height:16px;width:16px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:transform .2s;
+  }
+  .switch input:checked + .switch-slider{background:var(--accent-teal);}
+  .switch input:checked + .switch-slider::before{transform:translateX(16px);}
+
+  /* ---------- MAIN ---------- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+
+  .topbar{
+    height:60px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;
+    padding:0 24px;
+    gap:16px;
+    flex-shrink:0;
+  }
+  .topbar .hamburger{color:var(--ink-500);display:flex;cursor:pointer;}
+  .breadcrumb{
+    font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;
+  }
+  .breadcrumb .current{color:var(--ink-900);font-weight:600;}
+  .breadcrumb .sep{color:var(--ink-400);}
+  .topbar .spacer{flex:1;}
+  .topbar-right{display:flex;align-items:center;gap:16px;}
+  .meta-item{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--ink-700);
+  }
+  .meta-item .icon{width:18px;height:18px;color:var(--primary);}
+  .meta-item b{font-weight:500;color:var(--ink-900);}
+  .divider-v{width:1px;height:24px;background:var(--border);}
+  .pill-chip{
+    display:flex;align-items:center;gap:8px;
+    background:var(--primary-50);color:var(--primary-dark);
+    font-size:13px;font-weight:500;
+    padding:8px 12px;border-radius:20px;white-space:nowrap;
+  }
+  .pill-chip .icon{width:16px;height:16px;}
+  .icon-btn-circle{
+    width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;border:1px solid var(--border);
+    background:var(--surface);flex-shrink:0;
+  }
+  .icon-btn-circle:hover{background:#f3f5f9;color:var(--ink-900);}
+  .icon-btn-circle .icon{width:19px;height:19px;}
+  .user-chip{display:flex;align-items:center;gap:8px;}
+  .user-avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--primary-100);color:var(--primary-dark);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:500;font-size:13px;
+  }
+  .user-chip .who{line-height:1.2;}
+  .user-chip .who .name{font-weight:500;font-size:13px;color:var(--ink-900);}
+  .user-chip .who .role{font-size:12px;color:var(--ink-500);}
+
+  .content{
+    padding:16px;
+    display:flex;flex-direction:column;
+    gap:16px;
+    flex:1;
+    min-height:0;
+    overflow-y:hidden;
+  }
+
+  /* ---------- PATIENT BANNER ---------- */
+  .patient-banner{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    display:flex;align-items:center;
+    gap:24px;
+    padding:16px 24px;
+    flex-shrink:0;
+  }
+  .patient-avatar{
+    width:44px;height:44px;border-radius:50%;
+    background:var(--primary);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:500;font-size:16px;flex-shrink:0;
+  }
+  .patient-name-block{flex-shrink:0;}
+  .patient-name-block .pname{font-size:16px;font-weight:600;color:var(--ink-900);white-space:nowrap;}
+  .patient-meta{
+    display:flex;align-items:center;flex-wrap:wrap;
+    gap:8px 16px;
+    flex:1;
+    font-size:13px;color:var(--ink-700);
+  }
+  .patient-meta .pm-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+  .patient-meta .pm-item .icon{width:16px;height:16px;color:var(--ink-500);}
+  .patient-meta .pm-item .lbl{color:var(--ink-500);font-weight:600;}
+  .patient-meta .pm-item b{color:var(--ink-900);font-weight:500;}
+  .patient-banner-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .badge.status-active{background:var(--green-bg);color:#0d7a3d;}
+  .badge.status-active .dot{background:#0d7a3d;}
+  html[data-theme="dark"] .badge.status-active{color:var(--green);}
+  html[data-theme="dark"] .badge.status-active .dot{background:var(--green);}
+  .badge-dot-inline{display:inline-flex;align-items:center;gap:8px;}
+  .badge-dot-inline .dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+  .close-x{
+    width:30px;height:30px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;border:1px solid var(--border);
+  }
+  .close-x:hover{background:#fdf2f2;color:var(--red);border-color:#f0d3d3;}
+
+  /* ---------- WORKSPACE LAYOUT ---------- */
+  .workspace{
+    display:flex;gap:16px;
+    flex:1;min-height:0;
+  }
+
+  /* ---------- EMPTY STATES INTERNOS (contrato / servicios / agenda) ---------- */
+  .panel-empty-hint{font-size:12px;color:var(--ink-500);font-style:italic;padding:2px 0;}
+  .services-empty, .agenda-empty-row{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;padding:32px 16px;text-align:center;flex:1;
+  }
+  .services-empty .icon, .agenda-empty-row .icon{width:26px;height:26px;color:var(--ink-500);}
+  .services-empty .se-text, .agenda-empty-row .ae-text{font-size:13px;color:var(--ink-500);max-width:200px;line-height:1.4;}
+
+  /* ---------- LEFT PANEL: CONTRATO + SERVICIOS (bloque único) ---------- */
+  .side-panel{
+    width:300px;flex-shrink:0;
+    display:flex;flex-direction:column;
+    min-height:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+  }
+  .panel-card{
+    padding:16px 16px;
+    flex-shrink:0;
+  }
+  .panel-card.contract-block{border-bottom:1px solid var(--border);}
+  .panel-card-title{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .panel-card-title .lbl{
+    display:flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.04em;
+  }
+  .panel-card-title .lbl .icon{width:16px;height:16px;color:var(--ink-500);}
+  .link-btn{
+    font-size:12px;font-weight:500;color:var(--primary);cursor:pointer;
+    background:none;border:none;padding:0;
+  }
+  .link-btn:hover{text-decoration:underline;}
+  .contract-row{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;}
+  .contract-row:last-child{margin-bottom:0;}
+  .contract-row .k{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+  .contract-row .v{font-size:14px;font-weight:500;color:var(--ink-900);}
+  .contract-row .v.link{color:var(--primary);}
+
+  .services-card{
+    flex:1;min-height:0;
+    display:flex;flex-direction:column;
+    padding:16px 16px 16px;
+  }
+  .services-search{position:relative;margin-bottom:12px;flex-shrink:0;}
+  .services-search .icon{
+    position:absolute;left:9px;top:50%;transform:translateY(-50%);
+    color:var(--ink-500);width:18px;height:18px;
+  }
+  .services-search input{
+    width:100%;padding:8px 12px 8px 32px;
+    border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:13px;background:var(--bg);
+  }
+  .services-search input::placeholder{color:var(--ink-400);}
+  .services-search input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+  .services-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -8px;padding:0 8px;}
+  .services-list::-webkit-scrollbar{width:5px;}
+  .services-list::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+  .service-item{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:8px;padding:8px 8px;border-radius:8px;cursor:pointer;
+  }
+  .service-item:hover{background:#f7f9fd;}
+  .service-item.active{background:var(--primary-50);}
+  .service-item .s-info{min-width:0;}
+  .service-item .s-name{font-size:13px;font-weight:500;color:var(--ink-900);line-height:1.3;}
+  .service-item .s-code{font-size:11px;font-weight:400;color:var(--ink-500);letter-spacing:.01em;margin-top:2px;}
+  .service-item .s-price{font-size:13px;font-weight:500;color:var(--ink-900);white-space:nowrap;flex-shrink:0;}
+
+  /* ---------- RIGHT PANEL ---------- */
+  .agenda-panel{
+    flex:1;min-width:0;
+    display:flex;flex-direction:column;gap:16px;min-height:0;
+  }
+
+  /* ---------- CARD / FILTROS + TABS ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    display:flex;flex-direction:column;
+    flex:1;min-height:0;
+  }
+
+  .filters-row{
+    display:flex;align-items:flex-end;gap:12px;flex-shrink:0;
+    padding:16px 16px 12px;
+    border-bottom:1px solid var(--border);
+  }
+  .filters-row .filter-icon{
+    display:flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.04em;
+    padding-bottom:8px;flex-shrink:0;
+  }
+  .filters-row .filter-icon .icon{width:17px;height:17px;color:var(--ink-500);}
+  .select-field{display:flex;flex-direction:column;gap:4px;flex:1;max-width:180px;}
+  .select-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+  .select-field select{
+    appearance:none;-webkit-appearance:none;
+    background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+    border:1px solid var(--border);border-radius:var(--radius);
+    padding:8px 32px 8px 12px;
+    font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-900);
+    width:100%;cursor:pointer;
+  }
+  .select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+  .tabs-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;flex-shrink:0;gap:16px;
+  }
+  .tabs{display:flex;gap:24px;}
+  .tab{
+    display:flex;align-items:center;gap:8px;
+    font-size:14px;font-weight:500;color:var(--ink-500);
+    cursor:pointer;padding:4px 0;position:relative;
+  }
+  .tab:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+  .tab .count{
+    background:var(--gray-bg,#eef0f4);color:var(--ink-700);
+    font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;
+  }
+  .tab.active{color:var(--primary);font-weight:500;}
+  .tab.active .count{background:var(--primary-100);color:var(--primary-dark);}
+  .tab.active::after{
+    content:'';position:absolute;left:0;right:0;bottom:-13px;height:2px;background:var(--primary);
+  }
+  .date-picker-chip{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--border);border-radius:var(--radius);
+    padding:8px 12px;font-size:13px;font-weight:500;color:var(--ink-900);
+    cursor:pointer;background:var(--surface);flex-shrink:0;
+  }
+  .date-picker-chip .icon{width:17px;height:17px;color:var(--primary);}
+
+  .table-wrap{
+    border-top:1px solid var(--border);
+    flex:1;min-height:200px;overflow-y:auto;overflow-x:auto;
+  }
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    position:sticky;top:0;z-index:1;
+    background:#f7f8fb;text-align:left;
+    font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;
+    padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  tbody td{
+    padding:8px 16px;border-bottom:1px solid #eef0f4;
+    color:var(--ink-700);white-space:nowrap;
+    vertical-align:middle;
+  }
+  tbody td.strong{color:var(--ink-900);font-weight:500;}
+  tbody tr{cursor:pointer;transition:background .1s;}
+  tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+  tbody tr:hover{background:#f7f9fd;}
+  tbody tr.selected{background:var(--primary-50);}
+  tbody tr.selected td{color:var(--ink-900);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+  tbody tr.row-empty{cursor:default;}
+  tbody tr.row-empty:hover{background:transparent;}
+
+  .hora-cell{display:flex;align-items:center;gap:8px;height:37px;padding-top:0;padding-bottom:0;}
+  .hora-cell .h{font-weight:500;color:var(--ink-900);font-size:14px;}
+  .hora-cell .m{font-size:11px;color:var(--ink-500);}
+  .llegada-cell{height:37px;padding-top:0;padding-bottom:0;}
+  .llegada-chip{display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:500;font-size:13px;}
+  .llegada-chip .icon{width:15px;height:15px;}
+  .llegada-dash{color:var(--ink-500);font-weight:400;}
+  .paciente-cell{height:37px;padding-top:0;padding-bottom:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .paciente-cell .p-name{font-weight:500;color:var(--ink-900);}
+  .paciente-cell .p-name.muted{font-weight:600;font-style:italic;color:var(--ink-500);}
+
+  .badge{
+    font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;
+    white-space:nowrap;display:inline-block;
+  }
+  .badge.eps{background:var(--primary-50);color:var(--primary-dark);}
+  .badge.neutral{background:#eef0f4;color:var(--ink-700);}
+
+  .estado-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:500;
+  }
+  .estado-badge .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .estado-badge.disponible{color:var(--green);}
+  .estado-badge.disponible .dot{background:var(--green);}
+  .estado-badge.ocupado{color:var(--red);}
+  .estado-badge.ocupado .dot{background:var(--red);}
+  .estado-badge.expirado{color:var(--gray-fg);}
+  .estado-badge.expirado .dot{background:var(--ink-400);}
+  .estado-badge.bloqueado{color:var(--amber-fg);}
+  .estado-badge.bloqueado .dot{background:#e08a00;}
+  .estado-badge.activo{color:var(--green);}
+  .estado-badge.activo .dot{background:var(--green);}
+  .estado-badge.inactivo{color:var(--gray-fg);}
+  .estado-badge.inactivo .dot{background:var(--ink-400);}
+  .estado-badge.suspendido{color:var(--amber-fg);}
+  .estado-badge.suspendido .dot{background:#e08a00;}
+
+  .row-menu-btn{
+    width:26px;height:26px;border-radius:7px;flex-shrink:0;
+    align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;
+    display:none;border:none;background:transparent;padding:0;
+  }
+  .row-menu-btn:hover{background:#eef0f4;color:var(--ink-900);}
+  tr.selected .row-menu-btn{display:inline-flex;}
+
+  .context-menu{
+    position:fixed;min-width:190px;
+    background:var(--surface);
+    border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14);
+    padding:8px;z-index:150;display:none;
+  }
+  .context-menu.open{display:block;}
+  .context-menu-item{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 12px;border-radius:7px;
+    font-size:13px;font-weight:600;color:var(--ink-700);
+    cursor:pointer;
+  }
+  .context-menu-item:hover{background:#f3f5f9;}
+  .context-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:#f3f5f9;}
+  .context-menu-item .icon{width:16px;height:16px;color:var(--ink-500);}
+  .context-menu-item.danger{color:var(--red);}
+  .context-menu-item.danger .icon{color:var(--red);}
+  .context-menu-item.accent{color:var(--green);}
+  .context-menu-item.accent .icon{color:var(--green);}
+  .context-menu-divider{height:1px;background:var(--border);margin:4px 4px;}
+
+  .legend-bar{
+    display:flex;align-items:center;gap:24px;
+    padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;
+  }
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-700);}
+  .legend-item .dot{width:8px;height:8px;border-radius:50%;}
+  .legend-item .dot.green{background:var(--green);}
+  .legend-item .dot.red{background:var(--red);}
+  .legend-item .dot.gray{background:var(--ink-400);}
+  .legend-item .dot.amber{background:#e08a00;}
+
+  /* ---------- FOOTER ---------- */
+  .page-footer-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;
+  }
+  .footer-note{font-size:13px;color:var(--ink-500);}
+  .footer-note b{color:var(--ink-900);font-weight:500;}
+  .footer-actions{display:flex;gap:12px;}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:inherit;font-weight:500;font-size:13px;
+    padding:8px 16px;border-radius:var(--radius);
+    border:1px solid transparent;cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s,opacity .15s;
+    white-space:nowrap;
+  }
+  .btn .icon{width:18px;height:18px;}
+  .btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+  .btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+  .btn-danger-outline{background:var(--surface);color:#c02b2b;border-color:#f0d3d3;}
+  .btn-danger-outline:hover{background:#fdf2f2;}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+  /* ================= WIZARD: NUEVO AGENDAMIENTO ================= */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(16,24,39,.5);
+    display:none;align-items:center;justify-content:center;z-index:100;
+    padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .wizard-modal{
+    width:1020px;max-width:100%;height:88vh;max-height:840px;
+    background:var(--surface);border-radius:var(--radius-lg);
+    box-shadow:0 12px 32px rgba(6,25,42,.22);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .wizard-body{flex:1;display:flex;min-height:0;}
+
+  /* ---- Riel lateral (3 pasos, con 5 sub-pasos anidados en "Cobertura") ---- */
+  .wizard-rail{
+    width:264px;flex-shrink:0;background:var(--bg);color:var(--ink-900);
+    border-right:1px solid var(--border);
+    padding:24px 16px;overflow-y:auto;display:flex;flex-direction:column;
+  }
+  .wizard-rail-header{margin-bottom:24px;flex-shrink:0;}
+  .wizard-rail-header .rh-eyebrow{
+    font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;
+  }
+  .wizard-rail-header .rh-title{font-size:18px;font-weight:600;color:var(--ink-900);line-height:1.25;}
+  .wizard-rail-header .rh-sub{
+    display:flex;align-items:center;gap:4px;
+    font-size:12px;font-weight:600;color:var(--ink-500);margin-top:8px;
+  }
+  .wizard-rail-header .rh-sub .icon{width:13px;height:13px;color:var(--ink-500);}
+
+  .wizard-rail-nav{display:flex;flex-direction:column;gap:2px;}
+  .rail-main-step{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:8px 8px;border-radius:10px;cursor:pointer;
+  }
+  .rail-main-step:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .rail-main-step.locked{cursor:not-allowed;opacity:.5;}
+  .rail-main-step:not(.locked):hover{background:#eef1f6;}
+  .rms-circle{
+    width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;
+    background:var(--gray-bg,#eef0f4);color:var(--ink-500);
+  }
+  .rms-circle svg{width:13px;height:13px;stroke-width:3;}
+  .rail-main-step.active .rms-circle,
+  .rail-main-step.done .rms-circle{background:var(--primary);color:#fff;}
+  .rms-title{font-size:14px;font-weight:500;color:var(--ink-900);}
+  .rms-sub{font-size:12px;color:var(--ink-500);margin-top:2px;line-height:1.35;}
+
+  .rail-substeps{
+    display:flex;flex-direction:column;gap:1px;
+    margin:2px 0 12px 32px;padding-left:16px;
+    border-left:1px dashed var(--border);
+  }
+  .rail-substep{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 8px;border-radius:8px;cursor:pointer;
+    font-size:13px;font-weight:600;color:var(--ink-500);
+  }
+  .rail-substep:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .rail-substep.locked{cursor:not-allowed;color:var(--ink-500);}
+  .rail-substep:not(.locked):hover{background:#eef1f6;}
+  .rs-dot{
+    width:18px;height:18px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;
+    background:var(--gray-bg,#eef0f4);color:var(--ink-500);
+  }
+  .rs-dot svg{width:11px;height:11px;stroke-width:3;}
+  .rail-substep.done{color:var(--ink-700);}
+  .rail-substep.done .rs-dot{background:var(--primary);color:#fff;}
+  .rail-substep.active{color:var(--primary-dark);font-weight:600;background:var(--primary-50);}
+  .rail-substep.active .rs-dot{background:var(--primary);color:#fff;}
+
+  /* ---- Panel derecho: header dinámico + contenido ---- */
+  .wizard-main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+  .wizard-main-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .wizard-main-header .t{font-size:16px;font-weight:600;color:var(--ink-900);}
+  .wizard-main-header .sub{font-size:13px;color:var(--ink-500);margin-top:2px;}
+  .wizard-close{
+    width:32px;height:32px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;border:none;background:transparent;
+  }
+  .wizard-close:hover{background:#f3f5f9;color:var(--ink-900);}
+  .wizard-close .icon{width:18px;height:18px;}
+
+  /* ---- Stepper horizontal (solo visible durante los 5 sub-pasos de Cobertura) ---- */
+  .wiz-stepper{
+    display:flex;align-items:flex-start;
+    padding:16px 32px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .wiz-step{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    flex:1;position:relative;cursor:pointer;
+  }
+  .wiz-step.locked{cursor:not-allowed;pointer-events:none;}
+  .wiz-step:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+  .wiz-step:not(:first-child)::before{
+    content:'';position:absolute;top:14px;left:-50%;width:100%;height:2px;
+    background:var(--border);z-index:0;
+  }
+  .wiz-step.done:not(:first-child)::before{background:var(--primary);}
+  .wiz-step-circle{
+    width:30px;height:30px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;
+    background:var(--surface);border:2px solid var(--border);color:var(--ink-500);
+    position:relative;z-index:1;
+  }
+  .wiz-step-circle svg{width:14px;height:14px;stroke-width:3;}
+  .wiz-step.done .wiz-step-circle{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .wiz-step.active .wiz-step-circle{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .wiz-step-label{font-size:11px;font-weight:600;color:var(--ink-500);text-align:center;}
+  .wiz-step.done .wiz-step-label{color:var(--primary);}
+  .wiz-step.active .wiz-step-label{color:var(--primary);font-weight:500;}
+
+  .wizard-content{flex:1;min-width:0;overflow-y:auto;padding:24px 32px;}
+  #ap-form{display:flex;flex-direction:column;flex:1;min-height:0;}
+  .wizard-step-title{font-size:16px;font-weight:600;color:var(--ink-900);margin-bottom:3px;}
+  .wizard-step-hint{font-size:13px;color:var(--ink-500);margin-bottom:16px;}
+
+  /* ---- Buscadores sobre las tablas de selección ---- */
+  .wiz-search-row{display:flex;gap:12px;margin-bottom:16px;}
+  .wiz-search-field{position:relative;flex:1;}
+  .wiz-search-field .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-500);}
+  .wiz-search-field input{
+    width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
+  }
+  .wiz-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+  .wiz-search-field input::placeholder{color:var(--ink-400);}
+
+  /* ---- Tablas de selección (Régimen / Especialidad / Médico / Contratación / Servicios) ---- */
+  .wiz-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .wiz-table-wrap table{width:100%;}
+  .wiz-table-wrap tbody tr{cursor:pointer;}
+  .wiz-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+  .wiz-table-wrap tbody tr.row-disabled{cursor:not-allowed;opacity:.45;}
+  .wiz-table-wrap tbody tr.row-disabled:hover{background:transparent;}
+  .wiz-table-wrap tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+  .wiz-row-chevron{color:var(--ink-500);text-align:right;}
+  .wiz-row-chevron .icon{width:16px;height:16px;}
+  .wiz-row-name{font-weight:500;color:var(--ink-900);}
+  tr.selected .wiz-row-name{color:var(--primary-dark);}
+  .wiz-row-count{font-weight:500;color:var(--ink-900);}
+
+  /* ---- Detalle expandido del régimen (accordion) ---- */
+  .wiz-detail-row td{background:#fafbfd;padding:0;}
+  html[data-theme="dark"] .wiz-detail-row td{background:#11172333;}
+  .wiz-detail-inner{padding:4px 16px 12px 48px;}
+  .wiz-detail-inner table{width:100%;border-collapse:collapse;}
+  .wiz-detail-inner th{
+    text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;padding:8px 12px;
+  }
+  .wiz-detail-inner td{
+    font-size:13px;color:var(--ink-700);padding:8px 12px;
+    border-top:1px solid var(--border);white-space:normal;
+  }
+
+  /* ---- Panel de disponibilidad del médico (solo horarios libres) ---- */
+  .slots-card{
+    background:var(--primary-50);border:1px solid var(--primary-100);
+    border-radius:var(--radius);padding:16px 16px;margin-top:24px;
+  }
+  .slots-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+  .slots-card-head .sch-left{display:flex;align-items:center;gap:12px;}
+  .slots-card-head .icon{width:20px;height:20px;color:var(--primary);flex-shrink:0;}
+  .slots-card-head .sch-name{font-size:14px;font-weight:600;color:var(--primary-dark);}
+  .slots-card-head .sch-sub{font-size:12px;color:var(--ink-500);margin-top:1px;}
+  .slots-badge{
+    background:var(--primary);color:#fff;font-size:12px;font-weight:500;
+    padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;
+  }
+
+  .day-strip{
+    display:flex;gap:8px;overflow-x:auto;
+    padding-bottom:12px;margin-bottom:12px;
+    border-bottom:1px solid var(--primary-100);
+  }
+  .day-chip{
+    flex-shrink:0;min-width:60px;text-align:center;
+    padding:8px 6px;border-radius:var(--radius);cursor:pointer;
+    border:1.5px solid var(--border);background:var(--surface);
+  }
+  .day-chip:hover{border-color:var(--primary);}
+  .day-chip:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .day-chip.active{background:var(--primary);border-color:var(--primary);}
+  .day-chip .dc-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+  .day-chip.active .dc-label{color:rgba(255,255,255,.85);}
+  .day-chip .dc-date{font-size:13px;font-weight:600;color:var(--ink-900);margin-top:3px;}
+  .day-chip.active .dc-date{color:#fff;}
+
+  .slots-grid{display:flex;flex-wrap:wrap;gap:12px;}
+  .slot-btn{
+    background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+    padding:12px 16px;text-align:center;cursor:pointer;min-width:70px;
+  }
+  .slot-btn:hover{border-color:var(--primary);}
+  .slot-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .slot-btn.selected{background:var(--primary);border-color:var(--primary);}
+  .slot-btn .sb-h{font-size:14px;font-weight:600;color:var(--ink-900);}
+  .slot-btn.selected .sb-h{color:#fff;}
+  .slots-empty{font-size:13px;color:var(--ink-500);font-style:italic;}
+
+  /* ---- Contratación: ficha de contexto + tabla de contratos ---- */
+  .ro-fields{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px 24px;
+    background:#fafbfd;border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 16px;margin:0 0 16px;
+  }
+  html[data-theme="dark"] .ro-fields{background:#11172333;}
+  .ro-field dt{
+    display:block;font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;margin:0 0 4px;
+  }
+  .ro-field .ro-value{
+    font-size:13px;font-weight:500;color:var(--ink-900);
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:8px 12px;margin:0;
+  }
+
+  /* ---- Servicios: filas multi-selección ---- */
+  .wiz-table-wrap tbody tr.selected{background:var(--primary-50);}
+
+  /* ---- Información de la cita ---- */
+  .field-block{margin-bottom:16px;max-width:100%;}
+  .field-block label{
+    display:block;font-size:13px;font-weight:600;color:var(--ink-700);
+    margin-bottom:8px;
+  }
+  .field-block label .req{color:var(--red);margin-left:2px;}
+  .field-block select, .field-block input{
+    width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--surface);
+  }
+  .field-block select{
+    appearance:none;-webkit-appearance:none;
+    background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 12px center;
+    padding-right:32px;cursor:pointer;
+  }
+  .field-block select:focus, .field-block input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .field-hint{font-size:12px;color:var(--ink-500);margin-top:6px;}
+
+  .info-card{
+    max-width:640px;
+    border:1px solid var(--border);border-radius:var(--radius-lg);
+    background:var(--surface);padding:24px 24px;
+  }
+  .info-card-head{
+    display:flex;align-items:center;gap:8px;
+    padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--border);
+  }
+  .info-card-head .icon{width:18px;height:18px;color:var(--ink-500);}
+  .info-card-head .title{font-size:14px;font-weight:500;color:var(--ink-900);}
+
+  /* ---- Resumen: bloques por paso, cada uno editable ---- */
+  .summary-block{
+    border:1px solid var(--border);border-radius:var(--radius-lg);
+    background:var(--surface);padding:16px 16px;margin-top:16px;
+  }
+  .summary-block-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .summary-block-head .sb-title{
+    font-size:11px;font-weight:500;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.04em;
+  }
+  .summary-edit-btn{
+    width:28px;height:28px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;
+    border:1px solid var(--border);background:var(--surface);
+  }
+  .summary-edit-btn:hover{background:var(--primary-50);color:var(--primary);border-color:var(--primary-100);}
+  .summary-edit-btn .icon{width:14px;height:14px;}
+  .summary-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eef0f4;font-size:13px;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .sr-k{color:var(--ink-500);font-weight:600;}
+  .summary-row .sr-v{color:var(--ink-900);font-weight:500;text-align:right;}
+  .summary-total{display:flex;justify-content:space-between;padding-top:12px;font-size:14px;font-weight:600;color:var(--ink-900);}
+
+  .wizard-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+  }
+  .wizard-footer-actions{display:flex;gap:12px;}
+
+  .nc-toast{
+    position:fixed;top:20px;right:20px;
+    background:var(--ink-900);color:#fff;
+    padding:12px 16px;border-radius:10px;
+    font-size:13px;font-weight:600;
+    box-shadow:0 8px 20px rgba(0,0,0,.22);
+    opacity:0;transform:translateY(-8px);
+    transition:opacity .2s,transform .2s;
+    z-index:200;pointer-events:none;
+    display:flex;align-items:center;gap:8px;
+  }
+  .nc-toast.show{opacity:1;transform:translateY(0);}
+  .nc-toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
+  /* ================= ESTADO VACÍO DEL PACIENTE ================= */
+  .patient-banner-empty{
+    background:var(--surface);
+    border:1.5px dashed var(--border);
+    border-radius:var(--radius-lg);
+    display:flex;align-items:center;gap:16px;
+    padding:16px 24px;flex-shrink:0;cursor:pointer;
+  }
+  .patient-banner-empty:hover{border-color:var(--primary-100);background:var(--primary-50);}
+  .pbe-icon{
+    width:44px;height:44px;border-radius:50%;flex-shrink:0;
+    background:var(--gray-bg,#eef0f4);color:var(--ink-500);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .patient-banner-empty:hover .pbe-icon{background:var(--primary-100);color:var(--primary);}
+  .pbe-icon .icon{width:21px;height:21px;}
+  .pbe-text{flex:1;min-width:0;}
+  .pbe-title{font-size:14px;font-weight:500;color:var(--ink-900);}
+  .pbe-sub{font-size:13px;color:var(--ink-500);margin-top:2px;}
+
+  /* ================= MODAL: BÚSQUEDA DE PACIENTES ================= */
+  .ps-modal{
+    width:940px;max-width:100%;max-height:82vh;
+    background:var(--surface);border-radius:var(--radius-lg);
+    box-shadow:0 12px 32px rgba(6,25,42,.22);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .ps-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .ps-header-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink-900);}
+  .ps-header-title .icon{width:19px;height:19px;color:var(--ink-700);}
+  .ps-search-row{
+    display:flex;align-items:center;gap:16px;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .ps-search-field{position:relative;flex:1;}
+  .ps-search-field .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--ink-500);}
+  .ps-search-field input{
+    width:100%;padding:12px 16px 12px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--bg);
+  }
+  .ps-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+  .ps-search-field input::placeholder{color:var(--ink-400);}
+  .ps-table-wrap{flex:1;overflow-y:auto;}
+  .ps-patient-cell{display:flex;align-items:center;gap:12px;}
+  .ps-avatar{
+    width:34px;height:34px;border-radius:50%;color:#fff;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:500;font-size:12px;
+  }
+  .ps-pname{font-weight:500;color:var(--ink-900);}
+  .ps-table-wrap tbody tr.row-disabled{cursor:default;}
+  .ps-table-wrap tbody tr.row-disabled:hover{background:transparent;}
+
+  /* ================= FORMULARIO: AGREGAR PACIENTE ================= */
+  .pf-section{margin-bottom:16px;}
+  .pf-section:last-child{margin-bottom:0;}
+  .pf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px;}
+  .pf-grid:last-child{margin-bottom:0;}
+  .pf-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .pf-grid.cols-4{grid-template-columns:repeat(4,1fr);}
+
+  .pf-field label{
+    display:block;font-size:13px;font-weight:600;color:var(--ink-700);
+    margin-bottom:6px;
+  }
+  .pf-field label .req{color:var(--red);margin-left:2px;}
+  .field-error{font-size:12px;color:var(--red);margin-top:6px;display:none;}
+  .field-error.show{display:block;}
+  .pf-field input[aria-invalid="true"], .pf-field select[aria-invalid="true"]{border-color:var(--red);}
+  .pf-field-wrap{position:relative;}
+  .pf-field input, .pf-field select{
+    width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
+  }
+  .pf-field select{
+    appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat:no-repeat;background-position:right 12px center;
+    padding-right:34px;
+  }
+  .pf-field-wrap.has-icon input,
+  .pf-field-wrap.has-icon select{padding-right:36px;}
+  .pf-field-wrap.has-icon select{background-position:right 34px center;}
+  .pf-trailing-icon{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;color:var(--primary);pointer-events:none;
+  }
+  .pf-field input:focus, .pf-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .pf-field input::placeholder{color:var(--ink-400);}
+
+  /* Obligatorio + vacío -> resaltado ámbar (validación nativa, sin JS por campo) */
+  .pf-field input:required:placeholder-shown,
+  .pf-field select:required:invalid{
+    background-color:var(--amber-bg);border-color:#eccb85;
+  }
+  html[data-theme="dark"] .pf-field input:required:placeholder-shown,
+  html[data-theme="dark"] .pf-field select:required:invalid{
+    background-color:var(--amber-bg);border-color:#6b4a10;
+  }
+
+  .pf-photo-link{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:600;color:var(--primary);cursor:pointer;
+    background:none;border:none;padding:0;
+  }
+  .pf-photo-link:hover{text-decoration:underline;}
+  .pf-photo-link .icon{width:16px;height:16px;}
+
+  .pf-attach-row{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;color:var(--ink-700);cursor:pointer;
+  }
+  .pf-attach-row:hover{color:var(--primary);}
+  .pf-attach-row .icon{width:17px;height:17px;color:var(--ink-500);}
+
+  /* ================= MOVIMIENTO RESPETUOSO ================= */
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="wordmark">
+        <div class="symbol" aria-label="Expandir menú" title="Expandir menú" onclick="toggleSidebar()">
+          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.1595 14.0019C19.1595 16.8535 16.8497 19.1639 13.9987 19.1639C11.1477 19.1639 8.83785 16.8535 8.83785 14.0019C8.83785 11.1502 11.1508 8.83984 13.9987 8.83984C16.8466 8.83984 19.1595 11.1502 19.1595 14.0019Z" fill="#58C2DC"/>
+            <path d="M28 14.0015C28 16.0274 27.5702 17.9543 26.7971 19.6894C26.7631 19.7574 26.7291 19.8286 26.6951 19.8997C24.4687 24.6844 19.6202 28 13.9956 28C6.30228 28 0.0592013 21.7926 0.000450226 14.1098C-0.0613931 6.36828 6.2559 0 13.9956 0C16.0612 0 18.0247 0.44847 19.7903 1.25262C20.7149 1.67326 21.2189 2.5702 21.2189 3.47642C21.2189 4.08572 20.9901 4.7043 20.5077 5.18679C19.7872 5.90743 18.6957 6.09301 17.7649 5.66928C16.6116 5.14658 15.3314 4.85585 13.9863 4.85585C8.8595 4.85585 4.69745 9.16425 4.85515 14.2892C5.00667 19.1172 8.89352 23.0019 13.7235 23.1411C18.8441 23.2895 23.1391 19.1234 23.1391 13.9985C23.1391 12.653 22.8485 11.3757 22.3259 10.2251C22.1775 9.89418 22.1032 9.54468 22.1032 9.19828C22.1032 8.56733 22.3444 7.94875 22.8083 7.48481C24.0049 6.28786 26.0272 6.64973 26.7322 8.1869C26.7539 8.23639 26.7755 8.28587 26.7971 8.33536C26.8281 8.4065 26.8621 8.47763 26.8961 8.54568C26.8992 8.55495 26.9023 8.56114 26.9085 8.57042C27.6104 10.2406 27.9969 12.0716 27.9969 13.9985L28 14.0015Z" fill="white"/>
+          </svg>
+        </div>
+        <span class="brand-text">clintos</span>
+      </div>
+      <span class="collapse-btn" aria-label="Colapsar menú" title="Colapsar menú" onclick="toggleSidebar()"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg></span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-group open">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2" />
+  <path d="M5 2v2" />
+  <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" />
+  <path d="M8 15a6 6 0 0 0 12 0v-3" />
+  <circle cx="20" cy="10" r="2" /></svg>
+          <span class="label">Módulo Asistencial</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body">
+
+          <div class="nav-group sub open">
+            <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+              <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" />
+  <path d="M8 12h8" />
+  <path d="M12 8v8" /></svg>
+              <span class="label">Consulta Externa</span>
+              <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+            </div>
+            <div class="nav-body">
+              <div class="nav-subitem active" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" />
+  <path d="M8 14h.01" />
+  <path d="M12 14h.01" />
+  <path d="M16 14h.01" />
+  <path d="M8 18h.01" />
+  <path d="M12 18h.01" />
+  <path d="M16 18h.01" /></svg>Asignación de citas</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14v2.2l1.6 1" />
+  <path d="M16 2v4" />
+  <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5" />
+  <path d="M3 10h5" />
+  <path d="M8 2v4" />
+  <circle cx="16" cy="16" r="6" /></svg>Reprogramar Citas</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" /></svg>Historias Clínicas</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg>Signos Vitales</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18v-6a5 5 0 1 1 10 0v6" />
+  <path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z" />
+  <path d="M21 12h1" />
+  <path d="M18.5 4.5 18 5" />
+  <path d="M2 12h1" />
+  <path d="M12 2v1" />
+  <path d="m4.929 4.929.707.707" />
+  <path d="M12 12v6" /></svg>Accidentes de Tránsito</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+  <circle cx="9" cy="7" r="4" /></svg>Pacientes</div>
+              <div class="nav-subitem" tabindex="0" role="button"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" /></svg>Solicitud de consumo</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16" />
+  <path d="M2 8h18a2 2 0 0 1 2 2v10" />
+  <path d="M2 17h20" />
+  <path d="M6 8v9" /></svg>
+          <span class="label">Hospitalización</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4" />
+  <path d="m17 7 3-3" />
+  <path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5" />
+  <path d="m9 11 4 4" />
+  <path d="m5 19-3 3" />
+  <path d="m14 4 6 6" /></svg>
+          <span class="label">Ayudas DX</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+  <path d="m3.3 7 8.7 5 8.7-5" />
+  <path d="M12 22V12" /></svg>
+          <span class="label">Consolidados</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
+  <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg>
+          <span class="label">Finanzas</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" /></svg>
+          <span class="label">Utilitarios</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="M18 17V9" />
+  <path d="M13 17V5" />
+  <path d="M8 17v-3" /></svg>
+          <span class="label">Reportes (CR)</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+  <circle cx="12" cy="12" r="3" /></svg>
+          <span class="label">Configuración</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18v-7" />
+  <path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z" />
+  <path d="M14 18v-7" />
+  <path d="M18 18v-7" />
+  <path d="M3 22h18" />
+  <path d="M6 18v-7" /></svg>
+          <span class="label">Módulo Contable</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21a8 8 0 0 0-16 0" />
+  <circle cx="10" cy="8" r="5" />
+  <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" /></svg>
+          <span class="label">Módulo Nómina</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-head" onclick="toggleNavGroup(this)" tabindex="0" role="button">
+          <svg class="icon nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" /></svg>
+          <span class="label">Otros soportes</span>
+          <svg class="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </div>
+        <div class="nav-body"></div>
+      </div>
+
+    </nav>
+
+    <div class="theme-toggle-row">
+      <div class="theme-toggle-icon" onclick="toggleThemeFromIcon()" aria-label="Cambiar tema" title="Cambiar tema">
+        <svg class="icon theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" /></svg>
+        <svg class="icon theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></svg>
+      </div>
+      <span class="theme-label">Modo oscuro</span>
+      <label class="switch">
+        <input type="checkbox" id="theme-switch" onchange="toggleTheme()">
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <svg class="hamburger icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" /></svg>
+      <div class="breadcrumb">
+        <span>Consulta Externa</span><span class="sep">/</span>
+        <span class="current">Asignación de Citas</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="topbar-right">
+        <div class="pill-chip">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+  <circle cx="12" cy="10" r="3" /></svg>
+          Sede Norte — Piso 2
+        </div>
+        <div class="divider-v"></div>
+        <div class="icon-btn-circle" onclick="toggleThemeFromIcon()" aria-label="Cambiar tema" title="Cambiar tema">
+          <svg class="icon theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" /></svg>
+          <svg class="icon theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></svg>
+        </div>
+        <div class="user-chip">
+          <div class="user-avatar">JC</div>
+          <div class="who">
+            <div class="name">Dr. Juan Carlos Pérez</div>
+            <div class="role">Medicina General</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- PATIENT BANNER -->
+      <div id="patient-banner-zone"></div>
+
+      <!-- WORKSPACE -->
+      <div class="workspace">
+
+        <!-- LEFT: CONTRATO / SERVICIOS -->
+        <aside class="side-panel">
+
+          <div class="panel-card contract-block">
+            <div class="panel-card-title">
+              <span class="lbl"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" /></svg>Contrato</span>
+              <button class="link-btn">Cambiar</button>
+            </div>
+            <div class="contract-row">
+              <span class="k">N° Contrato</span>
+              <span class="v" id="contrato-numero">—</span>
+            </div>
+            <div class="contract-row">
+              <span class="k">Tipo</span>
+              <span class="v link" id="contrato-tipo">—</span>
+            </div>
+          </div>
+
+          <div class="services-card">
+            <div class="services-search">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" /></svg>
+              <input type="text" placeholder="Buscar procedimiento...">
+            </div>
+            <div class="panel-card-title" style="margin-bottom:8px;">
+              <span class="lbl" style="text-transform:none;font-size:11.5px;">Servicios contratados</span>
+              <span class="badge neutral" id="servicios-count">0</span>
+            </div>
+            <div class="services-list" id="services-list"></div>
+          </div>
+
+        </aside>
+
+        <!-- RIGHT: AGENDA -->
+        <div class="agenda-panel">
+
+          <div class="card">
+            <div class="filters-row">
+              <div class="select-field">
+                <label>Régimen</label>
+                <select><option>Todos</option><option>Contributivo</option><option>Subsidiado</option></select>
+              </div>
+              <div class="select-field">
+                <label>Especialidad</label>
+                <select><option>Todas</option><option>Medicina General</option><option>Pediatría</option><option>Ginecología</option></select>
+              </div>
+              <div class="select-field">
+                <label>Médico</label>
+                <select><option>Todos</option><option>Dr. Juan Carlos Pérez</option><option>Dra. Ana María Ruiz</option></select>
+              </div>
+              <div class="select-field">
+                <label>Clase de orden</label>
+                <select><option>Todas</option><option>Primera vez</option><option>Control</option></select>
+              </div>
+            </div>
+            <div class="tabs-bar">
+              <div class="tabs" role="tablist">
+                <div class="tab active" tabindex="0" role="tab" aria-selected="true" onclick="cambiarTab(this)">Agenda del día <span class="count">5</span></div>
+                <div class="tab" tabindex="0" role="tab" aria-selected="false" onclick="cambiarTab(this)">Disponibilidad <span class="count">10</span></div>
+                <div class="tab" tabindex="0" role="tab" aria-selected="false" onclick="cambiarTab(this)">Disponibilidad (Sedes)</div>
+                <div class="tab" tabindex="0" role="tab" aria-selected="false" onclick="cambiarTab(this)">Disponibilidad (Especialidad)</div>
+              </div>
+              <div class="date-picker-chip">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" /></svg>
+                sáb, 18 jul 2026
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:90px;">Hora</th>
+                    <th style="width:110px;">Hora Llegada</th>
+                    <th>Paciente / Tipo</th>
+                    <th>EPS</th>
+                    <th>Valor</th>
+                    <th>Teléfono</th>
+                    <th>F. Solicitud</th>
+                    <th style="width:120px;">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="agenda-tbody"></tbody>
+              </table>
+            </div>
+
+            <div class="legend-bar">
+              <div class="legend-item"><span class="dot green"></span>Disponible</div>
+              <div class="legend-item"><span class="dot red"></span>Ocupado</div>
+              <div class="legend-item"><span class="dot gray"></span>Expirado</div>
+              <div class="legend-item"><span class="dot amber"></span>Bloqueado</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="page-footer-bar">
+        <span class="footer-note" id="footer-note">Cita seleccionada: <b id="footer-selected">08:20 — Mario Pineda León</b></span>
+        <div class="footer-actions">
+          <button class="btn btn-primary" onclick="ncOpen()"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" />
+  <path d="M12 5v14" /></svg>Nueva cita</button>
+          <button class="btn btn-secondary" id="footer-editar-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+  <path d="m15 5 4 4" /></svg>Editar</button>
+          <button class="btn btn-danger-outline" id="footer-cancelar-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" />
+  <path d="m14 14-4 4" />
+  <path d="m10 14 4 4" /></svg>Cancelar</button>
+          <button class="btn btn-secondary" id="footer-imprimir-btn"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+  <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" />
+  <rect x="6" y="14" width="12" height="8" rx="1" /></svg>Imprimir</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MENÚ CONTEXTUAL DE FILA (posición fija, fuera del scroll de la tabla) -->
+<div class="context-menu" id="row-context-menu" role="menu" onclick="event.stopPropagation()">
+  <div class="context-menu-item accent" tabindex="0" role="menuitem" onclick="accionMarcarLlegada()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>Marcar llegada
+  </div>
+  <div class="context-menu-item" tabindex="0" role="menuitem" onclick="accionReprogramar()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14v2.2l1.6 1" />
+  <path d="M16 2v4" />
+  <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5" />
+  <path d="M3 10h5" />
+  <path d="M8 2v4" />
+  <circle cx="16" cy="16" r="6" /></svg>Reprogramar
+  </div>
+  <div class="context-menu-item danger" tabindex="0" role="menuitem" onclick="accionCancelar()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" />
+  <path d="m14 14-4 4" />
+  <path d="m10 14 4 4" /></svg>Cancelar
+  </div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item" tabindex="0" role="menuitem" onclick="accionVerDetalle()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+  <circle cx="12" cy="12" r="3" /></svg>Ver detalle
+  </div>
+</div>
+
+<!-- MENÚ CONTEXTUAL DE FILA DE PACIENTE -->
+<div class="context-menu" id="ps-context-menu" role="menu" onclick="event.stopPropagation()">
+  <div class="context-menu-item" tabindex="0" role="menuitem" onclick="psAccionEditar()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+  <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>Editar
+  </div>
+  <div class="context-menu-item" tabindex="0" role="menuitem" onclick="psAccionHistorial()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+  <path d="M3 3v5h5" />
+  <path d="M12 7v5l4 2" /></svg>Historial de citas
+  </div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item danger" tabindex="0" role="menuitem" onclick="psAccionDesactivar()">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <circle cx="9" cy="7" r="4" />
+  <line x1="17" x2="22" y1="8" y2="13" />
+  <line x1="22" x2="17" y1="8" y2="13" /></svg>Desactivar usuario
+  </div>
+</div>
+
+<!-- MODAL: BÚSQUEDA DE PACIENTES -->
+<div class="modal-overlay" id="ps-overlay" onclick="if(event.target===this) closePatientSearch();">
+  <div class="ps-modal">
+    <div class="ps-header">
+      <div class="ps-header-title">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <circle cx="9" cy="7" r="4" />
+  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+  <path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+        Lista de Pacientes
+      </div>
+      <button class="wizard-close" onclick="closePatientSearch()" aria-label="Cerrar" title="Cerrar">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+      </button>
+    </div>
+    <div class="ps-search-row">
+      <div class="ps-search-field">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <input type="text" placeholder="Buscar por nombre o documento..." oninput="filterPatients(this.value)" autofocus>
+      </div>
+      <button class="icon-btn-circle" onclick="ncToast('Escaneo de QR de cédula en desarrollo.')" aria-label="Buscar por QR de cédula" title="Buscar por QR de cédula">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2" />
+  <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+  <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+  <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+  <path d="M7 12h10" /></svg>
+      </button>
+    </div>
+    <div class="ps-table-wrap">
+      <table>
+        <thead><tr>
+          <th>Paciente</th><th style="width:150px;">Documento</th><th style="width:130px;">Ciudad</th><th style="width:130px;">EPS</th><th style="width:120px;">Estado</th><th style="width:44px;"></th>
+        </tr></thead>
+        <tbody id="ps-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="wizard-footer">
+      <button class="btn btn-secondary" onclick="apOpen()">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <circle cx="9" cy="7" r="4" />
+  <path d="M19 8v6" /><path d="M22 11h-6" /></svg>
+        Agregar paciente
+      </button>
+      <div class="wizard-footer-actions">
+        <button class="btn btn-primary" id="ps-accept-btn" onclick="confirmPatientSelection()" disabled>
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIZARD: AGREGAR PACIENTE -->
+<div class="modal-overlay" id="ap-overlay" onclick="if(event.target===this) apClose();">
+  <div class="wizard-modal">
+
+    <div class="wizard-body">
+      <nav class="wizard-rail">
+        <div class="wizard-rail-header">
+          <div class="rh-eyebrow" id="ap-rail-eyebrow">Nuevo registro</div>
+          <div class="rh-title" id="ap-rail-title">Agregar Paciente</div>
+          <div class="rh-sub">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <circle cx="9" cy="7" r="4" /></svg>
+            <span id="ap-rail-sub">Historia clínica nueva</span>
+          </div>
+        </div>
+        <div class="wizard-rail-nav" id="ap-rail"></div>
+      </nav>
+
+      <div class="wizard-main">
+        <div class="wizard-main-header">
+          <div class="t" id="ap-progress-text">Paso 1 de 4</div>
+          <button class="wizard-close" onclick="apClose()" aria-label="Cerrar" title="Cerrar">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+          </button>
+        </div>
+
+        <form id="ap-form" onsubmit="return false;">
+          <div class="wizard-content" id="ap-content"></div>
+        </form>
+
+        <div class="wizard-footer">
+          <button type="button" class="btn btn-secondary" id="ap-back-btn" onclick="apBack()">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>Atrás
+          </button>
+          <div class="wizard-footer-actions">
+            <button type="button" class="btn btn-primary" id="ap-continue-btn" onclick="apNext()">Siguiente
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- WIZARD: NUEVO AGENDAMIENTO -->
+<div class="modal-overlay" id="nc-overlay" onclick="if(event.target===this) ncClose();">
+  <div class="wizard-modal">
+
+    <div class="wizard-body">
+      <nav class="wizard-rail">
+        <div class="wizard-rail-header">
+          <div class="rh-eyebrow">Nueva Cita</div>
+          <div class="rh-title" id="nc-rail-patient-name">Laura Sofía Martínez Gómez</div>
+          <div class="rh-sub">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h2" />
+  <path d="M16 14h2" />
+  <path d="M6.17 15a3 3 0 0 1 5.66 0" />
+  <circle cx="9" cy="11" r="2" />
+  <rect x="2" y="5" width="20" height="14" rx="2" /></svg>
+            <span id="nc-rail-patient-doc">CC 1.032.847.291</span>
+          </div>
+        </div>
+        <div class="wizard-rail-nav" id="nc-rail"></div>
+      </nav>
+
+      <div class="wizard-main">
+        <div class="wizard-main-header">
+          <div>
+            <div class="t" id="nc-main-title">Régimen</div>
+            <div class="sub" id="nc-progress-text">Paso 1 de 7</div>
+          </div>
+          <button class="wizard-close" onclick="ncClose()" aria-label="Cerrar" title="Cerrar">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+          </button>
+        </div>
+
+        <nav class="wiz-stepper" id="nc-stepper"></nav>
+
+        <div class="wizard-content" id="nc-content"></div>
+
+        <div class="wizard-footer">
+          <button class="btn btn-secondary" id="nc-back-btn" onclick="ncBack()">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>Atrás
+          </button>
+          <div class="wizard-footer-actions">
+            <button class="btn btn-primary" id="nc-continue-btn" onclick="ncNext()" disabled>Continuar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+  /* ================= MODO OSCURO ================= */
+  function applyTheme(dark){
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('theme-switch').checked = dark;
+  }
+
+  function toggleTheme(){
+    applyTheme(document.getElementById('theme-switch').checked);
+  }
+
+  function toggleThemeFromIcon(){
+    const chk = document.getElementById('theme-switch');
+    applyTheme(!chk.checked);
+  }
+
+  function toggleSidebar(){
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  }
+
+  function toggleNavGroup(headEl){
+    const sidebar = document.getElementById('sidebar');
+    if(sidebar.classList.contains('collapsed')){
+      sidebar.classList.remove('collapsed');
+    }
+    const group = headEl.parentElement;
+    group.classList.toggle('open');
+  }
+
+  /* ================= SELECCIÓN DE PACIENTE ================= */
+  const PATIENTS = [
+    { iniciales:'LS', nombre:'Laura Sofía Martínez Gómez',   edad:34, sexo:'Femenino',  ciudad:'Bogotá D.C.',    documento:'1.032.847.291', telefono:'310 842 9173', eps:'Sura',       estado:'activo',     citasFuturas:2, color:'#0065CD' },
+    { iniciales:'AF', nombre:'Andrés Felipe Herrera Rincón', edad:47, sexo:'Masculino', ciudad:'Medellín',       documento:'79.834.125',    telefono:'300 555 1234', eps:'Nueva EPS',  estado:'activo',     citasFuturas:0, color:'#7C3AED' },
+    { iniciales:'MI', nombre:'María Isabel Correa Patiño',   edad:58, sexo:'Femenino',  ciudad:'Cali',           documento:'43.729.381',    telefono:'301 555 2345', eps:'Compensar',  estado:'activo',     citasFuturas:1, color:'#DB2777' },
+    { iniciales:'JL', nombre:'Jorge Luis Pedraza Mora',      edad:65, sexo:'Masculino', ciudad:'Barranquilla',   documento:'17.284.930',    telefono:'302 555 3456', eps:'Salud Total',estado:'inactivo',  citasFuturas:0, color:'#EA580C' },
+    { iniciales:'VO', nombre:'Valentina Ospina Castaño',     edad:26, sexo:'Femenino',  ciudad:'Bucaramanga',    documento:'1.130.648.702', telefono:'303 555 4567', eps:'Colsanitas', estado:'activo',     citasFuturas:3, color:'#16A34A' },
+    { iniciales:'CE', nombre:'Carlos Eduardo Ramírez Torres',edad:52, sexo:'Masculino', ciudad:'Bogotá D.C.',    documento:'80.124.478',    telefono:'304 555 5678', eps:'Famisanar',  estado:'suspendido',citasFuturas:0, color:'#D97706' },
+    { iniciales:'SM', nombre:'Sandra Milena Vargas Díaz',    edad:41, sexo:'Femenino',  ciudad:'Pereira',        documento:'52.483.917',    telefono:'305 555 6789', eps:'Coomeva',    estado:'activo',     citasFuturas:1, color:'#64748B' },
+  ];
+  const PATIENT_ESTADO_LABEL = { activo:'Activo', inactivo:'Inactivo', suspendido:'Suspendido' };
+
+  let currentPatient = null;
+
+  // Datos mock del contrato y servicios contratados (se muestran solo con paciente seleccionado)
+  const CONTRATO_ACTIVO = { numero:'CTR-2025-0842', tipo:'Capitación' };
+  const SIDEBAR_SERVICIOS = [
+    { nombre:'Consulta médica general',       codigo:'890301', precio:'$ 28.500' },
+    { nombre:'Consulta de urgencias',         codigo:'890302', precio:'$ 42.000' },
+    { nombre:'Consulta especializada ...',    codigo:'890401', precio:'$ 68.000' },
+    { nombre:'Consulta especializada ...',    codigo:'890402', precio:'$ 71.000' },
+    { nombre:'Consulta especializada ...',    codigo:'890403', precio:'$ 65.000' },
+    { nombre:'Hemograma completo',            codigo:'840001', precio:'$ 18.500' },
+    { nombre:'Glicemia en ayunas',            codigo:'840101', precio:'$ 8.200'  },
+    { nombre:'Perfil lipídico completo',      codigo:'840201', precio:'$ 24.000' },
+    { nombre:'Radiografía tórax PA y l...',   codigo:'870201', precio:'$ 32.000' },
+    { nombre:'Ecografía abdominal',           codigo:'870301', precio:'$ 58.000' },
+    { nombre:'Electrocardiograma',            codigo:'850101', precio:'$ 35.000' },
+    { nombre:'Espirometría',                  codigo:'850201', precio:'$ 45.000' },
+  ];
+
+  function renderContratoPanel(){
+    document.getElementById('contrato-numero').textContent = currentPatient ? CONTRATO_ACTIVO.numero : '—';
+    document.getElementById('contrato-tipo').textContent = currentPatient ? CONTRATO_ACTIVO.tipo : '—';
+  }
+
+  function renderServiciosPanel(){
+    const list = document.getElementById('services-list');
+    const count = document.getElementById('servicios-count');
+    if(!currentPatient){
+      count.textContent = '0';
+      list.innerHTML = `<div class="services-empty">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" /></svg>
+        <div class="se-text">Selecciona un paciente para ver sus servicios contratados</div>
+      </div>`;
+      return;
+    }
+    count.textContent = String(SIDEBAR_SERVICIOS.length);
+    list.innerHTML = SIDEBAR_SERVICIOS.map(s=>`
+      <div class="service-item">
+        <div class="s-info"><div class="s-name">${s.nombre}</div><div class="s-code">${s.codigo}</div></div>
+        <div class="s-price">${s.precio}</div>
+      </div>`).join('');
+  }
+
+  function renderPatientBanner(){
+    const zone = document.getElementById('patient-banner-zone');
+    document.getElementById('footer-note').style.visibility = currentPatient ? 'visible' : 'hidden';
+    ['footer-editar-btn','footer-cancelar-btn','footer-imprimir-btn'].forEach(id=>{
+      document.getElementById(id).disabled = !currentPatient;
+    });
+    renderContratoPanel();
+    renderServiciosPanel();
+    renderAgenda();
+    if(!currentPatient){
+      zone.innerHTML = `<div class="patient-banner-empty" onclick="openPatientSearch()">
+        <div class="pbe-icon">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  <circle cx="9" cy="7" r="4" />
+  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+  <path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+        </div>
+        <div class="pbe-text">
+          <div class="pbe-title">Ningún paciente seleccionado</div>
+          <div class="pbe-sub">Busca por nombre o documento para iniciar la atención</div>
+        </div>
+        <button class="btn btn-primary" onclick="event.stopPropagation(); openPatientSearch();">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+          Buscar paciente
+        </button>
+      </div>`;
+      return;
+    }
+    const p = currentPatient;
+    zone.innerHTML = `<div class="patient-banner">
+      <div class="patient-avatar" style="background:${p.color}">${p.iniciales}</div>
+      <div class="patient-name-block"><div class="pname">${p.nombre}</div></div>
+      <div class="patient-meta">
+        <div class="pm-item"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h2" />
+  <path d="M16 14h2" />
+  <path d="M6.17 15a3 3 0 0 1 5.66 0" />
+  <circle cx="9" cy="11" r="2" />
+  <rect x="2" y="5" width="20" height="14" rx="2" /></svg><span class="lbl">CC</span> <b>${p.documento}</b></div>
+        <div class="pm-item"><span class="lbl">EDAD</span> <b>${p.edad} años</b></div>
+        <div class="pm-item"><span class="lbl">SEXO</span> <b>${p.sexo}</b></div>
+        <div class="pm-item"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+  <circle cx="12" cy="10" r="3" /></svg><b>${p.ciudad}</b></div>
+        <div class="pm-item"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><b>${p.telefono}</b></div>
+        <div class="pm-item"><span class="lbl">EPS</span> <b>${p.eps}</b></div>
+        <div class="pm-item"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" />
+  <path d="m9 16 2 2 4-4" /></svg><b>${p.citasFuturas} citas futuras</b></div>
+      </div>
+      <div class="patient-banner-right">
+        <span class="badge status-active badge-dot-inline"><span class="dot"></span>${PATIENT_ESTADO_LABEL[p.estado]}</span>
+        <span class="close-x" aria-label="Quitar paciente" title="Quitar paciente" onclick="clearPatient()"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></svg></span>
+      </div>
+    </div>`;
+  }
+
+  function clearPatient(){
+    currentPatient = null;
+    renderPatientBanner();
+  }
+
+  let psSelectedIdx = null;
+
+  function openPatientSearch(){
+    psSelectedIdx = null;
+    document.getElementById('ps-overlay').classList.add('open');
+    filterPatients('');
+    document.getElementById('ps-accept-btn').disabled = true;
+    const input = document.querySelector('#ps-overlay .ps-search-field input');
+    if(input){ input.value=''; setTimeout(()=>input.focus(), 50); }
+  }
+
+  function closePatientSearch(){
+    document.getElementById('ps-overlay').classList.remove('open');
+  }
+
+  function filterPatients(query){
+    const q = query.trim().toLowerCase();
+    const qDigits = q.replace(/\D/g,'');
+    const list = PATIENTS.filter(p=>{
+      if(!q) return true;
+      const matchNombre = p.nombre.toLowerCase().includes(q);
+      const matchDoc = qDigits && p.documento.replace(/\D/g,'').includes(qDigits);
+      return matchNombre || matchDoc;
+    });
+    renderPatientTable(list);
+  }
+
+  function renderPatientTable(list){
+    const tbody = document.getElementById('ps-tbody');
+    if(!list.length){
+      tbody.innerHTML = `<tr class="row-disabled"><td colspan="6" style="text-align:center;color:var(--ink-500);padding:24px;">No se encontraron pacientes</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(p=>{
+      const idx = PATIENTS.indexOf(p);
+      const selected = psSelectedIdx === idx;
+      return `<tr class="${selected?'selected':''}" tabindex="0" onclick="setPsSelected(${idx},this)" ondblclick="setPsSelected(${idx},this); confirmPatientSelection();">
+        <td>
+          <div class="ps-patient-cell">
+            <span class="ps-avatar" style="background:${p.color}">${p.iniciales}</span>
+            <span class="ps-pname">${p.nombre}</span>
+          </div>
+        </td>
+        <td>${p.documento}</td>
+        <td>${p.ciudad}</td>
+        <td><span class="badge eps">${p.eps}</span></td>
+        <td><span class="estado-badge ${p.estado}"><span class="dot"></span>${PATIENT_ESTADO_LABEL[p.estado]}</span></td>
+        <td>
+          <button class="row-menu-btn" style="display:inline-flex;" onclick="event.stopPropagation(); togglePsRowMenu(event, ${idx});" aria-label="Más acciones" title="Más acciones">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>
+          </button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ---- Menú contextual de fila (Editar / Historial / Desactivar) ---- */
+  function togglePsRowMenu(evt, idx){
+    const menu = document.getElementById('ps-context-menu');
+    const yaAbiertoParaEstaFila = menu.classList.contains('open') && menu.dataset.idx === String(idx);
+    cerrarPsRowMenu();
+    if(yaAbiertoParaEstaFila) return;
+    const rect = evt.currentTarget.getBoundingClientRect();
+    menu.style.top = (rect.bottom + 6) + 'px';
+    menu.style.left = (rect.right - 190) + 'px';
+    menu.dataset.idx = idx;
+    menu.classList.add('open');
+  }
+
+  function cerrarPsRowMenu(){
+    document.getElementById('ps-context-menu')?.classList.remove('open');
+  }
+
+  function psAccionEditar(){
+    const idx = Number(document.getElementById('ps-context-menu').dataset.idx);
+    cerrarPsRowMenu();
+    apOpenEdit(idx);
+  }
+
+  function psAccionHistorial(){
+    const idx = document.getElementById('ps-context-menu').dataset.idx;
+    ncToast(`Historial de citas de ${PATIENTS[idx]?.nombre || ''} (en desarrollo).`);
+    cerrarPsRowMenu();
+  }
+
+  function psAccionDesactivar(){
+    const idx = document.getElementById('ps-context-menu').dataset.idx;
+    ncToast(`Desactivar usuario: ${PATIENTS[idx]?.nombre || ''} (en desarrollo).`);
+    cerrarPsRowMenu();
+  }
+
+  document.addEventListener('click', cerrarPsRowMenu);
+  document.querySelector('.ps-table-wrap')?.addEventListener('scroll', cerrarPsRowMenu);
+
+
+  function setPsSelected(idx, trEl){
+    psSelectedIdx = idx;
+    document.querySelectorAll('#ps-tbody tr').forEach(tr=>tr.classList.remove('selected'));
+    if(trEl) trEl.classList.add('selected');
+    document.getElementById('ps-accept-btn').disabled = false;
+  }
+
+  function confirmPatientSelection(){
+    if(psSelectedIdx === null) return;
+    currentPatient = PATIENTS[psSelectedIdx];
+    renderPatientBanner();
+    closePatientSearch();
+    ncOpen();
+  }
+
+  /* ================= AGENDA DEL DÍA ================= */
+  const AGENDA = [
+    { hora:'07:00', dur:'20min', paciente:'Pedro Arango Ruiz', tipo:'Consulta general', eps:'Sura', valor:'$ 28.500', tel:'300 123 4567', fsol:'02/07/2025', estado:'expirado' },
+    { hora:'07:20', dur:'20min', paciente:'Camila Torres Mesa', tipo:'Control', eps:'Nueva EPS', valor:'$ 28.500', tel:'316 234 5678', fsol:'01/07/2025', estado:'expirado' },
+    { hora:'07:40', dur:'20min', paciente:'Roberto Cárdenas', tipo:'Primera vez', eps:'Compensar', valor:'$ 28.500', tel:'314 345 6789', fsol:'30/06/2025', estado:'expirado' },
+    { hora:'08:00', dur:'20min', paciente:'Ana Lucía Vargas', tipo:'Control crónico', eps:'Sura', valor:'$ 28.500', tel:'312 456 7890', fsol:'05/07/2025', estado:'ocupado', llegada:'07:55' },
+    { hora:'08:20', dur:'20min', paciente:'Mario Pineda León', tipo:'Consulta general', eps:'Colsanitas', valor:'$ 28.500', tel:'321 567 8901', fsol:'06/07/2025', estado:'ocupado' },
+    { hora:'08:40', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
+    { hora:'09:00', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
+    { hora:'09:20', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
+    { hora:'09:40', dur:'20min', paciente:'Gloria Estela Ríos', tipo:'Seguimiento', eps:'Famisanar', valor:'$ 28.500', tel:'315 678 9012', fsol:'04/07/2025', estado:'ocupado' },
+    { hora:'10:00', dur:'20min', paciente:null, tipo:null, estado:'bloqueado' },
+    { hora:'10:20', dur:'20min', paciente:null, tipo:null, estado:'bloqueado' },
+    { hora:'10:40', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
+  ];
+
+  const ESTADO_LABEL = {
+    disponible:'Disponible', ocupado:'Ocupado', expirado:'Expirado', bloqueado:'Bloqueado'
+  };
+
+  let selectedHora = '08:20';
+
+  function renderAgenda(){
+    const tbody = document.getElementById('agenda-tbody');
+    if(!currentPatient){
+      tbody.innerHTML = `<tr class="row-empty"><td colspan="8">
+        <div class="agenda-empty-row">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 2v4" /><path d="M16 2v4" /></svg>
+          <div class="ae-text">Selecciona un paciente para ver la agenda del día</div>
+        </div>
+      </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = AGENDA.map(c=>{
+      const nombreCell = c.paciente
+        ? `<span class="p-name">${c.paciente}</span>`
+        : `<span class="p-name muted">Disponible</span>`;
+      const menuBtn = c.paciente
+        ? `<button class="row-menu-btn" onclick="toggleRowMenu(event,'${c.hora}')" aria-label="Más acciones" title="Más acciones"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1" />
+  <circle cx="19" cy="12" r="1" />
+  <circle cx="5" cy="12" r="1" /></svg></button>`
+        : '';
+      const llegadaCell = c.llegada
+        ? `<span class="llegada-chip"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>${c.llegada}</span>`
+        : `<span class="llegada-dash">—</span>`;
+      const epsCell = c.eps ? `<span class="badge eps">${c.eps}</span>` : '';
+      const rowCls = c.hora === selectedHora ? 'selected' : '';
+      return `<tr class="${rowCls}" tabindex="0" onclick="seleccionarCita(this,'${c.hora}')">
+        <td class="hora-cell"><span class="h">${c.hora}</span></td>
+        <td class="llegada-cell">${llegadaCell}</td>
+        <td class="paciente-cell">${nombreCell}${menuBtn}</td>
+        <td>${epsCell}</td>
+        <td>${c.valor || ''}</td>
+        <td>${c.tel || ''}</td>
+        <td>${c.fsol || ''}</td>
+        <td>
+          <span class="estado-badge ${c.estado}"><span class="dot"></span>${ESTADO_LABEL[c.estado]}</span>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function actualizarFooter(hora){
+    const c = AGENDA.find(x=>x.hora===hora);
+    const label = c && c.paciente ? `${hora} — ${c.paciente}` : `${hora} — Disponible`;
+    document.getElementById('footer-selected').textContent = label;
+  }
+
+  function seleccionarCita(tr, hora){
+    selectedHora = hora;
+    document.querySelectorAll('#agenda-tbody tr').forEach(r=>r.classList.remove('selected'));
+    tr.classList.add('selected');
+    actualizarFooter(hora);
+  }
+
+  /* ================= MENÚ CONTEXTUAL DE LA FILA ================= */
+  function toggleRowMenu(evt, hora){
+    evt.stopPropagation();
+    const menu = document.getElementById('row-context-menu');
+    const yaAbiertoParaEstaFila = menu.classList.contains('open') && menu.dataset.hora === hora;
+    cerrarRowMenu();
+    if(yaAbiertoParaEstaFila) return;
+    const rect = evt.currentTarget.getBoundingClientRect();
+    menu.style.top = (rect.bottom + 6) + 'px';
+    menu.style.left = (rect.right - 190) + 'px';
+    menu.dataset.hora = hora;
+    menu.classList.add('open');
+  }
+
+  function cerrarRowMenu(){
+    document.getElementById('row-context-menu').classList.remove('open');
+  }
+
+  function accionMarcarLlegada(){
+    const hora = document.getElementById('row-context-menu').dataset.hora;
+    const c = AGENDA.find(x=>x.hora===hora);
+    if(c){
+      const now = new Date();
+      c.llegada = now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',hour12:false});
+    }
+    cerrarRowMenu();
+    renderAgenda();
+    reaplicarSeleccion();
+  }
+
+  function accionCancelar(){
+    const hora = document.getElementById('row-context-menu').dataset.hora;
+    const c = AGENDA.find(x=>x.hora===hora);
+    if(c){
+      c.paciente = null; c.tipo = null; c.eps = null;
+      c.valor = null; c.tel = null; c.fsol = null; c.llegada = null;
+      c.estado = 'disponible';
+    }
+    cerrarRowMenu();
+    renderAgenda();
+    reaplicarSeleccion();
+    actualizarFooter(hora);
+  }
+
+  function accionReprogramar(){
+    // TODO: conectar con el flujo de reprogramación de citas
+    cerrarRowMenu();
+  }
+
+  function accionVerDetalle(){
+    // TODO: conectar con el detalle del paciente / historia clínica
+    cerrarRowMenu();
+  }
+
+  function reaplicarSeleccion(){
+    const tr = Array.from(document.querySelectorAll('#agenda-tbody tr'))
+      .find(r => r.querySelector('.hora-cell .h')?.textContent === selectedHora);
+    if(tr) tr.classList.add('selected');
+  }
+
+  document.addEventListener('click', cerrarRowMenu);
+  document.getElementById('agenda-tbody')?.addEventListener('scroll', cerrarRowMenu);
+
+  // Activa con Enter/Espacio los elementos no-nativos con tabindex="0"
+  // (filas de tabla, tarjetas de horario, ítems de navegación) — el foco visible
+  // solo tiene sentido si también son operables por teclado.
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    const el = e.target;
+    if(el.getAttribute && el.getAttribute('tabindex') === '0'){
+      e.preventDefault();
+      el.click();
+    }
+  });
+
+  function cambiarTab(el){
+    document.querySelectorAll('.tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    el.classList.add('active');
+    el.setAttribute('aria-selected','true');
+  }
+
+  renderPatientBanner();
+
+  /* ================================================================
+     WIZARD: NUEVO AGENDAMIENTO
+     Paso 1 · Cobertura (5 sub-pasos): Régimen → Especialidad → Médico
+       → Contratación → Servicios (cada uno depende del anterior)
+     Paso 2 · Información de cita: Finalidad + Teléfono de aviso
+     Paso 3 · Resumen (con opción de editar)
+     Selección simple = elegir. Doble clic = elegir Y avanzar de una vez,
+     sin tener que bajar hasta el botón "Continuar".
+  ================================================================= */
+
+  const NC_CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const NC_SEARCH_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>';
+  const NC_CHEVRON_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  const NC_CLOCK_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+  const NC_EDIT_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>';
+
+  const NC_FLOW = [
+    { key:'regimen',      label:'Régimen',      group:1 },
+    { key:'especialidad', label:'Especialidad', group:1 },
+    { key:'medico',       label:'Médico',       group:1 },
+    { key:'contratacion', label:'Contratación', group:1 },
+    { key:'servicios',    label:'Servicios',    group:1 },
+    { key:'info',         label:'Información de cita', group:2 },
+    { key:'resumen',      label:'Resumen',      group:3 },
+  ];
+
+  const NC_TITLES = {
+    regimen:'Régimen', especialidad:'Especialidad', medico:'Selección de médico',
+    contratacion:'Contratación', servicios:'Servicios contratados',
+    info:'Finalidad y Teléfono Aviso', resumen:'Resumen de la cita',
+  };
+
+  const NC_REGIMENES = [
+    { id:'900686173', nombre:'CONTRIBUTIVO EPS', detalle:[['EPS','Empresa Promotora de Salud Contributiva'],['EPSS','Empresa Promotora de Salud Subsidiada']] },
+    { id:'900856678', nombre:'SUBSIDIADO EPS',   detalle:[['EPS','Empresa Promotora de Salud Subsidiada']] },
+    { id:'900452246', nombre:'ESPECIAL EPS',     detalle:[['RÉGIMEN','Régimen especial de excepción']] },
+    { id:'900740833', nombre:'PARTICULAR EPS',   detalle:[['PAGO','Pago directo por el usuario']] },
+  ];
+
+  const NC_ESPECIALIDADES = [
+    { id:'010', nombre:'MEDICINA GENERAL',        medicos:8 },
+    { id:'302', nombre:'CARDIOLOGÍA',              medicos:9 },
+    { id:'303', nombre:'NEUROLOGÍA',               medicos:4 },
+    { id:'081', nombre:'ALERGOLOGÍA',              medicos:1 },
+    { id:'361', nombre:'CARDIOLOGÍA PEDIÁTRICA',   medicos:3 },
+    { id:'030', nombre:'CIRUGÍA CARDIOVASCULAR',   medicos:0 },
+  ];
+
+  const NC_MEDICOS = {
+    '010': [
+      { id:'12345678', nombre:'JUAN CARLOS PEREZ GARCIA' },
+      { id:'87654321', nombre:'MARIA FERNANDA LOPEZ RUIZ' },
+      { id:'11223344', nombre:'ANDRES FELIPE GOMEZ SILVA' },
+    ],
+    '302': [{ id:'20112233', nombre:'PAULA ANDREA MENDEZ RIOS' }],
+    '303': [{ id:'20334455', nombre:'IVAN DARIO CORTES LEON' }],
+    '081': [{ id:'20556677', nombre:'CAMILA TORRES VEGA' }],
+    '361': [{ id:'20778899', nombre:'FELIPE ROJAS MORENO' }],
+    '030': [],
+  };
+
+  // Genera N horarios cada 20 min a partir de una hora inicial (para simular agendas muy llenas de disponibilidad).
+  function ncGenerarHorarios(horaInicio, cantidad){
+    const [h0, m0] = horaInicio.split(':').map(Number);
+    let total = h0 * 60 + m0;
+    const horas = [];
+    for(let i=0; i<cantidad; i++){
+      const h = Math.floor(total / 60) % 24;
+      const m = total % 60;
+      horas.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+      total += 20;
+    }
+    return horas;
+  }
+
+  // Solo se listan horarios DISPONIBLES (al usuario no le interesan los ocupados).
+  const NC_SLOTS = {
+    '12345678': ['07:30','07:50','08:10','11:00'],
+    '87654321': ['09:00','09:20'],
+    '11223344': ncGenerarHorarios('07:00', 24),
+    '20112233': ['10:00','10:20','10:40'],
+    '20334455': ['08:40'],
+    '20556677': ['09:40','10:00'],
+    '20778899': ['07:00','07:20'],
+  };
+
+  // ---- Disponibilidad por día (navegación entre días en el paso "Médico") ----
+  // El día 0 (hoy) usa los horarios fijos de NC_SLOTS de arriba (coherentes con
+  // la agenda del día en pantalla). Los demás días se generan de forma
+  // determinística (mismo médico + mismo día = siempre el mismo resultado).
+  const NC_DIAS_VISIBLES = 6; // hoy + 5 días siguientes
+  const NC_DIA_NOMBRES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const NC_DIA_NOMBRES_CORTOS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  function ncHashSeed(str){
+    let h = 0;
+    for(let i=0;i<str.length;i++){ h = (h * 31 + str.charCodeAt(i)) >>> 0; }
+    return h || 1;
+  }
+  function ncSeededRandom(seed){
+    let s = seed % 2147483647;
+    if(s <= 0) s += 2147483646;
+    return function(){ s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+  }
+  function ncTodasLasHoras(){
+    const horas = [];
+    let total = 7 * 60;
+    while(total <= 16 * 60 + 40){
+      horas.push(`${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`);
+      total += 20;
+    }
+    return horas;
+  }
+  function ncSlotsForDay(medicoId, dayOffset){
+    if(dayOffset === 0) return NC_SLOTS[medicoId] || [];
+    const rand = ncSeededRandom(ncHashSeed(`${medicoId}-${dayOffset}`));
+    const densidad = 0.2 + rand() * 0.35;
+    return ncTodasLasHoras().filter(()=> rand() < densidad);
+  }
+  function ncFechaParaDia(offset){
+    const f = new Date();
+    f.setDate(f.getDate() + offset);
+    return f;
+  }
+  function ncDiaOptions(){
+    const opciones = [];
+    for(let i=0; i<NC_DIAS_VISIBLES; i++){
+      const f = ncFechaParaDia(i);
+      opciones.push({
+        offset:i,
+        label: i===0 ? 'Hoy' : i===1 ? 'Mañana' : NC_DIA_NOMBRES_CORTOS[f.getDay()],
+        numero: f.getDate(),
+        mes: f.toLocaleDateString('es-CO',{month:'short'}).replace('.',''),
+      });
+    }
+    return opciones;
+  }
+  function ncFechaLegible(offset){
+    const f = ncFechaParaDia(offset);
+    const dia = NC_DIA_NOMBRES[f.getDay()];
+    return `${dia} ${f.getDate()} de ${f.toLocaleDateString('es-CO',{month:'long'})}`;
+  }
+
+  const NC_CONTRATOS = [
+    { id:'12', nCto:'15', contrato:'SURA CONT (VIG 01-01-2025 AL 31-12-2025)' },
+    { id:'13', nCto:'22', contrato:'NUEVA EPS EVENTO (VIG 01-03-2025 AL 28-02-2026)' },
+  ];
+
+  const NC_SERVICIOS = [
+    { id:'890302-98C', nombre:'REVISION DE EXAMENES',                                     valor:0 },
+    { id:'890302-99C', nombre:'CONSULTA POSTQUIRURGICA',                                  valor:0 },
+    { id:'881202C',    nombre:'ECOCARDIOGRAMA TRANSTORACICO',                             valor:247400 },
+    { id:'895100C',    nombre:'ELECTROCARDIOGRAMA DE RITMO O DE SUPERFICIE',              valor:20384 },
+    { id:'890228C',    nombre:'CONSULTA DE PRIMERA VEZ POR ESPECIALISTA',                 valor:250000 },
+    { id:'890328C',    nombre:'CONSULTA DE CONTROL O DE SEGUIMIENTO',                     valor:250000 },
+    { id:'895101C',    nombre:'ELECTROCARDIOGRAMA DE RITMO O DE SUPERFICIE AMBULATORIO',  valor:256000 },
+    { id:'810100C',    nombre:'CONSULTA MEDICINA GENERAL',                                valor:28500 },
+  ];
+
+  const NC_FINALIDADES = ['Primera vez','Control','Urgencia','Procedimiento','Valoración'];
+
+  function fmtCOP(n){ return '$ ' + n.toLocaleString('es-CO'); }
+
+  let NC = { pos:0, maxReached:0, data:null };
+
+  function ncDataInicial(){
+    return { regimenId:null, especialidadId:null, medicoId:null, dia:0, horario:null, contratoId:null, servicios:[], finalidad:null, telefono:'' };
+  }
+
+  function ncRegimen(){ return NC_REGIMENES.find(r=>r.id===NC.data.regimenId); }
+  function ncEspecialidad(){ return NC_ESPECIALIDADES.find(e=>e.id===NC.data.especialidadId); }
+  function ncMedicos(){ return NC_MEDICOS[NC.data.especialidadId] || []; }
+  function ncMedico(){ return ncMedicos().find(m=>m.id===NC.data.medicoId); }
+  function ncContrato(){ return NC_CONTRATOS.find(c=>c.id===NC.data.contratoId); }
+
+  function ncOpen(){
+    if(!currentPatient){
+      openPatientSearch();
+      return;
+    }
+    NC = { pos:0, maxReached:0, data:ncDataInicial() };
+    document.getElementById('nc-rail-patient-name').textContent = currentPatient.nombre;
+    document.getElementById('nc-rail-patient-doc').textContent = `CC ${currentPatient.documento}`;
+    document.getElementById('nc-overlay').classList.add('open');
+    ncRender();
+  }
+
+  function ncClose(){
+    document.getElementById('nc-overlay').classList.remove('open');
+  }
+
+  function ncIsValid(key){
+    const d = NC.data;
+    switch(key){
+      case 'regimen':      return !!d.regimenId;
+      case 'especialidad': return !!d.especialidadId;
+      case 'medico':       return !!d.medicoId && !!d.horario;
+      case 'contratacion': return !!d.contratoId;
+      case 'servicios':    return d.servicios.length > 0;
+      case 'info':         return !!d.finalidad && d.telefono.trim().length >= 7;
+      case 'resumen':      return true;
+      default:             return false;
+    }
+  }
+
+  function ncGoTo(idx){
+    if(idx > NC.maxReached) return;
+    NC.pos = idx;
+    ncRender();
+  }
+
+  function ncNext(){
+    const cur = NC_FLOW[NC.pos].key;
+    if(!ncIsValid(cur)) return;
+    if(NC.pos < NC_FLOW.length - 1){
+      NC.pos++;
+      if(NC.pos > NC.maxReached) NC.maxReached = NC.pos;
+      ncRender();
+    }
+  }
+
+  function ncBack(){
+    if(NC.pos > 0){ NC.pos--; ncRender(); }
+  }
+
+  // Avanza automáticamente al siguiente (sub)paso si la selección ya deja
+  // válido el paso actual — así el usuario no tiene que bajar a "Continuar".
+  function ncMaybeAdvance(key, advance){
+    if(advance && ncIsValid(key) && NC.pos < NC_FLOW.length - 1){
+      NC.pos++;
+      if(NC.pos > NC.maxReached) NC.maxReached = NC.pos;
+    }
+    ncRender();
+  }
+
+  function ncSelectRegimen(id, advance){ NC.data.regimenId = id; ncMaybeAdvance('regimen', advance); }
+  function ncSelectEspecialidad(id, advance){
+    NC.data.especialidadId = id; NC.data.medicoId = null; NC.data.dia = 0; NC.data.horario = null;
+    ncMaybeAdvance('especialidad', advance);
+  }
+  function ncSelectMedico(id){ NC.data.medicoId = id; NC.data.dia = 0; NC.data.horario = null; ncRender(); }
+  function ncSelectMedicoQuick(id){
+    // Doble clic sobre un médico: lo selecciona, toma el primer horario libre de hoy y avanza.
+    NC.data.medicoId = id; NC.data.dia = 0; NC.data.horario = null;
+    const slots = ncSlotsForDay(id, 0);
+    if(slots.length){ NC.data.horario = slots[0]; }
+    ncMaybeAdvance('medico', true);
+  }
+  function ncSelectDia(offset){
+    NC.data.dia = offset;
+    NC.data.horario = null;
+    ncRender();
+  }
+  function ncSelectSlot(hora, advance){ NC.data.horario = hora; ncMaybeAdvance('medico', advance); }
+  function ncSelectContrato(id, advance){ NC.data.contratoId = id; ncMaybeAdvance('contratacion', advance); }
+  function ncToggleServicio(code, advance){
+    const i = NC.data.servicios.indexOf(code);
+    if(i >= 0) NC.data.servicios.splice(i,1); else NC.data.servicios.push(code);
+    ncMaybeAdvance('servicios', advance);
+  }
+  function ncSelectFinalidad(v){ NC.data.finalidad = v; ncUpdateContinueState(); }
+
+  function ncUpdateContinueState(){
+    const cont = document.getElementById('nc-continue-btn');
+    if(NC.pos !== NC_FLOW.length - 1){
+      cont.disabled = !ncIsValid(NC_FLOW[NC.pos].key);
+    }
+  }
+
+  function ncRenderStepper(){
+    const wrap = document.getElementById('nc-stepper');
+    const enGrupo1 = NC_FLOW[NC.pos].group === 1;
+    if(!enGrupo1){ wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+    wrap.style.display = 'flex';
+    const pasos1 = NC_FLOW.map((s,i)=>({...s, idx:i})).filter(s=>s.group===1);
+    wrap.innerHTML = pasos1.map(s=>{
+      let cls = 'wiz-step';
+      let dot = String(s.idx+1);
+      const clickable = s.idx <= NC.maxReached;
+      if(s.idx < NC.pos){ cls += ' done'; dot = NC_CHECK_SVG; }
+      else if(s.idx === NC.pos){ cls += ' active'; }
+      else if(s.idx > NC.maxReached){ cls += ' locked'; }
+      return `<div class="${cls}" ${clickable ? `tabindex="0" role="button"` : ''} onclick="ncGoTo(${s.idx})">
+        <span class="wiz-step-circle">${dot}</span>
+        <span class="wiz-step-label">${s.label}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function ncRenderMainHeader(){
+    const key = NC_FLOW[NC.pos].key;
+    document.getElementById('nc-main-title').textContent = NC_TITLES[key] || '';
+    document.getElementById('nc-progress-text').textContent = `Paso ${NC.pos + 1} de ${NC_FLOW.length}`;
+  }
+
+  function ncRailMainStepHtml(idx, numero, titulo, descripcion, extraClickable){
+    const pos = NC.pos;
+    let cls = 'rail-main-step';
+    let circle = String(numero);
+    if(idx < pos){ cls += ' done'; circle = NC_CHECK_SVG; }
+    else if(idx === pos){ cls += ' active'; }
+    else if(idx > NC.maxReached && !extraClickable){ cls += ' locked'; }
+    const clickable = extraClickable || idx <= NC.maxReached;
+    return `<div class="${cls}" ${clickable ? `tabindex="0" role="button" onclick="ncGoTo(${idx})"` : ''}>
+      <span class="rms-circle">${circle}</span>
+      <span>
+        <div class="rms-title">${titulo}</div>
+        <div class="rms-sub">${descripcion}</div>
+      </span>
+    </div>`;
+  }
+
+  function ncRenderRail(){
+    const rail = document.getElementById('nc-rail');
+    const pos = NC.pos;
+
+    // Grupo 1 · Seleccionar cobertura (siempre accesible desde el inicio)
+    let html = ncRailMainStepHtml(0, 1, 'Seleccionar cobertura', 'Régimen, especialidad, médico, contrato, servicio', true);
+
+    html += `<div class="rail-substeps">`;
+    NC_FLOW.filter(s=>s.group===1).forEach((s,idx)=>{
+      let cls = 'rail-substep';
+      let dot = String(idx+1);
+      if(idx < pos){ cls += ' done'; dot = NC_CHECK_SVG; }
+      else if(idx === pos){ cls += ' active'; }
+      else if(idx > NC.maxReached){ cls += ' locked'; }
+      const clickable = idx <= NC.maxReached;
+      html += `<div class="${cls}" ${clickable ? `tabindex="0" role="button" onclick="ncGoTo(${idx})"` : ''}>
+        <span class="rs-dot">${dot}</span>${s.label}
+      </div>`;
+    });
+    html += `</div>`;
+
+    // Grupo 2 · Información de cita
+    html += ncRailMainStepHtml(5, 2, 'Información de cita', 'Finalidad y teléfono de aviso', false);
+
+    // Grupo 3 · Resumen
+    html += ncRailMainStepHtml(6, 3, 'Resumen', 'Confirmar y guardar', false);
+
+    rail.innerHTML = html;
+  }
+
+  function ncStepHeader(title, hint){
+    return `<div class="wizard-step-title">${title}</div><div class="wizard-step-hint">${hint}</div>`;
+  }
+
+  function ncSearchRow(placeholders){
+    return `<div class="wiz-search-row">${placeholders.map((p,i)=>`
+      <div class="wiz-search-field">
+        ${NC_SEARCH_SVG}
+        <input type="text" placeholder="${p}" oninput="ncFiltrar(${i}, this.value)">
+      </div>`).join('')}</div>`;
+  }
+
+  let NC_FILTROS = ['', ''];
+
+  function ncFiltrar(idx, val){
+    NC_FILTROS[idx] = val.trim().toLowerCase();
+    ncRenderTableOnly();
+  }
+
+  // -------- Paso: Régimen (tabla con acordeón de detalle) --------
+  function ncContentRegimen(){
+    let html = ncStepHeader('Selecciona el régimen','Define la cobertura con la que se atenderá la cita.');
+    html += `<div class="wiz-table-wrap"><table><thead><tr>
+      <th style="width:160px;">ID Tercero</th><th>Nombre</th><th style="width:40px;"></th>
+    </tr></thead><tbody>`;
+    NC_REGIMENES.forEach(r=>{
+      const selected = NC.data.regimenId === r.id;
+      html += `<tr class="${selected?'selected':''}" tabindex="0" onclick="ncSelectRegimen('${r.id}')" ondblclick="ncSelectRegimen('${r.id}',true)">
+        <td>${r.id}</td>
+        <td class="wiz-row-name">${r.nombre}</td>
+        <td class="wiz-row-chevron">${NC_CHEVRON_SVG}</td>
+      </tr>`;
+      if(selected){
+        html += `<tr class="wiz-detail-row"><td colspan="3"><div class="wiz-detail-inner">
+          <table><thead><tr><th style="width:120px;">Tipo</th><th>Detalle</th></tr></thead><tbody>
+          ${r.detalle.map(([t,d])=>`<tr><td>${t}</td><td>${d}</td></tr>`).join('')}
+          </tbody></table>
+        </div></td></tr>`;
+      }
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  // -------- Paso: Especialidad --------
+  function ncContentEspecialidad(){
+    let html = ncStepHeader('Selecciona la especialidad', `Especialidades disponibles para ${ncRegimen()?ncRegimen().nombre:'el régimen seleccionado'}.`);
+    html += ncSearchRow(['Buscar por Especialidad','Buscar por Id. Especialidad']);
+    html += `<div id="nc-table-target">${ncTableEspecialidad()}</div>`;
+    return html;
+  }
+  function ncTableEspecialidad(){
+    const f0 = NC_FILTROS[0], f1 = NC_FILTROS[1];
+    const rows = NC_ESPECIALIDADES.filter(e=>
+      (!f0 || e.nombre.toLowerCase().includes(f0)) &&
+      (!f1 || e.id.toLowerCase().includes(f1))
+    );
+    let html = `<div class="wiz-table-wrap"><table><thead><tr>
+      <th style="width:80px;">ID</th><th>Especialidad</th><th style="width:180px;text-align:right;">Cantidad de médicos</th>
+    </tr></thead><tbody>`;
+    rows.forEach(e=>{
+      const selected = NC.data.especialidadId === e.id;
+      const disabled = e.medicos === 0;
+      html += `<tr class="${selected?'selected':''} ${disabled?'row-disabled':''}"
+        ${disabled?'':`tabindex="0" onclick="ncSelectEspecialidad('${e.id}')" ondblclick="ncSelectEspecialidad('${e.id}',true)"`}>
+        <td>${e.id}</td>
+        <td class="wiz-row-name">${e.nombre}</td>
+        <td class="wiz-row-count" style="text-align:right;">${e.medicos}</td>
+      </tr>`;
+    });
+    if(!rows.length) html += `<tr class="row-disabled"><td colspan="3" style="text-align:center;color:var(--ink-500);">Sin resultados</td></tr>`;
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  // -------- Paso: Médico + disponibilidad --------
+  function ncContentMedico(){
+    let html = ncStepHeader('Selecciona el médico', `Médicos de ${ncEspecialidad()?ncEspecialidad().nombre:''} con agenda disponible.`);
+    html += ncSearchRow(['Buscar por Nombre Médico','Buscar por ID Médico']);
+    html += `<div id="nc-table-target">${ncTableMedico()}</div>`;
+    return html;
+  }
+  function ncTableMedico(){
+    const f0 = NC_FILTROS[0], f1 = NC_FILTROS[1];
+    const medicos = ncMedicos().filter(m=>
+      (!f0 || m.nombre.toLowerCase().includes(f0)) &&
+      (!f1 || m.id.toLowerCase().includes(f1))
+    );
+    let html = `<div class="wiz-table-wrap"><table><thead><tr>
+      <th style="width:110px;">ID Médico</th><th>Nombre Médico</th><th style="width:140px;">Citas disponibles</th><th>Especialidad</th>
+    </tr></thead><tbody>`;
+    medicos.forEach(m=>{
+      const selected = NC.data.medicoId === m.id;
+      const slots = NC_SLOTS[m.id] || [];
+      html += `<tr class="${selected?'selected':''}" tabindex="0" onclick="ncSelectMedico('${m.id}')" ondblclick="ncSelectMedicoQuick('${m.id}')">
+        <td>${m.id}</td>
+        <td class="wiz-row-name">${m.nombre}</td>
+        <td class="wiz-row-count">${slots.length}</td>
+        <td>${ncEspecialidad()?ncEspecialidad().nombre:''}</td>
+      </tr>`;
+    });
+    if(!medicos.length) html += `<tr class="row-disabled"><td colspan="4" style="text-align:center;color:var(--ink-500);">Sin resultados</td></tr>`;
+    html += `</tbody></table></div>`;
+
+    if(NC.data.medicoId){
+      const medico = ncMedico();
+      const dia = NC.data.dia || 0;
+      const slots = ncSlotsForDay(NC.data.medicoId, dia);
+      const dias = ncDiaOptions();
+      html += `<div class="slots-card">
+        <div class="slots-card-head">
+          <div class="sch-left">
+            ${NC_CLOCK_SVG}
+            <div>
+              <div class="sch-name">${medico ? medico.nombre : ''}</div>
+              <div class="sch-sub">${ncEspecialidad() ? ncEspecialidad().nombre : ''}</div>
+            </div>
+          </div>
+          <span class="slots-badge">${slots.length} horarios disponibles</span>
+        </div>
+        <div class="day-strip">
+          ${dias.map(d=>`<div class="day-chip ${d.offset===dia?'active':''}" tabindex="0" onclick="ncSelectDia(${d.offset})">
+            <div class="dc-label">${d.label}</div>
+            <div class="dc-date">${d.numero} ${d.mes}</div>
+          </div>`).join('')}
+        </div>
+        <div class="slots-grid">
+          ${slots.length ? slots.map(h=>ncSlotBtn(h)).join('') : `<span class="slots-empty">Este médico no tiene horarios disponibles este día. Prueba con otra fecha.</span>`}
+        </div>
+      </div>`;
+    }
+    return html;
+  }
+  // NOTA A11Y: ondblclick es un acelerador SOLO-MOUSE (seleccionar + avanzar en un
+  // gesto). No tiene equivalente por teclado -- el listener de keydown global solo
+  // mapea Enter/Espacio a un click() simple, nunca a dblclick. Esto es intencional:
+  // el flujo de un solo clic + botón "Continuar" sigue siendo 100% funcional por
+  // teclado, así que no hay pérdida de paridad, solo de un atajo de conveniencia
+  // para usuarios de mouse/trackpad.
+  function ncSlotBtn(hora){
+    const selected = NC.data.horario === hora;
+    return `<div class="slot-btn ${selected?'selected':''}" tabindex="0" onclick="ncSelectSlot('${hora}')" ondblclick="ncSelectSlot('${hora}',true)">
+      <div class="sb-h">${hora}</div>
+    </div>`;
+  }
+
+  // -------- Paso: Contratación --------
+  function ncContentContratacion(){
+    const d = NC.data;
+    let html = ncStepHeader('Selecciona el contrato','Verifica el contexto y elige el contrato vigente.');
+    html += `<dl class="ro-fields">
+      <div class="ro-field"><dt>Sede</dt><dd class="ro-value">01 — Sede Norte</dd></div>
+      <div class="ro-field"><dt>Administradora</dt><dd class="ro-value">${ncRegimen() ? ncRegimen().id : ''}</dd></div>
+      <div class="ro-field"><dt>ID. Afiliado</dt><dd class="ro-value">1.032.847.291</dd></div>
+      <div class="ro-field"><dt>Área</dt><dd class="ro-value">Consulta Externa</dd></div>
+      <div class="ro-field"><dt>Especialidad</dt><dd class="ro-value">${ncEspecialidad() ? ncEspecialidad().nombre : ''}</dd></div>
+      <div class="ro-field"><dt>Régimen</dt><dd class="ro-value">${ncRegimen() ? ncRegimen().nombre : ''}</dd></div>
+    </dl>`;
+    html += `<div class="wiz-table-wrap"><table><thead><tr>
+      <th style="width:70px;">ID</th><th style="width:100px;">N° Cto.</th><th>Contrato</th>
+    </tr></thead><tbody>`;
+    NC_CONTRATOS.forEach(c=>{
+      const selected = d.contratoId === c.id;
+      html += `<tr class="${selected?'selected':''}" tabindex="0" onclick="ncSelectContrato('${c.id}')" ondblclick="ncSelectContrato('${c.id}',true)">
+        <td>${c.id}</td>
+        <td class="wiz-row-count">${c.nCto}</td>
+        <td class="wiz-row-name">${c.contrato}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  // -------- Paso: Servicios --------
+  function ncContentServicios(){
+    let html = ncStepHeader('Selecciona los servicios','Puedes elegir uno o varios servicios contratados.');
+    html += ncSearchRow(['Buscar por Nombre Procedimiento','Buscar por ID Servicio']);
+    html += `<div id="nc-table-target">${ncTableServicios()}</div>`;
+    return html;
+  }
+  function ncTableServicios(){
+    const f0 = NC_FILTROS[0], f1 = NC_FILTROS[1];
+    const rows = NC_SERVICIOS.filter(s=>
+      (!f0 || s.nombre.toLowerCase().includes(f0)) &&
+      (!f1 || s.id.toLowerCase().includes(f1))
+    );
+    let html = `<div class="wiz-table-wrap"><table><thead><tr>
+      <th style="width:130px;">ID. Servicio</th><th>Procedimiento</th><th style="width:120px;text-align:right;">Valor</th>
+    </tr></thead><tbody>`;
+    rows.forEach(s=>{
+      const selected = NC.data.servicios.includes(s.id);
+      html += `<tr class="${selected?'selected':''}" tabindex="0" onclick="ncToggleServicio('${s.id}')" ondblclick="ncToggleServicio('${s.id}',true)">
+        <td>${s.id}</td>
+        <td class="wiz-row-name">${s.nombre}</td>
+        <td style="text-align:right;">${fmtCOP(s.valor)}</td>
+      </tr>`;
+    });
+    if(!rows.length) html += `<tr class="row-disabled"><td colspan="3" style="text-align:center;color:var(--ink-500);">Sin resultados</td></tr>`;
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  // -------- Paso: Información de la cita --------
+  function ncContentInfo(){
+    const d = NC.data;
+    let html = `<div class="info-card">
+      <div class="info-card-head">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" /></svg>
+        <span class="title">Información de Atención</span>
+      </div>
+      <div class="field-block">
+        <label>Finalidad<span class="req">*</span></label>
+        <select onchange="ncSelectFinalidad(this.value)">
+          <option value="" ${!d.finalidad?'selected':''} disabled>-- Seleccionar finalidad --</option>
+          ${NC_FINALIDADES.map(f=>`<option value="${f}" ${d.finalidad===f?'selected':''}>${f}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field-block" style="margin-bottom:0;">
+        <label for="nc-telefono">Teléfono Aviso<span class="req">*</span></label>
+        <input id="nc-telefono" type="tel" inputmode="numeric" pattern="[0-9\s]{7,10}" placeholder="Ej: 310 842 9173" value="${d.telefono}" aria-describedby="nc-telefono-hint" oninput="NC.data.telefono=this.value; ncUpdateContinueState();">
+        <div class="field-hint" id="nc-telefono-hint">10 dígitos, sin indicativo (ej: 310 842 9173)</div>
+      </div>
+    </div>`;
+    return html;
+  }
+
+  // -------- Paso: Resumen --------
+  function ncContentResumen(){
+    const d = NC.data;
+    const medico = ncMedico();
+    const contrato = ncContrato();
+    const servicios = NC_SERVICIOS.filter(s=>d.servicios.includes(s.id));
+    const total = servicios.reduce((a,s)=>a+s.valor, 0);
+
+    let html = `<div class="wizard-step-hint">Verifica la información antes de confirmar el agendamiento.</div>`;
+
+    html += ncSummaryBlock('Cobertura', 0, `
+      <div class="summary-row"><span class="sr-k">Régimen</span><span class="sr-v">${ncRegimen() ? ncRegimen().nombre : ''}</span></div>
+      <div class="summary-row"><span class="sr-k">Especialidad</span><span class="sr-v">${ncEspecialidad() ? ncEspecialidad().nombre : ''}</span></div>
+      <div class="summary-row"><span class="sr-k">Médico</span><span class="sr-v">${medico ? medico.nombre : ''}</span></div>
+      <div class="summary-row"><span class="sr-k">Fecha</span><span class="sr-v">${ncFechaLegible(d.dia || 0)}</span></div>
+      <div class="summary-row"><span class="sr-k">Horario</span><span class="sr-v">${d.horario || ''}</span></div>
+      <div class="summary-row"><span class="sr-k">Contrato</span><span class="sr-v">${contrato ? `${contrato.id} · ${contrato.contrato}` : ''}</span></div>
+    `);
+
+    html += ncSummaryBlock(`Servicios (${servicios.length})`, 4, `
+      ${servicios.map(s=>`<div class="summary-row"><span class="sr-k">${s.nombre}</span><span class="sr-v">${fmtCOP(s.valor)}</span></div>`).join('')}
+      <div class="summary-total"><span>Total</span><span>${fmtCOP(total)}</span></div>
+    `);
+
+    html += ncSummaryBlock('Información de la cita', 5, `
+      <div class="summary-row"><span class="sr-k">Finalidad</span><span class="sr-v">${d.finalidad || ''}</span></div>
+      <div class="summary-row"><span class="sr-k">Teléfono de aviso</span><span class="sr-v">${d.telefono || ''}</span></div>
+    `, true);
+
+    return html;
+  }
+
+  function ncSummaryBlock(titulo, jumpToIdx, rowsHtml, isLast){
+    return `<div class="summary-block${isLast?' last':''}">
+      <div class="summary-block-head">
+        <span class="sb-title">${titulo}</span>
+        <button class="summary-edit-btn" onclick="ncGoTo(${jumpToIdx})" aria-label="Editar" title="Editar">${NC_EDIT_SVG}</button>
+      </div>
+      ${rowsHtml}
+    </div>`;
+  }
+
+  function ncRenderTableOnly(){
+    // Re-renderiza solo la tabla filtrable, sin perder el foco del buscador.
+    const target = document.getElementById('nc-table-target');
+    if(!target) return;
+    const key = NC_FLOW[NC.pos].key;
+    if(key==='especialidad') target.innerHTML = ncTableEspecialidad();
+    else if(key==='medico') target.innerHTML = ncTableMedico();
+    else if(key==='servicios') target.innerHTML = ncTableServicios();
+  }
+
+  function ncRenderContent(){
+    const el = document.getElementById('nc-content');
+    const key = NC_FLOW[NC.pos].key;
+    NC_FILTROS = ['', ''];
+    if(key==='regimen') el.innerHTML = ncContentRegimen();
+    else if(key==='especialidad') el.innerHTML = ncContentEspecialidad();
+    else if(key==='medico') el.innerHTML = ncContentMedico();
+    else if(key==='contratacion') el.innerHTML = ncContentContratacion();
+    else if(key==='servicios') el.innerHTML = ncContentServicios();
+    else if(key==='info') el.innerHTML = ncContentInfo();
+    else if(key==='resumen') el.innerHTML = ncContentResumen();
+  }
+
+  function ncRenderFooter(){
+    const back = document.getElementById('nc-back-btn');
+    const cont = document.getElementById('nc-continue-btn');
+    back.style.visibility = NC.pos === 0 ? 'hidden' : 'visible';
+    const isLast = NC.pos === NC_FLOW.length - 1;
+    if(isLast){
+      cont.innerHTML = `${NC_CHECK_SVG_BTN}Confirmar cita`;
+      cont.onclick = ncConfirmar;
+      cont.disabled = false;
+    } else {
+      cont.innerHTML = `Continuar<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>`;
+      cont.onclick = ncNext;
+      cont.disabled = !ncIsValid(NC_FLOW[NC.pos].key);
+    }
+  }
+  const NC_CHECK_SVG_BTN = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function ncRender(){
+    ncRenderRail();
+    ncRenderMainHeader();
+    ncRenderStepper();
+    ncRenderContent();
+    ncRenderFooter();
+  }
+
+  function ncConfirmar(){
+    const d = NC.data;
+    const dia = d.dia || 0;
+    const servicios = NC_SERVICIOS.filter(s=>d.servicios.includes(s.id));
+    const total = servicios.reduce((a,s)=>a+s.valor, 0);
+    const medico = ncMedico();
+    const fechaCita = ncFechaParaDia(dia).toLocaleDateString('es-CO');
+
+    const filaNueva = {
+      hora:d.horario, dur:'20min',
+      paciente:currentPatient ? currentPatient.nombre : '',
+      tipo:d.finalidad,
+      eps:currentPatient ? currentPatient.eps : (ncRegimen() ? ncRegimen().nombre.replace(' EPS','') : ''),
+      valor:fmtCOP(total),
+      tel:d.telefono,
+      fsol:fechaCita,
+      estado:'ocupado',
+    };
+
+    // La tabla "Agenda del día" es literalmente la de hoy: solo se actualiza
+    // si la cita agendada es para hoy. Si es para otro día, no debe aparecer ahí.
+    if(dia === 0){
+      let fila = AGENDA.find(c=>c.hora===d.horario);
+      if(fila){
+        Object.assign(fila, filaNueva);
+      } else {
+        AGENDA.push(filaNueva);
+        AGENDA.sort((a,b)=>a.hora.localeCompare(b.hora));
+      }
+      selectedHora = d.horario;
+      renderAgenda();
+      reaplicarSeleccion();
+      actualizarFooter(d.horario);
+    }
+
+    ncClose();
+    ncToast(`Cita agendada para el ${ncFechaLegible(dia)} a las ${d.horario} con ${medico ? medico.nombre : ''}.`);
+  }
+
+  function ncToast(msg){
+    let t = document.getElementById('nc-toast');
+    if(!t){
+      t = document.createElement('div');
+      t.id = 'nc-toast';
+      t.className = 'nc-toast';
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      t.innerHTML = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" /></svg><span id="nc-toast-msg"></span>`;
+      document.body.appendChild(t);
+    }
+    document.getElementById('nc-toast-msg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window.__ncToastTimer);
+    window.__ncToastTimer = setTimeout(()=>t.classList.remove('show'), 3500);
+  }
+
+  /* ================================================================
+     WIZARD: AGREGAR PACIENTE
+     4 pasos: Datos básicos → Afiliación → Ubicación → Clasificación
+     socioeconómica. Cada paso se valida con el HTML5 nativo (required)
+     antes de avanzar — los campos obligatorios vacíos se resaltan en
+     ámbar vía CSS (:required:placeholder-shown / :invalid), sin JS
+     por campo. Se dispara desde "Agregar paciente" en el buscador.
+  ================================================================= */
+
+  const AP_ICON_EYE = '<svg class="icon pf-trailing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>';
+  const AP_ICON_SEARCH = '<svg class="icon pf-trailing-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>';
+  const AP_ICON_CAMERA = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg>';
+  const AP_ICON_PAPERCLIP = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>';
+
+  const AP_STEPS = [
+    { key:'basicos',        label:'Datos básicos',                  desc:'Documento, nombres y datos personales' },
+    { key:'afiliacion',     label:'Afiliación',                     desc:'EPS, tipo de afiliado y estado' },
+    { key:'ubicacion',      label:'Ubicación',                      desc:'Dirección, contacto y residencia' },
+    { key:'socioeconomica', label:'Clasificación socioeconómica',   desc:'Grupo poblacional y variables sociales' },
+  ];
+
+  const AP_OPTS = {
+    tipoDocumento: ['CC - Cédula de Ciudadanía','TI - Tarjeta de Identidad','CE - Cédula de Extranjería','PA - Pasaporte','RC - Registro Civil','PEP - Permiso Especial de Permanencia'],
+    pais: ['COL - Colombia','VEN - Venezuela','USA - Estados Unidos','ESP - España','ECU - Ecuador'],
+    ciudad: ['Bogotá D.C.','Medellín','Cali','Barranquilla','Bucaramanga','Cartagena','Pereira'],
+    sexo: ['Masculino','Femenino','Intersexual'],
+    genero: ['Masculino','Femenino','Transgénero','No binario','Otro'],
+    estadoCivil: ['Soltero(a)','Casado(a)','Unión libre','Divorciado(a)','Viudo(a)'],
+    grupoSanguineo: ['O+','O-','A+','A-','B+','B-','AB+','AB-'],
+    tipoAfiliado: ['Cotizante','Beneficiario','Adicional'],
+    asegurador: ['Sura','Nueva EPS','Compensar','Salud Total','Colsanitas','Famisanar','Coomeva'],
+    estadoAfiliacion: ['Activo','Inactivo','Suspendido','Retirado'],
+    zona: ['Urbana','Rural'],
+    grupoPoblacional: ['Población general','Desplazado','Indígena','ROM / Gitano','Migrante','Habitante de calle'],
+    tipoDiscapacidad: ['Ninguna','Física','Visual','Auditiva','Cognitiva','Múltiple'],
+    nivelSocioeconomico: ['Estrato 1','Estrato 2','Estrato 3','Estrato 4','Estrato 5','Estrato 6'],
+    grupoEtnico: ['Ninguno','Indígena','Afrocolombiano','Raizal','Palenquero','ROM / Gitano'],
+    nivelEducativo: ['Ninguno','Primaria','Secundaria','Técnico','Tecnólogo','Universitario','Posgrado'],
+    incapacidad: ['No','Temporal','Permanente'],
+    religion: ['Católica','Cristiana / Evangélica','Testigo de Jehová','Ninguna','Otra'],
+    raza: ['Mestizo','Blanco','Afrodescendiente','Indígena','Otro'],
+    siNo: ['Sí','No'],
+  };
+
+  let apPos = 0;
+  let apMaxReached = 0;
+  let apData = {};
+  let apEditIndex = null;
+
+  function apField(f){
+    const val = apData[f.name] !== undefined ? apData[f.name] : (f.value || '');
+    const reqAttr = f.required ? 'required' : '';
+    const star = f.required ? '<span class="req">*</span>' : '';
+    const fieldId = `pf-${f.name}`;
+    const errId = `pf-err-${f.name}`;
+    let control;
+    if(f.options){
+      const opts = `<option value="" ${!val?'selected':''}>${f.placeholder || 'Seleccionar'}</option>`
+        + f.options.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('');
+      control = `<select id="${fieldId}" name="${f.name}" aria-describedby="${errId}" ${reqAttr}>${opts}</select>`;
+    } else {
+      control = `<input id="${fieldId}" type="${f.type||'text'}" name="${f.name}" placeholder="${f.placeholder||f.label}" value="${val}" aria-describedby="${errId}" ${reqAttr}>`;
+    }
+    const wrapCls = f.icon ? 'pf-field-wrap has-icon' : 'pf-field-wrap';
+    return `<div class="pf-field">
+      <label for="${fieldId}">${f.label}${star}</label>
+      <div class="${wrapCls}">${control}${f.icon ? f.icon : ''}</div>
+      <div class="field-error" id="${errId}" role="alert"></div>
+    </div>`;
+  }
+
+  function apRow(cols, fields){
+    const cls = cols === 2 ? 'pf-grid' : `pf-grid cols-${cols}`;
+    return `<div class="${cls}">${fields.map(apField).join('')}</div>`;
+  }
+
+  function apContentBasicos(){
+    let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button type="button" class="pf-photo-link" onclick="ncToast('Función de captura de foto en desarrollo.')">${AP_ICON_CAMERA}Tomar foto</button>
+    </div>`;
+
+    html += apRow(2, [
+      { name:'tipoDocumento', label:'Tipo de documento', required:true, options:AP_OPTS.tipoDocumento },
+      { name:'idAfiliado', label:'Id. Afiliado', required:true },
+    ]);
+    html += apRow(2, [
+      { name:'primerApellido', label:'Primer Apellido', required:true },
+      { name:'segundoApellido', label:'Segundo Apellido', required:false },
+    ]);
+    html += apRow(2, [
+      { name:'primerNombre', label:'Primer Nombre', required:true },
+      { name:'segundoNombre', label:'Segundo Nombre', required:false },
+    ]);
+    html += apRow(3, [
+      { name:'fechaNacimiento', label:'Fecha de nacimiento', required:true, type:'date' },
+      { name:'paisOrigen', label:'País origen', required:true, options:AP_OPTS.pais, icon:AP_ICON_EYE },
+      { name:'ciudadNacimiento', label:'Ciudad', required:true, options:AP_OPTS.ciudad, icon:AP_ICON_EYE },
+    ]);
+    html += apRow(2, [
+      { name:'documentoId', label:'Documento Id.', required:false },
+      { name:'ciudadExpedicion', label:'Ciudad de expedición', required:true },
+    ]);
+    html += apRow(4, [
+      { name:'sexo', label:'Sexo', required:true, options:AP_OPTS.sexo },
+      { name:'genero', label:'Género', required:true, options:AP_OPTS.genero },
+      { name:'estadoCivil', label:'Estado civil', required:true, options:AP_OPTS.estadoCivil },
+      { name:'grupoSanguineo', label:'Grupo sanguíneo', required:true, options:AP_OPTS.grupoSanguineo },
+    ]);
+    return html;
+  }
+
+  function apContentAfiliacion(){
+    let html = apRow(2, [
+      { name:'idSede', label:'Id. Sede', required:false, value:'02', icon:AP_ICON_EYE },
+    ]);
+    html += apRow(2, [
+      { name:'tipoAfiliado', label:'Tipo de afiliado', required:true, options:AP_OPTS.tipoAfiliado },
+      { name:'fechaAfiliacion', label:'Fecha de afiliación', required:false, type:'date' },
+    ]);
+    html += `<div class="pf-field" style="margin-bottom:16px;">
+      <label for="pf-asegurador">Asegurador<span class="req">*</span></label>
+      <div class="pf-field-wrap has-icon">${apFieldControlOnly({name:'asegurador', label:'Asegurador', required:true, options:AP_OPTS.asegurador})}${AP_ICON_EYE}</div>
+      <div class="field-error" id="pf-err-asegurador" role="alert"></div>
+    </div>`;
+    html += apRow(3, [
+      { name:'estadoAfiliacion', label:'Estado', required:false, options:AP_OPTS.estadoAfiliacion, value:'Activo' },
+      { name:'fechaEstado', label:'Fecha de estado', required:false, type:'date' },
+      { name:'ciudadProcedencia', label:'Ciudad procedencia', required:true, options:AP_OPTS.ciudad, icon:AP_ICON_EYE },
+    ]);
+    return html;
+  }
+
+  function apFieldControlOnly(f){
+    const val = apData[f.name] !== undefined ? apData[f.name] : (f.value || '');
+    const reqAttr = f.required ? 'required' : '';
+    const opts = `<option value="" ${!val?'selected':''}>${f.placeholder || 'Seleccionar'}</option>`
+      + f.options.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('');
+    return `<select id="pf-${f.name}" name="${f.name}" aria-describedby="pf-err-${f.name}" ${reqAttr}>${opts}</select>`;
+  }
+
+  function apContentUbicacion(){
+    let html = apRow(3, [
+      { name:'paisResidencia', label:'País residencia', required:true, options:AP_OPTS.pais, icon:AP_ICON_EYE },
+      { name:'ciudadResidencia', label:'Ciudad', required:true, options:AP_OPTS.ciudad, icon:AP_ICON_EYE },
+      { name:'localidad', label:'Localidad', required:false },
+    ]);
+    html += apRow(3, [
+      { name:'direccionResidencia', label:'Dirección de residencia', required:true },
+      { name:'zona', label:'Zona', required:true, options:AP_OPTS.zona },
+      { name:'zonaPostal', label:'Zona postal', required:true, icon:AP_ICON_EYE },
+    ]);
+    html += apRow(3, [
+      { name:'celular', label:'Celular', required:true, type:'tel' },
+      { name:'telefonoResidencia', label:'Teléfono residencia', required:false, type:'tel' },
+      { name:'telefonoLaboral', label:'Teléfono laboral', required:false, type:'tel' },
+    ]);
+    html += apRow(2, [
+      { name:'correoElectronico', label:'Correo electrónico', required:true, type:'email' },
+    ]);
+    return html;
+  }
+
+  function apContentSocioeconomica(){
+    let html = apRow(2, [
+      { name:'grupoPoblacional', label:'Grupo poblacional', required:true, options:AP_OPTS.grupoPoblacional },
+      { name:'tipoDiscapacidad', label:'Tipo de discapacidad', required:true, options:AP_OPTS.tipoDiscapacidad },
+    ]);
+    html += apRow(2, [
+      { name:'nivelSocioeconomico', label:'Nivel socioeconómico', required:true, options:AP_OPTS.nivelSocioeconomico },
+      { name:'grupoEtnico', label:'Grupo étnico', required:true, options:AP_OPTS.grupoEtnico },
+    ]);
+    html += apRow(2, [
+      { name:'nivelEducativo', label:'Nivel educativo', required:true, options:AP_OPTS.nivelEducativo },
+      { name:'incapacidad', label:'Incapacidad', required:true, options:AP_OPTS.incapacidad },
+    ]);
+    html += apRow(2, [
+      { name:'idOcupacion', label:'Id. Ocupación', required:true, placeholder:'Seleccionar la ocupación', icon:AP_ICON_SEARCH },
+    ]);
+    html += apRow(2, [
+      { name:'religion', label:'Religión', required:true, options:AP_OPTS.religion },
+      { name:'raza', label:'Raza', required:true, options:AP_OPTS.raza },
+    ]);
+    html += apRow(2, [
+      { name:'victimaConflicto', label:'Víctima de conflicto', required:true, options:AP_OPTS.siNo },
+      { name:'situacionDesplazamiento', label:'Situación de desplazamiento', required:true, options:AP_OPTS.siNo },
+    ]);
+    html += `<div class="pf-attach-row" style="margin-top:18px;" onclick="ncToast('Función de adjuntar documentos en desarrollo.')">${AP_ICON_PAPERCLIP}Adjuntar documentos</div>`;
+    return html;
+  }
+
+  const AP_CONTENT_FN = {
+    basicos: apContentBasicos,
+    afiliacion: apContentAfiliacion,
+    ubicacion: apContentUbicacion,
+    socioeconomica: apContentSocioeconomica,
+  };
+
+  function apSaveCurrentStepValues(){
+    const form = document.getElementById('ap-form');
+    form.querySelectorAll('input,select').forEach(el=>{
+      if(el.name) apData[el.name] = el.value;
+    });
+  }
+
+  function apRenderRail(){
+    const rail = document.getElementById('ap-rail');
+    rail.innerHTML = AP_STEPS.map((s,idx)=>{
+      let cls = 'rail-main-step';
+      let circle = String(idx+1);
+      if(idx < apPos){ cls += ' done'; circle = NC_CHECK_SVG; }
+      else if(idx === apPos){ cls += ' active'; }
+      else if(idx > apMaxReached){ cls += ' locked'; }
+      const clickable = idx <= apMaxReached;
+      return `<div class="${cls}" ${clickable ? `tabindex="0" role="button" onclick="apGoTo(${idx})"` : ''}>
+        <span class="rms-circle">${circle}</span>
+        <span>
+          <div class="rms-title">${s.label}</div>
+          <div class="rms-sub">${s.desc}</div>
+        </span>
+      </div>`;
+    }).join('');
+  }
+
+  function apRenderHeader(){
+    document.getElementById('ap-progress-text').textContent = `Paso ${apPos + 1} de ${AP_STEPS.length}`;
+  }
+
+  function apRenderContent(){
+    const key = AP_STEPS[apPos].key;
+    document.getElementById('ap-content').innerHTML = AP_CONTENT_FN[key]();
+  }
+
+  function apRenderFooter(){
+    const back = document.getElementById('ap-back-btn');
+    const cont = document.getElementById('ap-continue-btn');
+    back.style.visibility = apPos === 0 ? 'hidden' : 'visible';
+    const isLast = apPos === AP_STEPS.length - 1;
+    if(isLast){
+      cont.innerHTML = apEditIndex !== null ? `${NC_CHECK_SVG_BTN}Guardar cambios` : `${NC_CHECK_SVG_BTN}Agregar paciente`;
+      cont.onclick = apSubmit;
+    } else {
+      cont.innerHTML = `Siguiente<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>`;
+      cont.onclick = apNext;
+    }
+  }
+
+  function apRender(){
+    apRenderRail();
+    apRenderHeader();
+    apRenderContent();
+    apRenderFooter();
+  }
+
+  function apOpen(){
+    apPos = 0; apMaxReached = 0; apData = {}; apEditIndex = null;
+    document.getElementById('ap-rail-eyebrow').textContent = 'Nuevo registro';
+    document.getElementById('ap-rail-title').textContent = 'Agregar Paciente';
+    document.getElementById('ap-rail-sub').textContent = 'Historia clínica nueva';
+    closePatientSearch();
+    document.getElementById('ap-overlay').classList.add('open');
+    apRender();
+  }
+
+  function apOpenEdit(idx){
+    const p = PATIENTS[idx];
+    if(!p) return;
+    apEditIndex = idx;
+    apPos = 0;
+    apMaxReached = AP_STEPS.length - 1; // en edición se puede navegar libremente a cualquier paso
+
+    if(p.formData){
+      apData = { ...p.formData };
+    } else {
+      // Paciente sin historial completo (registro previo): reconstruye lo posible.
+      const partes = (p.nombre || '').split(' ').filter(Boolean);
+      apData = {
+        primerNombre: partes[0] || '',
+        segundoNombre: partes.length > 3 ? partes[1] : '',
+        primerApellido: partes.length > 3 ? partes[2] : (partes[1] || ''),
+        segundoApellido: partes.length > 3 ? partes[3] : (partes[2] || ''),
+        idAfiliado: p.documento || '',
+        sexo: p.sexo || '',
+        ciudadResidencia: p.ciudad || '',
+        asegurador: p.eps || '',
+        celular: p.telefono !== '—' ? (p.telefono || '') : '',
+      };
+    }
+
+    document.getElementById('ap-rail-eyebrow').textContent = 'Editar registro';
+    document.getElementById('ap-rail-title').textContent = p.nombre;
+    document.getElementById('ap-rail-sub').textContent = `Documento ${p.documento}`;
+
+    closePatientSearch();
+    document.getElementById('ap-overlay').classList.add('open');
+    apRender();
+  }
+
+  function apClose(){
+    document.getElementById('ap-overlay').classList.remove('open');
+  }
+
+  function apGoTo(idx){
+    if(idx > apMaxReached) return;
+    apSaveCurrentStepValues();
+    apPos = idx;
+    apRender();
+  }
+
+  // A11Y: refleja el estado de validación nativa en aria-invalid + mensaje
+  // de error asociado (aria-describedby ya apunta a estos contenedores desde apField).
+  function apMarkFieldValidity(form){
+    form.querySelectorAll('input, select').forEach(el=>{
+      const errEl = document.getElementById(`pf-err-${el.name}`);
+      if(el.checkValidity()){
+        el.removeAttribute('aria-invalid');
+        if(errEl){ errEl.textContent = ''; errEl.classList.remove('show'); }
+      } else {
+        el.setAttribute('aria-invalid', 'true');
+        if(errEl){ errEl.textContent = el.validationMessage; errEl.classList.add('show'); }
+      }
+    });
+  }
+
+  function apNext(){
+    const form = document.getElementById('ap-form');
+    apMarkFieldValidity(form);
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+    apSaveCurrentStepValues();
+    if(apPos < AP_STEPS.length - 1){
+      apPos++;
+      if(apPos > apMaxReached) apMaxReached = apPos;
+      apRender();
+    }
+  }
+
+  function apBack(){
+    apSaveCurrentStepValues();
+    if(apPos > 0){ apPos--; apRender(); }
+  }
+
+  function apSubmit(){
+    const form = document.getElementById('ap-form');
+    apMarkFieldValidity(form);
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+    apSaveCurrentStepValues();
+
+    const nombreCompleto = [apData.primerNombre, apData.segundoNombre, apData.primerApellido, apData.segundoApellido]
+      .filter(Boolean).join(' ');
+    const iniciales = (apData.primerNombre?.[0] || 'P') + (apData.primerApellido?.[0] || 'A');
+    let edad = '';
+    if(apData.fechaNacimiento){
+      const nac = new Date(apData.fechaNacimiento);
+      const hoy = new Date();
+      edad = hoy.getFullYear() - nac.getFullYear() - ((hoy.getMonth()<nac.getMonth() || (hoy.getMonth()===nac.getMonth() && hoy.getDate()<nac.getDate())) ? 1 : 0);
+    }
+
+    const datosFormulario = {
+      iniciales: iniciales.toUpperCase(),
+      nombre: nombreCompleto || 'Paciente sin nombre',
+      edad: edad || '—',
+      sexo: apData.sexo || '—',
+      ciudad: apData.ciudadResidencia || '—',
+      documento: apData.idAfiliado || '—',
+      telefono: apData.celular || '—',
+      eps: (apData.asegurador || '—'),
+      formData: { ...apData },
+    };
+
+    if(apEditIndex !== null){
+      const paciente = PATIENTS[apEditIndex];
+      Object.assign(paciente, datosFormulario);
+      if(currentPatient === paciente) renderPatientBanner();
+      apClose();
+      ncToast(`Datos de ${paciente.nombre} actualizados correctamente.`);
+    } else {
+      const colores = ['#0065CD','#7C3AED','#DB2777','#EA580C','#16A34A','#D97706','#64748B'];
+      const nuevoPaciente = {
+        ...datosFormulario,
+        estado: 'activo',
+        citasFuturas: 0,
+        color: colores[PATIENTS.length % colores.length],
+      };
+      PATIENTS.push(nuevoPaciente);
+      currentPatient = nuevoPaciente;
+      renderPatientBanner();
+      apClose();
+      ncToast(`Paciente ${nuevoPaciente.nombre} agregado correctamente.`);
+    }
+  }
+
+</script>
+
+</body>
+</html>
