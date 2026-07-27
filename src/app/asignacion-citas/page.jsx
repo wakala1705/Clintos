@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import './asignacion-citas.css';
 import { initAsignacionCitas } from './legacy-app';
 
@@ -55,7 +56,7 @@ export default function AsignacionCitasPage() {
               <svg className="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
             </div>
             <div className="nav-body">
-              <div className="nav-subitem active" tabIndex="0" role="button"><svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" />
+              <Link href="/asignacion-citas" className="nav-subitem active"><svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" />
   <path d="M16 2v4" />
   <rect width="18" height="18" x="3" y="4" rx="2" />
   <path d="M3 10h18" />
@@ -64,7 +65,7 @@ export default function AsignacionCitasPage() {
   <path d="M16 14h.01" />
   <path d="M8 18h.01" />
   <path d="M12 18h.01" />
-  <path d="M16 18h.01" /></svg>Asignación de citas</div>
+  <path d="M16 18h.01" /></svg>Asignación de citas</Link>
               <div className="nav-subitem" tabIndex="0" role="button"><svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 14v2.2l1.6 1" />
   <path d="M16 2v4" />
   <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5" />
@@ -108,7 +109,13 @@ export default function AsignacionCitasPage() {
           <span className="label">Hospitalización</span>
           <svg className="icon chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
         </div>
-        <div className="nav-body"></div>
+        <div className="nav-body">
+          <Link href="/historia-clinica" className="nav-subitem"><svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" /></svg>Historia Clínica</Link>
+        </div>
       </div>
 
       <div className="nav-group">
