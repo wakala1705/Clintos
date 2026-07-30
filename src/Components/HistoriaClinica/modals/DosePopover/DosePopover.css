@@ -1,0 +1,51 @@
+/* Estilos exclusivos de DosePopover. El patrón "info list" (.dp-info,
+   .dp-info-row, .k, .v) también lo usa PatientBanner (popover de alergias) —
+   ver shared/shared.css. */
+.dose-popover{
+  position:fixed;z-index:300;width:250px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:16px;
+  opacity:0;pointer-events:none;transform:translateY(4px);
+  transition:opacity .12s ease,transform .12s ease;
+}
+.dose-popover.open{opacity:1;pointer-events:auto;transform:translateY(0);}
+.dp-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+.dp-time{font-size:17px;font-weight:700;color:var(--ink-900);}
+.dp-status-badge{
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.dp-status-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dp-status-badge.st-administered{background:var(--green-bg);color:#0d7a3d;}
+.dp-status-badge.st-administered .dot{background:#0d7a3d;}
+.dp-status-badge.st-upcoming{background:var(--amber-bg);color:var(--amber-fg);}
+.dp-status-badge.st-upcoming .dot{background:var(--amber);}
+.dp-status-badge.st-incident{background:var(--red-bg);color:var(--red);}
+.dp-status-badge.st-incident .dot{background:var(--red);}
+.dp-status-badge.st-scheduled{background:var(--gray-bg);color:var(--ink-500);}
+.dp-status-badge.st-scheduled .dot{background:var(--ink-400);}
+.dp-status-badge.st-suspended{background:var(--gray-bg);color:var(--ink-500);}
+.dp-status-badge.st-suspended .dot{background:var(--ink-400);}
+
+.dp-pending-note{font-size:11.5px;color:var(--ink-500);font-style:italic;line-height:1.4;}
+.dp-observaciones{
+  margin-top:6px;padding:8px 10px;background:var(--bg);border-radius:8px;
+  font-size:12px;color:var(--ink-700);line-height:1.4;font-style:italic;
+}
+
+.dp-divider{height:1px;background:var(--border);margin:2px 0 8px;}
+.dp-resolved-note{
+  display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-500);
+  padding:2px 0 2px;
+}
+.dp-resolved-note .icon{width:14px;height:14px;flex-shrink:0;}
+.dp-actions{display:flex;flex-direction:column;gap:1px;}
+.dp-action{
+  display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:8px;
+  font-size:13px;font-weight:500;color:var(--ink-700);cursor:pointer;background:none;border:none;
+  font-family:inherit;width:100%;text-align:left;
+}
+.dp-action:hover{background:#f3f5f9;}
+.dp-action .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.dp-action.danger{color:var(--red);}
+.dp-action.danger .icon{color:var(--red);}

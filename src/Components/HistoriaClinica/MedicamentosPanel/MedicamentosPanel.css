@@ -1,0 +1,190 @@
+/* Estilos exclusivos de MedicamentosPanel: navegación de día, tabla-línea-de-
+   tiempo (encabezados fijos, marcadores de dosis, densidad de filas) y la
+   leyenda de marcadores. Filtros, popovers, selection-toolbar, tab-panel y el
+   wrapper del legend-bar son compartidos — ver shared/shared.css. */
+
+/* ---------- NAVEGACIÓN DE DÍA ---------- */
+.day-nav{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.day-nav-btn{
+  width:30px;height:30px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-700);flex-shrink:0;
+}
+.day-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.day-nav-btn .icon{width:16px;height:16px;}
+.day-nav-label{font-size:13px;font-weight:700;color:var(--ink-900);min-width:108px;text-align:center;white-space:nowrap;}
+.day-nav-today-btn{
+  font-size:12px;font-weight:600;color:var(--primary);background:none;border:none;cursor:pointer;
+  padding:4px var(--space-2);border-radius:6px;font-family:inherit;white-space:nowrap;
+}
+.day-nav-today-btn:hover{background:var(--primary-50);}
+html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e54;}
+
+/* ---------- Toggle de densidad de filas ---------- */
+.view-toggle-group{display:flex;align-items:center;gap:6px;}
+.view-btn{
+  width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
+  font-family:inherit;padding:0;
+}
+.view-btn:hover{background:#f3f5f9;}
+.view-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary);}
+.view-btn:disabled{opacity:.4;cursor:not-allowed;}
+.view-btn:disabled:hover{background:var(--surface);}
+.view-btn .icon{width:17px;height:17px;}
+.view-toggle-divider{width:1px;height:20px;background:var(--border);margin:0 2px;}
+
+/* ---------- TIMELINE TABLE ---------- */
+.timeline-wrap{flex:1;min-height:0;overflow:auto;position:relative;}
+.timeline-table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;}
+
+.check-col-head, .check-col-cell{
+  position:sticky;left:0;z-index:4;background:var(--surface);
+  width:44px;min-width:44px;max-width:44px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.check-col-head{background:#f7f8fb;border-bottom:1px solid var(--border);z-index:6;}
+.check-col-cell{border-bottom:1px solid #eef0f4;vertical-align:middle;}
+input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
+  width:16px;height:16px;accent-color:var(--primary);cursor:pointer;vertical-align:middle;
+}
+
+.med-col-head, .med-col-cell{
+  position:sticky;left:44px;z-index:3;background:var(--surface);
+  width:300px;min-width:300px;max-width:300px;
+  border-right:1px solid var(--border);
+}
+.hour-head{
+  width:var(--hour-col-width, 52px);min-width:var(--hour-col-width, 52px);text-align:center;
+  font-size:11px;font-weight:600;color:var(--ink-500);
+  padding:10px 0;border-bottom:1px solid var(--border);
+  background:#f7f8fb;white-space:nowrap;
+}
+.med-col-head{
+  text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+  padding:10px 20px;border-bottom:1px solid var(--border);
+  background:#f7f8fb;z-index:5;
+}
+.timeline-table thead th{position:sticky;top:0;z-index:2;}
+.timeline-table thead .med-col-head{z-index:5;}
+.timeline-table thead .check-col-head{z-index:6;}
+
+.med-cell{padding:12px 20px;border-bottom:1px solid #eef0f4;vertical-align:middle;text-align:left;font-weight:normal;}
+.med-name{font-size:13.5px;font-weight:600;color:var(--ink-900);line-height:1.35;}
+.med-status-badge{
+  display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-left:8px;
+  vertical-align:middle;position:relative;top:-1px;
+}
+.med-status-badge.activo{background:var(--green-bg);color:#0d7a3d;}
+.med-status-badge.suspendido{background:var(--gray-bg);color:var(--ink-500);}
+.med-status-badge.finalizado{background:var(--primary-50);color:var(--primary-dark);}
+.med-status-badge.devuelto{background:var(--violet-bg);color:var(--violet-fg);}
+.med-sub{font-size:12px;color:var(--ink-500);margin-top:3px;display:flex;align-items:center;gap:6px;}
+.med-sub .dot-sep{width:3px;height:3px;border-radius:50%;background:var(--ink-400);}
+.med-menu-btn{
+  float:right;width:24px;height:24px;border-radius:6px;border:none;background:transparent;
+  color:var(--ink-500);cursor:pointer;align-items:center;justify-content:center;margin-top:-2px;
+  display:none;
+}
+.med-menu-btn:hover{background:#eef0f4;color:var(--ink-900);}
+.med-menu-btn .icon{width:16px;height:16px;}
+tr.selected .med-menu-btn{display:flex;}
+
+.hour-cell{
+  width:var(--hour-col-width, 52px);min-width:var(--hour-col-width, 52px);height:76px;text-align:center;position:relative;
+  border-bottom:1px solid #eef0f4;
+}
+.grid-dot{width:4px;height:4px;border-radius:50%;background:#d7dce6;display:inline-block;}
+tr.row-empty td{border-bottom:none;background:var(--surface);}
+tr.row-empty:hover td{background:var(--surface);}
+
+/* ---------- Selección de filas ---------- */
+tr.med-row:hover .med-cell,
+tr.med-row:hover .hour-cell,
+tr.med-row:hover .check-col-cell{background:#fafbfd;}
+tr.selected .med-cell,
+tr.selected .hour-cell,
+tr.selected .check-col-cell{background:var(--primary-50) !important;}
+tr.selected .check-col-cell{box-shadow:inset 3px 0 0 var(--primary);}
+tr.selected .med-name{color:var(--ink-900);}
+
+/* ---------- Fondo de fila por estado del medicamento ---------- */
+tr.row-suspendido .med-cell,
+tr.row-suspendido .hour-cell{background:#f5f4f7;}
+tr.row-suspendido .med-col-cell,
+tr.row-suspendido .check-col-cell{background:#f5f4f7;}
+tr.row-suspendido .grid-dot{background:#c9cbd4;}
+
+tr.row-finalizado .med-cell,
+tr.row-finalizado .hour-cell{background:#f6f9fe;}
+tr.row-finalizado .med-col-cell,
+tr.row-finalizado .check-col-cell{background:#f6f9fe;}
+
+tr.row-devuelto .med-cell,
+tr.row-devuelto .hour-cell{background:var(--violet-bg);}
+tr.row-devuelto .med-col-cell,
+tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
+
+.dose-marker{
+  width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto;cursor:pointer;transition:box-shadow .12s,transform .12s;
+  border:none;padding:0;font-family:inherit;outline-offset:2px;
+}
+.dose-marker:hover{box-shadow:0 0 0 4px rgba(0,101,205,.12);transform:scale(1.06);}
+.dose-marker:focus-visible{outline:2px solid var(--primary);box-shadow:0 0 0 4px rgba(0,101,205,.16);}
+.dose-marker .icon{width:15px;height:15px;stroke-width:2.4;}
+.dose-marker.administered{background:var(--green-bg);color:var(--green);border:1.5px solid rgba(13,122,61,.35);}
+.dose-marker.upcoming{background:var(--amber-bg);color:var(--amber-fg);border:1.5px solid rgba(164,90,5,.35);}
+.dose-marker.incident{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(192,43,43,.35);}
+.dose-marker.scheduled{background:var(--surface);color:#6b7280;border:1.5px solid #6b7280;}
+.dose-marker.suspended{background:var(--gray-bg);color:var(--ink-500);border:1.5px solid rgba(107,114,128,.35);}
+
+/* ---------- Densidad de filas (compactar / expandir) ---------- */
+.timeline-table.density-compact .hour-cell{height:48px;}
+.timeline-table.density-compact .med-cell{padding:6px 20px;}
+.timeline-table.density-compact .med-name{font-size:12.5px;}
+.timeline-table.density-compact .med-sub{display:none;}
+.timeline-table.density-compact .dose-marker{width:20px;height:20px;}
+.timeline-table.density-compact .dose-marker .icon{width:11px;height:11px;}
+
+.timeline-table.density-expanded .hour-cell{height:104px;}
+.timeline-table.density-expanded .med-cell{padding:18px 20px;}
+.timeline-table.density-expanded .med-name{font-size:14.5px;}
+.timeline-table.density-expanded .dose-marker{width:32px;height:32px;}
+.timeline-table.density-expanded .dose-marker .icon{width:18px;height:18px;}
+
+.now-line{
+  position:absolute;top:0;bottom:0;width:2px;background:var(--primary);z-index:1;pointer-events:none;
+}
+.now-line::before{
+  content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  width:8px;height:8px;border-radius:50%;background:var(--primary);
+}
+
+/* ---------- LEYENDA de marcadores (contenido interno del legend-bar compartido) ---------- */
+.legend-divider{width:1px;height:26px;background:var(--border);flex-shrink:0;}
+.legend-items{display:flex;align-items:center;gap:20px;flex-wrap:wrap;flex:1;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-700);}
+.legend-marker{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.legend-marker .icon{width:9px;height:9px;stroke-width:3;}
+.legend-marker.scheduled{border:1.5px solid #6b7280;color:#6b7280;}
+.legend-marker.administered{background:var(--green-bg);color:var(--green);border:1.5px solid rgba(13,122,61,.35);}
+.legend-marker.upcoming{background:var(--amber-bg);color:var(--amber-fg);border:1.5px solid rgba(164,90,5,.35);}
+.legend-marker.incident{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(192,43,43,.35);}
+.legend-marker.suspended{background:var(--gray-bg);color:var(--ink-500);border:1.5px solid rgba(107,114,128,.35);}
+
+html[data-theme="dark"] tr.med-row:hover .med-cell,
+html[data-theme="dark"] tr.med-row:hover .hour-cell,
+html[data-theme="dark"] tr.med-row:hover .check-col-cell{background:#1a2130;}
+html[data-theme="dark"] tr.row-suspendido .med-cell,
+html[data-theme="dark"] tr.row-suspendido .hour-cell,
+html[data-theme="dark"] tr.row-suspendido .med-col-cell,
+html[data-theme="dark"] tr.row-suspendido .check-col-cell{background:#1c212e;}
+html[data-theme="dark"] tr.row-suspendido .grid-dot{background:#454e60;}
+html[data-theme="dark"] tr.row-finalizado .med-cell,
+html[data-theme="dark"] tr.row-finalizado .hour-cell,
+html[data-theme="dark"] tr.row-finalizado .med-col-cell,
+html[data-theme="dark"] tr.row-finalizado .check-col-cell{background:#141a2a;}
+html[data-theme="dark"] .grid-dot{background:#333c50;}
+html[data-theme="dark"] .dose-marker.scheduled,
+html[data-theme="dark"] .legend-marker.scheduled{color:var(--ink-500);border-color:var(--ink-500);}

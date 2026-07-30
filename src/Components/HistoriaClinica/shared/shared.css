@@ -1,0 +1,389 @@
+/* Shared primitives reused by 2+ Historia Clínica components (buttons, forms,
+   filters/popovers, tabs, modals scaffolding, tables, selection toolbar...).
+   Imported once from src/app/historia-clinica/page.jsx — individual components
+   only import their own <ComponentName>.css to avoid duplicating these rules.
+   See AGENTS.md for the rule that keeps this file as the single source of
+   truth for cross-component styles instead of copy-pasting them per component. */
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:500;font-size:13px;
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+.btn-warning-outline{background:var(--surface);color:var(--amber-fg);border-color:#f4dfae;}
+.btn-warning-outline:hover{background:var(--amber-bg);}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{background:#a82323;}
+.btn-sm{padding:6px 12px;font-size:12px;gap:6px;}
+.btn-sm .icon{width:15px;height:15px;}
+
+/* ---------- FILTER BAR (chips, search, popovers) ---------- */
+.filter-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.search-field{position:relative;width:230px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:13px;background:var(--bg);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+
+.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:600;color:var(--ink-700);
+  padding:7px 14px;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
+.chip-filter .count{font-size:11px;font-weight:700;color:var(--ink-400);}
+.chip-filter.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.chip-filter.active .count{color:rgba(255,255,255,.85);}
+
+.filter-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
+.filter-cluster{display:flex;align-items:center;gap:8px;}
+.filter-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.filter-spacer{flex:1;}
+
+.filter-popover-wrap{position:relative;flex-shrink:0;}
+.date-picker-btn, .filters-more-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:7px 12px;font-size:12.5px;font-weight:600;color:var(--ink-700);
+  background:var(--surface);cursor:pointer;white-space:nowrap;font-family:inherit;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.date-picker-btn .icon, .filters-more-btn .icon{width:16px;height:16px;color:var(--ink-500);}
+.date-picker-btn .chev, .card-tab .chev{width:14px;height:14px;color:var(--ink-400);margin-left:2px;}
+.date-picker-btn:hover, .filters-more-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.date-picker-btn.active, .filters-more-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
+.date-picker-btn.active .icon, .filters-more-btn.active .icon{color:var(--primary);}
+.filters-more-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+.filter-popover{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:30;min-width:260px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;display:none;
+}
+.filter-popover.open{display:block;}
+.filter-popover-wide{min-width:300px;}
+.fp-title{font-size:12.5px;font-weight:600;color:var(--ink-900);margin-bottom:12px;}
+.fp-date-row{display:flex;gap:10px;margin-bottom:14px;}
+.fp-date-field{flex:1;display:flex;flex-direction:column;gap:4px;}
+.fp-date-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.fp-date-field input{
+  border:1px solid var(--border);border-radius:var(--radius);padding:7px 8px;
+  font-family:inherit;font-size:12.5px;color:var(--ink-900);background:var(--bg);width:100%;
+}
+.fp-date-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+.fp-section{margin-bottom:16px;}
+.fp-section:last-of-type{margin-bottom:14px;}
+.fp-section-title{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
+.fp-actions .btn{padding:7px 14px;font-size:12.5px;}
+
+/* ---------- Popover "info list" pattern (PatientBanner allergy popover + DosePopover) ---------- */
+.dp-info{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+.dp-info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12.5px;}
+.dp-info-row .k{color:var(--ink-500);white-space:nowrap;}
+.dp-info-row .v{color:var(--ink-900);font-weight:600;text-align:right;}
+
+/* ---------- Barra de selección masiva ---------- */
+.selection-toolbar{
+  display:none;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:10px 20px;background:var(--primary-50);border-bottom:1px solid var(--primary-100);
+  flex-shrink:0;
+}
+.selection-toolbar.open{display:flex;}
+.sel-info{font-size:13px;font-weight:600;color:var(--primary-dark);white-space:nowrap;}
+.sel-info b{font-weight:700;}
+.sel-hint{font-size:13px;color:var(--ink-500);}
+.sel-spacer{flex:1;}
+.sel-actions{display:flex;align-items:center;gap:10px;}
+.sel-actions .btn{padding:7px 14px;font-size:12.5px;}
+.sel-cancel-btn{
+  background:none;border:none;font-size:12.5px;font-weight:600;color:var(--ink-700);
+  cursor:pointer;padding:7px 10px;border-radius:7px;font-family:inherit;
+}
+.sel-cancel-btn:hover{background:rgba(16,24,39,.06);}
+
+/* ---------- TAB PANELS / SUB-PANELS (Medicamentos / Órdenes / Pedidos + sus sub-secciones) ---------- */
+.tab-panel{display:none;flex-direction:column;flex:1;min-height:0;}
+.tab-panel.active{display:flex;}
+.sub-panel{display:none;flex-direction:column;flex:1;min-height:0;}
+.sub-panel.active{display:flex;}
+
+/* ---------- SUBNAVEGACIÓN (Órdenes médicas / Pedidos: sub-tabs redondeadas) ---------- */
+.subnav-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:14px 20px 0 20px;flex-shrink:0;
+}
+.subnav-tab{
+  display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink-700);
+  padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);
+  cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+  outline-offset:2px;
+}
+.subnav-tab .icon{width:15px;height:15px;flex-shrink:0;}
+.subnav-tab:hover{background:#f3f5f9;border-color:#d7dce6;}
+.subnav-tab:focus-visible{outline:2px solid var(--primary);}
+.subnav-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* ---------- LEGEND / FOOTER wrapper (el contenido interno del legend, p. ej. marcadores, vive en MedicamentosPanel.css) ---------- */
+.legend-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;gap:12px 20px;
+}
+.footer-title-block{flex-shrink:0;}
+.footer-title-block .ft-sub{font-size:12.5px;font-weight:600;color:var(--ink-700);}
+.footer-updated{font-size:12px;color:var(--ink-500);}
+.footer-updated b{color:var(--ink-900);font-weight:600;}
+
+/* ---------- MODAL scaffolding (overlay / card / header / body / footer / form-field) ---------- */
+.modal-overlay{
+  position:fixed;inset:0;z-index:600;background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .15s ease;
+}
+.modal-overlay.open{display:flex;opacity:1;}
+.modal-card{
+  background:var(--surface);border-radius:var(--radius-lg);width:780px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+  transform:translateY(8px) scale(.98);opacity:0;transition:transform .15s ease,opacity .15s ease;
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.modal-header h3{margin:0;font-size:16px;font-weight:700;color:var(--ink-900);}
+.modal-header-titles{display:flex;align-items:center;gap:var(--space-3);}
+.modal-header-titles .modal-header-sub{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.modal-close-btn{
+  width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
+}
+.modal-close-btn:hover{background:#f3f5f9;color:var(--ink-900);}
+.modal-close-btn .icon{width:18px;height:18px;}
+
+.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+.form-field{display:flex;flex-direction:column;gap:6px;}
+.form-field.full{grid-column:1 / -1;}
+.form-field label{font-size:12px;font-weight:600;color:var(--ink-700);}
+.form-field input, .form-field select, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  outline:2px solid var(--primary);outline-offset:1px;
+}
+.form-field textarea{resize:vertical;min-height:64px;}
+
+.admin-summary-time{
+  display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--border);font-size:12.5px;font-weight:600;color:var(--primary-dark);
+}
+.admin-summary-time .icon{width:15px;height:15px;flex-shrink:0;color:var(--primary);}
+.admin-summary-time b{font-variant-numeric:tabular-nums;}
+
+/* ---------- MODAL: patrón compartido Suspender / Devolver / Programar / Pedido a farmacia ---------- */
+.suspend-header-icon{
+  width:34px;height:34px;border-radius:50%;background:var(--amber-bg);color:var(--amber-fg);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.suspend-header-icon.icon-primary{background:var(--primary-50);color:var(--primary);}
+.suspend-header-icon .icon{width:19px;height:19px;}
+
+.suspend-patient-strip{
+  display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--ink-700);
+  background:var(--bg);border-radius:var(--radius);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-4);
+}
+.suspend-patient-strip .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);}
+.suspend-patient-strip b{color:var(--ink-900);font-weight:700;}
+.suspend-patient-strip .sps-sep{width:1px;height:12px;background:var(--border);margin:0 2px;flex-shrink:0;}
+
+.suspend-med-list{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:var(--space-4);overflow:hidden;}
+.suspend-med-row{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-2) var(--space-3);
+}
+.suspend-med-row + .suspend-med-row{border-top:1px solid #eef0f4;}
+.suspend-med-row .sm-name{font-size:13px;font-weight:600;color:var(--ink-900);}
+.suspend-med-row .sm-meta{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.suspend-med-row.with-qty{align-items:center;}
+.suspend-med-row .sm-qty-result{text-align:right;flex-shrink:0;}
+.suspend-med-row .sm-qty-result .program-chip{font-size:13px;padding:4px 10px;}
+.suspend-med-row .sm-qty-result .sm-qty-note{font-size:11.5px;color:var(--ink-500);margin-top:3px;}
+.program-chip{
+  font-size:12px;font-weight:600;color:var(--primary-dark);background:var(--primary-50);
+  padding:3px var(--space-2);border-radius:12px;font-variant-numeric:tabular-nums;
+}
+.program-chip.overflow{color:var(--ink-500);background:var(--gray-bg);font-weight:500;font-style:italic;}
+
+.field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
+.field-label-row label{font-size:12px;font-weight:600;color:var(--ink-700);margin-bottom:0;}
+.required-pill{
+  display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;color:var(--red);
+  background:var(--red-bg);padding:1px var(--space-2);border-radius:10px;letter-spacing:.02em;
+}
+.suspend-audit-note{
+  display:flex;align-items:flex-start;gap:var(--space-2);font-size:12px;color:var(--ink-500);
+  line-height:1.4;margin-top:var(--space-2);
+}
+.suspend-audit-note .icon{width:14px;height:14px;flex-shrink:0;margin-top:1px;}
+
+/* Insumos checklist reutilizado por AdminModal (uso durante la administración) y PedidoModal */
+.admin-insumo-row{
+  display:flex;align-items:center;gap:10px;padding:var(--space-2) var(--space-3);
+  border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--ink-900);
+}
+.admin-insumo-row + .admin-insumo-row{margin-top:6px;}
+.admin-insumo-row:hover{background:var(--bg);}
+.admin-insumo-row input[type="checkbox"]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--primary);}
+.admin-insumo-row .air-name{flex:1;}
+.admin-insumo-row .air-disp{font-size:12px;color:var(--ink-500);flex-shrink:0;}
+.admin-insumos-empty{font-size:12.5px;color:var(--ink-500);padding:var(--space-2) 0;}
+.ome-muted{color:var(--ink-500);}
+
+/* ---------- DATA TABLE genérica (usada por tablas de Pedidos/Órdenes generadas dinámicamente) ---------- */
+.data-table-wrap{
+  flex:1;min-height:0;overflow-y:auto;
+}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table thead th{
+  position:sticky;top:0;z-index:1;background:#f7f8fb;color:var(--ink-500);
+  font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+}
+.data-table th.col-right, .data-table td.col-right{text-align:right;}
+.data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover{background:#fafbfd;}
+.data-table .cell-primary{font-weight:600;color:var(--ink-900);}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:11.5px;font-weight:500;margin-top:2px;}
+.data-table .cell-muted{color:var(--ink-500);}
+.data-table tr.filtered-out{display:none;}
+
+/* ---------- BADGES DE ESTADO (Pedidos / Órdenes, filas generadas dinámicamente) ---------- */
+.order-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;white-space:nowrap;display:inline-block;}
+.order-badge.pendiente{background:var(--amber-bg);color:var(--amber-fg);}
+.order-badge.aprobada,.order-badge.completa,.order-badge.procesada{background:var(--green-bg);color:#0d7a3d;}
+.order-badge.rechazada{background:var(--red-bg);color:var(--red);}
+.order-badge.parcial{background:var(--violet-bg);color:var(--violet-fg);}
+.order-badge.despachada{background:var(--primary-50);color:var(--primary-dark);}
+.order-badge.mixto{background:var(--violet-bg);color:var(--violet-fg);}
+.order-badge.recibido{background:var(--green-bg);color:#0d7a3d;}
+.order-badge.urgente{background:var(--red-bg);color:var(--red);}
+.order-badge.normal{background:var(--gray-bg);color:var(--ink-500);}
+.confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0d7a3d;}
+.confirmed-tag .icon{width:15px;height:15px;}
+
+/* ---------- FILAS EXPANDIBLES (patrón genérico padre → hijo: orden → ítems, medicamento → lotes) ---------- */
+.med-cell-parent{display:flex;align-items:center;gap:6px;}
+.row-expand-btn{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:20px;height:20px;border:none;background:none;cursor:pointer;color:var(--ink-500);
+  padding:0;border-radius:4px;transition:background .15s,color .15s;
+}
+.row-expand-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.row-expand-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.row-expand-btn .icon{width:15px;height:15px;transition:transform .15s;}
+.row-expand-btn[aria-expanded="false"] .icon{transform:rotate(-90deg);}
+.row-expand-spacer{display:inline-block;width:20px;height:20px;flex-shrink:0;}
+.child-count-badge{
+  font-size:10.5px;font-weight:700;color:var(--ink-500);background:var(--gray-bg);
+  padding:2px 8px;border-radius:10px;white-space:nowrap;
+}
+.data-table tr.child-row td{background:#fafbfd;padding-top:8px;padding-bottom:8px;}
+.data-table tr.child-row.collapsed{display:none;}
+.row-indent{display:flex;align-items:center;gap:8px;padding-left:26px;font-size:12.5px;color:var(--ink-700);}
+.row-indent.level-3{padding-left:46px;}
+.row-indent .row-indent-icon{color:var(--ink-400);font-size:13px;line-height:1;flex-shrink:0;margin-top:1px;align-self:flex-start;}
+.row-indent b{color:var(--ink-900);font-weight:600;}
+.row-indent .row-indent-sub{display:block;color:var(--ink-500);font-size:11.5px;font-weight:500;margin-top:2px;}
+.row-indent .row-expand-btn{margin-left:-2px;}
+
+/* ---------- TABLA DE DETALLE ANIDADA (artículo / lote dentro de un medicamento) ---------- */
+.detail-table-wrap{
+  margin:10px 20px 12px 46px;border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.detail-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.detail-table thead th{
+  background:var(--primary-50);color:var(--ink-700);font-weight:700;font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.03em;padding:9px 14px;text-align:left;
+  border-bottom:1px solid var(--primary-100);
+}
+.detail-table td{padding:9px 14px;border-bottom:1px solid #eef0f4;color:var(--ink-900);}
+.detail-table tbody tr:last-child td{border-bottom:none;}
+.detail-table tbody tr:hover{background:#fafbfd;}
+.detail-table .cant-confirmada{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
+
+/* ---------- INDICADOR ORTOGONAL "PARCIAL" (no reemplaza el estado, lo acompaña) ---------- */
+.partial-flag{
+  display:inline-flex;align-items:center;gap:4px;margin-left:6px;
+  font-size:10.5px;font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
+  padding:2px 8px;border-radius:10px;white-space:nowrap;border:1px solid #f4dfae;
+}
+.partial-flag .icon{width:11px;height:11px;flex-shrink:0;}
+
+/* ---------- Encabezados/listas tipo grid compartidos entre Solicitudes y Devoluciones ---------- */
+.dev-list{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;}
+.dev-header-row{
+  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
+  background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;
+  font-size:10.5px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+.dev-header-row .col-actions{text-align:right;}
+
+html[data-theme="dark"] .chip-filter:hover,
+html[data-theme="dark"] .date-picker-btn:hover,
+html[data-theme="dark"] .filters-more-btn:hover,
+html[data-theme="dark"] .subnav-tab:hover,
+html[data-theme="dark"] .dp-action:hover,
+html[data-theme="dark"] .modal-close-btn:hover{background:#20283a;border-color:#333e54;}
+html[data-theme="dark"] .search-field input:focus,
+html[data-theme="dark"] .fp-date-field input:focus{background:var(--surface);}
+html[data-theme="dark"] .data-table tr.child-row td{background:#1a2130;}
+html[data-theme="dark"] .badge.status-active,
+html[data-theme="dark"] .med-status-badge.activo,
+html[data-theme="dark"] .dp-status-badge.st-administered,
+html[data-theme="dark"] .lote-badge.ok,
+html[data-theme="dark"] .order-badge.aprobada,
+html[data-theme="dark"] .order-badge.completa,
+html[data-theme="dark"] .order-badge.procesada,
+html[data-theme="dark"] .order-badge.recibido,
+html[data-theme="dark"] .confirmed-tag{color:var(--green);}
+html[data-theme="dark"] .badge.status-active .dot,
+html[data-theme="dark"] .dp-status-badge.st-administered .dot{background:var(--green);}
+html[data-theme="dark"] .allergy-chip,
+html[data-theme="dark"] .admin-lote-warning,
+html[data-theme="dark"] .partial-flag{border-color:rgba(245,185,66,.35);}
+html[data-theme="dark"] .allergy-chip:hover{background:rgba(224,138,0,.26);}

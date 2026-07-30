@@ -1,0 +1,5 @@
+/* SuspendModal no tiene reglas exclusivas propias: reutiliza por completo el
+   patrón de modal compartido (overlay, suspend-header-icon, suspend-patient-strip,
+   suspend-med-list, required-pill, btn-danger...) de shared/shared.css. Este
+   archivo se mantiene igual para no romper la convención "un .css por
+   componente" — ver AGENTS.md. */

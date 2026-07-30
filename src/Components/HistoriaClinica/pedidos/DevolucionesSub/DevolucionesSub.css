@@ -1,0 +1,20 @@
+/* Estilos exclusivos de DevolucionesSub. .dev-list/.dev-header-row (base,
+   compartidos con SolicitudesSub) viven en shared/shared.css. */
+.dev-grid-cols{grid-template-columns:36px 130px 1fr 150px 130px 170px 150px 96px;}
+.dev-order{border-bottom:1px solid var(--border);flex-shrink:0;}
+.dev-order:last-child{border-bottom:none;}
+.dev-order.filtered-out{display:none;}
+.dev-order-header{
+  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--surface);
+}
+.dev-order-header .row-expand-btn{color:var(--primary);}
+.dev-consecutivo{font-size:13px;font-weight:700;color:var(--primary);}
+.dev-cell{font-size:13px;color:var(--ink-900);}
+.dev-cell.muted{color:var(--ink-500);}
+.dev-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end;}
+.dev-icon-btn{
+  width:28px;height:28px;border:none;background:none;color:var(--ink-500);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+}
+.dev-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.dev-icon-btn .icon{width:16px;height:16px;}

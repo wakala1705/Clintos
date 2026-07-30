@@ -1,0 +1,27 @@
+/* Estilos exclusivos de RecepcionSub: acordeón orden → medicamento →
+   artículo/lote. row-expand-btn, child-count-badge, detail-table, partial-flag
+   y confirmed-tag son el patrón genérico compartido — ver shared/shared.css. */
+.recep-list{
+  display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;
+}
+.recep-order{border-bottom:1px solid var(--border);flex-shrink:0;}
+.recep-order:last-child{border-bottom:none;}
+.recep-order.filtered-out{display:none;}
+.recep-order-header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--surface);}
+.recep-order-header .row-expand-btn{color:var(--primary);}
+.recep-order-number{font-size:14px;font-weight:700;color:var(--primary);}
+.recep-order-date{font-size:12.5px;color:var(--ink-500);white-space:nowrap;}
+.recep-order-spacer{flex:1;}
+.recep-order-status{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.recep-order-body{display:flex;flex-direction:column;}
+.recep-order-body.collapsed{display:none;}
+.recep-med{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#f5f6f8;border-top:1px solid var(--border);}
+.recep-med .row-expand-btn{color:var(--ink-700);}
+.recep-med-name{font-size:12px;font-weight:700;color:var(--ink-900);text-transform:uppercase;letter-spacing:.01em;}
+.recep-med-detail{border-top:1px solid var(--border);}
+.recep-med-detail.collapsed{display:none;}
+.recep-med-detail .detail-table{font-size:12.5px;}
+.recep-med-detail .detail-table thead th{background:var(--primary-50);}
+.recep-med-detail .cant-entregada{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
+
+html[data-theme="dark"] .recep-med{background:#1a2130;}

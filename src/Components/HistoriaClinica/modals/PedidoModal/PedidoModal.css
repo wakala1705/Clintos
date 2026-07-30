@@ -1,0 +1,44 @@
+/* Estilos exclusivos de PedidoModal. El patrón de modal compartido (overlay,
+   suspend-header-icon, suspend-patient-strip, suspend-med-list, form-field,
+   admin-summary-time, suspend-audit-note, admin-insumo-row) vive en
+   shared/shared.css junto a los otros 3 modales que lo reutilizan. */
+#pedido-cobertura-group{margin-top:2px;}
+.pedido-custom-wrap{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-2);}
+.pedido-custom-wrap input[type="number"]{
+  width:100px;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  font-family:inherit;font-size:13px;color:var(--ink-900);
+}
+.pedido-custom-wrap input[type="number"]:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.pedido-custom-wrap span{font-size:12.5px;color:var(--ink-500);}
+
+.insumo-row{display:flex;align-items:center;gap:8px;padding:var(--space-2) 0;}
+.insumo-row + .insumo-row{border-top:1px solid #eef0f4;}
+.insumo-row select{
+  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
+}
+.insumo-row .insumo-otro-input{
+  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  font-family:inherit;font-size:13px;color:var(--ink-900);
+}
+.insumo-row .insumo-cantidad-input{
+  width:70px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  font-family:inherit;font-size:13px;color:var(--ink-900);
+}
+.insumo-row select:focus, .insumo-row input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.insumo-remove-btn{
+  flex-shrink:0;width:30px;height:30px;border:none;background:none;color:var(--ink-500);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.insumo-remove-btn:hover{background:var(--red-bg);color:var(--red);}
+.insumo-remove-btn .icon{width:16px;height:16px;}
+.btn-add-insumo{margin-top:var(--space-2);}
+
+.insumos-resumen{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:4px;}
+.insumos-resumen-row{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-2) var(--space-3);font-size:13px;
+}
+.insumos-resumen-row + .insumos-resumen-row{border-top:1px solid #eef0f4;}
+.insumos-resumen-row .ir-name{color:var(--ink-900);}
+.insumos-resumen-row .ir-qty{font-size:12px;font-weight:600;color:var(--primary);white-space:nowrap;}
