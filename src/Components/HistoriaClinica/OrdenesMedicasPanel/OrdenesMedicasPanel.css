@@ -26,17 +26,35 @@
 .ome-order-body{display:flex;flex-direction:column;}
 .ome-order-body.collapsed{display:none;}
 .ome-table-wrap{overflow-x:auto;}
-.ome-table{width:100%;border-collapse:collapse;font-size:13px;min-width:1200px;}
+.ome-table{table-layout:fixed;width:100%;min-width:1526px;border-collapse:collapse;font-size:13px;}
 .ome-table thead th{
   position:sticky;top:0;background:#f7f8fb;color:var(--ink-500);font-weight:600;font-size:10.5px;
   text-transform:uppercase;letter-spacing:.03em;padding:var(--space-2) var(--space-3);text-align:left;
   border-bottom:1px solid var(--border);white-space:nowrap;
 }
-.ome-table td{padding:var(--space-3);border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);white-space:nowrap;}
+.ome-table td{padding:var(--space-3);border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ome-table tbody tr:last-child td{border-bottom:none;}
 .ome-table tbody tr:hover{background:#fafbfd;}
 .ome-table tbody tr.selected{background:var(--primary-50);}
-.ome-table .ome-desc{font-weight:600;color:var(--ink-900);white-space:normal;min-width:200px;}
+.ome-table .ome-desc{font-weight:600;color:var(--ink-900);white-space:normal;overflow:visible;text-overflow:clip;}
+
+/* Anchos fijos por columna (checkbox, descripción, prioridad, dosis,
+   frecuencia, vía, duración, enfermera, est. programación, est. pedido,
+   cant. pedida, aplicadas, acción) — con table-layout:fixed, cada tabla de
+   orden queda alineada igual sin importar el largo del contenido de cada fila. */
+.ome-table th:nth-child(1), .ome-table td:nth-child(1){width:36px;}
+.ome-table th:nth-child(2), .ome-table td:nth-child(2){width:260px;}
+.ome-table th:nth-child(3), .ome-table td:nth-child(3){width:90px;}
+.ome-table th:nth-child(4), .ome-table td:nth-child(4){width:80px;}
+.ome-table th:nth-child(5), .ome-table td:nth-child(5){width:110px;}
+.ome-table th:nth-child(6), .ome-table td:nth-child(6){width:70px;}
+.ome-table th:nth-child(7), .ome-table td:nth-child(7){width:90px;}
+.ome-table th:nth-child(8), .ome-table td:nth-child(8){width:170px;}
+.ome-table th:nth-child(9), .ome-table td:nth-child(9){width:130px;}
+.ome-table th:nth-child(10), .ome-table td:nth-child(10){width:120px;}
+.ome-table th:nth-child(11), .ome-table td:nth-child(11){width:100px;}
+.ome-table th:nth-child(12), .ome-table td:nth-child(12){width:100px;}
+.ome-table th:nth-child(13), .ome-table td:nth-child(13){width:170px;}
 .ome-check-cell{width:36px;}
 .ome-check-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);}
 .ome-actions-cell{display:flex;align-items:center;gap:4px;}

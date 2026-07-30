@@ -17,6 +17,8 @@ import ReturnModal from '@/Components/HistoriaClinica/modals/ReturnModal/ReturnM
 import ProgramModal from '@/Components/HistoriaClinica/modals/ProgramModal/ProgramModal';
 import PedidoModal from '@/Components/HistoriaClinica/modals/PedidoModal/PedidoModal';
 import CatalogModal from '@/Components/HistoriaClinica/modals/CatalogModal/CatalogModal';
+import RestanteModal from '@/Components/HistoriaClinica/modals/RestanteModal/RestanteModal';
+import CerrarParcialModal from '@/Components/HistoriaClinica/modals/CerrarParcialModal/CerrarParcialModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuMenu, LuPill } from 'react-icons/lu';
 
@@ -108,6 +110,8 @@ export default function HistoriaClinicaPage() {
 <ProgramModal />
 <PedidoModal />
 <CatalogModal />
+<RestanteModal />
+<CerrarParcialModal />
     </>
   );
 }

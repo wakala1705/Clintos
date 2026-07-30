@@ -5,6 +5,21 @@
    See AGENTS.md for the rule that keeps this file as the single source of
    truth for cross-component styles instead of copy-pasting them per component. */
 
+/* ---------- SPACING TOKENS ----------
+   Consumed via var(--space-N) across most of the grid-based rows/headers below
+   (.dev-header-row, .ome-header-row, modal chip/field gaps, etc). Missing
+   after the historia-clinica.css split — grids collapsed to 0 gap/padding
+   without a fallback. Keep this the single definition; components must not
+   hardcode their own px value "just in case" the var is unset. */
+:root{
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+}
+
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
@@ -302,6 +317,9 @@
 .order-badge.recibido{background:var(--green-bg);color:#0d7a3d;}
 .order-badge.urgente{background:var(--red-bg);color:var(--red);}
 .order-badge.normal{background:var(--gray-bg);color:var(--ink-500);}
+.order-badge.programada{background:var(--green-bg);color:#0d7a3d;}
+.order-badge.no-solicitado{background:var(--gray-bg);color:var(--ink-500);}
+.order-badge.solicitado{background:var(--primary-50);color:var(--primary-dark);}
 .confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0d7a3d;}
 .confirmed-tag .icon{width:15px;height:15px;}
 
@@ -380,6 +398,7 @@ html[data-theme="dark"] .order-badge.aprobada,
 html[data-theme="dark"] .order-badge.completa,
 html[data-theme="dark"] .order-badge.procesada,
 html[data-theme="dark"] .order-badge.recibido,
+html[data-theme="dark"] .order-badge.programada,
 html[data-theme="dark"] .confirmed-tag{color:var(--green);}
 html[data-theme="dark"] .badge.status-active .dot,
 html[data-theme="dark"] .dp-status-badge.st-administered .dot{background:var(--green);}

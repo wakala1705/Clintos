@@ -677,7 +677,7 @@ export function initHistoriaClinica() {
     });
   });
 
-  /* ================= RECEPCIÓN: filtro por estado + fecha + tipo ================= */
+  /* ================= RECEPCIÓN: datos, render, filtro por estado + fecha + tipo ================= */
   const RECEPCION_FILTER_LABELS = { todas: 'turno actual', despachado: 'filtro: Pendiente', recibido: 'filtro: Recibido', parcial: 'filtro: Parcial' };
   let recepcionEstadoFilter = 'despachado';
   let recepcionDateFilter = null;
@@ -691,6 +691,180 @@ export function initHistoriaClinica() {
     if(tipo === 'insumo') return nombres.some(esInsumo);
     if(tipo === 'medicamento') return nombres.some(n => !esInsumo(n));
     return true;
+  }
+
+  const PARTIAL_FLAG_SVG = '<span class="partial-flag" title="Un ítem de esta orden se recibió incompleto"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
+  const CONFIRMED_TAG_SVG = '<span class="confirmed-tag"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Recibido</span>';
+
+  // Cada orden trae sus ítems con lo solicitado/recibido y una bitácora
+  // ("tandas") de cada confirmación/recepción parcial con su hora y responsable.
+  const recepcionOrdenes = [
+    { id:'recep-478', consecutivo:'SOL-000478', fecha:'02 May 2026 · 08:10', fechaISO: shiftDate(TODAY_DATE, -1), estado:'recibido', partial:false,
+      items:[
+        { id:'enoxaparina', nombre:'Enoxaparina sódica 40 mg solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:3, cantidadRecibida:3, completo:true,
+          articulos:[{ articulo:'MX0000012-1', medicamento:'Enoxaparina sódica 40 mg solución inyectable - Clexane', cantidad:3, lote:'L-48210', vencimiento:'2027-08-31', tandaIndex:0 }] },
+        { id:'acetaminofen', nombre:'Acetaminofén 500 mg tableta', esInsumo:false, omeItemId:null, cantidadSolicitada:3, cantidadRecibida:3, completo:true,
+          articulos:[
+            { articulo:'MX0000005-2', medicamento:'Acetaminofén 500 mg tableta - Genfar', cantidad:1, lote:'858E', vencimiento:'2026-12-31', tandaIndex:0 },
+            { articulo:'MX0000005-2', medicamento:'Acetaminofén 500 mg tableta - Genfar', cantidad:1, lote:'ERR_25', vencimiento:'2026-12-31', tandaIndex:0 },
+            { articulo:'MX0000005-3', medicamento:'Acetaminofén 500mg tableta (Dolex)', cantidad:1, lote:'UTYLO778', vencimiento:'2026-09-16', tandaIndex:0 },
+          ] },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 08:10', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+
+    { id:'recep-481', consecutivo:'SOL-000481', fecha:'02 May 2026 · 10:15', fechaISO: shiftDate(TODAY_DATE, -3), estado:'despachado', partial:false,
+      items:[
+        { id:'ceftriaxona', nombre:'Ceftriaxona sódica 1 g solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:4, cantidadRecibida:4, completo:true,
+          articulos:[
+            { articulo:'MX0000041-1', medicamento:'Ceftriaxona sódica 1 g - Rocephin', cantidad:1, lote:'L-51190', vencimiento:'2026-11-30', tandaIndex:0 },
+            { articulo:'MX0000041-1', medicamento:'Ceftriaxona sódica 1 g - Rocephin', cantidad:1, lote:'L-51204', vencimiento:'2026-11-30', tandaIndex:0 },
+            { articulo:'MX0000041-1', medicamento:'Ceftriaxona sódica 1 g - Rocephin', cantidad:1, lote:'L-51218', vencimiento:'2026-12-15', tandaIndex:0 },
+            { articulo:'MX0000041-1', medicamento:'Ceftriaxona sódica 1 g - Rocephin', cantidad:1, lote:'L-51233', vencimiento:'2027-01-10', tandaIndex:0 },
+          ] },
+      ], tandas:[], cierre:null },
+
+    { id:'recep-493', consecutivo:'SOL-000493', fecha:'02 May 2026 · 06:50', fechaISO: shiftDate(TODAY_DATE, 0), estado:'despachado', partial:false,
+      items:[
+        { id:'aposito-hidrocoloide', nombre:'Apósito hidrocoloide 10x10 cm', esInsumo:true, omeItemId:null, cantidadSolicitada:5, cantidadRecibida:5, completo:true,
+          articulos:[{ articulo:'IN0000018-1', medicamento:'Apósito hidrocoloide 10x10 cm - Convatec', cantidad:5, lote:'L-90214', vencimiento:'2027-04-30', tandaIndex:0 }] },
+        { id:'gasa-esteril', nombre:'Gasa estéril 10x10 cm', esInsumo:true, omeItemId:null, cantidadSolicitada:10, cantidadRecibida:10, completo:true,
+          articulos:[{ articulo:'IN0000021-1', medicamento:'Gasa estéril 10x10 cm - Curitas Médicas', cantidad:10, lote:'L-77031', vencimiento:'2028-01-31', tandaIndex:0 }] },
+      ], tandas:[], cierre:null },
+
+    { id:'recep-497', consecutivo:'SOL-000497', fecha:'02 May 2026 · 11:20', fechaISO: shiftDate(TODAY_DATE, -1), estado:'recibido', partial:false,
+      items:[
+        { id:'metamizol', nombre:'Metamizol sódico 1 g solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:2, cantidadRecibida:2, completo:true,
+          articulos:[{ articulo:'MX0000029-1', medicamento:'Metamizol sódico 1 g solución inyectable - Novalgina', cantidad:2, lote:'L-60214', vencimiento:'2027-02-28', tandaIndex:0 }] },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 11:20', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+
+    { id:'recep-501', consecutivo:'SOL-000501', fecha:'02 May 2026 · 14:05', fechaISO: shiftDate(TODAY_DATE, -1), estado:'recibido', partial:true,
+      items:[
+        { id:'vancomicina-501', nombre:'Vancomicina 1 g solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:2, cantidadRecibida:2, completo:true,
+          articulos:[{ articulo:'MX0000015-1', medicamento:'Vancomicina 1 g solución inyectable - Vancocin', cantidad:2, lote:'L-42078', vencimiento:'2027-01-31', tandaIndex:0 }] },
+        { id:'piperacilina', nombre:'Piperacilina/Tazobactam 4.5 g solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:6, cantidadRecibida:4, completo:false,
+          articulos:[
+            { articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58821', vencimiento:'2026-10-31', tandaIndex:0 },
+            { articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58902', vencimiento:'2026-10-31', tandaIndex:0 },
+          ] },
+        { id:'cloruro-potasio', nombre:'Cloruro de potasio 10 mEq solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:5, cantidadRecibida:5, completo:true,
+          articulos:[{ articulo:'MX0000040-1', medicamento:'Cloruro de potasio 10 mEq solución inyectable - Pisa', cantidad:5, lote:'L-31490', vencimiento:'2027-06-30', tandaIndex:0 }] },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 14:05', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+
+    { id:'recep-505', consecutivo:'SOL-000505', fecha:'02 May 2026 · 15:30', fechaISO: shiftDate(TODAY_DATE, 0), estado:'despachado', partial:false,
+      items:[
+        { id:'solucion-salina', nombre:'Cloruro de sodio 0.9% 500 ml solución para infusión', esInsumo:false, omeItemId:null, cantidadSolicitada:10, cantidadRecibida:10, completo:true,
+          articulos:[{ articulo:'MX0000008-2', medicamento:'Cloruro de sodio 0.9% 500 ml solución para infusión - Baxter', cantidad:10, lote:'L-20456', vencimiento:'2028-03-31', tandaIndex:0 }] },
+      ], tandas:[], cierre:null },
+
+    { id:'recep-508', consecutivo:'SOL-000508', fecha:'02 May 2026 · 16:45', fechaISO: shiftDate(TODAY_DATE, -2), estado:'recibido', partial:false,
+      items:[
+        { id:'guantes-nitrilo', nombre:'Guantes de nitrilo talla M', esInsumo:true, omeItemId:null, cantidadSolicitada:1, cantidadRecibida:1, completo:true,
+          articulos:[{ articulo:'IN0000002-1', medicamento:'Guantes de nitrilo talla M - Kimberly Clark', cantidad:1, lote:'L-11023', vencimiento:'2028-08-31', tandaIndex:0 }] },
+        { id:'jeringas', nombre:'Jeringas 10 ml', esInsumo:true, omeItemId:null, cantidadSolicitada:20, cantidadRecibida:20, completo:true,
+          articulos:[{ articulo:'IN0000005-1', medicamento:'Jeringas 10 ml - BD', cantidad:20, lote:'L-40217', vencimiento:'2029-05-31', tandaIndex:0 }] },
+        { id:'alcohol-antiseptico', nombre:'Alcohol antiséptico 70% 250 ml', esInsumo:true, omeItemId:null, cantidadSolicitada:4, cantidadRecibida:4, completo:true,
+          articulos:[{ articulo:'IN0000009-1', medicamento:'Alcohol antiséptico 70% 250 ml - Barrytek', cantidad:4, lote:'L-63340', vencimiento:'2027-12-31', tandaIndex:0 }] },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 16:45', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+  ];
+
+  function findRecepcionOrden(orderId){ return recepcionOrdenes.find(o => o.id === orderId); }
+
+  function recepDetailTableHtml(articulos){
+    return `
+      <table class="detail-table">
+        <thead><tr><th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
+        <tbody>
+          ${articulos.map(a => `
+            <tr>
+              <td>${a.articulo}</td>
+              <td>${a.medicamento}</td>
+              <td class="cant-entregada">${a.cantidad}</td>
+              <td>${a.lote}</td>
+              <td>${a.vencimiento}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function recepMedDetailHtml(orden, item){
+    const revisable = orden.estado === 'recibido' || orden.estado === 'cerrado';
+    if(revisable && !item.completo){
+      const faltante = item.cantidadSolicitada - item.cantidadRecibida;
+      const accionHtml = orden.estado === 'recibido'
+        ? `<button type="button" class="btn btn-primary btn-sm btn-recepcionar-restante" data-order-id="${orden.id}" title="Registrar el complemento de este pedido">
+             <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+             Recepcionar restante
+           </button>`
+        : `<span class="ome-muted" style="font-size:12px;">No se completó — orden cerrada</span>`;
+      return `
+        <div class="detail-section-label">Recibido (${item.cantidadRecibida})</div>
+        ${recepDetailTableHtml(item.articulos)}
+        <div class="detail-section-label detail-section-label--faltante">Falta por recibir (${faltante})</div>
+        <div class="recep-faltante-row">
+          <span>${item.nombre} — ${faltante} unidad${faltante === 1 ? '' : 'es'} pendiente${faltante === 1 ? '' : 's'}</span>
+          ${accionHtml}
+        </div>`;
+    }
+    return recepDetailTableHtml(item.articulos);
+  }
+
+  function recepOrderStatusHtml(orden){
+    if(orden.estado === 'despachado'){
+      return `
+        <button type="button" class="btn btn-primary btn-sm btn-confirm-receipt" data-order-id="${orden.id}">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Confirmar recepción
+        </button>`;
+    }
+    if(orden.estado === 'cerrado'){
+      return `<span class="order-badge no-solicitado">Cerrada</span>${PARTIAL_FLAG_SVG}`;
+    }
+    if(orden.partial){
+      return `
+        <button type="button" class="btn btn-secondary btn-sm btn-recepcionar-restante" data-order-id="${orden.id}">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          Recepcionar restante
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm btn-cerrar-parcial" data-order-id="${orden.id}">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+          Cerrar parcial
+        </button>`;
+    }
+    return CONFIRMED_TAG_SVG;
+  }
+
+  function renderRecepcionList(){
+    const container = document.getElementById('recepcion-list');
+    container.innerHTML = recepcionOrdenes.map(orden=>{
+      const medBlocksHtml = orden.items.map(item=>`
+        <div class="recep-med">
+          <button type="button" class="row-expand-btn" aria-expanded="true" aria-controls="detalle-${item.id}" data-group="${item.id}" title="Ver artículo(s) y lote(s)">
+            <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <span class="recep-med-name">${item.nombre}</span>
+          <span class="child-count-badge">${item.cantidadSolicitada}</span>
+          ${(orden.estado === 'recibido' || orden.estado === 'cerrado') && !item.completo ? PARTIAL_FLAG_SVG : ''}
+        </div>
+        <div class="recep-med-detail" id="detalle-${item.id}" data-parent-group="${item.id}">
+          ${recepMedDetailHtml(orden, item)}
+        </div>`).join('');
+
+      return `
+        <div class="recep-order" id="order-${orden.id}" data-order-id="${orden.id}" data-estado="${orden.estado}" data-partial="${orden.partial}" data-fecha-iso="${orden.fechaISO}">
+          <div class="recep-order-header">
+            <button type="button" class="row-expand-btn" aria-expanded="true" aria-controls="body-${orden.id}" data-group="${orden.id}" title="Ver medicamentos de esta orden">
+              <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <span class="recep-order-number">${orden.consecutivo}</span>
+            <span class="recep-order-date">${orden.fecha}</span>
+            <span class="child-count-badge">${orden.items.length} ítem${orden.items.length === 1 ? '' : 's'}</span>
+            <div class="recep-order-spacer"></div>
+            <div class="recep-order-status" id="${orden.id}-status">${recepOrderStatusHtml(orden)}</div>
+          </div>
+          <div class="recep-order-body" id="body-${orden.id}" data-parent-group="${orden.id}">
+            ${medBlocksHtml}
+          </div>
+        </div>`;
+    }).join('');
   }
 
   function applyRecepcionFilter(){
@@ -715,7 +889,7 @@ export function initHistoriaClinica() {
       const orderBtn = orderEl.querySelector('.recep-order-header .row-expand-btn');
       const orderBody = orderEl.querySelector('.recep-order-body');
       if(orderBtn && orderBody){
-        if(filterValue === 'despachado'){
+        if(filterValue === 'despachado' || filterValue === 'parcial'){
           orderBtn.setAttribute('aria-expanded', 'true');
           orderBody.classList.remove('collapsed');
           orderEl.querySelectorAll('.recep-med-detail').forEach(d => d.classList.remove('collapsed'));
@@ -741,6 +915,7 @@ export function initHistoriaClinica() {
       applyRecepcionFilter();
     });
   });
+  renderRecepcionList();
   applyRecepcionFilter();
 
   document.querySelectorAll('#chipgroup-recepcion-fecha .chip-filter').forEach(chip=>{
@@ -822,12 +997,6 @@ export function initHistoriaClinica() {
     closeAllPopovers();
   });
 
-  const RECEP_FECHA_OFFSETS = { 'recep-478': -1, 'recep-481': -3, 'recep-493': 0, 'recep-497': -1, 'recep-501': -1, 'recep-505': 0, 'recep-508': -2 };
-  Object.keys(RECEP_FECHA_OFFSETS).forEach(recepId=>{
-    const el = document.getElementById('order-' + recepId);
-    if(el) el.setAttribute('data-fecha-iso', shiftDate(TODAY_DATE, RECEP_FECHA_OFFSETS[recepId]));
-  });
-
   /* ================= Insumos disponibles del paciente (recibidos de farmacia) ================= */
   const insumosDisponibles = [
     { id: 'insumo-1', nombre: 'Jeringas 10 ml', cantidadDisponible: 6 },
@@ -843,8 +1012,6 @@ export function initHistoriaClinica() {
     }
   }
 
-  const RECEPCION_MED_LINKS = {};
-
   function isoAMesAno(isoDate){
     const [y, m] = isoDate.split('-');
     return m + '/' + y;
@@ -853,73 +1020,35 @@ export function initHistoriaClinica() {
   function crearRecepcionDesdeSolicitud(solicitud){
     const recepId = 'recep-' + solicitud.id.replace('sol-', '');
 
-    const medBlocksHtml = solicitud.items.map((item, idx)=>{
-      const group = 'pedmed-' + solicitud.id + '-' + idx;
+    const items = solicitud.items.map((item, idx)=>{
       const articuloCod = (item.esInsumo ? 'IN' : 'MX') + String(1000 + idx) + '-1';
       const loteCod = 'L-' + Math.floor(60000 + Math.random() * 9000);
       const vencIso = shiftDate(TODAY_DATE, 180 + idx * 15);
-      const vencMesAno = isoAMesAno(vencIso);
-      const cantidadNum = parseInt(item.cantidad, 10) || 1;
+      const cantidadSolicitada = parseInt(item.cantidad, 10) || 1;
+      // Simulación del despacho real de farmacia: los insumos y los pedidos de
+      // una sola unidad siempre llegan completos; un medicamento de más de una
+      // unidad llega con 1 unidad de menos, para poder ejercitar de inmediato
+      // el flujo de "Recepcionar restante" sobre datos recién creados (la
+      // cantidad realmente despachada hoy es un dato simulado del prototipo —
+      // en producción vendría del proceso real de despacho de farmacia).
+      const cantidadRecibida = (!item.esInsumo && cantidadSolicitada > 1) ? cantidadSolicitada - 1 : cantidadSolicitada;
 
-      if(item.omeItemId){
-        RECEPCION_MED_LINKS[group] = {
-          omeItemId: item.omeItemId,
-          lote: loteCod, vencimiento: vencMesAno,
-          lotes: [{ lote: loteCod, vencimiento: vencMesAno, cantidad: cantidadNum }]
-        };
-      } else if(item.esInsumo){
-        RECEPCION_MED_LINKS[group] = { esInsumo: true, nombre: item.nombre, cantidad: cantidadNum };
-      }
+      return {
+        id: 'pedmed-' + solicitud.id + '-' + idx,
+        nombre: item.nombre,
+        esInsumo: !!item.esInsumo,
+        omeItemId: item.omeItemId || null,
+        cantidadSolicitada, cantidadRecibida,
+        completo: cantidadRecibida >= cantidadSolicitada,
+        articulos: [{ articulo: articuloCod, medicamento: item.nombre, cantidad: cantidadRecibida, lote: loteCod, vencimiento: vencIso, tandaIndex: 0 }]
+      };
+    });
 
-      return `
-        <div class="recep-med">
-          <button type="button" class="row-expand-btn" aria-expanded="false" aria-controls="detalle-${group}" data-group="${group}" title="Ver artículo(s) y lote(s)">
-            <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <span class="recep-med-name">${item.nombre}</span>
-          <span class="child-count-badge">${cantidadNum}</span>
-        </div>
-        <div class="recep-med-detail collapsed" id="detalle-${group}" data-parent-group="${group}">
-          <table class="detail-table">
-            <thead><tr><th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>${articuloCod}</td>
-                <td>${item.nombre}</td>
-                <td class="cant-entregada">${cantidadNum}</td>
-                <td>${loteCod}</td>
-                <td>${vencIso}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>`;
-    }).join('');
-
-    const medTargets = solicitud.items.map((item, idx) => 'pedmed-' + solicitud.id + '-' + idx).join(',');
-
-    const orderHtml = `
-      <div class="recep-order" id="order-${recepId}" data-order-id="${recepId}" data-estado="despachado" data-partial="false" data-fecha-iso="${TODAY_DATE}">
-        <div class="recep-order-header">
-          <button type="button" class="row-expand-btn" aria-expanded="true" aria-controls="body-${recepId}" data-group="${recepId}" title="Ver medicamentos de esta orden">
-            <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <span class="recep-order-number">${solicitud.consecutivo}</span>
-          <span class="recep-order-date">${solicitud.fecha}</span>
-          <span class="child-count-badge">${solicitud.items.length} ítem${solicitud.items.length === 1 ? '' : 's'}</span>
-          <div class="recep-order-spacer"></div>
-          <div class="recep-order-status" id="${recepId}-status">
-            <button type="button" class="btn btn-primary btn-sm btn-confirm-receipt" data-confirm-target="${recepId}" data-med-targets="${medTargets}" data-partial="false">
-              <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              Confirmar recepción
-            </button>
-          </div>
-        </div>
-        <div class="recep-order-body" id="body-${recepId}" data-parent-group="${recepId}">
-          ${medBlocksHtml}
-        </div>
-      </div>`;
-
-    document.getElementById('recepcion-list').insertAdjacentHTML('afterbegin', orderHtml);
+    recepcionOrdenes.unshift({
+      id: recepId, consecutivo: solicitud.consecutivo, fecha: solicitud.fecha, fechaISO: TODAY_DATE,
+      estado: 'despachado', partial: false, items, tandas: [], cierre: null
+    });
+    renderRecepcionList();
     applyRecepcionFilter();
   }
 
@@ -947,35 +1076,254 @@ export function initHistoriaClinica() {
     });
   });
 
-  /* ================= Confirmar recepción ================= */
-  const PARTIAL_FLAG_SVG = '<span class="partial-flag" title="Un ítem de esta orden se recibió incompleto"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
-  const CONFIRMED_TAG_SVG = '<span class="confirmed-tag"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Recibido</span>';
+  /* ================= Confirmar recepción / Recepcionar restante / Cerrar parcial ================= */
+  function aplicarEntregaAMed(item, entrega){
+    if(item.esInsumo){ agregarInsumoDisponible(item.nombre, entrega.cantidad); return; }
+    if(!item.omeItemId) return;
+    const med = MEDS.find(m => m.omeItemId === item.omeItemId);
+    if(!med) return;
+    const vencMesAno = isoAMesAno(entrega.vencimiento);
+    med.lotesRecibidos = (med.lotesRecibidos || []).concat([{ lote: entrega.lote, vencimiento: vencMesAno, cantidad: entrega.cantidad }]);
+    med.lote = entrega.lote;
+    med.vencimiento = vencMesAno;
+    med.pendienteRecepcion = false;
+  }
+
+  function confirmarRecepcion(orden){
+    const horaReal = new Date().toTimeString().slice(0,5);
+    orden.tandas.push({
+      index: orden.tandas.length, fecha: `${formatDateLabel(TODAY_DATE)} · ${horaReal}`, por: CURRENT_USER_NAME, tipo: 'inicial',
+      detalle: orden.items.map(i => ({ itemId: i.id, cantidad: i.cantidadRecibida, lote: i.articulos[0] ? i.articulos[0].lote : null, vencimiento: i.articulos[0] ? i.articulos[0].vencimiento : null }))
+    });
+    orden.items.forEach(item=>{
+      if(item.cantidadRecibida <= 0) return;
+      item.articulos.forEach(a => aplicarEntregaAMed(item, { cantidad: a.cantidad, lote: a.lote, vencimiento: a.vencimiento }));
+    });
+    orden.estado = 'recibido';
+    orden.partial = orden.items.some(i => !i.completo);
+  }
+
+  function registrarRestante(orden, entregas){
+    const horaReal = new Date().toTimeString().slice(0,5);
+    const tandaIndex = orden.tandas.length;
+    orden.tandas.push({ index: tandaIndex, fecha: `${formatDateLabel(TODAY_DATE)} · ${horaReal}`, por: CURRENT_USER_NAME, tipo: 'restante', detalle: entregas });
+
+    entregas.forEach(e=>{
+      const item = orden.items.find(i => i.id === e.itemId);
+      if(!item || e.cantidad <= 0) return;
+      const articuloCod = item.articulos[0] ? item.articulos[0].articulo : '—';
+      item.articulos.push({ articulo: articuloCod, medicamento: item.nombre, cantidad: e.cantidad, lote: e.lote, vencimiento: e.vencimiento, tandaIndex });
+      item.cantidadRecibida += e.cantidad;
+      item.completo = item.cantidadRecibida >= item.cantidadSolicitada;
+      aplicarEntregaAMed(item, e);
+    });
+
+    orden.partial = orden.items.some(i => !i.completo);
+  }
+
+  function cerrarParcial(orden, cierre){
+    orden.estado = 'cerrado';
+    orden.cierre = cierre;
+  }
 
   document.getElementById('recepcion-list').addEventListener('click', (e)=>{
-    const btn = e.target.closest('.btn-confirm-receipt');
-    if(!btn) return;
-    const orderTarget = btn.getAttribute('data-confirm-target');
-    const isPartial = btn.getAttribute('data-partial') === 'true';
-    const medTargets = (btn.getAttribute('data-med-targets') || '').split(',').filter(Boolean);
-
-    const statusContainer = document.getElementById(orderTarget + '-status');
-    if(statusContainer) statusContainer.innerHTML = CONFIRMED_TAG_SVG + (isPartial ? PARTIAL_FLAG_SVG : '');
-
-    const orderEl = document.getElementById('order-' + orderTarget);
-    if(orderEl){ orderEl.setAttribute('data-estado', 'recibido'); orderEl.setAttribute('data-partial', isPartial ? 'true' : 'false'); }
-
-    medTargets.forEach(group=>{
-      const link = RECEPCION_MED_LINKS[group];
-      if(!link) return;
-      if(link.esInsumo){ agregarInsumoDisponible(link.nombre, link.cantidad); return; }
-      const med = MEDS.find(m => m.omeItemId === link.omeItemId);
-      if(!med) return;
-      med.lote = link.lote;
-      med.vencimiento = link.vencimiento;
-      med.lotesRecibidos = link.lotes;
-      med.pendienteRecepcion = false;
-    });
+    const confirmBtn = e.target.closest('.btn-confirm-receipt');
+    if(confirmBtn){
+      const orden = findRecepcionOrden(confirmBtn.getAttribute('data-order-id'));
+      if(!orden) return;
+      confirmarRecepcion(orden);
+      renderRecepcionList();
+      applyRecepcionFilter();
+      showToast(orden.partial ? `Recepción ${orden.consecutivo} confirmada — quedó parcial` : `Recepción ${orden.consecutivo} confirmada`);
+      return;
+    }
+    const restanteBtn = e.target.closest('.btn-recepcionar-restante');
+    if(restanteBtn){ openRestanteModal(findRecepcionOrden(restanteBtn.getAttribute('data-order-id'))); return; }
+    const cerrarBtn = e.target.closest('.btn-cerrar-parcial');
+    if(cerrarBtn){ openCerrarParcialModal(findRecepcionOrden(cerrarBtn.getAttribute('data-order-id'))); return; }
   });
+
+  /* ================= Modal: Recepcionar restante ================= */
+  const restanteModalOverlay = document.getElementById('restante-modal-overlay');
+  let restanteModalOrden = null;
+
+  function openRestanteModal(orden){
+    if(!orden) return;
+    const faltantes = orden.items.filter(i => !i.completo);
+    if(faltantes.length === 0) return;
+    restanteModalOrden = orden;
+
+    document.getElementById('restante-modal-title').textContent = `Recepcionar restante — ${orden.consecutivo}`;
+    document.getElementById('restante-items-list').innerHTML = faltantes.map(item=>{
+      const faltante = item.cantidadSolicitada - item.cantidadRecibida;
+      return `
+        <div class="restante-item-row" data-item-id="${item.id}" data-faltante="${faltante}">
+          <div class="restante-item-info">
+            <div class="restante-item-name">${item.nombre}</div>
+            <div class="restante-item-meta">Faltan ${faltante} de ${item.cantidadSolicitada} unidades</div>
+          </div>
+          <div class="restante-item-fields">
+            <div class="form-field">
+              <label>Cantidad</label>
+              <input type="number" class="restante-cantidad-input" min="0" max="${faltante}" value="${faltante}">
+            </div>
+            <div class="form-field">
+              <div class="field-label-row"><label>Lote</label><span class="required-pill restante-lote-required" style="display:none;">Requerido</span></div>
+              <input type="text" class="restante-lote-input" placeholder="Ej. L-58910">
+            </div>
+            <div class="form-field">
+              <div class="field-label-row"><label>Vencimiento</label><span class="required-pill restante-vencimiento-required" style="display:none;">Requerido</span></div>
+              <input type="date" class="restante-vencimiento-input">
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('restante-por').textContent = CURRENT_USER_NAME;
+    restanteModalOverlay.classList.add('open');
+    startRestanteClock();
+  }
+
+  function closeRestanteModal(){
+    restanteModalOverlay.classList.remove('open');
+    restanteModalOrden = null;
+    stopRestanteClock();
+  }
+
+  document.getElementById('restante-modal-close').addEventListener('click', closeRestanteModal);
+  document.getElementById('restante-cancel-btn').addEventListener('click', closeRestanteModal);
+  restanteModalOverlay.addEventListener('click', (e)=>{
+    if(e.target === restanteModalOverlay) closeRestanteModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && restanteModalOverlay.classList.contains('open')) closeRestanteModal();
+  });
+
+  document.getElementById('restante-confirm-btn').addEventListener('click', ()=>{
+    if(!restanteModalOrden) return;
+    const rows = document.querySelectorAll('#restante-items-list .restante-item-row');
+    const entregas = [];
+    let valid = true;
+    let focusTarget = null;
+
+    rows.forEach(row=>{
+      const itemId = row.getAttribute('data-item-id');
+      const faltante = parseInt(row.getAttribute('data-faltante'), 10);
+      const cantidadInput = row.querySelector('.restante-cantidad-input');
+      const loteInput = row.querySelector('.restante-lote-input');
+      const vencInput = row.querySelector('.restante-vencimiento-input');
+      const loteRequired = row.querySelector('.restante-lote-required');
+      const vencRequired = row.querySelector('.restante-vencimiento-required');
+      loteRequired.style.display = 'none';
+      vencRequired.style.display = 'none';
+
+      let cantidad = parseInt(cantidadInput.value, 10) || 0;
+      if(cantidad < 0) cantidad = 0;
+      if(cantidad > faltante) cantidad = faltante;
+      if(cantidad === 0) return;
+
+      if(!loteInput.value.trim()){ loteRequired.style.display = 'inline-flex'; focusTarget = focusTarget || loteInput; valid = false; }
+      if(!vencInput.value){ vencRequired.style.display = 'inline-flex'; focusTarget = focusTarget || vencInput; valid = false; }
+      entregas.push({ itemId, cantidad, lote: loteInput.value.trim(), vencimiento: vencInput.value });
+    });
+
+    if(entregas.length === 0){ showToast('Ingresa al menos una cantidad para registrar.'); return; }
+    if(!valid){ if(focusTarget) focusTarget.focus(); return; }
+
+    const orden = restanteModalOrden;
+    registrarRestante(orden, entregas);
+    closeRestanteModal();
+    renderRecepcionList();
+    applyRecepcionFilter();
+    showToast(orden.partial ? `Recepción registrada — ${orden.consecutivo} sigue parcial` : `Recepción ${orden.consecutivo} completada`);
+  });
+
+  let restanteClockTimer = null;
+  function updateRestanteClock(){ document.getElementById('restante-hora-registro').textContent = new Date().toTimeString().slice(0,5); }
+  function startRestanteClock(){ updateRestanteClock(); clearInterval(restanteClockTimer); restanteClockTimer = setInterval(updateRestanteClock, 1000); }
+  function stopRestanteClock(){ clearInterval(restanteClockTimer); restanteClockTimer = null; }
+
+  /* ================= Modal: Cerrar parcial ================= */
+  const cerrarParcialModalOverlay = document.getElementById('cerrar-parcial-modal-overlay');
+  let cerrarParcialOrden = null;
+
+  function openCerrarParcialModal(orden){
+    if(!orden) return;
+    cerrarParcialOrden = orden;
+    const faltantes = orden.items.filter(i => !i.completo);
+
+    document.getElementById('cerrar-parcial-order-number').textContent = orden.consecutivo;
+    document.getElementById('cerrar-parcial-items-list').innerHTML = faltantes.map(item=>{
+      const faltante = item.cantidadSolicitada - item.cantidadRecibida;
+      return `
+        <div class="suspend-med-row">
+          <div>
+            <div class="sm-name">${item.nombre}</div>
+            <div class="sm-meta">Faltan ${faltante} de ${item.cantidadSolicitada} unidades</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('cerrar-parcial-motivo').value = '';
+    document.getElementById('cerrar-parcial-detalle').value = '';
+    document.getElementById('cerrar-parcial-detalle-wrap').style.display = 'none';
+    document.getElementById('cerrar-parcial-motivo-required').style.display = 'none';
+    document.getElementById('cerrar-parcial-detalle-required').style.display = 'none';
+    document.getElementById('cerrar-parcial-por').textContent = CURRENT_USER_NAME;
+
+    cerrarParcialModalOverlay.classList.add('open');
+    startCerrarParcialClock();
+  }
+
+  function closeCerrarParcialModal(){
+    cerrarParcialModalOverlay.classList.remove('open');
+    cerrarParcialOrden = null;
+    stopCerrarParcialClock();
+  }
+
+  document.getElementById('cerrar-parcial-modal-close').addEventListener('click', closeCerrarParcialModal);
+  document.getElementById('cerrar-parcial-cancel-btn').addEventListener('click', closeCerrarParcialModal);
+  cerrarParcialModalOverlay.addEventListener('click', (e)=>{
+    if(e.target === cerrarParcialModalOverlay) closeCerrarParcialModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && cerrarParcialModalOverlay.classList.contains('open')) closeCerrarParcialModal();
+  });
+
+  document.getElementById('cerrar-parcial-motivo').addEventListener('change', ()=>{
+    const val = document.getElementById('cerrar-parcial-motivo').value;
+    document.getElementById('cerrar-parcial-motivo-required').style.display = 'none';
+    const detalleWrap = document.getElementById('cerrar-parcial-detalle-wrap');
+    if(val === 'otro'){ detalleWrap.style.display = 'block'; }
+    else { detalleWrap.style.display = 'none'; document.getElementById('cerrar-parcial-detalle-required').style.display = 'none'; }
+  });
+
+  document.getElementById('cerrar-parcial-confirm-btn').addEventListener('click', ()=>{
+    const motivo = document.getElementById('cerrar-parcial-motivo');
+    const detalle = document.getElementById('cerrar-parcial-detalle');
+    let valid = true;
+    let focusTarget = null;
+
+    if(!motivo.value){ document.getElementById('cerrar-parcial-motivo-required').style.display = 'inline-flex'; focusTarget = focusTarget || motivo; valid = false; }
+    if(motivo.value === 'otro' && !detalle.value.trim()){ document.getElementById('cerrar-parcial-detalle-required').style.display = 'inline-flex'; focusTarget = focusTarget || detalle; valid = false; }
+    if(!valid){ if(focusTarget) focusTarget.focus(); return; }
+
+    const motivoLabel = motivo.options[motivo.selectedIndex].text;
+    const horaReal = document.getElementById('cerrar-parcial-hora-registro').textContent;
+    const orden = cerrarParcialOrden;
+
+    cerrarParcial(orden, { motivo: motivo.value, motivoLabel, detalle: detalle.value.trim(), por: CURRENT_USER_NAME, hora: horaReal });
+
+    closeCerrarParcialModal();
+    renderRecepcionList();
+    applyRecepcionFilter();
+    showToast(`Recepción ${orden.consecutivo} cerrada sin completar`);
+  });
+
+  let cerrarParcialClockTimer = null;
+  function updateCerrarParcialClock(){ document.getElementById('cerrar-parcial-hora-registro').textContent = new Date().toTimeString().slice(0,5); }
+  function startCerrarParcialClock(){ updateCerrarParcialClock(); clearInterval(cerrarParcialClockTimer); cerrarParcialClockTimer = setInterval(updateCerrarParcialClock, 1000); }
+  function stopCerrarParcialClock(){ clearInterval(cerrarParcialClockTimer); cerrarParcialClockTimer = null; }
 
   /* ================= Popovers: fecha personalizada, otros filtros y alergias ================= */
   function closeAllPopovers(){
@@ -2112,9 +2460,6 @@ export function initHistoriaClinica() {
             <td>
               <div class="ome-actions-cell">
                 ${actionCell}
-                <button type="button" class="dev-icon-btn" title="Más opciones" data-ome-more="${item.id}">
-                  <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                </button>
               </div>
             </td>
           </tr>`;
@@ -2450,8 +2795,6 @@ export function initHistoriaClinica() {
     if(programarBtn){ openProgramModal([programarBtn.getAttribute('data-programar-item')]); return; }
     const pedirBtn = e.target.closest('[data-pedir-item]');
     if(pedirBtn){ pedirAFarmacia([pedirBtn.getAttribute('data-pedir-item')]); return; }
-    const moreBtn = e.target.closest('[data-ome-more]');
-    if(moreBtn){ showToast('Esta acción estará disponible próximamente'); return; }
     const orderActionBtn = e.target.closest('[data-ome-order-action]');
     if(orderActionBtn){ showToast('Esta acción estará disponible próximamente'); }
   });

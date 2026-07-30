@@ -24,4 +24,16 @@
 .recep-med-detail .detail-table thead th{background:var(--primary-50);}
 .recep-med-detail .cant-entregada{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
 
+/* ---------- Recepción parcial: separador "Recibido" / "Falta por recibir" ---------- */
+.detail-section-label{
+  padding:8px 14px 4px;font-size:10.5px;font-weight:700;color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;background:var(--surface);
+}
+.detail-section-label--faltante{color:var(--amber-fg);background:var(--amber-bg);padding-top:8px;padding-bottom:8px;}
+.recep-faltante-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;background:var(--amber-bg);font-size:12.5px;color:var(--ink-900);
+}
+
 html[data-theme="dark"] .recep-med{background:#1a2130;}
+html[data-theme="dark"] .detail-section-label{background:#161c2b;}

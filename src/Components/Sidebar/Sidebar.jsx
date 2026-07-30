@@ -59,7 +59,7 @@ export default function Sidebar() {
 
       <nav className="sidebar-nav">
 
-        <div className={`nav-group${isAsignacionCitas ? ' open' : ''}`}>
+        <div className={`nav-group${isAsignacionCitas || isHistoriaClinica ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuStethoscope className="icon nav-icon" />
             <span className="label">Módulo Asistencial</span>
@@ -84,72 +84,72 @@ export default function Sidebar() {
               </div>
             </div>
 
-          </div>
-        </div>
+            <div className={`nav-group sub${isHistoriaClinica ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuBed className="icon nav-icon" />
+                <span className="label">Hospitalización</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historia Clínica</Link>
+              </div>
+            </div>
 
-        <div className={`nav-group${isHistoriaClinica ? ' open' : ''}`}>
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuBed className="icon nav-icon" />
-            <span className="label">Hospitalización</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body">
-            <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historia Clínica</Link>
-          </div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuSyringe className="icon nav-icon" />
+                <span className="label">Ayudas DX</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuSyringe className="icon nav-icon" />
-            <span className="label">Ayudas DX</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuBox className="icon nav-icon" />
+                <span className="label">Consolidados</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuBox className="icon nav-icon" />
-            <span className="label">Consolidados</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuWallet className="icon nav-icon" />
+                <span className="label">Finanzas</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuWallet className="icon nav-icon" />
-            <span className="label">Finanzas</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuWrench className="icon nav-icon" />
+                <span className="label">Utilitarios</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuWrench className="icon nav-icon" />
-            <span className="label">Utilitarios</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuChartColumn className="icon nav-icon" />
+                <span className="label">Reportes (CR)</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuChartColumn className="icon nav-icon" />
-            <span className="label">Reportes (CR)</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group sub">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuSettings className="icon nav-icon" />
+                <span className="label">Configuración</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuSettings className="icon nav-icon" />
-            <span className="label">Configuración</span>
-            <LuChevronDown className="icon chev" />
           </div>
-          <div className="nav-body"></div>
         </div>
 
         <div className="sidebar-divider"></div>
@@ -163,6 +163,8 @@ export default function Sidebar() {
           <div className="nav-body"></div>
         </div>
 
+        <div className="sidebar-divider"></div>
+
         <div className="nav-group">
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuUsersRound className="icon nav-icon" />
@@ -171,6 +173,8 @@ export default function Sidebar() {
           </div>
           <div className="nav-body"></div>
         </div>
+
+        <div className="sidebar-divider"></div>
 
         <div className="nav-group">
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
