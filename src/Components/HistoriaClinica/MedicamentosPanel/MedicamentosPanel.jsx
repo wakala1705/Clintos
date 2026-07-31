@@ -1,5 +1,5 @@
 import './MedicamentosPanel.css';
-import { LuCalendar, LuCheck, LuChevronDown, LuChevronLeft, LuChevronRight, LuClock, LuColumns2, LuFilter, LuMinus, LuPanelLeft, LuPlus, LuSearch, LuTriangleAlert } from 'react-icons/lu';
+import { LuCalendar, LuCheck, LuChevronDown, LuChevronLeft, LuChevronRight, LuClock, LuFilter, LuMinus, LuPlus, LuSearch, LuSlidersHorizontal, LuTriangleAlert } from 'react-icons/lu';
 
 // Tab "Gestión de medicamentos": navegación de día, filtros del cronograma,
 // barra de selección masiva y la tabla-línea-de-tiempo (encabezado de horas y
@@ -8,6 +8,15 @@ export default function MedicamentosPanel() {
   return (
     <div role="tabpanel" id="panel-medicamentos" aria-labelledby="tab-medicamentos" tabIndex="0" className="tab-panel active">
       <div className="filter-bar">
+
+        <div className="search-field">
+          <label htmlFor="search-input" className="sr-only">Buscar medicamento por nombre</label>
+          <LuSearch className="icon" aria-hidden="true" />
+          <input type="text" placeholder="Buscar medicamento..." id="search-input"/>
+        </div>
+
+        
+
         <div className="day-nav" id="day-nav">
           <button type="button" className="day-nav-btn" id="day-prev-btn" title="Día anterior" aria-label="Ver día anterior">
             <LuChevronLeft className="icon" aria-hidden="true" />
@@ -19,19 +28,13 @@ export default function MedicamentosPanel() {
           <button type="button" className="day-nav-today-btn" id="day-nav-today-btn" style={{display: 'none'}}>Hoy</button>
         </div>
 
-        <div className="filter-divider"></div>
-
-        <div className="search-field">
-          <label htmlFor="search-input" className="sr-only">Buscar medicamento por nombre</label>
-          <LuSearch className="icon" aria-hidden="true" />
-          <input type="text" placeholder="Buscar medicamento..." id="search-input"/>
-        </div>
+        <div className="filter-spacer"></div>
 
         <div className="chip-group" id="estado-chip-group">
-          <button className="chip-filter active" data-estado="" aria-pressed="true">Todos</button>
-          <button className="chip-filter" data-estado="activo" aria-pressed="false">Activos</button>
-          <button className="chip-filter" data-estado="suspendido" aria-pressed="false">Suspendidos</button>
+          <button className="chip-filter active" data-estado="activo" aria-pressed="true">Activos</button>
           <button className="chip-filter" data-estado="finalizado" aria-pressed="false">Finalizados</button>
+          <button className="chip-filter" data-estado="suspendido" aria-pressed="false">Suspendidos</button>
+          <button className="chip-filter" data-estado="" aria-pressed="false">Todos</button>
         </div>
 
         <div className="filter-divider"></div>
@@ -99,22 +102,33 @@ export default function MedicamentosPanel() {
           </div>
         </div>
 
-        <div className="filter-spacer"></div>
-
-        <div className="view-toggle-group">
-          <button className="view-btn" type="button" id="view-compact-btn" title="Compactar filas" aria-label="Compactar filas">
-            <LuMinus className="icon" aria-hidden="true" />
+        <div className="filter-popover-wrap" id="view-popover-wrap">
+          <button className="date-picker-btn" id="view-popover-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="view-popover">
+            <LuSlidersHorizontal className="icon" aria-hidden="true" />
+            Vista
+            <LuChevronDown className="icon chev" aria-hidden="true" />
           </button>
-          <button className="view-btn" type="button" id="view-expand-btn" title="Expandir filas" aria-label="Expandir filas">
-            <LuPlus className="icon" aria-hidden="true" />
-          </button>
-          <div className="view-toggle-divider"></div>
-          <button className="view-btn active" type="button" id="view-columns-btn" title="Ver todas las horas" aria-label="Ver todas las horas" aria-pressed="true">
-            <LuColumns2 className="icon" aria-hidden="true" />
-          </button>
-          <button className="view-btn" type="button" id="view-split-btn" title="Ver solo horas pares" aria-label="Ver solo horas pares" aria-pressed="false">
-            <LuPanelLeft className="icon" aria-hidden="true" />
-          </button>
+          <div className="filter-popover filter-popover-right" id="view-popover" role="dialog" aria-label="Ajustes de vista del cronograma">
+            <div className="fp-section">
+              <div className="fp-section-title">Densidad de columnas</div>
+              <div className="density-stepper">
+                <button type="button" className="density-step-btn" id="view-compact-btn" title="Reducir densidad" aria-label="Reducir densidad de columnas">
+                  <LuMinus className="icon" aria-hidden="true" />
+                </button>
+                <span className="density-level-label" id="density-level-label">Media</span>
+                <button type="button" className="density-step-btn" id="view-expand-btn" title="Aumentar densidad" aria-label="Aumentar densidad de columnas">
+                  <LuPlus className="icon" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+            <div className="fp-section">
+              <div className="fp-section-title">Intervalo de tiempo</div>
+              <div className="segmented-control">
+                <button type="button" className="segmented-btn active" id="view-columns-btn" aria-pressed="true">Todas las horas</button>
+                <button type="button" className="segmented-btn" id="view-split-btn" aria-pressed="false">Horas pares</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

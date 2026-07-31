@@ -1,0 +1,109 @@
+/* Estilos exclusivos del shell de la página /historia-clinica (page.jsx):
+   la card contenedora y su barra de tabs principal (Gestión de medicamentos /
+   Órdenes médicas / Pedidos / Monitoreo / Notas). page.jsx no es un componente
+   reutilizable (es la ruta de Next.js), así que su CSS se queda junto a él en
+   vez de moverse a src/Components — ver AGENTS.md.
+
+   Los tokens (--amber) y el override de tema oscuro para clases de otros
+   componentes siguen aquí porque ya estaban acopladas a este archivo desde el
+   mockup original; el resto de reglas de historia-clinica.css se repartió
+   entre src/Components/HistoriaClinica/**\/*.css (por componente) y
+   src/Components/HistoriaClinica/shared/shared.css (reglas cruzadas). */
+
+:root{
+  --amber:#e08a00;
+}
+html[data-theme="dark"]{
+  --amber:#f5b942;
+}
+
+/* ---------- RESET + APP SHELL (sidebar + topbar + content wrapper) ----------
+   Also used to come from ../asignacion-citas/asignacion-citas.css (page.jsx
+   imported it for the shared .app/.topbar/.breadcrumb chrome around the
+   Sidebar). Duplicated here so this route owns its own shell instead of
+   depending on another feature's CSS — design tokens and .icon live in
+   shared/shared.css since components rely on them too, not just this shell. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.app{
+  display:flex;
+  height:100vh;
+  min-width:1440px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.topbar{
+  height:60px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 24px;
+  gap:16px;
+  flex-shrink:0;
+}
+.topbar .hamburger{color:var(--ink-500);display:flex;cursor:pointer;}
+.breadcrumb{
+  font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;
+}
+.breadcrumb .current{color:var(--ink-900);font-weight:600;}
+.breadcrumb .sep{color:var(--ink-400);}
+.topbar .spacer{flex:1;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.meta-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--ink-700);
+}
+.meta-item .icon{width:18px;height:18px;color:var(--primary);}
+.meta-item b{font-weight:500;color:var(--ink-900);}
+.divider-v{width:1px;height:24px;background:var(--border);}
+.user-chip{display:flex;align-items:center;gap:8px;}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--primary-100);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:500;font-size:13px;
+}
+.user-chip .who{line-height:1.2;}
+.user-chip .who .name{font-weight:500;font-size:13px;color:var(--ink-900);}
+.user-chip .who .role{font-size:12px;color:var(--ink-500);}
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+
+/* ---------- CARD ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+
+/* ---------- TABS integradas al card ---------- */
+.card-tabs-bar{
+  display:flex;align-items:center;gap:24px;padding:0 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;
+}
+.card-tabs-bar::-webkit-scrollbar{display:none;height:0;}
+.card-tab{
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink-500);
+  cursor:pointer;padding:13px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
+  border:none;background:none;font-family:inherit;outline-offset:2px;
+}
+.card-tab .icon{width:17px;height:17px;flex-shrink:0;}
+.card-tab:hover{color:var(--ink-900);}
+.card-tab:focus-visible{outline:2px solid var(--primary);border-radius:4px;}
+.card-tab.active{color:var(--primary);font-weight:600;}
+.card-tab.active::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--primary);
+}

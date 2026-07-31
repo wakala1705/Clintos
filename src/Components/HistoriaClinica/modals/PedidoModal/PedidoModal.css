@@ -1,7 +1,7 @@
 /* Estilos exclusivos de PedidoModal. El patrón de modal compartido (overlay,
    suspend-header-icon, suspend-patient-strip, suspend-med-list, form-field,
-   admin-summary-time, suspend-audit-note, admin-insumo-row) vive en
-   shared/shared.css junto a los otros 3 modales que lo reutilizan. */
+   admin-summary-time, suspend-audit-note) vive en shared/shared.css junto a
+   los otros 3 modales que lo reutilizan. */
 #pedido-cobertura-group{margin-top:2px;}
 .pedido-custom-wrap{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-2);}
 .pedido-custom-wrap input[type="number"]{
@@ -33,6 +33,7 @@
 .insumo-remove-btn:hover{background:var(--red-bg);color:var(--red);}
 .insumo-remove-btn .icon{width:16px;height:16px;}
 .btn-add-insumo{margin-top:var(--space-2);}
+#pedido-add-insumo-btn{justify-content:center;}
 
 .insumos-resumen{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:4px;}
 .insumos-resumen-row{

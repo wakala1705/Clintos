@@ -549,6 +549,15 @@ export function initHistoriaClinica() {
   }
   window.addEventListener('resize', handleResize);
 
+  // El ancho de las columnas de hora se calcula a partir de #timeline-wrap
+  // (ver computeHourColWidth). Colapsar/expandir el sidebar cambia ese ancho
+  // sin disparar un evento "resize" de window (el viewport no cambia), así
+  // que la tabla quedaba con el ancho viejo y un hueco en blanco a la
+  // derecha. Un ResizeObserver detecta ese cambio de tamaño del contenedor
+  // directamente, sin acoplarse al toggle del sidebar.
+  const timelineResizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleResize) : null;
+  if(timelineResizeObserver) timelineResizeObserver.observe(document.getElementById('timeline-wrap'));
+
   document.querySelectorAll('.chip-group:not(#turno-chip-group):not(#via-chip-group)').forEach(group=>{
     group.querySelectorAll('.chip-filter').forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -564,6 +573,7 @@ export function initHistoriaClinica() {
   });
 
   const DENSITY_LEVELS = ['compact', 'normal', 'expanded'];
+  const DENSITY_LABELS = { compact:'Compacta', normal:'Media', expanded:'Expandida' };
   let densityIdx = 1;
   function applyDensity(){
     const table = document.querySelector('.timeline-table');
@@ -573,6 +583,8 @@ export function initHistoriaClinica() {
     if(level === 'expanded') table.classList.add('density-expanded');
     document.getElementById('view-compact-btn').disabled = densityIdx === 0;
     document.getElementById('view-expand-btn').disabled = densityIdx === DENSITY_LEVELS.length - 1;
+    const levelLabel = document.getElementById('density-level-label');
+    if(levelLabel) levelLabel.textContent = DENSITY_LABELS[level];
     requestAnimationFrame(updateNowLine);
   }
   document.getElementById('view-compact-btn').addEventListener('click', ()=>{
@@ -1350,6 +1362,7 @@ export function initHistoriaClinica() {
   const datePop = setupPopover('date-popover-wrap','date-popover-btn','date-popover');
   const morePop = setupPopover('more-popover-wrap','more-popover-btn','more-popover');
   const allergyPop = setupPopover('allergy-popover-wrap','allergy-btn','allergy-popover');
+  setupPopover('view-popover-wrap','view-popover-btn','view-popover');
 
   document.addEventListener('click', closeAllPopovers);
 
@@ -1660,19 +1673,28 @@ export function initHistoriaClinica() {
   }
 
   function renderAdminInsumos(){
-    const wrap = document.getElementById('admin-insumos-list');
+    const tbody = document.getElementById('admin-insumos-list');
     const disponibles = insumosDisponibles.filter(i => i.cantidadDisponible > 0);
     if(disponibles.length === 0){
-      wrap.innerHTML = '<div class="admin-insumos-empty">No hay insumos disponibles para este paciente todavía — llegan aquí una vez que farmacia despacha un pedido que los incluya.</div>';
+      tbody.innerHTML = '<tr><td colspan="3" class="admin-insumos-empty">No hay insumos disponibles para este paciente todavía — llegan aquí una vez que farmacia despacha un pedido que los incluya.</td></tr>';
       return;
     }
-    wrap.innerHTML = disponibles.map(i => `
-      <label class="admin-insumo-row">
-        <input type="checkbox" data-insumo-id="${i.id}">
-        <span class="air-name">${i.nombre}</span>
-        <span class="air-disp">Disponible: ${i.cantidadDisponible}</span>
-      </label>
+    tbody.innerHTML = disponibles.map(i => `
+      <tr>
+        <td class="col-radio"><input type="checkbox" data-insumo-id="${i.id}" aria-label="${i.nombre}"></td>
+        <td>${i.nombre}</td>
+        <td class="lote-disp">${i.cantidadDisponible} un.</td>
+      </tr>
     `).join('');
+    tbody.querySelectorAll('tr').forEach(tr=>{
+      const checkbox = tr.querySelector('input[type="checkbox"]');
+      function toggle(){
+        checkbox.checked = !checkbox.checked;
+        tr.classList.toggle('selected', checkbox.checked);
+      }
+      checkbox.addEventListener('change', ()=> tr.classList.toggle('selected', checkbox.checked));
+      tr.addEventListener('click', (e)=>{ if(e.target !== checkbox) toggle(); });
+    });
   }
 
   function openAdminModal(){
@@ -3367,6 +3389,7 @@ export function initHistoriaClinica() {
 
   return function cleanup() {
     window.removeEventListener('resize', handleResize);
+    if(timelineResizeObserver) timelineResizeObserver.disconnect();
     document.removeEventListener('click', closeAllPopovers);
     document.removeEventListener('keydown', handlePopoverEscape);
     document.removeEventListener('keydown', handleAdminModalEscape);

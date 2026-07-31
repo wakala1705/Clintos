@@ -1,5 +1,12 @@
 /* Estilos exclusivos de ReturnModal. El patrón de modal compartido (incluye
    .required-pill, también usado por SuspendModal) vive en shared/shared.css. */
+
+/* #return-med-list reutiliza la clase .suspend-med-list solo por el
+   margin-bottom; a diferencia de Suspender/Pedido a farmacia (filas planas
+   .suspend-med-row), aquí cada hijo es un .program-med-block con su propio
+   borde/radio/fondo (mismo patrón que ProgramModal). El borde+fondo que
+   .suspend-med-list agrega por defecto duplicaba el borde de cada bloque. */
+#return-med-list{border:none;background:none;border-radius:0;overflow:visible;}
 .return-qty-field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .return-qty-field label{font-size:11px;color:var(--ink-500);font-weight:600;white-space:nowrap;}
 .return-qty-field input{

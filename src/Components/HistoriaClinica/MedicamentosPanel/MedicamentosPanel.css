@@ -19,20 +19,50 @@
 .day-nav-today-btn:hover{background:var(--primary-50);}
 html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e54;}
 
-/* ---------- Toggle de densidad de filas ---------- */
-.view-toggle-group{display:flex;align-items:center;gap:6px;}
-.view-btn{
-  width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);
-  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
+/* ---------- Popover "Vista" (densidad de columnas + intervalo de tiempo) ----------
+   Antes eran 4 botones-ícono sueltos (view-toggle-group) al extremo derecho de
+   la barra de filtros; ahora viven agrupados dentro de un único popover
+   disparado por el botón "Vista" (.date-picker-btn, ver shared/shared.css).
+   Los ids (view-compact-btn/view-expand-btn/view-columns-btn/view-split-btn)
+   no cambiaron para no tocar los handlers en legacy-app.js. */
+.density-stepper{
+  display:flex;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;width:max-content;
+}
+.density-step-btn{
+  width:32px;height:32px;border:none;background:var(--surface);color:var(--ink-700);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
   font-family:inherit;padding:0;
 }
-.view-btn:hover{background:#f3f5f9;}
-.view-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.view-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary);}
-.view-btn:disabled{opacity:.4;cursor:not-allowed;}
-.view-btn:disabled:hover{background:var(--surface);}
-.view-btn .icon{width:17px;height:17px;}
-.view-toggle-divider{width:1px;height:20px;background:var(--border);margin:0 2px;}
+.density-step-btn:hover{background:#f3f5f9;}
+.density-step-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.density-step-btn:disabled{opacity:.4;cursor:not-allowed;}
+.density-step-btn:disabled:hover{background:var(--surface);}
+.density-step-btn .icon{width:15px;height:15px;}
+.density-level-label{
+  min-width:68px;height:32px;padding:0 10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;color:var(--ink-900);
+  border-left:1px solid var(--border);border-right:1px solid var(--border);
+  white-space:nowrap;
+}
+.segmented-control{
+  display:flex;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;width:max-content;
+}
+.segmented-btn{
+  border:none;background:var(--surface);color:var(--ink-700);
+  font-family:inherit;font-size:12px;font-weight:600;
+  padding:8px 12px;cursor:pointer;white-space:nowrap;
+}
+.segmented-btn:not(:last-child){border-right:1px solid var(--border);}
+.segmented-btn:hover{background:#f3f5f9;}
+.segmented-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);font-weight:700;}
+html[data-theme="dark"] .density-step-btn:hover,
+html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 
 /* ---------- TIMELINE TABLE ---------- */
 .timeline-wrap{flex:1;min-height:0;overflow:auto;position:relative;}

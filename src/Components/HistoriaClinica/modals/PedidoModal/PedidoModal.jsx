@@ -31,7 +31,7 @@ export default function PedidoModal() {
             <span>CC <b id="pedido-patient-cc">—</b></span>
           </div>
 
-          <div className="form-field full" style={{marginBottom: '16px'}}>
+          <div className="form-field full" style={{marginBottom: '24px'}}>
             <div className="field-label-row">
               <label>Cobertura a solicitar</label>
             </div>
@@ -53,11 +53,11 @@ export default function PedidoModal() {
           </div>
 
           <div className="form-field full" style={{marginBottom: '16px'}}>
-            <div className="field-label-row" style={{marginBottom: '8px'}}>
+            <div className="field-label-row" >
               <label>Insumos adicionales</label>
             </div>
             <div className="insumos-resumen" id="pedido-insumos-resumen" style={{display: 'none'}}></div>
-            <button type="button" className="btn btn-primary" id="pedido-add-insumo-btn" style={{marginTop: 'var(--space-2)'}}>
+            <button type="button" className="btn btn-tinted" id="pedido-add-insumo-btn" >
               <LuPlus className="icon" aria-hidden="true" />
               <span id="pedido-add-insumo-label">Agregar insumos desde el catálogo</span>
             </button>

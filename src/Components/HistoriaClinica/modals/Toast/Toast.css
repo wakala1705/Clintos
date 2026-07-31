@@ -8,7 +8,7 @@
   transition:opacity .2s ease,transform .2s ease;
   isolation:isolate;
 }
-.toast.show{opacity:1;transform:translateY(0);}
+.toast.show{opacity:1;transform:translateY(0);pointer-events:auto;}
 .toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
 .toast-action-btn{
   margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.14);color:#fff;border:none;

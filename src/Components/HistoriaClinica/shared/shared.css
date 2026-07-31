@@ -5,6 +5,88 @@
    See AGENTS.md for the rule that keeps this file as the single source of
    truth for cross-component styles instead of copy-pasting them per component. */
 
+/* ---------- DESIGN TOKENS (color/radius) ----------
+   Historia Clínica used to inherit these from ../asignacion-citas/asignacion-citas.css
+   (both routes rendered the same Sidebar, so the app.jsx import order happened
+   to leak them in). Duplicated here so this feature no longer depends on that
+   route's CSS — asignacion-citas.css keeps its own copy untouched. Includes
+   --sidebar/--accent-teal because Sidebar.css (app-wide component, rendered
+   inside this page) also relies on them being defined somewhere globally. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#9aa3b2;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --bg:#f4f6fb;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --radius:8px;
+  --radius-lg:12px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#5b6272;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --bg:#0c0f17;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+}
+
+/* Base icon sizing/alignment — every "<X className='icon'>" across Historia
+   Clínica (and Sidebar) leans on this for display/vertical-align/stroke;
+   components only override width/height locally. */
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+/* ---------- SCROLLBARS ----------
+   Delgados y casi imperceptibles en toda la página (timeline, listas de
+   órdenes/pedidos, tablas de detalle, cuerpo de modales...). .sidebar-nav
+   trae su propio scrollbar (fondo oscuro, ver Sidebar.css) y gana por
+   especificidad, así que no se ve afectado por esta regla genérica. */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
 /* ---------- SPACING TOKENS ----------
    Consumed via var(--space-N) across most of the grid-based rows/headers below
    (.dev-header-row, .ome-header-row, modal chip/field gaps, etc). Missing
@@ -53,11 +135,14 @@
 .btn-primary:hover{background:var(--primary-dark);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
 .btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+.btn-tinted{background:var(--primary-50);color:var(--primary-dark);border-color:var(--primary-100);}
+.btn-tinted:hover{background:var(--primary-100);}
 .btn-warning-outline{background:var(--surface);color:var(--amber-fg);border-color:#f4dfae;}
 .btn-warning-outline:hover{background:var(--amber-bg);}
 .btn-danger{background:var(--red);color:#fff;}
 .btn-danger:hover{background:#a82323;}
 .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
 .btn-sm{padding:var(--space-2) var(--space-3);font-size:12px;gap:6px;}
 .btn-sm .icon{width:15px;height:15px;}
 
@@ -66,7 +151,7 @@
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
   border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.search-field{position:relative;width:400px;flex-shrink:0;}
+.search-field{position:relative;width:320px;flex-shrink:0;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
 .search-field input{
   width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
@@ -227,9 +312,9 @@
   padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
 
-.form-field{display:flex;flex-direction:column;gap:6px;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
 .form-field.full{grid-column:1 / -1;}
-.form-field label{font-size:12px;font-weight:600;color:var(--ink-700);}
+.form-field label{font-size:14px;font-weight:600;color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);width:100%;
@@ -255,25 +340,28 @@
 .suspend-header-icon .icon{width:19px;height:19px;}
 
 .suspend-patient-strip{
-  display:flex;align-items:center;gap:var(--space-2);font-size:13px;color:var(--ink-700);
+  display:flex;align-items:center;gap:var(--space-2);font-size:14px;color:var(--ink-700);
   background:var(--bg);border-radius:var(--radius);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-4);
 }
 .suspend-patient-strip .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);}
-.suspend-patient-strip b{color:var(--ink-900);font-weight:700;}
+.suspend-patient-strip b{color:var(--ink-900);font-weight:600;}
 .suspend-patient-strip .sps-sep{width:1px;height:12px;background:var(--border);margin:0 2px;flex-shrink:0;}
 
-.suspend-med-list{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:var(--space-4);overflow:hidden;}
+.suspend-med-list{
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  margin-bottom:var(--space-4);overflow:hidden;
+}
 .suspend-med-row{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
-  padding:var(--space-2) var(--space-3);
+  background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
+  padding:var(--space-3) var(--space-3);
 }
 .suspend-med-row + .suspend-med-row{border-top:1px solid #eef0f4;}
 .suspend-med-row .sm-name{font-size:13px;font-weight:600;color:var(--ink-900);}
-.suspend-med-row .sm-meta{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.suspend-med-row .sm-meta{font-size:12px;color:var(--ink-500);margin-top:4px;}
 .suspend-med-row.with-qty{align-items:center;}
 .suspend-med-row .sm-qty-result{text-align:right;flex-shrink:0;}
 .suspend-med-row .sm-qty-result .program-chip{font-size:13px;padding:4px 10px;}
-.suspend-med-row .sm-qty-result .sm-qty-note{font-size:12px;color:var(--ink-500);margin-top:3px;}
+.suspend-med-row .sm-qty-result .sm-qty-note{font-size:12px;color:var(--ink-500);margin-top:8px;}
 .program-chip{
   font-size:12px;font-weight:600;color:var(--primary-dark);background:var(--primary-50);
   padding:3px var(--space-2);border-radius:12px;font-variant-numeric:tabular-nums;
@@ -281,7 +369,7 @@
 .program-chip.overflow{color:var(--ink-500);background:var(--gray-bg);font-weight:500;font-style:italic;}
 
 .field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
-.field-label-row label{font-size:12px;font-weight:600;color:var(--ink-700);margin-bottom:0;}
+.field-label-row label{font-size:14px;font-weight:600;color:var(--ink-700);margin-bottom:0;}
 .required-pill{
   display:inline-flex;align-items:center;font-size:11px;font-weight:700;color:var(--red);
   background:var(--red-bg);padding:1px var(--space-2);border-radius:10px;letter-spacing:.02em;
@@ -292,17 +380,6 @@
 }
 .suspend-audit-note .icon{width:14px;height:14px;flex-shrink:0;margin-top:1px;}
 
-/* Insumos checklist reutilizado por AdminModal (uso durante la administración) y PedidoModal */
-.admin-insumo-row{
-  display:flex;align-items:center;gap:10px;padding:var(--space-2) var(--space-3);
-  border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--ink-900);
-}
-.admin-insumo-row + .admin-insumo-row{margin-top:6px;}
-.admin-insumo-row:hover{background:var(--bg);}
-.admin-insumo-row input[type="checkbox"]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--primary);}
-.admin-insumo-row .air-name{flex:1;}
-.admin-insumo-row .air-disp{font-size:12px;color:var(--ink-500);flex-shrink:0;}
-.admin-insumos-empty{font-size:13px;color:var(--ink-500);padding:var(--space-2) 0;}
 .ome-muted{color:var(--ink-500);}
 
 /* ---------- DATA TABLE genérica (usada por tablas de Pedidos/Órdenes generadas dinámicamente) ---------- */
@@ -404,6 +481,7 @@ html[data-theme="dark"] .date-picker-btn:hover,
 html[data-theme="dark"] .filters-more-btn:hover,
 html[data-theme="dark"] .subnav-tab:hover,
 html[data-theme="dark"] .dp-action:hover,
+html[data-theme="dark"] .btn-secondary:hover,
 html[data-theme="dark"] .modal-close-btn:hover{background:#20283a;border-color:#333e54;}
 html[data-theme="dark"] .search-field input:focus,
 html[data-theme="dark"] .fp-date-field input:focus{background:var(--surface);}

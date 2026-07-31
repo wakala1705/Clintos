@@ -1,6 +1,7 @@
 /* Estilos exclusivos de AdminModal. Overlay/card/header/body/footer/form-field
-   y .admin-insumo-row/.admin-insumos-empty (compartido con PedidoModal) viven
-   en shared/shared.css. */
+   viven en shared/shared.css. La tabla de insumos utilizados reutiliza
+   .lote-table (misma tabla que la selección de lote, más abajo) en vez de un
+   patrón propio, para que ambas listas seleccionables luzcan igual. */
 .admin-summary{
   background:var(--bg);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;
 }
@@ -12,7 +13,7 @@
 .admin-summary-meta .asm-sep{width:1px;height:12px;background:var(--border);}
 
 .admin-lote-section{margin-bottom:16px;}
-.admin-lote-label{display:block;font-size:12px;font-weight:600;color:var(--ink-700);margin-bottom:8px;}
+.admin-lote-label{display:block;font-size:14px;font-weight:600;color:var(--ink-700);margin-bottom:8px;}
 .lote-table-wrap{
   border:1px solid var(--border);border-radius:var(--radius);
   max-height:224px;overflow-y:auto;
@@ -31,10 +32,11 @@
 .lote-table tbody tr:last-child td{border-bottom:none;}
 .lote-table tbody tr:hover{background:#fafbfd;}
 .lote-table tbody tr.selected{background:var(--primary-50);}
-.lote-table input[type="radio"]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
+.lote-table input[type="radio"], .lote-table input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
 .lote-table .lote-code{font-weight:700;color:var(--ink-900);}
 .lote-table .lote-venc{color:var(--ink-700);}
 .lote-table .lote-disp{text-align:right;color:var(--ink-500);font-variant-numeric:tabular-nums;}
+.admin-insumos-empty{color:var(--ink-500);}
 .lote-badge{
   font-size:11px;font-weight:700;padding:var(--space-1) var(--space-2);border-radius:12px;white-space:nowrap;display:inline-block;
 }

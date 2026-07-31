@@ -56,9 +56,20 @@ export default function AdminModal() {
             </div>
           </div>
 
-          <div className="form-field full" id="admin-insumos-section" style={{marginBottom: '14px'}}>
-            <label>Insumos utilizados <span className="ome-muted" style={{fontWeight: 500}}>(opcional)</span></label>
-            <div id="admin-insumos-list" style={{marginTop: '6px'}}>{/* filas generadas por legacy-app.js */}</div>
+          <div className="admin-lote-section" id="admin-insumos-section">
+            <label className="admin-lote-label" id="admin-insumos-label">Insumos utilizados <span className="ome-muted" style={{fontWeight: 500}}>(opcional)</span></label>
+            <div className="lote-table-wrap">
+              <table className="lote-table" aria-labelledby="admin-insumos-label">
+                <thead>
+                  <tr>
+                    <th className="col-radio"><span className="sr-only">Seleccionar</span></th>
+                    <th>Insumo</th>
+                    <th className="col-disp">Disponible</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-insumos-list">{/* filas generadas por legacy-app.js */}</tbody>
+              </table>
+            </div>
           </div>
 
           <div className="form-field full">
