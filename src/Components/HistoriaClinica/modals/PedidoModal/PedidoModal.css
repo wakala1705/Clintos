@@ -9,7 +9,7 @@
   font-family:inherit;font-size:13px;color:var(--ink-900);
 }
 .pedido-custom-wrap input[type="number"]:focus{outline:2px solid var(--primary);outline-offset:1px;}
-.pedido-custom-wrap span{font-size:12.5px;color:var(--ink-500);}
+.pedido-custom-wrap span{font-size:13px;color:var(--ink-500);}
 
 .insumo-row{display:flex;align-items:center;gap:8px;padding:var(--space-2) 0;}
 .insumo-row + .insumo-row{border-top:1px solid #eef0f4;}

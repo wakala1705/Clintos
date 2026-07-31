@@ -14,6 +14,7 @@ export default function SolicitudesSub() {
           <LuSearch className="icon" aria-hidden="true" />
           <input type="text" placeholder="Buscar medicamento o insumo..." id="search-solicitudes"/>
         </div>
+        <div className="filter-spacer"></div>
         <div className="chip-group" id="chipgroup-solicitudes-estado">
           <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
           <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes</button>
@@ -57,7 +58,7 @@ export default function SolicitudesSub() {
             Otros filtros
             <span className="badge-count" id="sol-more-badge-count" style={{display: 'none'}} aria-live="polite">0</span>
           </button>
-          <div className="filter-popover" id="sol-more-popover" role="dialog" aria-label="Otros filtros: prioridad">
+          <div className="filter-popover filter-popover-right" id="sol-more-popover" role="dialog" aria-label="Otros filtros: prioridad">
             <div className="fp-section">
               <div className="fp-section-title">Prioridad</div>
               <div className="chip-group" id="sol-prioridad-chip-group">

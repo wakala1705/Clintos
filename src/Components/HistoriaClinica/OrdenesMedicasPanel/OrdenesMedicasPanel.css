@@ -2,24 +2,30 @@
    ordenamientos). Filtros, selection-toolbar, subnav-tab, legend-bar y
    data-table-wrap/data-table (base) son compartidos — ver shared/shared.css;
    aquí solo el layout tipo grid de la lista de órdenes de medicación. */
-.ome-grid-cols{grid-template-columns:36px 110px 1fr 160px 150px 150px 90px;}
+/* Orden de columnas: consecutivo, medicamentos, estado, médico, fecha, acciones.
+   Las primeras 5 tienen ancho fijo y quedan agrupadas y compactas a la
+   izquierda; la columna de fecha absorbe el espacio sobrante (minmax 1fr) para
+   empujar "Acciones" al extremo derecho del contenedor sin separar el resto. */
+.ome-grid-cols{grid-template-columns:36px 110px 130px 190px 180px minmax(150px,1fr) 90px;}
 .ome-list{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;}
 .ome-header-row{
-  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
-  background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;
-  font-size:10.5px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-2) var(--space-4);
+  background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
+  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
 }
-.ome-header-row .col-actions{text-align:right;}
+.ome-header-row .col-actions{text-align:right;justify-self:end;}
 .ome-order{border-bottom:1px solid var(--border);flex-shrink:0;}
 .ome-order:last-child{border-bottom:none;}
 .ome-order.filtered-out{display:none;}
 .ome-order-header{
-  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--surface);
+  display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-3) var(--space-4);background:var(--surface);
+  border-left:3px solid var(--primary);
 }
+.ome-order-header .ome-order-actions-cell{justify-self:end;}
 .ome-order-number{font-size:13px;font-weight:700;color:var(--primary);}
 .ome-order-cell{font-size:13px;color:var(--ink-900);}
 .ome-order-badge{
-  font-size:11px;font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
+  font-size:11px;font-weight:700;color:var(--ink-500);background:var(--gray-bg);
   padding:2px var(--space-2);border-radius:12px;white-space:nowrap;display:inline-block;
 }
 .ome-order-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end;}
@@ -28,7 +34,7 @@
 .ome-table-wrap{overflow-x:auto;}
 .ome-table{table-layout:fixed;width:100%;min-width:1526px;border-collapse:collapse;font-size:13px;}
 .ome-table thead th{
-  position:sticky;top:0;background:#f7f8fb;color:var(--ink-500);font-weight:600;font-size:10.5px;
+  position:sticky;top:0;background:#f7f8fb;color:var(--ink-500);font-weight:600;font-size:11px;
   text-transform:uppercase;letter-spacing:.03em;padding:var(--space-2) var(--space-3);text-align:left;
   border-bottom:1px solid var(--border);white-space:nowrap;
 }
@@ -55,9 +61,10 @@
 .ome-table th:nth-child(11), .ome-table td:nth-child(11){width:100px;}
 .ome-table th:nth-child(12), .ome-table td:nth-child(12){width:100px;}
 .ome-table th:nth-child(13), .ome-table td:nth-child(13){width:170px;}
+.ome-table th:nth-child(13){text-align:right;}
 .ome-check-cell{width:36px;}
 .ome-check-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);}
-.ome-actions-cell{display:flex;align-items:center;gap:4px;}
-.btn-programar{padding:6px var(--space-3);font-size:12.5px;}
+.ome-actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;}
+.btn-programar{padding:6px var(--space-3);font-size:13px;}
 html[data-theme="dark"] .ome-table tbody tr:hover{background:#1a2130;}
 html[data-theme="dark"] .ome-table tbody tr.selected{background:var(--primary-50);}

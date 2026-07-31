@@ -27,6 +27,7 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
   font-family:inherit;padding:0;
 }
 .view-btn:hover{background:#f3f5f9;}
+.view-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .view-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary);}
 .view-btn:disabled{opacity:.4;cursor:not-allowed;}
 .view-btn:disabled:hover{background:var(--surface);}
@@ -38,18 +39,18 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .timeline-table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;}
 
 .check-col-head, .check-col-cell{
-  position:sticky;left:0;z-index:4;background:var(--surface);
+  position:sticky;left:0;z-index:calc(var(--z-sticky) + 3);background:var(--surface);
   width:44px;min-width:44px;max-width:44px;text-align:center;
   border-right:1px solid var(--border);
 }
-.check-col-head{background:#f7f8fb;border-bottom:1px solid var(--border);z-index:6;}
+.check-col-head{background:#f7f8fb;border-bottom:1px solid var(--border);z-index:calc(var(--z-sticky) + 5);}
 .check-col-cell{border-bottom:1px solid #eef0f4;vertical-align:middle;}
 input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
   width:16px;height:16px;accent-color:var(--primary);cursor:pointer;vertical-align:middle;
 }
 
 .med-col-head, .med-col-cell{
-  position:sticky;left:44px;z-index:3;background:var(--surface);
+  position:sticky;left:44px;z-index:calc(var(--z-sticky) + 2);background:var(--surface);
   width:300px;min-width:300px;max-width:300px;
   border-right:1px solid var(--border);
 }
@@ -63,16 +64,16 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
   text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
   padding:10px 20px;border-bottom:1px solid var(--border);
-  background:#f7f8fb;z-index:5;
+  background:#f7f8fb;z-index:calc(var(--z-sticky) + 4);
 }
-.timeline-table thead th{position:sticky;top:0;z-index:2;}
-.timeline-table thead .med-col-head{z-index:5;}
-.timeline-table thead .check-col-head{z-index:6;}
+.timeline-table thead th{position:sticky;top:0;z-index:calc(var(--z-sticky) + 1);}
+.timeline-table thead .med-col-head{z-index:calc(var(--z-sticky) + 4);}
+.timeline-table thead .check-col-head{z-index:calc(var(--z-sticky) + 5);}
 
 .med-cell{padding:12px 20px;border-bottom:1px solid #eef0f4;vertical-align:middle;text-align:left;font-weight:normal;}
-.med-name{font-size:13.5px;font-weight:600;color:var(--ink-900);line-height:1.35;}
+.med-name{font-size:13px;font-weight:600;color:var(--ink-900);line-height:1.35;}
 .med-status-badge{
-  display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-left:8px;
+  display:inline-block;font-size:11px;font-weight:600;padding:var(--space-1) var(--space-2);border-radius:20px;margin-left:8px;
   vertical-align:middle;position:relative;top:-1px;
 }
 .med-status-badge.activo{background:var(--green-bg);color:#0d7a3d;}
@@ -142,7 +143,7 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 /* ---------- Densidad de filas (compactar / expandir) ---------- */
 .timeline-table.density-compact .hour-cell{height:48px;}
 .timeline-table.density-compact .med-cell{padding:6px 20px;}
-.timeline-table.density-compact .med-name{font-size:12.5px;}
+.timeline-table.density-compact .med-name{font-size:13px;}
 .timeline-table.density-compact .med-sub{display:none;}
 .timeline-table.density-compact .dose-marker{width:20px;height:20px;}
 .timeline-table.density-compact .dose-marker .icon{width:11px;height:11px;}

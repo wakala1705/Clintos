@@ -15,11 +15,12 @@ export default function RecepcionSub() {
           <LuSearch className="icon" aria-hidden="true" />
           <input type="text" placeholder="Buscar medicamento o insumo..." id="search-recepcion"/>
         </div>
+        <div className="filter-spacer"></div>
         <div className="chip-group" id="chipgroup-recepcion-estado">
-          <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
           <button className="chip-filter active" data-filter="despachado" aria-pressed="true">Pendiente</button>
-          <button className="chip-filter" data-filter="recibido" aria-pressed="false">Recibido</button>
           <button className="chip-filter" data-filter="parcial" aria-pressed="false">Parcial</button>
+          <button className="chip-filter" data-filter="recibido" aria-pressed="false">Recibido</button>
+          <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
         </div>
         <div className="filter-divider"></div>
         <div className="chip-group" id="chipgroup-recepcion-fecha">
@@ -57,7 +58,7 @@ export default function RecepcionSub() {
             Otros filtros
             <span className="badge-count" id="recep-more-badge-count" style={{display: 'none'}} aria-live="polite">0</span>
           </button>
-          <div className="filter-popover" id="recep-more-popover" role="dialog" aria-label="Otros filtros: tipo">
+          <div className="filter-popover filter-popover-right" id="recep-more-popover" role="dialog" aria-label="Otros filtros: tipo">
             <div className="fp-section">
               <div className="fp-section-title">Tipo</div>
               <div className="chip-group" id="recep-tipo-chip-group">

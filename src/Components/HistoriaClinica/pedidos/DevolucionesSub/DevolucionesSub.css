@@ -6,6 +6,7 @@
 .dev-order.filtered-out{display:none;}
 .dev-order-header{
   display:grid;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);background:var(--surface);
+  border-left:3px solid var(--primary);
 }
 .dev-order-header .row-expand-btn{color:var(--primary);}
 .dev-consecutivo{font-size:13px;font-weight:700;color:var(--primary);}

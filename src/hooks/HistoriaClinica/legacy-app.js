@@ -857,7 +857,6 @@ export function initHistoriaClinica() {
             <span class="recep-order-number">${orden.consecutivo}</span>
             <span class="recep-order-date">${orden.fecha}</span>
             <span class="child-count-badge">${orden.items.length} ítem${orden.items.length === 1 ? '' : 's'}</span>
-            <div class="recep-order-spacer"></div>
             <div class="recep-order-status" id="${orden.id}-status">${recepOrderStatusHtml(orden)}</div>
           </div>
           <div class="recep-order-body" id="body-${orden.id}" data-parent-group="${orden.id}">
@@ -2486,10 +2485,10 @@ export function initHistoriaClinica() {
               <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <span class="ome-order-number">${orden.consecutivo}</span>
-            <span class="ome-order-cell">${orden.medico}</span>
-            <span class="ome-order-cell">${orden.fecha}</span>
             <span class="ome-order-badge">${orden.items.length} medicamento${orden.items.length === 1 ? '' : 's'}</span>
             <span>${estadoBadgeHtml}</span>
+            <span class="ome-order-cell">${orden.medico}</span>
+            <span class="ome-order-cell">${orden.fecha}</span>
             <div class="ome-order-actions-cell">
               <button type="button" class="dev-icon-btn" title="Ver detalle" data-ome-order-action="ver">
                 <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>

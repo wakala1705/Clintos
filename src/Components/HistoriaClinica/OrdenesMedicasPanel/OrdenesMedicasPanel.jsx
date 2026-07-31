@@ -27,10 +27,11 @@ export default function OrdenesMedicasPanel() {
             <LuSearch className="icon" aria-hidden="true" />
             <input type="text" placeholder="Buscar por consecutivo, medicamento o médico..." id="search-ordenes"/>
           </div>
+          <div className="filter-spacer"></div>
           <div className="chip-group" id="chipgroup-ordenes-estado">
-            <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
-            <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes de programar</button>
+            <button className="chip-filter active" data-filter="pendiente" aria-pressed="true">Pendientes de programar</button>
             <button className="chip-filter" data-filter="programada" aria-pressed="false">Programadas</button>
+            <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
           </div>
           <div className="filter-divider"></div>
           <div className="chip-group" id="chipgroup-ordenes-fecha">
@@ -68,7 +69,7 @@ export default function OrdenesMedicasPanel() {
               Otros filtros
               <span className="badge-count" id="ome-more-badge-count" style={{display: 'none'}} aria-live="polite">0</span>
             </button>
-            <div className="filter-popover" id="ome-more-popover" role="dialog" aria-label="Otros filtros: prioridad">
+            <div className="filter-popover filter-popover-right" id="ome-more-popover" role="dialog" aria-label="Otros filtros: prioridad">
               <div className="fp-section">
                 <div className="fp-section-title">Prioridad</div>
                 <div className="chip-group" id="ome-prioridad-chip-group">
@@ -94,10 +95,10 @@ export default function OrdenesMedicasPanel() {
         <div className="ome-header-row ome-grid-cols">
           <span></span>
           <span>Consecutivo</span>
-          <span>Médico</span>
-          <span>Fecha de la orden</span>
           <span>Medicamentos</span>
           <span>Estado</span>
+          <span>Médico</span>
+          <span>Fecha de la orden</span>
           <span className="col-actions">Acciones</span>
         </div>
         <div className="ome-list" id="ordenes-list">{/* filas generadas por legacy-app.js */}</div>
@@ -116,6 +117,7 @@ export default function OrdenesMedicasPanel() {
             <LuSearch className="icon" aria-hidden="true" />
             <input type="text" placeholder="Buscar por descripción o médico..." id="search-otros-ordenamientos"/>
           </div>
+          <div className="filter-spacer"></div>
           <div className="chip-group" id="chipgroup-otros-estado">
             <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
             <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes</button>
@@ -158,7 +160,7 @@ export default function OrdenesMedicasPanel() {
               Otros filtros
               <span className="badge-count" id="otros-more-badge-count" style={{display: 'none'}} aria-live="polite">0</span>
             </button>
-            <div className="filter-popover" id="otros-more-popover" role="dialog" aria-label="Otros filtros: tipo de ordenamiento">
+            <div className="filter-popover filter-popover-right" id="otros-more-popover" role="dialog" aria-label="Otros filtros: tipo de ordenamiento">
               <div className="fp-section">
                 <div className="fp-section-title">Tipo</div>
                 <div className="chip-group" id="otros-tipo-chip-group">

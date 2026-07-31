@@ -2,15 +2,16 @@
    .dp-info-row, .k, .v) también lo usa PatientBanner (popover de alergias) —
    ver shared/shared.css. */
 .dose-popover{
-  position:fixed;z-index:300;width:250px;
+  position:fixed;z-index:var(--z-dose-popover);width:250px;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 16px 40px rgba(16,24,39,.20);padding:16px;
   opacity:0;pointer-events:none;transform:translateY(4px);
   transition:opacity .12s ease,transform .12s ease;
+  isolation:isolate;
 }
 .dose-popover.open{opacity:1;pointer-events:auto;transform:translateY(0);}
 .dp-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
-.dp-time{font-size:17px;font-weight:700;color:var(--ink-900);}
+.dp-time{font-size:16px;font-weight:700;color:var(--ink-900);}
 .dp-status-badge{
   font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
   display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
@@ -27,7 +28,7 @@
 .dp-status-badge.st-suspended{background:var(--gray-bg);color:var(--ink-500);}
 .dp-status-badge.st-suspended .dot{background:var(--ink-400);}
 
-.dp-pending-note{font-size:11.5px;color:var(--ink-500);font-style:italic;line-height:1.4;}
+.dp-pending-note{font-size:12px;color:var(--ink-500);font-style:italic;line-height:1.4;}
 .dp-observaciones{
   margin-top:6px;padding:8px 10px;background:var(--bg);border-radius:8px;
   font-size:12px;color:var(--ink-700);line-height:1.4;font-style:italic;
