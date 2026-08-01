@@ -23,7 +23,7 @@
   --ink-900:#101827;
   --ink-700:#374151;
   --ink-500:#6b7280;
-  --ink-400:#9aa3b2;
+  --ink-400:#838a99; /* ~3.5:1 sobre --surface blanco — 1.4.11 (chevrons, separadores) */
   --border:#e5e8ef;
   --surface:#ffffff;
   --bg:#f4f6fb;
@@ -39,6 +39,18 @@
   --violet-fg:#6d3fd6;
   --radius:8px;
   --radius-lg:12px;
+
+  /* Semantic accent roles — all derived from the --primary blue family above,
+     kept as distinct names so each usage (selection state, single tint of
+     status, link text) can be restyled independently instead of every
+     consumer reaching for --primary/--primary-50 directly. See
+     ajustes-acento-color-ordenes-medicas.md for the rationale. */
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
+  --link-text:var(--primary);
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);
@@ -46,7 +58,7 @@ html[data-theme="dark"]{
   --ink-900:#f1f4f9;
   --ink-700:#c6cbd6;
   --ink-500:#8b93a3;
-  --ink-400:#5b6272;
+  --ink-400:#7b8394; /* ~4.5:1 sobre --surface oscuro — 1.4.11 */
   --border:#2a3242;
   --surface:#161c2b;
   --bg:#0c0f17;
@@ -133,6 +145,8 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .btn .icon{width:18px;height:18px;}
 .btn-primary{background:var(--primary);color:#fff;}
 .btn-primary:hover{background:var(--primary-dark);}
+.btn-outline{background:transparent;color:var(--primary);border-color:var(--primary);}
+.btn-outline:hover{background:var(--primary-50);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
 .btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
 .btn-tinted{background:var(--primary-50);color:var(--primary-dark);border-color:var(--primary-100);}
@@ -170,8 +184,34 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 }
 .chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
 .chip-filter .count{font-size:11px;font-weight:700;color:var(--ink-400);}
-.chip-filter.active{background:var(--primary);border-color:var(--primary);color:#fff;}
-.chip-filter.active .count{color:rgba(255,255,255,.85);}
+.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+/* ---------- Filtro de estado / rango rápido como segmented control ----------
+   Variante de .chip-group para los filtros "primarios" de la barra (estado,
+   rango rápido de fecha) en Medicamentos/Órdenes médicas/Pedidos: agrupa los
+   chip-filter en un único contenedor tipo píldora (fondo tenue, borde
+   exterior) en vez de chips sueltos con borde individual — la opción activa
+   se distingue con un fondo "elevado" (surface + sombra), no con relleno
+   azul sólido. Los chip-group de popovers (prioridad, tipo, vía...) se
+   quedan con el estilo suelto de .chip-filter de arriba. */
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
 
 .filter-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
 .filter-cluster{display:flex;align-items:center;gap:8px;}
@@ -265,7 +305,24 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .subnav-tab .icon{width:15px;height:15px;flex-shrink:0;}
 .subnav-tab:hover{background:#f3f5f9;border-color:#d7dce6;}
 .subnav-tab:focus-visible{outline:2px solid var(--primary);}
-.subnav-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.subnav-tab.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+
+/* ---------- BADGE DE ESTADO DE DOSIS (DosePopover + vista "Lista" de MedicamentosPanel) ---------- */
+.dp-status-badge{
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.dp-status-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dp-status-badge.st-administered{background:var(--green-bg);color:#0d7a3d;}
+.dp-status-badge.st-administered .dot{background:#0d7a3d;}
+.dp-status-badge.st-upcoming{background:var(--amber-bg);color:var(--amber-fg);}
+.dp-status-badge.st-upcoming .dot{background:var(--amber);}
+.dp-status-badge.st-incident{background:var(--red-bg);color:var(--red);}
+.dp-status-badge.st-incident .dot{background:var(--red);}
+.dp-status-badge.st-scheduled{background:var(--gray-bg);color:var(--ink-500);}
+.dp-status-badge.st-scheduled .dot{background:var(--ink-400);}
+.dp-status-badge.st-suspended{background:var(--gray-bg);color:var(--ink-500);}
+.dp-status-badge.st-suspended .dot{background:var(--ink-400);}
 
 /* ---------- LEGEND / FOOTER wrapper (el contenido interno del legend, p. ej. marcadores, vive en MedicamentosPanel.css) ---------- */
 .legend-bar{
@@ -407,14 +464,14 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .order-badge.aprobada,.order-badge.completa,.order-badge.procesada{background:var(--green-bg);color:#0d7a3d;}
 .order-badge.rechazada{background:var(--red-bg);color:var(--red);}
 .order-badge.parcial{background:var(--violet-bg);color:var(--violet-fg);}
-.order-badge.despachada{background:var(--primary-50);color:var(--primary-dark);}
+.order-badge.despachada{background:var(--status-info-bg);color:var(--status-info-fg);}
 .order-badge.mixto{background:var(--violet-bg);color:var(--violet-fg);}
 .order-badge.recibido{background:var(--green-bg);color:#0d7a3d;}
 .order-badge.urgente{background:var(--red-bg);color:var(--red);}
 .order-badge.normal{background:var(--gray-bg);color:var(--ink-500);}
 .order-badge.programada{background:var(--green-bg);color:#0d7a3d;}
 .order-badge.no-solicitado{background:var(--gray-bg);color:var(--ink-500);}
-.order-badge.solicitado{background:var(--primary-50);color:var(--primary-dark);}
+.order-badge.solicitado{background:var(--status-info-bg);color:var(--status-info-fg);}
 .confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0d7a3d;}
 .confirmed-tag .icon{width:15px;height:15px;}
 
@@ -483,6 +540,7 @@ html[data-theme="dark"] .subnav-tab:hover,
 html[data-theme="dark"] .dp-action:hover,
 html[data-theme="dark"] .btn-secondary:hover,
 html[data-theme="dark"] .modal-close-btn:hover{background:#20283a;border-color:#333e54;}
+html[data-theme="dark"] .btn-outline:hover{background:var(--primary-50);}
 html[data-theme="dark"] .search-field input:focus,
 html[data-theme="dark"] .fp-date-field input:focus{background:var(--surface);}
 html[data-theme="dark"] .data-table tr.child-row td{background:#1a2130;}

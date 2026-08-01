@@ -25,6 +25,13 @@
     --violet-fg:#6d3fd6;
     --radius:8px;
     --radius-lg:12px;
+
+    --interactive-selected-bg:var(--primary-50);
+    --interactive-selected-border:var(--primary-100);
+    --interactive-selected-text:var(--primary-dark);
+    --status-info-bg:var(--primary-50);
+    --status-info-fg:var(--primary-dark);
+    --link-text:var(--primary);
   }
 
   html[data-theme="dark"]{
@@ -378,7 +385,7 @@
     font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;
     white-space:nowrap;display:inline-block;
   }
-  .badge.eps{background:var(--primary-50);color:var(--primary-dark);}
+  .badge.eps{background:var(--status-info-bg);color:var(--status-info-fg);}
   .badge.neutral{background:#eef0f4;color:var(--ink-700);}
 
   .estado-badge{
@@ -664,11 +671,11 @@
   }
   .day-chip:hover{border-color:var(--primary);}
   .day-chip:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-  .day-chip.active{background:var(--primary);border-color:var(--primary);}
+  .day-chip.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);}
   .day-chip .dc-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
-  .day-chip.active .dc-label{color:rgba(255,255,255,.85);}
+  .day-chip.active .dc-label{color:var(--interactive-selected-text);opacity:.85;}
   .day-chip .dc-date{font-size:13px;font-weight:600;color:var(--ink-900);margin-top:3px;}
-  .day-chip.active .dc-date{color:#fff;}
+  .day-chip.active .dc-date{color:var(--interactive-selected-text);}
 
   .slots-grid{display:flex;flex-wrap:wrap;gap:12px;}
   .slot-btn{
@@ -677,9 +684,9 @@
   }
   .slot-btn:hover{border-color:var(--primary);}
   .slot-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-  .slot-btn.selected{background:var(--primary);border-color:var(--primary);}
+  .slot-btn.selected{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);}
   .slot-btn .sb-h{font-size:14px;font-weight:600;color:var(--ink-900);}
-  .slot-btn.selected .sb-h{color:#fff;}
+  .slot-btn.selected .sb-h{color:var(--interactive-selected-text);}
   .slots-empty{font-size:13px;color:var(--ink-500);font-style:italic;}
 
   /* ---- Contratación: ficha de contexto + tabla de contratos ---- */

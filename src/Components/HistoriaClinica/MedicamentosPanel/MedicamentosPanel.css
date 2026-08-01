@@ -108,7 +108,7 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
 }
 .med-status-badge.activo{background:var(--green-bg);color:#0d7a3d;}
 .med-status-badge.suspendido{background:var(--gray-bg);color:var(--ink-500);}
-.med-status-badge.finalizado{background:var(--primary-50);color:var(--primary-dark);}
+.med-status-badge.finalizado{background:var(--status-info-bg);color:var(--status-info-fg);}
 .med-status-badge.devuelto{background:var(--violet-bg);color:var(--violet-fg);}
 .med-sub{font-size:12px;color:var(--ink-500);margin-top:3px;display:flex;align-items:center;gap:6px;}
 .med-sub .dot-sep{width:3px;height:3px;border-radius:50%;background:var(--ink-400);}
@@ -204,6 +204,63 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 .legend-marker.incident{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(192,43,43,.35);}
 .legend-marker.suspended{background:var(--gray-bg);color:var(--ink-500);border:1.5px solid rgba(107,114,128,.35);}
 
+/* ---------- VISTA "LISTA" (alternativa al timeline, ver view-mode-list-btn) ----------
+   Una fila por toma (no por medicamento). El botón de cada fila reutiliza
+   .dose-marker (mismo popover/dataset que el timeline vía markerNode) con la
+   variante .dose-list-marker para pasar de círculo a fila completa — el
+   fondo/borde por tipo (.administered/.upcoming/...) de arriba se resetea a
+   neutro aquí a propósito (ver comentario abajo) y el color de estado queda
+   solo en el ícono (reutiliza .legend-marker.{tipo}, ya definido arriba) y
+   en .dp-status-badge (shared.css): así no se tiñe toda la fila y la lista
+   se mantiene legible con muchas filas. */
+.dose-list{
+  list-style:none;margin:0;padding:10px 16px;
+  flex:1;min-height:0;overflow-y:auto;
+  display:flex;flex-direction:column;gap:6px;
+}
+.dose-list-row{display:flex;align-items:flex-start;gap:10px;}
+.dose-list-row .dose-list-check{margin-top:14px;flex-shrink:0;}
+.dose-list-row.selected .dose-marker.dose-list-marker{
+  background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);
+}
+
+.dose-marker.dose-list-marker{
+  width:100%;height:auto;margin:0;border-radius:var(--radius);
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  justify-content:flex-start;text-align:left;
+  background:var(--surface);border:1px solid var(--border);color:inherit;
+}
+.dose-marker.dose-list-marker:hover{box-shadow:none;transform:none;background:#fafbfd;}
+.dose-marker.dose-list-marker:focus-visible{outline:2px solid var(--primary);box-shadow:none;outline-offset:2px;}
+
+.dlm-icon{width:26px;height:26px;flex-shrink:0;}
+.dlm-icon .icon{width:13px;height:13px;}
+.dlm-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.dlm-name{font-size:13px;font-weight:600;color:var(--ink-900);}
+.dlm-sub{display:block;font-size:12px;color:var(--ink-500);margin-top:1px;}
+.dlm-meta{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.dlm-time{font-size:13px;font-weight:700;color:var(--ink-900);font-variant-numeric:tabular-nums;}
+
+.dose-list-empty{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:40px 16px;color:var(--ink-500);
+}
+
+/* Mobile: cada fila colapsa a card apilada en una sola columna, sin que el
+   contenedor necesite scroll horizontal (a diferencia del timeline).
+   NOTA: esto todavía no es alcanzable en la práctica — .app{min-width:1440px}
+   (historia-clinica.css, excepción documentada de WCAG 1.4.10) recorta todo
+   el shell por debajo de 1440px con overflow:hidden, así que el breakpoint
+   de abajo nunca llega a mostrarse hasta que se aborde el shell completo
+   (sidebar/topbar responsive) como iniciativa aparte. Decisión explícita:
+   dejar esta regla lista para ese momento, no expandir el alcance ahora. */
+@media (max-width:640px){
+  .dose-marker.dose-list-marker{flex-wrap:wrap;}
+  .dlm-icon{order:1;}
+  .dlm-main{order:2;flex:1 1 calc(100% - 38px);}
+  .dlm-meta{order:3;flex:1 1 100%;justify-content:space-between;margin-top:2px;padding-left:38px;}
+}
+
 html[data-theme="dark"] tr.med-row:hover .med-cell,
 html[data-theme="dark"] tr.med-row:hover .hour-cell,
 html[data-theme="dark"] tr.med-row:hover .check-col-cell{background:#1a2130;}
@@ -219,3 +276,4 @@ html[data-theme="dark"] tr.row-finalizado .check-col-cell{background:#141a2a;}
 html[data-theme="dark"] .grid-dot{background:#333c50;}
 html[data-theme="dark"] .dose-marker.scheduled,
 html[data-theme="dark"] .legend-marker.scheduled{color:var(--ink-500);border-color:var(--ink-500);}
+html[data-theme="dark"] .dose-marker.dose-list-marker:hover{background:#20283a;}

@@ -16,14 +16,14 @@ export default function RecepcionSub() {
           <input type="text" placeholder="Buscar medicamento o insumo..." id="search-recepcion"/>
         </div>
         <div className="filter-spacer"></div>
-        <div className="chip-group" id="chipgroup-recepcion-estado">
+        <div className="chip-group segmented" id="chipgroup-recepcion-estado">
           <button className="chip-filter active" data-filter="despachado" aria-pressed="true">Pendiente</button>
           <button className="chip-filter" data-filter="parcial" aria-pressed="false">Parcial</button>
           <button className="chip-filter" data-filter="recibido" aria-pressed="false">Recibido</button>
           <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
         </div>
         <div className="filter-divider"></div>
-        <div className="chip-group" id="chipgroup-recepcion-fecha">
+        <div className="chip-group segmented" id="chipgroup-recepcion-fecha">
           <button className="chip-filter" data-quickdate="hoy" aria-pressed="false">Hoy</button>
           <button className="chip-filter" data-quickdate="semana" aria-pressed="false">Última semana</button>
         </div>

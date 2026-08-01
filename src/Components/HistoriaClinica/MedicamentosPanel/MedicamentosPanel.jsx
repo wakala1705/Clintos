@@ -1,5 +1,5 @@
 import './MedicamentosPanel.css';
-import { LuCalendar, LuCheck, LuChevronDown, LuChevronLeft, LuChevronRight, LuClock, LuFilter, LuMinus, LuPlus, LuSearch, LuSlidersHorizontal, LuTriangleAlert } from 'react-icons/lu';
+import { LuCalendar, LuCheck, LuChevronDown, LuChevronLeft, LuChevronRight, LuCircleDotDashed, LuClock, LuFilter, LuMinus, LuPlus, LuSearch, LuSlidersHorizontal, LuTriangleAlert } from 'react-icons/lu';
 
 // Tab "Gestión de medicamentos": navegación de día, filtros del cronograma,
 // barra de selección masiva y la tabla-línea-de-tiempo (encabezado de horas y
@@ -30,7 +30,7 @@ export default function MedicamentosPanel() {
 
         <div className="filter-spacer"></div>
 
-        <div className="chip-group" id="estado-chip-group">
+        <div className="chip-group segmented" id="estado-chip-group">
           <button className="chip-filter active" data-estado="activo" aria-pressed="true">Activos</button>
           <button className="chip-filter" data-estado="finalizado" aria-pressed="false">Finalizados</button>
           <button className="chip-filter" data-estado="suspendido" aria-pressed="false">Suspendidos</button>
@@ -39,7 +39,7 @@ export default function MedicamentosPanel() {
 
         <div className="filter-divider"></div>
 
-        <div className="chip-group">
+        <div className="chip-group segmented">
           <button className="chip-filter active" data-quickdate="hoy" aria-pressed="true">Hoy</button>
           <button className="chip-filter" data-quickdate="semana" aria-pressed="false">Última semana</button>
         </div>
@@ -110,22 +110,31 @@ export default function MedicamentosPanel() {
           </button>
           <div className="filter-popover filter-popover-right" id="view-popover" role="dialog" aria-label="Ajustes de vista del cronograma">
             <div className="fp-section">
-              <div className="fp-section-title">Densidad de columnas</div>
-              <div className="density-stepper">
-                <button type="button" className="density-step-btn" id="view-compact-btn" title="Reducir densidad" aria-label="Reducir densidad de columnas">
-                  <LuMinus className="icon" aria-hidden="true" />
-                </button>
-                <span className="density-level-label" id="density-level-label">Media</span>
-                <button type="button" className="density-step-btn" id="view-expand-btn" title="Aumentar densidad" aria-label="Aumentar densidad de columnas">
-                  <LuPlus className="icon" aria-hidden="true" />
-                </button>
+              <div className="fp-section-title">Modo de vista</div>
+              <div className="segmented-control">
+                <button type="button" className="segmented-btn active" id="view-mode-timeline-btn" aria-pressed="true">Timeline</button>
+                <button type="button" className="segmented-btn" id="view-mode-list-btn" aria-pressed="false">Lista</button>
               </div>
             </div>
-            <div className="fp-section">
-              <div className="fp-section-title">Intervalo de tiempo</div>
-              <div className="segmented-control">
-                <button type="button" className="segmented-btn active" id="view-columns-btn" aria-pressed="true">Todas las horas</button>
-                <button type="button" className="segmented-btn" id="view-split-btn" aria-pressed="false">Horas pares</button>
+            <div id="view-timeline-settings">
+              <div className="fp-section">
+                <div className="fp-section-title">Densidad de columnas</div>
+                <div className="density-stepper">
+                  <button type="button" className="density-step-btn" id="view-compact-btn" title="Reducir densidad" aria-label="Reducir densidad de columnas">
+                    <LuMinus className="icon" aria-hidden="true" />
+                  </button>
+                  <span className="density-level-label" id="density-level-label">Media</span>
+                  <button type="button" className="density-step-btn" id="view-expand-btn" title="Aumentar densidad" aria-label="Aumentar densidad de columnas">
+                    <LuPlus className="icon" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+              <div className="fp-section">
+                <div className="fp-section-title">Intervalo de tiempo</div>
+                <div className="segmented-control">
+                  <button type="button" className="segmented-btn active" id="view-columns-btn" aria-pressed="true">Todas las horas</button>
+                  <button type="button" className="segmented-btn" id="view-split-btn" aria-pressed="false">Horas pares</button>
+                </div>
               </div>
             </div>
           </div>
@@ -155,13 +164,20 @@ export default function MedicamentosPanel() {
         </table>
       </div>
 
+      {/* Vista "Lista": alternativa al timeline horizontal, una fila por toma
+          (no por medicamento) — ver renderDoseList en legacy-app.js. Oculta
+          por defecto; view-mode-list-btn la activa. */}
+      <ul className="dose-list" id="dose-list" style={{display: 'none'}}>
+        {/* filas y estado vacío generados por legacy-app.js */}
+      </ul>
+
       <div className="legend-bar">
         <div className="footer-title-block">
           <div className="ft-sub" id="ft-sub">7 medicamentos · ronda del 02 May 2026</div>
         </div>
         <div className="legend-divider"></div>
         <div className="legend-items">
-          <div className="legend-item"><span className="legend-marker scheduled"></span>Programado</div>
+          <div className="legend-item"><span className="legend-marker scheduled"><LuCircleDotDashed className="icon" strokeWidth="3" /></span>Programado</div>
           <div className="legend-item"><span className="legend-marker administered"><LuCheck className="icon" strokeWidth="3" /></span>Administrado</div>
           <div className="legend-item"><span className="legend-marker upcoming"><LuClock className="icon" strokeWidth="3" /></span>Próximo</div>
           <div className="legend-item"><span className="legend-marker incident"><LuTriangleAlert className="icon" strokeWidth="3" /></span>Incidencia</div>

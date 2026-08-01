@@ -28,13 +28,13 @@ export default function OrdenesMedicasPanel() {
             <input type="text" placeholder="Buscar por consecutivo, medicamento o médico..." id="search-ordenes"/>
           </div>
           <div className="filter-spacer"></div>
-          <div className="chip-group" id="chipgroup-ordenes-estado">
+          <div className="chip-group segmented" id="chipgroup-ordenes-estado">
             <button className="chip-filter active" data-filter="pendiente" aria-pressed="true">Pendientes de programar</button>
             <button className="chip-filter" data-filter="programada" aria-pressed="false">Programadas</button>
             <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
           </div>
           <div className="filter-divider"></div>
-          <div className="chip-group" id="chipgroup-ordenes-fecha">
+          <div className="chip-group segmented" id="chipgroup-ordenes-fecha">
             <button className="chip-filter" data-quickdate="hoy" aria-pressed="false">Hoy</button>
             <button className="chip-filter" data-quickdate="semana" aria-pressed="false">Última semana</button>
           </div>
@@ -118,14 +118,14 @@ export default function OrdenesMedicasPanel() {
             <input type="text" placeholder="Buscar por descripción o médico..." id="search-otros-ordenamientos"/>
           </div>
           <div className="filter-spacer"></div>
-          <div className="chip-group" id="chipgroup-otros-estado">
+          <div className="chip-group segmented" id="chipgroup-otros-estado">
             <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
             <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes</button>
             <button className="chip-filter" data-filter="programado" aria-pressed="false">Programados</button>
             <button className="chip-filter" data-filter="realizado" aria-pressed="false">Realizados</button>
           </div>
           <div className="filter-divider"></div>
-          <div className="chip-group" id="chipgroup-otros-fecha">
+          <div className="chip-group segmented" id="chipgroup-otros-fecha">
             <button className="chip-filter" data-quickdate="hoy" aria-pressed="false">Hoy</button>
             <button className="chip-filter" data-quickdate="semana" aria-pressed="false">Última semana</button>
           </div>

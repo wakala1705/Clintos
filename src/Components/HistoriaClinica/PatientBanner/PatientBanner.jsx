@@ -15,7 +15,7 @@ export default function PatientBanner() {
         <div className="pm-item"><span className="lbl">EDAD</span> <b>34 años 10 meses 14 días</b></div>
         <div className="pm-item"><span className="lbl">SEXO</span> <b>Femenino</b></div>
         <div className="pm-item"><b>Salud Total Entidad Promotora de Salud del Régimen Contributivo y del Régimen S</b></div>
-        <div className="pm-item"><a href="#">Ver más datos</a></div>
+        <div className="pm-item pm-item-more">Ver más datos</div>
       </div>
       <div className="patient-banner-right">
         <div className="filter-popover-wrap" id="allergy-popover-wrap">

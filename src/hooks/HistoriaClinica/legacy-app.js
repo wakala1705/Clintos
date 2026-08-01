@@ -31,6 +31,48 @@ export function initHistoriaClinica() {
     group.classList.toggle('open');
   }
 
+  /* ================= ACCESIBILIDAD: focus trap para modales =================
+     Mientras un modal está abierto, .app queda oculta a tecnología de
+     asistencia (aria-hidden) y Tab/Shift+Tab quedan atrapados dentro del
+     modal, para que el contenido "detrás" del overlay no siga siendo
+     alcanzable con teclado. Toast/DosePopover y los propios modales viven
+     fuera de #app-shell (hermanos en historia-clinica.jsx), así que no se
+     ven afectados por el aria-hidden. */
+  const appShell = document.getElementById('app-shell');
+  const MODAL_FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const modalTrapHandlers = new WeakMap();
+  const openModalOverlays = new Set();
+
+  function trapModalFocus(overlayEl){
+    if(!overlayEl) return;
+    openModalOverlays.add(overlayEl);
+    if(appShell) appShell.setAttribute('aria-hidden', 'true');
+    const handler = (e)=>{
+      if(e.key !== 'Tab') return;
+      const card = overlayEl.querySelector('.modal-card') || overlayEl;
+      const focusable = Array.from(card.querySelectorAll(MODAL_FOCUSABLE_SELECTOR))
+        .filter(el => el.offsetParent !== null);
+      if(focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if(e.shiftKey && document.activeElement === first){
+        e.preventDefault(); last.focus();
+      } else if(!e.shiftKey && document.activeElement === last){
+        e.preventDefault(); first.focus();
+      }
+    };
+    overlayEl.addEventListener('keydown', handler);
+    modalTrapHandlers.set(overlayEl, handler);
+  }
+
+  function releaseModalFocus(overlayEl){
+    if(!overlayEl) return;
+    openModalOverlays.delete(overlayEl);
+    if(appShell && openModalOverlays.size === 0) appShell.removeAttribute('aria-hidden');
+    const handler = modalTrapHandlers.get(overlayEl);
+    if(handler){ overlayEl.removeEventListener('keydown', handler); modalTrapHandlers.delete(overlayEl); }
+  }
+
   /* ================================================================
      A partir de aquí: contenido íntegro del <script> del mockup ampliado.
   ================================================================= */
@@ -46,7 +88,8 @@ export function initHistoriaClinica() {
     check: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     clock: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
     warning: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
-    minus: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>'
+    minus: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>',
+    scheduled: '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.1 2.18a9.93 9.93 0 0 1 3.8 0"/><path d="M17.6 3.71a9.95 9.95 0 0 1 2.69 2.7"/><path d="M21.82 10.1a9.93 9.93 0 0 1 0 3.8"/><path d="M20.29 17.6a9.95 9.95 0 0 1-2.7 2.69"/><path d="M13.9 21.82a9.94 9.94 0 0 1-3.8 0"/><path d="M6.4 20.29a9.95 9.95 0 0 1-2.69-2.7"/><path d="M2.18 13.9a9.93 9.93 0 0 1 0-3.8"/><path d="M3.71 6.4a9.95 9.95 0 0 1 2.7-2.69"/><circle cx="12" cy="12" r="1"/></svg>'
   };
 
   function getSystemTodayDate(){
@@ -115,6 +158,7 @@ export function initHistoriaClinica() {
     });
     if(huboCambios){
       renderMedRows();
+      renderDoseList();
       applyFilters();
     }
   }
@@ -214,17 +258,25 @@ export function initHistoriaClinica() {
     document.querySelector('.timeline-table').style.width = totalWidth + 'px';
   }
 
-  function markerNode(type, med, hourIndex){
-    const wrap = document.createElement('button');
-    wrap.type = 'button';
-    wrap.className = 'dose-marker ' + type;
-    if(type==='administered') wrap.innerHTML = ICONS.check;
-    else if(type==='upcoming') wrap.innerHTML = ICONS.clock;
-    else if(type==='incident') wrap.innerHTML = ICONS.warning;
-    else if(type==='suspended') wrap.innerHTML = ICONS.minus;
+  function iconForDoseType(type){
+    if(type==='administered') return ICONS.check;
+    if(type==='upcoming') return ICONS.clock;
+    if(type==='incident') return ICONS.warning;
+    if(type==='suspended') return ICONS.minus;
+    if(type==='scheduled') return ICONS.scheduled;
+    return '';
+  }
+
+  // Compartido entre el marcador circular del timeline (markerNode) y la fila
+  // de la vista "Lista" (buildDoseListRow, ver MedicamentosPanel): ambos son
+  // el mismo botón "dose-marker" interactivo, solo cambia su layout/tamaño —
+  // así showDosePopover/attachDoseMarkerEvents funcionan igual sin importar
+  // la vista activa.
+  function populateDoseMarkerDataset(wrap, type, med, hourIndex){
     const time = hourLabel(hourIndex);
     const statusLabel = (STATUS_META[type] || {}).label || type;
-    const reg = (med.registrations && med.registrations[hourIndex]) || null;
+    const dateRegs = med.registrations && med.registrations[currentViewDate];
+    const reg = (dateRegs && dateRegs[hourIndex]) || null;
 
     wrap._med = med;
     wrap._hour = hourIndex;
@@ -249,12 +301,23 @@ export function initHistoriaClinica() {
     }
     wrap.setAttribute('aria-label', `Dosis ${time}, ${statusLabel} — ${med.name}`);
     wrap.setAttribute('aria-haspopup', 'true');
+  }
+
+  function markerNode(type, med, hourIndex){
+    const wrap = document.createElement('button');
+    wrap.type = 'button';
+    wrap.className = 'dose-marker ' + type;
+    wrap.innerHTML = iconForDoseType(type);
+    populateDoseMarkerDataset(wrap, type, med, hourIndex);
     return wrap;
   }
 
   const ROWS = [];
+  const LIST_ROWS = [];
   const selectedMeds = new Set();
   let tbodyEl = null;
+  let listEl = null;
+  let viewMode = 'timeline';
 
   function buildMedRow(med){
     const tr = document.createElement('tr');
@@ -268,7 +331,7 @@ export function initHistoriaClinica() {
     checkbox.className = 'row-check';
     checkbox.checked = selectedMeds.has(med);
     checkbox.setAttribute('aria-label', `Seleccionar ${med.name}`);
-    checkbox.addEventListener('change', ()=> toggleRowSelection(med, tr, checkbox.checked));
+    checkbox.addEventListener('change', ()=> toggleMedSelection(med, checkbox.checked));
     checkTd.appendChild(checkbox);
     tr.appendChild(checkTd);
 
@@ -333,7 +396,96 @@ export function initHistoriaClinica() {
     renderMedRows();
   }
 
+  /* ================= Vista "Lista" (alternativa al timeline) =================
+     Una fila por toma (no por medicamento): si un medicamento tiene 3 tomas
+     hoy, aparecen 3 <li>. Reusa markerNode/populateDoseMarkerDataset (mismo
+     botón .dose-marker, mismo popover) — solo cambia su layout vía la clase
+     .dose-list-marker. Orden: Incidencia y Próximo primero (sin importar la
+     hora del resto), luego el resto por hora. */
+  const DOSE_LIST_PRIORITY = { incident: 0, upcoming: 1 };
+  function doseListPriority(type){
+    return DOSE_LIST_PRIORITY.hasOwnProperty(type) ? DOSE_LIST_PRIORITY[type] : 2;
+  }
+
+  function buildDoseListRow(med, hour, type){
+    const li = document.createElement('li');
+    li.className = 'dose-list-row';
+    if(selectedMeds.has(med)) li.classList.add('selected');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'row-check dose-list-check';
+    checkbox.checked = selectedMeds.has(med);
+    checkbox.setAttribute('aria-label', `Seleccionar ${med.name}`);
+    checkbox.addEventListener('change', ()=> toggleMedSelection(med, checkbox.checked));
+    li.appendChild(checkbox);
+
+    const meta = STATUS_META[type] || {label: type, cls: ''};
+    const marker = document.createElement('button');
+    marker.type = 'button';
+    marker.className = 'dose-marker dose-list-marker ' + type;
+    marker.innerHTML = `
+      <span class="legend-marker dlm-icon ${type}">${iconForDoseType(type)}</span>
+      <span class="dlm-main">
+        <span class="dlm-name">${med.name}<span class="med-status-badge ${med.estado}">${ESTADO_LABEL[med.estado]}</span></span>
+        <span class="dlm-sub">${med.dose} · ${med.via}</span>
+      </span>
+      <span class="dlm-meta">
+        <span class="dlm-time">${hourLabel(hour)}</span>
+        <span class="dp-status-badge ${meta.cls}"><span class="dot"></span>${meta.label}</span>
+      </span>
+    `;
+    populateDoseMarkerDataset(marker, type, med, hour);
+    li.appendChild(marker);
+
+    return li;
+  }
+
+  function renderDoseList(){
+    if(!listEl) return;
+    listEl.querySelectorAll('li.dose-list-row').forEach(li=>li.remove());
+    LIST_ROWS.length = 0;
+    const emptyLi = document.getElementById('dose-list-empty');
+
+    const entries = [];
+    MEDS.forEach(med=>{
+      const dayMarkers = getMedMarkers(med, currentViewDate);
+      Object.keys(dayMarkers).forEach(hourStr=>{
+        entries.push({ med, hour: Number(hourStr), type: dayMarkers[hourStr] });
+      });
+    });
+    entries.sort((a, b)=> doseListPriority(a.type) - doseListPriority(b.type) || a.hour - b.hour);
+
+    entries.forEach(({med, hour, type})=>{
+      const li = buildDoseListRow(med, hour, type);
+      listEl.insertBefore(li, emptyLi);
+      LIST_ROWS.push({li, med, hour});
+    });
+    attachDoseMarkerEvents();
+  }
+
+  function buildDoseListBody(){
+    listEl = document.getElementById('dose-list');
+    const emptyLi = document.createElement('li');
+    emptyLi.id = 'dose-list-empty';
+    emptyLi.className = 'dose-list-empty';
+    emptyLi.style.display = 'none';
+    emptyLi.innerHTML = `
+      <svg class="icon" style="width:26px;height:26px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+      <div style="font-size:13px;">No se encontraron tomas con los filtros aplicados</div>
+    `;
+    listEl.appendChild(emptyLi);
+    renderDoseList();
+  }
+
   const TURNO_RANGES = { manana:[6,11], tarde:[12,17], noche:[18,23] };
+
+  function matchesMedFilters(med, {estadoFilter, viaFilters, searchTerm}){
+    if(estadoFilter && med.estado !== estadoFilter) return false;
+    if(viaFilters.length && !viaFilters.includes(med.via)) return false;
+    if(searchTerm && !med.name.toLowerCase().includes(searchTerm)) return false;
+    return true;
+  }
 
   function applyFilters(){
     const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
@@ -341,40 +493,71 @@ export function initHistoriaClinica() {
     const estadoFilter = estadoBtn ? estadoBtn.dataset.estado : '';
     const turnoFilters = Array.from(document.querySelectorAll('#turno-chip-group .chip-filter.active')).map(b=>b.dataset.turno);
     const viaFilters = Array.from(document.querySelectorAll('#via-chip-group .chip-filter.active')).map(b=>b.dataset.via);
+    const medCriteria = {estadoFilter, viaFilters, searchTerm};
 
     let visibleCount = 0;
-
     ROWS.forEach(({tr, med})=>{
-      let visible = true;
-      if(estadoFilter && med.estado !== estadoFilter) visible = false;
-      if(visible && viaFilters.length && !viaFilters.includes(med.via)) visible = false;
+      let visible = matchesMedFilters(med, medCriteria);
       if(visible && turnoFilters.length){
         const hours = Object.keys(getMedMarkers(med, currentViewDate)).map(Number);
         const inTurno = hours.some(h => turnoFilters.some(t => h >= TURNO_RANGES[t][0] && h <= TURNO_RANGES[t][1]));
         if(!inTurno) visible = false;
       }
-      if(visible && searchTerm && !med.name.toLowerCase().includes(searchTerm)) visible = false;
-
       tr.style.display = visible ? '' : 'none';
       if(visible) visibleCount++;
     });
-
     document.getElementById('empty-state-row').style.display = visibleCount === 0 ? 'table-row' : 'none';
+
+    // En Lista cada fila es una toma puntual, así que el turno filtra por la
+    // hora exacta de esa fila (no "¿alguna hora del medicamento cae en el
+    // turno?" como en el timeline) — mismos datos, filtro más preciso porque
+    // la presentación ya es por toma individual.
+    let visibleListCount = 0;
+    LIST_ROWS.forEach(({li, med, hour})=>{
+      let visible = matchesMedFilters(med, medCriteria);
+      if(visible && turnoFilters.length){
+        const inTurno = turnoFilters.some(t => hour >= TURNO_RANGES[t][0] && hour <= TURNO_RANGES[t][1]);
+        if(!inTurno) visible = false;
+      }
+      li.style.display = visible ? '' : 'none';
+      if(visible) visibleListCount++;
+    });
+    const emptyLi = document.getElementById('dose-list-empty');
+    if(emptyLi) emptyLi.style.display = visibleListCount === 0 ? 'flex' : 'none';
 
     const ftSub = document.getElementById('ft-sub');
     const total = MEDS.length;
+    const totalDosis = LIST_ROWS.length;
     const hasActiveFilters = !!estadoFilter || turnoFilters.length>0 || viaFilters.length>0 || !!searchTerm;
-    ftSub.textContent = hasActiveFilters
-      ? `${visibleCount} de ${total} medicamentos · ronda del ${formatDateLabel(currentViewDate)}`
-      : `${total} medicamentos · ronda del ${formatDateLabel(currentViewDate)}`;
+    ftSub.textContent = viewMode === 'list'
+      ? (hasActiveFilters
+          ? `${visibleListCount} de ${totalDosis} tomas · ronda del ${formatDateLabel(currentViewDate)}`
+          : `${totalDosis} tomas · ronda del ${formatDateLabel(currentViewDate)}`)
+      : (hasActiveFilters
+          ? `${visibleCount} de ${total} medicamentos · ronda del ${formatDateLabel(currentViewDate)}`
+          : `${total} medicamentos · ronda del ${formatDateLabel(currentViewDate)}`);
 
     requestAnimationFrame(updateNowLine);
     updateSelectAllCheckboxState();
   }
 
-  function toggleRowSelection(med, tr, checked){
-    if(checked){ selectedMeds.add(med); tr.classList.add('selected'); }
-    else { selectedMeds.delete(med); tr.classList.remove('selected'); }
+  function syncSelectionVisuals(){
+    ROWS.forEach(({tr, med})=>{
+      tr.classList.toggle('selected', selectedMeds.has(med));
+      const cb = tr.querySelector('.row-check');
+      if(cb) cb.checked = selectedMeds.has(med);
+    });
+    LIST_ROWS.forEach(({li, med})=>{
+      li.classList.toggle('selected', selectedMeds.has(med));
+      const cb = li.querySelector('.row-check');
+      if(cb) cb.checked = selectedMeds.has(med);
+    });
+  }
+
+  function toggleMedSelection(med, checked){
+    if(checked){ selectedMeds.add(med); }
+    else { selectedMeds.delete(med); }
+    syncSelectionVisuals();
     updateSelectionUI();
     updateSelectAllCheckboxState();
   }
@@ -382,7 +565,7 @@ export function initHistoriaClinica() {
   function clearSelection(){
     selectedMeds.clear();
     document.querySelectorAll('.row-check:checked').forEach(cb=>{ cb.checked = false; });
-    document.querySelectorAll('tr.med-row.selected').forEach(tr=> tr.classList.remove('selected'));
+    document.querySelectorAll('tr.med-row.selected, li.dose-list-row.selected').forEach(el=> el.classList.remove('selected'));
     updateSelectionUI();
     updateSelectAllCheckboxState();
   }
@@ -520,6 +703,7 @@ export function initHistoriaClinica() {
     currentViewDate = dateStr;
     updateDayNavLabel();
     renderMedRows();
+    renderDoseList();
     applyFilters();
     requestAnimationFrame(()=>{ updateNowLine(); scrollToNow(); });
   }
@@ -532,6 +716,7 @@ export function initHistoriaClinica() {
 
   buildHeader();
   buildBody();
+  buildDoseListBody();
   requestAnimationFrame(buildNowLine);
   const nowLineInterval = setInterval(updateNowLine, 30000);
   revisarDosisVencidas();
@@ -622,7 +807,35 @@ export function initHistoriaClinica() {
     rebuildTimeline();
   });
 
-  const cardTabs = Array.from(document.querySelectorAll('.card-tab'));
+  function setViewMode(mode){
+    if(viewMode === mode) return;
+    viewMode = mode;
+    const timelineBtn = document.getElementById('view-mode-timeline-btn');
+    const listBtn = document.getElementById('view-mode-list-btn');
+    timelineBtn.classList.toggle('active', mode === 'timeline');
+    timelineBtn.setAttribute('aria-pressed', mode === 'timeline' ? 'true' : 'false');
+    listBtn.classList.toggle('active', mode === 'list');
+    listBtn.setAttribute('aria-pressed', mode === 'list' ? 'true' : 'false');
+
+    document.getElementById('timeline-wrap').style.display = mode === 'timeline' ? '' : 'none';
+    document.getElementById('dose-list').style.display = mode === 'list' ? '' : 'none';
+    document.getElementById('view-timeline-settings').style.display = mode === 'timeline' ? '' : 'none';
+
+    if(mode === 'timeline'){
+      // El timeline estuvo oculto (display:none) mientras tanto: sus anchos
+      // calculados a partir de clientWidth pueden haber quedado obsoletos si
+      // hubo resize/cambios de sidebar en el intertanto — reconstruir es lo
+      // mismo que ya hace rebuildTimeline() para el toggle de horas.
+      rebuildTimeline();
+    } else {
+      renderDoseList();
+      applyFilters();
+    }
+  }
+  document.getElementById('view-mode-timeline-btn').addEventListener('click', ()=> setViewMode('timeline'));
+  document.getElementById('view-mode-list-btn').addEventListener('click', ()=> setViewMode('list'));
+
+  const cardTabs = Array.from(document.querySelectorAll('.card-tab:not([disabled])'));
   function selectCardTab(tab, focusIt){
     cardTabs.forEach(t=>{
       const isSelected = t === tab;
@@ -802,7 +1015,7 @@ export function initHistoriaClinica() {
     if(revisable && !item.completo){
       const faltante = item.cantidadSolicitada - item.cantidadRecibida;
       const accionHtml = orden.estado === 'recibido'
-        ? `<button type="button" class="btn btn-primary btn-sm btn-recepcionar-restante" data-order-id="${orden.id}" title="Registrar el complemento de este pedido">
+        ? `<button type="button" class="btn btn-outline btn-sm btn-recepcionar-restante" data-order-id="${orden.id}" title="Registrar el complemento de este pedido">
              <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
              Recepcionar restante
            </button>`
@@ -1064,7 +1277,7 @@ export function initHistoriaClinica() {
   }
 
   /* ================= Filas/paneles expandibles (patrón genérico) ================= */
-  document.addEventListener('click', (e)=>{
+  function handleRowExpandClick(e){
     const btn = e.target.closest('.row-expand-btn');
     if(!btn) return;
     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
@@ -1085,7 +1298,8 @@ export function initHistoriaClinica() {
         row.classList.toggle('collapsed', !parentExpanded);
       }
     });
-  });
+  }
+  document.addEventListener('click', handleRowExpandClick);
 
   /* ================= Confirmar recepción / Recepcionar restante / Cerrar parcial ================= */
   function aplicarEntregaAMed(item, entrega){
@@ -1192,11 +1406,13 @@ export function initHistoriaClinica() {
 
     document.getElementById('restante-por').textContent = CURRENT_USER_NAME;
     restanteModalOverlay.classList.add('open');
+    trapModalFocus(restanteModalOverlay);
     startRestanteClock();
   }
 
   function closeRestanteModal(){
     restanteModalOverlay.classList.remove('open');
+    releaseModalFocus(restanteModalOverlay);
     restanteModalOrden = null;
     stopRestanteClock();
   }
@@ -1283,11 +1499,13 @@ export function initHistoriaClinica() {
     document.getElementById('cerrar-parcial-por').textContent = CURRENT_USER_NAME;
 
     cerrarParcialModalOverlay.classList.add('open');
+    trapModalFocus(cerrarParcialModalOverlay);
     startCerrarParcialClock();
   }
 
   function closeCerrarParcialModal(){
     cerrarParcialModalOverlay.classList.remove('open');
+    releaseModalFocus(cerrarParcialModalOverlay);
     cerrarParcialOrden = null;
     stopCerrarParcialClock();
   }
@@ -1461,6 +1679,13 @@ export function initHistoriaClinica() {
   let currentPopoverMarker = null;
 
   const RESOLVED_STATUSES = { administered:'Esta dosis ya fue administrada.', suspended:'Esta dosis está suspendida.' };
+  // "Incidencia" no cierra el popover (la dosis sigue accionable), pero el
+  // badge por sí solo no explica qué pasó — se agrega la misma nota
+  // explicativa que usan los estados resueltos, sin ocultar dp-actions.
+  const STATUS_EXPLANATIONS = {
+    ...RESOLVED_STATUSES,
+    incident: 'Esta dosis venció su ventana horaria sin registrarse a tiempo. Verifica si aún corresponde administrarla o si debe quedar registrada como incidencia.'
+  };
 
   function showDosePopover(marker){
     clearTimeout(doseHideTimer);
@@ -1506,9 +1731,10 @@ export function initHistoriaClinica() {
     const isResolved = RESOLVED_STATUSES.hasOwnProperty(status);
     document.getElementById('dp-actions').style.display = isResolved ? 'none' : 'flex';
     const note = document.getElementById('dp-resolved-note');
-    if(isResolved){
+    const explanation = STATUS_EXPLANATIONS[status];
+    if(explanation){
       note.style.display = 'flex';
-      note.innerHTML = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>${RESOLVED_STATUSES[status]}`;
+      note.innerHTML = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>${explanation}`;
     } else {
       note.style.display = 'none';
     }
@@ -1654,12 +1880,14 @@ export function initHistoriaClinica() {
   }
 
   function updateAdminConfirmState(){
-    const checked = document.getElementById('admin-5-correctos').checked;
-    document.getElementById('admin-confirm-btn').disabled = !(checked && selectedLoteOption);
+    const checks = Array.from(document.querySelectorAll('#admin-modal-overlay [data-safety-check]'));
+    const allChecked = checks.length > 0 && checks.every(c => c.checked);
+    document.getElementById('admin-confirm-btn').disabled = !(allChecked && selectedLoteOption);
   }
 
   let adminClockTimer = null;
   function updateAdminClock(){
+    document.getElementById('admin-fecha-registro').textContent = formatDateLabel(getSystemTodayDate());
     document.getElementById('admin-hora-registro').textContent = new Date().toTimeString().slice(0,5);
   }
   function startAdminClock(){
@@ -1672,11 +1900,27 @@ export function initHistoriaClinica() {
     adminClockTimer = null;
   }
 
+  function syncAdminInsumosSelectAll(){
+    const selectAll = document.getElementById('admin-insumos-select-all');
+    const rowChecks = Array.from(document.querySelectorAll('#admin-insumos-list input[type="checkbox"]'));
+    if(rowChecks.length === 0){
+      selectAll.checked = false;
+      selectAll.indeterminate = false;
+      selectAll.disabled = true;
+      return;
+    }
+    selectAll.disabled = false;
+    const checkedCount = rowChecks.filter(cb => cb.checked).length;
+    selectAll.checked = checkedCount === rowChecks.length;
+    selectAll.indeterminate = checkedCount > 0 && checkedCount < rowChecks.length;
+  }
+
   function renderAdminInsumos(){
     const tbody = document.getElementById('admin-insumos-list');
     const disponibles = insumosDisponibles.filter(i => i.cantidadDisponible > 0);
     if(disponibles.length === 0){
       tbody.innerHTML = '<tr><td colspan="3" class="admin-insumos-empty">No hay insumos disponibles para este paciente todavía — llegan aquí una vez que farmacia despacha un pedido que los incluya.</td></tr>';
+      syncAdminInsumosSelectAll();
       return;
     }
     tbody.innerHTML = disponibles.map(i => `
@@ -1691,11 +1935,25 @@ export function initHistoriaClinica() {
       function toggle(){
         checkbox.checked = !checkbox.checked;
         tr.classList.toggle('selected', checkbox.checked);
+        syncAdminInsumosSelectAll();
       }
-      checkbox.addEventListener('change', ()=> tr.classList.toggle('selected', checkbox.checked));
+      checkbox.addEventListener('change', ()=> {
+        tr.classList.toggle('selected', checkbox.checked);
+        syncAdminInsumosSelectAll();
+      });
       tr.addEventListener('click', (e)=>{ if(e.target !== checkbox) toggle(); });
     });
+    syncAdminInsumosSelectAll();
   }
+
+  document.getElementById('admin-insumos-select-all').addEventListener('change', (e)=>{
+    const checked = e.target.checked;
+    document.querySelectorAll('#admin-insumos-list input[type="checkbox"]').forEach(cb=>{
+      cb.checked = checked;
+      cb.closest('tr').classList.toggle('selected', checked);
+    });
+    e.target.indeterminate = false;
+  });
 
   function openAdminModal(){
     if(!currentPopoverMarker) return;
@@ -1704,7 +1962,8 @@ export function initHistoriaClinica() {
     const hour = marker._hour;
     if(!med && med !== 0) return;
 
-    adminModalContext = { med, hour };
+    const date = currentViewDate;
+    adminModalContext = { med, hour, date };
     adminModalOpenerMarker = marker;
     hideDosePopoverNow();
 
@@ -1712,21 +1971,33 @@ export function initHistoriaClinica() {
     document.getElementById('admin-dosis-prescrita').textContent = med.dose;
     document.getElementById('admin-via').textContent = med.via;
     document.getElementById('admin-frecuencia').textContent = med.freq;
+    document.getElementById('admin-fecha-programada').textContent = formatDateLabel(date);
     document.getElementById('admin-hora-programada').textContent = hourLabel(hour);
+
+    const alergias = Array.from(document.querySelectorAll('#allergy-popover .dp-info-row .k')).map(el => el.textContent);
+    const alergiasRow = document.getElementById('admin-alergias-row');
+    if(alergias.length > 0){
+      document.getElementById('admin-alergias-list').textContent = alergias.join(', ');
+      alergiasRow.style.display = 'flex';
+    } else {
+      alergiasRow.style.display = 'none';
+    }
 
     renderLoteOptions(med);
     renderAdminInsumos();
     document.getElementById('admin-observaciones').value = '';
-    document.getElementById('admin-5-correctos').checked = false;
+    document.querySelectorAll('#admin-modal-overlay [data-safety-check]').forEach(c => { c.checked = false; });
     document.getElementById('admin-lote-warning').style.display = 'none';
     updateAdminConfirmState();
 
     adminModalOverlay.classList.add('open');
+    trapModalFocus(adminModalOverlay);
     startAdminClock();
   }
 
   function closeAdminModal(){
     adminModalOverlay.classList.remove('open');
+    releaseModalFocus(adminModalOverlay);
     adminModalContext = null;
     selectedLoteOption = null;
     stopAdminClock();
@@ -1744,11 +2015,13 @@ export function initHistoriaClinica() {
   }
   document.addEventListener('keydown', handleAdminModalEscape);
 
-  document.getElementById('admin-5-correctos').addEventListener('change', updateAdminConfirmState);
+  document.querySelectorAll('#admin-modal-overlay [data-safety-check]').forEach(c=>{
+    c.addEventListener('change', updateAdminConfirmState);
+  });
 
   document.getElementById('admin-confirm-btn').addEventListener('click', ()=>{
     if(!adminModalContext || !selectedLoteOption) return;
-    const { med, hour } = adminModalContext;
+    const { med, hour, date } = adminModalContext;
 
     const horaReal = document.getElementById('admin-hora-registro').textContent;
     const observaciones = document.getElementById('admin-observaciones').value.trim();
@@ -1758,30 +2031,59 @@ export function initHistoriaClinica() {
       const insumo = insumosDisponibles.find(i => i.id === cb.getAttribute('data-insumo-id'));
       if(insumo && insumo.cantidadDisponible > 0){
         insumo.cantidadDisponible -= 1;
-        insumosUsados.push({ nombre: insumo.nombre, cantidad: 1 });
+        insumosUsados.push({ nombre: insumo.nombre, cantidad: 1, insumoId: insumo.id });
       }
     });
 
+    // Estado previo (para el "Deshacer" del toast) y para el bug de datos que
+    // esto reemplaza: antes se guardaba med.registrations[hour] sin scope de
+    // fecha, así que la misma hora en dos días distintos se pisaba entre sí.
+    const dayMarkers = getMedMarkers(med, date);
+    const previousMarkerType = dayMarkers[hour];
+    const previousEstado = med.estado;
     med.registrations = med.registrations || {};
-    med.registrations[hour] = {
+    med.registrations[date] = med.registrations[date] || {};
+    const previousRegistration = med.registrations[date][hour] || null;
+
+    med.registrations[date][hour] = {
       horaReal, dosisReal: med.dose, viaReal: med.via,
       lote: selectedLoteOption.lote, vencimiento: selectedLoteOption.vencimiento,
       observaciones, profesional: CURRENT_USER_NAME, insumosUsados
     };
-    getMedMarkers(med, currentViewDate)[hour] = 'administered';
+    dayMarkers[hour] = 'administered';
     checkTratamientoCompleto(med);
 
     adminModalOverlay.classList.remove('open');
+    releaseModalFocus(adminModalOverlay);
     adminModalContext = null;
     selectedLoteOption = null;
     adminModalOpenerMarker = null;
     stopAdminClock();
 
     renderMedRows();
+    renderDoseList();
     applyFilters();
     requestAnimationFrame(updateNowLine);
     const insumosMsg = insumosUsados.length > 0 ? ` (+ ${insumosUsados.map(i=>i.nombre).join(', ')} para cargos)` : '';
-    showToast(`Administración registrada: ${med.name} · ${horaReal}${insumosMsg}`);
+
+    showToast(`Administración registrada: ${med.name} · ${horaReal}${insumosMsg}`, {
+      label: 'Deshacer',
+      onClick: ()=>{
+        if(previousRegistration){ med.registrations[date][hour] = previousRegistration; }
+        else { delete med.registrations[date][hour]; }
+        dayMarkers[hour] = previousMarkerType;
+        med.estado = previousEstado;
+        insumosUsados.forEach(u=>{
+          const insumo = insumosDisponibles.find(i => i.id === u.insumoId);
+          if(insumo) insumo.cantidadDisponible += 1;
+        });
+        renderMedRows();
+        renderDoseList();
+        applyFilters();
+        requestAnimationFrame(updateNowLine);
+        showToast(`Se deshizo el registro de administración de ${med.name}`);
+      }
+    });
   });
 
   /* ================= Modal: Suspender tratamiento ================= */
@@ -1822,11 +2124,13 @@ export function initHistoriaClinica() {
     document.getElementById('suspend-por').textContent = CURRENT_USER_NAME;
 
     suspendModalOverlay.classList.add('open');
+    trapModalFocus(suspendModalOverlay);
     startSuspendClock();
   }
 
   function closeSuspendModal(){
     suspendModalOverlay.classList.remove('open');
+    releaseModalFocus(suspendModalOverlay);
     suspendModalMeds = [];
     stopSuspendClock();
     if(suspendModalOpener){ suspendModalOpener.focus(); }
@@ -1892,6 +2196,7 @@ export function initHistoriaClinica() {
     closeSuspendModal();
     clearSelection();
     renderMedRows();
+    renderDoseList();
     applyFilters();
     showToast(
       count === 1 ? `${firstName} suspendido correctamente` : `${count} medicamentos suspendidos correctamente`,
@@ -1962,11 +2267,13 @@ export function initHistoriaClinica() {
     document.getElementById('return-por').textContent = CURRENT_USER_NAME;
 
     returnModalOverlay.classList.add('open');
+    trapModalFocus(returnModalOverlay);
     startReturnClock();
   }
 
   function closeReturnModal(){
     returnModalOverlay.classList.remove('open');
+    releaseModalFocus(returnModalOverlay);
     returnModalMeds = [];
     stopReturnClock();
   }
@@ -2049,6 +2356,7 @@ export function initHistoriaClinica() {
     closeReturnModal();
     clearSelection();
     renderMedRows();
+    renderDoseList();
     applyFilters();
     showToast(`Devolución ${consecutivo} generada correctamente`);
   });
@@ -2452,12 +2760,12 @@ export function initHistoriaClinica() {
           : `<td class="ome-muted">${item.prioridad}</td>`;
         let actionCell;
         if(item.estadoProgramacion === 'pendiente'){
-          actionCell = `<button type="button" class="btn btn-primary btn-sm btn-programar" data-programar-item="${item.id}">
+          actionCell = `<button type="button" class="btn btn-outline btn-sm btn-programar" data-programar-item="${item.id}">
                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="m9 16 2 2 4-4"/></svg>
                Programar
              </button>`;
         } else if(item.estadoPedido === 'no_solicitado'){
-          actionCell = `<button type="button" class="btn btn-primary btn-sm btn-programar" data-pedir-item="${item.id}">
+          actionCell = `<button type="button" class="btn btn-outline btn-sm btn-programar" data-pedir-item="${item.id}">
                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
                Pedir a farmacia
              </button>`;
@@ -2562,7 +2870,7 @@ export function initHistoriaClinica() {
     const tbody = document.getElementById('otros-ordenamientos-tbody');
     tbody.innerHTML = otrosOrdenamientos.map(oo=>{
       const accion = oo.estado === 'pendiente'
-        ? `<button type="button" class="btn btn-primary btn-sm btn-programar" data-programar-otro="${oo.id}">Programar</button>`
+        ? `<button type="button" class="btn btn-outline btn-sm btn-programar" data-programar-otro="${oo.id}">Programar</button>`
         : `<span class="ome-muted" style="font-size:12px;">—</span>`;
       return `
         <tr data-order-id="${oo.id}" data-estado="${oo.estado}" data-tipo="${oo.tipo}" data-fecha-iso="${oo.fechaISO}">
@@ -2758,6 +3066,7 @@ export function initHistoriaClinica() {
     if(activeChip) applyOrdenesFilter();
 
     renderMedRows();
+    renderDoseList();
     applyFilters();
 
     showToast(ids.length === 1 ? 'Medicamento programado correctamente' : `${ids.length} medicamentos programados correctamente`);
@@ -2826,7 +3135,7 @@ export function initHistoriaClinica() {
     updateOmeSelectionUI();
   });
 
-  let ordenesEstadoFilter = 'todas';
+  let ordenesEstadoFilter = document.querySelector('#chipgroup-ordenes-estado .chip-filter.active')?.getAttribute('data-filter') || 'todas';
   let ordenesDateFilter = null;
   let ordenesPrioridadFilter = null;
 
@@ -2857,6 +3166,7 @@ export function initHistoriaClinica() {
       applyOrdenesFilter();
     });
   });
+  applyOrdenesFilter();
 
   document.querySelectorAll('#chipgroup-ordenes-fecha .chip-filter').forEach(chip=>{
     chip.addEventListener('click', ()=>{
@@ -3014,10 +3324,12 @@ export function initHistoriaClinica() {
     renderProgramPreview();
 
     programModalOverlay.classList.add('open');
+    trapModalFocus(programModalOverlay);
   }
 
   function closeProgramModal(){
     programModalOverlay.classList.remove('open');
+    releaseModalFocus(programModalOverlay);
     programModalItemIds = [];
   }
 
@@ -3102,7 +3414,6 @@ export function initHistoriaClinica() {
 
   function renderCatalogCart(){
     const list = document.getElementById('catalog-cart-list');
-    const empty = document.getElementById('catalog-cart-empty');
     const count = catalogCart.length;
     const units = catalogCart.reduce((s, c) => s + c.cantidad, 0);
 
@@ -3112,11 +3423,13 @@ export function initHistoriaClinica() {
     document.getElementById('catalog-confirm-btn').disabled = count === 0;
 
     if(count === 0){
-      list.innerHTML = '';
-      if(!list.contains(empty)){ empty.style.display = 'flex'; list.appendChild(empty); }
+      list.innerHTML = `
+        <div class="catalog-cart-empty" id="catalog-cart-empty">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          Aún no has agregado artículos a este pedido.
+        </div>`;
       return;
     }
-    if(list.contains(empty)) list.removeChild(empty);
 
     list.innerHTML = catalogCart.map(c => `
       <div class="cart-item" data-cart-id="${c.id}">
@@ -3131,7 +3444,7 @@ export function initHistoriaClinica() {
   }
 
   function openCatalog(){
-    catalogCart = [];
+    catalogCart = pedidoInsumosSeleccionados.map(i => ({ ...i }));
     document.getElementById('catalog-search').value = '';
     catalogFiltro = 'todos';
     document.getElementById('catalog-chip-todos').classList.add('active');
@@ -3139,12 +3452,17 @@ export function initHistoriaClinica() {
     renderCatalogTable();
     renderCatalogCart();
     catalogOverlay.classList.add('open');
+    trapModalFocus(catalogOverlay);
     document.getElementById('catalog-search').focus();
   }
-  function closeCatalog(){ catalogOverlay.classList.remove('open'); }
+  function closeCatalog(){
+    catalogOverlay.classList.remove('open');
+    releaseModalFocus(catalogOverlay);
+  }
 
   document.getElementById('catalog-close-btn').addEventListener('click', closeCatalog);
-  catalogOverlay.addEventListener('click', (e)=>{ if(e.target === catalogOverlay) closeCatalog(); });
+  function handleCatalogOverlayClick(e){ if(e.target === catalogOverlay) closeCatalog(); }
+  catalogOverlay.addEventListener('click', handleCatalogOverlayClick);
   function handleCatalogEscape(e){
     if(e.key === 'Escape' && catalogOverlay.classList.contains('open')){ e.stopPropagation(); closeCatalog(); }
   }
@@ -3152,16 +3470,18 @@ export function initHistoriaClinica() {
 
   document.getElementById('catalog-search').addEventListener('input', renderCatalogTable);
 
+  function handleCatalogChipClick(e){
+    const chip = e.currentTarget;
+    catalogFiltro = chip.getAttribute('data-cat-filter');
+    document.querySelectorAll('.catalog-chip[data-cat-filter]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderCatalogTable();
+  }
   document.querySelectorAll('.catalog-chip[data-cat-filter]').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      catalogFiltro = chip.getAttribute('data-cat-filter');
-      document.querySelectorAll('.catalog-chip[data-cat-filter]').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      renderCatalogTable();
-    });
+    chip.addEventListener('click', handleCatalogChipClick);
   });
 
-  document.getElementById('catalog-tbody').addEventListener('click', (e)=>{
+  function handleCatalogTbodyClick(e){
     const addBtn = e.target.closest('[data-add-art]');
     if(!addBtn) return;
     const id = addBtn.getAttribute('data-add-art');
@@ -3173,9 +3493,10 @@ export function initHistoriaClinica() {
     catalogCart.push({ id: art.id, desc: art.desc, cantidad: n });
     renderCatalogTable();
     renderCatalogCart();
-  });
+  }
+  document.getElementById('catalog-tbody').addEventListener('click', handleCatalogTbodyClick);
 
-  document.getElementById('catalog-cart-list').addEventListener('input', (e)=>{
+  function handleCatalogCartInput(e){
     const input = e.target.closest('[data-cart-qty]');
     if(!input) return;
     const id = input.getAttribute('data-cart-qty');
@@ -3183,27 +3504,33 @@ export function initHistoriaClinica() {
     if(item){ item.cantidad = Math.max(1, parseInt(input.value, 10) || 1); }
     document.getElementById('catalog-footer-units').textContent = catalogCart.reduce((s, c) => s + c.cantidad, 0);
     document.getElementById('catalog-cart-count').textContent = catalogCart.length;
-  });
+  }
+  document.getElementById('catalog-cart-list').addEventListener('input', handleCatalogCartInput);
 
-  document.getElementById('catalog-cart-list').addEventListener('click', (e)=>{
+  function handleCatalogCartClick(e){
     const removeBtn = e.target.closest('[data-remove-cart]');
     if(!removeBtn) return;
     const id = removeBtn.getAttribute('data-remove-cart');
     catalogCart = catalogCart.filter(c => c.id !== id);
     renderCatalogTable();
     renderCatalogCart();
-  });
+  }
+  document.getElementById('catalog-cart-list').addEventListener('click', handleCatalogCartClick);
 
-  document.getElementById('catalog-confirm-btn').addEventListener('click', ()=>{
-    const seleccionados = catalogCart.slice();
+  function handleCatalogConfirmClick(){
     closeCatalog();
-    renderPedidoInsumosResumen(seleccionados);
+    setPedidoInsumosSeleccionados(catalogCart.slice());
+  }
+  document.getElementById('catalog-confirm-btn').addEventListener('click', handleCatalogConfirmClick);
+
+  function setPedidoInsumosSeleccionados(items){
+    pedidoInsumosSeleccionados = items;
+    renderPedidoInsumosResumen(items);
     const label = document.getElementById('pedido-add-insumo-label');
-    if(label) label.textContent = seleccionados.length > 0
-      ? `Editar insumos seleccionados (${seleccionados.length})`
+    if(label) label.textContent = items.length > 0
+      ? `Editar insumos seleccionados (${items.length})`
       : 'Agregar insumos desde el catálogo';
-    pedidoInsumosSeleccionados = seleccionados;
-  });
+  }
 
   function renderPedidoInsumosResumen(items){
     const wrap = document.getElementById('pedido-insumos-resumen');
@@ -3213,8 +3540,19 @@ export function initHistoriaClinica() {
       <div class="insumos-resumen-row">
         <span class="ir-name">${i.desc}</span>
         <span class="ir-qty">${i.cantidad} unidad${i.cantidad === 1 ? '' : 'es'}</span>
+        <button type="button" class="insumo-remove-btn" data-remove-insumo="${i.id}" title="Quitar">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
       </div>`).join('');
   }
+
+  function handlePedidoInsumosResumenClick(e){
+    const removeBtn = e.target.closest('[data-remove-insumo]');
+    if(!removeBtn) return;
+    const id = removeBtn.getAttribute('data-remove-insumo');
+    setPedidoInsumosSeleccionados(pedidoInsumosSeleccionados.filter(i => i.id !== id));
+  }
+  document.getElementById('pedido-insumos-resumen').addEventListener('click', handlePedidoInsumosResumenClick);
 
   /* ================= Modal: Pedido a farmacia ================= */
   const pedidoModalOverlay = document.getElementById('pedido-modal-overlay');
@@ -3279,7 +3617,6 @@ export function initHistoriaClinica() {
   function openPedidoModal(ids){
     if(!ids || ids.length === 0) return;
     pedidoModalItemIds = ids;
-    pedidoInsumosSeleccionados = [];
 
     const count = ids.length;
     document.getElementById('pedido-modal-title').textContent = count === 1 ? 'Pedido a farmacia' : `Pedido a farmacia (${count} medicamentos)`;
@@ -3297,16 +3634,16 @@ export function initHistoriaClinica() {
     document.getElementById('pedido-cobertura-custom').value = '';
     pedidoCoberturaHoras = 12;
 
-    renderPedidoInsumosResumen([]);
-    const label = document.getElementById('pedido-add-insumo-label');
-    if(label) label.textContent = 'Agregar insumos desde el catálogo';
+    setPedidoInsumosSeleccionados([]);
 
     renderPedidoSummary();
     pedidoModalOverlay.classList.add('open');
+    trapModalFocus(pedidoModalOverlay);
   }
 
   function closePedidoModal(){
     pedidoModalOverlay.classList.remove('open');
+    releaseModalFocus(pedidoModalOverlay);
     pedidoModalItemIds = [];
   }
 
@@ -3391,6 +3728,7 @@ export function initHistoriaClinica() {
     window.removeEventListener('resize', handleResize);
     if(timelineResizeObserver) timelineResizeObserver.disconnect();
     document.removeEventListener('click', closeAllPopovers);
+    document.removeEventListener('click', handleRowExpandClick);
     document.removeEventListener('keydown', handlePopoverEscape);
     document.removeEventListener('keydown', handleAdminModalEscape);
     document.removeEventListener('keydown', handleSuspendModalEscape);
@@ -3398,6 +3736,18 @@ export function initHistoriaClinica() {
     document.removeEventListener('keydown', handleProgramModalEscape);
     document.removeEventListener('keydown', handlePedidoModalEscape);
     document.removeEventListener('keydown', handleCatalogEscape, true);
+    document.getElementById('catalog-close-btn')?.removeEventListener('click', closeCatalog);
+    catalogOverlay?.removeEventListener('click', handleCatalogOverlayClick);
+    document.getElementById('catalog-search')?.removeEventListener('input', renderCatalogTable);
+    document.querySelectorAll('.catalog-chip[data-cat-filter]').forEach(chip=>{
+      chip.removeEventListener('click', handleCatalogChipClick);
+    });
+    document.getElementById('catalog-tbody')?.removeEventListener('click', handleCatalogTbodyClick);
+    document.getElementById('catalog-cart-list')?.removeEventListener('input', handleCatalogCartInput);
+    document.getElementById('catalog-cart-list')?.removeEventListener('click', handleCatalogCartClick);
+    document.getElementById('catalog-confirm-btn')?.removeEventListener('click', handleCatalogConfirmClick);
+    document.getElementById('pedido-insumos-resumen')?.removeEventListener('click', handlePedidoInsumosResumenClick);
+    document.getElementById('pedido-add-insumo-btn')?.removeEventListener('click', openCatalog);
     clearInterval(nowLineInterval);
     clearInterval(dosisVencidasInterval);
     clearTimeout(resizeTimer);

@@ -57,7 +57,7 @@ export default function PedidoModal() {
               <label>Insumos adicionales</label>
             </div>
             <div className="insumos-resumen" id="pedido-insumos-resumen" style={{display: 'none'}}></div>
-            <button type="button" className="btn btn-tinted" id="pedido-add-insumo-btn" >
+            <button type="button" className="btn btn-outline" id="pedido-add-insumo-btn" >
               <LuPlus className="icon" aria-hidden="true" />
               <span id="pedido-add-insumo-label">Agregar insumos desde el catálogo</span>
             </button>

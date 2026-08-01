@@ -29,7 +29,7 @@ export default function HistoriaClinicaPage() {
 
   return (
     <>
-<div className="app">
+<div className="app" id="app-shell">
 
   <Sidebar />
 
@@ -82,11 +82,11 @@ export default function HistoriaClinicaPage() {
             <LuBox className="icon" aria-hidden="true" />
             Pedidos
           </button>
-          <button type="button" className="card-tab" role="tab" id="tab-monitoreo" aria-selected="false" aria-controls="panel-medicamentos" tabIndex="-1">
+          <button type="button" className="card-tab" role="tab" id="tab-monitoreo" aria-selected="false" tabIndex="-1" disabled aria-disabled="true" title="Próximamente">
             <LuActivity className="icon" aria-hidden="true" />
             Monitoreo
           </button>
-          <button type="button" className="card-tab" role="tab" id="tab-notas" aria-selected="false" aria-controls="panel-medicamentos" tabIndex="-1">
+          <button type="button" className="card-tab" role="tab" id="tab-notas" aria-selected="false" tabIndex="-1" disabled aria-disabled="true" title="Próximamente">
             <LuFileUp className="icon" aria-hidden="true" />
             Notas de enfermería
           </button>

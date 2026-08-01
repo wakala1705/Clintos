@@ -15,7 +15,7 @@ export default function SolicitudesSub() {
           <input type="text" placeholder="Buscar medicamento o insumo..." id="search-solicitudes"/>
         </div>
         <div className="filter-spacer"></div>
-        <div className="chip-group" id="chipgroup-solicitudes-estado">
+        <div className="chip-group segmented" id="chipgroup-solicitudes-estado">
           <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
           <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes</button>
           <button className="chip-filter" data-filter="aprobada" aria-pressed="false">Aprobadas</button>
@@ -23,7 +23,7 @@ export default function SolicitudesSub() {
           <button className="chip-filter" data-filter="rechazada" aria-pressed="false">Rechazadas</button>
         </div>
         <div className="filter-divider"></div>
-        <div className="chip-group" id="chipgroup-solicitudes-fecha">
+        <div className="chip-group segmented" id="chipgroup-solicitudes-fecha">
           <button className="chip-filter" data-quickdate="hoy" aria-pressed="false">Hoy</button>
           <button className="chip-filter" data-quickdate="semana" aria-pressed="false">Última semana</button>
         </div>

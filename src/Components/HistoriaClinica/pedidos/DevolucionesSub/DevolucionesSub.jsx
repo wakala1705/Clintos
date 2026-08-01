@@ -15,7 +15,7 @@ export default function DevolucionesSub() {
           <input type="text" placeholder="Buscar por consecutivo o medicamento..." id="search-devoluciones"/>
         </div>
         <div className="filter-spacer"></div>
-        <div className="chip-group" id="chipgroup-devoluciones-estado">
+        <div className="chip-group segmented" id="chipgroup-devoluciones-estado">
           <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
           <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes</button>
           <button className="chip-filter" data-filter="confirmada" aria-pressed="false">Confirmadas por farmacia</button>

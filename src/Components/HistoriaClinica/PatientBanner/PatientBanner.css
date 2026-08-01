@@ -15,8 +15,10 @@
 .patient-meta .pm-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .patient-meta .pm-item .lbl{color:var(--ink-500);font-weight:600;}
 .patient-meta .pm-item b{color:var(--ink-900);font-weight:500;}
-.patient-meta .pm-item a{color:var(--primary);font-weight:500;text-decoration:none;font-size:13px;}
-.patient-meta .pm-item a:hover{text-decoration:underline;}
+/* "Ver más datos" no está implementado (no dispara ninguna acción) — se
+   muestra como texto atenuado en vez de enlace para no exponer a
+   tecnología de asistencia una función que no existe (WCAG 4.1.2). */
+.patient-meta .pm-item-more{color:var(--ink-500);font-size:13px;}
 .patient-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
 .badge{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;}
 .badge.status-active{background:var(--green-bg);color:#0d7a3d;}

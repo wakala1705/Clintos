@@ -35,6 +35,11 @@ body{
 .app{
   display:flex;
   height:100vh;
+  /* min-width:1440px es una excepción intencional a WCAG 1.4.10 (Reflow):
+     esta pantalla está diseñada para estaciones clínicas de escritorio con
+     monitores grandes, no para reflow a 320px/zoom 400%. Decisión de producto
+     aceptada explícitamente, no un descuido — no "arreglar" esto sin antes
+     revisar si cambió el contexto de uso (ej. tablets en planta). */
   min-width:1440px;
   overflow:hidden;
 }
@@ -103,6 +108,8 @@ body{
 .card-tab .icon{width:17px;height:17px;flex-shrink:0;}
 .card-tab:hover{color:var(--ink-900);}
 .card-tab:focus-visible{outline:2px solid var(--primary);border-radius:4px;}
+.card-tab[disabled]{opacity:.45;cursor:not-allowed;}
+.card-tab[disabled]:hover{color:var(--ink-500);}
 .card-tab.active{color:var(--primary);font-weight:600;}
 .card-tab.active::after{
   content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--primary);
