@@ -112,5 +112,5 @@ body{
 .card-tab[disabled]:hover{color:var(--ink-500);}
 .card-tab.active{color:var(--primary);font-weight:600;}
 .card-tab.active::after{
-  content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--primary);
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary);
 }
