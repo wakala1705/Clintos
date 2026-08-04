@@ -93,16 +93,19 @@ export default function OrdenesMedicasPanel() {
           <button className="sel-cancel-btn" type="button" id="ome-sel-cancel-btn">Cancelar selección</button>
         </div>
 
-        <div className="ome-header-row ome-grid-cols">
-          <span></span>
-          <span>Consecutivo</span>
-          <span>Medicamentos</span>
-          <span>Estado</span>
-          <span>Médico</span>
-          <span>Fecha de la orden</span>
-          <span className="col-actions">Acciones</span>
+        <div className="ome-scroll-x">
+          <div className="ome-header-row ome-grid-cols">
+            <span></span>
+            <span>Consecutivo</span>
+            <span>Medicamentos</span>
+            <span>Médico</span>
+            <span>Fecha de la orden</span>
+            
+            <span>Estado</span>
+            <span className="col-actions">Acciones</span>
+          </div>
+          <div className="ome-list" id="ordenes-list">{/* filas generadas por legacy-app.js */}</div>
         </div>
-        <div className="ome-list" id="ordenes-list">{/* filas generadas por legacy-app.js */}</div>
 
         <div className="legend-bar">
           <div className="footer-title-block"><div className="ft-sub" id="ordenes-footer-count">3 órdenes · turno actual</div></div>

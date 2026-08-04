@@ -35,12 +35,17 @@ body{
 .app{
   display:flex;
   height:100vh;
-  /* min-width:1440px es una excepción intencional a WCAG 1.4.10 (Reflow):
-     esta pantalla está diseñada para estaciones clínicas de escritorio con
-     monitores grandes, no para reflow a 320px/zoom 400%. Decisión de producto
-     aceptada explícitamente, no un descuido — no "arreglar" esto sin antes
-     revisar si cambió el contexto de uso (ej. tablets en planta). */
-  min-width:1440px;
+  /* Piso bajado de 1440px a 1024px: iniciativa de shell responsive para
+     soportar tablets en planta (contexto de uso que la excepción WCAG 1.4.10
+     original pedía revisar antes de tocar este valor — ver historial). Sigue
+     sin ser reflow real a 320px/zoom 400%: por debajo de 1024px la página
+     vuelve a requerir scroll horizontal a nivel de .app, es un piso más bajo,
+     no cumplimiento completo de Reflow. Las grillas densas (OME, Solicitudes,
+     Devoluciones, Recepción) no se apilan en tarjetas en este rango — ganan su
+     propio scroll horizontal en vez de romper el layout (ver *-list/*-scroll-x
+     en cada feature). El sidebar se auto-colapsa a riel de íconos por debajo
+     de este mismo breakpoint (ver applySidebarAutoState en legacy-app.js). */
+  min-width:1024px;
   overflow:hidden;
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}

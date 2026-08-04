@@ -7,7 +7,7 @@
 // React shell (page.jsx + src/Components/HistoriaClinica/**) renders once and never touches again.
 export function initHistoriaClinica() {
 
-  /* ================= MODO OSCURO / SIDEBAR (idéntico a asignacion-citas/legacy-app.js) ================= */
+  /* ================= MODO OSCURO / SIDEBAR ================= */
   function applyTheme(dark){
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     document.getElementById('theme-switch').checked = dark;
@@ -19,12 +19,31 @@ export function initHistoriaClinica() {
     const chk = document.getElementById('theme-switch');
     applyTheme(!chk.checked);
   }
+
+  /* Shell responsive (iniciativa tablet ~1024px, ver .app en historia-clinica.css):
+     por debajo de SIDEBAR_AUTO_BREAKPOINT el sidebar se auto-colapsa al riel de
+     íconos para dejar más ancho al contenido. Si el usuario lo togglea a mano
+     (botón de colapsar o abriendo un grupo de navegación estando colapsado),
+     esa preferencia manual manda sobre el auto-colapso hasta que se recargue la
+     página — a diferencia de asignacion-citas/legacy-app.js, que todavía no
+     tiene esta lógica (el sidebar allá sigue siendo 100% manual). */
+  const SIDEBAR_AUTO_BREAKPOINT = 1024;
+  let sidebarUserOverride = null;
+  function applySidebarAutoState(){
+    const sidebar = document.getElementById('sidebar');
+    if(!sidebar) return;
+    const shouldCollapse = sidebarUserOverride !== null ? sidebarUserOverride : window.innerWidth < SIDEBAR_AUTO_BREAKPOINT;
+    sidebar.classList.toggle('collapsed', shouldCollapse);
+  }
   function toggleSidebar(){
-    document.getElementById('sidebar').classList.toggle('collapsed');
+    const sidebar = document.getElementById('sidebar');
+    sidebarUserOverride = !sidebar.classList.contains('collapsed');
+    sidebar.classList.toggle('collapsed');
   }
   function toggleNavGroup(headEl){
     const sidebar = document.getElementById('sidebar');
     if(sidebar.classList.contains('collapsed')){
+      sidebarUserOverride = false;
       sidebar.classList.remove('collapsed');
     }
     const group = headEl.parentElement;
@@ -722,8 +741,10 @@ export function initHistoriaClinica() {
   revisarDosisVencidas();
   const dosisVencidasInterval = setInterval(revisarDosisVencidas, 60000);
 
+  applySidebarAutoState();
   let resizeTimer = null;
   function handleResize(){
+    applySidebarAutoState();
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(()=>{
       buildHeader();
@@ -996,6 +1017,7 @@ export function initHistoriaClinica() {
   function recepDetailTableHtml(articulos){
     return `
       <table class="detail-table">
+        <thead><tr><th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
         <tbody>
           ${articulos.map(a => `
             <tr>
@@ -2197,10 +2219,8 @@ export function initHistoriaClinica() {
     renderMedRows();
     renderDoseList();
     applyFilters();
-    showToast(
-      count === 1 ? `${firstName} suspendido correctamente` : `${count} medicamentos suspendidos correctamente`,
-      { label: 'Devolver a farmacia', onClick: ()=> openReturnModal(meds) }
-    );
+    showToast(count === 1 ? `${firstName} suspendido correctamente` : `${count} medicamentos suspendidos correctamente`);
+    openReturnModal(meds);
   });
 
   let suspendClockTimer = null;
@@ -2754,6 +2774,7 @@ export function initHistoriaClinica() {
     container.innerHTML = ordenesMedicas.map(orden=>{
       const rows = orden.items.map(item=>{
         const checked = selectedOmeItems.has(item.id);
+        const metaText = `${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}`;
         const prioridadBadge = item.prioridad === 'Urgente'
           ? `<span class="order-badge urgente">Prioridad urgente</span>`
           : '<span></span>';
@@ -2774,15 +2795,17 @@ export function initHistoriaClinica() {
         return `
           <div class="ome-item-row ome-item-grid-cols${checked ? ' selected' : ''}" data-item-id="${item.id}">
             <span class="ome-check-cell"><input type="checkbox" data-ome-check="${item.id}" ${checked ? 'checked' : ''} aria-label="Seleccionar ${item.desc}"></span>
-            <div class="row-indent">
+            <span></span>
+            <div class="row-indent" title="${item.desc}">
               <span class="row-indent-icon">↳</span>
               <b>${item.desc}</b>
-              <span class="row-indent-sub">${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}</span>
             </div>
+            <span class="ome-item-meta" title="${metaText}">${metaText}</span>
             ${prioridadBadge}
-            <span class="dev-cell muted">${item.enfermera}</span>
             <span>${OME_PROGRAMACION_BADGE[item.estadoProgramacion]}</span>
             <span>${OME_PEDIDO_BADGE[item.estadoPedido]}</span>
+            <span class="dev-cell muted">${item.enfermera}</span>
+            <span class="ome-item-spacer"></span>
             <div class="ome-actions-cell">
               ${actionCell}
             </div>
@@ -2794,7 +2817,10 @@ export function initHistoriaClinica() {
       let ordenEstado, estadoBadgeHtml;
       if(pendCount === 0){
         ordenEstado = 'programada';
-        estadoBadgeHtml = '<span class="order-badge programada">Programada</span>';
+        const pedidoPendienteCount = orden.items.filter(i => i.estadoPedido !== 'solicitado').length;
+        estadoBadgeHtml = pedidoPendienteCount === 0
+          ? '<span class="order-badge programada">Programada y solicitada</span>'
+          : '<span class="order-badge pendiente">Programada y pendiente de solicitud</span>';
       } else if(progCount === 0){
         ordenEstado = 'pendiente';
         estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente de programar</span>';
@@ -2811,18 +2837,16 @@ export function initHistoriaClinica() {
             </button>
             <span class="ome-order-number">${orden.consecutivo}</span>
             <span class="child-count-badge">${orden.items.length} ítem${orden.items.length === 1 ? '' : 's'}</span>
-            <span>${estadoBadgeHtml}</span>
             <span class="ome-order-cell">${orden.medico}</span>
             <span class="ome-order-cell">${orden.fecha}</span>
+            
+            <span>${estadoBadgeHtml}</span>
             <div class="ome-order-actions-cell">
               <button type="button" class="dev-icon-btn" title="Ver detalle" data-ome-order-action="ver">
                 <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
               <button type="button" class="dev-icon-btn" title="Imprimir" data-ome-order-action="imprimir">
                 <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-              </button>
-              <button type="button" class="dev-icon-btn" title="Más opciones" data-ome-order-action="mas">
-                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
               </button>
             </div>
           </div>
@@ -3104,13 +3128,83 @@ export function initHistoriaClinica() {
     updateOmeSelectionUI();
   });
 
+  /* ================= Modal: Detalle de la orden (ícono "Ver detalle") ================= */
+  const ordenDetalleModalOverlay = document.getElementById('orden-detalle-modal-overlay');
+
+  function ordenDetalleEstadoHtml(orden){
+    const pendCount = orden.items.filter(i => i.estadoProgramacion === 'pendiente').length;
+    if(pendCount > 0){
+      return pendCount === orden.items.length
+        ? '<span class="order-badge pendiente">Pendiente de programar</span>'
+        : '<span class="order-badge pendiente">Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados">Parcial</span>';
+    }
+    const pedidoPendienteCount = orden.items.filter(i => i.estadoPedido !== 'solicitado').length;
+    return pedidoPendienteCount === 0
+      ? '<span class="order-badge programada">Programada y solicitada</span>'
+      : '<span class="order-badge pendiente">Programada y pendiente de solicitud</span>';
+  }
+
+  function openOrdenDetalleModal(ordenId){
+    const orden = ordenesMedicas.find(o => o.id === ordenId);
+    if(!orden) return;
+
+    document.getElementById('orden-detalle-modal-title').textContent = `Detalle de la orden ${orden.consecutivo}`;
+    document.getElementById('orden-detalle-patient-name').textContent =
+      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+    document.getElementById('orden-detalle-patient-cc').textContent =
+      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+    document.getElementById('orden-detalle-consecutivo').textContent = orden.consecutivo;
+    document.getElementById('orden-detalle-medico').textContent = orden.medico;
+    document.getElementById('orden-detalle-fecha').textContent = orden.fecha;
+    document.getElementById('orden-detalle-estado').innerHTML = ordenDetalleEstadoHtml(orden);
+
+    document.getElementById('orden-detalle-meds').innerHTML = orden.items.map(item => `
+      <div class="suspend-med-row">
+        <div>
+          <div class="sm-name">${item.desc}${item.prioridad === 'Urgente' ? ' <span class="order-badge urgente">Urgente</span>' : ''}</div>
+          <div class="sm-meta">${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}</div>
+          <div class="sm-meta">Programado por: ${item.enfermera} · Cant. pedida: ${item.cantPedida} · Aplicadas: ${item.aplicadas}</div>
+        </div>
+        <div class="orden-detalle-med-badges">
+          ${OME_PROGRAMACION_BADGE[item.estadoProgramacion]}
+          ${OME_PEDIDO_BADGE[item.estadoPedido]}
+        </div>
+      </div>`).join('');
+
+    ordenDetalleModalOverlay.classList.add('open');
+    trapModalFocus(ordenDetalleModalOverlay);
+  }
+
+  function closeOrdenDetalleModal(){
+    ordenDetalleModalOverlay.classList.remove('open');
+    releaseModalFocus(ordenDetalleModalOverlay);
+  }
+
+  document.getElementById('orden-detalle-modal-close').addEventListener('click', closeOrdenDetalleModal);
+  document.getElementById('orden-detalle-close-btn').addEventListener('click', closeOrdenDetalleModal);
+  ordenDetalleModalOverlay.addEventListener('click', (e)=>{
+    if(e.target === ordenDetalleModalOverlay) closeOrdenDetalleModal();
+  });
+  function handleOrdenDetalleModalEscape(e){
+    if(e.key === 'Escape' && ordenDetalleModalOverlay.classList.contains('open')) closeOrdenDetalleModal();
+  }
+  document.addEventListener('keydown', handleOrdenDetalleModalEscape);
+
   document.getElementById('ordenes-list').addEventListener('click', (e)=>{
     const programarBtn = e.target.closest('[data-programar-item]');
     if(programarBtn){ openProgramModal([programarBtn.getAttribute('data-programar-item')]); return; }
     const pedirBtn = e.target.closest('[data-pedir-item]');
     if(pedirBtn){ pedirAFarmacia([pedirBtn.getAttribute('data-pedir-item')]); return; }
     const orderActionBtn = e.target.closest('[data-ome-order-action]');
-    if(orderActionBtn){ showToast('Esta acción estará disponible próximamente'); }
+    if(orderActionBtn){
+      const action = orderActionBtn.getAttribute('data-ome-order-action');
+      if(action === 'ver'){
+        const orderEl = orderActionBtn.closest('[data-order-id]');
+        if(orderEl) openOrdenDetalleModal(orderEl.getAttribute('data-order-id'));
+        return;
+      }
+      showToast('Esta acción estará disponible próximamente');
+    }
   });
 
   document.getElementById('ome-sel-cancel-btn').addEventListener('click', ()=>{
@@ -3719,6 +3813,7 @@ export function initHistoriaClinica() {
     document.removeEventListener('keydown', handleReturnModalEscape);
     document.removeEventListener('keydown', handleProgramModalEscape);
     document.removeEventListener('keydown', handlePedidoModalEscape);
+    document.removeEventListener('keydown', handleOrdenDetalleModalEscape);
     document.removeEventListener('keydown', handleCatalogEscape, true);
     document.getElementById('catalog-close-btn')?.removeEventListener('click', closeCatalog);
     catalogOverlay?.removeEventListener('click', handleCatalogOverlayClick);

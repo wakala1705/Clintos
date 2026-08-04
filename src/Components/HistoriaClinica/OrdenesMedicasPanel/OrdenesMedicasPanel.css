@@ -4,13 +4,37 @@
    el patrón de fila expandible (.row-indent, .row-expand-btn, .child-count-badge)
    también es compartido — mismo lenguaje visual que SolicitudesSub/RecepcionSub;
    aquí solo el layout tipo grid propio de la lista de órdenes de medicación. */
-/* Orden de columnas (cabecera de orden): consecutivo, medicamentos, estado,
-   médico, fecha, acciones. Las primeras 5 tienen ancho fijo y quedan agrupadas
-   y compactas a la izquierda; la columna de fecha absorbe el espacio sobrante
-   (minmax 1fr) para empujar "Acciones" al extremo derecho del contenedor sin
-   separar el resto. */
-.ome-grid-cols{grid-template-columns:36px 110px 130px 190px 180px minmax(150px,1fr) 90px;}
-.ome-list{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;}
+/* Alineación EXACTA (no aproximada por escala) entre la cabecera de orden y
+   el detalle por medicamento: las columnas que ambas filas comparten
+   posicionalmente usan las MISMAS variables, así que coinciden por
+   construcción en vez de por aritmética que se puede desalinear con
+   cualquier ajuste futuro de una sola de las dos reglas. */
+:root{
+  --ome-col-check:36px;    /* checkbox/chevron */
+  --ome-col-slot2:110px;   /* Consecutivo (cabecera) / vacío (ítem) */
+  --ome-col-name:320px;    /* Medicamentos (cabecera, badge) / nombre (ítem) */
+  --ome-col-meta:260px;    /* Médico (cabecera) / meta dosis·frecuencia·vía·duración (ítem) */
+  --ome-col-slot5:180px;   /* Fecha de la orden (cabecera) / prioridad (ítem) */
+  --ome-col-slot6:130px;   /* vacío (cabecera) / est. programación (ítem) — hace que "Estado" y "est. pedido" arranquen en el mismo borde */
+}
+/* Orden de columnas (cabecera de orden): consecutivo, medicamentos, médico,
+   fecha, (vacío), estado, acciones — estado va después de fecha para quedar
+   cerca de los badges "est. programación"/"est. pedido" del detalle. La
+   columna vacía entre fecha y estado no tiene equivalente visible: existe
+   solo para que el conteo de columnas compartidas con .ome-item-grid-cols
+   cuadre (la fila de ítem tiene prioridad + est. programación antes de
+   est. pedido, dos campos sin par en la cabecera de orden). Las primeras 6
+   son de ancho fijo y quedan agrupadas a la izquierda; estado absorbe el
+   espacio sobrante (minmax 1fr) para empujar "Acciones" al extremo derecho. */
+.ome-grid-cols{grid-template-columns:var(--ome-col-check) var(--ome-col-slot2) var(--ome-col-name) var(--ome-col-meta) var(--ome-col-slot5) var(--ome-col-slot6) minmax(190px,1fr) 65px;}
+/* .ome-scroll-x envuelve cabecera + lista: columnas de ancho fijo que no caben
+   por debajo del piso tablet (~1024px, ver .app en historia-clinica.css) ganan
+   su propio scroll horizontal en vez de romper el layout, moviendo cabecera y
+   filas como una sola unidad. overflow-x:visible en .ome-list evita que abra un
+   SEGUNDO scroll horizontal independiente del de .ome-scroll-x (el eje Y sigue
+   siendo suyo). */
+.ome-scroll-x{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow-x:auto;overflow-y:hidden;}
+.ome-list{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;overflow-x:visible;}
 .ome-header-row{
   display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-2) var(--space-4);
   background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
@@ -32,20 +56,36 @@
 .ome-order-body.collapsed{display:none;}
 
 /* Filas de medicamento: sin tabla ni cabecera propia, homologadas al patrón
-   fila-indentada de Solicitudes/Recepción. Columnas: checkbox, descripción
-   (con dosis/frecuencia/vía/duración resumidas en una sola línea secundaria),
-   prioridad, enfermera, est. programación, est. pedido, acción. */
-.ome-item-grid-cols{grid-template-columns:36px minmax(220px,1fr) 130px 150px 130px 120px 170px;}
+   fila-indentada de Solicitudes/Recepción. Columnas: checkbox, (spacer
+   vacío), nombre, meta (dosis · frecuencia · vía · duración), prioridad
+   (solo si Urgente), est. programación, est. pedido, quien programó
+   (enfermera), acción. Las primeras 6 columnas reusan las variables
+   --ome-col-* de .ome-grid-cols, así que coinciden EXACTO con checkbox/
+   chevron, Consecutivo(vacío), Medicamentos→nombre, Médico→meta,
+   Fecha→prioridad y (vacío)→est. programación de la cabecera de orden —
+   "nombre" arranca bajo "Medicamentos" y "est. pedido" arranca bajo "Estado"
+   por construcción, no por cálculo aproximado (mismo criterio de alineación
+   que .sol-item-row con .sol-grid-cols en Solicitudes, adaptado porque acá
+   el detalle tiene más campos propios que la cabecera de orden). Nombre y
+   meta truncan con ellipsis + title si no caben, en vez de wrappear. Las
+   columnas sin variable compartida (est. pedido, enfermera, acción) son de
+   ancho fijo propio (no 1fr) para que no se estiren con el espacio sobrante
+   — ese espacio lo absorbe .ome-item-spacer, justo antes de la acción. Por
+   debajo del piso tablet, la fila completa gana su propio scroll horizontal
+   (.ome-scroll-x) en vez de wrappear. */
+.ome-item-grid-cols{grid-template-columns:var(--ome-col-check) var(--ome-col-slot2) var(--ome-col-name) var(--ome-col-meta) var(--ome-col-slot5) var(--ome-col-slot6) 120px 150px minmax(0,1fr) 170px;}
 .ome-item-row{
-  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
+  display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-2) var(--space-4);
   background:#fafbfd;border-top:1px solid #eef0f4;font-size:13px;color:var(--ink-900);
 }
-.ome-item-row .row-indent{padding-left:0;}
+.ome-item-row .row-indent{padding-left:0;min-width:0;}
+.ome-item-row .row-indent b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ome-item-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-500);font-size:12px;}
 .ome-item-row:hover{background:#f5f6fa;}
 .ome-item-row.selected{background:var(--primary-50);}
 .ome-check-cell{display:flex;}
 .ome-check-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);}
-.ome-actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;}
+.ome-actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;justify-self:end;}
 .btn-programar{padding:6px var(--space-3);font-size:13px;}
 html[data-theme="dark"] .ome-item-row:hover{background:#1a2130;}
 html[data-theme="dark"] .ome-item-row.selected{background:var(--primary-50);}

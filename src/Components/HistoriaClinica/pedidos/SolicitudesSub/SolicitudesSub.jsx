@@ -73,17 +73,19 @@ export default function SolicitudesSub() {
           </div>
         </div>
       </div>
-      <div className="dev-header-row sol-grid-cols">
-        <span></span>
-        <span>Consecutivo</span>
-        <span>Medicamentos / insumos</span>
-        <span>Prioridad</span>
-        <span>Solicitado por</span>
-        <span>Fecha y hora</span>
-        <span>Estado</span>
-        <span className="col-actions">Acciones</span>
+      <div className="dev-scroll-x">
+        <div className="dev-header-row sol-grid-cols">
+          <span></span>
+          <span>Consecutivo</span>
+          <span>Medicamentos / insumos</span>
+          <span>Prioridad</span>
+          <span>Solicitado por</span>
+          <span>Fecha y hora</span>
+          <span>Estado</span>
+          <span className="col-actions">Acciones</span>
+        </div>
+        <div className="dev-list" id="solicitudes-list">{/* filas generadas por legacy-app.js */}</div>
       </div>
-      <div className="dev-list" id="solicitudes-list">{/* filas generadas por legacy-app.js */}</div>
       <div className="legend-bar">
         <div className="footer-title-block"><div className="ft-sub" id="solicitudes-footer-count">5 solicitudes · 9 ítems · turno actual</div></div>
         <div className="footer-updated">Última actualización: <b>14:32h</b></div>

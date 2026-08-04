@@ -22,17 +22,19 @@ export default function DevolucionesSub() {
           <button className="chip-filter" data-filter="rechazada" aria-pressed="false">Rechazadas</button>
         </div>
       </div>
-      <div className="dev-header-row dev-grid-cols">
-        <span></span>
-        <span>Consecutivo</span>
-        <span>Motivo</span>
-        <span>Fecha devolución</span>
-        <span>Responsable</span>
-        <span>Estado</span>
-        <span>Confirma en farmacia</span>
-        <span className="col-actions">Acciones</span>
+      <div className="dev-scroll-x">
+        <div className="dev-header-row dev-grid-cols">
+          <span></span>
+          <span>Consecutivo</span>
+          <span>Motivo</span>
+          <span>Fecha devolución</span>
+          <span>Responsable</span>
+          <span>Estado</span>
+          <span>Confirma en farmacia</span>
+          <span className="col-actions">Acciones</span>
+        </div>
+        <div className="dev-list" id="devoluciones-list">{/* filas generadas por legacy-app.js */}</div>
       </div>
-      <div className="dev-list" id="devoluciones-list">{/* filas generadas por legacy-app.js */}</div>
       <div className="legend-bar">
         <div className="footer-title-block"><div className="ft-sub" id="devoluciones-footer-count">3 devoluciones · turno actual</div></div>
         <div className="footer-updated">Última actualización: <b>14:32h</b></div>

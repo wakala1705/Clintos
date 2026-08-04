@@ -1,8 +1,13 @@
 /* Estilos exclusivos de RecepcionSub: acordeón orden → medicamento →
    artículo/lote. row-expand-btn, child-count-badge, detail-table, partial-flag
    y confirmed-tag son el patrón genérico compartido — ver shared/shared.css. */
+/* Sin cabecera propia (ver comentario en legacy-app.js/recepDetailTableHtml),
+   así que a diferencia de OME/Solicitudes/Devoluciones no hace falta un
+   wrapper .*-scroll-x aparte: min-width:0 + overflow-x:auto alcanzan para que
+   .recep-order-header (grid-template-columns fijo) gane su propio scroll
+   horizontal por debajo del piso tablet (~1024px) en vez de romper el layout. */
 .recep-list{
-  display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;
+  display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow-y:auto;overflow-x:auto;
 }
 .recep-order{border-bottom:1px solid var(--border);flex-shrink:0;}
 .recep-order:last-child{border-bottom:none;}
