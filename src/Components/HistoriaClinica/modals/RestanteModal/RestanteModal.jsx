@@ -2,10 +2,12 @@ import './RestanteModal.css';
 import { LuClock, LuInbox, LuX } from 'react-icons/lu';
 
 // Modal "Recepcionar restante": lista los ítems faltantes de una orden de
-// Recepción parcial y permite registrar el complemento (cantidad, lote,
-// vencimiento) en una tanda — puede repetirse hasta completar la orden.
-// legacy-app.js llena #restante-items-list según los ítems incompletos de la
-// orden abierta y valida cantidad/lote/vencimiento al confirmar.
+// Recepción parcial junto con el artículo/lote/vencimiento que farmacia ya
+// despachó para completarlos (mismos datos que el detalle de recepción) y
+// registra esa entrega en una tanda — puede repetirse hasta completar la
+// orden. Es solo lectura: nada de esto lo escribe la enfermera, ya viene del
+// despacho de farmacia (ver item.pendiente en legacy-app.js). legacy-app.js
+// llena #restante-items-list según los ítems incompletos de la orden abierta.
 export default function RestanteModal() {
   return (
     <div className="modal-overlay" id="restante-modal-overlay">

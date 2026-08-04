@@ -1,13 +1,16 @@
 import './AdminModal.css';
 import { LuClock, LuShieldCheck, LuTriangleAlert, LuX } from 'react-icons/lu';
 
-// Modal "Registrar administración": resumen del medicamento (incluida la
-// fecha de la dosis, no solo la hora — el cronograma permite navegar a otros
-// días), alerta de alergias del paciente (leída del banner, ver
-// admin-alergias-row), selección de lote disponible (FEFO), insumos
-// utilizados (opcional) y checklist de los 5 correctos como 5 verificaciones
-// independientes. legacy-app.js llena admin-lote-list / admin-insumos-list y
-// habilita admin-confirm-btn solo cuando hay lote elegido + las 5 verificaciones marcadas.
+// Modal "Registrar administración": resumen compacto del medicamento en dos
+// líneas (nombre + dosis/vía/frecuencia a la derecha; fecha/hora programada +
+// hora en que quedará registrada a la derecha) — las alergias del paciente ya
+// no se repiten aquí, se consultan desde el banner/popover del cronograma.
+// Selección de lote disponible (FEFO: los que vencen antes aparecen primero,
+// ver getLoteOptions), insumos utilizados (opcional) y checklist de los 5
+// correctos como 5 verificaciones independientes. legacy-app.js llena
+// admin-lote-list / admin-insumos-list, resta unidades del lote elegido al
+// confirmar y habilita admin-confirm-btn solo cuando hay lote elegido + las 5
+// verificaciones marcadas.
 export default function AdminModal() {
   return (
     <div className="modal-overlay" id="admin-modal-overlay">
@@ -21,25 +24,26 @@ export default function AdminModal() {
 
         <div className="modal-body">
           <div className="admin-summary">
-            <div className="admin-summary-name" id="admin-med-nombre">—</div>
-            <div className="admin-summary-meta">
-              <span className="asm-item"><span className="asm-k">Dosis</span><span className="asm-v" id="admin-dosis-prescrita">—</span></span>
-              <span className="asm-sep"></span>
-              <span className="asm-item"><span className="asm-k">Vía</span><span className="asm-v" id="admin-via">—</span></span>
-              <span className="asm-sep"></span>
-              <span className="asm-item"><span className="asm-k">Frecuencia</span><span className="asm-v" id="admin-frecuencia">—</span></span>
-              <span className="asm-sep"></span>
-              <span className="asm-item"><span className="asm-k">Fecha</span><span className="asm-v" id="admin-fecha-programada">—</span></span>
-              <span className="asm-sep"></span>
-              <span className="asm-item"><span className="asm-k">Hora programada</span><span className="asm-v" id="admin-hora-programada">—</span></span>
+            <div className="admin-summary-row">
+              <div className="admin-summary-name" id="admin-med-nombre">—</div>
+              <div className="admin-summary-meta">
+                <span className="asm-item"><span className="asm-k">Dosis</span><span className="asm-v" id="admin-dosis-prescrita">—</span></span>
+                <span className="asm-sep"></span>
+                <span className="asm-item"><span className="asm-k">Vía</span><span className="asm-v" id="admin-via">—</span></span>
+                <span className="asm-sep"></span>
+                <span className="asm-item"><span className="asm-k">Frecuencia</span><span className="asm-v" id="admin-frecuencia">—</span></span>
+              </div>
             </div>
-            <div className="admin-alergias-row" id="admin-alergias-row" role="alert" style={{display: 'none'}}>
-              <LuTriangleAlert className="icon" aria-hidden="true" />
-              <span>Alergias registradas: <b id="admin-alergias-list">—</b></span>
-            </div>
-            <div className="admin-summary-time">
-              <LuClock className="icon" aria-hidden="true" strokeWidth="2.2" />
-              Quedará registrada el <b id="admin-fecha-registro">—</b> a las <b id="admin-hora-registro">--:--</b>
+            <div className="admin-summary-row">
+              <div className="admin-summary-meta">
+                <span className="asm-item"><span className="asm-k">Fecha</span><span className="asm-v" id="admin-fecha-programada">—</span></span>
+                <span className="asm-sep"></span>
+                <span className="asm-item"><span className="asm-k">Hora programada</span><span className="asm-v" id="admin-hora-programada">—</span></span>
+              </div>
+              <div className="admin-summary-time">
+                <LuClock className="icon" aria-hidden="true" strokeWidth="2.2" />
+                Se registrará <b id="admin-fecha-registro">—</b> · <b id="admin-hora-registro">--:--</b>
+              </div>
             </div>
           </div>
 

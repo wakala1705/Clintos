@@ -990,7 +990,8 @@ export function initHistoriaClinica() {
           articulos:[
             { articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58821', vencimiento:'2026-10-31', tandaIndex:0 },
             { articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58902', vencimiento:'2026-10-31', tandaIndex:0 },
-          ] },
+          ],
+          pendiente:{ articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58940', vencimiento:'2026-11-15' } },
         { id:'cloruro-potasio', nombre:'Cloruro de potasio 10 mEq solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:5, cantidadRecibida:5, completo:true,
           articulos:[{ articulo:'MX0000040-1', medicamento:'Cloruro de potasio 10 mEq solución inyectable - Pisa', cantidad:5, lote:'L-31490', vencimiento:'2027-06-30', tandaIndex:0 }] },
       ], tandas:[{ index:0, fecha:'02 May 2026 · 14:05', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
@@ -1014,13 +1015,22 @@ export function initHistoriaClinica() {
 
   function findRecepcionOrden(orderId){ return recepcionOrdenes.find(o => o.id === orderId); }
 
-  function recepDetailTableHtml(articulos){
+  // indent=true agrega una columna vacía inicial (ver .detail-table--indent en
+  // RecepcionSub.css) para que Artículo quede alineado con el nombre del
+  // medicamento de la fila padre, sin recurrir a padding/margin-left sobre la
+  // tabla — eso mantenía el ancho fijo en px de las demás columnas, que en
+  // paneles angostos empujaba la tabla a desbordarse. RestanteModal (que
+  // reusa esta misma función sin fila padre que alinear) no la pide.
+  function recepDetailTableHtml(articulos, indent){
+    const indentTh = indent ? '<th></th>' : '';
+    const indentTd = indent ? '<td></td>' : '';
     return `
-      <table class="detail-table">
-        <thead><tr><th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
+      <table class="detail-table${indent ? ' detail-table--indent' : ''}">
+        <thead><tr>${indentTh}<th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
         <tbody>
           ${articulos.map(a => `
             <tr>
+              ${indentTd}
               <td>${a.articulo}</td>
               <td>${a.medicamento}</td>
               <td class="cant-entregada">${a.cantidad}</td>
@@ -1043,14 +1053,14 @@ export function initHistoriaClinica() {
         : `<span class="ome-muted" style="font-size:12px;">No se completó — orden cerrada</span>`;
       return `
         <div class="detail-section-label">Recibido (${item.cantidadRecibida})</div>
-        ${recepDetailTableHtml(item.articulos)}
+        ${recepDetailTableHtml(item.articulos, true)}
         <div class="detail-section-label detail-section-label--faltante">Falta por recibir (${faltante})</div>
         <div class="recep-faltante-row">
           <span>${item.nombre} — ${faltante} unidad${faltante === 1 ? '' : 'es'} pendiente${faltante === 1 ? '' : 's'}</span>
           ${accionHtml}
         </div>`;
     }
-    return recepDetailTableHtml(item.articulos);
+    return recepDetailTableHtml(item.articulos, true);
   }
 
   function recepOrderStatusHtml(orden){
@@ -1277,15 +1287,23 @@ export function initHistoriaClinica() {
       // cantidad realmente despachada hoy es un dato simulado del prototipo —
       // en producción vendría del proceso real de despacho de farmacia).
       const cantidadRecibida = (!item.esInsumo && cantidadSolicitada > 1) ? cantidadSolicitada - 1 : cantidadSolicitada;
+      const completo = cantidadRecibida >= cantidadSolicitada;
+      // El artículo/lote/vencimiento del restante ya lo conoce farmacia desde
+      // que lo despacha — no es un dato que la enfermera deba escribir al
+      // recepcionarlo, así que se genera aquí junto con el resto del despacho.
+      const pendiente = completo ? null : {
+        articulo: articuloCod, medicamento: item.nombre, cantidad: cantidadSolicitada - cantidadRecibida,
+        lote: 'L-' + Math.floor(60000 + Math.random() * 9000), vencimiento: shiftDate(TODAY_DATE, 195 + idx * 15)
+      };
 
       return {
         id: 'pedmed-' + solicitud.id + '-' + idx,
         nombre: item.nombre,
         esInsumo: !!item.esInsumo,
         omeItemId: item.omeItemId || null,
-        cantidadSolicitada, cantidadRecibida,
-        completo: cantidadRecibida >= cantidadSolicitada,
-        articulos: [{ articulo: articuloCod, medicamento: item.nombre, cantidad: cantidadRecibida, lote: loteCod, vencimiento: vencIso, tandaIndex: 0 }]
+        cantidadSolicitada, cantidadRecibida, completo,
+        articulos: [{ articulo: articuloCod, medicamento: item.nombre, cantidad: cantidadRecibida, lote: loteCod, vencimiento: vencIso, tandaIndex: 0 }],
+        pendiente
       };
     });
 
@@ -1361,6 +1379,7 @@ export function initHistoriaClinica() {
       item.articulos.push({ articulo: articuloCod, medicamento: item.nombre, cantidad: e.cantidad, lote: e.lote, vencimiento: e.vencimiento, tandaIndex });
       item.cantidadRecibida += e.cantidad;
       item.completo = item.cantidadRecibida >= item.cantidadSolicitada;
+      item.pendiente = null;
       aplicarEntregaAMed(item, e);
     });
 
@@ -1403,25 +1422,12 @@ export function initHistoriaClinica() {
     document.getElementById('restante-items-list').innerHTML = faltantes.map(item=>{
       const faltante = item.cantidadSolicitada - item.cantidadRecibida;
       return `
-        <div class="restante-item-row" data-item-id="${item.id}" data-faltante="${faltante}">
+        <div class="restante-item-row" data-item-id="${item.id}">
           <div class="restante-item-info">
             <div class="restante-item-name">${item.nombre}</div>
-            <div class="restante-item-meta">Faltan ${faltante} de ${item.cantidadSolicitada} unidades</div>
+            <div class="restante-item-meta">Recibirás ${faltante} de ${item.cantidadSolicitada} unidades pendientes</div>
           </div>
-          <div class="restante-item-fields">
-            <div class="form-field">
-              <label>Cantidad</label>
-              <input type="number" class="restante-cantidad-input" min="0" max="${faltante}" value="${faltante}">
-            </div>
-            <div class="form-field">
-              <div class="field-label-row"><label>Lote</label><span class="required-pill restante-lote-required" style="display:none;">Requerido</span></div>
-              <input type="text" class="restante-lote-input" placeholder="Ej. L-58910">
-            </div>
-            <div class="form-field">
-              <div class="field-label-row"><label>Vencimiento</label><span class="required-pill restante-vencimiento-required" style="display:none;">Requerido</span></div>
-              <input type="date" class="restante-vencimiento-input">
-            </div>
-          </div>
+          ${recepDetailTableHtml(item.pendiente ? [item.pendiente] : [])}
         </div>`;
     }).join('');
 
@@ -1449,36 +1455,13 @@ export function initHistoriaClinica() {
 
   document.getElementById('restante-confirm-btn').addEventListener('click', ()=>{
     if(!restanteModalOrden) return;
-    const rows = document.querySelectorAll('#restante-items-list .restante-item-row');
-    const entregas = [];
-    let valid = true;
-    let focusTarget = null;
-
-    rows.forEach(row=>{
-      const itemId = row.getAttribute('data-item-id');
-      const faltante = parseInt(row.getAttribute('data-faltante'), 10);
-      const cantidadInput = row.querySelector('.restante-cantidad-input');
-      const loteInput = row.querySelector('.restante-lote-input');
-      const vencInput = row.querySelector('.restante-vencimiento-input');
-      const loteRequired = row.querySelector('.restante-lote-required');
-      const vencRequired = row.querySelector('.restante-vencimiento-required');
-      loteRequired.style.display = 'none';
-      vencRequired.style.display = 'none';
-
-      let cantidad = parseInt(cantidadInput.value, 10) || 0;
-      if(cantidad < 0) cantidad = 0;
-      if(cantidad > faltante) cantidad = faltante;
-      if(cantidad === 0) return;
-
-      if(!loteInput.value.trim()){ loteRequired.style.display = 'inline-flex'; focusTarget = focusTarget || loteInput; valid = false; }
-      if(!vencInput.value){ vencRequired.style.display = 'inline-flex'; focusTarget = focusTarget || vencInput; valid = false; }
-      entregas.push({ itemId, cantidad, lote: loteInput.value.trim(), vencimiento: vencInput.value });
-    });
-
-    if(entregas.length === 0){ showToast('Ingresa al menos una cantidad para registrar.'); return; }
-    if(!valid){ if(focusTarget) focusTarget.focus(); return; }
-
     const orden = restanteModalOrden;
+    const entregas = orden.items
+      .filter(item => !item.completo && item.pendiente)
+      .map(item => ({ itemId: item.id, cantidad: item.pendiente.cantidad, lote: item.pendiente.lote, vencimiento: item.pendiente.vencimiento }));
+
+    if(entregas.length === 0){ showToast('No hay unidades pendientes por recepcionar.'); return; }
+
     registrarRestante(orden, entregas);
     closeRestanteModal();
     renderRecepcionList();
@@ -1839,20 +1822,33 @@ export function initHistoriaClinica() {
     return (y - refY) * 12 + (m - refM);
   }
 
+  // El stock de cada lote se cachea en el propio med (lotesRecibidos si viene
+  // de una recepción real, o _lotesSinteticos como respaldo) para que las
+  // cantidades restadas en admin-confirm-btn persistan entre aperturas del
+  // modal en vez de regenerarse desde cero cada vez.
+  function getLoteStock(med){
+    if(med.lotesRecibidos && med.lotesRecibidos.length > 0) return med.lotesRecibidos;
+    if(!med._lotesSinteticos){
+      const [prefix, numStr] = med.lote.split('-');
+      const baseNum = parseInt(numStr, 10) || 1000;
+      med._lotesSinteticos = [
+        { lote: `${prefix}-${baseNum + 64}`, vencimiento: shiftMonthYear(med.vencimiento, 7),  cantidad: 24 },
+        { lote: `${prefix}-${baseNum + 41}`, vencimiento: shiftMonthYear(med.vencimiento, 5),  cantidad: 18 },
+        { lote: `${prefix}-${baseNum + 9}`,  vencimiento: shiftMonthYear(med.vencimiento, 0),  cantidad: 6  },
+        { lote: `${prefix}-${baseNum - 21}`, vencimiento: shiftMonthYear(med.vencimiento, -3), cantidad: 2  },
+        { lote: `${prefix}-${baseNum - 55}`, vencimiento: shiftMonthYear(med.vencimiento, -5), cantidad: 11 }
+      ];
+    }
+    return med._lotesSinteticos;
+  }
+
+  // FEFO (first-expire, first-out): los lotes más próximos a vencer se listan
+  // primero para que la enfermera los use antes por rotación de inventario.
   function getLoteOptions(med){
     if(med.pendienteRecepcion) return [];
-    if(med.lotesRecibidos && med.lotesRecibidos.length > 0){
-      return med.lotesRecibidos.filter(opt => monthsUntil(opt.vencimiento) >= 0);
-    }
-    const [prefix, numStr] = med.lote.split('-');
-    const baseNum = parseInt(numStr, 10) || 1000;
-    return [
-      { lote: `${prefix}-${baseNum + 64}`, vencimiento: shiftMonthYear(med.vencimiento, 7),  cantidad: 24 },
-      { lote: `${prefix}-${baseNum + 41}`, vencimiento: shiftMonthYear(med.vencimiento, 5),  cantidad: 18 },
-      { lote: `${prefix}-${baseNum + 9}`,  vencimiento: shiftMonthYear(med.vencimiento, 0),  cantidad: 6  },
-      { lote: `${prefix}-${baseNum - 21}`, vencimiento: shiftMonthYear(med.vencimiento, -3), cantidad: 2  },
-      { lote: `${prefix}-${baseNum - 55}`, vencimiento: shiftMonthYear(med.vencimiento, -5), cantidad: 11 }
-    ].filter(opt => monthsUntil(opt.vencimiento) >= 0);
+    return getLoteStock(med)
+      .filter(opt => opt.cantidad > 0 && monthsUntil(opt.vencimiento) >= 0)
+      .sort((a, b) => monthsUntil(a.vencimiento) - monthsUntil(b.vencimiento));
   }
 
   function renderLoteOptions(med){
@@ -1995,15 +1991,6 @@ export function initHistoriaClinica() {
     document.getElementById('admin-fecha-programada').textContent = formatDateLabel(date);
     document.getElementById('admin-hora-programada').textContent = hourLabel(hour);
 
-    const alergias = Array.from(document.querySelectorAll('#allergy-popover .dp-info-row .k')).map(el => el.textContent);
-    const alergiasRow = document.getElementById('admin-alergias-row');
-    if(alergias.length > 0){
-      document.getElementById('admin-alergias-list').textContent = alergias.join(', ');
-      alergiasRow.style.display = 'flex';
-    } else {
-      alergiasRow.style.display = 'none';
-    }
-
     renderLoteOptions(med);
     renderAdminInsumos();
     document.getElementById('admin-observaciones').value = '';
@@ -2072,6 +2059,8 @@ export function initHistoriaClinica() {
       observaciones, profesional: CURRENT_USER_NAME, insumosUsados
     };
     dayMarkers[hour] = 'administered';
+    selectedLoteOption.cantidad -= 1;
+    const administeredLoteOption = selectedLoteOption;
     checkTratamientoCompleto(med);
 
     adminModalOverlay.classList.remove('open');
@@ -2098,6 +2087,7 @@ export function initHistoriaClinica() {
           const insumo = insumosDisponibles.find(i => i.id === u.insumoId);
           if(insumo) insumo.cantidadDisponible += 1;
         });
+        administeredLoteOption.cantidad += 1;
         renderMedRows();
         renderDoseList();
         applyFilters();

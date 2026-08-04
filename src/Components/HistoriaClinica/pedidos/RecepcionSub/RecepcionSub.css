@@ -29,11 +29,19 @@
 .recep-med-detail.collapsed{display:none;}
 .recep-med-detail .detail-table{font-size:13px;table-layout:fixed;}
 .recep-med-detail .detail-table thead th{background:var(--primary-50);}
-.recep-med-detail .detail-table th:nth-child(1), .recep-med-detail .detail-table td:nth-child(1){width:140px;}
-.recep-med-detail .detail-table th:nth-child(3), .recep-med-detail .detail-table td:nth-child(3){width:150px;}
-.recep-med-detail .detail-table th:nth-child(4), .recep-med-detail .detail-table td:nth-child(4){width:130px;}
-.recep-med-detail .detail-table th:nth-child(5), .recep-med-detail .detail-table td:nth-child(5){width:130px;}
-.recep-med-detail .detail-table td:nth-child(2){white-space:normal;overflow-wrap:break-word;}
+/* Columnas en % (no px): así la tabla nunca puede pedir más ancho que el que
+   tiene disponible — con px fijos, sumaban más que el panel en pantallas
+   angostas y la tabla se recortaba en vez de encogerse. La primera columna
+   (vacía, ver recepDetailTableHtml/indent en legacy-app.js) es el único
+   "espacio en blanco" real: reemplaza el margin-left que usábamos antes para
+   alinear Artículo con el nombre del medicamento de la fila padre, sin
+   depender de padding/margin sobre la tabla. Medicamento con % fijo (no
+   "el resto") para que no sea la columna que se traga todo el sobrante. */
+.recep-med-detail .detail-table--indent th:nth-child(1), .recep-med-detail .detail-table--indent td:nth-child(1){width:4%;padding:0;}
+.recep-med-detail .detail-table--indent th:nth-child(2), .recep-med-detail .detail-table--indent td:nth-child(2){width:14%;}
+.recep-med-detail .detail-table--indent th:nth-child(3), .recep-med-detail .detail-table--indent td:nth-child(3){width:32%;white-space:normal;overflow-wrap:break-word;}
+.recep-med-detail .detail-table--indent th:nth-child(4), .recep-med-detail .detail-table--indent td:nth-child(4){width:18%;}
+.recep-med-detail .detail-table--indent th:nth-child(5), .recep-med-detail .detail-table--indent td:nth-child(5){width:16%;}
 .recep-med-detail .cant-entregada{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
 
 /* ---------- Recepción parcial: separador "Recibido" / "Falta por recibir" ---------- */
