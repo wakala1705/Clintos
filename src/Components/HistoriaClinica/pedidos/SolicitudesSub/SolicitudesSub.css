@@ -1,7 +1,12 @@
 /* Estilos exclusivos de SolicitudesSub. El filtro/lista base (.dev-list,
    .dev-header-row) y el patrón de fila expandible (.row-indent, .row-expand-btn)
    son compartidos — ver shared/shared.css. */
-.sol-grid-cols{grid-template-columns:36px 130px 1fr 110px 160px 150px 140px 96px;}
+/* "Medicamentos/insumos" ya no absorbe el espacio sobrante (antes era 1fr y
+   dejaba un vacío enorme antes de Prioridad/Solicitado por/Fecha/Estado);
+   ahora es de ancho fijo y el espacio libre real lo absorbe Estado (la
+   última columna de datos), empujando solo Acciones al extremo derecho —
+   mismo patrón que .ome-grid-cols. */
+.sol-grid-cols{grid-template-columns:36px 130px 300px 110px 160px 150px minmax(120px,1fr) 96px;}
 .sol-item-row{
   display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
   background:#fafbfd;border-top:1px solid #eef0f4;font-size:13px;color:var(--ink-900);

@@ -1,11 +1,14 @@
 /* Estilos exclusivos de OrdenesMedicasPanel (sub-tabs Medicamentos / Otros
    ordenamientos). Filtros, selection-toolbar, subnav-tab, legend-bar y
    data-table-wrap/data-table (base) son compartidos — ver shared/shared.css;
-   aquí solo el layout tipo grid de la lista de órdenes de medicación. */
-/* Orden de columnas: consecutivo, medicamentos, estado, médico, fecha, acciones.
-   Las primeras 5 tienen ancho fijo y quedan agrupadas y compactas a la
-   izquierda; la columna de fecha absorbe el espacio sobrante (minmax 1fr) para
-   empujar "Acciones" al extremo derecho del contenedor sin separar el resto. */
+   el patrón de fila expandible (.row-indent, .row-expand-btn, .child-count-badge)
+   también es compartido — mismo lenguaje visual que SolicitudesSub/RecepcionSub;
+   aquí solo el layout tipo grid propio de la lista de órdenes de medicación. */
+/* Orden de columnas (cabecera de orden): consecutivo, medicamentos, estado,
+   médico, fecha, acciones. Las primeras 5 tienen ancho fijo y quedan agrupadas
+   y compactas a la izquierda; la columna de fecha absorbe el espacio sobrante
+   (minmax 1fr) para empujar "Acciones" al extremo derecho del contenedor sin
+   separar el resto. */
 .ome-grid-cols{grid-template-columns:36px 110px 130px 190px 180px minmax(150px,1fr) 90px;}
 .ome-list{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;}
 .ome-header-row{
@@ -24,47 +27,25 @@
 .ome-order-header .ome-order-actions-cell{justify-self:end;}
 .ome-order-number{font-size:13px;font-weight:700;color:var(--link-text);}
 .ome-order-cell{font-size:13px;color:var(--ink-900);}
-.ome-order-badge{
-  font-size:11px;font-weight:700;color:var(--ink-500);background:var(--gray-bg);
-  padding:2px var(--space-2);border-radius:12px;white-space:nowrap;display:inline-block;
-}
 .ome-order-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end;}
 .ome-order-body{display:flex;flex-direction:column;}
 .ome-order-body.collapsed{display:none;}
-.ome-table-wrap{overflow-x:auto;}
-.ome-table{table-layout:fixed;width:100%;min-width:1526px;border-collapse:collapse;font-size:13px;}
-.ome-table thead th{
-  position:sticky;top:0;background:#f7f8fb;color:var(--ink-500);font-weight:600;font-size:11px;
-  text-transform:uppercase;letter-spacing:.03em;padding:var(--space-2) var(--space-3);text-align:left;
-  border-bottom:1px solid var(--border);white-space:nowrap;
-}
-.ome-table td{padding:var(--space-3);border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ome-table tbody tr:last-child td{border-bottom:none;}
-.ome-table tbody tr:hover{background:#fafbfd;}
-.ome-table tbody tr.selected{background:var(--primary-50);}
-.ome-table .ome-desc{font-weight:600;color:var(--ink-900);white-space:normal;overflow:visible;text-overflow:clip;}
 
-/* Anchos fijos por columna (checkbox, descripción, prioridad, dosis,
-   frecuencia, vía, duración, enfermera, est. programación, est. pedido,
-   cant. pedida, aplicadas, acción) — con table-layout:fixed, cada tabla de
-   orden queda alineada igual sin importar el largo del contenido de cada fila. */
-.ome-table th:nth-child(1), .ome-table td:nth-child(1){width:36px;}
-.ome-table th:nth-child(2), .ome-table td:nth-child(2){width:260px;}
-.ome-table th:nth-child(3), .ome-table td:nth-child(3){width:90px;}
-.ome-table th:nth-child(4), .ome-table td:nth-child(4){width:80px;}
-.ome-table th:nth-child(5), .ome-table td:nth-child(5){width:110px;}
-.ome-table th:nth-child(6), .ome-table td:nth-child(6){width:70px;}
-.ome-table th:nth-child(7), .ome-table td:nth-child(7){width:90px;}
-.ome-table th:nth-child(8), .ome-table td:nth-child(8){width:170px;}
-.ome-table th:nth-child(9), .ome-table td:nth-child(9){width:130px;}
-.ome-table th:nth-child(10), .ome-table td:nth-child(10){width:120px;}
-.ome-table th:nth-child(11), .ome-table td:nth-child(11){width:100px;}
-.ome-table th:nth-child(12), .ome-table td:nth-child(12){width:100px;}
-.ome-table th:nth-child(13), .ome-table td:nth-child(13){width:170px;}
-.ome-table th:nth-child(13){text-align:right;}
-.ome-check-cell{width:36px;}
+/* Filas de medicamento: sin tabla ni cabecera propia, homologadas al patrón
+   fila-indentada de Solicitudes/Recepción. Columnas: checkbox, descripción
+   (con dosis/frecuencia/vía/duración resumidas en una sola línea secundaria),
+   prioridad, enfermera, est. programación, est. pedido, acción. */
+.ome-item-grid-cols{grid-template-columns:36px minmax(220px,1fr) 130px 150px 130px 120px 170px;}
+.ome-item-row{
+  display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
+  background:#fafbfd;border-top:1px solid #eef0f4;font-size:13px;color:var(--ink-900);
+}
+.ome-item-row .row-indent{padding-left:0;}
+.ome-item-row:hover{background:#f5f6fa;}
+.ome-item-row.selected{background:var(--primary-50);}
+.ome-check-cell{display:flex;}
 .ome-check-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);}
 .ome-actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;}
 .btn-programar{padding:6px var(--space-3);font-size:13px;}
-html[data-theme="dark"] .ome-table tbody tr:hover{background:#1a2130;}
-html[data-theme="dark"] .ome-table tbody tr.selected{background:var(--primary-50);}
+html[data-theme="dark"] .ome-item-row:hover{background:#1a2130;}
+html[data-theme="dark"] .ome-item-row.selected{background:var(--primary-50);}

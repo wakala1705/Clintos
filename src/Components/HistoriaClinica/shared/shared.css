@@ -471,6 +471,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .order-badge.normal{background:var(--gray-bg);color:var(--ink-500);}
 .order-badge.programada{background:var(--green-bg);color:#0d7a3d;}
 .order-badge.no-solicitado{background:var(--gray-bg);color:var(--ink-500);}
+.order-badge.sin-programar{background:var(--gray-bg);color:var(--ink-500);}
 .order-badge.solicitado{background:var(--status-info-bg);color:var(--status-info-fg);}
 .confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0d7a3d;}
 .confirmed-tag .icon{width:15px;height:15px;}

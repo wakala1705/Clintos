@@ -29,9 +29,10 @@ export default function OrdenesMedicasPanel() {
           </div>
           <div className="filter-spacer"></div>
           <div className="chip-group segmented" id="chipgroup-ordenes-estado">
-            <button className="chip-filter active" data-filter="pendiente" aria-pressed="true">Pendientes de programar</button>
+            <button className="chip-filter active" data-filter="todas" aria-pressed="true">Todas</button>
+            <button className="chip-filter" data-filter="pendiente" aria-pressed="false">Pendientes de programar</button>
             <button className="chip-filter" data-filter="programada" aria-pressed="false">Programadas</button>
-            <button className="chip-filter" data-filter="todas" aria-pressed="false">Todas</button>
+            
           </div>
           <div className="filter-divider"></div>
           <div className="chip-group segmented" id="chipgroup-ordenes-fecha">

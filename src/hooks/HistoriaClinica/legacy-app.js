@@ -996,7 +996,6 @@ export function initHistoriaClinica() {
   function recepDetailTableHtml(articulos){
     return `
       <table class="detail-table">
-        <thead><tr><th>Artículo</th><th>Medicamento</th><th>Cant. entregada</th><th>Lote</th><th>Vencimiento</th></tr></thead>
         <tbody>
           ${articulos.map(a => `
             <tr>
@@ -2734,7 +2733,7 @@ export function initHistoriaClinica() {
   const selectedOmeItems = new Set();
 
   const OME_PROGRAMACION_BADGE = {
-    pendiente: '<span class="order-badge pendiente">Pendiente</span>',
+    pendiente: '<span class="order-badge sin-programar">Sin programar</span>',
     programada: '<span class="order-badge programada">Programada</span>',
   };
   const OME_PEDIDO_BADGE = {
@@ -2755,17 +2754,17 @@ export function initHistoriaClinica() {
     container.innerHTML = ordenesMedicas.map(orden=>{
       const rows = orden.items.map(item=>{
         const checked = selectedOmeItems.has(item.id);
-        const prioridadCell = item.prioridad === 'Urgente'
-          ? `<td style="color:var(--red);font-weight:600;">${item.prioridad}</td>`
-          : `<td class="ome-muted">${item.prioridad}</td>`;
+        const prioridadBadge = item.prioridad === 'Urgente'
+          ? `<span class="order-badge urgente">Prioridad urgente</span>`
+          : '<span></span>';
         let actionCell;
         if(item.estadoProgramacion === 'pendiente'){
-          actionCell = `<button type="button" class="btn btn-outline btn-sm btn-programar" data-programar-item="${item.id}">
+          actionCell = `<button type="button" class="btn btn-primary btn-sm btn-programar" data-programar-item="${item.id}">
                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="m9 16 2 2 4-4"/></svg>
                Programar
              </button>`;
         } else if(item.estadoPedido === 'no_solicitado'){
-          actionCell = `<button type="button" class="btn btn-outline btn-sm btn-programar" data-pedir-item="${item.id}">
+          actionCell = `<button type="button" class="btn btn-primary btn-sm btn-programar" data-pedir-item="${item.id}">
                <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
                Pedir a farmacia
              </button>`;
@@ -2773,25 +2772,21 @@ export function initHistoriaClinica() {
           actionCell = `<span class="ome-muted" style="font-size:12px;">—</span>`;
         }
         return `
-          <tr class="${checked ? 'selected' : ''}" data-item-id="${item.id}">
-            <td class="ome-check-cell"><input type="checkbox" data-ome-check="${item.id}" ${checked ? 'checked' : ''} aria-label="Seleccionar ${item.desc}"></td>
-            <td class="ome-desc">${item.desc}</td>
-            ${prioridadCell}
-            <td>${item.dosis}</td>
-            <td>${item.frecuencia}</td>
-            <td>${item.via}</td>
-            <td>${item.duracion}</td>
-            <td class="ome-muted">${item.enfermera}</td>
-            <td>${OME_PROGRAMACION_BADGE[item.estadoProgramacion]}</td>
-            <td>${OME_PEDIDO_BADGE[item.estadoPedido]}</td>
-            <td>${item.cantPedida}</td>
-            <td>${item.aplicadas}</td>
-            <td>
-              <div class="ome-actions-cell">
-                ${actionCell}
-              </div>
-            </td>
-          </tr>`;
+          <div class="ome-item-row ome-item-grid-cols${checked ? ' selected' : ''}" data-item-id="${item.id}">
+            <span class="ome-check-cell"><input type="checkbox" data-ome-check="${item.id}" ${checked ? 'checked' : ''} aria-label="Seleccionar ${item.desc}"></span>
+            <div class="row-indent">
+              <span class="row-indent-icon">↳</span>
+              <b>${item.desc}</b>
+              <span class="row-indent-sub">${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}</span>
+            </div>
+            ${prioridadBadge}
+            <span class="dev-cell muted">${item.enfermera}</span>
+            <span>${OME_PROGRAMACION_BADGE[item.estadoProgramacion]}</span>
+            <span>${OME_PEDIDO_BADGE[item.estadoPedido]}</span>
+            <div class="ome-actions-cell">
+              ${actionCell}
+            </div>
+          </div>`;
       }).join('');
 
       const pendCount = orden.items.filter(i => i.estadoProgramacion === 'pendiente').length;
@@ -2802,10 +2797,10 @@ export function initHistoriaClinica() {
         estadoBadgeHtml = '<span class="order-badge programada">Programada</span>';
       } else if(progCount === 0){
         ordenEstado = 'pendiente';
-        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente</span>';
+        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente de programar</span>';
       } else {
         ordenEstado = 'pendiente';
-        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
+        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
       }
 
       return `
@@ -2815,7 +2810,7 @@ export function initHistoriaClinica() {
               <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <span class="ome-order-number">${orden.consecutivo}</span>
-            <span class="ome-order-badge">${orden.items.length} medicamento${orden.items.length === 1 ? '' : 's'}</span>
+            <span class="child-count-badge">${orden.items.length} ítem${orden.items.length === 1 ? '' : 's'}</span>
             <span>${estadoBadgeHtml}</span>
             <span class="ome-order-cell">${orden.medico}</span>
             <span class="ome-order-cell">${orden.fecha}</span>
@@ -2832,18 +2827,7 @@ export function initHistoriaClinica() {
             </div>
           </div>
           <div class="ome-order-body" data-parent-group="${orden.id}">
-            <div class="ome-table-wrap">
-              <table class="ome-table">
-                <thead>
-                  <tr>
-                    <th></th><th>Descripción</th><th>Prioridad</th><th>Dosis</th><th>Frecuencia</th><th>Vía</th>
-                    <th>Duración</th><th>Enfermera</th><th>Est. programación</th><th>Est. pedido</th>
-                    <th>Cant. pedida</th><th>Aplicadas</th><th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-              </table>
-            </div>
+            ${rows}
           </div>
         </div>`;
     }).join('');
@@ -3115,8 +3099,8 @@ export function initHistoriaClinica() {
     if(!cb) return;
     const itemId = cb.getAttribute('data-ome-check');
     if(cb.checked) selectedOmeItems.add(itemId); else selectedOmeItems.delete(itemId);
-    const tr = cb.closest('tr');
-    if(tr) tr.classList.toggle('selected', cb.checked);
+    const itemRow = cb.closest('.ome-item-row');
+    if(itemRow) itemRow.classList.toggle('selected', cb.checked);
     updateOmeSelectionUI();
   });
 
