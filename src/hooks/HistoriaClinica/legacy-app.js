@@ -194,6 +194,22 @@ export function initHistoriaClinica() {
     });
     if(hayMarcadores && todoAdministrado) med.estado = 'finalizado';
   }
+  // "Accionable" = no resuelto todavía (ni administrado ni suspendido). Usado
+  // por el registro múltiple para detectar cuándo 2+ medicamentos seleccionados
+  // comparten la misma hora de próxima dosis pendiente.
+  function getNextActionableHour(med, dateStr){
+    const dayMarkers = getMedMarkers(med, dateStr);
+    const hours = Object.keys(dayMarkers)
+      .map(Number)
+      .filter(h => dayMarkers[h] !== 'administered' && dayMarkers[h] !== 'suspended')
+      .sort((a, b) => a - b);
+    return hours.length > 0 ? hours[0] : null;
+  }
+  function getSharedActionableHour(meds){
+    const hours = meds.map(m => getNextActionableHour(m, currentViewDate));
+    if(hours.some(h => h === null)) return null;
+    return hours.every(h => h === hours[0]) ? hours[0] : null;
+  }
 
   const MEDS = [
     { name:'ENOXAPARINA SODICA 40 MG SOLUCION INYECTABLE', dose:'40 mg', freq:'c/12h', via:'SC', estado:'activo',
@@ -627,11 +643,25 @@ export function initHistoriaClinica() {
         </button>`;
       document.getElementById('bulk-devolver-btn').addEventListener('click', bulkDevolverFarmacia);
     } else if(estados.size === 1 && estados.has('activo')){
-      actionsWrap.innerHTML = `
+      const meds = Array.from(selectedMeds);
+      const sharedHour = meds.length >= 2 ? getSharedActionableHour(meds) : null;
+      let html = '';
+      if(sharedHour !== null){
+        html += `
+          <button class="btn btn-primary" id="bulk-registrar-btn" type="button">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="m7.5 4.27 9 5.15"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></svg>
+            Registrar administración
+          </button>`;
+      }
+      html += `
         <button class="btn btn-warning-outline" id="bulk-suspender-btn" type="button">
           <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="9" y2="15"/><line x1="14" x2="14" y1="9" y2="15"/></svg>
           Suspender medicamentos
         </button>`;
+      actionsWrap.innerHTML = html;
+      if(sharedHour !== null){
+        document.getElementById('bulk-registrar-btn').addEventListener('click', ()=> bulkRegistrar(meds, sharedHour));
+      }
       document.getElementById('bulk-suspender-btn').addEventListener('click', bulkSuspender);
     } else {
       hint.textContent = 'Selecciona medicamentos con el mismo estado para aplicar una acción masiva';
@@ -640,6 +670,7 @@ export function initHistoriaClinica() {
 
   function bulkDevolverFarmacia(){ openReturnModal(Array.from(selectedMeds)); }
   function bulkSuspender(){ openSuspendModal(Array.from(selectedMeds), null); }
+  function bulkRegistrar(meds, hour){ openMultiAdminModal(meds, hour, currentViewDate); }
 
   let toastTimer = null;
   function showToast(message, action){
@@ -1808,6 +1839,26 @@ export function initHistoriaClinica() {
   let adminModalContext = null;
   let adminModalOpenerMarker = null;
   let selectedLoteOption = null;
+  const multiAdminModalOverlay = document.getElementById('madmin-modal-overlay');
+
+  // Config global expuesta por ConfigModal (UserMenu, app-wide): window.__clintosVerificacionClinica
+  // + evento 'clintos:verificacion-clinica-change' para sincronizar en caliente si se
+  // apaga/prende mientras esta página ya está montada. Sin localStorage, igual que el
+  // resto del estado de esta app (tema incluido): vive solo mientras dura la sesión.
+  function isVerificacionClinicaEnabled(){
+    return window.__clintosVerificacionClinica !== false;
+  }
+  function applySafetyCheckVisibility(){
+    const block = document.getElementById('admin-safety-check-block');
+    if(block) block.style.display = isVerificacionClinicaEnabled() ? '' : 'none';
+  }
+  function handleVerificacionClinicaChange(){
+    applySafetyCheckVisibility();
+    updateAdminConfirmState();
+    applyMultiAdminSafetyCheckVisibility();
+    updateMultiAdminNextState();
+  }
+  window.addEventListener('clintos:verificacion-clinica-change', handleVerificacionClinicaChange);
 
   function shiftMonthYear(mmYYYY, delta){
     let [m, y] = mmYYYY.split('/').map(Number);
@@ -1898,7 +1949,7 @@ export function initHistoriaClinica() {
 
   function updateAdminConfirmState(){
     const checks = Array.from(document.querySelectorAll('#admin-modal-overlay [data-safety-check]'));
-    const allChecked = checks.length > 0 && checks.every(c => c.checked);
+    const allChecked = !isVerificacionClinicaEnabled() || (checks.length > 0 && checks.every(c => c.checked));
     document.getElementById('admin-confirm-btn').disabled = !(allChecked && selectedLoteOption);
   }
 
@@ -1996,6 +2047,7 @@ export function initHistoriaClinica() {
     document.getElementById('admin-observaciones').value = '';
     document.querySelectorAll('#admin-modal-overlay [data-safety-check]').forEach(c => { c.checked = false; });
     document.getElementById('admin-lote-warning').style.display = 'none';
+    applySafetyCheckVisibility();
     updateAdminConfirmState();
 
     adminModalOverlay.classList.add('open');
@@ -2094,6 +2146,339 @@ export function initHistoriaClinica() {
         requestAnimationFrame(updateNowLine);
         showToast(`Se deshizo el registro de administración de ${med.name}`);
       }
+    });
+  });
+
+  /* ================= Modal: Registrar administración (múltiple) =================
+     Wizard de un paso por medicamento — mismo resumen/tabla de lotes/insumos/
+     checklist que el modal de una sola dosis (arriba), pero nada se escribe en
+     el registro del paciente hasta confirmar el último paso: cada paso solo
+     guarda su selección en multiAdminSelections, así que "Atrás" solo relee
+     ese borrador en vez de deshacer una mutación ya aplicada. */
+  let multiAdminMeds = [];
+  let multiAdminHour = null;
+  let multiAdminDate = null;
+  let multiAdminStepIndex = 0;
+  let multiAdminSelections = [];
+  let multiAdminOpener = null;
+  let multiAdminClockTimer = null;
+
+  function updateMultiAdminClockNow(){
+    document.getElementById('madmin-fecha-registro').textContent = formatDateLabel(getSystemTodayDate());
+    document.getElementById('madmin-hora-registro').textContent = new Date().toTimeString().slice(0,5);
+  }
+  function startMultiAdminClock(){
+    updateMultiAdminClockNow();
+    clearInterval(multiAdminClockTimer);
+    multiAdminClockTimer = setInterval(updateMultiAdminClockNow, 1000);
+  }
+  function stopMultiAdminClock(){
+    clearInterval(multiAdminClockTimer);
+    multiAdminClockTimer = null;
+  }
+
+  function applyMultiAdminSafetyCheckVisibility(){
+    const block = document.getElementById('madmin-safety-check-block');
+    if(block) block.style.display = isVerificacionClinicaEnabled() ? '' : 'none';
+  }
+  function updateMultiAdminNextState(){
+    if(multiAdminMeds.length === 0) return;
+    const selection = multiAdminSelections[multiAdminStepIndex];
+    if(!selection) return;
+    const checksOk = !isVerificacionClinicaEnabled() || Object.values(selection.checks).every(Boolean);
+    document.getElementById('madmin-next-btn').disabled = !(selection.loteOption && checksOk);
+  }
+
+  function updateMultiAdminLoteWarning(hasNearExpiryStock, selection){
+    const warn = document.getElementById('madmin-lote-warning');
+    const show = selection.loteOption && !selection.loteOption._nearExpiry && hasNearExpiryStock;
+    if(show){
+      document.getElementById('madmin-lote-warning-text').textContent =
+        'Hay otros lotes más próximos a vencer en el stock. Por rotación (primero en vencer, primero en salir) se recomienda usarlos antes, aunque puedes continuar con el seleccionado.';
+      warn.style.display = 'flex';
+    } else {
+      warn.style.display = 'none';
+    }
+  }
+  function renderMultiAdminLoteOptions(med, stepIndex){
+    const tbody = document.getElementById('madmin-lote-list');
+    tbody.innerHTML = '';
+    const selection = multiAdminSelections[stepIndex];
+    const options = getLoteOptions(med);
+    const hasNearExpiryStock = options.some(o => monthsUntil(o.vencimiento) <= 2);
+    const previouslySelectedLote = selection.loteOption ? selection.loteOption.lote : null;
+
+    options.forEach((opt, idx)=>{
+      const nearExpiry = monthsUntil(opt.vencimiento) <= 2;
+      opt._nearExpiry = nearExpiry;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="col-radio"><input type="radio" name="madmin-lote-radio-${stepIndex}" value="${idx}" aria-label="Lote ${opt.lote}, vence ${opt.vencimiento}"></td>
+        <td class="lote-code">${opt.lote}</td>
+        <td class="lote-venc">${opt.vencimiento}</td>
+        <td class="lote-disp">${opt.cantidad} un.</td>
+        <td class="col-estado"><span class="lote-badge ${nearExpiry ? 'warn' : 'ok'}">${nearExpiry ? 'Vence pronto' : 'Vigente'}</span></td>
+      `;
+      const radio = tr.querySelector('input');
+      if(opt.lote === previouslySelectedLote){ radio.checked = true; tr.classList.add('selected'); }
+      function selectRow(){
+        radio.checked = true;
+        tbody.querySelectorAll('tr').forEach(r=>r.classList.remove('selected'));
+        tr.classList.add('selected');
+        selection.loteOption = opt;
+        updateMultiAdminLoteWarning(hasNearExpiryStock, selection);
+        updateMultiAdminNextState();
+      }
+      radio.addEventListener('change', selectRow);
+      tr.addEventListener('click', (e)=>{ if(e.target !== radio) selectRow(); });
+      tbody.appendChild(tr);
+    });
+    updateMultiAdminLoteWarning(hasNearExpiryStock, selection);
+  }
+
+  function syncMultiAdminInsumosSelectAll(){
+    const selectAll = document.getElementById('madmin-insumos-select-all');
+    const rowChecks = Array.from(document.querySelectorAll('#madmin-insumos-list input[type="checkbox"]'));
+    if(rowChecks.length === 0){
+      selectAll.checked = false;
+      selectAll.indeterminate = false;
+      selectAll.disabled = true;
+      return;
+    }
+    selectAll.disabled = false;
+    const checkedCount = rowChecks.filter(cb => cb.checked).length;
+    selectAll.checked = checkedCount === rowChecks.length;
+    selectAll.indeterminate = checkedCount > 0 && checkedCount < rowChecks.length;
+  }
+  function renderMultiAdminInsumos(stepIndex){
+    const tbody = document.getElementById('madmin-insumos-list');
+    const selection = multiAdminSelections[stepIndex];
+    const disponibles = insumosDisponibles.filter(i => i.cantidadDisponible > 0);
+    if(disponibles.length === 0){
+      tbody.innerHTML = '<tr><td colspan="3" class="admin-insumos-empty">No hay insumos disponibles para este paciente todavía — llegan aquí una vez que farmacia despacha un pedido que los incluya.</td></tr>';
+      syncMultiAdminInsumosSelectAll();
+      return;
+    }
+    tbody.innerHTML = disponibles.map(i => `
+      <tr>
+        <td class="col-radio"><input type="checkbox" data-insumo-id="${i.id}" aria-label="${i.nombre}"></td>
+        <td>${i.nombre}</td>
+        <td class="lote-disp">${i.cantidadDisponible} un.</td>
+      </tr>
+    `).join('');
+    tbody.querySelectorAll('tr').forEach(tr=>{
+      const checkbox = tr.querySelector('input[type="checkbox"]');
+      const insumoId = checkbox.getAttribute('data-insumo-id');
+      checkbox.checked = selection.insumosUsados.has(insumoId);
+      tr.classList.toggle('selected', checkbox.checked);
+      function applyCheckboxState(){
+        tr.classList.toggle('selected', checkbox.checked);
+        if(checkbox.checked) selection.insumosUsados.add(insumoId);
+        else selection.insumosUsados.delete(insumoId);
+        syncMultiAdminInsumosSelectAll();
+      }
+      checkbox.addEventListener('change', applyCheckboxState);
+      tr.addEventListener('click', (e)=>{ if(e.target !== checkbox){ checkbox.checked = !checkbox.checked; applyCheckboxState(); } });
+    });
+    syncMultiAdminInsumosSelectAll();
+  }
+  document.getElementById('madmin-insumos-select-all').addEventListener('change', (e)=>{
+    const checked = e.target.checked;
+    const selection = multiAdminSelections[multiAdminStepIndex];
+    document.querySelectorAll('#madmin-insumos-list input[type="checkbox"]').forEach(cb=>{
+      cb.checked = checked;
+      cb.closest('tr').classList.toggle('selected', checked);
+      const insumoId = cb.getAttribute('data-insumo-id');
+      if(checked) selection.insumosUsados.add(insumoId); else selection.insumosUsados.delete(insumoId);
+    });
+    e.target.indeterminate = false;
+  });
+
+  const MULTI_ADMIN_CHECK_KEYS = ['paciente', 'medicamento', 'dosis', 'via', 'hora'];
+  function renderMultiAdminSteps(){
+    document.getElementById('madmin-steps').innerHTML = multiAdminMeds.map((med, idx)=>{
+      const cls = idx === multiAdminStepIndex ? 'current' : (idx < multiAdminStepIndex ? 'done' : '');
+      return `<div class="madmin-step-chip ${cls}"><span class="num">${idx + 1}</span>${med.name}</div>`;
+    }).join('');
+  }
+
+  function renderMultiAdminStep(){
+    const med = multiAdminMeds[multiAdminStepIndex];
+    const selection = multiAdminSelections[multiAdminStepIndex];
+    const total = multiAdminMeds.length;
+    const isLast = multiAdminStepIndex === total - 1;
+
+    document.getElementById('madmin-modal-subtitle').textContent = `Medicamento ${multiAdminStepIndex + 1} de ${total}`;
+    renderMultiAdminSteps();
+
+    document.getElementById('madmin-med-nombre').textContent = med.name;
+    document.getElementById('madmin-dosis-prescrita').textContent = med.dose;
+    document.getElementById('madmin-via').textContent = med.via;
+    document.getElementById('madmin-frecuencia').textContent = med.freq;
+    document.getElementById('madmin-fecha-programada').textContent = formatDateLabel(multiAdminDate);
+    document.getElementById('madmin-hora-programada').textContent = hourLabel(multiAdminHour);
+
+    renderMultiAdminLoteOptions(med, multiAdminStepIndex);
+    renderMultiAdminInsumos(multiAdminStepIndex);
+    document.getElementById('madmin-observaciones').value = selection.observaciones || '';
+
+    applyMultiAdminSafetyCheckVisibility();
+    MULTI_ADMIN_CHECK_KEYS.forEach(key=>{
+      document.getElementById('madmin-check-' + key).checked = !!selection.checks[key];
+    });
+
+    document.getElementById('madmin-back-btn').disabled = multiAdminStepIndex === 0;
+    document.getElementById('madmin-next-btn').innerHTML = isLast
+      ? `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="m7.5 4.27 9 5.15"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></svg>Confirmar administración (${total})`
+      : `Siguiente<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+
+    updateMultiAdminNextState();
+    updateMultiAdminClockNow();
+  }
+
+  function saveMultiAdminStepDraft(){
+    const selection = multiAdminSelections[multiAdminStepIndex];
+    if(!selection) return;
+    selection.observaciones = document.getElementById('madmin-observaciones').value.trim();
+    MULTI_ADMIN_CHECK_KEYS.forEach(key=>{
+      selection.checks[key] = document.getElementById('madmin-check-' + key).checked;
+    });
+  }
+
+  function openMultiAdminModal(meds, hour, date){
+    if(!meds || meds.length < 2) return;
+    hideDosePopoverNow();
+    multiAdminMeds = meds;
+    multiAdminHour = hour;
+    multiAdminDate = date;
+    multiAdminStepIndex = 0;
+    multiAdminSelections = meds.map(()=> ({
+      loteOption: null,
+      insumosUsados: new Set(),
+      observaciones: '',
+      checks: { paciente: false, medicamento: false, dosis: false, via: false, hora: false }
+    }));
+    multiAdminOpener = document.getElementById('bulk-registrar-btn');
+
+    renderMultiAdminStep();
+    multiAdminModalOverlay.classList.add('open');
+    trapModalFocus(multiAdminModalOverlay);
+    startMultiAdminClock();
+  }
+
+  function closeMultiAdminModal(){
+    multiAdminModalOverlay.classList.remove('open');
+    releaseModalFocus(multiAdminModalOverlay);
+    multiAdminMeds = [];
+    multiAdminSelections = [];
+    stopMultiAdminClock();
+    if(multiAdminOpener){ multiAdminOpener.focus(); }
+    multiAdminOpener = null;
+  }
+
+  function confirmMultiAdmin(){
+    const date = multiAdminDate;
+    const hour = multiAdminHour;
+    const horaReal = document.getElementById('madmin-hora-registro').textContent;
+    const reversions = [];
+
+    multiAdminMeds.forEach((med, idx)=>{
+      const selection = multiAdminSelections[idx];
+      const loteOption = selection.loteOption;
+      if(!loteOption) return;
+
+      const insumosUsados = [];
+      selection.insumosUsados.forEach(insumoId=>{
+        const insumo = insumosDisponibles.find(i => i.id === insumoId);
+        if(insumo && insumo.cantidadDisponible > 0){
+          insumo.cantidadDisponible -= 1;
+          insumosUsados.push({ nombre: insumo.nombre, cantidad: 1, insumoId: insumo.id });
+        }
+      });
+
+      const dayMarkers = getMedMarkers(med, date);
+      const previousMarkerType = dayMarkers[hour];
+      const previousEstado = med.estado;
+      med.registrations = med.registrations || {};
+      med.registrations[date] = med.registrations[date] || {};
+      const previousRegistration = med.registrations[date][hour] || null;
+
+      med.registrations[date][hour] = {
+        horaReal, dosisReal: med.dose, viaReal: med.via,
+        lote: loteOption.lote, vencimiento: loteOption.vencimiento,
+        observaciones: selection.observaciones, profesional: CURRENT_USER_NAME, insumosUsados
+      };
+      dayMarkers[hour] = 'administered';
+      loteOption.cantidad -= 1;
+      checkTratamientoCompleto(med);
+
+      reversions.push(()=>{
+        if(previousRegistration){ med.registrations[date][hour] = previousRegistration; }
+        else { delete med.registrations[date][hour]; }
+        dayMarkers[hour] = previousMarkerType;
+        med.estado = previousEstado;
+        insumosUsados.forEach(u=>{
+          const insumo = insumosDisponibles.find(i => i.id === u.insumoId);
+          if(insumo) insumo.cantidadDisponible += 1;
+        });
+        loteOption.cantidad += 1;
+      });
+    });
+
+    const count = reversions.length;
+
+    closeMultiAdminModal();
+    clearSelection();
+    renderMedRows();
+    renderDoseList();
+    applyFilters();
+    requestAnimationFrame(updateNowLine);
+
+    showToast(`${count} medicamentos registrados · ${horaReal}`, {
+      label: 'Deshacer',
+      onClick: ()=>{
+        reversions.forEach(fn => fn());
+        renderMedRows();
+        renderDoseList();
+        applyFilters();
+        requestAnimationFrame(updateNowLine);
+        showToast(`Se deshizo el registro de ${count} medicamentos`);
+      }
+    });
+  }
+
+  document.getElementById('madmin-back-btn').addEventListener('click', ()=>{
+    if(multiAdminStepIndex === 0) return;
+    saveMultiAdminStepDraft();
+    multiAdminStepIndex -= 1;
+    renderMultiAdminStep();
+  });
+  document.getElementById('madmin-next-btn').addEventListener('click', ()=>{
+    const selection = multiAdminSelections[multiAdminStepIndex];
+    if(!selection || !selection.loteOption) return;
+    saveMultiAdminStepDraft();
+    if(multiAdminStepIndex === multiAdminMeds.length - 1){
+      confirmMultiAdmin();
+    } else {
+      multiAdminStepIndex += 1;
+      renderMultiAdminStep();
+    }
+  });
+  document.getElementById('madmin-cancel-btn').addEventListener('click', closeMultiAdminModal);
+  document.getElementById('madmin-modal-close').addEventListener('click', closeMultiAdminModal);
+  multiAdminModalOverlay.addEventListener('click', (e)=>{
+    if(e.target === multiAdminModalOverlay) closeMultiAdminModal();
+  });
+  function handleMultiAdminModalEscape(e){
+    if(e.key === 'Escape' && multiAdminModalOverlay.classList.contains('open')) closeMultiAdminModal();
+  }
+  document.addEventListener('keydown', handleMultiAdminModalEscape);
+  document.querySelectorAll('#madmin-modal-overlay [data-safety-check]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const selection = multiAdminSelections[multiAdminStepIndex];
+      if(!selection) return;
+      selection.checks[cb.id.replace('madmin-check-', '')] = cb.checked;
+      updateMultiAdminNextState();
     });
   });
 
@@ -3799,6 +4184,8 @@ export function initHistoriaClinica() {
     document.removeEventListener('click', handleRowExpandClick);
     document.removeEventListener('keydown', handlePopoverEscape);
     document.removeEventListener('keydown', handleAdminModalEscape);
+    document.removeEventListener('keydown', handleMultiAdminModalEscape);
+    window.removeEventListener('clintos:verificacion-clinica-change', handleVerificacionClinicaChange);
     document.removeEventListener('keydown', handleSuspendModalEscape);
     document.removeEventListener('keydown', handleReturnModalEscape);
     document.removeEventListener('keydown', handleProgramModalEscape);
@@ -3823,6 +4210,7 @@ export function initHistoriaClinica() {
     clearTimeout(toastTimer);
     clearTimeout(doseHideTimer);
     clearInterval(adminClockTimer);
+    clearInterval(multiAdminClockTimer);
     clearInterval(suspendClockTimer);
     clearInterval(returnClockTimer);
     for (const name of Object.keys(exported)) delete window[name];

@@ -11,6 +11,7 @@ import PedidosPanel from '@/Components/HistoriaClinica/PedidosPanel/PedidosPanel
 import Toast from '@/Components/HistoriaClinica/modals/Toast/Toast';
 import DosePopover from '@/Components/HistoriaClinica/modals/DosePopover/DosePopover';
 import AdminModal from '@/Components/HistoriaClinica/modals/AdminModal/AdminModal';
+import MultiAdminModal from '@/Components/HistoriaClinica/modals/MultiAdminModal/MultiAdminModal';
 import SuspendModal from '@/Components/HistoriaClinica/modals/SuspendModal/SuspendModal';
 import ReturnModal from '@/Components/HistoriaClinica/modals/ReturnModal/ReturnModal';
 import ProgramModal from '@/Components/HistoriaClinica/modals/ProgramModal/ProgramModal';
@@ -20,6 +21,7 @@ import RestanteModal from '@/Components/HistoriaClinica/modals/RestanteModal/Res
 import CerrarParcialModal from '@/Components/HistoriaClinica/modals/CerrarParcialModal/CerrarParcialModal';
 import OrdenDetalleModal from '@/Components/HistoriaClinica/modals/OrdenDetalleModal/OrdenDetalleModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
+import UserMenu from '@/Components/UserMenu/UserMenu';
 import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuMenu, LuPill } from 'react-icons/lu';
 
 export default function HistoriaClinicaPage() {
@@ -55,13 +57,7 @@ export default function HistoriaClinicaPage() {
           <span className="lbl">Área:</span> <b>02-Hospitalización</b>
         </div>
         <div className="divider-v"></div>
-        <div className="user-chip">
-          <div className="user-avatar">CG</div>
-          <div className="who">
-            <div className="name">Manuel Hernández</div>
-            <div className="role">Médico</div>
-          </div>
-        </div>
+        <UserMenu name="Manuel Hernández" role="Médico" initials="CG" />
       </div>
     </header>
 
@@ -105,6 +101,7 @@ export default function HistoriaClinicaPage() {
 <Toast />
 <DosePopover />
 <AdminModal />
+<MultiAdminModal />
 <SuspendModal />
 <ReturnModal />
 <ProgramModal />

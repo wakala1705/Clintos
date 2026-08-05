@@ -90,7 +90,7 @@ export default function AdminModal() {
             <textarea id="admin-observaciones" rows="3" placeholder="Ej. Paciente toleró bien la administración, sitio de punción sin signos de infección..."></textarea>
           </div>
 
-          <div className="admin-safety-check" role="group" aria-labelledby="admin-safety-check-title">
+          <div className="admin-safety-check" id="admin-safety-check-block" role="group" aria-labelledby="admin-safety-check-title">
             <div className="admin-safety-check-title" id="admin-safety-check-title">
               <LuShieldCheck className="icon" aria-hidden="true" />
               Verificación obligatoria de los 5 correctos

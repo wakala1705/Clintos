@@ -1,0 +1,42 @@
+/* Estilos exclusivos de UserMenu. Reemplaza el .user-chip que antes vivía
+   inline (y duplicado) en historia-clinica.css y asignacion-citas.css — ver
+   AGENTS.md sobre componentes app-wide. Usa los design tokens (--primary,
+   --ink-900, --border, --surface, --radius...) que cada ruta ya define en su
+   propio :root, igual que Sidebar.css. El z-index del dropdown se deja fijo
+   (no depende de --z-modal, que solo existe en la ruta de Historia Clínica). */
+.user-menu{position:relative;flex-shrink:0;}
+
+.user-chip{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:none;padding:4px;border-radius:var(--radius);
+  cursor:pointer;font-family:inherit;text-align:left;
+}
+.user-chip:hover{background:var(--bg);}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--primary-100);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:500;font-size:13px;flex-shrink:0;
+}
+.user-chip .who{line-height:1.2;}
+.user-chip .who .name{font-weight:500;font-size:13px;color:var(--ink-900);}
+.user-chip .who .role{font-size:12px;color:var(--ink-500);}
+.user-chip .chev{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
+.user-chip[aria-expanded="true"] .chev{transform:rotate(180deg);}
+
+.user-menu-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:220px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
+  display:flex;flex-direction:column;gap:1px;
+}
+.user-menu-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  font-size:13px;font-weight:500;color:var(--ink-700);cursor:pointer;
+  background:none;border:none;font-family:inherit;width:100%;text-align:left;
+}
+.user-menu-item:hover{background:var(--bg);}
+.user-menu-item .icon{width:17px;height:17px;color:var(--ink-500);flex-shrink:0;}
+.user-menu-item.danger{color:var(--red);}
+.user-menu-item.danger .icon{color:var(--red);}
+.user-menu-divider{height:1px;background:var(--border);margin:5px 4px;}

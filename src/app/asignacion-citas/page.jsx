@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import './asignacion-citas.css';
 import { initAsignacionCitas } from '@/hooks/AsignacionCitas/legacy-app';
 import Sidebar from '@/Components/Sidebar/Sidebar';
+import UserMenu from '@/Components/UserMenu/UserMenu';
 import { LuArrowRight, LuCalendar, LuCalendarClock, LuCalendarX, LuCheck, LuChevronLeft, LuEye, LuFileText, LuHistory, LuIdCard, LuMapPin, LuMenu, LuMoon, LuPencil, LuPlus, LuPrinter, LuScanLine, LuSearch, LuSquarePen, LuSun, LuUser, LuUserPlus, LuUserX, LuUsers, LuX } from 'react-icons/lu';
 
 export default function AsignacionCitasPage() {
@@ -39,13 +40,7 @@ export default function AsignacionCitasPage() {
           <LuSun className="icon theme-icon-sun" />
           <LuMoon className="icon theme-icon-moon" />
         </div>
-        <div className="user-chip">
-          <div className="user-avatar">JC</div>
-          <div className="who">
-            <div className="name">Dr. Juan Carlos Pérez</div>
-            <div className="role">Medicina General</div>
-          </div>
-        </div>
+        <UserMenu name="Dr. Juan Carlos Pérez" role="Medicina General" initials="JC" />
       </div>
     </header>
 
