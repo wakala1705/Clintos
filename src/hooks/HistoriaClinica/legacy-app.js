@@ -382,7 +382,7 @@ export function initHistoriaClinica() {
       <button class="med-menu-btn" title="Más opciones" aria-label="Más opciones para ${med.name}">
         <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
       </button>
-      <div class="med-name">${med.name}<span class="med-status-badge ${med.estado}">${ESTADO_LABEL[med.estado]}</span></div>
+      <div class="med-name">${med.name}<span class="med-status-badge ${med.estado}"><span class="dot"></span>${ESTADO_LABEL[med.estado]}</span></div>
       <div class="med-sub"><span>${med.dose}</span><span class="dot-sep"></span><span>${med.freq}</span><span class="dot-sep"></span><span>${med.via}</span></div>
     `;
     tr.appendChild(medTd);
@@ -467,7 +467,7 @@ export function initHistoriaClinica() {
     marker.innerHTML = `
       <span class="legend-marker dlm-icon ${type}">${iconForDoseType(type)}</span>
       <span class="dlm-main">
-        <span class="dlm-name">${med.name}<span class="med-status-badge ${med.estado}">${ESTADO_LABEL[med.estado]}</span></span>
+        <span class="dlm-name">${med.name}<span class="med-status-badge ${med.estado}"><span class="dot"></span>${ESTADO_LABEL[med.estado]}</span></span>
         <span class="dlm-sub">${med.dose} · ${med.via}</span>
       </span>
       <span class="dlm-meta">
@@ -1108,7 +1108,7 @@ export function initHistoriaClinica() {
         </button>`;
     }
     if(orden.estado === 'cerrado'){
-      return `<span class="order-badge no-solicitado">Cerrada</span>${PARTIAL_FLAG_SVG}`;
+      return `<span class="order-badge no-solicitado"><span class="dot"></span>Cerrada</span>${PARTIAL_FLAG_SVG}`;
     }
     if(orden.partial){
       return `
@@ -1923,7 +1923,7 @@ export function initHistoriaClinica() {
         <td class="lote-code">${opt.lote}</td>
         <td class="lote-venc">${opt.vencimiento}</td>
         <td class="lote-disp">${opt.cantidad} un.</td>
-        <td class="col-estado"><span class="lote-badge ${nearExpiry ? 'warn' : 'ok'}">${nearExpiry ? 'Vence pronto' : 'Vigente'}</span></td>
+        <td class="col-estado"><span class="lote-badge ${nearExpiry ? 'warn' : 'ok'}"><span class="dot"></span>${nearExpiry ? 'Vence pronto' : 'Vigente'}</span></td>
       `;
       const radio = tr.querySelector('input');
       function selectRow(){
@@ -2222,7 +2222,7 @@ export function initHistoriaClinica() {
         <td class="lote-code">${opt.lote}</td>
         <td class="lote-venc">${opt.vencimiento}</td>
         <td class="lote-disp">${opt.cantidad} un.</td>
-        <td class="col-estado"><span class="lote-badge ${nearExpiry ? 'warn' : 'ok'}">${nearExpiry ? 'Vence pronto' : 'Vigente'}</span></td>
+        <td class="col-estado"><span class="lote-badge ${nearExpiry ? 'warn' : 'ok'}"><span class="dot"></span>${nearExpiry ? 'Vence pronto' : 'Vigente'}</span></td>
       `;
       const radio = tr.querySelector('input');
       if(opt.lote === previouslySelectedLote){ radio.checked = true; tr.classList.add('selected'); }
@@ -2805,16 +2805,16 @@ export function initHistoriaClinica() {
   let solicitudesSeq = 490;
 
   const SOL_PRIORIDAD_BADGE = {
-    normal: '<span class="order-badge normal">Normal</span>',
-    urgente: '<span class="order-badge urgente">Urgente</span>',
+    normal: '<span class="order-badge normal"><span class="dot"></span>Normal</span>',
+    urgente: '<span class="order-badge urgente"><span class="dot"></span>Urgente</span>',
   };
   const SOL_ESTADO_BADGE = {
-    pendiente: '<span class="order-badge pendiente">Pendiente</span>',
-    aprobada: '<span class="order-badge aprobada">Aprobada</span>',
-    despachada: '<span class="order-badge despachada">Despachada</span>',
-    rechazada: '<span class="order-badge rechazada">Rechazada</span>',
-    mixto: '<span class="order-badge mixto">Mixto</span>',
-    cancelada: '<span class="order-badge no-solicitado">Cancelada</span>',
+    pendiente: '<span class="order-badge pendiente"><span class="dot"></span>Pendiente</span>',
+    aprobada: '<span class="order-badge aprobada"><span class="dot"></span>Aprobada</span>',
+    despachada: '<span class="order-badge despachada"><span class="dot"></span>Despachada</span>',
+    rechazada: '<span class="order-badge rechazada"><span class="dot"></span>Rechazada</span>',
+    mixto: '<span class="order-badge mixto"><span class="dot"></span>Mixto</span>',
+    cancelada: '<span class="order-badge no-solicitado"><span class="dot"></span>Cancelada</span>',
   };
 
   function renderSolicitudesList(){
@@ -3020,9 +3020,9 @@ export function initHistoriaClinica() {
   let devolucionesSeq = devoluciones.length;
 
   const DEV_ESTADO_BADGE = {
-    confirmada: '<span class="order-badge recibido">Confirmada por farmacia</span>',
-    pendiente: '<span class="order-badge pendiente">Pendiente</span>',
-    rechazada: '<span class="order-badge rechazada">Rechazada</span>',
+    confirmada: '<span class="order-badge recibido"><span class="dot"></span>Confirmada por farmacia</span>',
+    pendiente: '<span class="order-badge pendiente"><span class="dot"></span>Pendiente</span>',
+    rechazada: '<span class="order-badge rechazada"><span class="dot"></span>Rechazada</span>',
   };
 
   function renderDevolucionesList(){
@@ -3133,12 +3133,12 @@ export function initHistoriaClinica() {
   const selectedOmeItems = new Set();
 
   const OME_PROGRAMACION_BADGE = {
-    pendiente: '<span class="order-badge sin-programar">Sin programar</span>',
-    programada: '<span class="order-badge programada">Programada</span>',
+    pendiente: '<span class="order-badge sin-programar"><span class="dot"></span>Sin programar</span>',
+    programada: '<span class="order-badge programada"><span class="dot"></span>Programada</span>',
   };
   const OME_PEDIDO_BADGE = {
-    no_solicitado: '<span class="order-badge no-solicitado">No solicitado</span>',
-    solicitado: '<span class="order-badge solicitado">Solicitado</span>',
+    no_solicitado: '<span class="order-badge no-solicitado"><span class="dot"></span>No solicitado</span>',
+    solicitado: '<span class="order-badge solicitado"><span class="dot"></span>Solicitado</span>',
   };
 
   function findOmeItemById(id){
@@ -3156,7 +3156,7 @@ export function initHistoriaClinica() {
         const checked = selectedOmeItems.has(item.id);
         const metaText = `${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}`;
         const prioridadBadge = item.prioridad === 'Urgente'
-          ? `<span class="order-badge urgente">Prioridad urgente</span>`
+          ? `<span class="order-badge urgente"><span class="dot"></span>Prioridad urgente</span>`
           : '<span></span>';
         let actionCell;
         if(item.estadoProgramacion === 'pendiente'){
@@ -3199,14 +3199,14 @@ export function initHistoriaClinica() {
         ordenEstado = 'programada';
         const pedidoPendienteCount = orden.items.filter(i => i.estadoPedido !== 'solicitado').length;
         estadoBadgeHtml = pedidoPendienteCount === 0
-          ? '<span class="order-badge programada">Programada y solicitada</span>'
-          : '<span class="order-badge pendiente">Programada y pendiente de solicitud</span>';
+          ? '<span class="order-badge programada"><span class="dot"></span>Programada y solicitada</span>'
+          : '<span class="order-badge pendiente"><span class="dot"></span>Programada y pendiente de solicitud</span>';
       } else if(progCount === 0){
         ordenEstado = 'pendiente';
-        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente de programar</span>';
+        estadoBadgeHtml = '<span class="order-badge pendiente"><span class="dot"></span>Pendiente de programar</span>';
       } else {
         ordenEstado = 'pendiente';
-        estadoBadgeHtml = '<span class="order-badge pendiente">Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
+        estadoBadgeHtml = '<span class="order-badge pendiente"><span class="dot"></span>Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados"><svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Parcial</span>';
       }
 
       return `
@@ -3249,9 +3249,9 @@ export function initHistoriaClinica() {
   ];
 
   const OO_ESTADO_BADGE = {
-    pendiente: '<span class="order-badge pendiente">Pendiente</span>',
-    programado: '<span class="order-badge programada">Programado</span>',
-    realizado: '<span class="order-badge recibido">Realizado</span>',
+    pendiente: '<span class="order-badge pendiente"><span class="dot"></span>Pendiente</span>',
+    programado: '<span class="order-badge programada"><span class="dot"></span>Programado</span>',
+    realizado: '<span class="order-badge recibido"><span class="dot"></span>Realizado</span>',
   };
 
   function renderOtrosOrdenamientosList(){
@@ -3515,13 +3515,13 @@ export function initHistoriaClinica() {
     const pendCount = orden.items.filter(i => i.estadoProgramacion === 'pendiente').length;
     if(pendCount > 0){
       return pendCount === orden.items.length
-        ? '<span class="order-badge pendiente">Pendiente de programar</span>'
-        : '<span class="order-badge pendiente">Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados">Parcial</span>';
+        ? '<span class="order-badge pendiente"><span class="dot"></span>Pendiente de programar</span>'
+        : '<span class="order-badge pendiente"><span class="dot"></span>Pendiente de programar</span><span class="partial-flag" title="Algunos medicamentos de esta orden ya están programados">Parcial</span>';
     }
     const pedidoPendienteCount = orden.items.filter(i => i.estadoPedido !== 'solicitado').length;
     return pedidoPendienteCount === 0
-      ? '<span class="order-badge programada">Programada y solicitada</span>'
-      : '<span class="order-badge pendiente">Programada y pendiente de solicitud</span>';
+      ? '<span class="order-badge programada"><span class="dot"></span>Programada y solicitada</span>'
+      : '<span class="order-badge pendiente"><span class="dot"></span>Programada y pendiente de solicitud</span>';
   }
 
   function openOrdenDetalleModal(ordenId){
@@ -3541,7 +3541,7 @@ export function initHistoriaClinica() {
     document.getElementById('orden-detalle-meds').innerHTML = orden.items.map(item => `
       <div class="suspend-med-row">
         <div>
-          <div class="sm-name">${item.desc}${item.prioridad === 'Urgente' ? ' <span class="order-badge urgente">Urgente</span>' : ''}</div>
+          <div class="sm-name">${item.desc}${item.prioridad === 'Urgente' ? ' <span class="order-badge urgente"><span class="dot"></span>Urgente</span>' : ''}</div>
           <div class="sm-meta">${item.dosis} · ${item.frecuencia} · ${item.via} · ${item.duracion}</div>
           <div class="sm-meta">Programado por: ${item.enfermera} · Cant. pedida: ${item.cantPedida} · Aplicadas: ${item.aplicadas}</div>
         </div>

@@ -20,10 +20,10 @@
    tecnología de asistencia una función que no existe (WCAG 4.1.2). */
 .patient-meta .pm-item-more{color:var(--ink-500);font-size:13px;}
 .patient-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
-.badge{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;white-space:nowrap;display:inline-block;}
+.badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;display:inline-block;}
 .badge.status-active{background:var(--green-bg);color:#0d7a3d;}
 .badge.status-active .dot{background:#0d7a3d;}
-.badge-dot-inline{display:inline-flex;align-items:center;gap:8px;}
+.badge-dot-inline{display:inline-flex;align-items:center;gap:6px;}
 .badge-dot-inline .dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
 .allergy-chip{
   display:inline-flex;align-items:center;gap:8px;background:var(--amber-bg);color:var(--amber-fg);

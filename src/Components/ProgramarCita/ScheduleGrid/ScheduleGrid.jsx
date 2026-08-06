@@ -61,7 +61,7 @@ export default function ScheduleGrid({ columns, appointments, resolveColId, onSe
             <button
               type="button"
               key={a.id}
-              className={`pc-appt-card${a.estado === 'cancelada' ? ' cancelada' : ''}`}
+              className={`pc-appt-card ${a.estado.replace('_', '-')}`}
               style={{ gridColumn: colIdx + 2, gridRow: startIdx + 2 }}
               title={`${a.patient}\n${STATE_LABEL[a.estado]} · ${TIPO_LABEL[a.tipo]}\n${a.motivo}`}
               onClick={() => onSelectAppointment(a)}

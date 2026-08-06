@@ -33,6 +33,18 @@ export default function ProgramarCita() {
   const [especialidadId, setEspecialidadId] = useState(SPECIALTIES[0].id);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
+  // El médico seleccionado siempre debe pertenecer a la especialidad activa
+  // (selector de médico "relacionado" a la especialidad, ver AgendaToolbar):
+  // si la nueva especialidad no incluye al médico actual, se cae al primero
+  // de la lista en vez de dejar un médico de otra especialidad seleccionado.
+  function handleChangeEspecialidad(id) {
+    setEspecialidadId(id);
+    const doctoresDeEsp = DOCTORS.filter((d) => d.especialidadId === id);
+    if (!doctoresDeEsp.some((d) => d.id === doctorId)) {
+      setDoctorId(doctoresDeEsp[0]?.id ?? doctorId);
+    }
+  }
+
   const days = weekDays();
 
   let columns, appointments, resolveColId;
@@ -104,7 +116,7 @@ export default function ProgramarCita() {
                 doctorId={doctorId}
                 onChangeDoctorId={setDoctorId}
                 especialidadId={especialidadId}
-                onChangeEspecialidadId={setEspecialidadId}
+                onChangeEspecialidadId={handleChangeEspecialidad}
               />
               <ScheduleGrid
                 columns={columns}

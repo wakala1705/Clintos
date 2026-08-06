@@ -15,13 +15,25 @@
 .pc-nav-btn .icon{width:16px;height:16px;}
 .pc-date-label{font-weight:600;font-size:14px;color:var(--ink-900);min-width:200px;text-align:center;}
 
+.pc-toolbar-selectors{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .pc-select-wrap{display:flex;align-items:center;gap:8px;}
-.pc-select-wrap label{font-size:12px;color:var(--ink-500);font-weight:600;}
-.pc-select-wrap select{
+.pc-select-wrap label{font-size:12px;color:var(--ink-500);font-weight:600;flex-shrink:0;}
+
+/* Botón que reemplaza al <select> nativo — abre SelectorModal en vez de
+   desplegar una lista del navegador (ver AgendaToolbar.jsx). Ancho fijo (no
+   se ajusta al nombre elegido) para que el resto del toolbar no salte de
+   sitio cada vez que cambia la especialidad o el médico seleccionado. */
+.pc-picker-trigger{
+  display:inline-flex;align-items:center;justify-content:space-between;gap:8px;
+  width:200px;
   border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;
-  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-900);background:var(--surface);cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-900);
+  background:var(--surface);cursor:pointer;
 }
-.pc-select-wrap select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.pc-picker-trigger:hover{background:var(--bg);border-color:var(--ink-400);}
+.pc-picker-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.pc-picker-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.pc-picker-trigger .chev{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
 
 /* Mismo patrón que .chip-group.segmented en
    HistoriaClinica/shared/shared.css (filtro de estado/rango rápido de

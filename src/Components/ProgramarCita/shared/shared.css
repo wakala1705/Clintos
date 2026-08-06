@@ -17,16 +17,16 @@
 .pc-link-btn:hover{text-decoration:underline;}
 
 /* ---------- BADGE DE ESTADO DE CITA ----------
-   Mismo lenguaje visual que .estado-badge en asignacion-citas.css
-   (disponible/ocupado/expirado/bloqueado), extendido a los 5 estados de una
-   cita ya agendada. */
+   Mismo lenguaje visual que .estado-badge (asignacion-citas.css) y
+   .dp-status-badge (HistoriaClinica): píldora + punto, 11px/600, padding
+   4px 10px, radio 20px — homologado en todo el proyecto (ver AGENTS.md). */
 .pc-estado-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
 }
 .pc-estado-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor;}
 .pc-estado-badge.confirmada{background:var(--green-bg);color:var(--green);}
-.pc-estado-badge.pendiente{background:var(--yellow-bg);color:var(--yellow-fg);}
+.pc-estado-badge.pendiente{background:var(--amber-bg);color:var(--amber-fg);}
 .pc-estado-badge.cancelada{background:var(--gray-bg);color:var(--gray-fg);}
 .pc-estado-badge.no-asistio{background:var(--red-bg);color:var(--red);}
 .pc-estado-badge.reprogramada{background:var(--violet-bg);color:var(--violet-fg);}

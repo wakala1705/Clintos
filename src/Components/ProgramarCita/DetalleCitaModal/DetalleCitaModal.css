@@ -1,15 +1,27 @@
+/* Modal más ancho que el de agendar cita (.pc-modal base = 480px): con los
+   bloques de datos a 4 columnas necesita más aire horizontal para ganar
+   espacio vertical (ver .pc-detail-grid más abajo). */
+.pc-modal.pc-modal-lg{max-width:900px;}
+
 .pc-detail-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .pc-detail-patient{font-weight:700;font-size:16px;color:var(--ink-900);}
 .pc-detail-doc{font-size:12px;color:var(--ink-500);margin-top:2px;}
 
-.pc-detail-rows{display:flex;flex-direction:column;}
-.pc-detail-row{
-  display:flex;justify-content:space-between;gap:12px;
-  font-size:13px;padding:8px 0;border-bottom:1px solid var(--bg);
+/* Datos agrupados por categoría (cita / contrato / seguimiento), cada una en
+   su propia cuadrícula de 4 columnas — más escaneable que una lista larga de
+   una sola columna. */
+.pc-detail-section{display:flex;flex-direction:column;gap:8px;}
+.pc-detail-section-title{
+  font-size:11px;font-weight:700;color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
 }
-.pc-detail-row.last{border-bottom:none;}
-.pc-detail-row .k{color:var(--ink-500);flex-shrink:0;}
-.pc-detail-row .v{font-weight:600;color:var(--ink-900);text-align:right;}
+.pc-detail-grid{
+  display:grid;grid-template-columns:repeat(4, 1fr);gap:12px 16px;
+  padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+}
+.pc-detail-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.pc-detail-field .k{font-size:11px;font-weight:600;color:var(--ink-500);}
+.pc-detail-field .v{font-size:13px;font-weight:600;color:var(--ink-900);word-break:break-word;}
 
 .pc-detail-actions{flex-wrap:nowrap;justify-content:flex-start !important;gap:8px;}
 .pc-detail-actions .btn{flex:1;padding-left:10px;padding-right:10px;justify-content:center;}

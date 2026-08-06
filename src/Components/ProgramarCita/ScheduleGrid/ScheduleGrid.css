@@ -45,8 +45,8 @@
    línea. El resto (motivo, estado, tipo) va en el tooltip nativo (`title`,
    ver ScheduleGrid.jsx) para no perder esa información. */
 .pc-appt-card{
-  border-radius:var(--radius);padding:0 8px;
-  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius);padding:0 8px 0 7px;
+  background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--ink-400);
   overflow:hidden;text-align:left;
   display:flex;align-items:center;gap:6px;position:relative;z-index:1;
   transition:box-shadow 140ms ease,border-color 140ms ease;cursor:pointer;
@@ -54,8 +54,22 @@
 }
 .pc-appt-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.10);border-color:var(--ink-400);}
 .pc-appt-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.pc-appt-card.cancelada{opacity:.7;}
+
+/* Color semántico por estado — mismo lenguaje que .pc-estado-badge (ver
+   shared/shared.css): tinte de fondo + acento en el borde izquierdo, para
+   que la agenda se pueda leer de un vistazo sin abrir cada cita. */
+.pc-appt-card.confirmada{background:var(--green-bg);border-left-color:var(--green);}
+.pc-appt-card.confirmada .pc-appt-patient{color:#0d7a3d;}
+.pc-appt-card.pendiente{background:var(--amber-bg);border-left-color:var(--amber-fg);}
+.pc-appt-card.pendiente .pc-appt-patient{color:var(--amber-fg);}
+.pc-appt-card.reprogramada{background:var(--violet-bg);border-left-color:var(--violet-fg);}
+.pc-appt-card.reprogramada .pc-appt-patient{color:var(--violet-fg);}
+.pc-appt-card.no-asistio{background:var(--red-bg);border-left-color:var(--red);}
+.pc-appt-card.no-asistio .pc-appt-patient{color:var(--red);}
+.pc-appt-card.cancelada{background:var(--gray-bg);border-left-color:var(--ink-400);opacity:.7;}
 .pc-appt-card.cancelada .pc-appt-patient{text-decoration:line-through;color:var(--ink-500);}
+
+html[data-theme="dark"] .pc-appt-card.confirmada .pc-appt-patient{color:var(--green);}
 
 .pc-appt-time{font-size:10px;font-weight:600;color:var(--ink-500);flex-shrink:0;}
 .pc-appt-patient{font-size:12px;font-weight:600;color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}

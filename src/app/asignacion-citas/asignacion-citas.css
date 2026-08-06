@@ -64,6 +64,10 @@
   html[data-theme="dark"] thead th{background:#1c2333;}
   html[data-theme="dark"] tbody tr:hover{background:#1a2130;}
   html[data-theme="dark"] .badge.neutral{background:#242c3d;color:var(--ink-700);}
+  html[data-theme="dark"] .estado-badge.disponible,
+  html[data-theme="dark"] .estado-badge.activo{color:var(--green);}
+  html[data-theme="dark"] .estado-badge.disponible .dot,
+  html[data-theme="dark"] .estado-badge.activo .dot{background:var(--green);}
   html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#333e54;}
   html[data-theme="dark"] .service-item:hover{background:#1a2130;}
   html[data-theme="dark"] .service-item.active{background:var(--primary-50);}
@@ -179,7 +183,7 @@
   .badge.status-active .dot{background:#0d7a3d;}
   html[data-theme="dark"] .badge.status-active{color:var(--green);}
   html[data-theme="dark"] .badge.status-active .dot{background:var(--green);}
-  .badge-dot-inline{display:inline-flex;align-items:center;gap:8px;}
+  .badge-dot-inline{display:inline-flex;align-items:center;gap:6px;}
   .badge-dot-inline .dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
   .close-x{
     width:30px;height:30px;border-radius:8px;
@@ -377,30 +381,32 @@
   .paciente-cell .p-name.muted{font-weight:600;font-style:italic;color:var(--ink-500);}
 
   .badge{
-    font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
     white-space:nowrap;display:inline-block;
   }
   .badge.eps{background:var(--status-info-bg);color:var(--status-info-fg);}
   .badge.neutral{background:#eef0f4;color:var(--ink-700);}
 
+  /* Píldora + punto, homologada con .pc-estado-badge (ProgramarCita) y
+     .dp-status-badge (HistoriaClinica) — mismo tamaño, padding y radio. */
   .estado-badge{
-    display:inline-flex;align-items:center;gap:8px;
-    font-size:12px;font-weight:500;
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
   }
-  .estado-badge .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .estado-badge.disponible{color:var(--green);}
-  .estado-badge.disponible .dot{background:var(--green);}
-  .estado-badge.ocupado{color:var(--red);}
+  .estado-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .estado-badge.disponible{background:var(--green-bg);color:#0d7a3d;}
+  .estado-badge.disponible .dot{background:#0d7a3d;}
+  .estado-badge.ocupado{background:var(--red-bg);color:var(--red);}
   .estado-badge.ocupado .dot{background:var(--red);}
-  .estado-badge.expirado{color:var(--gray-fg);}
+  .estado-badge.expirado{background:var(--gray-bg);color:var(--gray-fg);}
   .estado-badge.expirado .dot{background:var(--ink-400);}
-  .estado-badge.bloqueado{color:var(--amber-fg);}
+  .estado-badge.bloqueado{background:var(--amber-bg);color:var(--amber-fg);}
   .estado-badge.bloqueado .dot{background:#e08a00;}
-  .estado-badge.activo{color:var(--green);}
-  .estado-badge.activo .dot{background:var(--green);}
-  .estado-badge.inactivo{color:var(--gray-fg);}
+  .estado-badge.activo{background:var(--green-bg);color:#0d7a3d;}
+  .estado-badge.activo .dot{background:#0d7a3d;}
+  .estado-badge.inactivo{background:var(--gray-bg);color:var(--gray-fg);}
   .estado-badge.inactivo .dot{background:var(--ink-400);}
-  .estado-badge.suspendido{color:var(--amber-fg);}
+  .estado-badge.suspendido{background:var(--amber-bg);color:var(--amber-fg);}
   .estado-badge.suspendido .dot{background:#e08a00;}
 
   .row-menu-btn{

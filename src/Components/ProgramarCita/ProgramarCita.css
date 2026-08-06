@@ -25,11 +25,6 @@
   --gray-bg:#eef0f4;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
-  /* Estado "pendiente" — eje distinto de --amber (que aquí queda para el
-     tipo de consulta "Urgencia"), para que ambos indicadores no se
-     confundan cuando aparecen juntos en una misma tarjeta de cita. */
-  --yellow-bg:#fff8e1;
-  --yellow-fg:#8e6a00;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --radius:8px;
@@ -58,8 +53,6 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
-  --yellow-bg:rgba(241,194,27,.18);
-  --yellow-fg:#f1c21b;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
 }
@@ -81,6 +74,20 @@ body{
   flex-shrink:0;
   stroke:currentColor;
 }
+
+/* ---------- SCROLLBARS ----------
+   Mismo patrón que HistoriaClinica/shared/shared.css: delgado y casi
+   imperceptible en toda la página (grilla de horarios, listas de los
+   pickers de especialidad/médico...). */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
 .app{
   display:flex;
   height:100vh;
@@ -129,6 +136,7 @@ body{
 .btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
 .btn-danger-outline{background:var(--surface);color:#c02b2b;border-color:#f0d3d3;}
 .btn-danger-outline:hover{background:#fdf2f2;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
 
 .icon-btn-circle{
   width:34px;height:34px;border-radius:50%;

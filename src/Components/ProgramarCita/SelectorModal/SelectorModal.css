@@ -1,0 +1,54 @@
+/* El scaffolding de modal (.pc-modal-overlay, .pc-modal, .pc-modal-header,
+   .pc-close-x, .pc-modal-footer) vive en ../shared/shared.css — aquí solo el
+   tamaño y la tabla buscable propios de este picker.
+   Alto fijo (no max-height): header, buscador, encabezado de tabla y footer
+   quedan fijos: la lista de filas (.pc-selector-list) es la única que crece
+   y hace scroll para llenar el espacio restante. */
+.pc-modal.pc-modal-sm{
+  max-width:560px;height:480px;max-height:480px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+.pc-selector-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  margin:16px 24px 0;padding:8px 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.pc-selector-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.pc-selector-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:13px;color:var(--ink-900);outline:none;
+}
+.pc-selector-search input::placeholder{color:var(--ink-400);}
+
+.pc-selector-table{
+  margin:12px 24px 20px;border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* Misma cuadrícula (ID / nombre / conteo) para la fila de encabezado y cada
+   opción, para que las tres columnas queden alineadas entre sí. */
+.pc-selector-row{
+  display:grid;grid-template-columns:88px 1fr 130px;align-items:center;gap:12px;
+  padding:10px 14px;
+}
+.pc-selector-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
+.pc-selector-count-head{text-align:right;}
+
+.pc-selector-list{flex:1;min-height:0;overflow-y:auto;}
+.pc-selector-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.pc-selector-option:last-child{border-bottom:none;}
+.pc-selector-option:hover{background:var(--bg);}
+.pc-selector-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.pc-selector-option.active{background:var(--primary-50);}
+.pc-selector-code{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-option-label{font-size:13px;font-weight:600;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-count{font-size:13px;font-weight:600;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
+.pc-selector-empty{padding:28px 14px;text-align:center;font-size:13px;color:var(--ink-500);}
