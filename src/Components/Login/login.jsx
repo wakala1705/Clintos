@@ -28,7 +28,7 @@ export default function Login() {
     }
 
     setError('');
-    router.push('/historia-clinica');
+    router.push('/home');
   };
 
   return (

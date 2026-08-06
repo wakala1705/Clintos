@@ -14,6 +14,7 @@ import {
   LuFileText,
   LuFolder,
   LuHeart,
+  LuHouse,
   LuLandmark,
   LuMoon,
   LuPackage,
@@ -36,6 +37,7 @@ import {
 // nuevo, no una copia completa del árbol de navegación.
 export default function Sidebar() {
   const pathname = usePathname();
+  const isHome = pathname === '/home';
   const isAsignacionCitas = pathname === '/asignacion-citas';
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
 
@@ -58,6 +60,11 @@ export default function Sidebar() {
       <div className="sidebar-divider"></div>
 
       <nav className="sidebar-nav">
+
+        <Link href="/home" className={`nav-head nav-link${isHome ? ' active' : ''}`}>
+          <LuHouse className="icon nav-icon" />
+          <span className="label">Inicio</span>
+        </Link>
 
         <div className={`nav-group${isAsignacionCitas || isHistoriaClinica ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
