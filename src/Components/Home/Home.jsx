@@ -38,7 +38,8 @@ const MODULE_GROUPS = [
         title: 'Programar cita',
         description: 'Programa una nueva cita para un paciente.',
         icon: LuCalendarPlus,
-        enabled: false,
+        href: '/programar-cita',
+        enabled: true,
       },
       {
         title: 'Reprogramar citas',

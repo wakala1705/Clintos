@@ -8,6 +8,7 @@ import {
   LuBox,
   LuCalendarClock,
   LuCalendarDays,
+  LuCalendarPlus,
   LuChartColumn,
   LuChevronDown,
   LuChevronLeft,
@@ -39,6 +40,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const isHome = pathname === '/home';
   const isAsignacionCitas = pathname === '/asignacion-citas';
+  const isProgramarCita = pathname === '/programar-cita';
+  const isConsultaExterna = isAsignacionCitas || isProgramarCita;
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
 
   return (
@@ -66,7 +69,7 @@ export default function Sidebar() {
           <span className="label">Inicio</span>
         </Link>
 
-        <div className={`nav-group${isAsignacionCitas || isHistoriaClinica ? ' open' : ''}`}>
+        <div className={`nav-group${isConsultaExterna || isHistoriaClinica ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuStethoscope className="icon nav-icon" />
             <span className="label">Módulo Asistencial</span>
@@ -74,7 +77,7 @@ export default function Sidebar() {
           </div>
           <div className="nav-body">
 
-            <div className={`nav-group sub${isAsignacionCitas ? ' open' : ''}`}>
+            <div className={`nav-group sub${isConsultaExterna ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuSquarePlus className="icon nav-icon" />
                 <span className="label">Consulta Externa</span>
@@ -82,6 +85,7 @@ export default function Sidebar() {
               </div>
               <div className="nav-body">
                 <Link href="/asignacion-citas" className={`nav-subitem${isAsignacionCitas ? ' active' : ''}`}><LuCalendarDays className="icon" />Asignación de citas</Link>
+                <Link href="/programar-cita" className={`nav-subitem${isProgramarCita ? ' active' : ''}`}><LuCalendarPlus className="icon" />Programar cita</Link>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuCalendarClock className="icon" />Reprogramar Citas</div>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuFileText className="icon" />Historias Clínicas</div>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>

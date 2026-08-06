@@ -1,0 +1,167 @@
+/* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
+   Home.css / asignacion-citas.css / historia-clinica.css (cada feature de
+   nivel superior es dueña de su propia copia) — ver AGENTS.md. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  /* Estado "pendiente" — eje distinto de --amber (que aquí queda para el
+     tipo de consulta "Urgencia"), para que ambos indicadores no se
+     confundan cuando aparecen juntos en una misma tarjeta de cita. */
+  --yellow-bg:#fff8e1;
+  --yellow-fg:#8e6a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --radius:8px;
+  --radius-lg:12px;
+
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --yellow-bg:rgba(241,194,27,.18);
+  --yellow-fg:#f1c21b;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+.app{
+  display:flex;
+  height:100vh;
+  min-width:1200px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+
+.topbar{
+  height:60px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 24px;
+  gap:16px;
+  flex-shrink:0;
+}
+.topbar .hamburger{color:var(--ink-500);display:flex;cursor:pointer;}
+.breadcrumb{font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;}
+.breadcrumb .current{color:var(--ink-900);font-weight:600;}
+.breadcrumb .sep{color:var(--ink-400);}
+.topbar .spacer{flex:1;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+
+.content{
+  padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+  flex:1;min-height:0;
+  overflow:hidden;
+}
+
+/* ---------- BOTONES / ICON-BTN (duplicados desde asignacion-citas.css) ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:500;font-size:13px;
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
+.btn-danger-outline{background:var(--surface);color:#c02b2b;border-color:#f0d3d3;}
+.btn-danger-outline:hover{background:#fdf2f2;}
+
+.icon-btn-circle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;
+}
+.icon-btn-circle:hover{background:var(--bg);color:var(--ink-900);}
+.icon-btn-circle .icon{width:18px;height:18px;}
+
+/* ---------- HEADER DE PÁGINA ---------- */
+.pc-page-header{
+  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  flex-shrink:0;
+}
+.pc-page-header h1{font-size:20px;font-weight:600;color:var(--ink-900);letter-spacing:-.01em;}
+.pc-page-header p{font-size:13px;color:var(--ink-500);margin-top:2px;}
+.pc-page-header-actions{display:flex;align-items:center;gap:10px;}
+
+/* ---------- WORKSPACE (2 columnas) ---------- */
+.pc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
+.pc-side-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.pc-main-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0;}
+
+/* ---------- TOAST (estático, sin trigger todavía) ---------- */
+.pc-toast{
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
+  background:var(--ink-900);color:#fff;
+  padding:12px 20px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:8px;z-index:60;
+}
+.pc-toast.show{opacity:1;transform:translate(-50%,0);}
+.pc-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+html[data-theme="dark"] .pc-toast{background:var(--surface-modal);border:1px solid var(--border);}

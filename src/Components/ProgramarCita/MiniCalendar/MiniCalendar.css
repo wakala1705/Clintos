@@ -1,0 +1,21 @@
+.pc-mini-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pc-mini-cal-head.collapsed{margin-bottom:0;}
+.pc-mini-cal-month{font-weight:600;font-size:13px;color:var(--ink-900);}
+.pc-mini-cal-nav{display:flex;align-items:center;gap:4px;}
+.pc-mini-cal-nav-btn{
+  width:24px;height:24px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;flex-shrink:0;
+}
+.pc-mini-cal-nav-btn:hover{background:var(--bg);}
+.pc-mini-cal-nav-btn .icon{width:14px;height:14px;}
+.pc-mini-cal-nav-divider{width:1px;height:16px;background:var(--border);margin:0 2px;}
+
+.pc-mini-cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  text-align:center;font-size:11px;
+}
+.pc-mini-cal-dow{color:var(--ink-500);font-weight:600;padding-bottom:4px;}
+.pc-mini-cal-day{padding:6px 0;border-radius:6px;color:var(--ink-900);}
+.pc-mini-cal-day.muted{color:var(--ink-400);}
+.pc-mini-cal-day.today{background:var(--primary);color:#fff;font-weight:700;}

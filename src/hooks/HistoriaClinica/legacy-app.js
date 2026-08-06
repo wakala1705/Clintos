@@ -26,9 +26,14 @@ export function initHistoriaClinica() {
      (botón de colapsar o abriendo un grupo de navegación estando colapsado),
      esa preferencia manual manda sobre el auto-colapso hasta que se recargue la
      página — a diferencia de asignacion-citas/legacy-app.js, que todavía no
-     tiene esta lógica (el sidebar allá sigue siendo 100% manual). */
+     tiene esta lógica (el sidebar allá sigue siendo 100% manual).
+     El override arranca en `true` (no en `null`) porque, a diferencia de
+     Inicio, un módulo siempre debe entrar con el sidebar colapsado — le
+     ahorra al usuario el click manual en el chevron. Sigue siendo un
+     "override" real: si el usuario lo expande a mano, esa elección manda
+     sobre el ancho de pantalla igual que antes. */
   const SIDEBAR_AUTO_BREAKPOINT = 1024;
-  let sidebarUserOverride = null;
+  let sidebarUserOverride = true;
   function applySidebarAutoState(){
     const sidebar = document.getElementById('sidebar');
     if(!sidebar) return;

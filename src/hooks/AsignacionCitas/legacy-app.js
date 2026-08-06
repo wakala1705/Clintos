@@ -34,6 +34,11 @@ export function initAsignacionCitas() {
     group.classList.toggle('open');
   }
 
+  // Al entrar a un módulo (a diferencia de Inicio, que sí lo muestra
+  // expandido) el sidebar arranca colapsado — le ahorra al usuario el click
+  // manual en el chevron que antes tenía que hacer cada vez.
+  document.getElementById('sidebar')?.classList.add('collapsed');
+
   /* ================= SELECCIÓN DE PACIENTE ================= */
   const PATIENTS = [
     { iniciales:'LS', nombre:'Laura Sofía Martínez Gómez',   edad:34, sexo:'Femenino',  ciudad:'Bogotá D.C.',    documento:'1.032.847.291', telefono:'310 842 9173', eps:'Sura',       estado:'activo',     citasFuturas:2, color:'#0065CD' },

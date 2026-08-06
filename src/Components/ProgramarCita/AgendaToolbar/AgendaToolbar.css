@@ -1,0 +1,48 @@
+.pc-toolbar{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  flex-shrink:0;
+}
+
+.pc-date-nav{display:flex;align-items:center;gap:12px;}
+.pc-nav-btn{
+  width:28px;height:28px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;flex-shrink:0;
+}
+.pc-nav-btn:hover{background:var(--bg);}
+.pc-nav-btn .icon{width:16px;height:16px;}
+.pc-date-label{font-weight:600;font-size:14px;color:var(--ink-900);min-width:200px;text-align:center;}
+
+.pc-select-wrap{display:flex;align-items:center;gap:8px;}
+.pc-select-wrap label{font-size:12px;color:var(--ink-500);font-weight:600;}
+.pc-select-wrap select{
+  border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-900);background:var(--surface);cursor:pointer;
+}
+.pc-select-wrap select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Mismo patrón que .chip-group.segmented en
+   HistoriaClinica/shared/shared.css (filtro de estado/rango rápido de
+   Medicamentos, Órdenes médicas, Pedidos): track en píldora con fondo tenue,
+   opción activa "elevada" (surface + sombra), no relleno azul sólido. */
+.pc-view-switch{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;flex-shrink:0;
+}
+.pc-view-switch button{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+  padding:7px 14px;border-radius:999px;font-weight:600;
+  color:var(--ink-700);font-size:12.5px;cursor:pointer;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.pc-view-switch button:hover{background:rgba(16,24,39,.05);}
+.pc-view-switch button.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+html[data-theme="dark"] .pc-view-switch{background:#0c0f17;}
+html[data-theme="dark"] .pc-view-switch button:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .pc-view-switch button.active{background:#20283a;border-color:#333e54;}
