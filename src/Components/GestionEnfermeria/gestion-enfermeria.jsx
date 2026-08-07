@@ -1,32 +1,32 @@
 'use client';
 
 import { useEffect } from 'react';
-import './historia-clinica.css';
-import '@/Components/HistoriaClinica/shared/shared.css';
-import { initHistoriaClinica } from '@/hooks/HistoriaClinica/legacy-app';
-import PatientBanner from '@/Components/HistoriaClinica/PatientBanner/PatientBanner';
-import MedicamentosPanel from '@/Components/HistoriaClinica/MedicamentosPanel/MedicamentosPanel';
-import OrdenesMedicasPanel from '@/Components/HistoriaClinica/OrdenesMedicasPanel/OrdenesMedicasPanel';
-import PedidosPanel from '@/Components/HistoriaClinica/PedidosPanel/PedidosPanel';
-import Toast from '@/Components/HistoriaClinica/modals/Toast/Toast';
-import DosePopover from '@/Components/HistoriaClinica/modals/DosePopover/DosePopover';
-import AdminModal from '@/Components/HistoriaClinica/modals/AdminModal/AdminModal';
-import MultiAdminModal from '@/Components/HistoriaClinica/modals/MultiAdminModal/MultiAdminModal';
-import SuspendModal from '@/Components/HistoriaClinica/modals/SuspendModal/SuspendModal';
-import ReturnModal from '@/Components/HistoriaClinica/modals/ReturnModal/ReturnModal';
-import ProgramModal from '@/Components/HistoriaClinica/modals/ProgramModal/ProgramModal';
-import PedidoModal from '@/Components/HistoriaClinica/modals/PedidoModal/PedidoModal';
-import CatalogModal from '@/Components/HistoriaClinica/modals/CatalogModal/CatalogModal';
-import RestanteModal from '@/Components/HistoriaClinica/modals/RestanteModal/RestanteModal';
-import CerrarParcialModal from '@/Components/HistoriaClinica/modals/CerrarParcialModal/CerrarParcialModal';
-import OrdenDetalleModal from '@/Components/HistoriaClinica/modals/OrdenDetalleModal/OrdenDetalleModal';
+import './gestion-enfermeria.css';
+import '@/Components/GestionEnfermeria/shared/shared.css';
+import { initGestionEnfermeria } from '@/hooks/GestionEnfermeria/legacy-app';
+import PatientBanner from '@/Components/GestionEnfermeria/PatientBanner/PatientBanner';
+import MedicamentosPanel from '@/Components/GestionEnfermeria/MedicamentosPanel/MedicamentosPanel';
+import OrdenesMedicasPanel from '@/Components/GestionEnfermeria/OrdenesMedicasPanel/OrdenesMedicasPanel';
+import PedidosPanel from '@/Components/GestionEnfermeria/PedidosPanel/PedidosPanel';
+import Toast from '@/Components/GestionEnfermeria/modals/Toast/Toast';
+import DosePopover from '@/Components/GestionEnfermeria/modals/DosePopover/DosePopover';
+import AdminModal from '@/Components/GestionEnfermeria/modals/AdminModal/AdminModal';
+import MultiAdminModal from '@/Components/GestionEnfermeria/modals/MultiAdminModal/MultiAdminModal';
+import SuspendModal from '@/Components/GestionEnfermeria/modals/SuspendModal/SuspendModal';
+import ReturnModal from '@/Components/GestionEnfermeria/modals/ReturnModal/ReturnModal';
+import ProgramModal from '@/Components/GestionEnfermeria/modals/ProgramModal/ProgramModal';
+import PedidoModal from '@/Components/GestionEnfermeria/modals/PedidoModal/PedidoModal';
+import CatalogModal from '@/Components/GestionEnfermeria/modals/CatalogModal/CatalogModal';
+import RestanteModal from '@/Components/GestionEnfermeria/modals/RestanteModal/RestanteModal';
+import CerrarParcialModal from '@/Components/GestionEnfermeria/modals/CerrarParcialModal/CerrarParcialModal';
+import OrdenDetalleModal from '@/Components/GestionEnfermeria/modals/OrdenDetalleModal/OrdenDetalleModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import UserMenu from '@/Components/UserMenu/UserMenu';
 import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuMenu, LuPill } from 'react-icons/lu';
 
-export default function HistoriaClinicaPage() {
+export default function GestionEnfermeriaPage() {
   useEffect(() => {
-    const cleanup = initHistoriaClinica();
+    const cleanup = initGestionEnfermeria();
     return cleanup;
   }, []);
 
@@ -44,7 +44,7 @@ export default function HistoriaClinicaPage() {
       <LuMenu className="hamburger icon" />
       <div className="breadcrumb">
         <span>Hospitalización</span><span className="sep">/</span>
-        <span className="current">Historia Clínica</span>
+        <span className="current">Gestión de Enfermería</span>
       </div>
       <div className="spacer"></div>
       <div className="topbar-right">

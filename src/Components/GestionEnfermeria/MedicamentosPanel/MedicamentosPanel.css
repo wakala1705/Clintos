@@ -251,7 +251,7 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 /* Mobile: cada fila colapsa a card apilada en una sola columna, sin que el
    contenedor necesite scroll horizontal (a diferencia del timeline).
    NOTA: esto todavía no es alcanzable en la práctica — .app{min-width:1440px}
-   (historia-clinica.css, excepción documentada de WCAG 1.4.10) recorta todo
+   (gestion-enfermeria.css, excepción documentada de WCAG 1.4.10) recorta todo
    el shell por debajo de 1440px con overflow:hidden, así que el breakpoint
    de abajo nunca llega a mostrarse hasta que se aborde el shell completo
    (sidebar/topbar responsive) como iniciativa aparte. Decisión explícita:

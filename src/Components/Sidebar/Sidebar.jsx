@@ -15,6 +15,7 @@ import {
   LuFileText,
   LuFolder,
   LuHeart,
+  LuHeartPulse,
   LuHouse,
   LuLandmark,
   LuMoon,
@@ -31,7 +32,7 @@ import {
   LuWrench,
 } from 'react-icons/lu';
 
-// Sidebar de navegación, compartido por /asignacion-citas y /historia-clinica
+// Sidebar de navegación, compartido por /asignacion-citas y /gestion-enfermeria
 // (antes duplicado inline en cada page.jsx). El estado de "grupo abierto" /
 // "ítem activo" se deriva de la ruta actual en vez de estar hardcodeado, así
 // que agregar una nueva ruta bajo un grupo existente solo requiere un Link
@@ -42,7 +43,7 @@ export default function Sidebar() {
   const isAsignacionCitas = pathname === '/asignacion-citas';
   const isProgramarCita = pathname === '/programar-cita';
   const isConsultaExterna = isAsignacionCitas || isProgramarCita;
-  const isHistoriaClinica = pathname.startsWith('/historia-clinica');
+  const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -69,7 +70,7 @@ export default function Sidebar() {
           <span className="label">Inicio</span>
         </Link>
 
-        <div className={`nav-group${isConsultaExterna || isHistoriaClinica ? ' open' : ''}`}>
+        <div className={`nav-group${isConsultaExterna || isGestionEnfermeria ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuStethoscope className="icon nav-icon" />
             <span className="label">Módulo Asistencial</span>
@@ -95,14 +96,14 @@ export default function Sidebar() {
               </div>
             </div>
 
-            <div className={`nav-group sub${isHistoriaClinica ? ' open' : ''}`}>
+            <div className={`nav-group sub${isGestionEnfermeria ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuBed className="icon nav-icon" />
                 <span className="label">Hospitalización</span>
                 <LuChevronDown className="icon chev" />
               </div>
               <div className="nav-body">
-                <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historia Clínica</Link>
+                <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
               </div>
             </div>
 

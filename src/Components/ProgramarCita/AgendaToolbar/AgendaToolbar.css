@@ -36,7 +36,7 @@
 .pc-picker-trigger .chev{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
 
 /* Mismo patrón que .chip-group.segmented en
-   HistoriaClinica/shared/shared.css (filtro de estado/rango rápido de
+   GestionEnfermeria/shared/shared.css (filtro de estado/rango rápido de
    Medicamentos, Órdenes médicas, Pedidos): track en píldora con fondo tenue,
    opción activa "elevada" (surface + sombra), no relleno azul sólido. */
 .pc-view-switch{

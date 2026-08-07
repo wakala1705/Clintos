@@ -1,5 +1,5 @@
 /* Tokens + reset del shell (sidebar + topbar + content wrapper) duplicados
-   aquí siguiendo el mismo criterio que asignacion-citas.css / historia-clinica.css
+   aquí siguiendo el mismo criterio que asignacion-citas.css / gestion-enfermeria.css
    (cada feature de nivel superior es dueña de su propia copia en vez de
    depender del CSS de otra ruta) — ver AGENTS.md y los comentarios de esos
    dos archivos. */

@@ -1,12 +1,12 @@
-/* Shared primitives reused by 2+ Historia Clínica components (buttons, forms,
+/* Shared primitives reused by 2+ Gestión de Enfermería components (buttons, forms,
    filters/popovers, tabs, modals scaffolding, tables, selection toolbar...).
-   Imported once from src/app/historia-clinica/page.jsx — individual components
+   Imported once from src/app/gestion-enfermeria/page.jsx — individual components
    only import their own <ComponentName>.css to avoid duplicating these rules.
    See AGENTS.md for the rule that keeps this file as the single source of
    truth for cross-component styles instead of copy-pasting them per component. */
 
 /* ---------- DESIGN TOKENS (color/radius) ----------
-   Historia Clínica used to inherit these from ../asignacion-citas/asignacion-citas.css
+   Gestión de Enfermería used to inherit these from ../asignacion-citas/asignacion-citas.css
    (both routes rendered the same Sidebar, so the app.jsx import order happened
    to leak them in). Duplicated here so this feature no longer depends on that
    route's CSS — asignacion-citas.css keeps its own copy untouched. Includes
@@ -164,8 +164,8 @@ html[data-theme="dark"]{
 }
 .admin-safety-check-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer;}
 
-/* Base icon sizing/alignment — every "<X className='icon'>" across Historia
-   Clínica (and Sidebar) leans on this for display/vertical-align/stroke;
+/* Base icon sizing/alignment — every "<X className='icon'>" across Gestión de
+   Enfermería (and Sidebar) leans on this for display/vertical-align/stroke;
    components only override width/height locally. */
 .icon{
   width:20px;height:20px;
@@ -192,7 +192,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 /* ---------- SPACING TOKENS ----------
    Consumed via var(--space-N) across most of the grid-based rows/headers below
    (.dev-header-row, .ome-header-row, modal chip/field gaps, etc). Missing
-   after the historia-clinica.css split — grids collapsed to 0 gap/padding
+   after the gestion-enfermeria.css split — grids collapsed to 0 gap/padding
    without a fallback. Keep this the single definition; components must not
    hardcode their own px value "just in case" the var is unset. */
 :root{
@@ -624,7 +624,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 /* ---------- Encabezados/listas tipo grid compartidos entre Solicitudes y Devoluciones ----------
    .dev-scroll-x envuelve cabecera + lista: sus columnas son grid-template-columns
    de ancho fijo (sol-grid-cols/dev-grid-cols), así que por debajo del piso tablet
-   (~1024px, ver .app en historia-clinica.css) no caben sin desalinearse — en vez
+   (~1024px, ver .app en gestion-enfermeria.css) no caben sin desalinearse — en vez
    de romper el layout, ganan su propio scroll horizontal, moviendo cabecera y
    filas como una sola unidad. overflow-x:visible en .dev-list evita que la lista
    abra un SEGUNDO scroll horizontal independiente del de .dev-scroll-x (el eje Y

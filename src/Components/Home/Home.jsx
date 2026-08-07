@@ -78,10 +78,10 @@ const MODULE_GROUPS = [
     icon: LuBed,
     items: [
       {
-        title: 'Historia clínica',
+        title: 'Gestión de enfermería',
         description: 'Cronograma de medicamentos, órdenes médicas y pedidos.',
-        icon: LuFileText,
-        href: '/historia-clinica',
+        icon: LuHeartPulse,
+        href: '/gestion-enfermeria',
         enabled: true,
       },
       {
@@ -97,9 +97,9 @@ const MODULE_GROUPS = [
         enabled: false,
       },
       {
-        title: 'Gestión de enfermería',
-        description: 'Seguimiento clínico y tareas de enfermería.',
-        icon: LuHeartPulse,
+        title: 'Historia clínica',
+        description: 'Diagnósticos, evolución clínica e historial médico del paciente.',
+        icon: LuFileText,
         enabled: false,
       },
     ],

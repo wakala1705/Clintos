@@ -1,4 +1,4 @@
-/* Estilos exclusivos del shell de la página /historia-clinica (page.jsx):
+/* Estilos exclusivos del shell de la página /gestion-enfermeria (page.jsx):
    la card contenedora y su barra de tabs principal (Gestión de medicamentos /
    Órdenes médicas / Pedidos / Monitoreo / Notas). page.jsx no es un componente
    reutilizable (es la ruta de Next.js), así que su CSS se queda junto a él en
@@ -6,9 +6,9 @@
 
    Los tokens (--amber) y el override de tema oscuro para clases de otros
    componentes siguen aquí porque ya estaban acopladas a este archivo desde el
-   mockup original; el resto de reglas de historia-clinica.css se repartió
-   entre src/Components/HistoriaClinica/**\/*.css (por componente) y
-   src/Components/HistoriaClinica/shared/shared.css (reglas cruzadas). */
+   mockup original; el resto de reglas de gestion-enfermeria.css se repartió
+   entre src/Components/GestionEnfermeria/**\/*.css (por componente) y
+   src/Components/GestionEnfermeria/shared/shared.css (reglas cruzadas). */
 
 :root{
   --amber:#e08a00;

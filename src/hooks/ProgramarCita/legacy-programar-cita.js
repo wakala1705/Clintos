@@ -21,7 +21,7 @@ export function initProgramarCita() {
   // módulo siempre debe entrar con el sidebar colapsado — le ahorra al
   // usuario el click manual en el chevron. Sigue siendo un "override" real:
   // si el usuario lo expande a mano, esa elección manda sobre el ancho de
-  // pantalla igual que antes (ver mismo criterio en HistoriaClinica/legacy-app.js).
+  // pantalla igual que antes (ver mismo criterio en GestionEnfermeria/legacy-app.js).
   const SIDEBAR_AUTO_BREAKPOINT = 1024;
   let sidebarUserOverride = true;
   function applySidebarAutoState(){

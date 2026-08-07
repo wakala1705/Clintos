@@ -28,7 +28,7 @@
    espacio sobrante (minmax 1fr) para empujar "Acciones" al extremo derecho. */
 .ome-grid-cols{grid-template-columns:var(--ome-col-check) var(--ome-col-slot2) var(--ome-col-name) var(--ome-col-meta) var(--ome-col-slot5) var(--ome-col-slot6) minmax(190px,1fr) 65px;}
 /* .ome-scroll-x envuelve cabecera + lista: columnas de ancho fijo que no caben
-   por debajo del piso tablet (~1024px, ver .app en historia-clinica.css) ganan
+   por debajo del piso tablet (~1024px, ver .app en gestion-enfermeria.css) ganan
    su propio scroll horizontal en vez de romper el layout, moviendo cabecera y
    filas como una sola unidad. overflow-x:visible en .ome-list evita que abra un
    SEGUNDO scroll horizontal independiente del de .ome-scroll-x (el eje Y sigue

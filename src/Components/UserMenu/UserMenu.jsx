@@ -7,7 +7,7 @@ import ConfigModal from './ConfigModal/ConfigModal';
 import { LuBell, LuChevronDown, LuLifeBuoy, LuLogOut, LuSettings } from 'react-icons/lu';
 
 // Menú desplegable del usuario, compartido por /asignacion-citas y
-// /historia-clinica (mismo criterio que Sidebar — ver AGENTS.md). Cada ruta le
+// /gestion-enfermeria (mismo criterio que Sidebar — ver AGENTS.md). Cada ruta le
 // pasa sus propios name/role/initials; el propio componente resuelve
 // apertura/cierre del dropdown y del ConfigModal con estado local, sin
 // depender de las funciones globales de legacy-app.js.

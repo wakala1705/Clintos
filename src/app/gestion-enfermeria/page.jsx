@@ -1,6 +1,6 @@
-import HistoriaClinica from '@/Components/HistoriaClinica/historia-clinica';
+import GestionEnfermeria from '@/Components/GestionEnfermeria/gestion-enfermeria';
 
 
-export default function HistoriaClinicaPage() {
-  return <HistoriaClinica />;r
+export default function GestionEnfermeriaPage() {
+  return <GestionEnfermeria />;
 }

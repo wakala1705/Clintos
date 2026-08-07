@@ -1,7 +1,7 @@
 /* Primitivas compartidas por 2+ componentes de Programar Cita (panel
    genérico, badge de estado de cita, scaffolding de modal). Importado una
    sola vez desde ProgramarCita.jsx — ver AGENTS.md (mismo criterio que
-   HistoriaClinica/shared/shared.css). */
+   GestionEnfermeria/shared/shared.css). */
 
 /* ---------- PANEL GENÉRICO (mini-calendario / contrato) ---------- */
 .pc-panel{
@@ -18,7 +18,7 @@
 
 /* ---------- BADGE DE ESTADO DE CITA ----------
    Mismo lenguaje visual que .estado-badge (asignacion-citas.css) y
-   .dp-status-badge (HistoriaClinica): píldora + punto, 11px/600, padding
+   .dp-status-badge (GestionEnfermeria): píldora + punto, 11px/600, padding
    4px 10px, radio 20px — homologado en todo el proyecto (ver AGENTS.md). */
 .pc-estado-badge{
   display:inline-flex;align-items:center;gap:6px;

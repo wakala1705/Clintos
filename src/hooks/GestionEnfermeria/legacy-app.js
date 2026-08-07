@@ -4,8 +4,8 @@
 // Pedido a farmacia y catálogo de insumos). Same conventions as
 // ../AsignacionCitas/legacy-app.js: this module owns its own state via closures
 // and re-renders by writing innerHTML / toggling classList on containers that the
-// React shell (page.jsx + src/Components/HistoriaClinica/**) renders once and never touches again.
-export function initHistoriaClinica() {
+// React shell (page.jsx + src/Components/GestionEnfermeria/**) renders once and never touches again.
+export function initGestionEnfermeria() {
 
   /* ================= MODO OSCURO / SIDEBAR ================= */
   function applyTheme(dark){
@@ -20,7 +20,7 @@ export function initHistoriaClinica() {
     applyTheme(!chk.checked);
   }
 
-  /* Shell responsive (iniciativa tablet ~1024px, ver .app en historia-clinica.css):
+  /* Shell responsive (iniciativa tablet ~1024px, ver .app en gestion-enfermeria.css):
      por debajo de SIDEBAR_AUTO_BREAKPOINT el sidebar se auto-colapsa al riel de
      íconos para dejar más ancho al contenido. Si el usuario lo togglea a mano
      (botón de colapsar o abriendo un grupo de navegación estando colapsado),
@@ -60,7 +60,7 @@ export function initHistoriaClinica() {
      asistencia (aria-hidden) y Tab/Shift+Tab quedan atrapados dentro del
      modal, para que el contenido "detrás" del overlay no siga siendo
      alcanzable con teclado. Toast/DosePopover y los propios modales viven
-     fuera de #app-shell (hermanos en historia-clinica.jsx), así que no se
+     fuera de #app-shell (hermanos en gestion-enfermeria.jsx), así que no se
      ven afectados por el aria-hidden. */
   const appShell = document.getElementById('app-shell');
   const MODAL_FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';

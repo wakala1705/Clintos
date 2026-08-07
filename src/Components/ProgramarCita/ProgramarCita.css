@@ -1,5 +1,5 @@
 /* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
-   Home.css / asignacion-citas.css / historia-clinica.css (cada feature de
+   Home.css / asignacion-citas.css / gestion-enfermeria.css (cada feature de
    nivel superior es dueña de su propia copia) — ver AGENTS.md. */
 :root{
   --primary:#0065CD;
@@ -76,7 +76,7 @@ body{
 }
 
 /* ---------- SCROLLBARS ----------
-   Mismo patrón que HistoriaClinica/shared/shared.css: delgado y casi
+   Mismo patrón que GestionEnfermeria/shared/shared.css: delgado y casi
    imperceptible en toda la página (grilla de horarios, listas de los
    pickers de especialidad/médico...). */
 *{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}

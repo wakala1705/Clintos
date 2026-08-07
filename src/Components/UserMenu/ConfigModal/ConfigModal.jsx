@@ -14,11 +14,11 @@ const SECTIONS = [
 ];
 
 // Fuente de verdad de "Verificación de los 5 correctos", leída por AdminModal
-// vía src/hooks/HistoriaClinica/legacy-app.js (isVerificacionClinicaEnabled).
+// vía src/hooks/GestionEnfermeria/legacy-app.js (isVerificacionClinicaEnabled).
 // Vive en window (no localStorage, igual que el resto del estado de esta app)
 // para que sobreviva a la navegación entre /asignacion-citas y
-// /historia-clinica dentro de la misma sesión — ConfigModal se abre desde
-// UserMenu en ambas rutas, pero solo Historia Clínica tiene AdminModal.
+// /gestion-enfermeria dentro de la misma sesión — ConfigModal se abre desde
+// UserMenu en ambas rutas, pero solo Gestión de Enfermería tiene AdminModal.
 function isVerificacionClinicaEnabled() {
   if (typeof window === 'undefined') return true;
   return window.__clintosVerificacionClinica !== false;

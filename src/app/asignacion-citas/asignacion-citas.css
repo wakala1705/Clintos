@@ -45,7 +45,7 @@
     --border:#2a3242;
     --surface:#161c2b;
     /* Tono propio para cards de modal — ver la misma variable en shared.css
-       (Historia Clínica): separa el modal del fondo atenuado detrás en modo
+       (Gestión de Enfermería): separa el modal del fondo atenuado detrás en modo
        oscuro, sin oscurecer también inputs/botones que usan --surface. */
     --surface-modal:#1c2333;
     --bg:#0c0f17;
@@ -388,7 +388,7 @@
   .badge.neutral{background:#eef0f4;color:var(--ink-700);}
 
   /* Píldora + punto, homologada con .pc-estado-badge (ProgramarCita) y
-     .dp-status-badge (HistoriaClinica) — mismo tamaño, padding y radio. */
+     .dp-status-badge (GestionEnfermeria) — mismo tamaño, padding y radio. */
   .estado-badge{
     display:inline-flex;align-items:center;gap:6px;
     font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;

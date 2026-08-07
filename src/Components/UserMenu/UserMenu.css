@@ -1,9 +1,9 @@
 /* Estilos exclusivos de UserMenu. Reemplaza el .user-chip que antes vivía
-   inline (y duplicado) en historia-clinica.css y asignacion-citas.css — ver
+   inline (y duplicado) en gestion-enfermeria.css y asignacion-citas.css — ver
    AGENTS.md sobre componentes app-wide. Usa los design tokens (--primary,
    --ink-900, --border, --surface, --radius...) que cada ruta ya define en su
    propio :root, igual que Sidebar.css. El z-index del dropdown se deja fijo
-   (no depende de --z-modal, que solo existe en la ruta de Historia Clínica). */
+   (no depende de --z-modal, que solo existe en la ruta de Gestión de Enfermería). */
 .user-menu{position:relative;flex-shrink:0;}
 
 .user-chip{
