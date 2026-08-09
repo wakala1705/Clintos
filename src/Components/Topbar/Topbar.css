@@ -1,0 +1,37 @@
+/* Topbar global — base tomada de gestion-enfermeria.css (ver Topbar.jsx).
+   .icon-btn-circle vivía antes duplicado en asignacion-citas.css / ProgramarCita.css;
+   se consolida aquí y lo siguen usando otros botones circulares del proyecto
+   (buscar/config del header de Programar Cita, QR de Asignación de Citas). */
+.topbar{
+  height:60px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 24px;
+  gap:16px;
+  flex-shrink:0;
+}
+.topbar .hamburger{color:var(--ink-500);display:flex;cursor:pointer;}
+.breadcrumb{
+  font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;
+}
+.breadcrumb a:hover{color:var(--primary);text-decoration:underline;}
+.breadcrumb .current{color:var(--ink-900);font-weight:600;}
+.breadcrumb .sep{color:var(--ink-400);}
+.topbar .spacer{flex:1;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.meta-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--ink-700);
+}
+.meta-item .icon{width:18px;height:18px;color:var(--primary);}
+.meta-item b{font-weight:500;color:var(--ink-900);}
+.divider-v{width:1px;height:24px;background:var(--border);}
+.icon-btn-circle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;
+}
+.icon-btn-circle:hover{background:#f3f5f9;color:var(--ink-900);}
+.icon-btn-circle .icon{width:19px;height:19px;}

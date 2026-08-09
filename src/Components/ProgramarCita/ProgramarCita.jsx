@@ -1,20 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ProgramarCita.css';
 import './shared/shared.css';
-import { initProgramarCita } from '@/hooks/ProgramarCita/legacy-programar-cita';
+import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import { APPOINTMENTS, DOCTORS, SPECIALTIES, todayDayIndex, weekDays } from '@/hooks/ProgramarCita/agendaMockData';
 import Sidebar from '@/Components/Sidebar/Sidebar';
-import UserMenu from '@/Components/UserMenu/UserMenu';
+import Topbar from '@/Components/Topbar/Topbar';
 import MiniCalendar from '@/Components/ProgramarCita/MiniCalendar/MiniCalendar';
 import ContractPanel from '@/Components/ProgramarCita/ContractPanel/ContractPanel';
 import AgendaToolbar from '@/Components/ProgramarCita/AgendaToolbar/AgendaToolbar';
 import ScheduleGrid from '@/Components/ProgramarCita/ScheduleGrid/ScheduleGrid';
-import NuevaCitaModal from '@/Components/ProgramarCita/NuevaCitaModal/NuevaCitaModal';
+import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import DetalleCitaModal from '@/Components/ProgramarCita/DetalleCitaModal/DetalleCitaModal';
 import RangoDropdown from '@/Components/ProgramarCita/RangoDropdown/RangoDropdown';
-import { LuMenu, LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
+import { LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
 
 // Vista "Por especialidad" muestra un solo día (el miércoles de la semana
 // visible), igual que el mockup de referencia — el usuario ya filtró a una
@@ -22,9 +23,23 @@ import { LuMenu, LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
 const ESPECIALIDAD_DAY_ID = 2;
 
 export default function ProgramarCita() {
+  // Esta página no tiene banner/contrato/agenda ligados a "el paciente
+  // activo" (a diferencia de AsignacionCitas) — el ref solo existe para que
+  // el wizard compartido tenga dónde guardar el paciente elegido mientras
+  // dura el flujo de agendamiento. Ver initNuevaCita en
+  // src/hooks/NuevaCita/legacy-nueva-cita.js.
+  const nuevaCitaPatientRef = useRef(null);
+
   useEffect(() => {
-    const cleanup = initProgramarCita();
-    return cleanup;
+    const cleanupChrome = initShellChrome({ startCollapsed: true });
+    const cleanupNuevaCita = initNuevaCita({
+      getPatient: () => nuevaCitaPatientRef.current,
+      setPatient: (patient) => { nuevaCitaPatientRef.current = patient; },
+    });
+    return () => {
+      cleanupChrome?.();
+      cleanupNuevaCita?.();
+    };
   }, []);
 
   const [vista, setVista] = useState('medico');
@@ -75,17 +90,11 @@ export default function ProgramarCita() {
 
       <div className="main">
 
-        <header className="topbar">
-          <LuMenu className="hamburger icon" />
-          <div className="breadcrumb">
-            <span>Consulta Externa</span><span className="sep">/</span>
-            <span className="current">Programar cita</span>
-          </div>
-          <div className="spacer"></div>
-          <div className="topbar-right">
-            <UserMenu name="Manuel Hernández" role="Médico" initials="CG" />
-          </div>
-        </header>
+        <Topbar
+          section="Consulta Externa"
+          page="Programar cita"
+          user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
+        />
 
         <div className="content">
 
@@ -98,7 +107,7 @@ export default function ProgramarCita() {
               <button type="button" className="icon-btn-circle" aria-label="Buscar"><LuSearch className="icon" /></button>
               <button type="button" className="icon-btn-circle" aria-label="Configuración"><LuSettings className="icon" /></button>
               {vista === 'medico' && <RangoDropdown value={rango} onChange={setRango} />}
-              <button type="button" className="btn btn-primary"><LuPlus className="icon" />Agendar cita</button>
+              <button type="button" className="btn btn-primary" onClick={() => window.ncOpen()}><LuPlus className="icon" />Agendar cita</button>
             </div>
           </div>
 
@@ -130,7 +139,7 @@ export default function ProgramarCita() {
         </div>
       </div>
 
-      <NuevaCitaModal open={false} />
+      <NuevaCitaFlow />
       <DetalleCitaModal appointment={selectedAppointment} onClose={() => setSelectedAppointment(null)} />
 
       <div className="pc-toast">

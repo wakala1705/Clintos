@@ -1,0 +1,14 @@
+/* Color de fondo único y neutral para todo avatar de paciente en Clintos —
+   ver PatientAvatar.jsx. #64748B (slate) + texto blanco da ~4.8:1 de
+   contraste, por encima del mínimo 4.5:1 que exige WCAG 2.1 AA para texto
+   normal (las iniciales se renderizan en 12-16px según el caller, por debajo
+   del umbral de "texto grande" que permitiría 3:1). Deliberadamente distinto
+   de --gray-bg/--gray-fg (usados por .estado-badge.inactivo) para que un
+   paciente activo no "lea" visualmente como inactivo por el color del
+   avatar. No depende de tokens por página para poder usarse igual en
+   cualquier ruta sin duplicar variables. */
+.patient-avatar-badge{
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;flex-shrink:0;
+  background:#dbe8fe;color:#004e9e;
+}

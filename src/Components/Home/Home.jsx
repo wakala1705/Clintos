@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import './Home.css';
-import { initHome } from '@/hooks/Home/legacy-home';
+import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
-import UserMenu from '@/Components/UserMenu/UserMenu';
+import Topbar from '@/Components/Topbar/Topbar';
 import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
 import {
   LuActivity,
@@ -16,7 +16,6 @@ import {
   LuFileText,
   LuHeart,
   LuHeartPulse,
-  LuMenu,
   LuSiren,
   LuStethoscope,
   LuUsers,
@@ -63,7 +62,8 @@ const MODULE_GROUPS = [
         title: 'Lista de pacientes',
         description: 'Consulta y administra el listado de pacientes.',
         icon: LuUsers,
-        enabled: false,
+        href: '/lista-pacientes',
+        enabled: true,
       },
       {
         title: 'Accidentes de tránsito',
@@ -108,7 +108,7 @@ const MODULE_GROUPS = [
 
 export default function Home() {
   useEffect(() => {
-    const cleanup = initHome();
+    const cleanup = initShellChrome({ startCollapsed: false });
     return cleanup;
   }, []);
 
@@ -119,16 +119,7 @@ export default function Home() {
 
       <div className="main">
 
-        <header className="topbar">
-          <LuMenu className="hamburger icon" />
-          <div className="breadcrumb">
-            <span className="current">Inicio</span>
-          </div>
-          <div className="spacer"></div>
-          <div className="topbar-right">
-            <UserMenu name="Manuel Hernández" role="Médico" initials="CG" />
-          </div>
-        </header>
+        <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }} />
 
         <div className="content home-content">
 

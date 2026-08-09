@@ -1,0 +1,18 @@
+.fp-section-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 24px;scroll-margin-top:16px;
+}
+.fp-section-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+.fp-section-heading{display:flex;align-items:flex-start;gap:10px;}
+.fp-section-icon{
+  width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.fp-section-icon .icon{width:17px;height:17px;}
+.fp-section-head h2{font-size:15px;font-weight:600;color:var(--ink-900);margin:0;}
+.fp-section-head p{font-size:12px;color:var(--ink-500);margin:2px 0 0;}
+.fp-section-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}

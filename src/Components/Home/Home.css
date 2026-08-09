@@ -64,21 +64,8 @@ body{
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
 
-.topbar{
-  height:60px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 24px;
-  gap:16px;
-  flex-shrink:0;
-}
-.topbar .hamburger{color:var(--ink-500);display:flex;cursor:pointer;}
-.breadcrumb{font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;}
-.breadcrumb .current{color:var(--ink-900);font-weight:600;}
-.breadcrumb .sep{color:var(--ink-400);}
-.topbar .spacer{flex:1;}
-.topbar-right{display:flex;align-items:center;gap:16px;}
+/* .topbar / .breadcrumb / .topbar-right moved to
+   src/Components/Topbar/Topbar.css — see AGENTS.md (topbar homologada). */
 
 .content{
   padding:16px;

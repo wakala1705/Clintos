@@ -1,0 +1,60 @@
+/* .estado-badge (activo/inactivo/dot) reutiliza las reglas globales que ya
+   trae NuevaCitaFlow.css (esta página siempre renderiza <NuevaCitaFlow/> para
+   "Agregar paciente") — no se duplican aquí. */
+
+.lp-table-wrap{
+  flex:1;min-height:0;overflow:auto;
+}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  position:sticky;top:0;background:#f7f8fb;z-index:1;
+  text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+  padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+html[data-theme="dark"] thead th{background:#161c2b;}
+.lp-th-acciones{text-align:right;}
+tbody td{
+  padding:10px 16px;border-bottom:1px solid #eef0f4;
+  color:var(--ink-700);white-space:nowrap;vertical-align:middle;font-size:13px;
+}
+tbody tr:hover{background:#f7f9fd;}
+tbody tr:last-child td{border-bottom:none;}
+
+.lp-patient-cell{display:flex;align-items:center;gap:10px;}
+/* Color/forma vienen de .patient-avatar-badge (PatientAvatar.css) — acá solo
+   el tamaño/tipografía propios de esta tabla. */
+.lp-avatar{width:32px;height:32px;font-weight:500;font-size:12px;}
+.lp-pname{font-weight:500;color:var(--ink-900);}
+
+.lp-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px;}
+.lp-row-action-btn{
+  width:30px;height:30px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.lp-row-action-btn .icon{width:17px;height:17px;}
+.lp-row-action-btn:hover{background:#eef0f4;color:var(--primary);}
+
+/* ---------- TARJETAS MOBILE ----------
+   La tabla colapsa a una tarjeta por paciente por debajo de 768px. El shell
+   compartido (.app{min-width:1024px}, ver ListaPacientes.css) todavía no
+   permite que la ventana llegue a ese ancho — mismo límite documentado en
+   gestion-enfermeria.css — así que esta vista queda lista para cuando el
+   shell adopte un modo realmente responsive, no es alcanzable hoy con solo
+   redimensionar la ventana. */
+.lp-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .lp-table-wrap{display:none;}
+  .lp-cards{display:flex;}
+}
+.lp-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.lp-card-top{display:flex;align-items:center;gap:10px;}
+.lp-card-id{flex:1;min-width:0;}
+.lp-card-doc{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.lp-card-meta{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--ink-700);}
+.lp-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.lp-card-actions .btn{flex:1;justify-content:center;}

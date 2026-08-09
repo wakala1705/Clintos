@@ -1,0 +1,481 @@
+/* Flujo compartido 'Nueva cita' (búsqueda/alta de paciente + wizard de
+   agendamiento) — ver NuevaCitaFlow.jsx. Extraído de asignacion-citas.css
+   (única fuente hasta ahora) para que /programar-cita reciba el mismo
+   estilo. .badge/.estado-badge base + variantes activo/inactivo/suspendido
+   se duplican aquí (asignacion-citas.css conserva su propia copia completa
+   para la agenda del día) — mismo criterio que el resto del proyecto: cada
+   pieza reutilizable es dueña de su copia de los tokens que necesita. */
+
+  .badge{
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+    white-space:nowrap;display:inline-block;
+  }
+  .badge.eps{background:var(--status-info-bg);color:var(--status-info-fg);}
+  .estado-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+  }
+  .estado-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .estado-badge.activo{background:var(--green-bg);color:#0d7a3d;}
+  .estado-badge.activo .dot{background:#0d7a3d;}
+  .estado-badge.inactivo{background:var(--gray-bg);color:var(--gray-fg);}
+  .estado-badge.inactivo .dot{background:var(--ink-400);}
+  .estado-badge.suspendido{background:var(--amber-bg);color:var(--amber-fg);}
+  .estado-badge.suspendido .dot{background:#e08a00;}
+
+  /* Botón "⋯" de fila de la tabla de búsqueda de pacientes — oculto salvo en
+     la fila seleccionada (ver .row-menu-btn en asignacion-citas.css, dueña de
+     su propia copia para la agenda del día). */
+  .row-menu-btn{
+    width:26px;height:26px;border-radius:7px;flex-shrink:0;
+    align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;
+    display:none;border:none;background:transparent;padding:0;
+  }
+  .row-menu-btn:hover{background:#eef0f4;color:var(--ink-900);}
+  tr.selected .row-menu-btn{display:inline-flex;}
+
+  .context-menu{
+    position:fixed;min-width:190px;
+    background:var(--surface);
+    border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14);
+    padding:8px;z-index:150;display:none;
+  }
+  .context-menu.open{display:block;}
+  .context-menu-item{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 12px;border-radius:7px;
+    font-size:13px;font-weight:600;color:var(--ink-700);
+    cursor:pointer;
+  }
+  .context-menu-item:hover{background:#f3f5f9;}
+  .context-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:#f3f5f9;}
+  .context-menu-item .icon{width:16px;height:16px;color:var(--ink-500);}
+  .context-menu-item.danger{color:var(--red);}
+  .context-menu-item.danger .icon{color:var(--red);}
+  .context-menu-item.accent{color:var(--green);}
+  .context-menu-item.accent .icon{color:var(--green);}
+  .context-menu-divider{height:1px;background:var(--border);margin:4px 4px;}
+
+
+  /* ================= WIZARD: NUEVO AGENDAMIENTO ================= */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(16,24,39,.5);
+    display:none;align-items:center;justify-content:center;z-index:100;
+    padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .wizard-modal{
+    width:1020px;max-width:100%;height:88vh;max-height:840px;
+    background:var(--surface-modal);border-radius:var(--radius-lg);
+    box-shadow:0 12px 32px rgba(6,25,42,.22);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .wizard-body{flex:1;display:flex;min-height:0;}
+
+  /* ---- Riel lateral (3 pasos, con 5 sub-pasos anidados en "Cobertura") ---- */
+  .wizard-rail{
+    width:264px;flex-shrink:0;background:var(--bg);color:var(--ink-900);
+    border-right:1px solid var(--border);
+    padding:24px 16px;overflow-y:auto;display:flex;flex-direction:column;
+  }
+  .wizard-rail-header{margin-bottom:24px;flex-shrink:0;}
+  .wizard-rail-header .rh-eyebrow{
+    font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;
+  }
+  .wizard-rail-header .rh-title{font-size:18px;font-weight:600;color:var(--ink-900);line-height:1.25;}
+  .wizard-rail-header .rh-sub{
+    display:flex;align-items:center;gap:4px;
+    font-size:12px;font-weight:600;color:var(--ink-500);margin-top:8px;
+  }
+  .wizard-rail-header .rh-sub .icon{width:13px;height:13px;color:var(--ink-500);}
+
+  .wizard-rail-nav{display:flex;flex-direction:column;gap:2px;}
+  .rail-main-step{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:8px 8px;border-radius:10px;cursor:pointer;
+  }
+  .rail-main-step:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .rail-main-step.locked{cursor:not-allowed;opacity:.5;}
+  .rail-main-step:not(.locked):hover{background:#eef1f6;}
+  .rms-circle{
+    width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;
+    background:var(--gray-bg,#eef0f4);color:var(--ink-500);
+  }
+  .rms-circle svg{width:13px;height:13px;stroke-width:3;}
+  .rail-main-step.active .rms-circle,
+  .rail-main-step.done .rms-circle{background:var(--primary);color:#fff;}
+  .rms-title{font-size:14px;font-weight:500;color:var(--ink-900);}
+  .rms-sub{font-size:12px;color:var(--ink-500);margin-top:2px;line-height:1.35;}
+
+  .rail-substeps{
+    display:flex;flex-direction:column;gap:1px;
+    margin:2px 0 12px 32px;padding-left:16px;
+    border-left:1px dashed var(--border);
+  }
+  .rail-substep{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 8px;border-radius:8px;cursor:pointer;
+    font-size:13px;font-weight:600;color:var(--ink-500);
+  }
+  .rail-substep:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .rail-substep.locked{cursor:not-allowed;color:var(--ink-500);}
+  .rail-substep:not(.locked):hover{background:#eef1f6;}
+  .rs-dot{
+    width:18px;height:18px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;
+    background:var(--gray-bg,#eef0f4);color:var(--ink-500);
+  }
+  .rs-dot svg{width:11px;height:11px;stroke-width:3;}
+  .rail-substep.done{color:var(--ink-700);}
+  .rail-substep.done .rs-dot{background:var(--primary);color:#fff;}
+  .rail-substep.active{color:var(--primary-dark);font-weight:600;background:var(--primary-50);}
+  .rail-substep.active .rs-dot{background:var(--primary);color:#fff;}
+
+  /* ---- Panel derecho: header dinámico + contenido ---- */
+  .wizard-main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+  .wizard-main-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .wizard-main-header .t{font-size:16px;font-weight:600;color:var(--ink-900);}
+  .wizard-main-header .sub{font-size:13px;color:var(--ink-500);margin-top:2px;}
+  .wizard-close{
+    width:32px;height:32px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;border:none;background:transparent;
+  }
+  .wizard-close:hover{background:#f3f5f9;color:var(--ink-900);}
+  .wizard-close .icon{width:18px;height:18px;}
+
+  /* ---- Stepper horizontal (solo visible durante los 5 sub-pasos de Cobertura) ---- */
+  .wiz-stepper{
+    display:flex;align-items:flex-start;
+    padding:16px 32px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .wiz-step{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    flex:1;position:relative;cursor:pointer;
+  }
+  .wiz-step.locked{cursor:not-allowed;pointer-events:none;}
+  .wiz-step:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+  .wiz-step:not(:first-child)::before{
+    content:'';position:absolute;top:14px;left:-50%;width:100%;height:2px;
+    background:var(--border);z-index:0;
+  }
+  .wiz-step.done:not(:first-child)::before{background:var(--primary);}
+  .wiz-step-circle{
+    width:30px;height:30px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;
+    background:var(--surface);border:2px solid var(--border);color:var(--ink-500);
+    position:relative;z-index:1;
+  }
+  .wiz-step-circle svg{width:14px;height:14px;stroke-width:3;}
+  .wiz-step.done .wiz-step-circle{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .wiz-step.active .wiz-step-circle{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .wiz-step-label{font-size:11px;font-weight:600;color:var(--ink-500);text-align:center;}
+  .wiz-step.done .wiz-step-label{color:var(--primary);}
+  .wiz-step.active .wiz-step-label{color:var(--primary);font-weight:500;}
+
+  .wizard-content{flex:1;min-width:0;overflow-y:auto;padding:24px 32px;}
+  #ap-form{display:flex;flex-direction:column;flex:1;min-height:0;}
+  .wizard-step-title{font-size:16px;font-weight:600;color:var(--ink-900);margin-bottom:3px;}
+  .wizard-step-hint{font-size:13px;color:var(--ink-500);margin-bottom:16px;}
+
+  /* ---- Buscadores sobre las tablas de selección ---- */
+  .wiz-search-row{display:flex;gap:12px;margin-bottom:16px;}
+  .wiz-search-field{position:relative;flex:1;}
+  .wiz-search-field .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-500);}
+  .wiz-search-field input{
+    width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
+  }
+  .wiz-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+  .wiz-search-field input::placeholder{color:var(--ink-400);}
+
+  /* ---- Tablas de selección (Régimen / Especialidad / Médico / Contratación / Servicios) ---- */
+  .wiz-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .wiz-table-wrap table{width:100%;}
+  .wiz-table-wrap tbody tr{cursor:pointer;}
+  .wiz-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+  .wiz-table-wrap tbody tr.row-disabled{cursor:not-allowed;opacity:.45;}
+  .wiz-table-wrap tbody tr.row-disabled:hover{background:transparent;}
+  .wiz-table-wrap tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+  .wiz-row-chevron{color:var(--ink-500);text-align:right;}
+  .wiz-row-chevron .icon{width:16px;height:16px;}
+  .wiz-row-name{font-weight:500;color:var(--ink-900);}
+  tr.selected .wiz-row-name{color:var(--primary-dark);}
+  .wiz-row-count{font-weight:500;color:var(--ink-900);}
+
+  /* ---- Detalle expandido del régimen (accordion) ---- */
+  .wiz-detail-row td{background:#fafbfd;padding:0;}
+  html[data-theme="dark"] .wiz-detail-row td{background:#11172333;}
+  .wiz-detail-inner{padding:4px 16px 12px 48px;}
+  .wiz-detail-inner table{width:100%;border-collapse:collapse;}
+  .wiz-detail-inner th{
+    text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;padding:8px 12px;
+  }
+  .wiz-detail-inner td{
+    font-size:13px;color:var(--ink-700);padding:8px 12px;
+    border-top:1px solid var(--border);white-space:normal;
+  }
+
+  /* ---- Panel de disponibilidad del médico (solo horarios libres) ---- */
+  .slots-card{
+    background:var(--primary-50);border:1px solid var(--primary-100);
+    border-radius:var(--radius);padding:16px 16px;margin-top:24px;
+  }
+  .slots-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+  .slots-card-head .sch-left{display:flex;align-items:center;gap:12px;}
+  .slots-card-head .icon{width:20px;height:20px;color:var(--primary);flex-shrink:0;}
+  .slots-card-head .sch-name{font-size:14px;font-weight:600;color:var(--primary-dark);}
+  .slots-card-head .sch-sub{font-size:12px;color:var(--ink-500);margin-top:1px;}
+  .slots-badge{
+    background:var(--primary);color:#fff;font-size:12px;font-weight:500;
+    padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;
+  }
+
+  .day-strip{
+    display:flex;gap:8px;overflow-x:auto;
+    padding-bottom:12px;margin-bottom:12px;
+    border-bottom:1px solid var(--primary-100);
+  }
+  .day-chip{
+    flex-shrink:0;min-width:60px;text-align:center;
+    padding:8px 6px;border-radius:var(--radius);cursor:pointer;
+    border:1.5px solid var(--border);background:var(--surface);
+  }
+  .day-chip:hover{border-color:var(--primary);}
+  .day-chip:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .day-chip.active{background:var(--primary);border-color:var(--primary);}
+  .day-chip .dc-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+  .day-chip.active .dc-label{color:#fff;opacity:.85;}
+  .day-chip .dc-date{font-size:13px;font-weight:600;color:var(--ink-900);margin-top:3px;}
+  .day-chip.active .dc-date{color:#fff;}
+
+  /* El bg de .slots-card es --primary-50: los chips sin seleccionar quedan en
+     --surface (blanco) para destacar sobre ese fondo, y el chip seleccionado
+     usa --primary sólido (mismo tratamiento que .slots-badge) en vez de
+     --interactive-selected-bg, que es igual a --primary-50 y por eso el chip
+     seleccionado se perdía contra el fondo de la tarjeta. */
+  .slots-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .slot-btn{
+    background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+    padding:7px 10px;text-align:center;cursor:pointer;min-width:56px;
+  }
+  .slot-btn:hover{border-color:var(--primary);}
+  .slot-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .slot-btn.selected{background:var(--primary);border-color:var(--primary);}
+  .slot-btn .sb-h{font-size:13px;font-weight:600;color:var(--ink-900);}
+  .slot-btn.selected .sb-h{color:#fff;}
+  .slots-empty{font-size:13px;color:var(--ink-500);font-style:italic;}
+
+  /* ---- Contratación: ficha de contexto + tabla de contratos ---- */
+  .ro-fields{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px 24px;
+    background:#fafbfd;border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 16px;margin:0 0 16px;
+  }
+  html[data-theme="dark"] .ro-fields{background:#11172333;}
+  .ro-field dt{
+    display:block;font-size:11px;font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;margin:0 0 4px;
+  }
+  .ro-field .ro-value{
+    font-size:13px;font-weight:500;color:var(--ink-900);
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:8px 12px;margin:0;
+  }
+
+  /* ---- Servicios: filas multi-selección ---- */
+  .wiz-table-wrap tbody tr.selected{background:var(--primary-50);}
+
+  /* ---- Información de la cita ---- */
+  .field-block{margin-bottom:16px;max-width:100%;}
+  .field-block label{
+    display:block;font-size:13px;font-weight:600;color:var(--ink-700);
+    margin-bottom:8px;
+  }
+  .field-block label .req{color:var(--red);margin-left:2px;}
+  .field-block select, .field-block input{
+    width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--surface);
+  }
+  .field-block select{
+    appearance:none;-webkit-appearance:none;
+    background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 12px center;
+    padding-right:32px;cursor:pointer;
+  }
+  .field-block select:focus, .field-block input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .field-hint{font-size:12px;color:var(--ink-500);margin-top:6px;}
+
+  .info-card{
+    max-width:640px;
+    border:1px solid var(--border);border-radius:var(--radius-lg);
+    background:var(--surface);padding:24px 24px;
+  }
+  .info-card-head{
+    display:flex;align-items:center;gap:8px;
+    padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--border);
+  }
+  .info-card-head .icon{width:18px;height:18px;color:var(--ink-500);}
+  .info-card-head .title{font-size:14px;font-weight:500;color:var(--ink-900);}
+
+  /* ---- Resumen: bloques por paso, cada uno editable ---- */
+  .summary-block{
+    border:1px solid var(--border);border-radius:var(--radius-lg);
+    background:var(--surface);padding:16px 16px;margin-top:16px;
+  }
+  .summary-block-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .summary-block-head .sb-title{
+    font-size:11px;font-weight:500;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.04em;
+  }
+  .summary-edit-btn{
+    width:28px;height:28px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;
+    border:1px solid var(--border);background:var(--surface);
+  }
+  .summary-edit-btn:hover{background:var(--primary-50);color:var(--primary);border-color:var(--primary-100);}
+  .summary-edit-btn .icon{width:14px;height:14px;}
+  .summary-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eef0f4;font-size:13px;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .sr-k{color:var(--ink-500);font-weight:600;}
+  .summary-row .sr-v{color:var(--ink-900);font-weight:500;text-align:right;}
+  .summary-total{display:flex;justify-content:space-between;padding-top:12px;font-size:14px;font-weight:600;color:var(--ink-900);}
+
+  .wizard-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+  }
+  .wizard-footer-actions{display:flex;gap:12px;}
+
+  .nc-toast{
+    position:fixed;top:20px;right:20px;
+    background:var(--ink-900);color:#fff;
+    padding:12px 16px;border-radius:10px;
+    font-size:13px;font-weight:600;
+    box-shadow:0 8px 20px rgba(0,0,0,.22);
+    opacity:0;transform:translateY(-8px);
+    transition:opacity .2s,transform .2s;
+    z-index:200;pointer-events:none;
+    display:flex;align-items:center;gap:8px;
+  }
+  .nc-toast.show{opacity:1;transform:translateY(0);}
+  .nc-toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
+
+  /* ================= MODAL: BÚSQUEDA DE PACIENTES ================= */
+  .ps-modal{
+    width:940px;max-width:100%;max-height:82vh;
+    background:var(--surface-modal);border-radius:var(--radius-lg);
+    box-shadow:0 12px 32px rgba(6,25,42,.22);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .ps-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .ps-header-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink-900);}
+  .ps-header-title .icon{width:19px;height:19px;color:var(--ink-700);}
+  .ps-search-row{
+    display:flex;align-items:center;gap:16px;
+    padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  }
+  .ps-search-field{position:relative;flex:1;}
+  .ps-search-field .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--ink-500);}
+  .ps-search-field input{
+    width:100%;padding:12px 16px 12px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--bg);
+  }
+  .ps-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+  .ps-search-field input::placeholder{color:var(--ink-400);}
+  .ps-table-wrap{flex:1;overflow-y:auto;}
+  .ps-patient-cell{display:flex;align-items:center;gap:12px;}
+  /* Mismo color neutral y fijo que .patient-avatar-badge (PatientAvatar.css,
+     usado por Lista de Pacientes/Ficha/PatientBanner) — antes cada paciente
+     tenía un color al azar (PATIENTS[].color en legacy-nueva-cita.js), acá
+     se homologa el mismo criterio: sin semántica, solo las iniciales
+     diferencian una fila de otra. Es HTML armado a mano (no un componente
+     React), así que no puede importar PatientAvatar — el color queda
+     hardcodeado acá en vez de repetir el inline style por paciente. */
+  .ps-avatar{
+    width:34px;height:34px;border-radius:50%;flex-shrink:0;
+    background:#64748B;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:500;font-size:12px;
+  }
+  .ps-pname{font-weight:500;color:var(--ink-900);}
+  .ps-table-wrap tbody tr.row-disabled{cursor:default;}
+  .ps-table-wrap tbody tr.row-disabled:hover{background:transparent;}
+
+  /* ================= FORMULARIO: AGREGAR PACIENTE ================= */
+  .pf-section{margin-bottom:16px;}
+  .pf-section:last-child{margin-bottom:0;}
+  .pf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px;}
+  .pf-grid:last-child{margin-bottom:0;}
+  .pf-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .pf-grid.cols-4{grid-template-columns:repeat(4,1fr);}
+
+  .pf-field label{
+    display:block;font-size:13px;font-weight:600;color:var(--ink-700);
+    margin-bottom:6px;
+  }
+  .pf-field label .req{color:var(--red);margin-left:2px;}
+  .field-error{font-size:12px;color:var(--red);margin-top:6px;display:none;}
+  .field-error.show{display:block;}
+  .pf-field input[aria-invalid="true"], .pf-field select[aria-invalid="true"]{border-color:var(--red);}
+  .pf-field-wrap{position:relative;}
+  .pf-field input, .pf-field select{
+    width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
+  }
+  .pf-field select{
+    appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat:no-repeat;background-position:right 12px center;
+    padding-right:34px;
+  }
+  .pf-field-wrap.has-icon input,
+  .pf-field-wrap.has-icon select{padding-right:36px;}
+  .pf-field-wrap.has-icon select{background-position:right 34px center;}
+  .pf-trailing-icon{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;color:var(--primary);pointer-events:none;
+  }
+  .pf-field input:focus, .pf-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .pf-field input::placeholder{color:var(--ink-400);}
+
+  /* Obligatorio + vacío -> resaltado ámbar (validación nativa, sin JS por campo) */
+  .pf-field input:required:placeholder-shown,
+  .pf-field select:required:invalid{
+    background-color:var(--amber-bg);border-color:#eccb85;
+  }
+  html[data-theme="dark"] .pf-field input:required:placeholder-shown,
+  html[data-theme="dark"] .pf-field select:required:invalid{
+    background-color:var(--amber-bg);border-color:#6b4a10;
+  }
+
+  .pf-photo-link{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:600;color:var(--primary);cursor:pointer;
+    background:none;border:none;padding:0;
+  }
+  .pf-photo-link:hover{text-decoration:underline;}
+  .pf-photo-link .icon{width:16px;height:16px;}
+
+  .pf-attach-row{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;color:var(--ink-700);cursor:pointer;
+  }
+  .pf-attach-row:hover{color:var(--primary);}
+  .pf-attach-row .icon{width:17px;height:17px;color:var(--ink-500);}
+

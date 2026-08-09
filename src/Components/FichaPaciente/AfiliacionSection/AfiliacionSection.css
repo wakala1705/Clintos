@@ -1,0 +1,9 @@
+.fp-afiliacion-historial{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.fp-afiliacion-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:none;padding:0;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--primary);
+}
+.fp-afiliacion-toggle .icon{width:16px;height:16px;transition:transform .15s;}
+.fp-afiliacion-toggle .fp-rot{transform:rotate(180deg);}
+.fp-afiliacion-historial .fp-table-wrap{margin-top:12px;}

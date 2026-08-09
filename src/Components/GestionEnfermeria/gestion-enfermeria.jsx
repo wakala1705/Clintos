@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import './gestion-enfermeria.css';
 import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initGestionEnfermeria } from '@/hooks/GestionEnfermeria/legacy-app';
-import PatientBanner from '@/Components/GestionEnfermeria/PatientBanner/PatientBanner';
+import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import MedicamentosPanel from '@/Components/GestionEnfermeria/MedicamentosPanel/MedicamentosPanel';
 import OrdenesMedicasPanel from '@/Components/GestionEnfermeria/OrdenesMedicasPanel/OrdenesMedicasPanel';
 import PedidosPanel from '@/Components/GestionEnfermeria/PedidosPanel/PedidosPanel';
@@ -21,8 +21,8 @@ import RestanteModal from '@/Components/GestionEnfermeria/modals/RestanteModal/R
 import CerrarParcialModal from '@/Components/GestionEnfermeria/modals/CerrarParcialModal/CerrarParcialModal';
 import OrdenDetalleModal from '@/Components/GestionEnfermeria/modals/OrdenDetalleModal/OrdenDetalleModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
-import UserMenu from '@/Components/UserMenu/UserMenu';
-import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuMenu, LuPill } from 'react-icons/lu';
+import Topbar from '@/Components/Topbar/Topbar';
+import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuPill } from 'react-icons/lu';
 
 export default function GestionEnfermeriaPage() {
   useEffect(() => {
@@ -39,30 +39,43 @@ export default function GestionEnfermeriaPage() {
   {/* MAIN */}
   <div className="main">
 
-    {/* TOPBAR */}
-    <header className="topbar">
-      <LuMenu className="hamburger icon" />
-      <div className="breadcrumb">
-        <span>Hospitalización</span><span className="sep">/</span>
-        <span className="current">Gestión de Enfermería</span>
+    <Topbar
+      section="Hospitalización"
+      page="Gestión de Enfermería"
+      user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
+    >
+      <div className="meta-item">
+        <LuFile className="icon" />
+        <span className="lbl">Especialidad:</span> <b>Oncología</b>
       </div>
-      <div className="spacer"></div>
-      <div className="topbar-right">
-        <div className="meta-item">
-          <LuFile className="icon" />
-          <span className="lbl">Especialidad:</span> <b>Oncología</b>
-        </div>
-        <div className="meta-item">
-          <LuMapPin className="icon" />
-          <span className="lbl">Área:</span> <b>02-Hospitalización</b>
-        </div>
-        <div className="divider-v"></div>
-        <UserMenu name="Manuel Hernández" role="Médico" initials="CG" />
+      <div className="meta-item">
+        <LuMapPin className="icon" />
+        <span className="lbl">Área:</span> <b>02-Hospitalización</b>
       </div>
-    </header>
+    </Topbar>
 
     <div className="content">
-      <PatientBanner />
+      <PatientBanner
+        patient={{
+          iniciales: 'ID',
+          nombre: 'Isabella Daniela Rodríguez Paternina',
+          documento: '1234567890',
+          edad: '34 años 10 meses 14 días',
+          sexo: 'Femenino',
+          eps: 'Salud Total Entidad Promotora de Salud del Régimen Contributivo y del Régimen S',
+          allergies: [
+            { name: 'Penicilina', reaction: 'Reacción cutánea moderada' },
+            { name: 'Mariscos', reaction: 'Anafilaxia leve' },
+          ],
+        }}
+        secondRow={[
+          { label: 'Admisión', value: '0200265899' },
+          { label: 'N° contrato', value: '** No Especificado **' },
+          { label: 'ID Contrato', value: '197' },
+          { label: 'Cama', value: '305' },
+          { label: 'Estado', value: <span className="badge status-active badge-dot-inline"><span className="dot"></span>Activo</span> },
+        ]}
+      />
 
       {/* CARD: CRONOGRAMA (con tabs de módulo integradas) */}
       <div className="card">

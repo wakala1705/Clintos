@@ -21,7 +21,12 @@
   padding-right:8px;text-align:right;padding-top:2px;
 }
 
-.pc-slot-cell{border-right:1px solid var(--bg);border-bottom:1px solid var(--bg);position:relative;cursor:default;min-width:0;overflow:hidden;}
+.pc-slot-cell{
+  border:none;border-right:1px solid var(--bg);border-bottom:1px solid var(--bg);
+  background:none;padding:0;margin:0;font:inherit;text-align:left;
+  position:relative;cursor:pointer;min-width:0;overflow:hidden;
+}
+.pc-slot-cell:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pc-slot-cell.hour-line{border-bottom:1px solid var(--border);}
 .pc-add-hint{
   opacity:0;position:absolute;inset:2px;border:1px dashed var(--primary);

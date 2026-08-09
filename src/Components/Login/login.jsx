@@ -2,17 +2,23 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { LuChevronDown, LuEye, LuEyeOff } from 'react-icons/lu';
 import styles from './login.module.css';
+
+const COMPANY_OPTIONS = [
+  { value: 'unicia-sas', label: 'UNICIA SAS' },
+];
 
 export default function Login() {
   const router = useRouter();
   const [form, setForm] = useState({
-    company: '',
+    company: 'unicia-sas',
     name: '',
     password: '',
     area: '',
   });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,14 +59,19 @@ export default function Login() {
             <div className={styles['form-group']}>
               <div className={styles.company}>
                 <label htmlFor="company">Compañía</label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  placeholder="Compañía"
-                  value={form.company}
-                  onChange={handleChange}
-                />
+                <div className={styles.selectWrap}>
+                  <select
+                    id="company"
+                    name="company"
+                    value={form.company}
+                    onChange={handleChange}
+                  >
+                    {COMPANY_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <LuChevronDown className={styles.selectIcon} />
+                </div>
               </div>
 
               <div className={styles.name}>
@@ -77,28 +88,41 @@ export default function Login() {
 
               <div className={styles.password}>
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Ingresa tu contraseña"
-                  value={form.password}
-                  onChange={handleChange}
-                />
+                <div className={styles.passwordWrap}>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    name="password"
+                    placeholder="Ingresa tu contraseña"
+                    value={form.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className={styles.togglePassword}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? <LuEyeOff className={styles.eyeIcon} /> : <LuEye className={styles.eyeIcon} />}
+                  </button>
+                </div>
               </div>
 
               <div className={styles.area}>
                 <label htmlFor="area">Área funcional</label>
-                <select
-                  id="area"
-                  name="area"
-                  value={form.area}
-                  onChange={handleChange}
-                >
-                  <option value="">Seleccionar área</option>
-                  <option value="area1">Área 1</option>
-                  <option value="area2">Área 2</option>
-                </select>
+                <div className={styles.selectWrap}>
+                  <select
+                    id="area"
+                    name="area"
+                    value={form.area}
+                    onChange={handleChange}
+                  >
+                    <option value="">Seleccionar área</option>
+                    <option value="area1">Área 1</option>
+                    <option value="area2">Área 2</option>
+                  </select>
+                  <LuChevronDown className={styles.selectIcon} />
+                </div>
               </div>
 
               {error && <p className={styles.error}>{error}</p>}

@@ -44,13 +44,15 @@ export default function ScheduleGrid({ columns, appointments, resolveColId, onSe
         ))}
 
         {hourSlots.map((s) => columns.map((c, i) => (
-          <div
+          <button
+            type="button"
             key={`cell-${s}-${c.id}`}
             className={`pc-slot-cell${s % 2 === 0 ? ' hour-line' : ''}`}
             style={{ gridColumn: i + 2, gridRow: s + 2 }}
+            onClick={() => window.ncOpen()}
           >
             <span className="pc-add-hint">+ Agendar</span>
-          </div>
+          </button>
         )))}
 
         {appointments.map((a) => {

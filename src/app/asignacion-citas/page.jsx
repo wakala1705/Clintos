@@ -1,16 +1,34 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './asignacion-citas.css';
 import { initAsignacionCitas } from '@/hooks/AsignacionCitas/legacy-app';
 import Sidebar from '@/Components/Sidebar/Sidebar';
-import UserMenu from '@/Components/UserMenu/UserMenu';
-import { LuArrowRight, LuCalendar, LuCalendarClock, LuCalendarX, LuCheck, LuChevronLeft, LuEye, LuFileText, LuHistory, LuIdCard, LuMapPin, LuMenu, LuMoon, LuPencil, LuPlus, LuPrinter, LuScanLine, LuSearch, LuSquarePen, LuSun, LuUser, LuUserPlus, LuUserX, LuUsers, LuX } from 'react-icons/lu';
+import Topbar from '@/Components/Topbar/Topbar';
+import PatientBanner from '@/Components/PatientBanner/PatientBanner';
+import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
+import { LuCalendar, LuCalendarClock, LuCalendarX, LuCheck, LuEye, LuFile, LuFileText, LuMapPin, LuPencil, LuPlus, LuPrinter, LuSearch } from 'react-icons/lu';
+
+// activo/inactivo/suspendido son los valores de estado que usa PATIENTS en
+// legacy-app.js; se traducen a los tonos que soporta PatientBanner
+// (status-active/status-inactive/status-suspendido en PatientBanner.css).
+const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo', suspendido: 'Suspendido' };
+const ESTADO_TONE = { activo: 'active', inactivo: 'inactive', suspendido: 'suspendido' };
 
 export default function AsignacionCitasPage() {
+  const [patient, setPatient] = useState(null);
+
   useEffect(() => {
+    // legacy-app.js sigue siendo dueño de currentPatient (arrastra contrato,
+    // servicios y agenda con él); este setter es el único puente para que
+    // también actualice el PatientBanner de React — ver renderPatientBanner()
+    // en src/hooks/AsignacionCitas/legacy-app.js.
+    window.__setAsignacionCitasPatient = setPatient;
     const cleanup = initAsignacionCitas();
-    return cleanup;
+    return () => {
+      cleanup?.();
+      delete window.__setAsignacionCitasPatient;
+    };
   }, []);
 
   return (
@@ -22,32 +40,47 @@ export default function AsignacionCitasPage() {
   {/* MAIN */}
   <div className="main">
 
-    {/* TOPBAR */}
-    <header className="topbar">
-      <LuMenu className="hamburger icon" />
-      <div className="breadcrumb">
-        <span>Consulta Externa</span><span className="sep">/</span>
-        <span className="current">Asignación de Citas</span>
+    <Topbar
+      section="Consulta Externa"
+      page="Asignación de Citas"
+      user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
+    >
+      <div className="meta-item">
+        <LuFile className="icon" />
+        <span className="lbl">Especialidad:</span> <b>Medicina General</b>
       </div>
-      <div className="spacer"></div>
-      <div className="topbar-right">
-        <div className="pill-chip">
-          <LuMapPin className="icon" />
-          Sede Norte — Piso 2
-        </div>
-        <div className="divider-v"></div>
-        <div className="icon-btn-circle" onClick={() => window.toggleThemeFromIcon()} aria-label="Cambiar tema" title="Cambiar tema">
-          <LuSun className="icon theme-icon-sun" />
-          <LuMoon className="icon theme-icon-moon" />
-        </div>
-        <UserMenu name="Dr. Juan Carlos Pérez" role="Medicina General" initials="JC" />
+      <div className="meta-item">
+        <LuMapPin className="icon" />
+        <span className="lbl">Sede:</span> <b>Sede Norte — Piso 2</b>
       </div>
-    </header>
+    </Topbar>
 
     <div className="content">
 
       {/* PATIENT BANNER */}
-      <div id="patient-banner-zone"></div>
+      <PatientBanner
+        patient={patient ? {
+          iniciales: patient.iniciales,
+          nombre: patient.nombre,
+          documento: patient.documento,
+          edad: `${patient.edad} años`,
+          sexo: patient.sexo,
+          eps: patient.eps,
+        } : null}
+        secondRow={patient ? [
+          { label: 'Ciudad', value: patient.ciudad },
+          { label: 'Teléfono', value: patient.telefono },
+          { label: 'Citas futuras', value: patient.citasFuturas },
+        ] : undefined}
+        statusBadge={patient ? { label: ESTADO_LABEL[patient.estado], tone: ESTADO_TONE[patient.estado] } : undefined}
+        onClose={patient ? () => window.clearPatient() : undefined}
+        empty={{
+          title: 'Ningún paciente seleccionado',
+          subtitle: 'Busca por nombre o documento para iniciar la atención',
+          actionLabel: 'Buscar paciente',
+          onAction: () => window.openPatientSearch(),
+        }}
+      />
 
       {/* WORKSPACE */}
       <div className="workspace">
@@ -181,155 +214,8 @@ export default function AsignacionCitasPage() {
   </div>
 </div>
 
-{/* MENÚ CONTEXTUAL DE FILA DE PACIENTE */}
-<div className="context-menu" id="ps-context-menu" role="menu" onClick={(e) => e.stopPropagation()}>
-  <div className="context-menu-item" tabIndex="0" role="menuitem" onClick={() => window.psAccionEditar()}>
-    <LuSquarePen className="icon" />Editar
-  </div>
-  <div className="context-menu-item" tabIndex="0" role="menuitem" onClick={() => window.psAccionHistorial()}>
-    <LuHistory className="icon" />Historial de citas
-  </div>
-  <div className="context-menu-divider"></div>
-  <div className="context-menu-item danger" tabIndex="0" role="menuitem" onClick={() => window.psAccionDesactivar()}>
-    <LuUserX className="icon" />Desactivar usuario
-  </div>
-</div>
-
-{/* MODAL: BÚSQUEDA DE PACIENTES */}
-<div className="modal-overlay" id="ps-overlay" onClick={(e) => { if (e.target === e.currentTarget) window.closePatientSearch(); }}>
-  <div className="ps-modal">
-    <div className="ps-header">
-      <div className="ps-header-title">
-        <LuUsers className="icon" />
-        Lista de Pacientes
-      </div>
-      <button className="wizard-close" onClick={() => window.closePatientSearch()} aria-label="Cerrar" title="Cerrar">
-        <LuX className="icon" />
-      </button>
-    </div>
-    <div className="ps-search-row">
-      <div className="ps-search-field">
-        <LuSearch className="icon" />
-        <input type="text" placeholder="Buscar por nombre o documento..." onInput={(e) => window.filterPatients(e.target.value)} autoFocus />
-      </div>
-      <button className="icon-btn-circle" onClick={() => window.ncToast('Escaneo de QR de cédula en desarrollo.')} aria-label="Buscar por QR de cédula" title="Buscar por QR de cédula">
-        <LuScanLine className="icon" />
-      </button>
-    </div>
-    <div className="ps-table-wrap">
-      <table>
-        <thead><tr>
-          <th>Paciente</th><th style={{width:'150px'}}>Documento</th><th style={{width:'130px'}}>Ciudad</th><th style={{width:'130px'}}>EPS</th><th style={{width:'120px'}}>Estado</th><th style={{width:'44px'}}></th>
-        </tr></thead>
-        <tbody id="ps-tbody"></tbody>
-      </table>
-    </div>
-
-    <div className="wizard-footer">
-      <button className="btn btn-secondary" onClick={() => window.apOpen()}>
-        <LuUserPlus className="icon" />
-        Agregar paciente
-      </button>
-      <div className="wizard-footer-actions">
-        <button className="btn btn-primary" id="ps-accept-btn" onClick={() => window.confirmPatientSelection()} disabled>
-          <LuCheck className="icon" />
-          Aceptar
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-{/* WIZARD: AGREGAR PACIENTE */}
-<div className="modal-overlay" id="ap-overlay" onClick={(e) => { if (e.target === e.currentTarget) window.apClose(); }}>
-  <div className="wizard-modal">
-
-    <div className="wizard-body">
-      <nav className="wizard-rail">
-        <div className="wizard-rail-header">
-          <div className="rh-eyebrow" id="ap-rail-eyebrow">Nuevo registro</div>
-          <div className="rh-title" id="ap-rail-title">Agregar Paciente</div>
-          <div className="rh-sub">
-            <LuUser className="icon" />
-            <span id="ap-rail-sub">Historia clínica nueva</span>
-          </div>
-        </div>
-        <div className="wizard-rail-nav" id="ap-rail"></div>
-      </nav>
-
-      <div className="wizard-main">
-        <div className="wizard-main-header">
-          <div className="t" id="ap-progress-text">Paso 1 de 4</div>
-          <button className="wizard-close" onClick={() => window.apClose()} aria-label="Cerrar" title="Cerrar">
-            <LuX className="icon" />
-          </button>
-        </div>
-
-        <form id="ap-form" onSubmit={(e) => e.preventDefault()}>
-          <div className="wizard-content" id="ap-content"></div>
-        </form>
-
-        <div className="wizard-footer">
-          <button type="button" className="btn btn-secondary" id="ap-back-btn" onClick={() => window.apBack()}>
-            <LuChevronLeft className="icon" />Atrás
-          </button>
-          <div className="wizard-footer-actions">
-            <button type="button" className="btn btn-primary" id="ap-continue-btn">Siguiente
-              <LuArrowRight className="icon" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-{/* WIZARD: NUEVO AGENDAMIENTO */}
-<div className="modal-overlay" id="nc-overlay" onClick={(e) => { if (e.target === e.currentTarget) window.ncClose(); }}>
-  <div className="wizard-modal">
-
-    <div className="wizard-body">
-      <nav className="wizard-rail">
-        <div className="wizard-rail-header">
-          <div className="rh-eyebrow">Nueva Cita</div>
-          <div className="rh-title" id="nc-rail-patient-name">Laura Sofía Martínez Gómez</div>
-          <div className="rh-sub">
-            <LuIdCard className="icon" />
-            <span id="nc-rail-patient-doc">CC 1.032.847.291</span>
-          </div>
-        </div>
-        <div className="wizard-rail-nav" id="nc-rail"></div>
-      </nav>
-
-      <div className="wizard-main">
-        <div className="wizard-main-header">
-          <div>
-            <div className="t" id="nc-main-title">Régimen</div>
-            <div className="sub" id="nc-progress-text">Paso 1 de 7</div>
-          </div>
-          <button className="wizard-close" onClick={() => window.ncClose()} aria-label="Cerrar" title="Cerrar">
-            <LuX className="icon" />
-          </button>
-        </div>
-
-        <nav className="wiz-stepper" id="nc-stepper"></nav>
-
-        <div className="wizard-content" id="nc-content"></div>
-
-        <div className="wizard-footer">
-          <button className="btn btn-secondary" id="nc-back-btn" onClick={() => window.ncBack()}>
-            <LuChevronLeft className="icon" />Atrás
-          </button>
-          <div className="wizard-footer-actions">
-            <button className="btn btn-primary" id="nc-continue-btn" disabled>Continuar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
+{/* FLUJO "NUEVA CITA" (búsqueda/alta de paciente + wizard de agendamiento) */}
+<NuevaCitaFlow />
     </>
   );
 }

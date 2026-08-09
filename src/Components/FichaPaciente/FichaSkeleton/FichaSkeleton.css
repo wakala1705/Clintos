@@ -1,0 +1,24 @@
+.fp-skeleton{display:flex;flex-direction:column;gap:16px;flex:1;}
+.fp-skel-shimmer{background:var(--gray-bg);animation:fp-skeleton-pulse 1.4s ease-in-out infinite;}
+@keyframes fp-skeleton-pulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+@media (prefers-reduced-motion: reduce){.fp-skel-shimmer{animation:none;opacity:.75;}}
+
+.fp-skel-header{
+  display:flex;align-items:center;gap:14px;padding:20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.fp-skel-avatar{width:48px;height:48px;border-radius:50%;flex-shrink:0;}
+.fp-skel-lines{display:flex;flex-direction:column;gap:8px;}
+.fp-skel-bar{border-radius:6px;}
+
+.fp-skel-body{display:flex;gap:16px;align-items:flex-start;}
+.fp-skel-nav{width:220px;height:260px;border-radius:var(--radius-lg);flex-shrink:0;}
+.fp-skel-sections{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.fp-skel-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 24px;
+}
+
+@media (max-width:900px){
+  .fp-skel-nav{display:none;}
+}

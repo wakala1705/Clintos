@@ -1,0 +1,123 @@
+/* Tokens + reset del shell (sidebar + topbar + content wrapper) duplicados
+   aquí siguiendo el mismo criterio que el resto de features de nivel
+   superior (Home.css / ListaPacientes.css / ProgramarCita.css...) — ver
+   AGENTS.md. Los badges de estado (.estado-badge) no se redefinen aquí:
+   se reutilizan los de NuevaCitaFlow.css, montado siempre en esta pantalla
+   (mismo criterio que ListaPacientes/PatientsTable.css). */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --radius:8px;
+  --radius-lg:12px;
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+.app{
+  display:flex;
+  height:100vh;
+  min-width:1024px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:500;font-size:13px;
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+
+/* ---------- FICHA COMPLETA DEL PACIENTE ----------
+   El header (identidad + acciones) queda fijo arriba, fuera del área que
+   scrollea: .fp-body es una fila de altura fija (flex:1 dentro de .content,
+   que ya viene con overflow-y:hidden) y solo .fp-sections tiene su propio
+   scroll interno — así fp-nav se queda siempre visible al lado, sin
+   solaparse con el contenido como pasaba con .fp-header en sticky sobre un
+   .content que también scrolleaba. */
+.fp-body{display:flex;align-items:stretch;gap:16px;flex:1;min-height:0;}
+.fp-sections{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;padding-right:2px;}
+
+@media (max-width:900px){
+  .fp-body{flex-direction:column;overflow-y:auto;}
+  .fp-sections{overflow-y:visible;}
+}

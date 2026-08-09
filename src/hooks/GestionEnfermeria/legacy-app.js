@@ -5,55 +5,15 @@
 // ../AsignacionCitas/legacy-app.js: this module owns its own state via closures
 // and re-renders by writing innerHTML / toggling classList on containers that the
 // React shell (page.jsx + src/Components/GestionEnfermeria/**) renders once and never touches again.
+import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+
 export function initGestionEnfermeria() {
 
-  /* ================= MODO OSCURO / SIDEBAR ================= */
-  function applyTheme(dark){
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    document.getElementById('theme-switch').checked = dark;
-  }
-  function toggleTheme(){
-    applyTheme(document.getElementById('theme-switch').checked);
-  }
-  function toggleThemeFromIcon(){
-    const chk = document.getElementById('theme-switch');
-    applyTheme(!chk.checked);
-  }
-
-  /* Shell responsive (iniciativa tablet ~1024px, ver .app en gestion-enfermeria.css):
-     por debajo de SIDEBAR_AUTO_BREAKPOINT el sidebar se auto-colapsa al riel de
-     íconos para dejar más ancho al contenido. Si el usuario lo togglea a mano
-     (botón de colapsar o abriendo un grupo de navegación estando colapsado),
-     esa preferencia manual manda sobre el auto-colapso hasta que se recargue la
-     página — a diferencia de asignacion-citas/legacy-app.js, que todavía no
-     tiene esta lógica (el sidebar allá sigue siendo 100% manual).
-     El override arranca en `true` (no en `null`) porque, a diferencia de
-     Inicio, un módulo siempre debe entrar con el sidebar colapsado — le
-     ahorra al usuario el click manual en el chevron. Sigue siendo un
-     "override" real: si el usuario lo expande a mano, esa elección manda
-     sobre el ancho de pantalla igual que antes. */
-  const SIDEBAR_AUTO_BREAKPOINT = 1024;
-  let sidebarUserOverride = true;
-  function applySidebarAutoState(){
-    const sidebar = document.getElementById('sidebar');
-    if(!sidebar) return;
-    const shouldCollapse = sidebarUserOverride !== null ? sidebarUserOverride : window.innerWidth < SIDEBAR_AUTO_BREAKPOINT;
-    sidebar.classList.toggle('collapsed', shouldCollapse);
-  }
-  function toggleSidebar(){
-    const sidebar = document.getElementById('sidebar');
-    sidebarUserOverride = !sidebar.classList.contains('collapsed');
-    sidebar.classList.toggle('collapsed');
-  }
-  function toggleNavGroup(headEl){
-    const sidebar = document.getElementById('sidebar');
-    if(sidebar.classList.contains('collapsed')){
-      sidebarUserOverride = false;
-      sidebar.classList.remove('collapsed');
-    }
-    const group = headEl.parentElement;
-    group.classList.toggle('open');
-  }
+  // Tema claro/oscuro + colapsar/expandir el Sidebar (con auto-colapso
+  // responsive por debajo de 1024px) ahora viven en el chrome global — ver
+  // src/hooks/Shell/legacy-shell-chrome.js. Su cleanup se combina con el de
+  // este módulo al final del archivo.
+  const cleanupShellChrome = initShellChrome({ startCollapsed: true });
 
   /* ================= ACCESIBILIDAD: focus trap para modales =================
      Mientras un modal está abierto, .app queda oculta a tecnología de
@@ -248,7 +208,7 @@ export function initGestionEnfermeria() {
       lote:'FRS-1123', vencimiento:'04/2027', profesional:'Enf. Laura Gómez',
       markersByDate:{[TODAY_DATE]:{8:'administered'}} },
     { name:'METOCLOPRAMIDA 10 MG SOLUCION INYECTABLE', dose:'10 mg', freq:'c/8h', via:'IV', estado:'activo',
-      lote:'MTC-9021', vencimiento:'09/2027', profesional:'Enf. Manuel Hernández',
+      lote:'MTC-9021', vencimiento:'09/2027', profesional:'Enf. Camilo Grondona',
       markersByDate:{[TODAY_DATE]:{8:'administered', 16:'scheduled', 0:'scheduled'}} },
     { name:'HIDROCORTISONA 100 MG SOLUCION INYECTABLE', dose:'100 mg', freq:'c/6h', via:'IV', estado:'suspendido',
       lote:'HDC-6654', vencimiento:'07/2026', profesional:'Enf. Carlos Ruiz',
@@ -777,10 +737,11 @@ export function initGestionEnfermeria() {
   revisarDosisVencidas();
   const dosisVencidasInterval = setInterval(revisarDosisVencidas, 60000);
 
-  applySidebarAutoState();
+  // El auto-colapso del sidebar por ancho de ventana ya lo maneja
+  // initShellChrome (arriba); este listener es propio de la grilla de
+  // medicamentos (recalcula columnas de hora / filas al cambiar el tamaño).
   let resizeTimer = null;
   function handleResize(){
-    applySidebarAutoState();
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(()=>{
       buildHeader();
@@ -991,7 +952,7 @@ export function initGestionEnfermeria() {
             { articulo:'MX0000005-2', medicamento:'Acetaminofén 500 mg tableta - Genfar', cantidad:1, lote:'ERR_25', vencimiento:'2026-12-31', tandaIndex:0 },
             { articulo:'MX0000005-3', medicamento:'Acetaminofén 500mg tableta (Dolex)', cantidad:1, lote:'UTYLO778', vencimiento:'2026-09-16', tandaIndex:0 },
           ] },
-      ], tandas:[{ index:0, fecha:'02 May 2026 · 08:10', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 08:10', por:'Enf. Camilo Grondona', tipo:'inicial' }], cierre:null },
 
     { id:'recep-481', consecutivo:'SOL-000481', fecha:'02 May 2026 · 10:15', fechaISO: shiftDate(TODAY_DATE, -3), estado:'despachado', partial:false,
       items:[
@@ -1016,7 +977,7 @@ export function initGestionEnfermeria() {
       items:[
         { id:'metamizol', nombre:'Metamizol sódico 1 g solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:2, cantidadRecibida:2, completo:true,
           articulos:[{ articulo:'MX0000029-1', medicamento:'Metamizol sódico 1 g solución inyectable - Novalgina', cantidad:2, lote:'L-60214', vencimiento:'2027-02-28', tandaIndex:0 }] },
-      ], tandas:[{ index:0, fecha:'02 May 2026 · 11:20', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 11:20', por:'Enf. Camilo Grondona', tipo:'inicial' }], cierre:null },
 
     { id:'recep-501', consecutivo:'SOL-000501', fecha:'02 May 2026 · 14:05', fechaISO: shiftDate(TODAY_DATE, -1), estado:'recibido', partial:true,
       items:[
@@ -1030,7 +991,7 @@ export function initGestionEnfermeria() {
           pendiente:{ articulo:'MX0000033-1', medicamento:'Piperacilina/Tazobactam 4.5 g solución inyectable - Tazonam', cantidad:2, lote:'L-58940', vencimiento:'2026-11-15' } },
         { id:'cloruro-potasio', nombre:'Cloruro de potasio 10 mEq solución inyectable', esInsumo:false, omeItemId:null, cantidadSolicitada:5, cantidadRecibida:5, completo:true,
           articulos:[{ articulo:'MX0000040-1', medicamento:'Cloruro de potasio 10 mEq solución inyectable - Pisa', cantidad:5, lote:'L-31490', vencimiento:'2027-06-30', tandaIndex:0 }] },
-      ], tandas:[{ index:0, fecha:'02 May 2026 · 14:05', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 14:05', por:'Enf. Camilo Grondona', tipo:'inicial' }], cierre:null },
 
     { id:'recep-505', consecutivo:'SOL-000505', fecha:'02 May 2026 · 15:30', fechaISO: shiftDate(TODAY_DATE, 0), estado:'despachado', partial:false,
       items:[
@@ -1046,7 +1007,7 @@ export function initGestionEnfermeria() {
           articulos:[{ articulo:'IN0000005-1', medicamento:'Jeringas 10 ml - BD', cantidad:20, lote:'L-40217', vencimiento:'2029-05-31', tandaIndex:0 }] },
         { id:'alcohol-antiseptico', nombre:'Alcohol antiséptico 70% 250 ml', esInsumo:true, omeItemId:null, cantidadSolicitada:4, cantidadRecibida:4, completo:true,
           articulos:[{ articulo:'IN0000009-1', medicamento:'Alcohol antiséptico 70% 250 ml - Barrytek', cantidad:4, lote:'L-63340', vencimiento:'2027-12-31', tandaIndex:0 }] },
-      ], tandas:[{ index:0, fecha:'02 May 2026 · 16:45', por:'Enf. Manuel Hernández', tipo:'inicial' }], cierre:null },
+      ], tandas:[{ index:0, fecha:'02 May 2026 · 16:45', por:'Enf. Camilo Grondona', tipo:'inicial' }], cierre:null },
   ];
 
   function findRecepcionOrden(orderId){ return recepcionOrdenes.find(o => o.id === orderId); }
@@ -1619,8 +1580,9 @@ export function initGestionEnfermeria() {
 
   const datePop = setupPopover('date-popover-wrap','date-popover-btn','date-popover');
   const morePop = setupPopover('more-popover-wrap','more-popover-btn','more-popover');
-  const allergyPop = setupPopover('allergy-popover-wrap','allergy-btn','allergy-popover');
   setupPopover('view-popover-wrap','view-popover-btn','view-popover');
+  // El popover de alergias ahora vive dentro de PatientBanner (componente
+  // global con su propio estado de apertura) — ver src/Components/PatientBanner.
 
   document.addEventListener('click', closeAllPopovers);
 
@@ -1839,7 +1801,7 @@ export function initGestionEnfermeria() {
   attachDoseMarkerEvents();
 
   /* ================= Modal: Registrar administración ================= */
-  const CURRENT_USER_NAME = 'Manuel Hernández';
+  const CURRENT_USER_NAME = 'Camilo Grondona';
   const adminModalOverlay = document.getElementById('admin-modal-overlay');
   let adminModalContext = null;
   let adminModalOpenerMarker = null;
@@ -2776,13 +2738,13 @@ export function initGestionEnfermeria() {
 
   /* ================= SOLICITUDES: datos y render ================= */
   const solicitudes = [
-    { id:'orden-478', consecutivo:'SOL-000478', prioridad:'normal', solicitadoPor:'Enf. Manuel Hernández',
+    { id:'orden-478', consecutivo:'SOL-000478', prioridad:'normal', solicitadoPor:'Enf. Camilo Grondona',
       fecha:'02 May 2026 · 08:10', fechaISO: shiftDate(TODAY_DATE, -1), estado:'despachada',
       items:[
         { nombre:'Enoxaparina sódica 40 mg solución inyectable', cantidad:'3 unidades', prioridad:'normal', estado:'despachada' },
         { nombre:'Acetaminofén 500 mg tableta', cantidad:'3 unidades', prioridad:'normal', estado:'despachada' },
       ] },
-    { id:'orden-479', consecutivo:'SOL-000479', prioridad:'urgente', solicitadoPor:'Enf. Manuel Hernández',
+    { id:'orden-479', consecutivo:'SOL-000479', prioridad:'urgente', solicitadoPor:'Enf. Camilo Grondona',
       fecha:'02 May 2026 · 09:45', fechaISO: shiftDate(TODAY_DATE, -1), estado:'mixto',
       items:[
         { nombre:'Vancomicina 1 g solución inyectable', cantidad:'2 unidades', prioridad:'urgente', estado:'aprobada' },
@@ -2791,7 +2753,7 @@ export function initGestionEnfermeria() {
     { id:'orden-481', consecutivo:'SOL-000481', prioridad:'normal', solicitadoPor:'Enf. Laura Gómez',
       fecha:'02 May 2026 · 10:15', fechaISO: shiftDate(TODAY_DATE, -3), estado:'despachada',
       items:[ { nombre:'Ceftriaxona sódica 1 g solución inyectable', cantidad:'4 unidades', prioridad:'normal', estado:'despachada' } ] },
-    { id:'orden-486', consecutivo:'SOL-000486', prioridad:'urgente', solicitadoPor:'Enf. Manuel Hernández',
+    { id:'orden-486', consecutivo:'SOL-000486', prioridad:'urgente', solicitadoPor:'Enf. Camilo Grondona',
       fecha:'02 May 2026 · 13:20', fechaISO: shiftDate(TODAY_DATE, 0), estado:'pendiente',
       items:[ { nombre:'Tramadol 50 mg solución inyectable', esPRN:true, cantidad:'2 unidades', prioridad:'urgente', estado:'pendiente' } ] },
     { id:'orden-490', consecutivo:'SOL-000490', prioridad:'normal', solicitadoPor:'Enf. Laura Gómez',
@@ -3007,13 +2969,13 @@ export function initGestionEnfermeria() {
 
   /* ================= DEVOLUCIONES: datos y render ================= */
   const devoluciones = [
-    { id:'dev-1', consecutivo:'DEV-000001', motivo:'Cambio de orden médica', fecha:'01 May 2026 · 19:40', responsable:'Enf. Manuel Hernández',
+    { id:'dev-1', consecutivo:'DEV-000001', motivo:'Cambio de orden médica', fecha:'01 May 2026 · 19:40', responsable:'Enf. Camilo Grondona',
       estado:'confirmada', confirmaFarmacia:'02 May 2026 · 07:15',
       meds:[{ nombre:'Dexametasona 4 mg solución inyectable', cantidad:'1 unidad', lote:'L-77210', vencimiento:'2027-03-31' }] },
     { id:'dev-2', consecutivo:'DEV-000002', motivo:'Sobrante de dispensación', fecha:'30 Abr 2026 · 08:05', responsable:'Enf. Laura Gómez',
       estado:'confirmada', confirmaFarmacia:'30 Abr 2026 · 10:20',
       meds:[{ nombre:'Omeprazol sódico 40 mg solución inyectable', cantidad:'2 unidades', lote:'L-50213', vencimiento:'2026-08-31' }] },
-    { id:'dev-3', consecutivo:'DEV-000003', motivo:'Suspensión de tratamiento', fecha:'02 May 2026 · 09:10', responsable:'Enf. Manuel Hernández',
+    { id:'dev-3', consecutivo:'DEV-000003', motivo:'Suspensión de tratamiento', fecha:'02 May 2026 · 09:10', responsable:'Enf. Camilo Grondona',
       estado:'pendiente', confirmaFarmacia:null,
       meds:[{ nombre:'Metamizol 2.5 g / 5 ml solución inyectable (Novalgina)', cantidad:'1 unidad', lote:'L-61840', vencimiento:'2026-07-31' }] },
   ];
@@ -3127,7 +3089,7 @@ export function initGestionEnfermeria() {
       ] },
     { id:'ome-1390', consecutivo:'OME-1390', fecha:'26 de jul de 2026, 09:15', fechaISO: shiftDate(TODAY_DATE, -2), medico:'Daniel Antonio Martínez',
       items:[
-        { id:'ome-1390-0', desc:'Enoxaparina sódica 40 mg solución inyectable', prioridad:'Normal', dosis:'40 mg', frecuencia:'Cada 24 horas', via:'SC', duracion:'7 días', enfermera:'Enf. Manuel Hernández', estadoProgramacion:'programada', estadoPedido:'solicitado', cantPedida:'6/7', aplicadas:'3 de 7' },
+        { id:'ome-1390-0', desc:'Enoxaparina sódica 40 mg solución inyectable', prioridad:'Normal', dosis:'40 mg', frecuencia:'Cada 24 horas', via:'SC', duracion:'7 días', enfermera:'Enf. Camilo Grondona', estadoProgramacion:'programada', estadoPedido:'solicitado', cantPedida:'6/7', aplicadas:'3 de 7' },
       ] },
   ];
   const selectedOmeItems = new Set();
@@ -4172,17 +4134,8 @@ export function initGestionEnfermeria() {
     showToast(`Pedido ${nuevoConsecutivo ? nuevoConsecutivo + ' ' : ''}enviado a farmacia: ${totalMeds} medicamento${totalMeds === 1 ? '' : 's'}${insumosMsg}`);
   });
 
-  // Every function referenced by page.jsx's onClick={() => window.fn()} handlers
-  // (mirroring the original mockup's inline onclick="" attributes on the shared
-  // sidebar/topbar chrome) has to live on `window`. Everything else in this file
-  // wires itself up directly via addEventListener, exactly like the original
-  // inline <script>, so it needs no window exposure.
-  const exported = {
-    toggleSidebar, toggleNavGroup, toggleThemeFromIcon, toggleTheme,
-  };
-  Object.assign(window, exported);
-
   return function cleanup() {
+    cleanupShellChrome();
     window.removeEventListener('resize', handleResize);
     if(timelineResizeObserver) timelineResizeObserver.disconnect();
     document.removeEventListener('click', closeAllPopovers);
@@ -4218,6 +4171,5 @@ export function initGestionEnfermeria() {
     clearInterval(multiAdminClockTimer);
     clearInterval(suspendClockTimer);
     clearInterval(returnClockTimer);
-    for (const name of Object.keys(exported)) delete window[name];
   };
 }

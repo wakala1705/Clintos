@@ -1,11 +1,19 @@
-// Home no tiene lógica de negocio propia (solo navega a otros módulos vía
-// <Link>), pero comparte el mismo Sidebar/topbar chrome que Gestión de
-// Enfermería y Asignación de Citas, cuyos botones de tema/colapsar resuelven
-// window.toggleTheme / window.toggleSidebar / window.toggleNavGroup vía
-// onClick={() => window.fn()} (ver Sidebar.jsx). Este hook solo expone esas
-// mismas funciones — sin el resto del estado de esos otros módulos — para que
-// el chrome compartido funcione igual aquí.
-export function initHome() {
+// Chrome global compartido por TODAS las rutas: Sidebar.jsx resuelve el botón
+// de tema y el de colapsar/expandir vía window.toggleTheme / toggleThemeFromIcon
+// / toggleSidebar / toggleNavGroup, sin importar qué página esté montada (ver
+// onClick={() => window.fn()} en Sidebar.jsx). Antes esta misma lógica estaba
+// duplicada en el legacy-app.js/legacy-*.js de cada feature (Home,
+// GestionEnfermeria, ProgramarCita, AsignacionCitas) — se extrajo aquí para
+// que cada página nueva (como /lista-pacientes) no tenga que reinventarla ni
+// arriesgarse a olvidarla (window.toggleSidebar undefined → crash del botón).
+//
+// startCollapsed=true (todo módulo salvo Inicio): el sidebar siempre entra
+// colapsado — le ahorra al usuario el click manual en el chevron. Sigue
+// siendo un override real: si el usuario lo expande a mano, esa elección
+// manda sobre el ancho de pantalla hasta que se recargue la página.
+// startCollapsed=false (Inicio): el sidebar entra expandido, y por debajo de
+// SIDEBAR_AUTO_BREAKPOINT se auto-colapsa al riel de íconos según el ancho.
+export function initShellChrome({ startCollapsed = false } = {}) {
 
   function applyTheme(dark){
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
@@ -19,12 +27,8 @@ export function initHome() {
     applyTheme(!chk.checked);
   }
 
-  // Mismo comportamiento responsive que Gestión de Enfermería (ver
-  // applySidebarAutoState en src/hooks/GestionEnfermeria/legacy-app.js): por
-  // debajo de 1024px el sidebar se auto-colapsa al riel de íconos, salvo que
-  // el usuario ya lo haya togglado a mano.
   const SIDEBAR_AUTO_BREAKPOINT = 1024;
-  let sidebarUserOverride = null;
+  let sidebarUserOverride = startCollapsed ? true : null;
   function applySidebarAutoState(){
     const sidebar = document.getElementById('sidebar');
     if(!sidebar) return;

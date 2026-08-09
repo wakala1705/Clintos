@@ -68,6 +68,8 @@
 }
 
 .block-form {
+    --field-height: 44px;
+
     display: flex;
     width: 396px;
     height: 628px;
@@ -121,7 +123,8 @@
 .block-form .form-group input {
     display: flex;
     width: 348px;
-    padding: 12px 12px;
+    height: var(--field-height);
+    padding: 0 12px;
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -146,15 +149,35 @@
     line-height: 24px; /* 150% */
 }
 
-.block-form .form-group select {
-    display: flex;
+.selectWrap {
+    position: relative;
     width: 348px;
-    padding: 12px 12px;
+    height: var(--field-height);
+}
+
+.block-form .form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: flex;
+    width: 100%;
+    height: var(--field-height);
+    padding: 0 40px 0 12px;
     justify-content: center;
     align-items: center;
     gap: 10px;
     border-radius: 8px;
     border: 1px solid #E2E8F0;
+    background: #fff;
+    color: #06192A;
+    cursor: pointer;
+
+    /* Body/Large */
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 150% */
 }
 
 .block-form .form-group select option {
@@ -177,6 +200,56 @@
     outline: none;
     border-color: #0065cd;
     box-shadow: 0 0 0 2px rgba(0, 101, 205, 0.2);
+}
+
+.selectIcon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: #48546E;
+    pointer-events: none;
+}
+
+.passwordWrap {
+    position: relative;
+    width: 348px;
+    height: var(--field-height);
+}
+
+.passwordWrap input {
+    width: 100%;
+    padding-right: 44px !important;
+}
+
+.togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #48546E;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.togglePassword:hover {
+    background: #F0F3FA;
+    color: #0065CD;
+}
+
+.eyeIcon {
+    width: 18px;
+    height: 18px;
 }
 
 .block-form .form-group .error {
