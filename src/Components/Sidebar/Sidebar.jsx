@@ -43,7 +43,8 @@ export default function Sidebar() {
   const isAsignacionCitas = pathname === '/asignacion-citas';
   const isProgramarCita = pathname === '/programar-cita';
   const isListaPacientes = pathname === '/lista-pacientes';
-  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes;
+  const isHistoriaClinica = pathname.startsWith('/historia-clinica');
+  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
 
   return (
@@ -89,7 +90,7 @@ export default function Sidebar() {
                 <Link href="/asignacion-citas" className={`nav-subitem${isAsignacionCitas ? ' active' : ''}`}><LuCalendarDays className="icon" />Asignación de citas</Link>
                 <Link href="/programar-cita" className={`nav-subitem${isProgramarCita ? ' active' : ''}`}><LuCalendarPlus className="icon" />Programar cita</Link>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuCalendarClock className="icon" />Reprogramar Citas</div>
-                <div className="nav-subitem" tabIndex="0" role="button"><LuFileText className="icon" />Historias Clínicas</div>
+                <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historias Clínicas</Link>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuSiren className="icon" />Accidentes de Tránsito</div>
                 <Link href="/lista-pacientes" className={`nav-subitem${isListaPacientes ? ' active' : ''}`}><LuUsers className="icon" />Pacientes</Link>

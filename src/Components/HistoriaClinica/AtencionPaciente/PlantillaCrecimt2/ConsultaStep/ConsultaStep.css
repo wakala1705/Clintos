@@ -1,0 +1,29 @@
+/* Asterisco de campo obligatorio + mensaje de error puntual — únicos en este
+   paso porque hoy es el único del wizard con validación bloqueante (avanzar
+   a "02 Antecedentes" exige motivo de consulta, enfermedad actual y fecha de
+   atención, ver ConsultaStep.jsx). Si otro paso suma su propia validación
+   más adelante, estas reglas se mueven a PlantillaCrecimt2.css (ver AGENTS.md
+   sobre reglas compartidas por 2+ consumidores). */
+.req{color:var(--red);margin-left:2px;}
+.pf-field-error{display:block;font-size:12px;color:var(--red);margin-top:6px;}
+.form-field textarea[aria-invalid="true"],
+.form-field input[aria-invalid="true"]{border-color:var(--red);}
+
+/* Obligatorio + vacío -> resaltado ámbar (mismo patrón que "Agregar
+   Paciente", ver .pf-field en NuevaCitaFlow.css) — validación nativa vía
+   :required, sin JS por campo. Es una pista mientras se diligencia el
+   formulario; el aria-invalid de arriba (JS, tras un intento fallido de
+   "Guardar y continuar") es el estado de error real. :placeholder-shown
+   cubre texto/textarea (con placeholder); input[type="date"] no soporta
+   :placeholder-shown en Chromium, así que ese campo usa :invalid (un date
+   required vacío también es :invalid vía validación nativa). */
+.form-field textarea:required:placeholder-shown,
+.form-field input:required:placeholder-shown,
+.form-field input[type="date"]:required:invalid{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"] .form-field textarea:required:placeholder-shown,
+html[data-theme="dark"] .form-field input:required:placeholder-shown,
+html[data-theme="dark"] .form-field input[type="date"]:required:invalid{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}

@@ -1,0 +1,5 @@
+/* Único ajuste propio de este paso — separa el campo suelto "Vacunas
+   antitetánicas..." del grid de 4 columnas que le sigue justo debajo, dentro
+   de "Antecedentes durante la gestación" (ver AntecedentesStep.jsx). .ac-wrap
+   y .ac-mega son compartidos con ConsultaStep y viven en PlantillaCrecimt2.css. */
+.ac-field-spaced{margin-bottom:16px;}

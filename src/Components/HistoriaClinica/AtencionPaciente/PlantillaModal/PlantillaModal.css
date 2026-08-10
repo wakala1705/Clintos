@@ -1,0 +1,18 @@
+/* Selector compuesto (especificidad 0,0,2,0) a propósito: .modal-card (en
+   HistoriaClinica/shared/shared.css) también fija su propio width en una
+   sola clase, con la misma especificidad que ".pm-card" solo — sin el
+   combinador, cuál de las dos reglas "gana" depende del orden en que Next
+   inyecta cada hoja de estilos, que no es estable entre navegaciones (mismo
+   bug ya visto con .pf-checklist.pf-grid-4 en PlantillaCrecimt2.css). */
+.modal-card.pm-card{width:740px;}
+.pm-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.pm-search{width:100%;}
+
+.pm-table-wrap{
+  border:1px solid var(--border);border-radius:var(--radius);
+  max-height:360px;overflow:auto;
+}
+.pm-col-codigo{width:150px;}
+.pm-empty-row{cursor:default;}
+.pm-empty-row:hover{background:transparent;}
+.pm-empty-cell{padding:28px;text-align:center;color:var(--ink-500);cursor:default;white-space:normal;}

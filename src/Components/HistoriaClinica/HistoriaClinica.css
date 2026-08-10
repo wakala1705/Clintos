@@ -1,0 +1,69 @@
+/* ---------- RESET + APP SHELL (sidebar + topbar + content wrapper) ----------
+   Cada feature de nivel superior es dueña de su propia copia — ver AGENTS.md,
+   mismo criterio que gestion-enfermeria.css/ListaPacientes.css. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.app{display:flex;height:100vh;min-width:1024px;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.hc-content{
+  padding:16px;
+  display:flex;flex-direction:column;gap:16px;
+  flex:1;min-height:0;min-width:0;overflow-y:auto;
+}
+
+/* ---------- BLOQUE DE BIENVENIDA ---------- */
+.hc-welcome{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.hc-welcome-hi{font-size:14px;color:var(--ink-500);}
+.hc-doctor-name{margin:0;font-size:22px;font-weight:700;color:var(--ink-900);letter-spacing:.01em;}
+
+/* ---------- FILA: KPIs + selector de fecha ---------- */
+.hc-top-row{display:flex;align-items:stretch;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+.hc-kpi-row{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px;flex:1;min-width:0;}
+
+/* ---------- CARD: Agenda del día ---------- */
+.hc-card-shell{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;
+}
+.hc-agenda-header{
+  display:flex;align-items:center;gap:12px;padding:16px 20px 0 20px;flex-shrink:0;flex-wrap:wrap;
+}
+.hc-agenda-header h2{margin:0;font-size:16px;font-weight:700;color:var(--ink-900);}
+.hc-date-pill{
+  font-size:12px;font-weight:600;color:var(--primary-dark);background:var(--primary-50);
+  padding:4px 12px;border-radius:20px;text-transform:capitalize;
+}
+
+/* ---------- ACTIONS BAR (búsqueda + Refrescar / Ver Lista Pacientes) ---------- */
+.hc-actions-bar{
+  border-bottom: 1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:16px 20px;
+}
+.hc-actions-bar-buttons{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* ---------- MARCO DE LA TABLA ----------
+   Borde + esquinas redondeadas propios (distintos del borde de
+   .hc-card-shell) para que quede claro dónde empieza y termina la tabla,
+   sin importar el estado (carga/datos/vacío) — envuelve a los tres por
+   igual en vez de que cada uno defina su propio margen/borde. */
+.hc-table-frame{
+  overflow:hidden;
+  display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;
+}
+
+.search-field{position:relative;width:320px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}

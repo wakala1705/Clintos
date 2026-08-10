@@ -1,0 +1,5 @@
+/* Todas las clases que usa este componente (.pf-condition, .pf-toggle-group,
+   .pf-toggle-btn, .pf-condition-desc, .form-field) están definidas en
+   ../PlantillaCrecimt2.css — cascan desde ahí porque también las usa
+   AntecedentesContent.jsx (2 consumidores, ver criterio de shared.css en
+   AGENTS.md). Nada exclusivo de TriStateField todavía. */

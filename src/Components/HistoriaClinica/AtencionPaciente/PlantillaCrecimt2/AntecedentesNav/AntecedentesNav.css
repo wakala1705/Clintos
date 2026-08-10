@@ -1,0 +1,87 @@
+/* position:sticky (sin overflow-y propio): .pf-body es el ÚNICO contenedor
+   con scroll (ver PlantillaCrecimt2.css) — este panel se queda fijo en la
+   parte superior mientras el contenido de la derecha se desplaza por debajo,
+   en vez de scrollear por su cuenta y desincronizarse de la subsección
+   activa. Todas las filas (activas, done o inert) comparten el mismo tamaño
+   compacto a propósito — homologado en vez de que 01/02 se vean más grandes
+   que 03-11 — para que las 11 secciones + subsecciones de "02 Antecedentes"
+   expandidas entren sin scroll propio en el alto real de la card. */
+.an-nav{
+  width:340px;flex-shrink:0;position:sticky;top:0;
+  background:var(--surface);border-right:1px solid var(--border);padding:16px;
+}
+.an-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+
+.an-section-head{
+  display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius);
+  min-height:19px;
+}
+.an-section.inert .an-section-head{color:var(--ink-400);}
+.an-section.active .an-section-head{color:var(--primary-dark);background:var(--primary-50);border-radius:var(--radius);}
+/* Una sección "active" (01/02, ver AntecedentesNav.jsx) que además quedó
+   .done (ya se dejó atrás con scroll — p. ej. "01 Consulta" una vez se
+   avanza a "02 Antecedentes") vuelve a verse neutra en vez de seguir
+   resaltada en azul; el resaltado azul es solo para la sección que el
+   usuario tiene delante ahora mismo. */
+/* Un paso .done queda clicable (ver AntecedentesNav.jsx) para poder volver a
+   revisarlo/editarlo — cursor + hover lo comunican, ya que visualmente ya no
+   tiene el resaltado azul de "current" que delataba interactividad antes. */
+.an-section.active.done .an-section-head{color:var(--ink-700);background:transparent;cursor:pointer;}
+.an-section.active.done .an-section-head:hover{background:var(--gray-bg);}
+.an-section.active.done .an-section-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.an-section-icon{display:flex;flex-shrink:0;}
+.an-section-icon .icon{width:13px;height:13px;}
+.an-section.inert .an-section-icon .icon{color:var(--ink-400);}
+.an-section.active .an-section-icon .icon{color:var(--primary);}
+.an-section.active.done .an-section-icon .icon{color:var(--green);}
+.an-section-num{font-size:14px;font-weight:500;color:var(--ink-500);flex-shrink:0;}
+.an-section.active .an-section-num{color:var(--primary);}
+.an-section.active.done .an-section-num{color:var(--ink-400);}
+.an-section-label{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.an-section-progress{font-size:11px;font-weight:700;color:var(--primary);flex-shrink:0;}
+.an-section.active.done .an-section-progress{color:var(--green);}
+
+.an-sublist{list-style:none;margin:2px 0 4px;padding:0;display:flex;flex-direction:column;gap:0;}
+/* box-shadow inset como franja izquierda por fila (recortada por el propio
+   border-radius del botón) — con .an-sublist en gap:0 las filas quedan
+   pegadas entre sí, así que estos segmentos se ven como UNA sola línea
+   continua de arriba a abajo del bloque en vez de cortarse en la subsección
+   "current" (antes era transparent salvo en .current, y la línea se veía
+   "flotando" solo ahí, sin llegar al fondo del bloque). */
+.an-subitem{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-family:inherit;
+  background:none;border:none;cursor:pointer;padding:6px 8px 6px 34px;
+  font-size:13px;color:var(--ink-500);min-height:28px;
+  box-shadow:inset 3px 0 0 var(--border);
+}
+.an-subitem:hover{background:var(--bg);}
+.an-subitem-icon{display:flex;flex-shrink:0;width:14px;}
+.an-subitem-icon .icon{width:14px;height:14px;}
+.an-subitem.done{color:var(--ink-700);}
+.an-subitem.done .an-subitem-icon .icon{color:var(--green);}
+.an-subitem.pending .an-subitem-icon .icon{color:var(--ink-400);}
+.an-subitem.current{
+  color:var(--primary-dark);font-weight:500;background:var(--surface);
+  box-shadow:inset 3px 0 0 var(--primary);
+}
+.an-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);display:inline-block;}
+.an-subitem-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.an-subitem:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+@media (max-width: 1024px){
+  .an-nav{
+    width:100%;border-right:none;border-bottom:1px solid var(--border);
+    padding:8px 12px;overflow-x:auto;overflow-y:hidden;
+  }
+  .an-list{flex-direction:row;align-items:center;gap:0;}
+  .an-section:not(.active){display:none;}
+  .an-section.active{display:flex;align-items:center;width:max-content;}
+  .an-section.active .an-section-head{display:none;}
+  .an-sublist{flex-direction:row;gap:6px;margin:0;}
+  .an-subitem{
+    flex-direction:column;gap:4px;padding:8px 12px;white-space:nowrap;text-align:center;
+    box-shadow:none;border:1px solid var(--border);border-radius:20px;
+  }
+  .an-subitem.current{box-shadow:none;border-color:var(--primary-100);background:var(--primary-50);}
+  .an-subitem-label{max-width:120px;}
+}

@@ -1,0 +1,42 @@
+/* ---------- CARD + TABS ----------
+   Mismo patrón que .card/.card-tabs-bar/.card-tab de
+   src/Components/GestionEnfermeria/gestion-enfermeria.css — se copia acá en
+   vez de importar esa hoja de estilo para no acoplar Historia Clínica a otra
+   feature (ver AGENTS.md). */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;
+}
+.card-tabs-bar{
+  display:flex;align-items:center;gap:24px;padding:0 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;
+}
+.card-tabs-bar::-webkit-scrollbar{display:none;height:0;}
+.card-tab{
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink-500);
+  cursor:pointer;padding:13px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
+  border:none;background:none;font-family:inherit;outline-offset:2px;
+}
+.card-tab .icon{width:17px;height:17px;flex-shrink:0;}
+.card-tab:hover{color:var(--ink-900);}
+.card-tab:focus-visible{outline:2px solid var(--primary);border-radius:4px;}
+.card-tab[disabled]{opacity:.45;cursor:not-allowed;}
+.card-tab[disabled]:hover{color:var(--ink-500);}
+.card-tab.active{color:var(--primary);font-weight:600;}
+.card-tab.active::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary);
+}
+
+/* ---------- PANEL DE PESTAÑA ---------- */
+.ap-tab-panel{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;}
+
+/* ---------- CARGA / NO ENCONTRADO ---------- */
+.ap-loading{
+  display:flex;align-items:center;justify-content:center;flex:1;
+  color:var(--ink-500);font-size:14px;
+}
+.ap-not-found{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;flex:1;
+}

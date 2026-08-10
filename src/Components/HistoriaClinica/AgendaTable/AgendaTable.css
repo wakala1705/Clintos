@@ -1,0 +1,52 @@
+/* ---------- DATA TABLE: cabecera agrupada de 2 filas ----------
+   Extiende .data-table (base en shared.css) para la cabecera Hora/Primera
+   vez de esta tabla en particular — único consumidor de estas reglas (ver
+   AGENTS.md). min-width:0 es obligatorio aquí (y en .hc-content/.hc-card-shell,
+   ver HistoriaClinica.css): sin él, un item flex nunca se encoge por debajo
+   del ancho de su contenido, así que la tabla de 12 columnas empuja el
+   layout en vez de activar su propio scroll horizontal — y termina
+   recortada en silencio por el overflow:hidden de .main más arriba en el
+   árbol. */
+.hc-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
+.data-table thead tr:first-child th{top:0;}
+.data-table thead tr:last-child th{top:33px;}
+.data-table thead th.group-head{text-align:center;border-bottom:1px solid var(--border);}
+/* Continúa la línea de cada grupo de columnas (Hora / Id.-Nombre-Servicio-
+   Descripción / Primera vez / Tipo cita) desde el header hasta el cuerpo, en
+   la primera celda de cada grupo. */
+.data-table th.group-divider,
+.data-table td.group-divider{border-left:1px solid var(--border);}
+
+/* Fila de un paciente ya atendido — mismo verde semántico que el resto del
+   proyecto usa para "administrado/completado" (--green-bg, ver
+   .dp-status-badge.st-administered en GestionEnfermeria), para distinguir de
+   un vistazo quién ya fue atendido sin depender solo de leer la columna
+   "Final atención". Declarado después de :hover (misma especificidad) para
+   que el tinte se mantenga al pasar el mouse en vez de taparse con el gris
+   genérico de hover. */
+.data-table tbody tr.row-atendido,
+.data-table tbody tr.row-atendido:hover{background:var(--green-bg);}
+
+/* ---------- TARJETAS MOBILE ----------
+   La tabla colapsa a una tarjeta por cita por debajo de 768px — mismo umbral
+   y criterio que .lp-cards en PatientsTable (ver AGENTS.md): el shell
+   .app{min-width:1024px} todavía no permite llegar a ese ancho solo
+   redimensionando la ventana, así que esta vista queda lista para cuando el
+   shell adopte un modo realmente responsive. */
+.hc-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .hc-table-wrap{display:none;}
+  .hc-cards{display:flex;}
+}
+.hc-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
+}
+.hc-card.row-atendido{background:var(--green-bg);}
+.hc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.hc-card-id{min-width:0;}
+.hc-card-name{font-weight:600;color:var(--ink-900);font-size:13px;}
+.hc-card-doc{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--ink-700);}
+.hc-card-times b{color:var(--ink-500);font-weight:600;margin-right:4px;}
+.hc-card-meta{font-size:12px;color:var(--ink-500);border-top:1px solid #eef0f4;padding-top:8px;}

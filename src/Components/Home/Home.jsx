@@ -50,7 +50,8 @@ const MODULE_GROUPS = [
         title: 'Historia clínica',
         description: 'Consulta el historial clínico de pacientes de consulta externa.',
         icon: LuFileText,
-        enabled: false,
+        href: '/historia-clinica',
+        enabled: true,
       },
       {
         title: 'Signos vitales',
