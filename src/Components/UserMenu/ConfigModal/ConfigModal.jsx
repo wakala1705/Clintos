@@ -20,8 +20,8 @@ const SECTIONS = [
 // /gestion-enfermeria dentro de la misma sesión — ConfigModal se abre desde
 // UserMenu en ambas rutas, pero solo Gestión de Enfermería tiene AdminModal.
 function isVerificacionClinicaEnabled() {
-  if (typeof window === 'undefined') return true;
-  return window.__clintosVerificacionClinica !== false;
+  if (typeof window === 'undefined') return false;
+  return window.__clintosVerificacionClinica === true;
 }
 function setVerificacionClinicaEnabled(enabled) {
   window.__clintosVerificacionClinica = enabled;
@@ -30,23 +30,27 @@ function setVerificacionClinicaEnabled(enabled) {
 
 // Modal de configuración del aplicativo, abierto desde UserMenu. Nav lateral
 // de secciones + panel de contenido a la derecha (mismo patrón de dos
-// columnas que un modal de settings). El tema oscuro es la única preferencia
-// con efecto real (misma lógica que applyTheme en legacy-app.js, para que
-// quede en sync con el switch del Sidebar); el resto de campos son
-// configuración del perfil/notificaciones sin backend, igual de "demo" que el
-// resto del aplicativo.
+// columnas que un modal de settings). Apariencia tiene dos preferencias con
+// efecto real: el tema oscuro (misma lógica que applyTheme en
+// legacy-app.js, para que quede en sync con el switch del Sidebar) y el
+// resaltado ámbar de campos obligatorios (atributo data-required-highlight
+// en <html>, leído por ConsultaStep.css y NuevaCitaFlow.css). El resto de
+// campos son configuración del perfil/notificaciones sin backend, igual de
+// "demo" que el resto del aplicativo.
 export default function ConfigModal({ open, onClose, name, role, initials }) {
   const [section, setSection] = useState('perfil');
   const [isDark, setIsDark] = useState(false);
+  const [requiredHighlight, setRequiredHighlightState] = useState(true);
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifApp, setNotifApp] = useState(true);
   const [notifSound, setNotifSound] = useState(false);
-  const [verificacionClinica, setVerificacionClinica] = useState(true);
+  const [verificacionClinica, setVerificacionClinica] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
     setIsDark(document.documentElement.getAttribute('data-theme') === 'dark');
+    setRequiredHighlightState(document.documentElement.getAttribute('data-required-highlight') !== 'off');
     setVerificacionClinica(isVerificacionClinicaEnabled());
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
@@ -62,6 +66,11 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
     const themeSwitch = document.getElementById('theme-switch');
     if (themeSwitch) themeSwitch.checked = dark;
     setIsDark(dark);
+  }
+
+  function setRequiredHighlight(enabled) {
+    document.documentElement.setAttribute('data-required-highlight', enabled ? 'on' : 'off');
+    setRequiredHighlightState(enabled);
   }
 
   function toggleVerificacionClinica(enabled) {
@@ -131,6 +140,23 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
                   </div>
                   <label className="config-switch">
                     <input type="checkbox" checked={isDark} onChange={(e) => setTheme(e.target.checked)} />
+                    <span className="config-switch-slider"></span>
+                  </label>
+                </div>
+                <div className="config-toggle-row">
+                  <div>
+                    <div className="config-toggle-label">Resaltado de campos obligatorios</div>
+                    <div className="config-toggle-hint">
+                      Marca en color ámbar los campos obligatorios vacíos mientras se completa un
+                      formulario.
+                    </div>
+                  </div>
+                  <label className="config-switch">
+                    <input
+                      type="checkbox"
+                      checked={requiredHighlight}
+                      onChange={(e) => setRequiredHighlight(e.target.checked)}
+                    />
                     <span className="config-switch-slider"></span>
                   </label>
                 </div>

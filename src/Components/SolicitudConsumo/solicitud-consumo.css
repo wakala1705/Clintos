@@ -1,0 +1,81 @@
+/* Estilos exclusivos del shell de la página /solicitud-consumo
+   (solicitud-consumo.jsx no es reutilizable — es la ruta, ver AGENTS.md).
+   .topbar/.breadcrumb/.meta-item/.divider-v viven en Topbar.css (componente
+   app-wide); acá solo el reset, el :root de esta ruta y el layout propio de
+   la página (encabezado + filtros). El resto (card, tabla, modales) está en
+   shared/shared.css y en cada componente. */
+
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#9aa3b2;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --bg:#f4f6fb;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --green:#12a150;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --radius:8px;
+  --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
+     bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#5b6272;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --bg:#0c0f17;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --green:#34d399;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.app{display:flex;height:100vh;min-width:1024px;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{padding:16px;display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;overflow-y:hidden;}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
+.page-head h1{font-size:22px;font-weight:600;margin:0 0 4px;color:var(--ink-900);letter-spacing:-.01em;}
+.page-head p{margin:0;color:var(--ink-500);font-size:13px;}
+
+.filters{display:flex;gap:12px;}
+.select-field{display:flex;flex-direction:column;gap:4px;}
+.select-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.select-field select{
+  appearance:none;-webkit-appearance:none;
+  background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+  border:1px solid var(--border);border-radius:var(--radius);height:var(--input-md);padding:0 32px 0 12px;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-900);min-width:190px;cursor:pointer;
+}
+.select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}

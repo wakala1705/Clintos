@@ -26,18 +26,18 @@
 .rg-group-row.expanded{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .rg-group-row-btn{
   flex:1;min-width:0;display:flex;align-items:center;gap:8px;
-  padding:11px 12px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;
+  padding:12px 12px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;
 }
 .rg-group-row-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .rg-group-chevron{width:14px;height:14px;color:var(--ink-400);flex-shrink:0;transition:transform .15s;}
 .rg-group-chevron.open{transform:rotate(90deg);}
 .rg-group-count{font-size:13px;font-weight:700;color:var(--primary);flex-shrink:0;min-width:14px;}
 .rg-group-name{
-  font-size:12.5px;font-weight:600;color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
+  font-size:12px;font-weight:600;color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
   flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .rg-badge-activa{
-  font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);
+  font-size:11px;font-weight:700;color:var(--green);background:var(--green-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
 }
 
@@ -56,7 +56,7 @@
 .rg-subrows{display:flex;flex-direction:column;}
 .rg-subrow{
   display:flex;flex-direction:column;gap:2px;
-  padding:8px 16px 8px 34px;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;
+  padding:8px 16px 8px 32px;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;
   border-top:1px solid #eef0f4;
 }
 .rg-subrow:first-child{border-top:none;}

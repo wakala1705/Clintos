@@ -32,6 +32,13 @@
   --amber-fg:#a45a05;
   --radius:8px;
   --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
+     bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+
   --status-info-bg:var(--primary-50);
   --status-info-fg:var(--primary-dark);
 }

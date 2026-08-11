@@ -11,7 +11,7 @@
 
 .pf-titlebar{
   flex-shrink:0;display:flex;align-items:center;gap:10px;
-  padding:14px 20px;border-bottom:1px solid var(--border);
+  padding:16px 24px;border-bottom:1px solid var(--border);
 }
 .pf-titlebar-back{
   width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--ink-500);
@@ -19,7 +19,7 @@
 }
 .pf-titlebar-back:hover{background:var(--gray-bg);color:var(--ink-900);}
 .pf-titlebar-back .icon{width:17px;height:17px;}
-.pf-titlebar-title{font-size:14px;font-weight:700;color:var(--ink-900);}
+.pf-titlebar-title{font-size:14px;font-weight:600;color:var(--ink-900);}
 
 /* .pf-body es el ÚNICO contenedor con scroll (antes cada columna scrolleaba
    por su cuenta: el panel izquierdo se desincronizaba del contenido y
@@ -55,9 +55,9 @@
 /* ---------- FOOTER (pinned al fondo de la card, no del viewport) ---------- */
 .pf-footer{
   flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding:14px 20px;background:var(--surface);border-top:1px solid var(--border);
+  padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);
 }
-.pf-footer-saved{font-size:12.5px;color:var(--ink-500);}
+.pf-footer-saved{font-size:12px;color:var(--ink-500);}
 .pf-footer-saved b{color:var(--ink-900);font-weight:600;}
 .pf-footer-actions{display:flex;align-items:center;gap:10px;}
 .pf-footer-actions .btn{min-height:40px;}
@@ -70,13 +70,13 @@
    ===================================================================== */
 
 .pf-section-title{font-size:20px;font-weight:700;color:var(--ink-900);margin:0 0 4px;}
-.pf-section-desc{font-size:13.5px;color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
+.pf-section-desc{font-size:13px;color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .pf-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:20px 24px;margin-bottom:20px;scroll-margin-top:16px;
 }
-.pf-card-title{font-size:15px;font-weight:600;color:var(--ink-900);margin:0 0 12px;}
+.pf-card-title{font-size:16px;font-weight:600;color:var(--ink-900);margin:0 0 12px;}
 .pf-card-desc{font-size:13px;color:var(--ink-500);margin:0 0 16px;line-height:1.5;}
 
 /* Bloque colapsable completo (Antecedentes familiares / Antecedentes
@@ -127,13 +127,15 @@
    entre grupos pasa a ser un borde superior en vez de otra card completa. */
 .pf-group + .pf-group{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
 
-/* Nivel 3 de encabezado (Embarazo / Antecedentes durante la gestación,
-   dentro del grupo "Antecedentes obstétricos") — un tono más chico que
-   .pf-card-title/h3.pf-subheading (nivel 2, p. ej. "Antecedentes
-   obstétricos" en sí) para que la jerarquía se lea de un vistazo. */
+/* Nivel 3 de encabezado (Hemoclasificación, dentro del grupo "Antecedentes
+   Perinatales del recién nacido") — un tono más chico que .pf-card-title/
+   h3.pf-subheading (nivel 2) para que la jerarquía se lea de un vistazo. */
 .pf-subheading{font-size:14px;font-weight:700;color:var(--ink-900);margin:0 0 12px;}
-.pf-subheading2{font-size:13px;font-weight:700;color:var(--ink-700);margin:0 0 12px;}
-.pf-subheading2:not(:first-child){margin-top:20px;}
+.pf-subheading2{font-size:14px;font-weight:700;color:var(--ink-900);margin:0 0 12px;}
+/* Mismo borde divisor que separa un .pf-group del siguiente (ver
+   .pf-group + .pf-group) — un sub-bloque nivel 3 que no es el primero de su
+   grupo se separa del bloque anterior igual que un sub-bloque de nivel 2. */
+.pf-subheading2:not(:first-child){margin-top:20px;padding-top:20px;border-top:1px solid var(--border);}
 
 .pf-note{
   display:flex;align-items:flex-start;gap:10px;background:var(--status-info-bg);
@@ -144,18 +146,29 @@
 
 .pf-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 .pf-grid-4 .full{grid-column:1 / -1;}
-/* 2 columnas iguales — para parejas de campos anchos (textareas de Motivo de
+/* 1 columna, apilado — para parejas de campos anchos (textareas de Motivo de
    consulta/Enfermedad actual) donde .pf-grid-4 dejaría cada uno en un cuarto
    del ancho, demasiado angosto para un textarea. */
-.pf-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+.pf-grid-2{display:grid;grid-template-columns:1fr;gap:16px;}
+/* 2 columnas reales (a diferencia de .pf-grid-2, que pese al nombre apila en
+   1 columna) — para pares de campos angostos que deben quedar lado a lado
+   en su propia fila, ej. Tratamiento / Describa tratamiento en Antecedentes
+   Patológicos. */
+.pf-grid-2col{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+/* 3 columnas reales — para grillas densas de campos angostos (ej. "Riesgo
+   4505", ver RiesgoStep.jsx), donde .pf-grid-4 dejaría columnas de sobra y
+   .pf-grid-2col se vería demasiado ancho para selects cortos. */
+.pf-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 
 .form-field{display:flex;flex-direction:column;gap:6px;}
 .form-field label{font-size:13px;font-weight:400;color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
-  font-family:inherit;font-size:13.5px;color:var(--ink-900);background:var(--surface);width:100%;
-  min-height:44px;
+  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);width:100%;
 }
+/* Variante lg (44px, ver --input-lg en shared.css) — no incluye textarea,
+   cuya altura depende de `rows` (ver .form-field textarea abajo). */
+.form-field input, .form-field select{height:var(--input-lg);padding-top:0;padding-bottom:0;}
 .form-field textarea{min-height:64px;resize:vertical;}
 /* Mismo patrón de flecha custom que .field-block select (NuevaCitaFlow.css)
    y .lp-select-field select (FiltersRow.css) — el <select> nativo del
@@ -169,10 +182,13 @@
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
   outline:2px solid var(--primary);outline-offset:1px;
 }
+.form-field input:disabled, .form-field select:disabled, .form-field textarea:disabled{
+  background:var(--bg);color:var(--ink-400);cursor:not-allowed;
+}
 .form-field input::placeholder, .form-field textarea::placeholder{color:var(--ink-400);}
 .form-field .pf-field-suffix{display:flex;align-items:center;gap:8px;}
 .form-field .pf-field-suffix input{flex:1;}
-.form-field .pf-field-suffix span{font-size:12.5px;color:var(--ink-500);white-space:nowrap;}
+.form-field .pf-field-suffix span{font-size:12px;color:var(--ink-500);white-space:nowrap;}
 
 /* ---------- Checklist (Sucesos vitales familiares / Salud mental de los padres) ---------- */
 .pf-checklist{display:flex;flex-direction:column;gap:4px;}
@@ -183,8 +199,9 @@
    vez de grid (bug ya presente desde antes de pasar a 4 columnas, recién
    detectado ahora). */
 .pf-checklist.pf-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:2px 16px;}
+.pf-checklist.pf-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;}
 .pf-check-row{
-  display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-700);
+  display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);
   padding:9px 4px;border-radius:var(--radius);cursor:pointer;min-height:44px;
 }
 .pf-check-row:hover{background:var(--bg);}
@@ -204,11 +221,11 @@
    largo de cada etiqueta (se veía inconsistente entre las 8 condiciones). */
 .pf-grid-4 .pf-condition-row{flex-direction:column;align-items:flex-start;gap:8px;}
 .pf-condition-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-.pf-condition-label{font-size:13.5px;font-weight:500;color:var(--ink-900);}
+.pf-condition-label{font-size:13px;font-weight:500;color:var(--ink-900);}
 .pf-toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
 .pf-toggle-btn{
-  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-700);background:var(--surface);
-  border:none;padding:9px 14px;min-height:38px;cursor:pointer;white-space:nowrap;
+  font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-700);background:var(--surface);
+  border:none;padding:8px 12px;min-height:38px;cursor:pointer;white-space:nowrap;
   border-left:1px solid var(--border);
 }
 .pf-toggle-btn:first-child{border-left:none;}
@@ -227,11 +244,15 @@
 
 @media (max-width: 900px){
   .pf-grid-4{grid-template-columns:1fr 1fr;}
+  .pf-grid-3{grid-template-columns:1fr 1fr;}
 }
 
 @media (max-width: 720px){
   .pf-grid-4{grid-template-columns:1fr;}
+  .pf-grid-3{grid-template-columns:1fr;}
+  .pf-grid-2col{grid-template-columns:1fr;}
   .pf-checklist.pf-grid-4{grid-template-columns:1fr;}
+  .pf-checklist.pf-grid-3{grid-template-columns:1fr;}
   .pf-card{padding:16px;}
   .pf-condition-row{flex-direction:column;align-items:flex-start;gap:8px;}
   .pf-footer{padding:12px 16px;}

@@ -192,7 +192,7 @@
   .wiz-search-field{position:relative;flex:1;}
   .wiz-search-field .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-500);}
   .wiz-search-field input{
-    width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    width:100%;height:var(--input-md);padding:0 12px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
     font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
   }
   .wiz-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
@@ -304,7 +304,7 @@
   }
   .field-block label .req{color:var(--red);margin-left:2px;}
   .field-block select, .field-block input{
-    width:100%;padding:12px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    width:100%;height:var(--input-lg);padding:0 12px;border:1px solid var(--border);border-radius:var(--radius);
     font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--surface);
   }
   .field-block select{
@@ -394,7 +394,7 @@
   .ps-search-field{position:relative;flex:1;}
   .ps-search-field .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--ink-500);}
   .ps-search-field input{
-    width:100%;padding:12px 16px 12px 32px;border:1px solid var(--border);border-radius:var(--radius);
+    width:100%;height:var(--input-lg);padding:0 16px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
     font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--bg);
   }
   .ps-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
@@ -435,7 +435,7 @@
   .pf-field input[aria-invalid="true"], .pf-field select[aria-invalid="true"]{border-color:var(--red);}
   .pf-field-wrap{position:relative;}
   .pf-field input, .pf-field select{
-    width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);
+    width:100%;height:var(--input-md);padding:0 12px;border:1px solid var(--border);border-radius:var(--radius);
     font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
   }
   .pf-field select{
@@ -454,13 +454,16 @@
   .pf-field input:focus, .pf-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
   .pf-field input::placeholder{color:var(--ink-400);}
 
-  /* Obligatorio + vacío -> resaltado ámbar (validación nativa, sin JS por campo) */
-  .pf-field input:required:placeholder-shown,
-  .pf-field select:required:invalid{
+  /* Obligatorio + vacío -> resaltado ámbar (validación nativa, sin JS por
+     campo). Gateado por data-required-highlight en <html> (Configuración >
+     Apariencia, ver ConfigModal.jsx); "off" apaga el resaltado en toda la
+     app — mismo patrón que ConsultaStep.css. */
+  html:not([data-required-highlight="off"]) .pf-field input:required:placeholder-shown,
+  html:not([data-required-highlight="off"]) .pf-field select:required:invalid{
     background-color:var(--amber-bg);border-color:#eccb85;
   }
-  html[data-theme="dark"] .pf-field input:required:placeholder-shown,
-  html[data-theme="dark"] .pf-field select:required:invalid{
+  html[data-theme="dark"]:not([data-required-highlight="off"]) .pf-field input:required:placeholder-shown,
+  html[data-theme="dark"]:not([data-required-highlight="off"]) .pf-field select:required:invalid{
     background-color:var(--amber-bg);border-color:#6b4a10;
   }
 

@@ -20,7 +20,7 @@
   color:var(--ink-500);width:16px;height:16px;
 }
 .pc-contract-search input{
-  width:100%;padding:8px 12px 8px 32px;
+  width:100%;height:var(--input-md);padding:0 12px 0 32px;
   border:1px solid var(--border);border-radius:var(--radius);
   font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
 }

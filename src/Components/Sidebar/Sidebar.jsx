@@ -44,7 +44,8 @@ export default function Sidebar() {
   const isProgramarCita = pathname === '/programar-cita';
   const isListaPacientes = pathname === '/lista-pacientes';
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
-  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica;
+  const isSolicitudConsumo = pathname === '/solicitud-consumo';
+  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isSolicitudConsumo;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
 
   return (
@@ -94,7 +95,7 @@ export default function Sidebar() {
                 <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>
                 <div className="nav-subitem" tabIndex="0" role="button"><LuSiren className="icon" />Accidentes de Tránsito</div>
                 <Link href="/lista-pacientes" className={`nav-subitem${isListaPacientes ? ' active' : ''}`}><LuUsers className="icon" />Pacientes</Link>
-                <div className="nav-subitem" tabIndex="0" role="button"><LuPackage className="icon" />Solicitud de consumo</div>
+                <Link href="/solicitud-consumo" className={`nav-subitem${isSolicitudConsumo ? ' active' : ''}`}><LuPackage className="icon" />Solicitud de consumo</Link>
               </div>
             </div>
 

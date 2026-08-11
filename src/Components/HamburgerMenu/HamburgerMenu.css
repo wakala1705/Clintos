@@ -1,0 +1,44 @@
+/* Estilos exclusivos de HamburgerMenu. Reutiliza los design tokens
+   (--primary, --primary-100, --ink-900, --border, --surface, --radius...)
+   que cada ruta ya define en su propio :root — mismo criterio que
+   UserMenu.css. El submenu (flyout) se ancla siempre a la esquina superior
+   del panel principal (top:0; left:100%), no a la fila que lo abre. */
+.hmenu{position:relative;flex-shrink:0;}
+
+.hamburger-btn{
+  display:flex;align-items:center;justify-content:center;
+  background:none;border:none;padding:4px;border-radius:var(--radius);
+  cursor:pointer;
+}
+.hamburger-btn:hover{background:var(--bg);}
+.hamburger-btn .hamburger{color:var(--ink-500);}
+
+.hmenu-dropdown{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:400;width:240px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
+  display:flex;flex-direction:column;gap:1px;
+}
+
+.hmenu-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  font-size:13px;font-weight:500;color:var(--ink-700);cursor:pointer;
+  background:none;border:none;font-family:inherit;width:100%;text-align:left;
+  text-decoration:none;box-sizing:border-box;
+}
+.hmenu-item:hover{background:var(--bg);}
+.hmenu-item.active{background:var(--primary-100);color:var(--primary-dark);}
+.hmenu-item .icon{width:17px;height:17px;color:var(--ink-500);flex-shrink:0;}
+.hmenu-item.active .icon{color:var(--primary-dark);}
+.hmenu-item span{flex:1;}
+.hmenu-item .chev{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}
+.hmenu-item.active .chev{color:var(--primary-dark);}
+
+.hmenu-divider{height:1px;background:var(--border);margin:5px 4px;}
+
+.hmenu-submenu{
+  position:absolute;top:0;left:calc(100% + 8px);width:240px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
+  display:flex;flex-direction:column;gap:1px;
+}

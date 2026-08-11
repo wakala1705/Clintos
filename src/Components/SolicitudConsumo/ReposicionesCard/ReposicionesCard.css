@@ -1,0 +1,4 @@
+/* ReposicionesCard no tiene reglas exclusivas propias: card/tabla/badges/
+   menú de fila están en shared/shared.css porque también los reutilizan los
+   modales (DetalleModal, ArticulosModal...). Archivo mantenido igual para no
+   romper la convención "un .css por componente" — ver AGENTS.md. */

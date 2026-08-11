@@ -60,6 +60,9 @@
   border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;
   font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--bg);
 }
+/* Variante md (36px, ver --input-md en :root) — no incluye textarea, cuya
+   altura depende de `rows`. */
+.pc-field input,.pc-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
 .pc-field input:focus,.pc-field select:focus,.pc-field textarea:focus{
   outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);
 }

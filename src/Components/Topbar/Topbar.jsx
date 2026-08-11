@@ -3,8 +3,8 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
 import './Topbar.css';
+import HamburgerMenu from '@/Components/HamburgerMenu/HamburgerMenu';
 import UserMenu from '@/Components/UserMenu/UserMenu';
-import { LuMenu } from 'react-icons/lu';
 
 // Topbar global, compartida por /asignacion-citas, /programar-cita y
 // /gestion-enfermeria (antes duplicada inline en cada page.jsx, con CSS
@@ -25,7 +25,7 @@ export default function Topbar({ section, page, user, children }) {
 
   return (
     <header className="topbar">
-      <LuMenu className="hamburger icon" />
+      <HamburgerMenu />
       <div className="breadcrumb">
         {crumbs.map((crumb) => (
           <Fragment key={crumb.label}>

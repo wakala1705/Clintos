@@ -23,6 +23,12 @@
   --gray-bg:#eef0f4;
   --radius:8px;
   --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
+     bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);

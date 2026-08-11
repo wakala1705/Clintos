@@ -41,6 +41,17 @@
   --radius:8px;
   --radius-lg:12px;
 
+  /* Variantes de tamaño para inputs/selects de una sola línea (no aplica a
+     textareas, cuya altura depende de `rows`). Reemplazan los altos ad hoc
+     que existían por feature (30-46px según el padding de cada uno) —
+     mismo criterio de "cada ruta duplica sus tokens" que el resto de este
+     :root. Se aplican como `height` + `padding-top/bottom:0` sobre el
+     selector de cada input/select existente, nunca como clase nueva en el
+     JSX. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+
   /* Semantic accent roles — all derived from the --primary blue family above,
      kept as distinct names so each usage (selection state, single tint of
      status, link text) can be restyled independently instead of every
@@ -258,7 +269,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .search-field{position:relative;width:320px;flex-shrink:0;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
 .search-field input{
-  width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
   font-family:inherit;font-size:13px;background:var(--bg);
 }
 .search-field input::placeholder{color:var(--ink-400);}
@@ -340,7 +351,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .fp-date-field{flex:1;display:flex;flex-direction:column;gap:4px;}
 .fp-date-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .fp-date-field input{
-  border:1px solid var(--border);border-radius:var(--radius);padding:7px 8px;
+  border:1px solid var(--border);border-radius:var(--radius);height:var(--input-sm);padding:0 8px;
   font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--bg);width:100%;
 }
 .fp-date-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
@@ -466,6 +477,9 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);width:100%;
 }
+/* Variante md (36px, ver --input-md en :root) — no incluye textarea, cuya
+   altura depende de `rows` (ver .form-field textarea abajo). */
+.form-field input, .form-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
   outline:2px solid var(--primary);outline-offset:1px;
 }

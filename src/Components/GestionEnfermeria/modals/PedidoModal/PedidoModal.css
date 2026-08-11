@@ -5,7 +5,8 @@
 #pedido-cobertura-group{margin-top:2px;}
 .pedido-custom-wrap{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-2);}
 .pedido-custom-wrap input[type="number"]{
-  width:100px;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  width:100px;border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-sm);padding:0 var(--space-3);
   font-family:inherit;font-size:13px;color:var(--ink-900);
 }
 .pedido-custom-wrap input[type="number"]:focus{outline:2px solid var(--primary);outline-offset:1px;}
@@ -14,15 +15,18 @@
 .insumo-row{display:flex;align-items:center;gap:8px;padding:var(--space-2) 0;}
 .insumo-row + .insumo-row{border-top:1px solid #eef0f4;}
 .insumo-row select{
-  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-sm);padding:0 var(--space-3);
   font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
 }
 .insumo-row .insumo-otro-input{
-  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-sm);padding:0 var(--space-3);
   font-family:inherit;font-size:13px;color:var(--ink-900);
 }
 .insumo-row .insumo-cantidad-input{
-  width:70px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-2) var(--space-3);
+  width:70px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-sm);padding:0 var(--space-3);
   font-family:inherit;font-size:13px;color:var(--ink-900);
 }
 .insumo-row select:focus, .insumo-row input:focus{outline:2px solid var(--primary);outline-offset:1px;}

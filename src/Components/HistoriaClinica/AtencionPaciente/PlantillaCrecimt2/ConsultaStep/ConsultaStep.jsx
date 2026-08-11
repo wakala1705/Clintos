@@ -56,7 +56,7 @@ const ConsultaStep = forwardRef(function ConsultaStep({ hidden }, ref) {
             <div className="form-field">
               <label htmlFor="con-enfermedad">Enfermedad actual<span className="req">*</span></label>
               <textarea
-                id="con-enfermedad" rows={3} placeholder="Describe el inicio, evolución y características de los síntomas actuales"
+                id="con-enfermedad" rows={5} placeholder="Describe el inicio, evolución y características de los síntomas actuales"
                 required
                 value={consulta.enfermedadActual}
                 aria-invalid={errors.enfermedadActual ? 'true' : undefined}

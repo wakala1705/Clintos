@@ -11,6 +11,6 @@
 .return-qty-field label{font-size:11px;color:var(--ink-500);font-weight:600;white-space:nowrap;}
 .return-qty-field input{
   width:96px;border:1px solid var(--border);border-radius:var(--radius);
-  padding:6px var(--space-2);font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
+  height:var(--input-sm);padding:0 var(--space-2);font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
 }
 .return-qty-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}

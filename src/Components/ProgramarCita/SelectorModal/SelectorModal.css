@@ -9,9 +9,14 @@
   display:flex;flex-direction:column;overflow:hidden;
 }
 
+/* El <input> de acá abajo no tiene borde/padding propio (background
+   transparent) — el tamaño de la píldora completa lo da este wrapper, así
+   que la variante de tamaño (md, ver --input-md) se aplica acá y no en el
+   input; .pc-selector-search ya es flex+align-items:center, por eso el
+   contenido queda centrado igual sin padding vertical. */
 .pc-selector-search{
   display:flex;align-items:center;gap:8px;flex-shrink:0;
-  margin:16px 24px 0;padding:8px 12px;
+  height:var(--input-md);margin:16px 24px 0;padding:0 12px;
   border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
 }
 .pc-selector-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
@@ -49,6 +54,6 @@ html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
 .pc-selector-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pc-selector-option.active{background:var(--primary-50);}
 .pc-selector-code{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-option-label{font-size:13px;font-weight:600;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-count{font-size:13px;font-weight:600;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
+.pc-selector-option-label{font-size:13px;font-weight:500;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-count{font-size:13px;font-weight:500;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
 .pc-selector-empty{padding:28px 14px;text-align:center;font-size:13px;color:var(--ink-500);}

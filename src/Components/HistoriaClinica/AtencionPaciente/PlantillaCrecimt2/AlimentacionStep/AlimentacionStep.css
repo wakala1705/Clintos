@@ -1,0 +1,42 @@
+/* Card compacta por tipo de alimentación (Lactancia materna/Biberón/Otras
+   leches/Alimentación complementaria) dentro de "Alimentación actual" —
+   agrupa Sí/No + frecuencia del mismo tipo en su propia caja, en vez de la
+   única fila horizontal con todos los campos sueltos del formulario legacy
+   (mismo problema de escaneabilidad que motivó el rediseño). */
+.al-feed-card{
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;background:var(--surface);
+}
+.al-feed-title{font-size:13.5px;font-weight:600;color:var(--ink-900);margin:0 0 12px;}
+
+/* Fila "pregunta larga + respuesta corta" — Consumo del día anterior y
+   Evaluación de la lactancia materna, donde el texto clínico completo debe
+   leerse conectado a su respuesta en vez de como label suelto encima de un
+   select (patrón por defecto de .form-field, pensado para labels cortos).
+   Selector compuesto (especificidad 0,2,0 / 0,2,1) a propósito, mismo
+   criterio que .pf-grid-4 .pf-condition-row en PlantillaCrecimt2.css: sin
+   el combinador con .form-field, esta regla y la base compiten con la misma
+   especificidad y el orden de inyección de cada hoja decide. */
+.form-field.al-eval-row{
+  flex-direction:row;align-items:center;justify-content:space-between;gap:24px;
+  padding:14px 0;border-bottom:1px solid #eef0f4;
+}
+.al-eval-list .form-field.al-eval-row:last-child{border-bottom:none;}
+.form-field.al-eval-row label{font-size:13.5px;font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
+.form-field.al-eval-row select{width:200px;flex-shrink:0;}
+
+/* Envoltorio de la tabla de histórico — mismo patrón que .pm-table-wrap en
+   PlantillaModal.css (borde + radio + scroll propio), duplicado acá porque
+   ese componente es exclusivo del catálogo de plantillas (ver AGENTS.md). */
+.al-hist-wrap{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:auto;max-width:100%;
+}
+.al-hist-wrap .data-table{min-width:820px;}
+
+/* "Ver histórico" (punto 6.B del encargo): acción secundaria que no debe
+   competir visualmente con los campos clínicos — btn-secondary ya es el
+   tratamiento menos prominente del set de botones, acá solo se reduce el
+   padding para que se lea como una acción auxiliar, no como un CTA. */
+.al-hist-link{padding:6px 12px;font-size:12.5px;margin-top:16px;}
+.al-hist-link .icon{width:15px;height:15px;}

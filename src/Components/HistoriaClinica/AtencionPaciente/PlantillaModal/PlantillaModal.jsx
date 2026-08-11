@@ -93,8 +93,8 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
                     onDoubleClick={() => handleElegir(p)}
                     aria-selected={selectedCodigo === p.codigo}
                   >
-                    <td className="cell-primary">{p.codigo}</td>
-                    <td>{p.descripcion}</td>
+                    <td className="pm-cell-codigo">{p.codigo}</td>
+                    <td className="pm-cell-desc">{p.descripcion}</td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (

@@ -1,0 +1,5 @@
+/* Todas las clases que usa este paso (.pf-card, .pf-group, .pf-card-title,
+   .pf-grid-3, .form-field) están definidas en ../PlantillaCrecimt2.css —
+   cascan desde ahí porque .pf-grid-3 es un primitivo reutilizable (ver
+   criterio de AGENTS.md en PlantillaCrecimt2.css). Nada exclusivo de
+   RiesgoStep todavía. */

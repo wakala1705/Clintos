@@ -10,7 +10,7 @@
   width:17px;height:17px;color:var(--ink-500);
 }
 .lp-search-field input{
-  width:100%;padding:11px 16px 11px 38px;border:1px solid var(--border);border-radius:var(--radius);
+  width:100%;height:var(--input-lg);padding:0 16px 0 38px;border:1px solid var(--border);border-radius:var(--radius);
   font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--surface);
 }
 .lp-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}

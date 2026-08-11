@@ -4,7 +4,7 @@
    combinador, cuál de las dos reglas "gana" depende del orden en que Next
    inyecta cada hoja de estilos, que no es estable entre navegaciones (mismo
    bug ya visto con .pf-checklist.pf-grid-4 en PlantillaCrecimt2.css). */
-.modal-card.pm-card{width:740px;}
+.modal-card.pm-card{width:720px;}
 .pm-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
 .pm-search{width:100%;}
 
@@ -13,6 +13,16 @@
   max-height:360px;overflow:auto;
 }
 .pm-col-codigo{width:150px;}
+/* Jerarquía propia de este catálogo: la descripción es el dato que el
+   usuario realmente lee para elegir, así que pesa más que el código — al
+   revés del énfasis por defecto de .cell-primary en shared.css (pensado
+   para AgendaTable), por eso no se reutiliza esa clase acá. Escopadas a
+   .pm-table-wrap (especificidad 0,2,0) para ganarle con margen a
+   ".data-table td" (0,1,1, ver shared.css) sin depender del orden de
+   inyección de cada hoja — un solo ".pm-cell-desc" (0,1,0) perdía ahí
+   justo el font-weight. */
+.pm-table-wrap .pm-cell-codigo{font-weight:400;color:var(--primary);}
+.pm-table-wrap .pm-cell-desc{font-weight:500;color:var(--ink-900);}
 .pm-empty-row{cursor:default;}
 .pm-empty-row:hover{background:transparent;}
 .pm-empty-cell{padding:28px;text-align:center;color:var(--ink-500);cursor:default;white-space:normal;}

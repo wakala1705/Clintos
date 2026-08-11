@@ -16,14 +16,16 @@
    "Guardar y continuar") es el estado de error real. :placeholder-shown
    cubre texto/textarea (con placeholder); input[type="date"] no soporta
    :placeholder-shown en Chromium, así que ese campo usa :invalid (un date
-   required vacío también es :invalid vía validación nativa). */
-.form-field textarea:required:placeholder-shown,
-.form-field input:required:placeholder-shown,
-.form-field input[type="date"]:required:invalid{
+   required vacío también es :invalid vía validación nativa). Gateado por
+   data-required-highlight en <html> (Configuración > Apariencia, ver
+   ConfigModal.jsx); "off" apaga el resaltado en toda la app. */
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
   background-color:var(--amber-bg);border-color:#eccb85;
 }
-html[data-theme="dark"] .form-field textarea:required:placeholder-shown,
-html[data-theme="dark"] .form-field input:required:placeholder-shown,
-html[data-theme="dark"] .form-field input[type="date"]:required:invalid{
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
   background-color:var(--amber-bg);border-color:#6b4a10;
 }

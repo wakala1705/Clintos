@@ -14,17 +14,21 @@ body{
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
 .hc-content{
   padding:16px;
-  display:flex;flex-direction:column;gap:16px;
+  display:flex;flex-direction:column;gap:24px;
   flex:1;min-height:0;min-width:0;overflow-y:auto;
 }
 
 /* ---------- BLOQUE DE BIENVENIDA ---------- */
 .hc-welcome{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
 .hc-welcome-hi{font-size:14px;color:var(--ink-500);}
-.hc-doctor-name{margin:0;font-size:22px;font-weight:700;color:var(--ink-900);letter-spacing:.01em;}
+.hc-doctor-name{margin:0;font-size:24px;font-weight:700;color:var(--ink-900);letter-spacing:.01em;}
 
 /* ---------- FILA: KPIs + selector de fecha ---------- */
-.hc-top-row{display:flex;align-items:stretch;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+/* gap:24px (var(--space-5)) a propósito, distinto del gap:16px de .hc-kpi-row
+   más abajo: KPIs+datepicker son 2 grupos distintos en esta fila, no
+   miembros del mismo grupo — el espacio entre grupos debe leerse mayor que
+   el espacio dentro de cada uno (regla de craft "espaciado en una escala"). */
+.hc-top-row{display:flex;align-items:stretch;gap:24px;flex-shrink:0;flex-wrap:wrap;}
 .hc-kpi-row{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px;flex:1;min-width:0;}
 
 /* ---------- CARD: Agenda del día ---------- */
@@ -62,7 +66,7 @@ body{
 .search-field{position:relative;width:320px;flex-shrink:0;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
 .search-field input{
-  width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:var(--radius);
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
   font-family:inherit;font-size:13px;background:var(--bg);color:var(--ink-900);
 }
 .search-field input::placeholder{color:var(--ink-400);}

@@ -1812,8 +1812,9 @@ export function initGestionEnfermeria() {
   // + evento 'clintos:verificacion-clinica-change' para sincronizar en caliente si se
   // apaga/prende mientras esta página ya está montada. Sin localStorage, igual que el
   // resto del estado de esta app (tema incluido): vive solo mientras dura la sesión.
+  // Desactivada por default: solo cuenta como habilitada si se prendió explícitamente.
   function isVerificacionClinicaEnabled(){
-    return window.__clintosVerificacionClinica !== false;
+    return window.__clintosVerificacionClinica === true;
   }
   function applySafetyCheckVisibility(){
     const block = document.getElementById('admin-safety-check-block');
