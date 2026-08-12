@@ -1,6 +1,7 @@
 'use client';
 
 import './EadStepper.css';
+import { RANGOS_EAD } from '../eadData';
 import { LuCheck } from 'react-icons/lu';
 
 const ESTADO_LABEL = {
@@ -20,10 +21,12 @@ const ESTADO_LABEL = {
 // advertencia blanda, nunca bloquea), TODOS los nodos son clicables siempre,
 // a diferencia de ValeStepper (solo los nodos "done" eran clicables).
 //
-// El selector de edad (chips) ya no vive acá: se movió dentro de cada
-// dominio (ver EadDomainEtapa.jsx, arriba de su propio título) — este riel
-// solo se ocupa de la navegación entre los 5 nodos.
-export default function EadStepper({ nodos, etapaActual, onSelectEtapa }) {
+// El selector de edad (antes chips, ahora select) vive acá abajo de los 5
+// nodos, separado por un borde — ya no arriba de cada dominio (ver
+// EadDomainEtapa.jsx). Es el mismo estado elevado en EadStep.jsx que se
+// comparte entre los 4 dominios (los 12 rangos son idénticos en los 4),
+// solo cambia dónde se renderiza el control.
+export default function EadStepper({ nodos, etapaActual, onSelectEtapa, rangoSeleccionado, onRangoChange }) {
   return (
     <nav className="ead-rail" aria-label="Dominios de EAD">
       <div className="ead-rail-sticky">
@@ -56,6 +59,22 @@ export default function EadStepper({ nodos, etapaActual, onSelectEtapa }) {
             );
           })}
         </ol>
+
+        <div className="ead-rail-rango">
+          <label className="ead-rail-rango-label" htmlFor="ead-rail-rango-select">Edad del paciente</label>
+          <select
+            id="ead-rail-rango-select"
+            className="ead-rail-rango-input"
+            value={rangoSeleccionado ?? ''}
+            onChange={(e) => onRangoChange(e.target.value)}
+          >
+            <option value="" disabled>Selecciona un rango de edad</option>
+            {RANGOS_EAD.map((r) => (
+              <option key={r.id} value={r.id}>{r.label}</option>
+            ))}
+          </select>
+          <p className="ead-rail-rango-hint">Resalta el rango de edad vigente en cada dominio.</p>
+        </div>
       </div>
     </nav>
   );

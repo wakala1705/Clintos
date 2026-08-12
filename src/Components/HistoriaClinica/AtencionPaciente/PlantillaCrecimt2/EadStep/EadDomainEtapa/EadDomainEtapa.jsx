@@ -13,13 +13,13 @@ import { LuChevronDown, LuCircleCheck } from 'react-icons/lu';
 // en eadData.js). No bloquea el avance (encargo: advertencia blanda, ver
 // EadStep.jsx).
 //
-// El selector de rango de edad (chips) vive acá arriba de cada dominio, no
-// en el riel (EadStepper.jsx) — mismo criterio que VALE
-// (ValeDesarrolloEtapa.jsx): la selección sigue siendo estado elevado en
-// EadStep.jsx y se comparte entre los 4 dominios (los 12 rangos son
-// idénticos en los 4), solo cambia dónde se renderiza el control. Como acá
-// ya está la selección directa por chip, el rango vigente ES el chip
-// elegido — sin pasar por ninguna conversión a días.
+// El selector de rango de edad (select) vive en el riel (EadStepper.jsx,
+// debajo de los 5 nodos), no acá arriba de cada dominio — la selección
+// sigue siendo estado elevado en EadStep.jsx y se comparte entre los 4
+// dominios (los 12 rangos son idénticos en los 4), este componente solo
+// recibe `rangoSeleccionado` ya resuelto para saber cuál rango es el
+// "vigente" (pill + bloque auto-expandido) — sin pasar por ninguna
+// conversión a días.
 //
 // Cada rango de edad es un bloque colapsable (progressive disclosure,
 // encargo explícito: "evitar mostrar toda la información simultáneamente"),
@@ -30,7 +30,7 @@ import { LuChevronDown, LuCircleCheck } from 'react-icons/lu';
 // — nunca se ocultan del todo (encargo: "permitir consultar otros rangos
 // sin perder el contexto").
 export default function EadDomainEtapa({
-  dominio, rangoSeleccionado, onRangoChange, respuestas, onRespuestaChange, resultado, onResultadoChange,
+  dominio, rangoSeleccionado, respuestas, onRespuestaChange, resultado, onResultadoChange,
 }) {
   const rangoVigente = rangoSeleccionado;
 
@@ -69,24 +69,6 @@ export default function EadDomainEtapa({
 
   return (
     <div className="ac-wrap">
-      <div className="ead-rango-select">
-        <p className="ead-rango-select-label" id="ead-edad-label">Edad del paciente</p>
-        <div className="ead-rango-chips" role="group" aria-labelledby="ead-edad-label">
-          {RANGOS_EAD.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              className={`ead-rango-chip${rangoSeleccionado === r.id ? ' active' : ''}`}
-              aria-pressed={rangoSeleccionado === r.id}
-              onClick={() => onRangoChange(r.id)}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
-        <p className="ead-rango-select-hint">Resalta el rango de edad vigente en cada dominio.</p>
-      </div>
-
       <h1 className="pf-section-title">{dominio.label}</h1>
       <p className="pf-section-desc">{dominio.descripcion}</p>
 

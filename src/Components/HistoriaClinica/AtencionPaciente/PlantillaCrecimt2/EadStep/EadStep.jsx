@@ -41,13 +41,12 @@ function estadoDominio(items, respuestasDominio) {
 // responden ítems (ver EadDomainEtapa.jsx) — la etapa de Resultado solo
 // refleja lo que cada dominio ya tiene, no dispara ningún cálculo propio.
 //
-// La edad del paciente se captura una sola vez como chip de rango (ver
-// EadDomainEtapa.jsx, arriba de cada dominio — mismo criterio que VALE en
-// ValeDesarrolloEtapa.jsx, no un número exacto): los 12 rangos de los 4
+// La edad del paciente se captura una sola vez como select de rango (ver
+// EadStepper.jsx, debajo de los 5 nodos del riel): los 12 rangos de los 4
 // dominios son idénticos, así que la selección vive elevada acá y se
 // reutiliza en los 4 (el rango elegido ES directamente el "vigente" — sin
 // pasar por ninguna conversión a días). Sin un paciente real de estas
-// edades en los datos de prueba, el chip elegido queda como ejemplo del
+// edades en los datos de prueba, el rango elegido queda como ejemplo del
 // comportamiento — en producción se derivaría automáticamente de la edad
 // real del paciente en vez de pedirla acá.
 const EadStep = forwardRef(function EadStep({ hidden, scrollContainerRef }, ref) {
@@ -110,6 +109,8 @@ const EadStep = forwardRef(function EadStep({ hidden, scrollContainerRef }, ref)
         nodos={nodos}
         etapaActual={etapa}
         onSelectEtapa={handleSelectEtapa}
+        rangoSeleccionado={rangoSeleccionado}
+        onRangoChange={setRangoSeleccionado}
       />
 
       <div className="ead-main">
@@ -118,7 +119,6 @@ const EadStep = forwardRef(function EadStep({ hidden, scrollContainerRef }, ref)
             <EadDomainEtapa
               dominio={dominioActual}
               rangoSeleccionado={rangoSeleccionado}
-              onRangoChange={setRangoSeleccionado}
               respuestas={respuestas[dominioActual.key]}
               onRespuestaChange={(itemId, valor) => updateRespuesta(dominioActual.key, itemId, valor)}
               resultado={resultados[dominioActual.key]}

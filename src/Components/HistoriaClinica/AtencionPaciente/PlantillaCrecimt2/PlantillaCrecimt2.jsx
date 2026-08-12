@@ -27,27 +27,29 @@ import { LuArrowLeft } from 'react-icons/lu';
 // del wizard sin que este componente (ni ninguno de sus pasos) necesite
 // pedirlos de nuevo.
 //
-// Las 12 secciones del formulario original de CRECIMT2. "01 Consulta", "02
-// Antecedentes", "03 Riesgo 4505", "04 Alimentación", "05 Vacunación", "06
-// Factores de riesgo", "07 VALE" y "08 Desarrollo" tienen contenido real
-// (ver ConsultaStep.jsx/AntecedentesStep.jsx/RiesgoStep.jsx/
-// AlimentacionStep.jsx/VacunacionStep.jsx/FactoresRiesgoStep.jsx/
-// ValeStep.jsx/EadStep.jsx); el resto queda visible-pero-inerte para que el
-// mapa completo del formulario se lea igual de real que en un HIS en
-// producción, mismo patrón que las pestañas deshabilitadas de
-// AtencionPaciente.jsx (title="Próximamente"). Tres ajustes ya aplicados
-// sobre la numeración original, ninguno elimina campos: "Factores de
-// riesgo" (antes 08, inerte) pasó a 06, justo después de Vacunación, porque
-// su contenido real viene del mismo formulario legacy de vacunación;
-// "Desarrollo"/"Crecimiento" (07/08) intercambiaron posición porque el
-// primer contenido real que se construyó ahí fue VALE — Valoración del
-// desarrollo infantil (ver ValeStep.jsx); y ahora que el contenido real de
-// "08" es la EAD — Escala Abreviada de Desarrollo (ver EadStep.jsx,
-// semánticamente "Desarrollo" tanto o más que VALE) el 07 se relabela a
-// "VALE" (mismo contenido, solo el nombre) y el 08 pasa a llamarse
-// "Desarrollo" — "Crecimiento" no tenía una fuente legacy verificada en
-// este proyecto (fue mi propia aproximación antes de tener las capturas
-// reales del formulario), así que no hay contenido que reubicar.
+// Las 11 secciones del formulario original de CRECIMT2 (originalmente 12;
+// "09 Escalas" se eliminó por encargo — no tenía contenido real ni fuente
+// legacy, así que el resto se renumeró para no dejar un hueco en el riel).
+// "01 Consulta", "02 Antecedentes", "03 Riesgo 4505", "04 Alimentación", "05
+// Vacunación", "06 Factores de riesgo", "07 VALE" y "08 Escala de
+// desarrollo" tienen contenido real (ver ConsultaStep.jsx/
+// AntecedentesStep.jsx/RiesgoStep.jsx/AlimentacionStep.jsx/
+// VacunacionStep.jsx/FactoresRiesgoStep.jsx/ValeStep.jsx/EadStep.jsx); el
+// resto queda visible-pero-inerte para que el mapa completo del formulario
+// se lea igual de real que en un HIS en producción, mismo patrón que las
+// pestañas deshabilitadas de AtencionPaciente.jsx (title="Próximamente").
+// Ajustes ya aplicados sobre la numeración original, ninguno elimina
+// campos: "Factores de riesgo" (antes 08, inerte) pasó a 06, justo después
+// de Vacunación, porque su contenido real viene del mismo formulario legacy
+// de vacunación; "Desarrollo"/"Crecimiento" (07/08) intercambiaron posición
+// porque el primer contenido real que se construyó ahí fue VALE —
+// Valoración del desarrollo infantil (ver ValeStep.jsx); y ahora que el
+// contenido real de "08" es la EAD — Escala Abreviada de Desarrollo (ver
+// EadStep.jsx) el 07 se relabela a "VALE" (mismo contenido, solo el nombre)
+// y el 08 pasa a llamarse "Escala de desarrollo" — "Crecimiento" no tenía
+// una fuente legacy verificada en este proyecto (fue mi propia aproximación
+// antes de tener las capturas reales del formulario), así que no hay
+// contenido que reubicar.
 export const SECCIONES = [
   {
     num: '01', label: 'Consulta', status: 'active',
@@ -97,15 +99,14 @@ export const SECCIONES = [
     ],
   },
   {
-    num: '08', label: 'Desarrollo', status: 'active',
+    num: '08', label: 'Escala de desarrollo', status: 'active',
     subsecciones: [
       { id: 'ead-evaluacion', label: 'Evaluación EAD' },
     ],
   },
-  { num: '09', label: 'Escalas', status: 'inert' },
-  { num: '10', label: 'Examen físico', status: 'inert' },
-  { num: '11', label: 'Diagnóstico', status: 'inert' },
-  { num: '12', label: 'Plan', status: 'inert' },
+  { num: '09', label: 'Examen físico', status: 'inert' },
+  { num: '10', label: 'Diagnóstico', status: 'inert' },
+  { num: '11', label: 'Plan', status: 'inert' },
 ];
 
 function formatSavedAt(date) {
@@ -115,7 +116,8 @@ function formatSavedAt(date) {
 
 // El formulario es tipo wizard: `currentStep` es el índice (0 = 01 Consulta,
 // 1 = 02 Antecedentes, 2 = 03 Riesgo 4505, 3 = 04 Alimentación, 4 = 05
-// Vacunación, 5 = 06 Factores de riesgo, 6 = 07 VALE, 7 = 08 Desarrollo/EAD)
+// Vacunación, 5 = 06 Factores de riesgo, 6 = 07 VALE, 7 = 08 Escala de
+// desarrollo/EAD)
 // del paso que se está diligenciando ahora — ya no un scroll continuo con
 // scrollspy sobre todas las subsecciones del formulario. Un paso solo
 // avanza al siguiente si `ConsultaStep.validar()` (ref) confirma que los

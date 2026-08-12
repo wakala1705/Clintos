@@ -3,25 +3,8 @@
    (card de resultado) y .pf-grid-2col ya están definidos en
    ../../PlantillaCrecimt2.css y cascan hasta acá. */
 
-/* ---------- Selector de rango de edad (chips) ----------
-   Mismo patrón que .vale-rango-select/.vale-rango-chip en
-   ValeDesarrolloEtapa.css — un solo condicional de edad, resuelto por
-   selección directa de chip en vez de un número exacto. */
-.ead-rango-select{margin-bottom:20px;}
-.ead-rango-select-label{
-  margin:0 0 10px;font-size:11px;font-weight:700;color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;
-}
-.ead-rango-chips{display:flex;flex-wrap:wrap;gap:8px;}
-.ead-rango-chip{
-  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-700);
-  background:var(--surface);border:1px solid var(--border);border-radius:999px;
-  padding:8px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s;
-}
-.ead-rango-chip:hover{background:var(--bg);}
-.ead-rango-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
-.ead-rango-chip:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.ead-rango-select-hint{margin:8px 0 0;font-size:11.5px;color:var(--ink-500);line-height:1.4;}
+/* El selector de rango de edad (select) ya no vive acá — se movió al riel
+   (ver .ead-rail-rango-* en ../EadStepper/EadStepper.css). */
 
 /* ---------- Rangos de edad colapsables ---------- */
 .ead-rangos{padding:0;}
