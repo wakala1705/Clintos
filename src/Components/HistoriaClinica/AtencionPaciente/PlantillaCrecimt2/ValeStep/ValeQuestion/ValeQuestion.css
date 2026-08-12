@@ -1,0 +1,40 @@
+/* .pf-toggle-group/.pf-toggle-btn (segmented control Sí/No) y .pf-check-row
+   (checkbox "Observación directa") ya están definidos en
+   ../../PlantillaCrecimt2.css y cascan hasta acá — solo se agregan
+   variantes de tamaño/posición propias de esta pregunta, no se redefine el
+   control. */
+.vale-q{padding:16px 0;border-bottom:1px solid var(--border);}
+.vale-q:last-child{border-bottom:none;}
+.vale-q-main{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.vale-q-code{
+  flex-shrink:0;width:24px;height:24px;border-radius:6px;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+}
+.vale-q-code.c{background:var(--status-info-bg);color:var(--status-info-fg);}
+.vale-q-code.e{background:var(--violet-bg);color:var(--violet-fg);}
+.vale-q-code.i{background:var(--green-bg);color:var(--green);}
+.vale-q-text{margin:0;font-size:14px;font-weight:500;color:var(--ink-900);line-height:1.5;}
+
+.vale-q-controls{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-left:34px;
+}
+.vale-q-answer{flex-shrink:0;}
+/* Preguntas vestibulares no llevan código C/E/I (ver encargo) — sin la
+   insignia no hay nada que alinear los controles debajo, así que pierden la
+   indentación reservada para el ancho del código. */
+.vale-q.no-code .vale-q-controls{padding-left:0;}
+/* Observación directa: mismo .pf-check-row de siempre pero más compacto —
+   es secundaria a la pregunta principal (encargo: "no debe competir
+   visualmente"), min-height:44px del original es innecesario acá. */
+.vale-q-observacion{min-height:auto;padding:4px 8px;font-size:12.5px;color:var(--ink-500);}
+
+.vale-q.has-error .vale-q-text{color:var(--red);}
+.vale-q-error{display:flex;align-items:center;gap:5px;padding-left:34px;margin-top:10px;}
+.vale-q-error .icon{width:14px;height:14px;flex-shrink:0;}
+.vale-q.no-code .vale-q-error{padding-left:0;}
+
+@media (max-width:720px){
+  .vale-q-controls{padding-left:0;flex-direction:column;align-items:flex-start;gap:10px;}
+  .vale-q-error{padding-left:0;}
+}

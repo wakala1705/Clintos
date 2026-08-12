@@ -1,5 +1,6 @@
 import './AgendaTable.css';
 import TipoBadge from '../TipoBadge/TipoBadge';
+import { LuChevronRight } from 'react-icons/lu';
 
 // Tabla de escritorio/tablet + tarjetas de mobile del mismo dataset — se
 // renderizan ambas y la CSS decide cuál mostrar según el ancho (mismo patrón
@@ -7,7 +8,10 @@ import TipoBadge from '../TipoBadge/TipoBadge';
 // para las mismas filas. Doble clic en una fila/tarjeta abre la atención de
 // ese paciente (onOpenAtencion), igual que "Ir a historia clínica" en
 // PatientsTable — un solo clic queda libre para selección de texto/futuras
-// acciones sin disparar la navegación por accidente.
+// acciones sin disparar la navegación por accidente. El doble clic no tiene
+// equivalente de teclado (WCAG 2.1.1): cada fila/tarjeta también expone un
+// botón real "Ver atención de <nombre>" para que la misma acción quede
+// disponible con Tab + Enter/Espacio sin depender del mouse.
 export default function AgendaTable({ items, onOpenAtencion }) {
   return (
     <>
@@ -22,6 +26,7 @@ export default function AgendaTable({ items, onOpenAtencion }) {
               <th rowSpan={2}>Descripción</th>
               <th className="group-head group-divider" colSpan={3}>Primera vez</th>
               <th rowSpan={2} className="group-divider">Tipo cita</th>
+              <th rowSpan={2} className="col-acciones"><span className="sr-only">Acciones</span></th>
             </tr>
             <tr>
               <th>Cita</th>
@@ -52,6 +57,16 @@ export default function AgendaTable({ items, onOpenAtencion }) {
                 <td className="cell-muted">{a.primeraVez?.ips ?? '-'}</td>
                 <td className="cell-muted">{a.primeraVez?.medico ?? '-'}</td>
                 <td className="group-divider"><TipoBadge tipo={a.tipoCita} /></td>
+                <td className="col-acciones">
+                  <button
+                    type="button"
+                    className="row-open-btn"
+                    onClick={() => onOpenAtencion(a.id)}
+                    aria-label={`Ver atención de ${a.nombreAfiliado}`}
+                  >
+                    <LuChevronRight className="icon" aria-hidden="true" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -83,6 +98,14 @@ export default function AgendaTable({ items, onOpenAtencion }) {
                 Primera vez {a.primeraVez.anio} · {a.primeraVez.ips} · {a.primeraVez.medico}
               </div>
             )}
+            <button
+              type="button"
+              className="hc-card-open-btn"
+              onClick={() => onOpenAtencion(a.id)}
+            >
+              Ver atención
+              <LuChevronRight className="icon" aria-hidden="true" />
+            </button>
           </div>
         ))}
       </div>

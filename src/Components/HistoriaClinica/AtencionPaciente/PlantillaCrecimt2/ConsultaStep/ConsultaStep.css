@@ -1,11 +1,10 @@
-/* Asterisco de campo obligatorio + mensaje de error puntual — únicos en este
-   paso porque hoy es el único del wizard con validación bloqueante (avanzar
-   a "02 Antecedentes" exige motivo de consulta, enfermedad actual y fecha de
-   atención, ver ConsultaStep.jsx). Si otro paso suma su propia validación
-   más adelante, estas reglas se mueven a PlantillaCrecimt2.css (ver AGENTS.md
-   sobre reglas compartidas por 2+ consumidores). */
+/* Asterisco de campo obligatorio — único en este paso porque hoy es el
+   único del wizard con validación de campos con label (avanzar a "02
+   Antecedentes" exige motivo de consulta, enfermedad actual y fecha de
+   atención, ver ConsultaStep.jsx). .pf-field-error se movió a
+   PlantillaCrecimt2.css cuando ValeStep sumó su propia validación bloqueante
+   (ver AGENTS.md sobre reglas compartidas por 2+ consumidores). */
 .req{color:var(--red);margin-left:2px;}
-.pf-field-error{display:block;font-size:12px;color:var(--red);margin-top:6px;}
 .form-field textarea[aria-invalid="true"],
 .form-field input[aria-invalid="true"]{border-color:var(--red);}
 

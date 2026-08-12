@@ -49,9 +49,10 @@ const ConsultaStep = forwardRef(function ConsultaStep({ hidden }, ref) {
                 required
                 value={consulta.motivoConsulta}
                 aria-invalid={errors.motivoConsulta ? 'true' : undefined}
+                aria-describedby={errors.motivoConsulta ? 'con-motivo-error' : undefined}
                 onChange={(e) => { setConsulta((p) => ({ ...p, motivoConsulta: e.target.value })); clearError('motivoConsulta'); }}
               />
-              {errors.motivoConsulta && <span className="pf-field-error">Campo obligatorio para continuar</span>}
+              {errors.motivoConsulta && <span id="con-motivo-error" className="pf-field-error">Campo obligatorio para continuar</span>}
             </div>
             <div className="form-field">
               <label htmlFor="con-enfermedad">Enfermedad actual<span className="req">*</span></label>
@@ -60,9 +61,10 @@ const ConsultaStep = forwardRef(function ConsultaStep({ hidden }, ref) {
                 required
                 value={consulta.enfermedadActual}
                 aria-invalid={errors.enfermedadActual ? 'true' : undefined}
+                aria-describedby={errors.enfermedadActual ? 'con-enfermedad-error' : undefined}
                 onChange={(e) => { setConsulta((p) => ({ ...p, enfermedadActual: e.target.value })); clearError('enfermedadActual'); }}
               />
-              {errors.enfermedadActual && <span className="pf-field-error">Campo obligatorio para continuar</span>}
+              {errors.enfermedadActual && <span id="con-enfermedad-error" className="pf-field-error">Campo obligatorio para continuar</span>}
             </div>
           </div>
         </div>
@@ -75,9 +77,10 @@ const ConsultaStep = forwardRef(function ConsultaStep({ hidden }, ref) {
               <input
                 id="dat-fecha" type="date" required value={datosAtencion.fechaPrimeraAtencion}
                 aria-invalid={errors.fechaPrimeraAtencion ? 'true' : undefined}
+                aria-describedby={errors.fechaPrimeraAtencion ? 'dat-fecha-error' : undefined}
                 onChange={(e) => { setDatosAtencion((p) => ({ ...p, fechaPrimeraAtencion: e.target.value })); clearError('fechaPrimeraAtencion'); }}
               />
-              {errors.fechaPrimeraAtencion && <span className="pf-field-error">Campo obligatorio para continuar</span>}
+              {errors.fechaPrimeraAtencion && <span id="dat-fecha-error" className="pf-field-error">Campo obligatorio para continuar</span>}
             </div>
             <div className="form-field">
               <label htmlFor="dat-momento">Momento vital</label>

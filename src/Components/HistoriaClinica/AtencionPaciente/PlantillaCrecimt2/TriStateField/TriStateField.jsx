@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import './TriStateField.css';
 
 const DEFAULT_OPTIONS = [
@@ -23,6 +24,8 @@ export default function TriStateField({
   descriptionLabel = 'Descripción',
   descriptionPlaceholder = 'Describe brevemente...',
 }) {
+  const descriptionId = useId();
+
   return (
     <div className="pf-condition">
       <div className="pf-condition-row">
@@ -44,8 +47,9 @@ export default function TriStateField({
 
       {showDescription && (
         <div className="form-field pf-condition-desc">
-          <label>{descriptionLabel}</label>
+          <label htmlFor={descriptionId}>{descriptionLabel}</label>
           <input
+            id={descriptionId}
             type="text"
             value={descriptionValue}
             onChange={(e) => onDescriptionChange(e.target.value)}

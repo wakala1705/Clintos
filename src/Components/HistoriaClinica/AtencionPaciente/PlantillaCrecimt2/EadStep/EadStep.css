@@ -1,0 +1,32 @@
+/* Fila completa: riel (EadStepper, ver .ead-rail en EadStepper.css) +
+   contenido principal — mismo layout que .vale-step-root (ValeStep.css) un
+   nivel más adentro, para las 5 etapas propias de EAD en vez de las 12
+   secciones del wizard. */
+.ead-step-root{display:flex;}
+.ead-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+
+/* El padding/ancho máximo centrado de cada etapa viene de su propio
+   .ac-wrap interno (ver EadDomainEtapa.jsx/EadResultadoEtapa.jsx). */
+.ead-body{flex:1;}
+
+/* Barra de acciones interna de EAD (Anterior/Continuar) — independiente de
+   .pf-footer (barra externa del wizard). Sticky SIN overflow propio —
+   resuelve contra .pf-body (el único contenedor con scroll real del
+   wizard), mismo criterio que .vale-actionbar en ValeStep.css. */
+.ead-actionbar{
+  position:sticky;bottom:0;z-index:var(--z-sticky);
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.ead-actionbar-caption{
+  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
+}
+.ead-actionbar-buttons{display:flex;align-items:center;gap:10px;}
+
+@media (max-width:1024px){
+  .ead-step-root{flex-direction:column;}
+}
+@media (max-width:720px){
+  .ead-actionbar{padding-left:16px;padding-right:16px;}
+  .ead-actionbar-caption{display:none;}
+}

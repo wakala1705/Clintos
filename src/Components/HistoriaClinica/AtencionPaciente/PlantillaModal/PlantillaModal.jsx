@@ -1,9 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './PlantillaModal.css';
 import { PLANTILLAS } from '@/hooks/HistoriaClinica/mockPlantillas';
 import { LuCheck, LuSearch, LuX } from 'react-icons/lu';
+
+// Selector de elementos que pueden recibir foco de teclado dentro del modal
+// — usado para el focus trap (ver efecto de Tab más abajo) y para decidir a
+// quién devolver el foco no aplica acá (eso lo maneja AtencionPaciente.jsx,
+// que sabe cuál botón disparó la apertura).
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 // Catálogo de plantillas de historia clínica — se abre desde "Nueva
 // atención" en RegistrosPanel. Elegir una plantilla es, por ahora, el final
@@ -12,12 +18,31 @@ import { LuCheck, LuSearch, LuX } from 'react-icons/lu';
 export default function PlantillaModal({ open, onClose, onElegir }) {
   const [query, setQuery] = useState('');
   const [selectedCodigo, setSelectedCodigo] = useState(null);
+  const cardRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
+
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab') return;
+
+      // Focus trap: el modal no tiene backdrop inerte propio, así que sin
+      // esto Tab/Shift+Tab se escapa hacia el contenido de AtencionPaciente
+      // que sigue montado (solo tapado visualmente por el overlay).
+      const focusable = cardRef.current?.querySelectorAll(FOCUSABLE_SELECTOR);
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onClose]);
@@ -54,6 +79,7 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
         aria-modal="true"
         aria-labelledby="pm-title"
         onClick={(e) => e.stopPropagation()}
+        ref={cardRef}
       >
         <div className="modal-header">
           <h3 id="pm-title">Catálogo de plantillas de historia clínica</h3>
@@ -85,18 +111,32 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => (
-                  <tr
-                    key={p.codigo}
-                    className={selectedCodigo === p.codigo ? 'selected' : undefined}
-                    onClick={() => setSelectedCodigo(p.codigo)}
-                    onDoubleClick={() => handleElegir(p)}
-                    aria-selected={selectedCodigo === p.codigo}
-                  >
-                    <td className="pm-cell-codigo">{p.codigo}</td>
-                    <td className="pm-cell-desc">{p.descripcion}</td>
-                  </tr>
-                ))}
+                {filtered.map((p) => {
+                  const isSelected = selectedCodigo === p.codigo;
+                  return (
+                    <tr
+                      key={p.codigo}
+                      className={isSelected ? 'selected' : undefined}
+                      onClick={() => setSelectedCodigo(p.codigo)}
+                      onDoubleClick={() => handleElegir(p)}
+                      aria-selected={isSelected}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'Enter' && e.key !== ' ') return;
+                        e.preventDefault();
+                        // Enter selecciona la fila (como un clic); sobre una
+                        // fila ya seleccionada y enfocada, un segundo Enter
+                        // la elige — mismo mapeo que clic/doble clic con
+                        // mouse, sin depender de él (WCAG 2.1.1).
+                        if (isSelected) handleElegir(p);
+                        else setSelectedCodigo(p.codigo);
+                      }}
+                    >
+                      <td className="pm-cell-codigo">{p.codigo}</td>
+                      <td className="pm-cell-desc">{p.descripcion}</td>
+                    </tr>
+                  );
+                })}
                 {filtered.length === 0 && (
                   <tr className="pm-empty-row">
                     <td colSpan={2} className="pm-empty-cell">No encontramos plantillas que coincidan con tu búsqueda.</td>

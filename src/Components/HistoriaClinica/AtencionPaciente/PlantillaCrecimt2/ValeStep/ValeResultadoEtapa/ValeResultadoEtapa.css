@@ -1,0 +1,76 @@
+.vale-res-pending{
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+  padding:48px 24px;color:var(--ink-500);
+}
+.vale-res-pending .icon{width:32px;height:32px;color:var(--ink-400);}
+.vale-res-pending p{margin:0;font-size:13.5px;max-width:420px;}
+
+/* ---------- HEADLINE (resultado general) ---------- */
+.vale-res-headline{
+  display:flex;align-items:flex-start;gap:14px;padding:20px 24px;border-radius:var(--radius-lg);
+  margin-bottom:20px;
+}
+.vale-res-headline .icon{width:28px;height:28px;flex-shrink:0;margin-top:2px;}
+.vale-res-headline h2{margin:0 0 4px;font-size:18px;font-weight:700;}
+.vale-res-headline p{margin:0;font-size:13px;color:var(--ink-700);}
+.vale-res-headline p b{color:var(--ink-900);}
+/* #0d7a3d (no var(--green)) para el texto/ícono sobre --green-bg — mismo
+   ajuste de contraste que .dp-status-badge.st-administered en
+   GestionEnfermeria/shared/shared.css: var(--green) solo no pasa contraste
+   AA sobre ese verde tan claro de fondo. */
+.vale-res-headline.pass{background:var(--green-bg);}
+.vale-res-headline.pass .icon,
+.vale-res-headline.pass h2{color:#0d7a3d;}
+.vale-res-headline.fail{background:var(--red-bg);}
+.vale-res-headline.fail .icon,
+.vale-res-headline.fail h2{color:var(--red);}
+
+/* ---------- CONDUCTA RECOMENDADA ---------- */
+.vale-res-conducta{
+  background:var(--amber-bg);border:1px solid #eccb85;border-radius:var(--radius-lg);
+  padding:18px 24px;margin-bottom:20px;
+}
+.vale-res-conducta h3{margin:0 0 8px;font-size:14px;font-weight:700;color:var(--amber-fg);}
+.vale-res-conducta p{margin:0;font-size:13.5px;line-height:1.6;color:var(--ink-900);}
+
+/* ---------- CARDS DE RESULTADO POR DIMENSIÓN ----------
+   Adapta el shell de .kpi-card (KpiFilterCard.css) como <div> NO
+   interactivo — son tiles estáticos de resumen, no toggles de filtro: sin
+   cursor:pointer, sin hover ni :focus-visible. */
+.vale-res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.vale-res-card{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;
+}
+.vale-res-card-icon{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.vale-res-card-icon .icon{width:20px;height:20px;}
+.vale-res-card-body{display:flex;flex-direction:column;gap:5px;min-width:0;}
+.vale-res-card-label{font-size:13px;font-weight:600;color:var(--ink-900);}
+
+.vale-res-badge{
+  display:inline-flex;align-items:center;gap:6px;width:fit-content;
+  font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
+}
+.vale-res-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* Aprobado / Sin hallazgos */
+.vale-res-card-icon.pass, .vale-res-card-icon.sin-hallazgos,
+.vale-res-badge.pass, .vale-res-badge.sin-hallazgos{background:var(--green-bg);color:#0d7a3d;}
+/* Falla */
+.vale-res-card-icon.fail, .vale-res-badge.fail{background:var(--red-bg);color:var(--red);}
+/* Con hallazgos */
+.vale-res-card-icon.hallazgos, .vale-res-badge.hallazgos{background:var(--amber-bg);color:var(--amber-fg);}
+/* No aplica a esta edad — ink-700 (no ink-500): ink-500 sobre --gray-bg no
+   pasa contraste AA (mismo ajuste ya aplicado en TipoBadge.css). */
+.vale-res-card-icon.no-aplica, .vale-res-badge.no-aplica{background:var(--gray-bg);color:var(--ink-700);}
+
+@media (max-width:900px){
+  .vale-res-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:720px){
+  .vale-res-grid{grid-template-columns:1fr;}
+  .vale-res-headline{flex-direction:column;}
+}

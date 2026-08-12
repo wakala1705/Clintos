@@ -23,6 +23,11 @@
    justo el font-weight. */
 .pm-table-wrap .pm-cell-codigo{font-weight:400;color:var(--primary);}
 .pm-table-wrap .pm-cell-desc{font-weight:500;color:var(--ink-900);}
+/* Las filas son enfocables (tabIndex, ver PlantillaModal.jsx) para elegir
+   plantilla con Enter sin mouse — .data-table no trae :focus-visible propio
+   porque hasta ahora ninguna fila de otras tablas del proyecto era
+   enfocable. */
+.pm-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pm-empty-row{cursor:default;}
 .pm-empty-row:hover{background:transparent;}
 .pm-empty-cell{padding:28px;text-align:center;color:var(--ink-500);cursor:default;white-space:normal;}

@@ -24,6 +24,21 @@
 .data-table th.group-divider,
 .data-table td.group-divider{border-left:1px solid var(--border);}
 
+/* ---------- COLUMNA "ACCIONES" ----------
+   Botón real por fila para abrir la atención del paciente por teclado
+   (Tab + Enter/Espacio) — el onDoubleClick de la fila (ver AgendaTable.jsx)
+   no tiene equivalente de teclado por sí solo (WCAG 2.1.1). El th queda sin
+   texto visible (.sr-only, ver shared.css) porque el propósito de la
+   columna ya se entiende por el ícono de cada fila. */
+.col-acciones{width:1%;white-space:nowrap;}
+.row-open-btn{
+  width:28px;height:28px;border-radius:7px;border:none;background:transparent;color:var(--ink-500);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;
+}
+.row-open-btn .icon{width:17px;height:17px;}
+.row-open-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.row-open-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
 /* Fila de un paciente ya atendido — mismo verde semántico que el resto del
    proyecto usa para "administrado/completado" (--green-bg, ver
    .dp-status-badge.st-administered en GestionEnfermeria), para distinguir de
@@ -57,3 +72,13 @@
 .hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink-700);}
 .hc-card-times b{color:var(--ink-500);font-weight:600;margin-right:4px;}
 .hc-card-meta{font-size:12px;color:var(--ink-500);border-top:1px solid #eef0f4;padding-top:8px;}
+/* Mismo motivo que .row-open-btn arriba: la tarjeta mobile también depende
+   de onDoubleClick, sin equivalente táctil/teclado — este botón le da a
+   cada tarjeta una acción explícita y enfocable. */
+.hc-card-open-btn{
+  align-self:flex-end;display:flex;align-items:center;gap:4px;
+  font-family:inherit;font-size:12px;font-weight:600;color:var(--primary);
+  background:none;border:none;padding:4px 0;cursor:pointer;
+}
+.hc-card-open-btn .icon{width:15px;height:15px;}
+.hc-card-open-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}

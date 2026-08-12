@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../HistoriaClinica.css';
 import '../shared/shared.css';
@@ -47,7 +47,44 @@ export default function AtencionPaciente({ id }) {
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState('historia-clinica');
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
+  const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2'
+  // Guarda qué elemento tenía el foco antes de abrir el catálogo de
+  // plantillas, para devolvérselo al cerrar (PlantillaModal no lo sabe: solo
+  // conoce su propio contenido, no quién lo disparó — WCAG 2.1.2/2.4.3).
+  const plantillaTriggerRef = useRef(null);
+
+  function openPlantillaModal() {
+    plantillaTriggerRef.current = document.activeElement;
+    setPlantillaModalOpen(true);
+  }
+
+  function closePlantillaModal() {
+    setPlantillaModalOpen(false);
+    plantillaTriggerRef.current?.focus?.();
+  }
+
+  // Patrón ARIA APG de tablist: el roving tabIndex ya deja Tab llegar a la
+  // pestaña activa, pero dentro del tablist las flechas deben moverse entre
+  // pestañas habilitadas (WCAG 4.1.2 / expectativa estándar del patrón). Hoy
+  // solo hay una pestaña enabled, así que esto queda listo para cuando se
+  // habiliten más (ver TABS más arriba) sin volver a tocar este handler.
+  function handleTabsKeyDown(e) {
+    const enabledTabs = TABS.filter((t) => t.enabled);
+    if (enabledTabs.length <= 1) return;
+    const currentIndex = enabledTabs.findIndex((t) => t.id === activeTab);
+    let nextIndex;
+    if (e.key === 'ArrowRight') nextIndex = (currentIndex + 1) % enabledTabs.length;
+    else if (e.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + enabledTabs.length) % enabledTabs.length;
+    else if (e.key === 'Home') nextIndex = 0;
+    else if (e.key === 'End') nextIndex = enabledTabs.length - 1;
+    else return;
+
+    e.preventDefault();
+    const nextTab = enabledTabs[nextIndex];
+    setActiveTab(nextTab.id);
+    tabRefs.current.get(nextTab.id)?.focus();
+  }
 
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
@@ -77,18 +114,29 @@ export default function AtencionPaciente({ id }) {
         />
 
         <div className="content hc-content">
-          {status === 'loading' && <div className="ap-loading">Cargando atención…</div>}
+          {/* aria-live: sin esto, un lector de pantalla que ya leyó "Cargando
+              atención…" no se entera cuando ese estado cambia a "no
+              encontramos esta cita" — no hay foco ni anuncio que lo avise
+              (WCAG 4.1.3). Solo se monta mientras status !== 'ready': una
+              vez listo, el contenido real se encuentra con la lectura normal
+              de la página y este wrapper no debe seguir ocupando flex:1
+              junto a él (ver .ap-status-live en AtencionPaciente.css). */}
+          {status !== 'ready' && (
+            <div className="ap-status-live" aria-live="polite">
+              {status === 'loading' && <div className="ap-loading">Cargando atención…</div>}
 
-          {status === 'not-found' && (
-            <div className="ap-not-found">
-              <AgendaEmptyState
-                icon={LuFileText}
-                title="No encontramos esta cita"
-                subtitle="Puede que el enlace esté vencido o la cita ya no exista en la agenda del día."
-              />
-              <button type="button" className="btn btn-primary" onClick={() => router.push('/historia-clinica')}>
-                Volver a la agenda
-              </button>
+              {status === 'not-found' && (
+                <div className="ap-not-found">
+                  <AgendaEmptyState
+                    icon={LuFileText}
+                    title="No encontramos esta cita"
+                    subtitle="Puede que el enlace esté vencido o la cita ya no exista en la agenda del día."
+                  />
+                  <button type="button" className="btn btn-primary" onClick={() => router.push('/historia-clinica')}>
+                    Volver a la agenda
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -108,10 +156,11 @@ export default function AtencionPaciente({ id }) {
                   <PlantillaCrecimt2 onSalir={() => setPlantillaActiva(null)} />
                 ) : (
                   <>
-                    <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención">
+                    <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>
                       {TABS.map((tab) => (
                         <button
                           key={tab.id}
+                          ref={(el) => { if (el) tabRefs.current.set(tab.id, el); else tabRefs.current.delete(tab.id); }}
                           type="button"
                           className={`card-tab${activeTab === tab.id ? ' active' : ''}`}
                           role="tab"
@@ -134,7 +183,7 @@ export default function AtencionPaciente({ id }) {
                         <HistoriaClinicaTab
                           grupos={getRegistrosGrupos(data.patient.documento)}
                           nuevaAtencionLabel="Nueva atención"
-                          onNuevaAtencion={() => setPlantillaModalOpen(true)}
+                          onNuevaAtencion={openPlantillaModal}
                         />
                       )}
                     </div>
@@ -148,9 +197,9 @@ export default function AtencionPaciente({ id }) {
 
       <PlantillaModal
         open={plantillaModalOpen}
-        onClose={() => setPlantillaModalOpen(false)}
+        onClose={closePlantillaModal}
         onElegir={(plantilla) => {
-          setPlantillaModalOpen(false);
+          closePlantillaModal();
           if (plantilla.codigo === 'CRECIMT2') {
             setPlantillaActiva('crecimt2');
             return;

@@ -1,0 +1,14 @@
+/* .pf-toggle-group/.pf-toggle-btn (segmented control Logrado/No logrado) ya
+   están definidos en ../../PlantillaCrecimt2.css y cascan hasta acá — solo
+   se agrega el layout propio de este ítem, no se redefine el control. */
+.ead-item{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;
+}
+.ead-item:last-child{border-bottom:none;}
+.ead-item-text{margin:0;font-size:13.5px;font-weight:500;color:var(--ink-900);line-height:1.5;flex:1;min-width:220px;}
+.ead-item-answer{flex-shrink:0;}
+
+@media (max-width:720px){
+  .ead-item{flex-direction:column;align-items:flex-start;gap:8px;}
+}

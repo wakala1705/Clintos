@@ -1,0 +1,48 @@
+/* Fila completa: riel (ValeStepper, ver .vale-rail en ValeStepper.css) +
+   contenido principal — mismo layout que .pf-body (riel de
+   AntecedentesNav + .pf-content) un nivel más adentro, para las 5 etapas
+   propias de VALE en vez de las 12 secciones del wizard. */
+.vale-step-root{display:flex;}
+.vale-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+
+/* El padding/ancho máximo centrado de cada etapa viene de su propio
+   .ac-wrap interno (ver ValePerinatalEtapa.jsx y hermanas). */
+.vale-body{flex:1;}
+
+/* Barra de acciones interna de VALE (Anterior/Continuar/Finalizar
+   evaluación) — independiente de .pf-footer (barra externa del wizard,
+   Guardar y salir/Guardar y continuar). El label "Navegación VALE" evita
+   que el profesional confunda las dos barras al tener ambas visibles a la
+   vez (.pf-footer sigue siendo flex-shrink:0 fuera de .pf-body, ver
+   PlantillaCrecimt2.jsx). Sticky SIN overflow propio — resuelve contra
+   .pf-body (el único contenedor con scroll real del wizard); nunca
+   agregarle overflow-x/y, fue la causa exacta del bug de scroll ya
+   corregido en VacunacionStep (ver comentario en VacunacionStep.css). */
+.vale-actionbar{
+  position:sticky;bottom:0;z-index:var(--z-sticky);
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.vale-actionbar-caption{
+  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
+}
+.vale-actionbar-buttons{display:flex;align-items:center;gap:10px;}
+
+/* ---------- ESTADOS COMPARTIDOS ----------
+   .vale-dev-list/.vale-dev-empty: usadas por ValeDesarrolloEtapa.jsx y
+   ValeVestibularEtapa.jsx (2+ consumidores, ver AGENTS.md). */
+.vale-dev-list{display:flex;flex-direction:column;}
+.vale-dev-empty{
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+  padding:48px 24px;color:var(--ink-500);
+}
+.vale-dev-empty .icon{width:32px;height:32px;color:var(--ink-400);}
+.vale-dev-empty p{margin:0;font-size:13.5px;max-width:420px;}
+
+@media (max-width:1024px){
+  .vale-step-root{flex-direction:column;}
+}
+@media (max-width:720px){
+  .vale-actionbar{padding-left:16px;padding-right:16px;}
+  .vale-actionbar-caption{display:none;}
+}

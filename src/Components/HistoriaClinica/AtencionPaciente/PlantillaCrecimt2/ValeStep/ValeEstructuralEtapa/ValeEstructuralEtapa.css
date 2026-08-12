@@ -1,0 +1,24 @@
+/* 2 columnas por defecto (no 3): a diferencia de los demás pasos del
+   wizard, el contenido de VALE comparte ancho con su propio riel interno
+   (.vale-rail, ver ValeStepper.css) además del riel externo de 12
+   secciones (.an-nav) — con ambos descontados, 3 columnas de
+   Presencia/Integridad (cada fila necesita el ancho mínimo de un
+   .pf-toggle-group de 2 botones, que no se comprime más allá de su texto)
+   se recortaban a 1440px de viewport, un ancho común de escritorio. 3
+   columnas queda como mejora solo en monitores realmente anchos. */
+.vale-estr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.vale-estr-card{
+  border:1px solid var(--border);border-radius:var(--radius);padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.vale-estr-card-title{margin:0;font-size:14px;font-weight:600;color:var(--ink-900);}
+.vale-estr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.vale-estr-row-label{font-size:12.5px;color:var(--ink-500);flex-shrink:0;}
+
+@media (min-width:1600px){
+  .vale-estr-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media (max-width:900px){
+  .vale-estr-grid{grid-template-columns:1fr;}
+  .vale-estr-row{flex-direction:column;align-items:flex-start;gap:8px;}
+}

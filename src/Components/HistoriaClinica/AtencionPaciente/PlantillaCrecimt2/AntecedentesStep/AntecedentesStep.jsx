@@ -63,15 +63,28 @@ const VDRL_PARTO = [
   { value: 'desconoce', label: 'Desconoce' },
 ];
 
-const CONDICIONES_FAMILIARES = [
+// "Antecedentes / condiciones de salud" (Bloque 1): checklist rápido de 5,
+// sin "Describa" al marcar "Sí" (encargo explícito, no aplica progressive
+// disclosure acá). Asma queda aparte, en su propia fila de 1 — a diferencia
+// de las 5 de arriba, SÍ lleva "Describa" al marcar "Sí" (encargo explícito).
+const CONDICIONES_SALUD = [
   { key: 'diabetes', label: 'Diabetes' },
   { key: 'tuberculosis', label: 'Tuberculosis' },
   { key: 'alergias', label: 'Alergias' },
-  { key: 'mentales', label: 'Mentales' },
+  { key: 'dermatitis', label: 'Dermatitis atópica' },
+  { key: 'mentales', label: 'Enfermedades mentales' },
+];
+const CONDICION_ASMA = { key: 'asma', label: 'Asma' };
+// "Antecedentes familiares y desarrollo" (Bloque 2): a diferencia del
+// checklist de arriba, SÍ mantiene el "Describa" al marcar "Sí" — mismo
+// criterio que antes (antecedente genético/de desarrollo amerita
+// elaboración, a diferencia de una condición de salud puntual).
+const CONDICIONES_FAMILIARES_DESARROLLO = [
   { key: 'hereditarias', label: 'Enfermedades hereditarias' },
   { key: 'desarrolloInfantil', label: 'Problemas de desarrollo infantil' },
-  { key: 'asma', label: 'Asma' },
-  { key: 'dermatitis', label: 'Dermatitis atópica' },
+];
+const CONDICIONES_FAMILIARES = [
+  ...CONDICIONES_SALUD, CONDICION_ASMA, ...CONDICIONES_FAMILIARES_DESARROLLO,
 ];
 
 const SUCESOS_VITALES = [
@@ -215,7 +228,7 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
               <span className="pf-block-icon"><LuUsers className="icon" aria-hidden="true" /></span>
               <span className="pf-block-header-title">
                 <h2 className="pf-card-title">Antecedentes familiares</h2>
-                <p className="pf-card-desc">Antecedentes familiares, sucesos vitales, salud mental de los padres y composición del núcleo familiar.</p>
+                
               </span>
             </span>
             <LuChevronDown className={`icon pf-block-chevron${familiaresOpen ? '' : ' collapsed'}`} aria-hidden="true" />
@@ -224,9 +237,37 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
           {familiaresOpen && (
           <div className="pf-block-body">
           <div className="pf-group">
-            
-            <div className="pf-grid-4">
-              {CONDICIONES_FAMILIARES.map((c) => {
+            <h2 className="pf-card-title">Antecedentes / condiciones de salud</h2>
+            <div className="pf-grid-5">
+              {CONDICIONES_SALUD.map((c) => {
+                const estado = antecedentesFamiliares[c.key];
+                return (
+                  <TriStateField
+                    key={c.key}
+                    label={c.label}
+                    value={estado.valor}
+                    onChange={(v) => updateCondicion(setAntecedentesFamiliares, c.key, { valor: v })}
+                  />
+                );
+              })}
+            </div>
+            <div className="pf-grid-2 ac-field-spaced">
+              <TriStateField
+                label={CONDICION_ASMA.label}
+                value={antecedentesFamiliares[CONDICION_ASMA.key].valor}
+                onChange={(v) => updateCondicion(setAntecedentesFamiliares, CONDICION_ASMA.key, { valor: v })}
+                showDescription={antecedentesFamiliares[CONDICION_ASMA.key].valor === 'si'}
+                descriptionValue={antecedentesFamiliares[CONDICION_ASMA.key].descripcion}
+                onDescriptionChange={(v) => updateCondicion(setAntecedentesFamiliares, CONDICION_ASMA.key, { descripcion: v })}
+                descriptionPlaceholder={`Describe brevemente el antecedente de ${CONDICION_ASMA.label.toLowerCase()}`}
+              />
+            </div>
+          </div>
+
+          <div className="pf-group">
+            <h2 className="pf-card-title">Antecedentes familiares y desarrollo</h2>
+            <div className="pf-grid-2col">
+              {CONDICIONES_FAMILIARES_DESARROLLO.map((c) => {
                 const estado = antecedentesFamiliares[c.key];
                 return (
                   <TriStateField
@@ -343,8 +384,7 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
               <span className="pf-block-icon"><LuUser className="icon" aria-hidden="true" /></span>
               <span className="pf-block-header-title">
                 <h2 className="pf-card-title">Antecedentes personales</h2>
-                <p className="pf-card-desc">Historia individual del paciente, diferenciada en antecedentes perinatales y obstétricos.</p>
-              </span>
+                </span>
             </span>
             <LuChevronDown className={`icon pf-block-chevron${personalesOpen ? '' : ' collapsed'}`} aria-hidden="true" />
           </button>

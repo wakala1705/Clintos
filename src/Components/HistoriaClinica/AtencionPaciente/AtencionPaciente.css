@@ -32,6 +32,12 @@
 .ap-tab-panel{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;}
 
 /* ---------- CARGA / NO ENCONTRADO ---------- */
+/* Envuelve .ap-loading/.ap-not-found en el aria-live de AtencionPaciente.jsx
+   (WCAG 4.1.3) — display:flex + flex:1 replica el comportamiento que
+   .ap-loading/.ap-not-found tenían siendo hijos directos de .hc-content,
+   para que el wrapper (ahora el hijo flex real) siga llenando el alto
+   disponible en vez de encogerse a su contenido. */
+.ap-status-live{display:flex;flex-direction:column;flex:1;min-height:0;}
 .ap-loading{
   display:flex;align-items:center;justify-content:center;flex:1;
   color:var(--ink-500);font-size:14px;

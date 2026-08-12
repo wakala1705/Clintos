@@ -2,7 +2,19 @@
    Cada feature de nivel superior es dueña de su propia copia — ver AGENTS.md,
    mismo criterio que gestion-enfermeria.css/ListaPacientes.css. */
 *{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
+/* height:100%+overflow:hidden a propósito, no solo margin/padding en 0: sin
+   esto el documento puede quedar con un remanente real (aunque invisible)
+   de scroll vertical propio por debajo del shell — nada en este layout está
+   pensado para vivir fuera de .app{height:100vh;overflow:hidden}, pero un
+   wheel/scroll que empieza sobre un elemento SIN scroll propio y FUERA del
+   contenedor scrolleable real (ej. .pf-footer en AtencionPaciente, que es
+   hermano de .pf-body, no hijo) hace "scroll chaining" hacia arriba por el
+   árbol y puede terminar encontrando ese remanente del documento — bug
+   reportado como "se rompe el layout" al scrollear con el mouse sobre el
+   footer del wizard de historia clínica. Bloquear el scroll del documento
+   acá corta esa fuga de raíz, sin depender de que cada contenedor interno
+   evite perfectamente el scroll chaining por su cuenta. */
+html,body{margin:0;padding:0;height:100%;overflow:hidden;}
 body{
   font-family:'Inter',sans-serif;
   background:var(--bg);
@@ -20,7 +32,9 @@ body{
 
 /* ---------- BLOQUE DE BIENVENIDA ---------- */
 .hc-welcome{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
-.hc-welcome-hi{font-size:14px;color:var(--ink-500);}
+/* ink-700 (no ink-500): ink-500 sobre --bg da ~4.47:1, por debajo del 4.5:1
+   mínimo de 1.4.3 para texto normal — ver auditoría WCAG. */
+.hc-welcome-hi{font-size:14px;color:var(--ink-700);}
 .hc-doctor-name{margin:0;font-size:24px;font-weight:700;color:var(--ink-900);letter-spacing:.01em;}
 
 /* ---------- FILA: KPIs + selector de fecha ---------- */

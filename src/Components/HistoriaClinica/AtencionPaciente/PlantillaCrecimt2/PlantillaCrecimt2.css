@@ -29,7 +29,12 @@
    por defecto no se encoge por debajo de la altura de su contenido y en vez
    de scrollear empuja el alto de .card (mismo bug de flexbox que .hc-content,
    ver HistoriaClinica.css). */
-.pf-body{flex:1;min-height:0;display:flex;overflow-y:auto;overflow-x:hidden;}
+/* overscroll-behavior:contain: una vez .pf-body llega a su propio tope/fondo
+   de scroll, no deja que la rueda del mouse siga "encadenando" el scroll
+   hacia contenedores ancestros (.hc-content, el documento) — refuerza desde
+   este lado el mismo bug de scroll-chaining que se bloquea en la raíz con
+   html,body{overflow:hidden} (ver HistoriaClinica.css). */
+.pf-body{flex:1;min-height:0;display:flex;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}
 /* flex:1 es lo que hace que .pf-content ocupe el resto del ancho junto a
    .an-nav (340px fijos) — sin esto queda tan angosto como su propio
    contenido (.ac-wrap, max-width:1240px) y el margin:auto que lo centra deja
@@ -92,7 +97,7 @@
    ese caso. */
 .pf-card.pf-card-split{padding:0;}
 .pf-block-header{
-  width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
   background:none;border:none;border-bottom:1px solid var(--border);font-family:inherit;
   text-align:left;cursor:pointer;padding:20px 24px;
 }
@@ -101,7 +106,7 @@
    SectionCard.jsx (ficha del paciente): caja 32x32 con fondo primary-50,
    para que estos bloques generales se lean igual de jerárquicos que las
    secciones de esa pantalla. */
-.pf-block-heading{display:flex;align-items:flex-start;gap:10px;min-width:0;}
+.pf-block-heading{display:flex;align-items:center;gap:10px;min-width:0;}
 .pf-block-icon{
   width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
   background:var(--primary-50);color:var(--primary);
@@ -146,6 +151,16 @@
 
 .pf-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 .pf-grid-4 .full{grid-column:1 / -1;}
+/* 5 columnas reales — solo para la fila de 5 condiciones de "Antecedentes /
+   condiciones de salud" (ver AntecedentesStep.jsx), la única grilla del
+   wizard con esta cantidad de campos angostos en una sola fila. Bug real ya
+   visto en vivo: a diferencia de .pf-grid-4/.pf-grid-3 (que sí caben en
+   1280-1366px), 5 columnas de .pf-condition (cada una con un
+   .pf-toggle-group de 3 botones, que no se comprime más allá de su texto)
+   ya no caben ahí — ver el breakpoint dedicado más abajo
+   (max-width:1440px), 200-300px más ancho que el resto de grillas porque
+   esta es la única con 5 columnas en vez de 4/3/2. */
+.pf-grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
 /* 1 columna, apilado — para parejas de campos anchos (textareas de Motivo de
    consulta/Enfermedad actual) donde .pf-grid-4 dejaría cada uno en un cuarto
    del ancho, demasiado angosto para un textarea. */
@@ -190,6 +205,11 @@
 .form-field .pf-field-suffix input{flex:1;}
 .form-field .pf-field-suffix span{font-size:12px;color:var(--ink-500);white-space:nowrap;}
 
+/* Mensaje de error de validación puntual — vivía solo en ConsultaStep.css
+   hasta que ValeStep sumó su propia validación bloqueante (ver
+   ValeQuestion.jsx); se mueve acá por tener 2+ consumidores (ver AGENTS.md). */
+.pf-field-error{display:block;font-size:12px;color:var(--red);margin-top:6px;}
+
 /* ---------- Checklist (Sucesos vitales familiares / Salud mental de los padres) ---------- */
 .pf-checklist{display:flex;flex-direction:column;gap:4px;}
 /* Selector compuesto (especificidad 0,0,2,0) a propósito: .pf-checklist
@@ -214,13 +234,13 @@
    antecedentes) no necesita ese segundo borde anidado. */
 .pf-condition{padding:12px 0;}
 .pf-grid-4 .pf-condition{
-  border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;
+  
 }
 /* En 4 columnas la caja es angosta: label arriba y toggle abajo siempre, en
    vez de depender de que el wrap ocurra "a veces sí, a veces no" según el
    largo de cada etiqueta (se veía inconsistente entre las 8 condiciones). */
 .pf-grid-4 .pf-condition-row{flex-direction:column;align-items:flex-start;gap:8px;}
-.pf-condition-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.pf-condition-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .pf-condition-label{font-size:13px;font-weight:500;color:var(--ink-900);}
 .pf-toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
 .pf-toggle-btn{
@@ -233,6 +253,18 @@
 .pf-toggle-btn.active{background:var(--primary);color:#fff;}
 .pf-toggle-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pf-condition-desc{margin-top:10px;}
+
+/* A diferencia de los breakpoints de abajo (1024/900/720, todavía
+   inalcanzables solo redimensionando la ventana — ver el comentario
+   siguiente), este SÍ es real hoy: 1280-1366px es una resolución de laptop
+   común, y ahí .pf-grid-5 (la única grilla de 5 columnas del wizard, ver
+   AntecedentesStep.jsx) desbordaba — bug visto en vivo con capturas. Las
+   demás grillas (.pf-grid-4/.pf-grid-3, 4 y 3 columnas) sí caben en ese
+   rango, por eso este breakpoint es más ancho que el de ellas (900px) y
+   exclusivo de .pf-grid-5. */
+@media (max-width: 1440px){
+  .pf-grid-5{grid-template-columns:1fr 1fr 1fr;}
+}
 
 /* .app{min-width:1024px} (ver HistoriaClinica.css) todavía no permite llegar
    a estos anchos solo redimensionando la ventana — mismo caso que
@@ -251,6 +283,7 @@
   .pf-grid-4{grid-template-columns:1fr;}
   .pf-grid-3{grid-template-columns:1fr;}
   .pf-grid-2col{grid-template-columns:1fr;}
+  .pf-grid-5{grid-template-columns:1fr;}
   .pf-checklist.pf-grid-4{grid-template-columns:1fr;}
   .pf-checklist.pf-grid-3{grid-template-columns:1fr;}
   .pf-card{padding:16px;}

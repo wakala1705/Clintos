@@ -1,5 +1,5 @@
 .body-login {
-    background-color: #F0F3FA;
+    background-color: #0065cd;
     display: flex;
     width: 100%;
     height: 100vh;
@@ -21,7 +21,7 @@
 }
 
 .block-logo {
-    background: #0065CD;
+    background: #fff;
     display: flex;
     width: 420px;
     height: 628px;
@@ -42,7 +42,7 @@
 }
 
 .block-logo .logo img {
-    width: 200px;
+    width: 300px;
     height: auto;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .block-logo .copy p{
-    color: #ffffff;
+    color: #48546E;
     text-align: center;
 
 /* Caption/Regular */

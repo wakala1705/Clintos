@@ -1,0 +1,17 @@
+/* .pf-card/.form-field/.pf-grid-2col ya están definidos en
+   ../../PlantillaCrecimt2.css y cascan hasta acá. Cards estáticas de
+   resumen (no interactivas — sin cursor:pointer, sin hover/focus-visible),
+   mismo criterio que .vale-res-card en ValeStep/ValeResultadoEtapa.css. */
+.ead-res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;}
+.ead-res-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;
+}
+.ead-res-card-title{margin:0 0 14px;font-size:15px;font-weight:700;color:var(--ink-900);}
+.ead-res-card-list{display:flex;flex-direction:column;gap:8px;}
+.ead-res-card-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;}
+.ead-res-card-label{color:var(--ink-500);}
+.ead-res-card-value{font-weight:600;color:var(--ink-900);text-align:right;}
+
+@media (max-width:900px){
+  .ead-res-grid{grid-template-columns:1fr;}
+}

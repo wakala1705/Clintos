@@ -42,7 +42,7 @@ export default function Login() {
       <div className={styles.container}>
         <div className={styles['block-logo']}>
           <div className={styles.logo}>
-            <img src="/img/Logo_alt.svg" alt="Clintos" />
+            <img src="/img/Logo_v2.svg" alt="Clintos" />
           </div>
 
           <div className={styles.copy}>

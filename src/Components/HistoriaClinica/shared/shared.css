@@ -87,6 +87,15 @@ html[data-theme="dark"]{
   --violet-fg:#b79bf7;
 }
 
+/* Oculta visualmente pero deja disponible para lectores de pantalla — usado
+   por el th "Acciones" de AgendaTable.css (columna sin texto visible, solo
+   el botón de abrir atención por fila). Mismo criterio que
+   GestionEnfermeria/shared/shared.css: cada feature es dueña de su copia. */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
 /* Usado por WeekDatePicker (chevrones), KpiFilterCard (ícono de la tarjeta),
    AgendaEmptyState y los botones/campo de búsqueda de HistoriaClinica.jsx —
    4+ consumidores reales, por eso vive acá y no en un .css individual. */
@@ -174,10 +183,11 @@ html[data-theme="dark"] .data-table thead th{background:#161c2b;}
 }
 
 /* Los chevrones giratorios de RegistrosPanel (.rg-header-chevron/
-   .rg-group-chevron) y PlantillaCrecimt2 (.pf-block-chevron) transicionan
-   transform pero viven en hojas de estilo propias de cada componente — el
-   reset de prefers-reduced-motion se centraliza acá (mismo criterio que
-   .icon: 2+ consumidores) en vez de repetirse en cada archivo. */
+   .rg-group-chevron), PlantillaCrecimt2 (.pf-block-chevron) y VacunacionStep
+   (.vac-card-chevron) transicionan transform pero viven en hojas de estilo
+   propias de cada componente — el reset de prefers-reduced-motion se
+   centraliza acá (mismo criterio que .icon: 2+ consumidores) en vez de
+   repetirse en cada archivo. */
 @media (prefers-reduced-motion: reduce){
-  .rg-header-chevron,.rg-group-chevron,.pf-block-chevron{transition:none;}
+  .rg-header-chevron,.rg-group-chevron,.pf-block-chevron,.vac-card-chevron{transition:none;}
 }
