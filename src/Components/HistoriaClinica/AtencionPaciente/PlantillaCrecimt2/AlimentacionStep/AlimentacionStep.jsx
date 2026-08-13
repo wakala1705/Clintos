@@ -2,24 +2,25 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import './AlimentacionStep.css';
-import { LuChevronDown, LuHistory } from 'react-icons/lu';
+import { LuChevronDown, LuCircleAlert, LuHistory } from 'react-icons/lu';
 
 const SI_NO = [
   { value: 'si', label: 'Sí' },
   { value: 'no', label: 'No' },
 ];
 
-// El valor visible en el legacy era "LACTANCIA PARCIAL" resaltado en verde;
-// acá se mantiene como una opción más del mismo selector (ver punto 9 del
-// encargo: "el mismo tratamiento visual que los demás campos, salvo que
-// exista una regla clínica explícita que requiera mostrarlo como estado" —
-// no la hay, así que no lleva tratamiento especial).
-const TIPO_LACTANCIA = [
-  { value: 'exclusiva', label: 'Lactancia exclusiva' },
-  { value: 'parcial', label: 'Lactancia parcial' },
-  { value: 'artificial', label: 'Lactancia artificial' },
-  { value: 'no_aplica', label: 'No aplica' },
-];
+// "Tipo de lactancia" NO es una selección manual: es un resultado derivado
+// de "Toma actualmente lactancia materna?" (encargo explícito) — se muestra
+// como campo no editable, resaltado en verde igual que en el legacy (ver
+// .al-tipo-lactancia-result en AlimentacionStep.css), mismo criterio de
+// "diferenciar visualmente un campo calculado de uno editable" que el IMC de
+// ExamenFisicoStep.jsx. Mismo condicional decide si el bloque "Consumo
+// durante el día anterior" se habilita (ver al-consumo más abajo): si el
+// niño no toma lactancia materna actualmente, ese consumo no aplica.
+const TIPO_LACTANCIA_RESULTADO = {
+  si: 'Lactancia parcial',
+  no: 'Lactancia materna exclusiva',
+};
 
 const EVALUACION_AGARRE = [
   { value: 'buen_agarre', label: 'Buen agarre' },
@@ -55,7 +56,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
   ref,
 ) {
   const [lactanciaMaterna, setLactanciaMaterna] = useState({
-    exclusiva6m: 'si', edadDestete: 5, tomaActualmente: 'si', tipoLactancia: 'parcial',
+    exclusiva6m: 'si', edadDestete: 5, tomaActualmente: 'si',
   });
   const [introduccionAlimentos, setIntroduccionAlimentos] = useState({
     tipoLeche: '', edadOtrasLeches: 5, edadComplementaria: 0, alimentoAdministrado: '',
@@ -85,6 +86,9 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
   function setRef(index) {
     return (el) => { sectionRefs.current[index] = el; };
   }
+
+  const tipoLactanciaResultado = TIPO_LACTANCIA_RESULTADO[lactanciaMaterna.tomaActualmente];
+  const tomaLactanciaActualmente = lactanciaMaterna.tomaActualmente === 'si';
 
   useImperativeHandle(ref, () => ({
     scrollToSub(index) {
@@ -132,9 +136,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
 
       <div id="al-alimentacion" ref={setRef(0)} className="ac-mega">
         <section className="pf-card">
-          <h2 className="pf-card-title">Alimentación</h2>
 
-          <h3 className="pf-subheading">Lactancia materna</h3>
           <div className="pf-grid-2col">
             <div className="form-field">
               <label htmlFor="al-lact-exclusiva">Lactancia materna exclusiva los primeros 6 meses</label>
@@ -147,36 +149,18 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
             </div>
             <div className="form-field">
               <label htmlFor="al-edad-destete">Edad del niño al destete</label>
-              <div className="pf-field-suffix">
-                <input
-                  id="al-edad-destete" type="number" min="0" value={lactanciaMaterna.edadDestete}
-                  onChange={(e) => setLactanciaMaterna((p) => ({ ...p, edadDestete: e.target.value }))}
-                />
-                <span>meses</span>
-              </div>
+              <input
+                id="al-edad-destete" type="number" min="0" value={lactanciaMaterna.edadDestete}
+                onChange={(e) => setLactanciaMaterna((p) => ({ ...p, edadDestete: e.target.value }))}
+              />
             </div>
             <div className="form-field">
-              <label htmlFor="al-toma-actual">Toma actualmente lactancia materna?</label>
-              <select
-                id="al-toma-actual" value={lactanciaMaterna.tomaActualmente}
-                onChange={(e) => setLactanciaMaterna((p) => ({ ...p, tomaActualmente: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <label htmlFor="al-edad-otras-leches">Edad del niño al iniciar otras leches</label>
+              <input
+                id="al-edad-otras-leches" type="number" min="0" value={introduccionAlimentos.edadOtrasLeches}
+                onChange={(e) => setIntroduccionAlimentos((p) => ({ ...p, edadOtrasLeches: e.target.value }))}
+              />
             </div>
-            <div className="form-field">
-              <label htmlFor="al-tipo-lactancia">Tipo de lactancia</label>
-              <select
-                id="al-tipo-lactancia" value={lactanciaMaterna.tipoLactancia}
-                onChange={(e) => setLactanciaMaterna((p) => ({ ...p, tipoLactancia: e.target.value }))}
-              >
-                {TIPO_LACTANCIA.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <h3 className="pf-subheading">Introducción de alimentos y otras leches</h3>
-          <div className="pf-grid-2col">
             <div className="form-field">
               <label htmlFor="al-tipo-leche">Qué tipo de leche</label>
               <input
@@ -185,24 +169,11 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
               />
             </div>
             <div className="form-field">
-              <label htmlFor="al-edad-otras-leches">Edad del niño al iniciar otras leches</label>
-              <div className="pf-field-suffix">
-                <input
-                  id="al-edad-otras-leches" type="number" min="0" value={introduccionAlimentos.edadOtrasLeches}
-                  onChange={(e) => setIntroduccionAlimentos((p) => ({ ...p, edadOtrasLeches: e.target.value }))}
-                />
-                <span>meses</span>
-              </div>
-            </div>
-            <div className="form-field">
               <label htmlFor="al-edad-complementaria">Edad al iniciar alimentación complementaria</label>
-              <div className="pf-field-suffix">
-                <input
-                  id="al-edad-complementaria" type="number" min="0" value={introduccionAlimentos.edadComplementaria}
-                  onChange={(e) => setIntroduccionAlimentos((p) => ({ ...p, edadComplementaria: e.target.value }))}
-                />
-                <span>meses</span>
-              </div>
+              <input
+                id="al-edad-complementaria" type="number" min="0" value={introduccionAlimentos.edadComplementaria}
+                onChange={(e) => setIntroduccionAlimentos((p) => ({ ...p, edadComplementaria: e.target.value }))}
+              />
             </div>
             <div className="form-field">
               <label htmlFor="al-alimento-administrado">Alimento administrado</label>
@@ -212,10 +183,89 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
               />
             </div>
           </div>
+
+          <div className="pf-divider"></div>
+
+          <div className="pf-grid-2col ac-field-spaced">
+            <div className="form-field">
+              <label htmlFor="al-toma-actual">Toma actualmente lactancia materna?</label>
+              <select
+                id="al-toma-actual" value={lactanciaMaterna.tomaActualmente}
+                onChange={(e) => setLactanciaMaterna((p) => ({ ...p, tomaActualmente: e.target.value }))}
+              >
+                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="al-tipo-lactancia">Tipo de lactancia<span className="pf-field-tag pf-field-tag-green">Resultado</span></label>
+              <input
+                id="al-tipo-lactancia" type="text" disabled readOnly
+                className="al-tipo-lactancia-result"
+                value={tipoLactanciaResultado}
+                aria-live="polite"
+              />
+            </div>
+          </div>
+
+          
         </section>
       </div>
 
-      <div id="al-actual" ref={setRef(1)} className="ac-mega">
+      <div id="al-consumo" ref={setRef(1)} className="ac-mega">
+        <section className="pf-card">
+          <h2 className="pf-card-title">Consumo durante el día anterior</h2>
+          <p className="pf-card-desc">Durante el día de ayer o anoche</p>
+
+          {!tomaLactanciaActualmente && (
+            <div className="pf-note">
+              <LuCircleAlert className="icon" aria-hidden="true" />
+              Este bloque solo aplica cuando el niño toma actualmente lactancia materna — cambia "Toma actualmente lactancia materna?" en Alimentación para habilitarlo.
+            </div>
+          )}
+
+          <div className="al-eval-list">
+            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
+              <label htmlFor="al-consumo-liquidos">¿Recibió alguno de los siguientes líquidos: agua, agua aromática, jugo, té?</label>
+              <select
+                id="al-consumo-liquidos" value={consumoAyer.liquidos} disabled={!tomaLactanciaActualmente}
+                onChange={(e) => setConsumoAyer((p) => ({ ...p, liquidos: e.target.value }))}
+              >
+                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
+              <label htmlFor="al-consumo-leche-animal">¿Recibió leche de vaca, cabra, líquida, en polvo, fresca o en bolsa?</label>
+              <select
+                id="al-consumo-leche-animal" value={consumoAyer.lecheAnimal} disabled={!tomaLactanciaActualmente}
+                onChange={(e) => setConsumoAyer((p) => ({ ...p, lecheAnimal: e.target.value }))}
+              >
+                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
+              <label htmlFor="al-consumo-formula">¿Recibió leche de fórmula?</label>
+              <select
+                id="al-consumo-formula" value={consumoAyer.formula} disabled={!tomaLactanciaActualmente}
+                onChange={(e) => setConsumoAyer((p) => ({ ...p, formula: e.target.value }))}
+              >
+                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
+              <label htmlFor="al-consumo-solido">¿Recibió algún alimento como sopa espesa, puré, papilla o seco?</label>
+              <select
+                id="al-consumo-solido" value={consumoAyer.alimentoSolido} disabled={!tomaLactanciaActualmente}
+                onChange={(e) => setConsumoAyer((p) => ({ ...p, alimentoSolido: e.target.value }))}
+              >
+                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="al-actual" ref={setRef(2)} className="ac-mega">
         <section className="pf-card">
           <h2 className="pf-card-title">Alimentación actual</h2>
           <p className="pf-card-desc">Qué recibe el niño actualmente y con qué frecuencia.</p>
@@ -303,52 +353,6 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
         </section>
       </div>
 
-      <div id="al-consumo" ref={setRef(2)} className="ac-mega">
-        <section className="pf-card">
-          <h2 className="pf-card-title">Consumo durante el día anterior</h2>
-          <p className="pf-card-desc">Durante el día de ayer o anoche</p>
-
-          <div className="al-eval-list">
-            <div className="form-field al-eval-row">
-              <label htmlFor="al-consumo-liquidos">¿Recibió alguno de los siguientes líquidos: agua, agua aromática, jugo, té?</label>
-              <select
-                id="al-consumo-liquidos" value={consumoAyer.liquidos}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, liquidos: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className="form-field al-eval-row">
-              <label htmlFor="al-consumo-leche-animal">¿Recibió leche de vaca, cabra, líquida, en polvo, fresca o en bolsa?</label>
-              <select
-                id="al-consumo-leche-animal" value={consumoAyer.lecheAnimal}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, lecheAnimal: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className="form-field al-eval-row">
-              <label htmlFor="al-consumo-formula">¿Recibió leche de fórmula?</label>
-              <select
-                id="al-consumo-formula" value={consumoAyer.formula}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, formula: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className="form-field al-eval-row">
-              <label htmlFor="al-consumo-solido">¿Recibió algún alimento como sopa espesa, puré, papilla o seco?</label>
-              <select
-                id="al-consumo-solido" value={consumoAyer.alimentoSolido}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, alimentoSolido: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-          </div>
-        </section>
-      </div>
-
       <div id="al-historico" ref={setRef(3)} className="ac-mega">
         <section className="pf-card pf-card-split">
           <button
@@ -413,7 +417,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
 
             <h3 className="pf-subheading">Evaluación del amamantamiento</h3>
             <div className="al-eval-list">
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-menton">El niño toca el seno con el mentón</label>
                 <select
                   id="al-eval-menton" value={evaluacionAmamantamiento.tocaMenton}
@@ -422,7 +426,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
                   {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-boca">El niño abre bien la boca cuando amamanta</label>
                 <select
                   id="al-eval-boca" value={evaluacionAmamantamiento.abreBocaBien}
@@ -431,7 +435,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
                   {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-labio">El labio inferior está volteado hacia afuera</label>
                 <select
                   id="al-eval-labio" value={evaluacionAmamantamiento.labioVolteado}
@@ -440,7 +444,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
                   {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-areola">La areola de la madre se ve más por encima que por debajo de la boca del niño</label>
                 <select
                   id="al-eval-areola" value={evaluacionAmamantamiento.areolaMasArriba}
@@ -455,7 +459,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
           <div className="pf-group">
             <h3 className="pf-subheading">Evaluación de la succión del niño</h3>
             <div className="al-eval-list">
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-succion">Succión buena (de forma lenta y profunda y con pausas ocasionales)</label>
                 <select
                   id="al-eval-succion" value={evaluacionSuccion.succionBuena}
@@ -464,7 +468,7 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
                   {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <div className="form-field al-eval-row">
+              <div className="form-field pf-question-row">
                 <label htmlFor="al-eval-agarre">Evaluación del agarre</label>
                 <select
                   id="al-eval-agarre" value={evaluacionSuccion.evaluacionAgarre}

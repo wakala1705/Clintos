@@ -9,21 +9,28 @@
 }
 .al-feed-title{font-size:13.5px;font-weight:600;color:var(--ink-900);margin:0 0 12px;}
 
-/* Fila "pregunta larga + respuesta corta" — Consumo del día anterior y
-   Evaluación de la lactancia materna, donde el texto clínico completo debe
-   leerse conectado a su respuesta en vez de como label suelto encima de un
-   select (patrón por defecto de .form-field, pensado para labels cortos).
-   Selector compuesto (especificidad 0,2,0 / 0,2,1) a propósito, mismo
-   criterio que .pf-grid-4 .pf-condition-row en PlantillaCrecimt2.css: sin
-   el combinador con .form-field, esta regla y la base compiten con la misma
-   especificidad y el orden de inyección de cada hoja decide. */
-.form-field.al-eval-row{
-  flex-direction:row;align-items:center;justify-content:space-between;gap:24px;
-  padding:14px 0;border-bottom:1px solid #eef0f4;
+/* ---------- Tipo de lactancia (resultado derivado, no editable) ----------
+   .pf-field-tag/.pf-field-tag-green: definidas en ../PlantillaCrecimt2.css
+   (shared del feature) — acá solo el relleno del <input disabled> en sí.
+   Mismo verde que .badge.status-active (PatientBanner.css): "Tipo de
+   lactancia" es un resultado categórico positivo, no un número calculado
+   (por eso NO reutiliza el tinte primario de .ef-calculated-input en
+   ExamenFisicoStep.css — mismo mecanismo, semántica de color distinta). */
+.al-tipo-lactancia-result{
+  background:var(--green-bg) !important;border-color:transparent !important;
+  color:var(--green) !important;font-weight:700;text-transform:uppercase;letter-spacing:.01em;
+  cursor:default;
 }
-.al-eval-list .form-field.al-eval-row:last-child{border-bottom:none;}
-.form-field.al-eval-row label{font-size:13.5px;font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
-.form-field.al-eval-row select{width:200px;flex-shrink:0;}
+
+/* Bloque deshabilitado en conjunto (Consumo durante el día anterior cuando
+   "Toma actualmente lactancia materna?" = No, ver AlimentacionStep.jsx) —
+   los .form-field select:disabled individuales ya se atenúan (regla global
+   en PlantillaCrecimt2.css); esto solo atenúa el label/pregunta que los
+   acompaña, para que la fila completa se lea como "no aplica" de un
+   vistazo, no solo el control. .pf-question-row: definida en
+   ../PlantillaCrecimt2.css (shared del feature, ver comentario ahí — vivía
+   acá como .al-eval-row hasta que CrecimientoStep sumó su propio uso). */
+.pf-question-row.disabled label{color:var(--ink-400);}
 
 /* Envoltorio de la tabla de histórico — mismo patrón que .pm-table-wrap en
    PlantillaModal.css (borde + radio + scroll propio), duplicado acá porque

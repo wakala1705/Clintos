@@ -1,0 +1,20 @@
+/* .ac-wrap/.pf-section-title/.pf-section-desc/.btn/.modal-overlay/
+   .modal-card/.modal-header/.modal-body/.modal-footer/.modal-close-btn:
+   definidas en ../PlantillaCrecimt2.css / ../../shared/shared.css (mismo
+   scaffolding de modal que VacunacionStep.jsx/MedicamentosStep.jsx) — acá
+   solo lo exclusivo de este paso. */
+
+/* Grid de 2 columnas en escritorio (encargo explícito), 1 columna en
+   pantallas angostas — mismo breakpoint que .pf-grid-4/.pf-grid-3 en
+   PlantillaCrecimt2.css. */
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+@media (max-width:900px){
+  .rc-grid{grid-template-columns:1fr;}
+}
+
+/* Primer .btn-danger de la feature (confirmación de "desmarcar con
+   contenido", ver RecomendacionesStep.jsx) — promover a PlantillaCrecimt2.css
+   si un segundo paso llega a necesitar un botón destructivo (ver AGENTS.md). */
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{filter:brightness(0.92);}
+.rc-confirm-text{margin:0;font-size:13.5px;color:var(--ink-700);line-height:1.6;}

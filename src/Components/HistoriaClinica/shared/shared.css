@@ -191,3 +191,18 @@ html[data-theme="dark"] .data-table thead th{background:#161c2b;}
 @media (prefers-reduced-motion: reduce){
   .rg-header-chevron,.rg-group-chevron,.pf-block-chevron,.vac-card-chevron{transition:none;}
 }
+
+/* ---------- SCROLLBARS ----------
+   Mismo estilo delgado y casi imperceptible que el resto de la app (ver
+   GestionEnfermeria/shared/shared.css) — timeline de la agenda, .pf-body/
+   .an-nav del wizard CRECIMT2, cuerpo de modales, tablas de detalle...
+   .sidebar-nav trae su propio scrollbar (fondo oscuro, ver Sidebar.css) y
+   gana por especificidad, así que no se ve afectado por esta regla genérica. */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}

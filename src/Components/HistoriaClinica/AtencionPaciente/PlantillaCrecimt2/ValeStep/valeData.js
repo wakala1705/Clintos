@@ -23,6 +23,7 @@
 // dimensión sin preguntas aplicables queda en estado "no aplica", no en
 // aprobado/falla).
 export const RANGOS_CEI = [
+  { id: '0-3m', label: '0 – 3 meses', minMeses: 0, maxMeses: 3 },
   { id: '4-6m', label: '4 – 6 meses', minMeses: 4, maxMeses: 6 },
   { id: '7-9m', label: '7 – 9 meses', minMeses: 7, maxMeses: 9 },
   { id: '10-12m', label: '10 – 12 meses', minMeses: 10, maxMeses: 12 },
@@ -43,6 +44,15 @@ export const RANGOS_VESTIBULAR = [
 
 // ---------- PREGUNTAS COMPRENSIÓN (C) / EXPRESIÓN (E) / INTERACCIÓN (I) ----------
 export const PREGUNTAS_CEI = [
+  // 0-3 meses
+  { id: 'cei-0-3m-c1', rango: '0-3m', categoria: 'C',
+    texto: '¿Cuando en casa se cierra una puerta, se cae un objeto o se escucha un ruido muy fuerte, el bebé se mueve, se queda quieto o llora?' },
+  { id: 'cei-0-3m-e1', rango: '0-3m', categoria: 'E',
+    texto: '¿Usted siente diferencias en el llanto del bebé dependiendo si es por hambre, por sueño, porque está mojado, o de mal humor?' },
+  { id: 'cei-0-3m-e2', rango: '0-3m', categoria: 'E',
+    texto: '¿El bebé succiona con fuerza el alimento u otros objetos?' },
+  { id: 'cei-0-3m-i1', rango: '0-3m', categoria: 'I',
+    texto: '¿Cuando le habla al bebé, él/ella la/lo mira?' },
   // 4-6 meses
   { id: 'cei-4-6m-c1', rango: '4-6m', categoria: 'C',
     texto: '¿Cuando se escucha una puerta, timbre u otro sonido familiar el bebé voltea la cabeza buscando de dónde proviene?' },

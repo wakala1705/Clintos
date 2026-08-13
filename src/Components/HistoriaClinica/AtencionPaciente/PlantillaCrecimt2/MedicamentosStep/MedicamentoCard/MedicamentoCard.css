@@ -1,0 +1,13 @@
+/* .pf-block-icon/.pf-card-title/.pf-card-header-icon/.form-field/
+   .pf-grid-3/.pf-grid-2col: definidas en ../../PlantillaCrecimt2.css
+   (shared del feature) — acá solo el contenedor propio de cada tarjeta de
+   medicamento. Contenedor "sutil" (encargo: "evitar exceso de bordes y
+   elementos decorativos") — mismo borde+radio que .pf-card, sin sombra ni
+   fondo distinto, para separar los 3 medicamentos sin competir visualmente
+   entre ellos. */
+.mc-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 24px;background:var(--surface);
+}
+.mc-card + .mc-card{margin-top:16px;}
+.mc-extra-wide{margin-top:16px;}

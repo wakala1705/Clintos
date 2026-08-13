@@ -1,30 +1,7 @@
-/* Asterisco de campo obligatorio — único en este paso porque hoy es el
-   único del wizard con validación de campos con label (avanzar a "02
-   Antecedentes" exige motivo de consulta, enfermedad actual y fecha de
-   atención, ver ConsultaStep.jsx). .pf-field-error se movió a
-   PlantillaCrecimt2.css cuando ValeStep sumó su propia validación bloqueante
-   (ver AGENTS.md sobre reglas compartidas por 2+ consumidores). */
-.req{color:var(--red);margin-left:2px;}
-.form-field textarea[aria-invalid="true"],
-.form-field input[aria-invalid="true"]{border-color:var(--red);}
-
-/* Obligatorio + vacío -> resaltado ámbar (mismo patrón que "Agregar
-   Paciente", ver .pf-field en NuevaCitaFlow.css) — validación nativa vía
-   :required, sin JS por campo. Es una pista mientras se diligencia el
-   formulario; el aria-invalid de arriba (JS, tras un intento fallido de
-   "Guardar y continuar") es el estado de error real. :placeholder-shown
-   cubre texto/textarea (con placeholder); input[type="date"] no soporta
-   :placeholder-shown en Chromium, así que ese campo usa :invalid (un date
-   required vacío también es :invalid vía validación nativa). Gateado por
-   data-required-highlight en <html> (Configuración > Apariencia, ver
-   ConfigModal.jsx); "off" apaga el resaltado en toda la app. */
-html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
-html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
-html:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
-  background-color:var(--amber-bg);border-color:#eccb85;
-}
-html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
-html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
-html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
-  background-color:var(--amber-bg);border-color:#6b4a10;
-}
+/* Todas las clases que usa este paso (.pf-card, .pf-group, .pf-card-title,
+   .pf-grid-2, .pf-grid-4, .form-field, .req, .pf-field-error) están
+   definidas en ../PlantillaCrecimt2.css — cascan desde ahí porque .req y el
+   resaltado de obligatorio son primitivos reutilizables (ver criterio de
+   AGENTS.md en PlantillaCrecimt2.css, movidos acá cuando ExamenFisicoStep
+   sumó su propio set de campos obligatorios). Nada exclusivo de ConsultaStep
+   todavía. */

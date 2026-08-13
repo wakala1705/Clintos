@@ -49,6 +49,12 @@ export default function AtencionPaciente({ id }) {
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2'
+  // "Maximizar" (ver ViewSettingsMenu.jsx, dentro de PlantillaCrecimt2): vive
+  // acá porque también compacta PatientBanner, hermano de la card, no solo
+  // algo interno a PlantillaCrecimt2. Se resetea al salir de la plantilla
+  // (ver handleSalirPlantilla) para no dejar el banner compacto en la vista
+  // de pestañas normal.
+  const [plantillaMaximizada, setPlantillaMaximizada] = useState(false);
   // Guarda qué elemento tenía el foco antes de abrir el catálogo de
   // plantillas, para devolvérselo al cerrar (PlantillaModal no lo sabe: solo
   // conoce su propio contenido, no quién lo disparó — WCAG 2.1.2/2.4.3).
@@ -62,6 +68,11 @@ export default function AtencionPaciente({ id }) {
   function closePlantillaModal() {
     setPlantillaModalOpen(false);
     plantillaTriggerRef.current?.focus?.();
+  }
+
+  function handleSalirPlantilla() {
+    setPlantillaActiva(null);
+    setPlantillaMaximizada(false);
   }
 
   // Patrón ARIA APG de tablist: el roving tabIndex ya deja Tab llegar a la
@@ -144,6 +155,7 @@ export default function AtencionPaciente({ id }) {
             <>
               <PatientBanner
                 patient={data.patient}
+                compact={plantillaActiva === 'crecimt2' && plantillaMaximizada}
                 secondRow={[
                   { label: 'Cita', value: data.cita.citaHora },
                   { label: 'Servicio', value: `${data.cita.idServicio} · ${data.cita.descripcionServicio}` },
@@ -153,7 +165,12 @@ export default function AtencionPaciente({ id }) {
 
               <div className="card">
                 {plantillaActiva === 'crecimt2' ? (
-                  <PlantillaCrecimt2 onSalir={() => setPlantillaActiva(null)} />
+                  <PlantillaCrecimt2
+                    onSalir={handleSalirPlantilla}
+                    maximizada={plantillaMaximizada}
+                    onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                    patient={data.patient}
+                  />
                 ) : (
                   <>
                     <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>

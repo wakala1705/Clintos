@@ -35,84 +35,81 @@ const ConsultaStep = forwardRef(function ConsultaStep({ hidden }, ref) {
 
   return (
     <div className="ac-wrap" style={hidden ? { display: 'none' } : undefined}>
-      <h1 className="pf-section-title">Consulta</h1>
+      <h1 className="pf-section-title">Motivo de consulta y enfermedad actual</h1>
       <p className="pf-section-desc">Registra el motivo de consulta y los datos generales de esta atención.</p>
 
-      <section className="pf-card">
-        <div className="pf-group">
-          <h2 className="pf-card-title">Motivo de consulta y enfermedad actual</h2>
-          <div className="pf-grid-2">
-            <div className="form-field">
-              <label htmlFor="con-motivo">Motivo de consulta<span className="req">*</span></label>
-              <textarea
-                id="con-motivo" rows={3} placeholder="Describe brevemente el motivo por el que acude a la atención"
-                required
-                value={consulta.motivoConsulta}
-                aria-invalid={errors.motivoConsulta ? 'true' : undefined}
-                aria-describedby={errors.motivoConsulta ? 'con-motivo-error' : undefined}
-                onChange={(e) => { setConsulta((p) => ({ ...p, motivoConsulta: e.target.value })); clearError('motivoConsulta'); }}
-              />
-              {errors.motivoConsulta && <span id="con-motivo-error" className="pf-field-error">Campo obligatorio para continuar</span>}
-            </div>
-            <div className="form-field">
-              <label htmlFor="con-enfermedad">Enfermedad actual<span className="req">*</span></label>
-              <textarea
-                id="con-enfermedad" rows={5} placeholder="Describe el inicio, evolución y características de los síntomas actuales"
-                required
-                value={consulta.enfermedadActual}
-                aria-invalid={errors.enfermedadActual ? 'true' : undefined}
-                aria-describedby={errors.enfermedadActual ? 'con-enfermedad-error' : undefined}
-                onChange={(e) => { setConsulta((p) => ({ ...p, enfermedadActual: e.target.value })); clearError('enfermedadActual'); }}
-              />
-              {errors.enfermedadActual && <span id="con-enfermedad-error" className="pf-field-error">Campo obligatorio para continuar</span>}
-            </div>
+      <div className="pf-group">
+        <div className="pf-grid-2">
+          <div className="form-field">
+            <label htmlFor="con-motivo">Motivo de consulta<span className="req">*</span></label>
+            <textarea
+              id="con-motivo" rows={3} placeholder="Describe brevemente el motivo por el que acude a la atención"
+              required
+              value={consulta.motivoConsulta}
+              aria-invalid={errors.motivoConsulta ? 'true' : undefined}
+              aria-describedby={errors.motivoConsulta ? 'con-motivo-error' : undefined}
+              onChange={(e) => { setConsulta((p) => ({ ...p, motivoConsulta: e.target.value })); clearError('motivoConsulta'); }}
+            />
+            {errors.motivoConsulta && <span id="con-motivo-error" className="pf-field-error">Campo obligatorio para continuar</span>}
+          </div>
+          <div className="form-field">
+            <label htmlFor="con-enfermedad">Enfermedad actual<span className="req">*</span></label>
+            <textarea
+              id="con-enfermedad" rows={5} placeholder="Describe el inicio, evolución y características de los síntomas actuales"
+              required
+              value={consulta.enfermedadActual}
+              aria-invalid={errors.enfermedadActual ? 'true' : undefined}
+              aria-describedby={errors.enfermedadActual ? 'con-enfermedad-error' : undefined}
+              onChange={(e) => { setConsulta((p) => ({ ...p, enfermedadActual: e.target.value })); clearError('enfermedadActual'); }}
+            />
+            {errors.enfermedadActual && <span id="con-enfermedad-error" className="pf-field-error">Campo obligatorio para continuar</span>}
           </div>
         </div>
+      </div>
 
-        <div className="pf-group">
-          <h2 className="pf-card-title">Datos de la atención</h2>
-          <div className="pf-grid-4">
-            <div className="form-field">
-              <label htmlFor="dat-fecha">Fecha de primera atención en la ruta<span className="req">*</span></label>
-              <input
-                id="dat-fecha" type="date" required value={datosAtencion.fechaPrimeraAtencion}
-                aria-invalid={errors.fechaPrimeraAtencion ? 'true' : undefined}
-                aria-describedby={errors.fechaPrimeraAtencion ? 'dat-fecha-error' : undefined}
-                onChange={(e) => { setDatosAtencion((p) => ({ ...p, fechaPrimeraAtencion: e.target.value })); clearError('fechaPrimeraAtencion'); }}
-              />
-              {errors.fechaPrimeraAtencion && <span id="dat-fecha-error" className="pf-field-error">Campo obligatorio para continuar</span>}
-            </div>
-            <div className="form-field">
-              <label htmlFor="dat-momento">Momento vital</label>
-              <select
-                id="dat-momento" value={datosAtencion.momentoVital}
-                onChange={(e) => setDatosAtencion((p) => ({ ...p, momentoVital: e.target.value }))}
-              >
-                <option value="primera-infancia">Primera infancia</option>
-                <option value="infancia">Infancia</option>
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="dat-tipo">Tipo de consulta</label>
-              <select
-                id="dat-tipo" value={datosAtencion.tipoConsulta}
-                onChange={(e) => setDatosAtencion((p) => ({ ...p, tipoConsulta: e.target.value }))}
-              >
-                <option value="medico">Médico</option>
-                <option value="enfermeria">Enfermería</option>
-                <option value="nutricion">Nutrición</option>
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="dat-acompanante">Nombre del acompañante</label>
-              <input
-                id="dat-acompanante" type="text" placeholder="Nombre completo" value={datosAtencion.acompanante}
-                onChange={(e) => setDatosAtencion((p) => ({ ...p, acompanante: e.target.value }))}
-              />
-            </div>
+      <div className="pf-group">
+        <h2 className="pf-card-title">Datos de la atención</h2>
+        <div className="pf-grid-4">
+          <div className="form-field">
+            <label htmlFor="dat-fecha">Fecha de primera atención en la ruta<span className="req">*</span></label>
+            <input
+              id="dat-fecha" type="date" required value={datosAtencion.fechaPrimeraAtencion}
+              aria-invalid={errors.fechaPrimeraAtencion ? 'true' : undefined}
+              aria-describedby={errors.fechaPrimeraAtencion ? 'dat-fecha-error' : undefined}
+              onChange={(e) => { setDatosAtencion((p) => ({ ...p, fechaPrimeraAtencion: e.target.value })); clearError('fechaPrimeraAtencion'); }}
+            />
+            {errors.fechaPrimeraAtencion && <span id="dat-fecha-error" className="pf-field-error">Campo obligatorio para continuar</span>}
+          </div>
+          <div className="form-field">
+            <label htmlFor="dat-momento">Momento vital</label>
+            <select
+              id="dat-momento" value={datosAtencion.momentoVital}
+              onChange={(e) => setDatosAtencion((p) => ({ ...p, momentoVital: e.target.value }))}
+            >
+              <option value="primera-infancia">Primera infancia</option>
+              <option value="infancia">Infancia</option>
+            </select>
+          </div>
+          <div className="form-field">
+            <label htmlFor="dat-tipo">Tipo de consulta</label>
+            <select
+              id="dat-tipo" value={datosAtencion.tipoConsulta}
+              onChange={(e) => setDatosAtencion((p) => ({ ...p, tipoConsulta: e.target.value }))}
+            >
+              <option value="medico">Médico</option>
+              <option value="enfermeria">Enfermería</option>
+              <option value="nutricion">Nutrición</option>
+            </select>
+          </div>
+          <div className="form-field">
+            <label htmlFor="dat-acompanante">Nombre del acompañante</label>
+            <input
+              id="dat-acompanante" type="text" placeholder="Nombre completo" value={datosAtencion.acompanante}
+              onChange={(e) => setDatosAtencion((p) => ({ ...p, acompanante: e.target.value }))}
+            />
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 });

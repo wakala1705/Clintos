@@ -3,19 +3,21 @@
 import './AntecedentesNav.css';
 import { LuCircle, LuCircleCheck, LuCircleDot } from 'react-icons/lu';
 
-// `secciones` (definida en PlantillaCrecimt2.jsx) trae las 11 secciones del
-// formulario; solo las de status:'active' (01 Consulta, 02 Antecedentes) son
-// pasos reales del wizard. `currentStep` es el índice — SOLO contando esas
-// secciones activas, en orden — del paso que se está diligenciando ahora:
-// un paso queda 'done' si su índice quedó atrás de currentStep (avanzó tras
-// pasar la validación, ver handleGuardarContinuar en PlantillaCrecimt2.jsx),
-// 'current' si es exactamente currentStep, o 'locked' si todavía no se
-// completó el paso anterior — un paso locked se pinta igual que una sección
-// status:'inert' (mismo look "próximamente"), solo cambia el tooltip.
-// `activeSubIndex` es el scrollspy LOCAL del paso current (reinicia en 0 al
-// entrar a cada paso, ver ConsultaStep.jsx/AntecedentesStep.jsx) — ya no un
-// índice global sobre todas las subsecciones del formulario.
-export default function AntecedentesNav({ secciones, currentStep, activeSubIndex, onSelectStep, onSelectSub }) {
+// `secciones` (definida en PlantillaCrecimt2.jsx) trae las 13 secciones del
+// formulario; solo las de status:'active' (hoy, las 13) son pasos reales del
+// wizard. `currentStep` es el índice — SOLO contando esas secciones activas,
+// en orden — del paso que se está diligenciando ahora. `completedSteps` es
+// un Set<number> con los índices de los pasos ya completados (se marcan al
+// salir de un paso hacia adelante, ver markStepComplete en
+// PlantillaCrecimt2.jsx) — un paso es 'done' (check verde) si está en ese
+// Set, 'current' si es exactamente currentStep, o 'pending' en cualquier
+// otro caso. La navegación es libre: TODA sección activa es clicable sin
+// importar su estado — solo "01 Consulta" exige pasar `validar()` antes de
+// poder salir de ella (la gate vive en handleSelectStep, no acá). `activeSubIndex`
+// es el scrollspy LOCAL del paso current (reinicia en 0 al entrar a cada
+// paso, ver ConsultaStep.jsx/AntecedentesStep.jsx) — ya no un índice global
+// sobre todas las subsecciones del formulario.
+export default function AntecedentesNav({ secciones, currentStep, completedSteps, activeSubIndex, onSelectStep, onSelectSub }) {
   let stepIndex = -1;
 
   return (
@@ -36,42 +38,26 @@ export default function AntecedentesNav({ secciones, currentStep, activeSubIndex
 
           stepIndex += 1;
           const thisStep = stepIndex;
-          const state = thisStep < currentStep ? 'done' : thisStep === currentStep ? 'current' : 'locked';
-
-          if (state === 'locked') {
-            return (
-              <li key={s.num} className="an-section inert">
-                <div className="an-section-head" title="Completa el paso anterior para continuar" aria-disabled="true">
-                  <span className="an-section-icon"><LuCircle className="icon" aria-hidden="true" /></span>
-                  <span className="an-section-num">{s.num}</span>
-                  <span className="an-section-label">{s.label}</span>
-                </div>
-              </li>
-            );
-          }
-
-          const total = s.subsecciones.length;
-          const progreso = state === 'done' ? 100 : Math.round((activeSubIndex / total) * 100);
-          const clickable = state === 'done';
+          const state = completedSteps.has(thisStep) ? 'done' : thisStep === currentStep ? 'current' : 'pending';
 
           return (
-            <li key={s.num} className={`an-section active${state === 'done' ? ' done' : ''}`}>
+            <li key={s.num} className={`an-section active ${state}`}>
               <div
                 className="an-section-head"
-                role={clickable ? 'button' : undefined}
-                tabIndex={clickable ? 0 : undefined}
-                onClick={clickable ? () => onSelectStep(thisStep) : undefined}
-                onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onSelectStep(thisStep); } : undefined}
-                title={clickable ? `Volver a ${s.label}` : undefined}
+                role="button"
+                tabIndex={0}
+                onClick={() => onSelectStep(thisStep)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelectStep(thisStep); }}
+                title={state === 'current' ? undefined : `Ir a ${s.label}`}
+                aria-current={state === 'current' ? 'step' : undefined}
               >
                 <span className="an-section-icon">
-                  {state === 'done'
-                    ? <LuCircleCheck className="icon" aria-hidden="true" />
-                    : <LuCircleDot className="icon" aria-hidden="true" />}
+                  {state === 'done' && <LuCircleCheck className="icon" aria-hidden="true" />}
+                  {state === 'current' && <LuCircleDot className="icon" aria-hidden="true" />}
+                  {state === 'pending' && <LuCircle className="icon" aria-hidden="true" />}
                 </span>
                 <span className="an-section-num">{s.num}</span>
                 <span className="an-section-label">{s.label}</span>
-                <span className="an-section-progress">{progreso}%</span>
               </div>
 
               {state === 'current' && (

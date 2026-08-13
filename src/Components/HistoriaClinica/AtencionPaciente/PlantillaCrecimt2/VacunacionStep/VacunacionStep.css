@@ -1,17 +1,56 @@
 /* Todas las clases genéricas de formulario/card que usa este componente
-   (.ac-wrap, .ac-mega, .pf-card, .pf-group, .pf-card-title, .pf-card-desc,
+   (.ac-wrap, .ac-mega, .pf-group, .pf-card-title, .pf-card-desc,
    .form-field, .pf-grid-4, .btn) cascan desde PlantillaCrecimt2.css — acá
    solo viven las clases exclusivas de Vacunación (matriz + tarjetas mobile +
    lista de "Otras vacunas"), mismo criterio que TriStateField.css/
-   AntecedentesNav.css (ver AGENTS.md). */
+   AntecedentesNav.css (ver AGENTS.md). Ya no usa .pf-card: el contenido de
+   este paso salió de la card (mismo tratamiento que ConsultaStep/RiesgoStep,
+   ver AGENTS.md). .modal-overlay/.modal-card/.modal-header/.modal-body/
+   .modal-close-btn (modal "Expandir esquema"): definidas en
+   ../../shared/shared.css (mismo scaffolding que PlantillaModal.jsx), acá
+   solo el ancho ampliado propio de esta variante. */
 
 /* ---------- ENCABEZADO ---------- */
 .vac-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+/* flex:1 + min-width:0 en vez del flex-basis:auto por defecto: sin esto, el
+   párrafo de descripción (una sola oración larga) calcula su ancho preferido
+   por su propio contenido y empuja TODO .vac-header-actions (el botón
+   "Expandir esquema") a una fila propia en vez de solo envolver su propio
+   texto — un <div> flex-item sin flex declarado no se encoge por debajo de
+   su max-content, mismo bug de flexbox que .pf-body/.hc-content (ver
+   PlantillaCrecimt2.css). */
+.vac-header-text{flex:1;min-width:280px;}
+/* La pill de progreso vive pegada al h1 (no en el grupo de acciones de la
+   derecha): es un dato sobre el título "Esquema de vacunación" en sí, no una
+   acción — mismo criterio de agrupar por significado, no por alineación. */
+.vac-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.vac-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .vac-progress-pill{
   font-size:12px;font-weight:600;color:var(--status-info-fg);background:var(--status-info-bg);
-  padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:2px;
+  padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;
 }
 .vac-progress-pill.complete{color:var(--green);background:var(--green-bg);}
+/* Mismo btn-secondary del resto de la app, solo más compacto (min-height:40px
+   por defecto se ve pesado al lado de una pill de 1 línea). */
+.vac-expand-btn{min-height:34px;padding:7px 14px;font-size:12.5px;}
+.vac-expand-btn .icon{width:15px;height:15px;}
+
+/* ---------- MODAL "Expandir esquema" ----------
+   width:min(...) en vez del 560px por defecto de .modal-card: la matriz
+   completa (8 momentos) necesita el ancho real de la pantalla para no
+   depender de scroll horizontal salvo en viewports angostos, donde
+   .vac-matrix-wrap ya lo resuelve igual que en la vista compacta.
+   .vac-expand-overlay reduce el padding del overlay (24px→12px, ver
+   .modal-overlay en shared.css) y .vac-expand-body/.vac-expand-body .vac-cell
+   ajustan el propio padding interno — entre los 3 recuperan ~130px extra de
+   ancho real para las 8 columnas de fecha, suficiente para que quepan sin
+   scroll horizontal en un viewport de escritorio típico (1440px+). */
+.vac-expand-overlay{padding:12px;}
+.vac-expand-modal{width:min(1680px, 98vw);}
+.vac-expand-body{padding:24px;}
+.vac-expand-body .vac-matrix-wrap{margin-top:0;}
+.vac-expand-body .vac-cell{padding:5px 4px;}
+.vac-expand-body .vac-date-input{padding:5px 4px;}
 
 /* ---------- MATRIZ DE ESCRITORIO ----------
    Sticky primera columna (punto 3 del encargo, "si es necesario") para

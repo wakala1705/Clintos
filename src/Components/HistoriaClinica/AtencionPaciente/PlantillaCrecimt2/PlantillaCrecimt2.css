@@ -13,18 +13,26 @@
   flex-shrink:0;display:flex;align-items:center;gap:10px;
   padding:16px 24px;border-bottom:1px solid var(--border);
 }
-.pf-titlebar-back{
+/* .pf-titlebar-icon-btn: botón redondo genérico del titlebar — usado por
+   .pf-titlebar-back y por .vsm-trigger (ver ViewSettingsMenu.css, ícono de
+   configuración de vista), de ahí vivir acá en vez de en cada .css propio
+   (ver AGENTS.md). */
+.pf-titlebar-icon-btn{
   width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--ink-500);
   display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:inherit;
 }
-.pf-titlebar-back:hover{background:var(--gray-bg);color:var(--ink-900);}
-.pf-titlebar-back .icon{width:17px;height:17px;}
+.pf-titlebar-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.pf-titlebar-icon-btn .icon{width:17px;height:17px;}
 .pf-titlebar-title{font-size:14px;font-weight:600;color:var(--ink-900);}
 
-/* .pf-body es el ÚNICO contenedor con scroll (antes cada columna scrolleaba
-   por su cuenta: el panel izquierdo se desincronizaba del contenido y
-   "se rompía" al seleccionar una subsección — ver AntecedentesNav.css, donde
-   .an-nav queda position:sticky en vez de tener su propio overflow-y:auto).
+/* .pf-body es el contenedor de scroll principal de .pf-content (antes cada
+   columna scrolleaba por su cuenta: el panel izquierdo se desincronizaba del
+   contenido y "se rompía" al seleccionar una subsección, del viejo modelo de
+   scroll continuo). .an-nav (ver AntecedentesNav.css) además tiene su PROPIO
+   overflow-y:auto — no desincroniza nada porque el resaltado activo ya no
+   depende de scroll, viene de `currentStep`/`activeSubIndex` (modelo
+   wizard) — solo evita que sus filas queden recortadas cuando el paso
+   actual expandido no entra en el alto visible del panel.
    min-height:0 sigue siendo necesario: sin esto, un item de un flex column
    por defecto no se encoge por debajo de la altura de su contenido y en vez
    de scrollear empuja el alto de .card (mismo bug de flexbox que .hc-content,
@@ -123,7 +131,20 @@
   transition:transform .15s ease;
 }
 .pf-block-chevron.collapsed{transform:rotate(-90deg);}
-.pf-block-body{padding:20px 24px;}
+.pf-block-body{padding:0px;}
+
+/* Cabecera de card con ícono, para cards SIEMPRE expandidas (sin botón/
+   chevron/colapso — a diferencia de .pf-block-header, que sí es un <button>
+   completo) — ExamenFisicoStep (6 usos, antes .ef-card-header),
+   MedicamentoCard (antes .mc-card-header) y ProximasCitasStep comparten
+   exactamente el mismo layout, así que vive acá (ver AGENTS.md, 2+
+   consumidores). align-items:flex-start (no center): algunas cabeceras
+   solo traen h2 (una línea, se ve igual con cualquiera de los dos) pero
+   otras traen h2+pf-card-desc (2 líneas) — con center el ícono quedaría
+   descentrado hacia abajo en esos casos. */
+.pf-card-header-icon{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+.pf-card-header-icon .pf-card-title{margin:0;}
+.pf-card-header-icon .pf-card-desc{margin:4px 0 0;}
 
 /* .pf-group agrupa varias "cards de antes" dentro de una sola .pf-card
    grande (Antecedentes familiares / Antecedentes personales, ver
@@ -210,6 +231,83 @@
    ValeQuestion.jsx); se mueve acá por tener 2+ consumidores (ver AGENTS.md). */
 .pf-field-error{display:block;font-size:12px;color:var(--red);margin-top:6px;}
 
+/* Asterisco de campo obligatorio + resaltado ámbar de "obligatorio y vacío
+   todavía" — vivía solo en ConsultaStep.css hasta que ExamenFisicoStep sumó
+   su propio set de campos obligatorios (Medidas antropométricas); se mueve
+   acá por tener 2+ consumidores (ver AGENTS.md). El resaltado es una pista
+   mientras se diligencia el formulario, vía :required/:placeholder-shown
+   nativos, sin JS por campo; el aria-invalid (JS, tras un intento fallido de
+   "Guardar y continuar") es el estado de error real. input[type="date"] no
+   soporta :placeholder-shown en Chromium, así que ese caso usa :invalid (un
+   date required vacío también es :invalid vía validación nativa). Gateado
+   por data-required-highlight en <html> (Configuración > Apariencia, ver
+   ConfigModal.jsx); "off" apaga el resaltado en toda la app. */
+.req{color:var(--red);margin-left:2px;}
+.form-field textarea[aria-invalid="true"],
+.form-field input[aria-invalid="true"]{border-color:var(--red);}
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[type="date"]:required:invalid{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
+
+/* Separa un campo/grid suelto del bloque que le sigue dentro de una misma
+   .pf-group — vivía solo en AntecedentesStep.css hasta que ExamenFisicoStep
+   sumó su propio uso (ver AGENTS.md, 2+ consumidores). */
+.ac-field-spaced{margin-bottom:16px;margin-top:16px}
+
+/* Línea divisoria entre 2 grupos de campos dentro de una misma .pf-card,
+   cuando no alcanza con el spacing de .ac-field-spaced (ver "Lactancia
+   materna" / "Toma actualmente..." en AlimentacionStep.jsx) — mismo tono que
+   el borde de .pf-group + .pf-group, pero como elemento propio en vez de
+   depender de que el bloque siguiente sea un .pf-group completo. */
+.pf-divider{height:1px;background:var(--border);margin:24px 0;}
+
+/* Fila "pregunta larga + respuesta corta" — Consumo del día anterior /
+   Evaluación de la lactancia materna (AlimentacionStep.jsx) y el
+   cuestionario APGAR familiar (CrecimientoStep.jsx): el texto clínico
+   completo debe leerse conectado a su respuesta en vez de como label suelto
+   encima de un select/toggle (patrón por defecto de .form-field, pensado
+   para labels cortos). Vivía solo en AlimentacionStep.css hasta que
+   CrecimientoStep sumó su propio uso (ver AGENTS.md, 2+ consumidores).
+   Selector compuesto (especificidad 0,2,0/0,2,1) a propósito, mismo criterio
+   que .pf-grid-4 .pf-condition-row: sin el combinador con .form-field, esta
+   regla y la base compiten con la misma especificidad y el orden de
+   inyección de cada hoja decide. */
+.form-field.pf-question-row{
+  flex-direction:row;align-items:center;justify-content:space-between;gap:24px;
+  padding:14px 0;border-bottom:1px solid #eef0f4;
+}
+.form-field.pf-question-row:last-child{border-bottom:none;}
+/* label o <p>: CrecimientoStep (cuestionario APGAR) usa un grupo de botones
+   en vez de un único <select>, así que su pregunta no puede vivir en un
+   <label htmlFor> real (no hay un solo control al que apuntar) — usa un <p>
+   con id propio + aria-labelledby en el grupo (ver ValeQuestion.jsx, mismo
+   criterio). */
+.form-field.pf-question-row label,
+.form-field.pf-question-row p{font-size:13.5px;font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
+.form-field.pf-question-row select{width:200px;flex-shrink:0;}
+
+/* Pill pequeña junto a un <label>, para marcar que el campo de abajo NO se
+   edita a mano — es un valor que el propio formulario deriva (IMC en
+   ExamenFisicoStep.jsx, Tipo de lactancia en AlimentacionStep.jsx). Color
+   primario por defecto ("Calculado", un número derivado); .pf-field-tag-green
+   para un resultado categórico positivo ("Resultado", mismo verde que
+   .badge.status-active en PatientBanner.css) — cada consumidor decide su
+   propio tinte de fondo para el <input> en sí (.ef-calculated-input,
+   .al-tipo-lactancia-result), acá solo la pill. */
+.pf-field-tag{
+  display:inline-block;margin-left:8px;font-size:10px;font-weight:600;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--primary-dark);background:var(--primary-50);
+  border-radius:20px;padding:2px 8px;vertical-align:middle;
+}
+.pf-field-tag-green{color:var(--green);background:var(--green-bg);}
+
 /* ---------- Checklist (Sucesos vitales familiares / Salud mental de los padres) ---------- */
 .pf-checklist{display:flex;flex-direction:column;gap:4px;}
 /* Selector compuesto (especificidad 0,0,2,0) a propósito: .pf-checklist
@@ -233,9 +331,7 @@
    referencia); un TriStateField suelto dentro de una card (Otros
    antecedentes) no necesita ese segundo borde anidado. */
 .pf-condition{padding:12px 0;}
-.pf-grid-4 .pf-condition{
-  
-}
+
 /* En 4 columnas la caja es angosta: label arriba y toggle abajo siempre, en
    vez de depender de que el wrap ocurra "a veces sí, a veces no" según el
    largo de cada etiqueta (se veía inconsistente entre las 8 condiciones). */
@@ -243,6 +339,15 @@
 .pf-condition-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .pf-condition-label{font-size:13px;font-weight:500;color:var(--ink-900);}
 .pf-toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
+/* Cuando .pf-toggle-group es hijo directo de .form-field (ver "¿Requiere
+   remisión?" en ProximasCitasStep.jsx — único caso hoy; el resto de usos
+   vive dentro de una fila flex propia, ej. .pf-condition-row/
+   .pf-question-row, que ya lo alinea bien), el align-items:stretch por
+   defecto de un flex column lo estira a lo ancho del campo entero pese a
+   ser inline-flex — deja una caja enorme con los botones pegados a la
+   izquierda y medio campo vacío a la derecha. align-self:flex-start lo
+   vuelve a su ancho de contenido real. */
+.form-field > .pf-toggle-group{align-self:flex-start;}
 .pf-toggle-btn{
   font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-700);background:var(--surface);
   border:none;padding:8px 12px;min-height:38px;cursor:pointer;white-space:nowrap;

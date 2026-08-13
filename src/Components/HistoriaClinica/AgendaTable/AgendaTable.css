@@ -24,6 +24,22 @@
 .data-table th.group-divider,
 .data-table td.group-divider{border-left:1px solid var(--border);}
 
+/* Descripción gana el ancho que dejó libre "Id. Servicio" al quitarse (ese
+   dato ya vive en la ficha de atención, no hacía falta duplicarlo acá) — sin
+   este min-width, una descripción corta ("Consulta especializada") deja la
+   columna angosta y solo se ve amplia cuando el texto de turno es largo. */
+.col-descripcion{min-width:320px;}
+
+/* ---------- SELECCIÓN DE FILA ----------
+   Un solo clic selecciona (ver AgendaTable.jsx) — .selected ya trae el fondo
+   tinte primario desde .data-table tbody tr.selected (shared.css); acá solo
+   el acento de borde izquierdo, que sigue siendo visible incluso sobre una
+   fila .row-atendido (mismo fondo verde, otra propiedad — no compiten por
+   cascada) y el estado de foco por teclado (la fila ahora es un tabIndex
+   propio, ver el mismo archivo). */
+.hc-table-wrap .data-table tbody tr.selected{box-shadow:inset 3px 0 0 var(--primary);}
+.hc-table-wrap .data-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
 /* ---------- COLUMNA "ACCIONES" ----------
    Botón real por fila para abrir la atención del paciente por teclado
    (Tab + Enter/Espacio) — el onDoubleClick de la fila (ver AgendaTable.jsx)
@@ -65,6 +81,11 @@
   padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
 }
 .hc-card.row-atendido{background:var(--green-bg);}
+/* Declarada después de .row-atendido (misma especificidad): la selección es
+   el estado más "activo ahora mismo" de los dos, así que gana el fondo si
+   una tarjeta llega a estar atendida Y seleccionada a la vez. */
+.hc-card.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+.hc-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .hc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .hc-card-id{min-width:0;}
 .hc-card-name{font-weight:600;color:var(--ink-900);font-size:13px;}

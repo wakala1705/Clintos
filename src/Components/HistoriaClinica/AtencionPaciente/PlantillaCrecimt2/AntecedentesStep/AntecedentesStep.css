@@ -1,5 +1,6 @@
-/* Único ajuste propio de este paso — separa el campo suelto "Vacunas
-   antitetánicas..." del grid de 4 columnas que le sigue justo debajo, dentro
-   de "Antecedentes durante la gestación" (ver AntecedentesStep.jsx). .ac-wrap
-   y .ac-mega son compartidos con ConsultaStep y viven en PlantillaCrecimt2.css. */
-.ac-field-spaced{margin-bottom:16px;margin-top:16px}
+/* Todas las clases que usa este paso (.ac-wrap, .ac-mega, .pf-card,
+   .pf-card-split, .pf-block-*, .pf-group, .pf-grid-*, .form-field,
+   .ac-field-spaced) están definidas en ../PlantillaCrecimt2.css — cascan
+   desde ahí porque son primitivos reutilizables (ver criterio de AGENTS.md,
+   .ac-field-spaced movida acá cuando ExamenFisicoStep sumó su propio uso).
+   Nada exclusivo de AntecedentesStep todavía. */

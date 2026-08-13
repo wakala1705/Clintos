@@ -1,0 +1,59 @@
+/* .pf-card, .pf-card-title, .pf-card-desc, .pf-group, .pf-subheading,
+   .pf-grid-N, .form-field, .pf-field-suffix, .pf-toggle-group,
+   .pf-toggle-btn, .pf-condition-row, .pf-condition-label, .req,
+   .pf-field-error, .ac-field-spaced, .pf-block-icon, .pf-card-header-icon
+   (antes .ef-card-header, movida a shared al sumar MedicamentoCard/
+   ProximasCitasStep como consumidores): definidas en ../PlantillaCrecimt2.css
+   (shared del feature) — acá solo lo exclusivo de este paso. */
+
+/* ---------- Campo calculado (IMC) ----------
+   .pf-field-tag: definida en ../PlantillaCrecimt2.css (shared del feature,
+   ahora también usada por .al-tipo-lactancia-result en AlimentacionStep.css).
+   Acá solo el relleno propio de ESTE campo calculado: fondo tinte primario +
+   borde discontinuo, para que se lea de un vistazo como "esto no se escribe
+   acá" en vez de "este campo está bloqueado por alguna otra razón" (no basta
+   con `disabled`, que ya atenúa vía .form-field input:disabled en
+   PlantillaCrecimt2.css pero no distingue "calculado" de "bloqueado"). */
+.ef-calculated-input{
+  background:var(--primary-50) !important;border-style:dashed !important;
+  color:var(--primary-dark) !important;font-weight:600;cursor:default;
+}
+
+/* ---------- Presión arterial (sistólica / diastólica) ----------
+   Mismo alto/borde/radio que un <input> normal (ver .form-field input en
+   PlantillaCrecimt2.css) pero como un solo contenedor con 2 inputs sin
+   spinner + separador "/", para que se lea como un único dato compuesto en
+   vez de 2 campos sueltos — mismo criterio visual que .pf-field-suffix. */
+.ef-bp-field{
+  display:flex;align-items:center;gap:6px;height:var(--input-lg);
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  padding:0 12px;
+}
+.ef-bp-field:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
+.ef-bp-field input{
+  border:none;padding:0;height:auto;width:100%;min-width:0;text-align:center;
+  font-family:inherit;font-size:13px;color:var(--ink-900);background:transparent;
+}
+.ef-bp-field input:focus{outline:none;}
+/* -moz-appearance:textfield: Firefox no acepta appearance:none en number
+   inputs para ocultar el spinner — sin esto, 2 pares de flechas dentro de un
+   contenedor angosto de 90px quiebran el layout. */
+.ef-bp-field input[type="number"]{-moz-appearance:textfield;appearance:none;}
+.ef-bp-field input::-webkit-outer-spin-button, .ef-bp-field input::-webkit-inner-spin-button{
+  -webkit-appearance:none;margin:0;
+}
+.ef-bp-sep{color:var(--ink-400);font-weight:600;flex-shrink:0;}
+.ef-bp-unit{font-size:12px;color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
+
+/* ---------- Examen físico por sistemas ----------
+   2 columnas reales en desktop (Columna izquierda / Columna derecha del
+   encargo son 2 grupos de contenido distintos, no un único listado de 14 que
+   se reparte solo — ver SISTEMAS_IZQUIERDA/SISTEMAS_DERECHA en
+   ExamenFisicoStep.jsx) — cada `.ef-systems-col` es su propia pila vertical,
+   así que en el breakpoint de 1 columna la izquierda completa queda antes
+   que la derecha completa, no intercalada. */
+.ef-systems-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;align-items:start;}
+.ef-systems-col{display:flex;flex-direction:column;gap:12px;}
+@media (max-width: 720px){
+  .ef-systems-grid{grid-template-columns:1fr;}
+}

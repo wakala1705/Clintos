@@ -1,0 +1,11 @@
+/* .ac-wrap/.pf-section-title/.pf-section-desc/.pf-card/.pf-card-title/
+   .pf-card-desc/.pf-card-header-icon/.pf-block-icon/.pf-subheading/
+   .pf-grid-3/.pf-grid-2col/.form-field/.pf-toggle-group/.pf-toggle-btn/
+   .req/.ac-field-spaced/.sr-only: definidas en ../PlantillaCrecimt2.css /
+   ../../shared/shared.css (shared del feature/proyecto) — acá solo lo
+   exclusivo de este paso. */
+
+/* Contador de caracteres de "Observaciones clínicas" (encargo: "mostrar un
+   contador de caracteres si existe un límite definido" — ver
+   OBSERVACIONES_MAX_LENGTH en proximasCitasData.js). */
+.pcs-char-counter{display:block;margin-top:6px;font-size:11.5px;color:var(--ink-500);text-align:right;}

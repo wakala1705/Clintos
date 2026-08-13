@@ -1,0 +1,50 @@
+/* .form-field/.req: definidas en ../../PlantillaCrecimt2.css (shared del
+   feature) — acá solo el control propio del combobox. */
+.ss-wrap{position:relative;}
+.ss-control{
+  display:flex;align-items:center;gap:8px;height:var(--input-lg);
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  padding:0 12px;
+}
+.ss-control:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
+.ss-control.disabled{background:var(--bg);cursor:not-allowed;}
+/* El resaltado ámbar de "obligatorio y vacío" (.form-field input:required:
+   placeholder-shown, ver PlantillaCrecimt2.css) solo pinta el <input> real
+   — acá ese input mide su propia altura de línea (~16px), mucho más chico
+   que la caja visible de 44px de .ss-control (borde+ícono+chevron), así
+   que el ámbar se veía como una píldora angosta flotando en el medio del
+   campo en vez de llenarlo. :has() repite la misma regla (mismo selector/
+   gating que la de shared) pero sobre el contenedor completo. */
+html:not([data-required-highlight="off"]) .ss-control:has(input:required:placeholder-shown){
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .ss-control:has(input:required:placeholder-shown){
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
+.ss-search-icon{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}
+.ss-control input{
+  flex:1;min-width:0;border:none;padding:0;height:auto;
+  font-family:inherit;font-size:13px;color:var(--ink-900);background:transparent;
+}
+.ss-control input:focus{outline:none;}
+.ss-control input:disabled{color:var(--ink-400);cursor:not-allowed;}
+.ss-control input::placeholder{color:var(--ink-400);}
+.ss-chevron{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
+
+/* Listbox flotante — mismo z-index de overlays de la app (--z-dropdown si
+   existiera; se reutiliza --z-sticky, ya por encima del contenido normal
+   del panel, ver .data-table thead th en shared.css). */
+.ss-listbox{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:var(--z-sticky);
+  background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 12px 28px rgba(16,24,39,.16);max-height:240px;overflow-y:auto;
+  padding:4px;margin:0;list-style:none;
+}
+.ss-empty{padding:10px 12px;font-size:12.5px;color:var(--ink-500);}
+.ss-option{
+  width:100%;text-align:left;padding:9px 10px;border-radius:6px;border:none;background:none;
+  font-family:inherit;font-size:13px;color:var(--ink-900);cursor:pointer;
+}
+.ss-option:hover{background:var(--bg);}
+.ss-option.active{background:var(--primary-50);color:var(--primary-dark);font-weight:600;}
+.ss-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}

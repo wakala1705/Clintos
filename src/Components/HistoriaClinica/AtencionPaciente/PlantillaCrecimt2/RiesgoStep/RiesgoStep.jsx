@@ -44,24 +44,21 @@ const RiesgoStep = forwardRef(function RiesgoStep({ hidden }, ref) {
       <h1 className="pf-section-title">Riesgo 4505</h1>
       <p className="pf-section-desc">Registra la evaluación de riesgo del paciente según la Resolución 4505.</p>
 
-      <section className="pf-card">
-        <div className="pf-group">
-          <h2 className="pf-card-title">Riesgo 4505</h2>
-          <div className="pf-grid-3">
-            {CAMPOS_RIESGO.map((c) => (
-              <div className="form-field" key={c.key}>
-                <label htmlFor={`rg-${c.key}`}>{c.label}</label>
-                <select
-                  id={`rg-${c.key}`} value={riesgos[c.key]}
-                  onChange={(e) => setRiesgos((p) => ({ ...p, [c.key]: e.target.value }))}
-                >
-                  {RIESGO_OPCIONES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-            ))}
-          </div>
+      <div className="pf-group">
+        <div className="pf-grid-3">
+          {CAMPOS_RIESGO.map((c) => (
+            <div className="form-field" key={c.key}>
+              <label htmlFor={`rg-${c.key}`}>{c.label}</label>
+              <select
+                id={`rg-${c.key}`} value={riesgos[c.key]}
+                onChange={(e) => setRiesgos((p) => ({ ...p, [c.key]: e.target.value }))}
+              >
+                {RIESGO_OPCIONES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
     </div>
   );
 });

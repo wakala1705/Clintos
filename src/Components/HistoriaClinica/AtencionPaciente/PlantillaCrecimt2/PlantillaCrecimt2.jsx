@@ -12,6 +12,12 @@ import VacunacionStep from './VacunacionStep/VacunacionStep';
 import FactoresRiesgoStep from './FactoresRiesgoStep/FactoresRiesgoStep';
 import ValeStep from './ValeStep/ValeStep';
 import EadStep from './EadStep/EadStep';
+import ExamenFisicoStep from './ExamenFisicoStep/ExamenFisicoStep';
+import CrecimientoStep from './CrecimientoStep/CrecimientoStep';
+import MedicamentosStep from './MedicamentosStep/MedicamentosStep';
+import RecomendacionesStep from './RecomendacionesStep/RecomendacionesStep';
+import ProximasCitasStep from './ProximasCitasStep/ProximasCitasStep';
+import ViewSettingsMenu from './ViewSettingsMenu/ViewSettingsMenu';
 import { LuArrowLeft } from 'react-icons/lu';
 
 // Plantilla "Atención integral a la primera infancia e infancia" (CRECIMT2),
@@ -22,34 +28,42 @@ import { LuArrowLeft } from 'react-icons/lu';
 // Topbar/PatientBanner de la atención siguen visibles (ver AGENTS.md, "un
 // componente = una carpeta" también cubre vistas que reemplazan el body de
 // una card existente en vez de navegar a otra URL). `onSalir` viene del
-// padre. No recibe los datos del paciente: PatientBanner (AtencionPaciente.jsx)
-// ya los muestra arriba de toda la atención, visibles durante los 12 pasos
-// del wizard sin que este componente (ni ninguno de sus pasos) necesite
-// pedirlos de nuevo.
+// padre, igual que `maximizada`/`onToggleMaximizar` (ver ViewSettingsMenu →
+// "Maximizar"): ese estado vive en AtencionPaciente.jsx porque también
+// compacta PatientBanner, hermano de la card, no algo interno a este
+// componente. Tampoco recibe el resto de los datos del paciente —
+// PatientBanner (AtencionPaciente.jsx) ya los muestra arriba de toda la
+// atención, visibles durante los 11 pasos del wizard sin que este componente
+// (ni la mayoría de sus pasos) necesite pedirlos de nuevo — salvo `patient`
+// (solo se usa `patient.sexo`, ver "09 Examen físico" abajo): el desarrollo
+// puberal (Tanner) necesita saber a qué sexo pertenece el paciente para
+// mostrar el set de campos correcto.
 //
-// Las 11 secciones del formulario original de CRECIMT2 (originalmente 12;
-// "09 Escalas" se eliminó por encargo — no tenía contenido real ni fuente
-// legacy, así que el resto se renumeró para no dejar un hueco en el riel).
-// "01 Consulta", "02 Antecedentes", "03 Riesgo 4505", "04 Alimentación", "05
-// Vacunación", "06 Factores de riesgo", "07 VALE" y "08 Escala de
-// desarrollo" tienen contenido real (ver ConsultaStep.jsx/
-// AntecedentesStep.jsx/RiesgoStep.jsx/AlimentacionStep.jsx/
-// VacunacionStep.jsx/FactoresRiesgoStep.jsx/ValeStep.jsx/EadStep.jsx); el
-// resto queda visible-pero-inerte para que el mapa completo del formulario
-// se lea igual de real que en un HIS en producción, mismo patrón que las
-// pestañas deshabilitadas de AtencionPaciente.jsx (title="Próximamente").
-// Ajustes ya aplicados sobre la numeración original, ninguno elimina
-// campos: "Factores de riesgo" (antes 08, inerte) pasó a 06, justo después
-// de Vacunación, porque su contenido real viene del mismo formulario legacy
-// de vacunación; "Desarrollo"/"Crecimiento" (07/08) intercambiaron posición
-// porque el primer contenido real que se construyó ahí fue VALE —
-// Valoración del desarrollo infantil (ver ValeStep.jsx); y ahora que el
-// contenido real de "08" es la EAD — Escala Abreviada de Desarrollo (ver
-// EadStep.jsx) el 07 se relabela a "VALE" (mismo contenido, solo el nombre)
-// y el 08 pasa a llamarse "Escala de desarrollo" — "Crecimiento" no tenía
-// una fuente legacy verificada en este proyecto (fue mi propia aproximación
-// antes de tener las capturas reales del formulario), así que no hay
-// contenido que reubicar.
+// Las 13 secciones del wizard (12 del formulario original de CRECIMT2 +
+// "13 Próximas citas", agregada después — ver más abajo). Las 13 secciones
+// tienen contenido real (ver ConsultaStep.jsx/AntecedentesStep.jsx/
+// RiesgoStep.jsx/AlimentacionStep.jsx/VacunacionStep.jsx/
+// FactoresRiesgoStep.jsx/ValeStep.jsx/EadStep.jsx/ExamenFisicoStep.jsx/
+// CrecimientoStep.jsx/MedicamentosStep.jsx/RecomendacionesStep.jsx/
+// ProximasCitasStep.jsx) — ningún paso visible-pero-inerte (el patrón
+// sigue documentado acá y en AtencionPaciente.jsx, title="Próximamente",
+// por si un futuro paso vuelve a necesitarlo).
+// "10 Crecimiento y APGAR familiar" (verificación de indicadores de
+// crecimiento + síntesis histórica + cuestionario APGAR familiar de
+// Smilkstein, ver crecimientoData.js) se insertó después de "09 Examen
+// físico" — encargo explícito de reordenar los dos, ambos habían sido
+// construidos en el orden opuesto originalmente — sin perder ningún campo
+// ya construido en ninguno de los dos. "11 Medicamentos" reemplazó al
+// antiguo "11 Diagnóstico" (placeholder inerte, sin fuente legacy
+// verificada) — prescripción de los 3 medicamentos del esquema pediátrico
+// estándar (ver MedicamentosStep.jsx). "12 Recomendaciones al cuidador"
+// reemplazó al antiguo "12 Plan" (mismo motivo) — 8 categorías de
+// recomendación con plantilla clínica predefinida por categoría (ver
+// recomendacionesData.js). "13 Próximas citas" es una sección nueva sin
+// número original en el legacy de 12 (seguimiento + diagnóstico de la
+// atención + remisión + observaciones clínicas, ver proximasCitasData.js) —
+// se agregó al final del wizard en vez de intercalarse entre las 12
+// existentes.
 export const SECCIONES = [
   {
     num: '01', label: 'Consulta', status: 'active',
@@ -74,8 +88,8 @@ export const SECCIONES = [
     num: '04', label: 'Alimentación', status: 'active',
     subsecciones: [
       { id: 'al-alimentacion', label: 'Alimentación' },
-      { id: 'al-actual', label: 'Alimentación actual' },
       { id: 'al-consumo', label: 'Consumo día anterior' },
+      { id: 'al-actual', label: 'Alimentación actual' },
       { id: 'al-historico', label: 'Registro histórico' },
       { id: 'al-evaluacion', label: 'Evaluación de la lactancia' },
     ],
@@ -104,9 +118,43 @@ export const SECCIONES = [
       { id: 'ead-evaluacion', label: 'Evaluación EAD' },
     ],
   },
-  { num: '09', label: 'Examen físico', status: 'inert' },
-  { num: '10', label: 'Diagnóstico', status: 'inert' },
-  { num: '11', label: 'Plan', status: 'inert' },
+  {
+    num: '09', label: 'Examen físico', status: 'active',
+    subsecciones: [
+      { id: 'ef-antropometria', label: 'Medidas antropométricas' },
+      { id: 'ef-signos-vitales', label: 'Signos vitales' },
+      { id: 'ef-condiciones-generales', label: 'Condiciones generales' },
+      { id: 'ef-sistemas', label: 'Examen físico por sistemas' },
+      { id: 'ef-agudeza-visual', label: 'Tamizaje de agudeza visual' },
+      { id: 'ef-tanner', label: 'Desarrollo puberal' },
+    ],
+  },
+  {
+    num: '10', label: 'Crecimiento y APGAR familiar', status: 'active',
+    subsecciones: [
+      { id: 'cre-verificar', label: 'Verificar el crecimiento' },
+      { id: 'cre-sintesis', label: 'Síntesis de evaluaciones' },
+      { id: 'cre-apgar', label: 'Clasificación APGAR Familiar' },
+    ],
+  },
+  {
+    num: '11', label: 'Medicamentos', status: 'active',
+    subsecciones: [
+      { id: 'med-medicamentos', label: 'Medicamentos' },
+    ],
+  },
+  {
+    num: '12', label: 'Recomendaciones al cuidador', status: 'active',
+    subsecciones: [
+      { id: 'rec-recomendaciones', label: 'Recomendaciones al cuidador' },
+    ],
+  },
+  {
+    num: '13', label: 'Próximas citas', status: 'active',
+    subsecciones: [
+      { id: 'pcs-proximas-citas', label: 'Próximas citas' },
+    ],
+  },
 ];
 
 function formatSavedAt(date) {
@@ -117,21 +165,33 @@ function formatSavedAt(date) {
 // El formulario es tipo wizard: `currentStep` es el índice (0 = 01 Consulta,
 // 1 = 02 Antecedentes, 2 = 03 Riesgo 4505, 3 = 04 Alimentación, 4 = 05
 // Vacunación, 5 = 06 Factores de riesgo, 6 = 07 VALE, 7 = 08 Escala de
-// desarrollo/EAD)
-// del paso que se está diligenciando ahora — ya no un scroll continuo con
-// scrollspy sobre todas las subsecciones del formulario. Un paso solo
-// avanza al siguiente si `ConsultaStep.validar()` (ref) confirma que los
-// campos obligatorios están completos (ver handleGuardarContinuar); el
-// resto de pasos no tiene validación bloqueante propia a este nivel (VALE
-// sí valida internamente entre sus propias 5 etapas, EAD solo advierte sin
-// bloquear — ver ValeStep.jsx/EadStep.jsx, ninguno de los dos bloquea el
-// "Guardar y continuar" externo). "volver" a un paso ya completado no
-// exige nada. Los 8 pasos quedan SIEMPRE montados (ver `hidden` en
-// ConsultaStep/AntecedentesStep/RiesgoStep/AlimentacionStep/
-// VacunacionStep/FactoresRiesgoStep/ValeStep/EadStep) para no perder lo ya
-// diligenciado al ir y volver — solo se ocultan con CSS.
-export default function PlantillaCrecimt2({ onSalir }) {
+// desarrollo/EAD, 8 = 09 Examen físico, 9 = 10 Crecimiento y APGAR
+// familiar, 10 = 11 Medicamentos, 11 = 12 Recomendaciones al cuidador,
+// 12 = 13 Próximas citas) del paso que se está diligenciando ahora — ya no
+// un scroll continuo con scrollspy sobre todas las subsecciones del
+// formulario. La navegación por el sidebar (AntecedentesNav) es libre: se
+// puede saltar a cualquier sección sin completar las anteriores en orden
+// (encargo explícito) — la única excepción es "01 Consulta"
+// (motivo/enfermedad/fecha), que sigue siendo obligatoria: `validar()`
+// (ref) debe pasar antes de poder salir de ella, tanto por "Guardar y
+// continuar" como por un click directo en el sidebar (ver
+// handleSelectStep/handleGuardarContinuar). Ningún otro paso bloquea salir
+// de él — ExamenFisicoStep ya no bloquea tampoco (dejó de ser el caso
+// especial que era) — "Diagnóstico principal" y "Motivo/Especialidad de
+// remisión" (y los rangos clínicos de Examen físico) solo se marcan
+// visualmente como obligatorios, ver .req/:required:placeholder-shown en
+// PlantillaCrecimt2.css. `completedSteps` (Set de índices) es lo único que
+// controla el check verde en el sidebar — un paso entra ahí cuando se sale
+// de él hacia adelante (por "Guardar y continuar" o por click), nunca se
+// quita, y saltar directo a una sección sin pasar por las anteriores no las
+// marca completas. Los 13 pasos quedan SIEMPRE montados (ver `hidden` en ConsultaStep/
+// AntecedentesStep/RiesgoStep/AlimentacionStep/VacunacionStep/
+// FactoresRiesgoStep/ValeStep/EadStep/ExamenFisicoStep/CrecimientoStep/
+// MedicamentosStep/RecomendacionesStep/ProximasCitasStep) para no perder lo
+// ya diligenciado al ir y volver — solo se ocultan con CSS.
+export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximizar, patient }) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState(() => new Set());
   const [activeSubIndex, setActiveSubIndex] = useState(0);
   const [savedAt, setSavedAt] = useState(() => formatSavedAt(new Date()));
 
@@ -144,6 +204,11 @@ export default function PlantillaCrecimt2({ onSalir }) {
   const factoresRiesgoRef = useRef(null);
   const valeRef = useRef(null);
   const eadRef = useRef(null);
+  const examenFisicoRef = useRef(null);
+  const crecimientoRef = useRef(null);
+  const medicamentosRef = useRef(null);
+  const recomendacionesRef = useRef(null);
+  const proximasCitasRef = useRef(null);
 
   function goToStep(step) {
     setCurrentStep(step);
@@ -151,8 +216,24 @@ export default function PlantillaCrecimt2({ onSalir }) {
     contentRef.current?.scrollTo({ top: 0 });
   }
 
+  function markStepComplete(step) {
+    setCompletedSteps((prev) => (prev.has(step) ? prev : new Set(prev).add(step)));
+  }
+
+  // Único paso con navegación bloqueante: "01 Consulta" debe validar antes
+  // de poder salir de él, sea por click directo en el sidebar (acá) o por
+  // "Guardar y continuar" (ver handleGuardarContinuar) — el resto de
+  // secciones se puede visitar libremente en cualquier orden.
   function handleSelectStep(step) {
     if (step === currentStep) return;
+    if (currentStep === 0) {
+      const valido = consultaRef.current?.validar();
+      if (!valido) {
+        window.ncToast?.('Completa los campos obligatorios de "01 Consulta" para continuar.');
+        return;
+      }
+      markStepComplete(0);
+    }
     goToStep(step);
   }
 
@@ -165,6 +246,11 @@ export default function PlantillaCrecimt2({ onSalir }) {
     else if (currentStep === 5) factoresRiesgoRef.current?.scrollToSub(index);
     else if (currentStep === 6) valeRef.current?.scrollToSub(index);
     else if (currentStep === 7) eadRef.current?.scrollToSub(index);
+    else if (currentStep === 8) examenFisicoRef.current?.scrollToSub(index);
+    else if (currentStep === 9) crecimientoRef.current?.scrollToSub(index);
+    else if (currentStep === 10) medicamentosRef.current?.scrollToSub(index);
+    else if (currentStep === 11) recomendacionesRef.current?.scrollToSub(index);
+    else if (currentStep === 12) proximasCitasRef.current?.scrollToSub(index);
   }
 
   function handleGuardarSalir() {
@@ -178,70 +264,47 @@ export default function PlantillaCrecimt2({ onSalir }) {
         window.ncToast?.('Completa los campos obligatorios de "01 Consulta" para continuar.');
         return;
       }
+      markStepComplete(0);
       setSavedAt(formatSavedAt(new Date()));
       goToStep(1);
       return;
     }
 
-    if (currentStep === 1) {
+    // 1-11: ningún otro paso bloquea el avance (ver comentario sobre
+    // `completedSteps` más arriba) — ExamenFisicoStep incluido, ya dejó de
+    // ser un caso especial con validación propia acá.
+    if (currentStep >= 1 && currentStep <= 11) {
+      markStepComplete(currentStep);
       setSavedAt(formatSavedAt(new Date()));
-      goToStep(2);
+      goToStep(currentStep + 1);
       return;
     }
 
-    if (currentStep === 2) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(3);
-      return;
-    }
-
-    if (currentStep === 3) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(4);
-      return;
-    }
-
-    if (currentStep === 4) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(5);
-      return;
-    }
-
-    if (currentStep === 5) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(6);
-      return;
-    }
-
-    if (currentStep === 6) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(7);
-      return;
-    }
-
-    if (currentStep === 7) {
-      setSavedAt(formatSavedAt(new Date()));
-      goToStep(8);
-      return;
-    }
-
+    // currentStep === 12 ("13 Próximas citas") es el último paso real del
+    // wizard — ya no queda ningún paso inerte al que avanzar, así que
+    // "Guardar y continuar" acá solo guarda y confirma que el formulario
+    // completo quedó diligenciado (mismo botón, comportamiento distinto en
+    // el último paso, sin necesitar una acción separada tipo "Finalizar").
+    markStepComplete(12);
     setSavedAt(formatSavedAt(new Date()));
-    window.ncToast?.('Progreso guardado. El resto del formulario (09 a 12) está en desarrollo.');
+    window.ncToast?.('Formulario completo. Toda la información fue guardada.');
   }
 
   return (
     <>
       <div className="pf-titlebar">
-        <button type="button" className="pf-titlebar-back" onClick={onSalir} aria-label="Salir de la plantilla">
+        <button type="button" className="pf-titlebar-icon-btn pf-titlebar-back" onClick={onSalir} aria-label="Salir de la plantilla">
           <LuArrowLeft className="icon" aria-hidden="true" />
         </button>
         <span className="pf-titlebar-title">Atención integral a la primera infancia e infancia</span>
+        <ViewSettingsMenu maximizada={maximizada} onToggleMaximizar={onToggleMaximizar} />
       </div>
 
       <div className="pf-body" ref={contentRef}>
         <AntecedentesNav
           secciones={SECCIONES}
           currentStep={currentStep}
+          completedSteps={completedSteps}
           activeSubIndex={activeSubIndex}
           onSelectStep={handleSelectStep}
           onSelectSub={handleSelectSub}
@@ -268,6 +331,26 @@ export default function PlantillaCrecimt2({ onSalir }) {
           <FactoresRiesgoStep ref={factoresRiesgoRef} hidden={currentStep !== 5} />
           <ValeStep ref={valeRef} hidden={currentStep !== 6} scrollContainerRef={contentRef} />
           <EadStep ref={eadRef} hidden={currentStep !== 7} scrollContainerRef={contentRef} />
+          <ExamenFisicoStep
+            ref={examenFisicoRef}
+            hidden={currentStep !== 8}
+            activeSubIndex={activeSubIndex}
+            onActiveSubIndexChange={setActiveSubIndex}
+            scrollContainerRef={contentRef}
+            patientSexo={patient?.sexo}
+          />
+          <CrecimientoStep
+            ref={crecimientoRef}
+            hidden={currentStep !== 9}
+            activeSubIndex={activeSubIndex}
+            onActiveSubIndexChange={setActiveSubIndex}
+            scrollContainerRef={contentRef}
+            patientSexo={patient?.sexo}
+            patientEdad={patient?.edad}
+          />
+          <MedicamentosStep ref={medicamentosRef} hidden={currentStep !== 10} />
+          <RecomendacionesStep ref={recomendacionesRef} hidden={currentStep !== 11} />
+          <ProximasCitasStep ref={proximasCitasRef} hidden={currentStep !== 12} />
         </div>
       </div>
 

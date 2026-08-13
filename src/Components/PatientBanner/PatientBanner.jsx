@@ -15,8 +15,11 @@ import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 // Asignación de Citas ciudad/teléfono/citas futuras), `statusBadge` y
 // `onClose` (Asignación de Citas permite quitar el paciente seleccionado),
 // y `empty` (Asignación de Citas arranca sin paciente hasta que se busca uno;
-// Enfermería siempre entra con un paciente ya admitido).
-export default function PatientBanner({ patient, secondRow, statusBadge, onClose, empty }) {
+// Enfermería siempre entra con un paciente ya admitido). `compact` (usado por
+// PlantillaCrecimt2 al maximizar, ver ViewSettingsMenu.jsx) reduce el banner
+// a una sola línea con solo nombre/sexo/edad — ignora secondRow/statusBadge/
+// onClose/alergias para dejar sitio real a la card que crece por encima.
+export default function PatientBanner({ patient, secondRow, statusBadge, onClose, empty, compact }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const allergyRef = useRef(null);
 
@@ -56,6 +59,19 @@ export default function PatientBanner({ patient, secondRow, statusBadge, onClose
             {empty.actionLabel}
           </button>
         )}
+      </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <div className="patient-banner patient-banner-compact">
+        <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
+        <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
+        <div className="patient-meta">
+          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
+          <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
+        </div>
       </div>
     );
   }

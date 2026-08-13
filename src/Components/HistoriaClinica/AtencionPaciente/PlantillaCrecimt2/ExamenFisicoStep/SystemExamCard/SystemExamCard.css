@@ -1,0 +1,24 @@
+/* .pf-toggle-group / .pf-toggle-btn: definidas en ../../PlantillaCrecimt2.css
+   (shared del feature) — acá solo el tamaño compacto propio de una card de
+   sistema (más chico que el toggle Sí/No/No sabe de TriStateField, para que
+   14 de estas quepan sin dominar la card) y los 3 colores de estado. */
+.ef-system-card{
+  border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.ef-system-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.ef-system-label{font-size:13px;font-weight:600;color:var(--ink-900);}
+.ef-system-toggle .pf-toggle-btn{font-size:11px;padding:7px 10px;min-height:32px;}
+
+/* Mismo par "fondo claro + texto saturado" que .badge.status-* (ver
+   PatientBanner.css) en vez de fondo saturado + texto blanco — ya validado
+   en esta app como la pareja de contraste accesible para comunicar estado,
+   y menos "gritado" para una card densa. El texto de cada botón (no solo el
+   color) ya distingue el estado — WCAG 1.4.1. Especificidad reforzada
+   (3 clases) a propósito: sin esto empata con .pf-toggle-btn.active de
+   PlantillaCrecimt2.css y el orden de import decide, no querido. */
+.ef-system-toggle .pf-toggle-btn.ef-toggle-sinregistrar.active{background:var(--gray-bg);color:var(--gray-fg);}
+.ef-system-toggle .pf-toggle-btn.ef-toggle-normal.active{background:var(--green-bg);color:var(--green);}
+.ef-system-toggle .pf-toggle-btn.ef-toggle-anormal.active{background:var(--red-bg);color:var(--red);}
+
+.ef-system-desc{margin:0;}

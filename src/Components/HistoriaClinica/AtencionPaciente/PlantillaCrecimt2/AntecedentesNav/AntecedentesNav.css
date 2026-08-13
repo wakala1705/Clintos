@@ -1,14 +1,20 @@
-/* position:sticky (sin overflow-y propio): .pf-body es el ÚNICO contenedor
-   con scroll (ver PlantillaCrecimt2.css) — este panel se queda fijo en la
-   parte superior mientras el contenido de la derecha se desplaza por debajo,
-   en vez de scrollear por su cuenta y desincronizarse de la subsección
-   activa. Todas las filas (activas, done o inert) comparten el mismo tamaño
-   compacto a propósito — homologado en vez de que 01/02 se vean más grandes
-   que 03-11 — para que las 11 secciones + subsecciones de "02 Antecedentes"
-   expandidas entren sin scroll propio en el alto real de la card. */
+/* position:sticky: .pf-body es el ÚNICO contenedor con scroll horizontal de
+   nivel superior (ver PlantillaCrecimt2.css) — este panel se queda fijo en
+   la parte superior mientras el contenido de la derecha se desplaza por
+   debajo. El resaltado de sección/subsección activa ya no depende de scroll
+   (viene de `currentStep`/`activeSubIndex` en PlantillaCrecimt2.jsx, modelo
+   wizard) así que un overflow-y propio acá no lo desincroniza como sí
+   pasaba con el viejo modelo de scroll continuo. overflow-y:auto: con 13
+   secciones, el paso actual expandido puede necesitar más alto que el que
+   el stretch de flex le da (= alto visible de .pf-body) — sin esto, esas
+   filas de más quedaban recortadas y sin forma de llegar a ellas (ver
+   AGENTS.md, encargo). overscroll-behavior:contain evita que la rueda del
+   mouse "encadene" el scroll hacia .pf-body al llegar al tope/fondo del
+   propio panel, mismo motivo que en .pf-body (ver PlantillaCrecimt2.css). */
 .an-nav{
   width:340px;flex-shrink:0;position:sticky;top:0;
-  background:var(--surface);border-right:1px solid var(--border);padding:16px;
+  background:var(--surface);border-right:1px solid var(--border);padding:12px;
+  overflow-y:auto;overscroll-behavior:contain;
 }
 .an-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
 
@@ -17,29 +23,30 @@
   min-height:19px;
 }
 .an-section.inert .an-section-head{color:var(--ink-400);}
-.an-section.active .an-section-head{color:var(--primary-dark);background:var(--primary-50);border-radius:var(--radius);}
-/* Una sección "active" (01/02, ver AntecedentesNav.jsx) que además quedó
-   .done (ya se dejó atrás con scroll — p. ej. "01 Consulta" una vez se
-   avanza a "02 Antecedentes") vuelve a verse neutra en vez de seguir
-   resaltada en azul; el resaltado azul es solo para la sección que el
-   usuario tiene delante ahora mismo. */
-/* Un paso .done queda clicable (ver AntecedentesNav.jsx) para poder volver a
-   revisarlo/editarlo — cursor + hover lo comunican, ya que visualmente ya no
-   tiene el resaltado azul de "current" que delataba interactividad antes. */
-.an-section.active.done .an-section-head{color:var(--ink-700);background:transparent;cursor:pointer;}
-.an-section.active.done .an-section-head:hover{background:var(--gray-bg);}
-.an-section.active.done .an-section-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+/* Toda sección "active" (ver AntecedentesNav.jsx) es clicable ahora — no
+   solo 'done' — así que el cursor+hover aplican a los tres estados por
+   igual; solo 'current' se distingue con el resaltado azul de fondo. */
+.an-section.active .an-section-head{cursor:pointer;}
+.an-section.active .an-section-head:hover{background:var(--gray-bg);}
+.an-section.active .an-section-head:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.an-section.active.current .an-section-head{color:var(--primary-dark);background:var(--primary-50);border-radius:var(--radius);}
+.an-section.active.current .an-section-head:hover{background:var(--primary-50);}
+/* 'done' (check verde, ver AntecedentesNav.jsx) y 'pending' (todavía no
+   visitado, pero navegable libremente) comparten el mismo look neutro —
+   solo cambia el color del ícono/num más abajo. */
+.an-section.active.done .an-section-head,
+.an-section.active.pending .an-section-head{color:var(--ink-700);background:transparent;}
 .an-section-icon{display:flex;flex-shrink:0;}
 .an-section-icon .icon{width:13px;height:13px;}
 .an-section.inert .an-section-icon .icon{color:var(--ink-400);}
-.an-section.active .an-section-icon .icon{color:var(--primary);}
+.an-section.active.current .an-section-icon .icon{color:var(--primary);}
 .an-section.active.done .an-section-icon .icon{color:var(--green);}
+.an-section.active.pending .an-section-icon .icon{color:var(--ink-400);}
 .an-section-num{font-size:14px;font-weight:500;color:var(--ink-500);flex-shrink:0;}
-.an-section.active .an-section-num{color:var(--primary);}
-.an-section.active.done .an-section-num{color:var(--ink-400);}
+.an-section.active.current .an-section-num{color:var(--primary);}
+.an-section.active.done .an-section-num,
+.an-section.active.pending .an-section-num{color:var(--ink-400);}
 .an-section-label{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.an-section-progress{font-size:11px;font-weight:700;color:var(--primary);flex-shrink:0;}
-.an-section.active.done .an-section-progress{color:var(--green);}
 
 .an-sublist{list-style:none;margin:2px 0 4px;padding:0;display:flex;flex-direction:column;gap:0;}
 /* box-shadow inset como franja izquierda por fila (recortada por el propio

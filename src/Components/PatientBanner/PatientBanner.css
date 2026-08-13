@@ -20,6 +20,16 @@
    tecnología de asistencia una función que no existe (WCAG 4.1.2). */
 .patient-meta .pm-item-more{color:var(--ink-500);font-size:13px;}
 .patient-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
+
+/* ---------- VARIANTE COMPACTA (maximizar, ver PlantillaCrecimt2.jsx) ----------
+   Mismo bloque .patient-banner/.patient-name-block/.patient-meta que la
+   variante normal, solo con padding/gap/tamaño de avatar reducidos y
+   flex-wrap:nowrap para forzar una sola línea — nombre/sexo/edad son las
+   únicas dos filas de datos que se montan en este modo (ver
+   PatientBanner.jsx), así que nunca hay contenido de sobra que desbordar. */
+.patient-banner-compact{padding:8px 20px;gap:12px;flex-wrap:nowrap;}
+.patient-banner-compact .patient-avatar{width:30px;height:30px;font-size:12px;}
+.patient-banner-compact .patient-name-block .pname{font-size:14px;}
 .badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;display:inline-block;}
 .badge.status-active{background:var(--green-bg);color:var(--green);}
 .badge.status-active .dot{background:var(--green);}

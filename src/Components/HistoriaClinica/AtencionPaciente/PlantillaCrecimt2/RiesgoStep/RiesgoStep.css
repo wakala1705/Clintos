@@ -1,5 +1,7 @@
-/* Todas las clases que usa este paso (.pf-card, .pf-group, .pf-card-title,
-   .pf-grid-3, .form-field) están definidas en ../PlantillaCrecimt2.css —
-   cascan desde ahí porque .pf-grid-3 es un primitivo reutilizable (ver
-   criterio de AGENTS.md en PlantillaCrecimt2.css). Nada exclusivo de
-   RiesgoStep todavía. */
+/* Todas las clases que usa este paso (.ac-wrap, .pf-group, .pf-grid-3,
+   .form-field) están definidas en ../PlantillaCrecimt2.css — cascan desde
+   ahí porque .pf-grid-3 es un primitivo reutilizable (ver criterio de
+   AGENTS.md en PlantillaCrecimt2.css). Sin .pf-card/.pf-card-title: el
+   contenido del paso ya no vive dentro de una card (mismo ajuste que
+   ConsultaStep.jsx) y el h1 de la página cubre lo que decía ese subheading.
+   Nada exclusivo de RiesgoStep todavía. */

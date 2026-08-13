@@ -1,0 +1,99 @@
+/* .pf-card, .pf-card-title, .pf-card-desc, .pf-subheading, .pf-divider,
+   .pf-block-header/.pf-block-body/.pf-block-icon (bloque colapsable),
+   .form-field, .pf-question-row, .pf-toggle-group, .pf-toggle-btn,
+   .data-table (base): definidas en ../PlantillaCrecimt2.css /
+   ../../shared/shared.css (shared del feature/proyecto) — acá solo lo
+   exclusivo de este paso. */
+
+/* Lista de indicadores de "Verificar el crecimiento" — GrowthIndicatorRow.css
+   pone el borde entre filas, acá solo se asegura que el grupo no quede
+   pegado al título. */
+.gc-indicator-list{margin-top:4px;}
+
+/* Ícono identificador de cada grupo ("Peso" / "Talla y composición
+   corporal", ver GRUPO_ICONOS en CrecimientoStep.jsx) — mismo criterio de
+   color que .pf-block-icon (primary, para leerse como acento de sección),
+   pero inline junto al texto en vez de en una caja de 32x32: acá es un
+   h3.pf-subheading normal, no la cabecera de un bloque colapsable. El
+   divisor entre "Peso" y "Talla..." usa .pf-divider (ver
+   PlantillaCrecimt2.css) en vez de duplicar la regla acá — encargo
+   explícito de diferenciar ambos grupos con una línea, no solo espaciado. */
+.gc-group-heading{display:flex;align-items:center;gap:8px;}
+.gc-group-icon{width:15px;height:15px;color:var(--primary);flex-shrink:0;}
+
+/* ---------- Síntesis de evaluaciones ----------
+   Mismo patrón que .al-hist-wrap (AlimentacionStep.css): borde + radio +
+   scroll propio en vez de heredar el del panel completo. min-width amplio a
+   propósito (12 columnas reales: Fecha + Edad + 5 áreas + 5 crecimiento) —
+   nunca cabe sin scroll horizontal, por diseño (encargo: "mantener la
+   posibilidad de desplazamiento horizontal"). */
+.gc-hist-wrap{
+  position:relative;
+  overflow:auto;max-width:100%;
+}
+.gc-hist-table{min-width:1360px;}
+
+/* Cabecera agrupada de 2 filas ("Resultados por áreas" / "Crecimiento") —
+   mismo mecanismo sticky de 2 niveles que AgendaTable.css (top:33px en la
+   2ª fila = alto real de la 1ª, mismo padding/font-size heredados de
+   .data-table thead th en shared.css). */
+.gc-hist-table thead tr:first-child th{top:0;}
+.gc-hist-table thead tr:last-child th{top:33px;}
+.gc-hist-table thead th.gc-group-head{text-align:center;border-bottom:1px solid var(--border);}
+.gc-hist-table th.gc-group-divider,
+.gc-hist-table td.gc-group-divider{border-left:1px solid var(--border);}
+.gc-hist-table th.num,
+.gc-hist-table td.num{text-align:right;}
+
+/* Zebra striping sutil + hover/selected — sobre el <td> (no el <tr>) para no
+   competir por especificidad con .data-table tbody tr:hover/.selected de
+   shared.css (pensadas para AgendaTable/PlantillaModal, que sí tiñen el
+   <tr>): el fondo del td pinta encima del <tr> en la misma celda, así que
+   controla el resultado sin necesitar más especificidad. */
+.gc-hist-table tbody tr:nth-child(even) td{background:var(--bg);}
+.gc-hist-table tbody tr:hover td{background:#fafbfd;}
+.gc-hist-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+.gc-hist-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+/* Indicador de que hay más columnas fuera del viewport — franja de
+   degradado fija en el borde derecho de .gc-hist-wrap (no depende de
+   trackear scrollLeft con JS: 12 columnas con min-width:1360px casi siempre
+   desbordan el panel de contenido, así que la pista es válida por defecto).
+   pointer-events:none para no interceptar el scroll/clicks de la tabla. */
+.gc-hist-wrap::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;
+  width:24px;pointer-events:none;
+  background:linear-gradient(to right, transparent, rgba(16,24,39,.06));
+}
+html[data-theme="dark"] .gc-hist-wrap::after{background:linear-gradient(to right, transparent, rgba(0,0,0,.28));}
+
+/* ---------- Clasificación APGAR Familiar ---------- */
+.gc-apgar-list{margin-bottom:24px;}
+.gc-apgar-toggle .pf-toggle-btn{font-size:12.5px;padding:9px 14px;min-height:40px;}
+
+/* Bloque de resultado — mayor jerarquía visual que las preguntas porque es
+   la conclusión del cuestionario (encargo explícito), mismo criterio de
+   "resultado derivado" que .al-tipo-lactancia-result (AlimentacionStep.css)
+   pero como banda de resumen en vez de un solo input, porque acá son 2
+   valores (puntaje + clasificación) que se leen juntos. */
+.gc-apgar-result{
+  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px 24px;
+}
+.gc-apgar-result-item{display:flex;flex-direction:column;gap:4px;}
+.gc-apgar-result-label{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
+.gc-apgar-result-value{font-size:24px;font-weight:700;color:var(--ink-900);line-height:1;}
+.gc-apgar-class{
+  display:inline-block;font-size:13px;font-weight:700;color:var(--ink-500);
+  background:var(--gray-bg);border-radius:20px;padding:5px 14px;line-height:1.3;
+}
+.gc-apgar-class-green{color:var(--green);background:var(--green-bg);}
+.gc-apgar-class-amber{color:var(--amber-fg);background:var(--amber-bg);}
+.gc-apgar-class-red{color:var(--red);background:var(--red-bg);}
+.gc-apgar-result-hint{margin:0;font-size:12.5px;color:var(--ink-500);flex-basis:100%;}
+
+@media (max-width: 720px){
+  .gc-apgar-toggle{flex-wrap:wrap;}
+  .gc-apgar-result{padding:16px;gap:20px;}
+}

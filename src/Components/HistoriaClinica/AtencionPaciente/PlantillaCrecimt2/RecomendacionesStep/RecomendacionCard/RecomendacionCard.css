@@ -1,0 +1,31 @@
+/* Contenedor "sutil" (encargo: "cards con bordes suaves y poco ruido
+   visual") — mismo borde+radio que .pf-card/.mc-card, sin sombra. Los 3
+   estados se comunican con borde+fondo, nunca solo con color (WCAG 1.4.1):
+   el propio checkbox ya distingue seleccionada/no seleccionada, y el aro de
+   foco de .editing es un patrón ya establecido en el resto de la app
+   (:focus-visible), no un color aislado. */
+.rc-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  background:var(--surface);padding:16px 20px;
+  transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.rc-card.checked{border-color:var(--primary);background:var(--primary-50);}
+.rc-card.editing{border-color:var(--primary-dark);box-shadow:0 0 0 3px var(--primary-50);}
+
+.rc-card-header{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-family:inherit;}
+/* 18px (no los 16 por defecto del navegador): el encargo pide un checkbox
+   "fácil de identificar" — mismo tamaño que .pf-check-row input[type=
+   checkbox] en PlantillaCrecimt2.css, ya validado en esta app. */
+.rc-checkbox{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
+.rc-checkbox:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.rc-card-title{font-size:14px;font-weight:600;color:var(--ink-900);line-height:1.4;}
+
+.rc-card-body{margin-top:12px;}
+.rc-textarea{
+  width:100%;min-height:160px;resize:vertical;
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 12px;font-family:inherit;font-size:13px;color:var(--ink-900);
+  background:var(--surface);line-height:1.6;
+}
+.rc-textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.rc-textarea::placeholder{color:var(--ink-400);}

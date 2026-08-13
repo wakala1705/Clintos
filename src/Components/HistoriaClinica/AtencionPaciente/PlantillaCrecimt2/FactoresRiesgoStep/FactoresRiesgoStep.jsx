@@ -44,60 +44,57 @@ const FactoresRiesgoStep = forwardRef(function FactoresRiesgoStep({ hidden }, re
       <h1 className="pf-section-title">Factores de riesgo</h1>
       <p className="pf-section-desc">Factores de riesgo en el hogar</p>
 
-      <section className="pf-card">
-        <div className="pf-group">
-          <h2 className="pf-card-title">Factores de riesgo en el hogar</h2>
-          <div className="pf-grid-4">
-            <div className="form-field">
-              <label htmlFor="fr-animales">Animales domésticos</label>
-              <input
-                id="fr-animales" type="number" min="0"
-                value={factoresRiesgo.animalesDomesticos}
-                onChange={(e) => updateAnimalesDomesticos(e.target.value)}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="fr-animales-vacunados">¿Cuántos vacunados?</label>
-              <input
-                id="fr-animales-vacunados" type="number" min="0" max={factoresRiesgo.animalesDomesticos}
-                value={factoresRiesgo.animalesVacunados}
-                disabled={factoresRiesgo.animalesDomesticos === 0}
-                onChange={(e) => {
-                  const n = Math.max(0, Math.min(factoresRiesgo.animalesDomesticos, Number(e.target.value) || 0));
-                  setFactoresRiesgo((prev) => ({ ...prev, animalesVacunados: n }));
-                }}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="fr-fumadores">Fumadores en el hogar</label>
-              <select
-                id="fr-fumadores" value={factoresRiesgo.fumadores}
-                onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, fumadores: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="fr-vectores">Vectores en el hogar</label>
-              <select
-                id="fr-vectores" value={factoresRiesgo.vectores}
-                onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, vectores: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="fr-hacinamiento">Hacinamiento</label>
-              <select
-                id="fr-hacinamiento" value={factoresRiesgo.hacinamiento}
-                onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, hacinamiento: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
+      <div className="pf-group">
+        <div className="pf-grid-4">
+          <div className="form-field">
+            <label htmlFor="fr-animales">Animales domésticos</label>
+            <input
+              id="fr-animales" type="number" min="0"
+              value={factoresRiesgo.animalesDomesticos}
+              onChange={(e) => updateAnimalesDomesticos(e.target.value)}
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="fr-animales-vacunados">¿Cuántos vacunados?</label>
+            <input
+              id="fr-animales-vacunados" type="number" min="0" max={factoresRiesgo.animalesDomesticos}
+              value={factoresRiesgo.animalesVacunados}
+              disabled={factoresRiesgo.animalesDomesticos === 0}
+              onChange={(e) => {
+                const n = Math.max(0, Math.min(factoresRiesgo.animalesDomesticos, Number(e.target.value) || 0));
+                setFactoresRiesgo((prev) => ({ ...prev, animalesVacunados: n }));
+              }}
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="fr-fumadores">Fumadores en el hogar</label>
+            <select
+              id="fr-fumadores" value={factoresRiesgo.fumadores}
+              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, fumadores: e.target.value }))}
+            >
+              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+          <div className="form-field">
+            <label htmlFor="fr-vectores">Vectores en el hogar</label>
+            <select
+              id="fr-vectores" value={factoresRiesgo.vectores}
+              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, vectores: e.target.value }))}
+            >
+              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+          <div className="form-field">
+            <label htmlFor="fr-hacinamiento">Hacinamiento</label>
+            <select
+              id="fr-hacinamiento" value={factoresRiesgo.hacinamiento}
+              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, hacinamiento: e.target.value }))}
+            >
+              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 });
