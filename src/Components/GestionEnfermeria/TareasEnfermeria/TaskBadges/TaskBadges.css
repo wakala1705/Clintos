@@ -1,0 +1,17 @@
+/* Mismo patrón pill+ícono que .pg-med-badge/.dp-status-badge/.order-badge
+   (ver GestionEnfermeria/shared/shared.css) — 5 tonos semánticos reusando
+   los mismos tokens de color de siempre (rojo/ámbar/verde/gris/violeta +
+   azul info) para Prioridad y Estado de tareas. */
+.task-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.task-badge .icon{width:13px;height:13px;}
+.task-badge-red{background:var(--red-bg);color:var(--red);}
+.task-badge-amber{background:var(--amber-bg);color:var(--amber-fg);}
+.task-badge-green{background:var(--green-bg);color:#0d7a3d;}
+.task-badge-gray{background:var(--gray-bg);color:var(--gray-fg);}
+.task-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
+.task-badge-info{background:var(--status-info-bg);color:var(--status-info-fg);}
+
+html[data-theme="dark"] .task-badge-green{color:var(--green);}

@@ -18,13 +18,13 @@
    checkbox] en PlantillaCrecimt2.css, ya validado en esta app. */
 .rc-checkbox{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
 .rc-checkbox:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.rc-card-title{font-size:14px;font-weight:600;color:var(--ink-900);line-height:1.4;}
+.rc-card-title{font-size:var(--fs-md);font-weight:600;color:var(--ink-900);line-height:1.4;}
 
 .rc-card-body{margin-top:12px;}
 .rc-textarea{
   width:100%;min-height:160px;resize:vertical;
   border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 12px;font-family:inherit;font-size:13px;color:var(--ink-900);
+  padding:10px 12px;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);
   background:var(--surface);line-height:1.6;
 }
 .rc-textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}

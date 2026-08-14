@@ -5,10 +5,30 @@
    ../../shared/shared.css (shared del feature/proyecto) — acá solo lo
    exclusivo de este paso. */
 
-/* Lista de indicadores de "Verificar el crecimiento" — GrowthIndicatorRow.css
-   pone el borde entre filas, acá solo se asegura que el grupo no quede
-   pegado al título. */
-.gc-indicator-list{margin-top:4px;}
+/* Cabecera del paso — título a la izquierda, botón "Ver evolución" al
+   extremo derecho de la misma fila que .pf-section-title (encargo explícito:
+   sacarlo de la card de "Verificar el crecimiento" y subirlo acá; 1 solo
+   trigger para las 5 filas de abajo, que antes traía cada una el suyo — ver
+   GrowthIndicatorRow.jsx — pero las 5 abrían el mismo modal, que ya tiene su
+   propio selector de indicador por chips, ver GrowthChartModal.jsx). h1 sin
+   su margin-bottom propio acá (lo tiene .pf-section-desc, siguiente
+   hermano) para que quede centrado con el botón en la fila. */
+.cre-header-row{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.cre-header-row .pf-section-title{margin:0;}
+.gc-evolucion-btn{flex-shrink:0;}
+
+/* Lista de indicadores de "Verificar el crecimiento" — grilla por grupo
+   (encargo explícito: Peso en 3 columnas, Talla y composición corporal en 2
+   — ver GRUPO_COLS en CrecimientoStep.jsx), cada indicador con su input
+   arriba y Clasificación abajo (ver GrowthIndicatorRow.css). */
+.gc-indicator-list{margin-top:4px;display:grid;gap:20px 24px;}
+.gc-indicator-grid-3{grid-template-columns:repeat(3,1fr);}
+.gc-indicator-grid-2{grid-template-columns:repeat(2,1fr);}
+
+@media (max-width: 720px){
+  .gc-indicator-grid-3,
+  .gc-indicator-grid-2{grid-template-columns:1fr;}
+}
 
 /* Ícono identificador de cada grupo ("Peso" / "Talla y composición
    corporal", ver GRUPO_ICONOS en CrecimientoStep.jsx) — mismo criterio de
@@ -22,13 +42,22 @@
 .gc-group-icon{width:15px;height:15px;color:var(--primary);flex-shrink:0;}
 
 /* ---------- Síntesis de evaluaciones ----------
-   Mismo patrón que .al-hist-wrap (AlimentacionStep.css): borde + radio +
+   .gc-hist-body es propio de este bloque (no .pf-block-body compartido,
+   ver PlantillaCrecimt2.css) — encargo explícito: este padding no debe
+   quedar atado a cambios futuros del padding general de bloque colapsable
+   (ver AntecedentesStep, único otro consumidor de .pf-block-body), ni al
+   revés. Mismo valor hoy (20px 24px) por consistencia visual, pero
+   declarado independiente a propósito. */
+.gc-hist-body{padding:20px 24px;}
+
+/* Mismo patrón que .al-hist-wrap (AlimentacionStep.css): borde + radio +
    scroll propio en vez de heredar el del panel completo. min-width amplio a
    propósito (12 columnas reales: Fecha + Edad + 5 áreas + 5 crecimiento) —
    nunca cabe sin scroll horizontal, por diseño (encargo: "mantener la
    posibilidad de desplazamiento horizontal"). */
 .gc-hist-wrap{
   position:relative;
+  border:1px solid var(--border);border-radius:var(--radius);
   overflow:auto;max-width:100%;
 }
 .gc-hist-table{min-width:1360px;}
@@ -69,7 +98,7 @@ html[data-theme="dark"] .gc-hist-wrap::after{background:linear-gradient(to right
 
 /* ---------- Clasificación APGAR Familiar ---------- */
 .gc-apgar-list{margin-bottom:24px;}
-.gc-apgar-toggle .pf-toggle-btn{font-size:12.5px;padding:9px 14px;min-height:40px;}
+.gc-apgar-toggle .pf-toggle-btn{font-size:var(--fs-xs);padding:9px 14px;min-height:40px;}
 
 /* Bloque de resultado — mayor jerarquía visual que las preguntas porque es
    la conclusión del cuestionario (encargo explícito), mismo criterio de
@@ -82,16 +111,16 @@ html[data-theme="dark"] .gc-hist-wrap::after{background:linear-gradient(to right
   padding:18px 24px;
 }
 .gc-apgar-result-item{display:flex;flex-direction:column;gap:4px;}
-.gc-apgar-result-label{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
-.gc-apgar-result-value{font-size:24px;font-weight:700;color:var(--ink-900);line-height:1;}
+.gc-apgar-result-label{font-size:var(--fs-2xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
+.gc-apgar-result-value{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);line-height:1;}
 .gc-apgar-class{
-  display:inline-block;font-size:13px;font-weight:700;color:var(--ink-500);
+  display:inline-block;font-size:var(--fs-sm);font-weight:700;color:var(--ink-500);
   background:var(--gray-bg);border-radius:20px;padding:5px 14px;line-height:1.3;
 }
 .gc-apgar-class-green{color:var(--green);background:var(--green-bg);}
 .gc-apgar-class-amber{color:var(--amber-fg);background:var(--amber-bg);}
 .gc-apgar-class-red{color:var(--red);background:var(--red-bg);}
-.gc-apgar-result-hint{margin:0;font-size:12.5px;color:var(--ink-500);flex-basis:100%;}
+.gc-apgar-result-hint{margin:0;font-size:var(--fs-xs);color:var(--ink-500);flex-basis:100%;}
 
 @media (max-width: 720px){
   .gc-apgar-toggle{flex-wrap:wrap;}

@@ -1,0 +1,33 @@
+/* Mismo patrón que .pg-row-menu-* (PatientsPanel/PatientsTable/RowActionsMenu.css)
+   — acá solo suma el divisor entre grupos de acciones y los 2 ítems con
+   tinte de advertencia/peligro (No realizada / Cancelar). */
+.task-row-menu{position:relative;flex-shrink:0;}
+.task-row-menu-btn{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.task-row-menu-btn .icon{width:17px;height:17px;}
+.task-row-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.task-row-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.task-row-menu-dropdown{
+  position:absolute;top:calc(100% + 4px);right:0;min-width:220px;z-index:var(--z-popover);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+}
+.task-row-menu-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:13px;font-weight:600;color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.task-row-menu-item:hover{background:var(--bg);}
+.task-row-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.task-row-menu-item .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.task-row-menu-item[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.task-row-menu-item-warn{color:var(--amber-fg);}
+.task-row-menu-item-warn .icon{color:var(--amber-fg);}
+.task-row-menu-item-danger{color:var(--red);}
+.task-row-menu-item-danger .icon{color:var(--red);}
+.task-row-menu-item-warn:hover{background:var(--amber-bg);}
+.task-row-menu-item-danger:hover{background:var(--red-bg);}
+.task-row-menu-divider{height:1px;background:var(--border);margin:5px 4px;}

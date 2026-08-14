@@ -1,0 +1,16 @@
+/* .modal-overlay/.modal-card/.form-field/.suspend-header-icon/.subnav-bar/
+   .subnav-tab/.btn: definidas en ../../shared/shared.css (shared del
+   feature) — acá solo el ancho propio del modal y la grilla de 2 columnas
+   del formulario. */
+.task-new-modal-card{width:640px;}
+
+/* .subnav-bar trae padding pensado para vivir pegado al borde superior de
+   una página (ver Órdenes médicas/Pedidos) — acá vive dentro de
+   .modal-body, que ya trae su propio padding, así que se resetea. */
+.task-new-categoria{padding:0 0 18px;}
+
+.task-new-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+@media (max-width:640px){
+  .task-new-grid{grid-template-columns:1fr;}
+}

@@ -21,18 +21,19 @@
 
 /* ---------- Presión arterial (sistólica / diastólica) ----------
    Mismo alto/borde/radio que un <input> normal (ver .form-field input en
-   PlantillaCrecimt2.css) pero como un solo contenedor con 2 inputs sin
-   spinner + separador "/", para que se lea como un único dato compuesto en
-   vez de 2 campos sueltos — mismo criterio visual que .pf-field-suffix. */
+   PlantillaCrecimt2.css, misma --pf-input-height controlada por "Tipo de
+   formulario") pero como un solo contenedor con 2 inputs sin spinner +
+   separador "/", para que se lea como un único dato compuesto en vez de 2
+   campos sueltos — mismo criterio visual que .pf-field-suffix. */
 .ef-bp-field{
-  display:flex;align-items:center;gap:6px;height:var(--input-lg);
+  display:flex;align-items:center;gap:6px;height:var(--pf-input-height);
   border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
   padding:0 12px;
 }
 .ef-bp-field:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
 .ef-bp-field input{
   border:none;padding:0;height:auto;width:100%;min-width:0;text-align:center;
-  font-family:inherit;font-size:13px;color:var(--ink-900);background:transparent;
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:transparent;
 }
 .ef-bp-field input:focus{outline:none;}
 /* -moz-appearance:textfield: Firefox no acepta appearance:none en number
@@ -43,7 +44,7 @@
   -webkit-appearance:none;margin:0;
 }
 .ef-bp-sep{color:var(--ink-400);font-weight:600;flex-shrink:0;}
-.ef-bp-unit{font-size:12px;color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
+.ef-bp-unit{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
 
 /* ---------- Examen físico por sistemas ----------
    2 columnas reales en desktop (Columna izquierda / Columna derecha del

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import '../../shared/shared.css';
 import './PlantillaCrecimt2.css';
 import AntecedentesNav from './AntecedentesNav/AntecedentesNav';
@@ -12,7 +12,7 @@ import VacunacionStep from './VacunacionStep/VacunacionStep';
 import FactoresRiesgoStep from './FactoresRiesgoStep/FactoresRiesgoStep';
 import ValeStep from './ValeStep/ValeStep';
 import EadStep from './EadStep/EadStep';
-import ExamenFisicoStep from './ExamenFisicoStep/ExamenFisicoStep';
+import ExamenFisicoStep, { calcularIMC } from './ExamenFisicoStep/ExamenFisicoStep';
 import CrecimientoStep from './CrecimientoStep/CrecimientoStep';
 import MedicamentosStep from './MedicamentosStep/MedicamentosStep';
 import RecomendacionesStep from './RecomendacionesStep/RecomendacionesStep';
@@ -194,6 +194,30 @@ export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximiz
   const [completedSteps, setCompletedSteps] = useState(() => new Set());
   const [activeSubIndex, setActiveSubIndex] = useState(0);
   const [savedAt, setSavedAt] = useState(() => formatSavedAt(new Date()));
+  // "Tipo de formulario" (ver ViewSettingsMenu.jsx) — controla la altura de
+  // TODOS los inputs/selects de los 13 pasos a la vez vía --pf-input-height
+  // en .pf-content (ver PlantillaCrecimt2.css), reutilizando las 3 variantes
+  // de tamaño ya definidas para el proyecto (--input-sm/md/lg) en vez de una
+  // escala propia de este formulario.
+  const [densidad, setDensidad] = useState('normal');
+  // Único pedazo de estado de "09 Examen físico" que sube hasta acá (el
+  // resto sigue 100% local a ExamenFisicoStep, ver su propio comentario) —
+  // "10 Crecimiento y APGAR familiar" necesita leer Peso/Talla/PC/IMC ya
+  // diligenciados, así que no pueden quedar aislados en el estado interno
+  // del paso anterior.
+  const [antropometria, setAntropometria] = useState({ peso: '', talla: '', pc: '', pt: '', perimetroBrazo: '' });
+  const imcExamenFisico = useMemo(
+    () => calcularIMC(antropometria.peso, antropometria.talla),
+    [antropometria.peso, antropometria.talla],
+  );
+  // Memoizado (no un objeto literal inline en el JSX de abajo): PlantillaCrecimt2
+  // re-renderiza seguido por scroll/activeSubIndex de OTROS pasos, y sin esto
+  // CrecimientoStep recibiría una referencia nueva de `examenFisico` en cada
+  // uno de esos renders aunque Peso/Talla/PC/IMC no hayan cambiado.
+  const examenFisicoParaCrecimiento = useMemo(
+    () => ({ peso: antropometria.peso, talla: antropometria.talla, pc: antropometria.pc, imc: imcExamenFisico }),
+    [antropometria.peso, antropometria.talla, antropometria.pc, imcExamenFisico],
+  );
 
   const contentRef = useRef(null);
   const consultaRef = useRef(null);
@@ -297,7 +321,12 @@ export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximiz
           <LuArrowLeft className="icon" aria-hidden="true" />
         </button>
         <span className="pf-titlebar-title">Atención integral a la primera infancia e infancia</span>
-        <ViewSettingsMenu maximizada={maximizada} onToggleMaximizar={onToggleMaximizar} />
+        <ViewSettingsMenu
+          maximizada={maximizada}
+          onToggleMaximizar={onToggleMaximizar}
+          densidad={densidad}
+          onDensidadChange={setDensidad}
+        />
       </div>
 
       <div className="pf-body" ref={contentRef}>
@@ -310,7 +339,7 @@ export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximiz
           onSelectSub={handleSelectSub}
         />
 
-        <div className="pf-content">
+        <div className="pf-content" data-densidad={densidad}>
           <ConsultaStep ref={consultaRef} hidden={currentStep !== 0} />
           <AntecedentesStep
             ref={antecedentesRef}
@@ -338,6 +367,9 @@ export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximiz
             onActiveSubIndexChange={setActiveSubIndex}
             scrollContainerRef={contentRef}
             patientSexo={patient?.sexo}
+            antropometria={antropometria}
+            onAntropometriaChange={setAntropometria}
+            imc={imcExamenFisico}
           />
           <CrecimientoStep
             ref={crecimientoRef}
@@ -347,6 +379,8 @@ export default function PlantillaCrecimt2({ onSalir, maximizada, onToggleMaximiz
             scrollContainerRef={contentRef}
             patientSexo={patient?.sexo}
             patientEdad={patient?.edad}
+            patientNombre={patient?.nombre}
+            examenFisico={examenFisicoParaCrecimiento}
           />
           <MedicamentosStep ref={medicamentosRef} hidden={currentStep !== 10} />
           <RecomendacionesStep ref={recomendacionesRef} hidden={currentStep !== 11} />

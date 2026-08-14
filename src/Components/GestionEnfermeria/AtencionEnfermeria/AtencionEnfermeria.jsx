@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import './gestion-enfermeria.css';
+import './AtencionEnfermeria.css';
 import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initGestionEnfermeria } from '@/hooks/GestionEnfermeria/legacy-app';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
@@ -24,7 +24,18 @@ import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuPill } from 'react-icons/lu';
 
-export default function GestionEnfermeriaPage() {
+// Atención de enfermería a UN paciente (Medicamentos/Órdenes/Pedidos, ver
+// tabs abajo) — vivía en /gestion-enfermeria a secas; ahora que esa ruta es
+// el Panel General (lista de pacientes del piso, ver
+// src/Components/GestionEnfermeria/PanelGeneral/), esta pantalla se movió a
+// /gestion-enfermeria/atencion/[id] (mismo patrón que
+// /historia-clinica/atencion/[id] → AtencionPaciente.jsx). `id` se acepta
+// por consistencia de ruta (así cada paciente del Panel General navega a su
+// propia URL) pero todavía no selecciona datos por paciente — el resto de
+// esta pantalla (PatientBanner, MEDS, timeline...) sigue viniendo de datos
+// de ejemplo fijos, igual que antes del split; conectar `id` a datos reales
+// por paciente queda para cuando este módulo deje de ser un mock.
+export default function AtencionEnfermeria({ id }) {
   useEffect(() => {
     const cleanup = initGestionEnfermeria();
     return cleanup;
@@ -40,8 +51,8 @@ export default function GestionEnfermeriaPage() {
   <div className="main">
 
     <Topbar
-      section="Hospitalización"
-      page="Gestión de Enfermería"
+      section={['Hospitalización', { label: 'Gestión de Enfermería', href: '/gestion-enfermeria' }]}
+      page="Atención de enfermería"
       user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
     >
       <div className="meta-item">

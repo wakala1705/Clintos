@@ -4,4 +4,4 @@
    proyecto, mismo scaffolding de modal que VacunacionStep.jsx) — acá solo
    lo exclusivo de este paso. */
 .med-info-btn{margin-top:8px;}
-.med-info-text{margin:0;font-size:13.5px;color:var(--ink-700);line-height:1.6;}
+.med-info-text{margin:0;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.6;}

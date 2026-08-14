@@ -26,13 +26,13 @@
 .vac-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .vac-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .vac-progress-pill{
-  font-size:12px;font-weight:600;color:var(--status-info-fg);background:var(--status-info-bg);
+  font-size:var(--fs-xs);font-weight:600;color:var(--status-info-fg);background:var(--status-info-bg);
   padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;
 }
 .vac-progress-pill.complete{color:var(--green);background:var(--green-bg);}
 /* Mismo btn-secondary del resto de la app, solo más compacto (min-height:40px
    por defecto se ve pesado al lado de una pill de 1 línea). */
-.vac-expand-btn{min-height:34px;padding:7px 14px;font-size:12.5px;}
+.vac-expand-btn{min-height:34px;padding:7px 14px;font-size:var(--fs-xs);}
 .vac-expand-btn .icon{width:15px;height:15px;}
 
 /* ---------- MODAL "Expandir esquema" ----------
@@ -78,20 +78,20 @@
 .vac-matrix-wrap{
   overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin-top:16px;
 }
-.vac-matrix{border-collapse:separate;border-spacing:0;min-width:940px;width:100%;font-size:12.5px;}
+.vac-matrix{border-collapse:separate;border-spacing:0;min-width:940px;width:100%;font-size:var(--fs-xs);}
 .vac-matrix thead th{
   background:#f7f8fb;color:var(--ink-500);
-  font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;
+  font-weight:600;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:.03em;
   padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-matrix-corner{position:sticky;left:0;z-index:1;text-align:left;}
 .vac-momento-label{display:block;}
-.vac-momento-sub{display:block;font-size:9px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-400);}
+.vac-momento-sub{display:block;font-size:var(--fs-2xs);font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-400);}
 
 .vac-matrix-row-head{
   position:sticky;left:0;z-index:1;background:var(--surface);
-  text-align:left;font-size:12.5px;font-weight:600;color:var(--ink-900);white-space:nowrap;min-width:170px;
+  text-align:left;font-size:var(--fs-xs);font-weight:600;color:var(--ink-900);white-space:nowrap;min-width:170px;
   padding:8px 12px;border-bottom:1px solid var(--border);
   box-shadow:2px 0 4px -2px rgba(16,24,39,.08);
 }
@@ -117,7 +117,7 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-cell-done .vac-cell-status .icon{color:var(--green);}
 .vac-date-input{
   flex:1;min-width:0;border:1px solid var(--border);border-radius:6px;
-  padding:5px 6px;font-family:inherit;font-size:12px;color:var(--ink-900);background:var(--surface);
+  padding:5px 6px;font-family:inherit;font-size:var(--fs-xs);color:var(--ink-900);background:var(--surface);
 }
 .vac-cell-done .vac-date-input{background:var(--surface);}
 .vac-date-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
@@ -140,9 +140,9 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
   padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;
 }
 .vac-card-icon{width:18px;height:18px;color:var(--primary);flex-shrink:0;}
-.vac-card-title{font-size:13.5px;font-weight:600;color:var(--ink-900);flex:1;min-width:0;}
+.vac-card-title{font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);flex:1;min-width:0;}
 .vac-card-progress{
-  font-size:11px;font-weight:700;color:var(--ink-500);background:var(--gray-bg);
+  font-size:var(--fs-2xs);font-weight:700;color:var(--ink-500);background:var(--gray-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
 }
 .vac-card-progress.complete{color:var(--green);background:var(--green-bg);}
@@ -153,8 +153,8 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-card-body{padding:2px 14px 14px;display:flex;flex-direction:column;border-top:1px solid var(--border);}
 .vac-dose-row{display:flex;flex-direction:column;gap:6px;padding-top:12px;}
 .vac-dose-info{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.vac-dose-label{font-size:13px;font-weight:500;color:var(--ink-900);}
-.vac-dose-state{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--ink-500);flex-shrink:0;}
+.vac-dose-label{font-size:var(--fs-sm);font-weight:500;color:var(--ink-900);}
+.vac-dose-state{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-2xs);font-weight:600;color:var(--ink-500);flex-shrink:0;}
 .vac-dose-state .icon{width:13px;height:13px;}
 .vac-dose-state.done{color:var(--green);}
 .vac-dose-date{margin:0;}
@@ -163,12 +163,12 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-otras-list{display:flex;flex-direction:column;gap:8px;margin:16px 0 12px;}
 .vac-otras-col-labels{
   display:grid;grid-template-columns:1fr 200px 34px;gap:12px;
-  font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-2xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
   padding:0 2px 2px;
 }
 .vac-otra-row{display:grid;grid-template-columns:1fr 200px 34px;gap:12px;align-items:start;}
 .vac-otra-remove-btn{
-  width:34px;height:var(--input-lg);border-radius:var(--radius);border:none;background:none;color:var(--ink-500);
+  width:34px;height:var(--pf-input-height);border-radius:var(--radius);border:none;background:none;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 .vac-otra-remove-btn .icon{width:16px;height:16px;}

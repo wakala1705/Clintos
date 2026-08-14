@@ -1,0 +1,17 @@
+/* .btn/.btn-sm/.btn-outline: definidas en ../../../../shared/shared.css
+   (shared del feature) — acá solo el dropdown propio, mismo patrón que
+   .pg-area-select-dropdown (AreaSelector.css) / .task-row-menu-dropdown. */
+.task-quick-assign{position:relative;flex-shrink:0;}
+.task-quick-assign-dropdown{
+  position:absolute;top:calc(100% + 4px);right:0;min-width:190px;z-index:var(--z-popover);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+  list-style:none;margin:0;
+}
+.task-quick-assign-option{
+  display:flex;align-items:center;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:13px;font-weight:600;color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.task-quick-assign-option:hover{background:var(--bg);}
+.task-quick-assign-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

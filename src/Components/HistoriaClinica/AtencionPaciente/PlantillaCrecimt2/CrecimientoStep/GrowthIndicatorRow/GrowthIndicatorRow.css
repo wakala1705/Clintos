@@ -1,51 +1,36 @@
 /* .form-field / .pf-field-tag: definidas en ../../PlantillaCrecimt2.css
-   (shared del feature) — acá solo el layout de fila propio de este
-   indicador y el relleno de Clasificación (resultado derivado). */
-.gc-indicator-row{
-  display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;
-  padding:14px 0;border-bottom:1px solid #eef0f4;
+   (shared del feature) — acá solo el layout propio de este indicador
+   (input arriba, Clasificación abajo — encargo explícito, ver
+   .gc-indicator-grid-3/.gc-indicator-grid-2 en CrecimientoStep.css) y el
+   relleno de ambos campos calculados (DE + Clasificación). */
+.gc-indicator-row{display:flex;flex-direction:column;gap:12px;}
+
+/* Rango DE — mismo mecanismo que .ef-calculated-input (ExamenFisicoStep.css,
+   IMC): fondo + borde discontinuo tinte primario neutro, siempre (nunca
+   tiñe por severidad — eso es exclusivo de Clasificación, justo abajo), para
+   leerse de un vistazo como "esto se calculó solo, no se escribe acá". */
+.gc-de-input{
+  background:var(--primary-50) !important;border-style:dashed !important;
+  color:var(--primary-dark) !important;font-weight:600;cursor:default;
 }
-.gc-indicator-row:last-child{border-bottom:none;}
+.gc-de-input::placeholder{color:var(--ink-400);font-weight:400;}
 
-.gc-indicator-select-field{flex-shrink:0;}
-.gc-indicator-select-field label{white-space:nowrap;}
-.gc-indicator-select-wrap{display:flex;align-items:center;gap:8px;}
-/* Selector compuesto (especificidad 0,2,0) a propósito: .form-field
-   select{width:100%} (shared.css) tiene la misma especificidad que un
-   .gc-indicator-select suelto (0,1,1 vs 0,1,1) y el orden de import decide
-   — sin el combinador, el select se estiraba al 100% del wrap y empujaba el
-   botón "ver evolución" a superponerse con el campo de Clasificación. */
-.gc-indicator-select-field .gc-indicator-select{width:180px;flex-shrink:0;}
-
-/* Botón "ver evolución" — mismo tamaño que .pf-titlebar-icon-btn pero con
-   borde propio (32px se pensó para flotar sobre el titlebar, acá vive
-   inline junto a un select con borde, necesita el suyo para no verse
-   flotante). */
-.gc-trend-btn{
-  width:36px;height:36px;border-radius:var(--radius);border:1px solid var(--border);
-  background:var(--surface);color:var(--ink-500);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;font-family:inherit;
-}
-.gc-trend-btn:hover{background:var(--bg);color:var(--primary-dark);border-color:var(--primary);}
-.gc-trend-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.gc-trend-btn .icon{width:16px;height:16px;}
-
-.gc-indicator-clasificacion-field{flex:1;min-width:220px;}
 /* Mismo mecanismo que .ef-calculated-input (ExamenFisicoStep.css, IMC):
-   fondo tinte primario + borde discontinuo, para que se lea como "esto no
-   se escribe acá" en vez de "está bloqueado por alguna otra razón". No
-   reutiliza el verde de .al-tipo-lactancia-result (AlimentacionStep.css)
-   porque acá el resultado no siempre es positivo (puede ser "Obesidad",
-   "Desnutrición global"...), así que un tinte neutro es más honesto que un
-   verde fijo sin importar el contenido. */
+   fondo + borde discontinuo, para que se lea como "esto no se escribe acá"
+   en vez de "está bloqueado por alguna otra razón". Sin valor aún, tinte
+   primario neutro (mismo criterio de "resultado por calcular" que el resto
+   del wizard); con valor, el fondo tiñe según el estado clínico del
+   resultado (ver .gc-clasificacion-esperado y siguientes abajo) — mismos 4
+   estados/colores que .gcm-interpretation en GrowthChartModal.css (mismo
+   estadoDeClasificacion, encargo explícito de que formulario y modal lean
+   el mismo color para el mismo resultado). */
 .gc-clasificacion-input{
   background:var(--primary-50) !important;border-style:dashed !important;
   color:var(--primary-dark) !important;font-weight:600;cursor:default;
 }
 .gc-clasificacion-input::placeholder{color:var(--ink-400);font-weight:400;}
 
-@media (max-width: 720px){
-  .gc-indicator-row{gap:14px;}
-  .gc-indicator-select-field{flex:1 1 100%;}
-  .gc-indicator-clasificacion-field{flex:1 1 100%;}
-}
+.gc-clasificacion-input.gc-clasificacion-esperado{background:var(--green-bg) !important;color:var(--green) !important;border-color:var(--green);}
+.gc-clasificacion-input.gc-clasificacion-alerta{background:var(--amber-bg) !important;color:var(--amber-fg) !important;border-color:var(--amber-fg);}
+.gc-clasificacion-input.gc-clasificacion-fuera-de-rango{background:var(--red-bg) !important;color:var(--red) !important;border-color:var(--red);}
+.gc-clasificacion-input.gc-clasificacion-no-aplica{background:var(--gray-bg) !important;color:var(--gray-fg) !important;border-color:var(--gray-fg);}

@@ -30,7 +30,7 @@
 .ead-rail-indicator{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
 .ead-rail-circle{
   width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface);
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);
   flex-shrink:0;transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
 }
 .ead-rail-circle .icon{width:14px;height:14px;}
@@ -46,20 +46,16 @@
 .ead-rail-node.active:not(.completado) .ead-rail-circle{color:var(--primary);}
 
 .ead-rail-textwrap{padding-top:3px;display:flex;flex-direction:column;gap:5px;min-width:0;}
-.ead-rail-label{font-size:13px;font-weight:600;color:var(--ink-700);line-height:1.3;}
+.ead-rail-label{font-size:var(--fs-sm);font-weight:600;color:var(--ink-700);line-height:1.3;}
 .ead-rail-node.active .ead-rail-label{color:var(--primary);}
 
 .ead-rail-badge{
-  align-self:flex-start;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  align-self:flex-start;font-size:var(--fs-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.03em;
   padding:2px 7px;border-radius:999px;
 }
 .ead-rail-badge.no-iniciado{background:var(--gray-bg);color:var(--ink-500);}
 .ead-rail-badge.en-progreso{background:var(--status-info-bg);color:var(--status-info-fg);}
 .ead-rail-badge.completado{background:var(--green-bg);color:var(--green);}
-
-@media (prefers-reduced-motion: reduce){
-  .ead-rail-circle{transition:none;}
-}
 
 /* ---------- Selector de rango de edad (select) ----------
    Vive debajo de los 5 nodos, dentro del mismo .ead-rail-sticky (se mueve
@@ -68,19 +64,19 @@
    select (../../PlantillaCrecimt2.css). */
 .ead-rail-rango{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);}
 .ead-rail-rango-label{
-  display:block;margin:0 0 10px;font-size:11px;font-weight:700;color:var(--ink-500);
+  display:block;margin:0 0 10px;font-size:var(--fs-2xs);font-weight:700;color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
 }
 .ead-rail-rango-input{
-  width:100%;height:var(--input-lg);
-  font-family:inherit;font-size:13px;color:var(--ink-900);
+  width:100%;height:var(--pf-input-height);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:0 36px 0 12px;cursor:pointer;appearance:none;-webkit-appearance:none;
   background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
   background-repeat:no-repeat;background-position:right 12px center;
 }
 .ead-rail-rango-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.ead-rail-rango-hint{margin:8px 0 0;font-size:11.5px;color:var(--ink-500);line-height:1.4;}
+.ead-rail-rango-hint{margin:8px 0 0;font-size:var(--fs-2xs);color:var(--ink-500);line-height:1.4;}
 
 /* Mismo umbral y criterio que .vale-rail/.an-nav: el riel pasa a fila
    horizontal con scroll propio cuando el ancho no alcanza para la columna

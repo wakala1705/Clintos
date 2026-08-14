@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import './ExamenFisicoStep.css';
 import SystemExamCard from './SystemExamCard/SystemExamCard';
 import { LuBaby, LuEye, LuHeartPulse, LuNotebookPen, LuScale, LuStethoscope } from 'react-icons/lu';
@@ -69,7 +69,7 @@ const RANGOS = {
 // de rango solo avisan si el usuario sí llegó a diligenciarlas.
 const CAMPOS_OBLIGATORIOS = ['peso', 'talla', 'pc', 'pt', 'perimetroBrazo'];
 
-function calcularIMC(pesoKg, tallaCm) {
+export function calcularIMC(pesoKg, tallaCm) {
   const peso = Number(pesoKg);
   const talla = Number(tallaCm);
   if (!peso || !talla) return null;
@@ -92,11 +92,19 @@ const SCROLL_OFFSET = 32; // px desde el techo del panel de contenido que cuenta
 // desarrollo puberal (Tanner) muestra un set de campos distinto para mujer/
 // varón y nunca ambos a la vez (ver PlantillaCrecimt2.jsx, comentario sobre
 // por qué ese prop rompe la regla de "no recibe datos del paciente").
+// `antropometria`/`onAntropometriaChange`/`imc` viven controlados desde
+// PlantillaCrecimt2.jsx (a diferencia del resto del estado de este paso,
+// 100% local) — encargo explícito: "10 Crecimiento y APGAR familiar" (ver
+// GrowthChartModal.jsx) necesita leer Peso/Talla/PC/IMC ya diligenciados
+// acá, y un ref no re-renderiza al padre cuando cambian, así que el único
+// mecanismo reactivo real es levantar este pedazo de estado.
 const ExamenFisicoStep = forwardRef(function ExamenFisicoStep(
-  { hidden, activeSubIndex, onActiveSubIndexChange, scrollContainerRef, patientSexo },
+  {
+    hidden, activeSubIndex, onActiveSubIndexChange, scrollContainerRef, patientSexo,
+    antropometria, onAntropometriaChange, imc,
+  },
   ref,
 ) {
-  const [antropometria, setAntropometria] = useState({ peso: '', talla: '', pc: '', pt: '', perimetroBrazo: '' });
   const [signosVitales, setSignosVitales] = useState({ fc: '', fr: '', sistolica: '', diastolica: '', temperatura: '' });
   const [condicionesGenerales, setCondicionesGenerales] = useState('');
   const [sistemas, setSistemas] = useState(emptySistemas);
@@ -105,12 +113,6 @@ const ExamenFisicoStep = forwardRef(function ExamenFisicoStep(
   });
   const [tanner, setTanner] = useState({ mamario: '', pubicoMujer: '', genitalesMasculinos: '', pubicoVaron: '' });
   const [errors, setErrors] = useState({});
-
-  // Calculado en vivo, nunca escrito por el usuario (ver .ef-calculated-*
-  // en ExamenFisicoStep.css para cómo se diferencia visualmente de un campo
-  // editable) — null mientras falte peso o talla, para no mostrar un IMC
-  // sin sentido (ej. "0.0") antes de tener ambos insumos.
-  const imc = useMemo(() => calcularIMC(antropometria.peso, antropometria.talla), [antropometria.peso, antropometria.talla]);
 
   const sectionRefs = useRef([]);
   function setRef(index) {
@@ -133,7 +135,7 @@ const ExamenFisicoStep = forwardRef(function ExamenFisicoStep(
   }
 
   function updateAntropometria(key, value) {
-    setAntropometria((p) => ({ ...p, [key]: value }));
+    onAntropometriaChange((p) => ({ ...p, [key]: value }));
     clearError(key);
   }
   function updateSignosVitales(key, value) {

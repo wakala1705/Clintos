@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './GrowthChartModal.css';
-import { LuBan, LuChartNoAxesCombined, LuCircleAlert, LuCircleCheck, LuOctagonAlert, LuX } from 'react-icons/lu';
+import {
+  LuBan, LuChartNoAxesCombined, LuChevronLeft, LuChevronRight, LuCircleAlert, LuCircleCheck, LuOctagonAlert, LuX,
+} from 'react-icons/lu';
 import {
   ESTADO_LABEL, INDICADORES_GRAFICA, estadoDeClasificacion, muestrearCurvas, posicionPuntoActual,
 } from './growthChartData';
@@ -31,6 +33,14 @@ function puntosSvg(serie, dominioX, dominioY) {
   return serie.map((p) => `${xScale(p.x, dominioX).toFixed(1)},${yScale(p.y, dominioY).toFixed(1)}`).join(' ');
 }
 
+// Peso/Talla/PC son texto crudo del <input> de "09 Examen físico"
+// (antropometria, ver ExamenFisicoStep.jsx) — '' antes de diligenciar, no
+// un número; IMC es el único ya numérico (o null). Mismo criterio de '—'
+// que edadLabel/sexo más abajo para "todavía no hay dato".
+function formatMedida(valor, unidad) {
+  return valor === '' || valor == null ? '—' : `${valor} ${unidad}`;
+}
+
 // Modal "Gráficas de crecimiento" — se abre desde el botón "ver evolución"
 // de cada fila de GrowthIndicatorRow.jsx (antes solo disparaba un toast).
 // `medicionesActuales` es el objeto {indicadorKey: opción|null} que
@@ -38,9 +48,15 @@ function puntosSvg(serie, dominioX, dominioY) {
 // opción DE seleccionada en "Verificar el crecimiento", con su
 // Clasificación y `z` ya calculados) — este modal NUNCA vuelve a decidir
 // una clasificación por su cuenta, solo la visualiza sobre las curvas de
-// referencia (ver disclaimer de datos en growthChartData.js).
+// referencia (ver disclaimer de datos en growthChartData.js). `examenFisico`
+// ({peso,talla,pc,imc}) es Peso/Talla/PC/IMC ya diligenciados en "09 Examen
+// físico" (antropometria, levantado hasta PlantillaCrecimt2.jsx — ver
+// ExamenFisicoStep.jsx — porque este modal, 2 pasos después, necesita
+// leerlos): mismo criterio de "nunca recalcula, solo repite el dato ya
+// diligenciado" que medicionesActuales.
 export default function GrowthChartModal({
-  open, indicadorId, onIndicadorChange, onClose, sexo, edadLabel, edadMeses, medicionesActuales,
+  open, indicadorId, onIndicadorChange, onClose, sexo, edadLabel, edadMeses, medicionesActuales, nombrePaciente,
+  examenFisico,
 }) {
   const [hoverPunto, setHoverPunto] = useState(false);
   const closeRef = useRef(null);
@@ -54,7 +70,8 @@ export default function GrowthChartModal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onClose]);
 
-  const indicador = INDICADORES_GRAFICA.find((i) => i.key === indicadorId) ?? INDICADORES_GRAFICA[0];
+  const indicadorIndex = Math.max(0, INDICADORES_GRAFICA.findIndex((i) => i.key === indicadorId));
+  const indicador = INDICADORES_GRAFICA[indicadorIndex];
   const seleccion = medicionesActuales[indicador.key] ?? null;
   const estado = seleccion ? estadoDeClasificacion(seleccion.clasificacion) : null;
   const IconoEstado = estado ? ICONO_ESTADO[estado] : null;
@@ -78,6 +95,15 @@ export default function GrowthChartModal({
   }, [seleccion, indicador, sexo, edadMeses]);
 
   if (!open) return null;
+
+  // Cicla circularmente (del último al primero y viceversa) — con solo 5
+  // indicadores no vale la pena deshabilitar los extremos, se navega más
+  // rápido dejando que "siguiente" desde IMC vuelva a Peso para la edad.
+  function cambiarIndicador(delta) {
+    const total = INDICADORES_GRAFICA.length;
+    const next = (indicadorIndex + delta + total) % total;
+    onIndicadorChange(INDICADORES_GRAFICA[next].key);
+  }
 
   const px = puntoActual ? xScale(puntoActual.x, indicador.dominioX) : null;
   const py = puntoActual ? yScale(puntoActual.y, dominioY) : null;
@@ -113,22 +139,11 @@ export default function GrowthChartModal({
 
         <div className="modal-body gcm-body">
           <div className="gcm-toolbar">
-            <div className="gcm-selector" role="tablist" aria-label="Indicador de crecimiento">
-              {INDICADORES_GRAFICA.map((ind) => (
-                <button
-                  type="button"
-                  key={ind.key}
-                  role="tab"
-                  aria-selected={ind.key === indicador.key}
-                  className={`gcm-chip${ind.key === indicador.key ? ' active' : ''}`}
-                  onClick={() => onIndicadorChange(ind.key)}
-                >
-                  {ind.label}
-                </button>
-              ))}
-            </div>
-
             <div className="gcm-summary-row">
+              <div className="gcm-summary-item gcm-summary-paciente">
+                <span className="gcm-summary-label">Paciente</span>
+                <span className="gcm-summary-value">{nombrePaciente ?? '—'}</span>
+              </div>
               <div className="gcm-summary-item">
                 <span className="gcm-summary-label">Edad</span>
                 <span className="gcm-summary-value">{edadLabel ?? '—'}</span>
@@ -137,10 +152,48 @@ export default function GrowthChartModal({
                 <span className="gcm-summary-label">Sexo</span>
                 <span className="gcm-summary-value">{sexo ?? '—'}</span>
               </div>
+
+              <span className="gcm-summary-divider" aria-hidden="true" />
+
               <div className="gcm-summary-item">
-                <span className="gcm-summary-label">Valor — {indicador.label}</span>
-                <span className="gcm-summary-value">{seleccion ? seleccion.label : 'Sin registrar'}</span>
+                <span className="gcm-summary-label">Peso</span>
+                <span className="gcm-summary-value">{formatMedida(examenFisico?.peso, 'Kg')}</span>
               </div>
+              <div className="gcm-summary-item">
+                <span className="gcm-summary-label">Talla</span>
+                <span className="gcm-summary-value">{formatMedida(examenFisico?.talla, 'cm')}</span>
+              </div>
+              <div className="gcm-summary-item">
+                <span className="gcm-summary-label">PC</span>
+                <span className="gcm-summary-value">{formatMedida(examenFisico?.pc, 'cm')}</span>
+              </div>
+              <div className="gcm-summary-item">
+                <span className="gcm-summary-label">IMC</span>
+                <span className="gcm-summary-value">{examenFisico?.imc ? examenFisico.imc.toFixed(1) : '—'}</span>
+              </div>
+            </div>
+
+            <div className="gcm-indicator-switcher" role="group" aria-label="Indicador de crecimiento">
+              <button
+                type="button"
+                className="gcm-switcher-btn"
+                onClick={() => cambiarIndicador(-1)}
+                aria-label="Indicador anterior"
+              >
+                <LuChevronLeft className="icon" aria-hidden="true" />
+              </button>
+              <div className="gcm-switcher-label" aria-live="polite">
+                <span className="gcm-switcher-text">{indicador.label}</span>
+                <span className="gcm-switcher-count">{indicadorIndex + 1} / {INDICADORES_GRAFICA.length}</span>
+              </div>
+              <button
+                type="button"
+                className="gcm-switcher-btn"
+                onClick={() => cambiarIndicador(1)}
+                aria-label="Siguiente indicador"
+              >
+                <LuChevronRight className="icon" aria-hidden="true" />
+              </button>
             </div>
           </div>
 
@@ -231,21 +284,22 @@ export default function GrowthChartModal({
             </div>
           </div>
 
-          <div className="gcm-interpretation">
-            <span className="gcm-interpretation-label">Resultado</span>
+          <div className={`gcm-interpretation${estado ? ` gcm-interpretation-${estado}` : ''}`}>
             {seleccion ? (
               <>
-                <div className="gcm-interpretation-main">
-                  <p className="gcm-interpretation-text">{indicador.label}: {seleccion.clasificacion}</p>
+                <div className="gcm-interpretation-row">
+                  <p className="gcm-interpretation-text">
+                    <span className="gcm-interpretation-label">Resultado</span>
+                    {indicador.label}: {seleccion.clasificacion}
+                  </p>
                   <span className={`gcm-estado-badge gcm-estado-${estado}`}>
                     {IconoEstado && <IconoEstado className="icon" aria-hidden="true" />}
                     {ESTADO_LABEL[estado]}
                   </span>
                 </div>
-                <div className="gcm-interpretation-meta">
-                  <span>Valor registrado: <b>{seleccion.label}</b></span>
-                  <span>Desviación estándar aproximada: <b>{seleccion.z > 0 ? '+' : ''}{seleccion.z} DE</b></span>
-                </div>
+                <p className="gcm-interpretation-meta">
+                  Valor registrado: <b>{seleccion.label}</b> · Desviación estándar aproximada: <b>{seleccion.z > 0 ? '+' : ''}{seleccion.z} DE</b>
+                </p>
               </>
             ) : (
               <p className="gcm-interpretation-empty">

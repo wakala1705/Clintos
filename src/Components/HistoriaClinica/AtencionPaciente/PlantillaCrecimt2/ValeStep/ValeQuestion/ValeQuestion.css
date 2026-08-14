@@ -8,12 +8,12 @@
 .vale-q-main{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
 .vale-q-code{
   flex-shrink:0;width:24px;height:24px;border-radius:6px;margin-top:1px;
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-xs);font-weight:700;
 }
 .vale-q-code.c{background:var(--status-info-bg);color:var(--status-info-fg);}
 .vale-q-code.e{background:var(--violet-bg);color:var(--violet-fg);}
 .vale-q-code.i{background:var(--green-bg);color:var(--green);}
-.vale-q-text{margin:0;font-size:14px;font-weight:500;color:var(--ink-900);line-height:1.5;}
+.vale-q-text{margin:0;font-size:var(--fs-md);font-weight:500;color:var(--ink-900);line-height:1.5;}
 
 .vale-q-controls{
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -27,7 +27,7 @@
 /* Observación directa: mismo .pf-check-row de siempre pero más compacto —
    es secundaria a la pregunta principal (encargo: "no debe competir
    visualmente"), min-height:44px del original es innecesario acá. */
-.vale-q-observacion{min-height:auto;padding:4px 8px;font-size:12.5px;color:var(--ink-500);}
+.vale-q-observacion{min-height:auto;padding:4px 8px;font-size:var(--fs-xs);color:var(--ink-500);}
 
 .vale-q.has-error .vale-q-text{color:var(--red);}
 .vale-q-error{display:flex;align-items:center;gap:5px;padding-left:34px;margin-top:10px;}

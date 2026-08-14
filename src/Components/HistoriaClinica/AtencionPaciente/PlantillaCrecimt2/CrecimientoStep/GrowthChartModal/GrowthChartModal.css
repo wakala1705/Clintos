@@ -12,40 +12,68 @@
 .gcm-header-titles{display:flex;align-items:center;gap:12px;}
 .gcm-header-titles h3{margin:0;}
 
-/* Selector + resumen en la misma fila (encargo: "ubica este dato al lado
-   de los chips") — selector a la izquierda, resumen pegado a la derecha;
-   en angosto, el resumen baja debajo del selector en vez de comprimirse. */
-.gcm-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+/* Selector + resumen en la misma fila — resumen (Paciente/Edad/Sexo +
+   Peso/Talla/PC/IMC) a la izquierda, selector de indicador pegado a la
+   derecha. nowrap a propósito (encargo explícito: "que no genere scroll" —
+   con 7 datos en el resumen, permitir wrap dejaba 2 líneas altas en vez de
+   1 compacta): por eso el selector pasó de 5 chips sueltos (ver .gcm-chip,
+   removido) a .gcm-indicator-switcher de ancho fijo y acotado (prev/label/
+   next) más abajo — la única forma de garantizar que quepan resumen +
+   selector en una sola línea sin importar cuántos indicadores haya.
+   overflow-x:auto como red de seguridad, nunca el camino esperado: si algún
+   futuro dato adicional del resumen no cupiera en el viewport mínimo real
+   de la app (.app{min-width:1024px}, ver HistoriaClinica.css), scrollea
+   localmente esta barra en vez de romper el layout del modal completo. */
+.gcm-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:nowrap;overflow-x:auto;}
 
-/* Selector horizontal de indicador — chips sueltos tipo píldora (mismo
-   patrón visual que .vale-rango-chip en ValeDesarrolloEtapa.css: único
-   precedente de chip seleccionable de la feature) en vez de un
-   .pf-toggle-group encajonado — 5 etiquetas, algunas largas (ej.
-   "Perímetro cefálico para la edad"), envuelven sueltas sin la caja
-   rectangular continua del toggle-group. */
-.gcm-selector{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:280px;}
-.gcm-chip{
-  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-700);
-  background:var(--surface);border:1px solid var(--border);border-radius:999px;
-  padding:8px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s;
+/* Selector de indicador — antes 5 chips sueltos (uno por INDICADORES_GRAFICA,
+   ver growthChartData.js), ahora prev/label/next de ancho fijo (encargo
+   explícito, ver .gcm-toolbar arriba): con 5 etiquetas mostradas a la vez
+   nunca cabía junto al resumen sin wrap; con un único indicador visible a
+   la vez sí. flex-shrink:0 — nunca se comprime, mismo criterio que
+   .gcm-summary-row. */
+.gcm-indicator-switcher{
+  display:flex;align-items:center;gap:4px;flex-shrink:0;
+  border:1px solid var(--border);border-radius:999px;padding:4px;background:var(--surface);
 }
-.gcm-chip:hover{background:var(--bg);}
-.gcm-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
-.gcm-chip:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.gcm-switcher-btn{
+  width:30px;height:30px;border-radius:50%;border:none;background:transparent;color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:inherit;
+}
+.gcm-switcher-btn:hover{background:var(--bg);color:var(--primary-dark);}
+.gcm-switcher-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.gcm-switcher-btn .icon{width:16px;height:16px;}
+/* min-width fijo — Peso/Talla/Perímetro cefálico/IMC son todas etiquetas de
+   largo similar (ver growthChartData.js): sin ancho fijo, cada click hace
+   que el switcher completo "salte" de tamaño y empuje el resumen a la
+   izquierda de vuelta a 2 líneas. */
+.gcm-switcher-label{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:150px;}
+.gcm-switcher-text{font-size:var(--fs-sm);font-weight:700;color:var(--ink-900);white-space:nowrap;}
+.gcm-switcher-count{font-size:var(--fs-2xs);color:var(--ink-500);}
 
 /* Resumen compacto (encargo: "sin generar una tarjeta excesivamente
-   grande") — Edad/Sexo (contexto real del paciente) + el valor YA
-   registrado del indicador que se está graficando (nunca un dato crudo
-   inventado, ver growthChartData.js). Ya no ocupa el ancho completo (ver
-   .gcm-toolbar arriba): flex-shrink:0 para que conserve su tamaño natural
-   junto a los chips en vez de comprimirse. */
+   grande") — 2 grupos: Paciente/Edad/Sexo (a quién pertenece la gráfica) y
+   Peso/Talla/PC/IMC (encargo explícito: ya diligenciados en "09 Examen
+   físico", ver `examenFisico` en GrowthChartModal.jsx — nunca se vuelven a
+   pedir/calcular acá). No ocupa el ancho completo (ver .gcm-toolbar
+   arriba): flex-shrink:0 para que conserve su tamaño natural junto al
+   selector en vez de comprimirse. nowrap (antes wrap): ver .gcm-toolbar. */
 .gcm-summary-row{
-  display:flex;align-items:center;gap:20px;flex-wrap:wrap;flex-shrink:0;
+  display:flex;align-items:center;gap:16px;flex-wrap:nowrap;flex-shrink:0;
   padding:8px 14px;background:var(--bg);border-radius:var(--radius);
 }
-.gcm-summary-item{display:flex;flex-direction:column;gap:2px;}
-.gcm-summary-label{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);white-space:nowrap;}
-.gcm-summary-value{font-size:14px;font-weight:700;color:var(--ink-900);white-space:nowrap;}
+.gcm-summary-item{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.gcm-summary-label{font-size:var(--fs-2xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);white-space:nowrap;}
+.gcm-summary-value{font-size:var(--fs-md);font-weight:700;color:var(--ink-900);white-space:nowrap;}
+/* Separa el grupo Paciente/Edad/Sexo del grupo Peso/Talla/PC/IMC — mismo
+   tono que el resto de bordes sutiles del feature (var(--border)), como
+   línea en vez de espaciado extra porque ambos grupos comparten el mismo
+   fondo (var(--bg)) y sin ella se leerían como una sola lista continua. */
+.gcm-summary-divider{width:1px;align-self:stretch;background:var(--border);flex-shrink:0;}
+/* Nombre del paciente: el único valor de este resumen sin longitud
+   acotada (Edad/Sexo siempre son cortos) — trunca en vez de forzar scroll
+   horizontal o empujar los chips del selector fuera de vista. */
+.gcm-summary-paciente .gcm-summary-value{max-width:220px;overflow:hidden;text-overflow:ellipsis;}
 
 /* La gráfica es "el elemento protagonista" (encargo) — card propia, sin
    competir visualmente con el resumen/selector de arriba. Alto reducido a
@@ -57,12 +85,12 @@
   padding:14px 16px 10px;background:var(--surface);margin-top:16px;
 }
 .gcm-chart-wrap{width:100%;}
-.gcm-svg{width:100%;height:auto;max-height:340px;aspect-ratio:760/300;display:block;margin:0 auto;}
+.gcm-svg{width:100%;height:auto;aspect-ratio:760/300;display:block;margin:0 auto;}
 
 .gcm-gridline{stroke:var(--border);stroke-width:1;}
 .gcm-axis{stroke:var(--ink-400);stroke-width:1.2;}
-.gcm-axis-label{font-size:10.5px;fill:var(--ink-500);font-family:inherit;}
-.gcm-axis-title{font-size:11.5px;font-weight:600;fill:var(--ink-700);font-family:inherit;}
+.gcm-axis-label{font-size:var(--fs-2xs);fill:var(--ink-500);font-family:inherit;}
+.gcm-axis-title{font-size:var(--fs-2xs);font-weight:600;fill:var(--ink-700);font-family:inherit;}
 
 /* Curvas: DE 0 (mediana) sólida y más gruesa, ±1/±2/±3 escalan en grosor +
    patrón de trazo (no solo color) para diferenciarse incluso en escala de
@@ -85,10 +113,10 @@
 .gcm-estado-no-aplica.gcm-punto-halo,.gcm-estado-no-aplica.gcm-punto-dot{stroke:var(--gray-fg);fill:var(--gray-fg);}
 
 .gcm-tooltip-bg{fill:var(--ink-900);opacity:.94;}
-.gcm-tooltip-text{font-size:11px;fill:#fff;font-family:inherit;}
+.gcm-tooltip-text{font-size:var(--fs-2xs);fill:#fff;font-family:inherit;}
 
 .gcm-legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:8px 4px 2px;}
-.gcm-legend-item{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-700);}
+.gcm-legend-item{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-2xs);color:var(--ink-700);}
 .gcm-legend-swatch{width:16px;height:0;border-top:2.5px solid;display:inline-block;flex-shrink:0;}
 .gcm-legend-swatch.gcm-curve-0{border-color:var(--primary);}
 .gcm-legend-swatch.gcm-curve-1{border-color:var(--ink-400);}
@@ -99,34 +127,54 @@
 /* Bloque de interpretación clínica — el Resultado ya viene calculado en
    "Verificar el crecimiento" (Clasificación del select, ver
    crecimientoData.js): este bloque solo lo repite en el contexto de la
-   gráfica, nunca lo recalcula. */
+   gráfica, nunca lo recalcula. Compactado a 2 líneas (resultado+badge /
+   meta, encargo explícito "ganar espacio vertical") — fondo teñido del
+   color del estado en vez de blanco liso (mismo encargo), tono -bg de cada
+   estado ya usado en su badge (ver .gcm-estado-badge más abajo); sin
+   `estado` (sin valor registrado) se queda en el .gcm-interpretation base
+   (superficie neutra, ver JSX). */
 .gcm-interpretation{
-  margin-top:12px;padding:14px 18px;border:1px solid var(--border);border-radius:var(--radius-lg);
+  margin-top:12px;padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius-lg);
   background:var(--surface);
 }
-.gcm-interpretation-label{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
-.gcm-interpretation-main{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  margin-top:6px;
-}
-.gcm-interpretation-text{margin:0;font-size:15px;font-weight:600;color:var(--ink-900);}
-.gcm-interpretation-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--ink-500);}
-.gcm-interpretation-meta b{color:var(--ink-900);font-weight:600;}
-.gcm-interpretation-empty{margin:6px 0 0;font-size:13.5px;color:var(--ink-500);}
+.gcm-interpretation-esperado{background:var(--green-bg);border-color:var(--green);}
+.gcm-interpretation-alerta{background:var(--amber-bg);border-color:var(--amber-fg);}
+.gcm-interpretation-fuera-de-rango{background:var(--red-bg);border-color:var(--red);}
+.gcm-interpretation-no-aplica{background:var(--gray-bg);border-color:var(--gray-fg);}
 
-/* Estado — siempre ícono + texto, nunca solo color (encargo WCAG). */
+.gcm-interpretation-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.gcm-interpretation-text{margin:0;font-size:var(--fs-md);font-weight:600;color:var(--ink-900);}
+.gcm-interpretation-label{
+  font-size:var(--fs-2xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);
+  margin-right:8px;
+}
+.gcm-interpretation-meta{margin:4px 0 0;font-size:var(--fs-xs);color:var(--ink-700);}
+.gcm-interpretation-meta b{color:var(--ink-900);font-weight:600;}
+.gcm-interpretation-empty{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+/* Estado — siempre ícono + texto, nunca solo color (encargo WCAG). Borde
+   propio (en vez de solo el tinte -bg, que ahora comparte con la card que
+   lo envuelve — ver .gcm-interpretation-* arriba): sin él el badge se
+   perdía contra un fondo del mismo color. */
 .gcm-estado-badge{
   display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
-  font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;
+  border:1px solid transparent;
 }
 .gcm-estado-badge .icon{width:14px;height:14px;}
-.gcm-estado-badge.gcm-estado-esperado{color:var(--green);background:var(--green-bg);}
-.gcm-estado-badge.gcm-estado-alerta{color:var(--amber-fg);background:var(--amber-bg);}
-.gcm-estado-badge.gcm-estado-fuera-de-rango{color:var(--red);background:var(--red-bg);}
-.gcm-estado-badge.gcm-estado-no-aplica{color:var(--gray-fg);background:var(--gray-bg);}
+.gcm-estado-badge.gcm-estado-esperado{color:var(--green);background:var(--surface);border-color:var(--green);}
+.gcm-estado-badge.gcm-estado-alerta{color:var(--amber-fg);background:var(--surface);border-color:var(--amber-fg);}
+.gcm-estado-badge.gcm-estado-fuera-de-rango{color:var(--red);background:var(--surface);border-color:var(--red);}
+.gcm-estado-badge.gcm-estado-no-aplica{color:var(--gray-fg);background:var(--surface);border-color:var(--gray-fg);}
 
 @media (max-width: 900px){
   .gcm-modal{width:96vw;}
   .gcm-header-meta{display:none;}
-  .gcm-summary-row{gap:16px;}
+  /* Último recurso de compactación antes de que .gcm-toolbar tenga que
+     scrollear (ver overflow-x:auto arriba) — angosto real hoy solo
+     alcanzable en el emulador de dispositivo, no redimensionando la
+     ventana (.app{min-width:1024px}, ver HistoriaClinica.css). */
+  .gcm-summary-row{gap:12px;padding:8px 10px;}
+  .gcm-summary-paciente .gcm-summary-value{max-width:120px;}
+  .gcm-switcher-label{min-width:120px;}
 }

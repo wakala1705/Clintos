@@ -1,0 +1,35 @@
+/* .data-table (base)/.cell-primary/.cell-muted/.cell-sub/.sr-only: definidas
+   en ../../../shared/shared.css (shared del feature) — acá solo lo
+   exclusivo de esta tabla. */
+.task-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;position:relative;}
+.task-table{width:100%;}
+.task-table tbody tr{cursor:pointer;}
+.task-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.task-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.task-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
+
+/* Sin la columna Área operativa (encargo: ya la define el selector global
+   del header), Tarea/Paciente-ubicación/Programación ganan el ancho que
+   liberó esa columna — min-width explícito en vez de un colgroup fijo, para
+   no perder el auto-layout que ya reparte el resto de forma razonable. */
+.task-col-tarea{min-width:200px;}
+.task-col-ubicacion{min-width:190px;color:var(--ink-700);}
+.col-acciones{width:1%;white-space:nowrap;text-align:right;}
+
+.task-row-actions{display:inline-flex;align-items:center;gap:6px;}
+
+/* Programación — mismo criterio de "nunca solo color" que .task-badge: cada
+   tono trae su propio ícono, no solo un texto tintado. */
+.task-prog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;white-space:nowrap;}
+.task-prog .icon{width:14px;height:14px;flex-shrink:0;}
+.task-prog-vence-pronto{color:var(--amber-fg);}
+.task-prog-vencida{color:var(--red);}
+.task-prog-proxima{color:var(--ink-700);}
+.task-prog-proxima .icon{color:var(--ink-500);}
+.task-prog-en-curso{color:var(--status-info-fg);}
+.task-prog-completada{color:#0d7a3d;}
+.task-prog-neutral{color:var(--ink-500);font-weight:500;}
+
+.task-table-empty{padding:48px 20px;text-align:center;color:var(--ink-500);font-size:13.5px;}
+
+html[data-theme="dark"] .task-prog-completada{color:var(--green);}

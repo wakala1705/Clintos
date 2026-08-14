@@ -7,7 +7,7 @@
 .pcs-diag-codigo{width:140px;flex-shrink:0;}
 
 .pcs-diag-input-wrap{
-  display:flex;align-items:center;height:var(--input-lg);
+  display:flex;align-items:center;height:var(--pf-input-height);
   border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
   padding-left:12px;
 }
@@ -24,7 +24,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .pcs-diag-input-wra
 }
 .pcs-diag-input-wrap input{
   flex:1;min-width:0;border:none;padding:0;height:auto;
-  font-family:inherit;font-size:13px;color:var(--ink-900);background:transparent;
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:transparent;
 }
 .pcs-diag-input-wrap input:focus{outline:none;}
 .pcs-diag-input-wrap input::placeholder{color:var(--ink-400);}
@@ -46,7 +46,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .pcs-diag-input-wra
   box-shadow:0 12px 28px rgba(16,24,39,.16);max-height:260px;overflow-y:auto;
   padding:4px;margin:0;list-style:none;
 }
-.pcs-diag-empty{padding:10px 12px;font-size:12.5px;color:var(--ink-500);}
+.pcs-diag-empty{padding:10px 12px;font-size:var(--fs-xs);color:var(--ink-500);}
 .pcs-diag-option{
   width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
   text-align:left;padding:9px 10px;border-radius:6px;border:none;background:none;cursor:pointer;
@@ -54,9 +54,9 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .pcs-diag-input-wra
 .pcs-diag-option:hover{background:var(--bg);}
 .pcs-diag-option.active{background:var(--primary-50);}
 .pcs-diag-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.pcs-diag-option-texto{font-size:13px;color:var(--ink-900);}
+.pcs-diag-option-texto{font-size:var(--fs-sm);color:var(--ink-900);}
 .pcs-diag-option-codigo{
-  font-size:11px;font-weight:600;color:var(--ink-500);background:var(--gray-bg);
+  font-size:var(--fs-2xs);font-weight:600;color:var(--ink-500);background:var(--gray-bg);
   border-radius:10px;padding:2px 8px;flex-shrink:0;
 }
 

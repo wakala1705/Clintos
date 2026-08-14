@@ -28,6 +28,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --amber:#e08a00;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --green:#12a150;
@@ -79,6 +80,7 @@ html[data-theme="dark"]{
      visualmente. Mismo valor que ya usaba .catalog-side/thead sticky. */
   --surface-modal:#1c2333;
   --bg:#0c0f17;
+  --amber:#f5b942;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
   --green:#34d399;
@@ -89,6 +91,56 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
+}
+
+/* ---------- RESET + APP SHELL (sidebar + topbar + content wrapper) ----------
+   Antes solo en gestion-enfermeria.css (único consumidor, la pantalla de
+   atención a un paciente) — ahora que "Hospitalización / Gestión de
+   Enfermería" tiene 2 rutas reales (PanelGeneral en /gestion-enfermeria,
+   AtencionEnfermeria en /gestion-enfermeria/atencion/[id], ver AGENTS.md
+   "Route files stay in src/app/..."), ambas necesitan el mismo shell — se
+   mueve acá en vez de duplicarse en las 2 CSS de página. */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.app{
+  display:flex;
+  height:100vh;
+  /* Piso bajado de 1440px a 1024px: iniciativa de shell responsive para
+     soportar tablets en planta (contexto de uso que la excepción WCAG 1.4.10
+     original pedía revisar antes de tocar este valor — ver historial). Sigue
+     sin ser reflow real a 320px/zoom 400%: por debajo de 1024px la página
+     vuelve a requerir scroll horizontal a nivel de .app, es un piso más bajo,
+     no cumplimiento completo de Reflow. Las grillas densas (OME, Solicitudes,
+     Devoluciones, Recepción) no se apilan en tarjetas en este rango — ganan su
+     propio scroll horizontal en vez de romper el layout (ver *-list/*-scroll-x
+     en cada feature). El sidebar se auto-colapsa a riel de íconos por debajo
+     de este mismo breakpoint (ver applySidebarAutoState en legacy-app.js). */
+  min-width:1024px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+/* .topbar / .breadcrumb / .meta-item / .divider-v viven en
+   src/Components/Topbar/Topbar.css — ver AGENTS.md (topbar homologada). */
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+
+/* ---------- CARD ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
 }
 
 /* ---------- Resumen de dosis + selección de lote + checklist de 5 correctos ----------
@@ -463,6 +515,11 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 }
 .modal-close-btn:hover{background:#f3f5f9;color:var(--ink-900);}
 .modal-close-btn .icon{width:18px;height:18px;}
+
+/* Variante angosta — formularios de 1-2 campos (ReassignModal/
+   RescheduleModal/CompleteVitalsModal, Tareas de enfermería) que no
+   necesitan los 780px por defecto de .modal-card. */
+.task-mini-modal-card{width:400px;}
 
 .modal-body{padding:20px 24px;overflow-y:auto;}
 .modal-footer{

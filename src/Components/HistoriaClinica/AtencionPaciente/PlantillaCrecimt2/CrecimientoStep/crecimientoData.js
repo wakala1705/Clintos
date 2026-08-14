@@ -9,25 +9,25 @@
 // Mismos 5 indicadores del legacy, agrupados en 2 bloques (encargo explícito
 // — no es el agrupamiento visual de la captura de referencia, que los
 // repartía en una grilla de 2 columnas sin agrupar por concepto clínico). El
-// valor de cada indicador NO es un número libre: es un select de rangos DE
-// (desviación estándar) fijos, cada uno con una Clasificación clínica
-// derivada automáticamente — no hay estado Normal/Anormal seleccionable a
-// mano (encargo explícito, corrigiendo la primera versión de este campo).
-// `label` de cada opción se usa también como su `value` en el <select> (ver
-// GrowthIndicatorRow.jsx) — son strings únicos y estables por indicador, no
-// hace falta un id separado. Rangos y clasificaciones tomados 1:1 de
-// capturas del legacy (Resolución 2465/2016 Colombia, indicadores
-// antropométricos 0-5 años) — Peso/Talla DE es el único con el dropdown
-// completo capturado abierto (7 opciones, orden real preservado);
-// Perímetro Cefálico/Talla-Edad DE/IMC solo se capturaron opciones sueltas,
-// sin el dropdown abierto, así que van en orden ascendente por rango
-// (encargo explícito, sin evidencia del orden real del legacy para esos 3).
-// `z` es el punto (en desviaciones estándar) representativo de cada rango
-// — el punto medio del rango, o un valor razonable dentro del tramo
-// abierto para los extremos sin límite (p. ej. "<-2 DE" → -2.5). Solo se
-// usa para UBICAR el marcador de "medición actual" en GrowthChartModal.jsx
-// sobre las curvas de referencia — nunca reemplaza ni reinterpreta la
-// Clasificación ya calculada acá.
+// valor de cada indicador NO es un select manual: se deriva automáticamente
+// del z-score real de Peso/Talla/PC/IMC ya diligenciados en "09 Examen
+// físico" (ver opcionPorZ más abajo y calcularZ en growthChartData.js) — el
+// usuario nunca vuelve a diligenciar este paso a mano (encargo explícito).
+// Rangos y clasificaciones tomados 1:1 de capturas del legacy (Resolución
+// 2465/2016 Colombia, indicadores antropométricos 0-5 años) — Peso/Talla DE
+// es el único con el dropdown completo capturado abierto (7 opciones, orden
+// real preservado); Perímetro Cefálico/Talla-Edad DE/IMC solo se capturaron
+// opciones sueltas, sin el dropdown abierto, así que van en orden ascendente
+// por rango (encargo explícito, sin evidencia del orden real del legacy para
+// esos 3). Cada opción trae 2 datos numéricos, no solo el `label` visual:
+// - `test(z)`: el predicado exacto del rango DE de esa opción (límites
+//   tomados directamente del propio `label`, p. ej. ">=-1 A <=1 DE" →
+//   z >= -1 && z <= 1) — es lo que opcionPorZ usa para elegir la opción.
+// - `z`: el punto representativo del rango (su punto medio, o un valor
+//   razonable dentro del tramo abierto para los extremos sin límite, p. ej.
+//   "<-2 DE" → -2.5) — solo se usa para UBICAR el marcador de "medición
+//   actual" en GrowthChartModal.jsx sobre las curvas de referencia, nunca
+//   para clasificar (eso es trabajo exclusivo de `test`).
 export const GRUPOS_INDICADORES = [
   {
     id: 'peso',
@@ -36,30 +36,30 @@ export const GRUPOS_INDICADORES = [
       {
         key: 'pesoEdadDE', label: 'Peso/Edad DE',
         opciones: [
-          { label: '<-2 DE', clasificacion: 'Desnutrición global', z: -2.5 },
-          { label: '>1 DE', clasificacion: 'No Aplica (Verificar con IMC/E)', z: 1.5 },
-          { label: '>=-1 A <=1 DE', clasificacion: 'Peso adecuado para la edad', z: 0 },
-          { label: '>=-2 A <-1 DE', clasificacion: 'Riesgo de desnutrición global', z: -1.5 },
+          { label: '<-2 DE', clasificacion: 'Desnutrición global', z: -2.5, test: (z) => z < -2 },
+          { label: '>1 DE', clasificacion: 'No Aplica (Verificar con IMC/E)', z: 1.5, test: (z) => z > 1 },
+          { label: '>=-1 A <=1 DE', clasificacion: 'Peso adecuado para la edad', z: 0, test: (z) => z >= -1 && z <= 1 },
+          { label: '>=-2 A <-1 DE', clasificacion: 'Riesgo de desnutrición global', z: -1.5, test: (z) => z >= -2 && z < -1 },
         ],
       },
       {
         key: 'pesoTallaDE', label: 'Peso/Talla DE',
         opciones: [
-          { label: '< -2 a >= -3', clasificacion: 'Peso bajo para la talla o desnutrición aguda moderada', z: -2.5 },
-          { label: '<-3', clasificacion: 'Peso muy bajo para la talla o desnutrición aguda severa', z: -3.5 },
-          { label: '> +1a <= +2', clasificacion: 'Riesgo de Sobrepeso', z: 1.5 },
-          { label: '>+2 a <= +3', clasificacion: 'Sobrepeso', z: 2.5 },
-          { label: '>+3', clasificacion: 'Obesidad', z: 3.5 },
-          { label: '>= -1 a <= +1', clasificacion: 'Peso adecuado para la talla', z: 0 },
-          { label: '>= -2 a <-1', clasificacion: 'Riesgo de peso bajo para la talla', z: -1.5 },
+          { label: '< -2 a >= -3', clasificacion: 'Peso bajo para la talla o desnutrición aguda moderada', z: -2.5, test: (z) => z >= -3 && z < -2 },
+          { label: '<-3', clasificacion: 'Peso muy bajo para la talla o desnutrición aguda severa', z: -3.5, test: (z) => z < -3 },
+          { label: '> +1a <= +2', clasificacion: 'Riesgo de Sobrepeso', z: 1.5, test: (z) => z > 1 && z <= 2 },
+          { label: '>+2 a <= +3', clasificacion: 'Sobrepeso', z: 2.5, test: (z) => z > 2 && z <= 3 },
+          { label: '>+3', clasificacion: 'Obesidad', z: 3.5, test: (z) => z > 3 },
+          { label: '>= -1 a <= +1', clasificacion: 'Peso adecuado para la talla', z: 0, test: (z) => z >= -1 && z <= 1 },
+          { label: '>= -2 a <-1', clasificacion: 'Riesgo de peso bajo para la talla', z: -1.5, test: (z) => z >= -2 && z < -1 },
         ],
       },
       {
         key: 'perimetroCefalico', label: 'Perímetro Cefálico',
         opciones: [
-          { label: '< -2', clasificacion: 'Factor de riesgo del neurodesarrollo', z: -2.5 },
-          { label: '>= -2 a <= +2', clasificacion: 'Adecuado', z: 0 },
-          { label: '> +2', clasificacion: 'Factor de riesgo del neurodesarrollo', z: 2.5 },
+          { label: '< -2', clasificacion: 'Factor de riesgo del neurodesarrollo', z: -2.5, test: (z) => z < -2 },
+          { label: '>= -2 a <= +2', clasificacion: 'Adecuado', z: 0, test: (z) => z >= -2 && z <= 2 },
+          { label: '> +2', clasificacion: 'Factor de riesgo del neurodesarrollo', z: 2.5, test: (z) => z > 2 },
         ],
       },
     ],
@@ -71,23 +71,33 @@ export const GRUPOS_INDICADORES = [
       {
         key: 'tallaEdadDE', label: 'Talla/Edad DE',
         opciones: [
-          { label: '< -2', clasificacion: 'Talla baja para la edad o retraso en talla', z: -2.5 },
-          { label: '>= -2 a < -1', clasificacion: 'Riesgo de talla baja', z: -1.5 },
-          { label: '>= -1', clasificacion: 'Talla adecuada', z: 0 },
+          { label: '< -2', clasificacion: 'Talla baja para la edad o retraso en talla', z: -2.5, test: (z) => z < -2 },
+          { label: '>= -2 a < -1', clasificacion: 'Riesgo de talla baja', z: -1.5, test: (z) => z >= -2 && z < -1 },
+          { label: '>= -1', clasificacion: 'Talla adecuada', z: 0, test: (z) => z >= -1 },
         ],
       },
       {
         key: 'imc', label: 'IMC',
         opciones: [
-          { label: '<= +1', clasificacion: 'No Aplica (Verificar con P/T)', z: 0 },
-          { label: '> +1 a <= +2', clasificacion: 'Riesgo de Sobrepeso', z: 1.5 },
-          { label: '> +2 a <= +3', clasificacion: 'Sobrepeso', z: 2.5 },
-          { label: '> +3', clasificacion: 'Obesidad', z: 3.5 },
+          { label: '<= +1', clasificacion: 'No Aplica (Verificar con P/T)', z: 0, test: (z) => z <= 1 },
+          { label: '> +1 a <= +2', clasificacion: 'Riesgo de Sobrepeso', z: 1.5, test: (z) => z > 1 && z <= 2 },
+          { label: '> +2 a <= +3', clasificacion: 'Sobrepeso', z: 2.5, test: (z) => z > 2 && z <= 3 },
+          { label: '> +3', clasificacion: 'Obesidad', z: 3.5, test: (z) => z > 3 },
         ],
       },
     ],
   },
 ];
+
+// Elige la opción cuyo `test(z)` matchea el z-score real (ver calcularZ en
+// growthChartData.js) — null si falta algún dato de origen ("09 Examen
+// físico" incompleto o edad no parseable) en vez de caer en una opción por
+// defecto que podría leerse como un resultado clínico real.
+export function opcionPorZ(indicadorKey, z) {
+  if (z == null || Number.isNaN(z)) return null;
+  const indicador = GRUPOS_INDICADORES.flatMap((g) => g.indicadores).find((i) => i.key === indicadorKey);
+  return indicador?.opciones.find((o) => o.test(z)) ?? null;
+}
 
 // ---------- Síntesis de evaluaciones ----------
 // Columnas exactas del legacy, agrupadas en 2 categorías con cabecera de 2

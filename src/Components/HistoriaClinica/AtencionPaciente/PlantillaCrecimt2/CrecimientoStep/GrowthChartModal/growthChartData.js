@@ -86,8 +86,9 @@ const ANCLAS = {
 };
 
 // Coeficiente de variación (SD ≈ mediana × CV) — aproximación constante por
-// indicador en vez de la SD real por edad (ver disclaimer arriba).
-const CV_INDICADOR = {
+// indicador en vez de la SD real por edad (ver disclaimer arriba). Exportado
+// (antes interno) porque calcularZ, más abajo, también lo necesita.
+export const CV_INDICADOR = {
   pesoEdadDE: 0.13,
   tallaEdadDE: 0.045,
   perimetroCefalico: 0.04,
@@ -95,17 +96,40 @@ const CV_INDICADOR = {
   pesoTallaDE: 0.11,
 };
 
-// 5 gráficas seleccionables (encargo explícito, mismo orden que el selector
-// legacy) — `usaTalla` distingue "Peso para la talla" (único indicador cuyo
-// eje X real es la talla, no la edad).
+// z real (desviaciones estándar respecto a la mediana OMS aproximada, ver
+// disclaimer arriba) de una medición cruda de "09 Examen físico" — usado
+// para clasificar automáticamente "Verificar el crecimiento" (paso 10, ver
+// opcionPorZ en crecimientoData.js) sin que el usuario vuelva a diligenciar
+// nada (encargo explícito). `x` es edad en meses para todos los indicadores
+// excepto pesoTallaDE, cuyo eje real es la talla en cm (ver `usaTalla` en
+// INDICADORES_GRAFICA). null ante cualquier dato faltante — nunca se asume
+// un 0 que produciría un z-score falso.
+export function calcularZ(indicadorKey, sexo, x, valorReal) {
+  if (valorReal == null || Number.isNaN(valorReal) || x == null || Number.isNaN(x)) return null;
+  const mediana = medianaEnX(indicadorKey, sexo, x);
+  const sd = mediana * CV_INDICADOR[indicadorKey];
+  if (!sd) return null;
+  return (valorReal - mediana) / sd;
+}
+
+// 5 gráficas seleccionables — mismo orden que "Verificar el crecimiento"
+// (ver GRUPOS_INDICADORES en crecimientoData.js: Peso → Edad/Talla/
+// Perímetro cefálico, luego Talla y composición corporal → Talla/IMC),
+// encargo explícito de alinear el selector con el orden del formulario en
+// vez del orden del selector legacy (distinto). `usaTalla` distingue "Peso
+// para la talla" (único indicador cuyo eje X real es la talla, no la edad).
 export const INDICADORES_GRAFICA = [
+  {
+    key: 'pesoEdadDE', label: 'Peso para la edad',
+    ejeXLabel: 'Edad (meses)', ejeYLabel: 'Peso (kg)', usaTalla: false, dominioX: [0, 60], pasoX: 6,
+  },
   {
     key: 'pesoTallaDE', label: 'Peso para la talla',
     ejeXLabel: 'Talla (cm)', ejeYLabel: 'Peso (kg)', usaTalla: true, dominioX: [45, 115], pasoX: 10,
   },
   {
-    key: 'pesoEdadDE', label: 'Peso para la edad',
-    ejeXLabel: 'Edad (meses)', ejeYLabel: 'Peso (kg)', usaTalla: false, dominioX: [0, 60], pasoX: 6,
+    key: 'perimetroCefalico', label: 'Perímetro cefálico',
+    ejeXLabel: 'Edad (meses)', ejeYLabel: 'Perímetro cefálico (cm)', usaTalla: false, dominioX: [0, 60], pasoX: 6,
   },
   {
     key: 'tallaEdadDE', label: 'Talla para la edad',
@@ -114,10 +138,6 @@ export const INDICADORES_GRAFICA = [
   {
     key: 'imc', label: 'IMC para la edad',
     ejeXLabel: 'Edad (meses)', ejeYLabel: 'IMC (kg/m²)', usaTalla: false, dominioX: [0, 60], pasoX: 6,
-  },
-  {
-    key: 'perimetroCefalico', label: 'Perímetro cefálico para la edad',
-    ejeXLabel: 'Edad (meses)', ejeYLabel: 'Perímetro cefálico (cm)', usaTalla: false, dominioX: [0, 60], pasoX: 6,
   },
 ];
 

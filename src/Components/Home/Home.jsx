@@ -41,7 +41,7 @@ const MODULE_GROUPS = [
         enabled: true,
       },
       {
-        title: 'Reprogramar citas',
+        title: 'Reasignación de citas',
         description: 'Reagenda citas existentes de pacientes.',
         icon: LuCalendarClock,
         enabled: false,

@@ -8,4 +8,4 @@
 /* Contador de caracteres de "Observaciones clínicas" (encargo: "mostrar un
    contador de caracteres si existe un límite definido" — ver
    OBSERVACIONES_MAX_LENGTH en proximasCitasData.js). */
-.pcs-char-counter{display:block;margin-top:6px;font-size:11.5px;color:var(--ink-500);text-align:right;}
+.pcs-char-counter{display:block;margin-top:6px;font-size:var(--fs-2xs);color:var(--ink-500);text-align:right;}

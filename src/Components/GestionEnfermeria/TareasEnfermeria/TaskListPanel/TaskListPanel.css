@@ -1,0 +1,23 @@
+/* .card (base)/.chip-group.segmented/.chip-filter/.filter-bar/.search-field/
+   .filter-cluster/.filter-spacer/.btn: definidas en ../../shared/shared.css
+   (shared del feature) — acá solo el layout propio de esta card. */
+.task-list-card{flex:1;min-width:0;}
+
+.task-list-tabs{padding:14px 20px 0;flex-shrink:0;}
+
+/* 6 filtros + búsqueda + limpiar: más denso que .pg-patients-toolbar
+   (PatientsPanel.css, solo 1 búsqueda + 1 botón) — el cluster de filtros
+   necesita su propio wrap para no forzar scroll horizontal en viewports de
+   ~1280-1366px, el mismo piso de resolución que el resto del wizard/paneles
+   de la app. */
+.task-list-toolbar .search-field{width:260px;}
+.task-list-toolbar .filter-cluster{flex-wrap:wrap;row-gap:8px;}
+
+/* Indicador de filtros activos (encargo explícito) — mismo .badge-count
+   pill que .filters-more-btn .badge-count en shared.css (ahí solo aplica
+   dentro de un popover "Más filtros" que este toolbar no usa, así que se
+   redeclara acotado a este botón en vez de generalizar esa regla). */
+.task-filtros-activos-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:11px;font-weight:700;min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}

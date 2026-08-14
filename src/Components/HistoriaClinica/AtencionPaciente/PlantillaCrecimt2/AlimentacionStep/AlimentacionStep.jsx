@@ -1,8 +1,10 @@
 'use client';
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState,
+} from 'react';
 import './AlimentacionStep.css';
-import { LuChevronDown, LuCircleAlert, LuHistory } from 'react-icons/lu';
+import { LuChevronDown, LuHistory } from 'react-icons/lu';
 
 const SI_NO = [
   { value: 'si', label: 'Sí' },
@@ -10,17 +12,30 @@ const SI_NO = [
 ];
 
 // "Tipo de lactancia" NO es una selección manual: es un resultado derivado
-// de "Toma actualmente lactancia materna?" (encargo explícito) — se muestra
-// como campo no editable, resaltado en verde igual que en el legacy (ver
-// .al-tipo-lactancia-result en AlimentacionStep.css), mismo criterio de
-// "diferenciar visualmente un campo calculado de uno editable" que el IMC de
-// ExamenFisicoStep.jsx. Mismo condicional decide si el bloque "Consumo
-// durante el día anterior" se habilita (ver al-consumo más abajo): si el
-// niño no toma lactancia materna actualmente, ese consumo no aplica.
-const TIPO_LACTANCIA_RESULTADO = {
-  si: 'Lactancia parcial',
-  no: 'Lactancia materna exclusiva',
-};
+// de "Toma actualmente lactancia materna?" + "Consumo durante el día
+// anterior" (encargo explícito) — se muestra como campo no editable,
+// resaltado en verde igual que en el legacy (ver .al-tipo-lactancia-result
+// en AlimentacionStep.css), mismo criterio de "diferenciar visualmente un
+// campo calculado de uno editable" que el IMC de ExamenFisicoStep.jsx.
+// "Toma actualmente lactancia materna?" también decide si el bloque
+// "Consumo durante el día anterior" se muestra (ver al-consumo más abajo,
+// anidado en esta misma card justo debajo de este campo): si el niño no
+// toma lactancia materna actualmente, ese consumo no aplica y el bloque
+// completo se deja de montar en vez de mostrarse deshabilitado.
+//
+// Reglas (encargo explícito):
+// - Toma actualmente = No → "Lactancia materna exclusiva" (no depende del
+//   consumo del día anterior, que ni siquiera se pregunta en este caso).
+// - Toma actualmente = Sí y las 4 respuestas de consumo son "No" (no
+//   recibió líquidos/leche animal/fórmula/sólidos) → también "Lactancia
+//   materna exclusiva": solo tomó pecho.
+// - Toma actualmente = Sí pero al menos una respuesta de consumo es "Sí"
+//   → "Lactancia parcial": el pecho se combina con algo más.
+function calcularTipoLactancia(tomaActualmente, consumoAyer) {
+  if (tomaActualmente === 'no') return 'Lactancia materna exclusiva';
+  const soloRecibioPecho = Object.values(consumoAyer).every((respuesta) => respuesta === 'no');
+  return soloRecibioPecho ? 'Lactancia materna exclusiva' : 'Lactancia parcial';
+}
 
 const EVALUACION_AGARRE = [
   { value: 'buen_agarre', label: 'Buen agarre' },
@@ -87,8 +102,11 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
     return (el) => { sectionRefs.current[index] = el; };
   }
 
-  const tipoLactanciaResultado = TIPO_LACTANCIA_RESULTADO[lactanciaMaterna.tomaActualmente];
   const tomaLactanciaActualmente = lactanciaMaterna.tomaActualmente === 'si';
+  const tipoLactanciaResultado = useMemo(
+    () => calcularTipoLactancia(lactanciaMaterna.tomaActualmente, consumoAyer),
+    [lactanciaMaterna.tomaActualmente, consumoAyer],
+  );
 
   useImperativeHandle(ref, () => ({
     scrollToSub(index) {
@@ -208,60 +226,60 @@ const AlimentacionStep = forwardRef(function AlimentacionStep(
             </div>
           </div>
 
-          
-        </section>
-      </div>
+          {/* "Consumo durante el día anterior" solo tiene sentido si el niño
+              toma lactancia materna actualmente (encargo explícito) — antes
+              vivía en su propia card siempre visible, con cada campo
+              deshabilitado + una nota explicando por qué; ahora el bloque
+              completo depende de "Toma actualmente lactancia materna?" (acá
+              arriba) y directamente no se monta cuando la respuesta es "No",
+              en vez de mostrarse inerte. */}
+          {tomaLactanciaActualmente && (
+            <div id="al-consumo" ref={setRef(1)}>
+              <div className="pf-divider"></div>
 
-      <div id="al-consumo" ref={setRef(1)} className="ac-mega">
-        <section className="pf-card">
-          <h2 className="pf-card-title">Consumo durante el día anterior</h2>
-          <p className="pf-card-desc">Durante el día de ayer o anoche</p>
+              <h2 className="pf-card-title">Consumo durante el día anterior</h2>
+              <p className="pf-card-desc">Durante el día de ayer o anoche</p>
 
-          {!tomaLactanciaActualmente && (
-            <div className="pf-note">
-              <LuCircleAlert className="icon" aria-hidden="true" />
-              Este bloque solo aplica cuando el niño toma actualmente lactancia materna — cambia "Toma actualmente lactancia materna?" en Alimentación para habilitarlo.
+              <div className="al-eval-list">
+                <div className="form-field pf-question-row">
+                  <label htmlFor="al-consumo-liquidos">¿Recibió alguno de los siguientes líquidos: agua, agua aromática, jugo, té?</label>
+                  <select
+                    id="al-consumo-liquidos" value={consumoAyer.liquidos}
+                    onChange={(e) => setConsumoAyer((p) => ({ ...p, liquidos: e.target.value }))}
+                  >
+                    {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
+                <div className="form-field pf-question-row">
+                  <label htmlFor="al-consumo-leche-animal">¿Recibió leche de vaca, cabra, líquida, en polvo, fresca o en bolsa?</label>
+                  <select
+                    id="al-consumo-leche-animal" value={consumoAyer.lecheAnimal}
+                    onChange={(e) => setConsumoAyer((p) => ({ ...p, lecheAnimal: e.target.value }))}
+                  >
+                    {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
+                <div className="form-field pf-question-row">
+                  <label htmlFor="al-consumo-formula">¿Recibió leche de fórmula?</label>
+                  <select
+                    id="al-consumo-formula" value={consumoAyer.formula}
+                    onChange={(e) => setConsumoAyer((p) => ({ ...p, formula: e.target.value }))}
+                  >
+                    {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
+                <div className="form-field pf-question-row">
+                  <label htmlFor="al-consumo-solido">¿Recibió algún alimento como sopa espesa, puré, papilla o seco?</label>
+                  <select
+                    id="al-consumo-solido" value={consumoAyer.alimentoSolido}
+                    onChange={(e) => setConsumoAyer((p) => ({ ...p, alimentoSolido: e.target.value }))}
+                  >
+                    {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
+              </div>
             </div>
           )}
-
-          <div className="al-eval-list">
-            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
-              <label htmlFor="al-consumo-liquidos">¿Recibió alguno de los siguientes líquidos: agua, agua aromática, jugo, té?</label>
-              <select
-                id="al-consumo-liquidos" value={consumoAyer.liquidos} disabled={!tomaLactanciaActualmente}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, liquidos: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
-              <label htmlFor="al-consumo-leche-animal">¿Recibió leche de vaca, cabra, líquida, en polvo, fresca o en bolsa?</label>
-              <select
-                id="al-consumo-leche-animal" value={consumoAyer.lecheAnimal} disabled={!tomaLactanciaActualmente}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, lecheAnimal: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
-              <label htmlFor="al-consumo-formula">¿Recibió leche de fórmula?</label>
-              <select
-                id="al-consumo-formula" value={consumoAyer.formula} disabled={!tomaLactanciaActualmente}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, formula: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div className={`form-field pf-question-row${tomaLactanciaActualmente ? '' : ' disabled'}`}>
-              <label htmlFor="al-consumo-solido">¿Recibió algún alimento como sopa espesa, puré, papilla o seco?</label>
-              <select
-                id="al-consumo-solido" value={consumoAyer.alimentoSolido} disabled={!tomaLactanciaActualmente}
-                onChange={(e) => setConsumoAyer((p) => ({ ...p, alimentoSolido: e.target.value }))}
-              >
-                {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-          </div>
         </section>
       </div>
 

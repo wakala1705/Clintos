@@ -1,6 +1,5 @@
-import GestionEnfermeria from '@/Components/GestionEnfermeria/gestion-enfermeria';
-
+import PanelGeneral from '@/Components/GestionEnfermeria/PanelGeneral/PanelGeneral';
 
 export default function GestionEnfermeriaPage() {
-  return <GestionEnfermeria />;
+  return <PanelGeneral />;
 }

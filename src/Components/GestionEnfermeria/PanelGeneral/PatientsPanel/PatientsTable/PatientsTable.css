@@ -1,0 +1,39 @@
+/* .data-table (base)/.cell-primary/.cell-muted/.cell-sub/.col-right/.sr-only:
+   definidas en ../../../shared/shared.css (shared del feature) — acá solo lo
+   exclusivo de esta tabla. */
+.pg-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
+.pg-patients-table{width:100%;}
+.pg-patients-table tbody tr{cursor:pointer;}
+.pg-patients-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.pg-patients-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.pg-patients-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
+
+.pg-col-diagnostico{min-width:220px;color:var(--ink-700);}
+.col-acciones{width:1%;white-space:nowrap;text-align:right;}
+
+/* Bandera de estancia prolongada — icono + texto ámbar, además del texto
+   plano "X días" que ya llevan el resto de filas (nunca solo color, WCAG,
+   mismo criterio que .partial-flag en GestionEnfermeria/shared/shared.css).
+   Vive junto a la fecha de admisión (no en su propia columna): refuerza el
+   KPI "Estancias prolongadas" en el contexto exacto donde se lee la fecha,
+   sin agregar una octava columna a una tabla ya densa. */
+.pg-estancia-flag{
+  display:inline-flex;align-items:center;gap:4px;margin-left:8px;
+  font-size:11px;font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
+  padding:2px 8px;border-radius:10px;white-space:nowrap;
+}
+.pg-estancia-flag .icon{width:11px;height:11px;flex-shrink:0;}
+
+/* Estado de medicación — mismos 4 colores semánticos del resto de la app,
+   nombres propios del dominio (ver comentario en PatientsTable.jsx). */
+.pg-med-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.pg-med-badge .icon{width:13px;height:13px;}
+.pg-med-badge.pg-med-al-dia{background:var(--green-bg);color:#0d7a3d;}
+.pg-med-badge.pg-med-pendiente{background:var(--amber-bg);color:var(--amber-fg);}
+.pg-med-badge.pg-med-retrasada{background:var(--red-bg);color:var(--red);}
+.pg-med-badge.pg-med-no-aplica{background:var(--gray-bg);color:var(--gray-fg);}
+
+html[data-theme="dark"] .pg-med-badge.pg-med-al-dia{color:var(--green);}

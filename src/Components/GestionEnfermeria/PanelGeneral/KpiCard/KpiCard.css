@@ -1,0 +1,28 @@
+.pg-kpi-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0;
+}
+.pg-kpi-top{display:flex;align-items:center;gap:10px;}
+.pg-kpi-icon{
+  width:34px;height:34px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.pg-kpi-icon .icon{width:18px;height:18px;}
+.pg-kpi-neutral .pg-kpi-icon{background:var(--primary-50);color:var(--primary);}
+.pg-kpi-warning .pg-kpi-icon{background:var(--amber-bg);color:var(--amber-fg);}
+
+.pg-kpi-label{
+  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.pg-kpi-value{font-size:26px;font-weight:700;color:var(--ink-900);line-height:1.1;font-variant-numeric:tabular-nums;}
+.pg-kpi-desc{font-size:12.5px;color:var(--ink-500);}
+
+/* Exclusiva de "Ocupación" — barra delgada en vez de repetir el ícono
+   circular de advertencia de las demás tarjetas: el nivel de ocupación no es
+   "bueno/malo" por sí solo (depende del umbral que defina cada piso), así
+   que se representa como progreso neutro, no como otro estado semántico. */
+.pg-kpi-progress{
+  width:100%;height:6px;border-radius:999px;background:var(--gray-bg);overflow:hidden;margin-top:2px;
+}
+.pg-kpi-progress-fill{height:100%;border-radius:999px;background:var(--primary);}

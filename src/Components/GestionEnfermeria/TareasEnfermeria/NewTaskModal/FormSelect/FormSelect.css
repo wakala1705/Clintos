@@ -1,0 +1,31 @@
+/* Trigger dimensionado igual que .form-field input/select en shared.css
+   (mismo --input-md/border/radius/font-size) para que no se note el cambio
+   de <select> nativo a botón + listbox propio. */
+.form-select{position:relative;}
+.form-select-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+  height:var(--input-md);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);font-family:inherit;font-size:13px;color:var(--ink-900);cursor:pointer;text-align:left;
+}
+.form-select-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.form-select-trigger:disabled{background:var(--bg);color:var(--ink-400);cursor:not-allowed;}
+.form-select-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.form-select-placeholder{color:var(--ink-400);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.form-select-chev{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
+.form-select-chev.open{transform:rotate(180deg);}
+.form-select-trigger:disabled .form-select-chev{color:var(--ink-400);}
+
+.form-select-dropdown{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:240px;overflow-y:auto;z-index:var(--z-popover);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
+}
+.form-select-option{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:13px;font-weight:500;color:var(--ink-700);cursor:pointer;text-align:left;
+}
+.form-select-option:hover{background:var(--bg);}
+.form-select-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.form-select-option.active{color:var(--primary-dark);font-weight:600;}
+.form-select-option .icon{width:15px;height:15px;color:var(--primary);flex-shrink:0;}

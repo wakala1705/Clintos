@@ -1,0 +1,33 @@
+/* .app/.main/.content/.card (base shell) + .btn: definidas en
+   ../../shared/shared.css (shared del feature) — acá solo el layout propio
+   de este dashboard. */
+
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.pg-header h1{margin:0 0 4px;font-size:20px;font-weight:700;color:var(--ink-900);}
+.pg-header p{margin:0;font-size:13px;color:var(--ink-500);}
+
+/* "Tareas" + selector "Área operativa" agrupados al extremo derecho del
+   header (encargo explícito) — el selector queda último/más a la derecha
+   del grupo, mismo criterio de "la acción de filtro global vive al final"
+   que .filter-spacer en PatientsPanel.css. */
+.pg-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+.pg-kpi-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex-shrink:0;
+}
+
+/* Layout de 2 columnas (encargo: "~70% / ~30%") — flex-basis en vez de %
+   fijo para que ambas columnas sigan repartiendo el espacio sobrante con
+   flex-grow si el contenido de una empuja más que la otra, en vez de quedar
+   con un ancho rígido. min-height:0 en las 3 filas (.pg-header/.pg-kpi-row
+   ya no lo necesitan por ser flex-shrink:0, pero .pg-main-row sí) para que
+   .card (flex:1 min-height:0) pueda scrollear su propio contenido en vez de
+   empujar el alto de .content (mismo bug de flexbox documentado en
+   HistoriaClinica.css). */
+.pg-main-row{display:flex;gap:16px;flex:1;min-height:0;}
+.pg-main-row .pg-patients-card{flex:7 1 0;min-width:0;}
+.pg-main-row .pg-alerts-card{flex:3 1 0;min-width:280px;}
+
+@media (max-width:1280px){
+  .pg-kpi-row{grid-template-columns:repeat(3,1fr);}
+}

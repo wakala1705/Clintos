@@ -60,6 +60,24 @@
   --space-5:24px;
   --space-6:32px;
 
+  /* Escala tipográfica del módulo — reemplaza ~16 valores sueltos que había
+     antes en PlantillaCrecimt2 (9/10/10.5/11/11.5/12/12.5/13/13.5/14/14.5/
+     15/16/18/20/24px, varios en incrementos de .5px ajustados contra una
+     captura puntual en vez de una escala real). 7 pasos: --fs-2xs para
+     micro-etiquetas en mayúsculas (badges "RESULTADO"/"CALCULADO", cabeceras
+     de tabla), --fs-xs/--fs-sm para texto secundario/de cuerpo, --fs-md para
+     texto de cuerpo con más énfasis, --fs-lg para títulos de card, --fs-xl
+     para títulos de sección, --fs-2xl solo para números de resultado grandes
+     (ej. puntaje APGAR). La jerarquía adicional dentro de un mismo tamaño se
+     logra con font-weight/color, no con un paso intermedio nuevo. */
+  --fs-2xs:11px;
+  --fs-xs:12px;
+  --fs-sm:13px;
+  --fs-md:14px;
+  --fs-lg:16px;
+  --fs-xl:20px;
+  --fs-2xl:24px;
+
   --z-sticky:10;
   --z-popover:20;
   --z-modal:50;
@@ -176,20 +194,24 @@ html[data-theme="dark"] .data-table thead th{background:#161c2b;}
 }
 .modal-close-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .modal-close-btn .icon{width:18px;height:18px;}
-.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-body{padding:16px;overflow-y:auto;}
 .modal-footer{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
   padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
 
-/* Los chevrones giratorios de RegistrosPanel (.rg-header-chevron/
-   .rg-group-chevron), PlantillaCrecimt2 (.pf-block-chevron) y VacunacionStep
-   (.vac-card-chevron) transicionan transform pero viven en hojas de estilo
-   propias de cada componente — el reset de prefers-reduced-motion se
-   centraliza acá (mismo criterio que .icon: 2+ consumidores) en vez de
-   repetirse en cada archivo. */
+/* Reset global de prefers-reduced-motion — antes era una lista de
+   selectores a mano (solo los 4 chevrones giratorios conocidos en ese
+   momento), que se desactualizaba cada vez que un componente nuevo sumaba
+   su propia `transition` (KpiFilterCard, RecomendacionCard, WeekDatePicker,
+   .rg-group-actions del propio RegistrosPanel... quedaron fuera). `*` cubre
+   cualquier transition/animation presente o futura de todo el módulo sin
+   mantenimiento manual. */
 @media (prefers-reduced-motion: reduce){
-  .rg-header-chevron,.rg-group-chevron,.pf-block-chevron,.vac-card-chevron{transition:none;}
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
 }
 
 /* ---------- SCROLLBARS ----------
