@@ -12,7 +12,7 @@
   flex-shrink:0;
 }
 .breadcrumb{
-  font-size:13px;color:var(--ink-500);display:flex;align-items:center;gap:8px;
+  font-size:var(--fs-base);color:var(--ink-500);display:flex;align-items:center;gap:8px;
 }
 .breadcrumb a:hover{color:var(--primary);text-decoration:underline;}
 .breadcrumb .current{color:var(--ink-900);font-weight:600;}
@@ -21,7 +21,7 @@
 .topbar-right{display:flex;align-items:center;gap:16px;}
 .meta-item{
   display:flex;align-items:center;gap:8px;
-  font-size:13px;color:var(--ink-700);
+  font-size:var(--fs-base);color:var(--ink-700);
 }
 .meta-item .icon{width:18px;height:18px;color:var(--primary);}
 .meta-item b{font-weight:500;color:var(--ink-900);}

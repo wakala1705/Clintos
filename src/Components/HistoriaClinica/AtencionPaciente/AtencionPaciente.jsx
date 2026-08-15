@@ -102,6 +102,36 @@ export default function AtencionPaciente({ id }) {
     return cleanup;
   }, []);
 
+  // Atajo "+" (sola, sin Ctrl/Cmd) para "Nueva atención" (ver
+  // rg-shortcut-hint en RegistrosPanel.jsx, misma tecla representada en el
+  // botón). Ni Ctrl+N (el navegador la captura antes para "Nueva ventana")
+  // ni Ctrl++ (zoom del navegador) llegan de forma confiable a la página —
+  // por eso la tecla va sola. e.key es '+' en la mayoría de teclados con
+  // Shift, pero en el bloque numérico (sin Shift) o en teclados donde '+'
+  // comparte tecla con '=' llega como '=' — se aceptan ambos. Sin modificador
+  // que la distinga de tipeo normal, se ignora mientras el foco está en un
+  // campo editable (input/textarea/select/contenteditable) — hoy esta
+  // pantalla no tiene ninguno mientras el atajo está activo (el buscador de
+  // PlantillaModal solo existe con plantillaModalOpen, ya excluido abajo),
+  // pero queda a prueba de que se agregue uno más adelante. Gateado además
+  // por plantillaActiva===null && !plantillaModalOpen: evita reabrir el
+  // catálogo de plantillas encima de sí mismo o encima del wizard ya en
+  // curso si el usuario repite el atajo.
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (!(e.key === '+' || e.key === '=')) return;
+      if (status !== 'ready' || plantillaActiva !== null || plantillaModalOpen) return;
+      const target = e.target;
+      const isEditable = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA'
+        || target?.tagName === 'SELECT' || target?.isContentEditable;
+      if (isEditable) return;
+      e.preventDefault();
+      openPlantillaModal();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [status, plantillaActiva, plantillaModalOpen]);
+
   useEffect(() => {
     let cancelled = false;
     getAtencionData(id).then((result) => {

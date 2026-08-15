@@ -22,7 +22,7 @@
 .pc-selector-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
 .pc-selector-search input{
   flex:1;min-width:0;border:none;background:transparent;
-  font-family:inherit;font-size:13px;color:var(--ink-900);outline:none;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
 }
 .pc-selector-search input::placeholder{color:var(--ink-400);}
 
@@ -39,7 +39,7 @@
 }
 .pc-selector-row-head{
   background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
-  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
 }
 html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
 .pc-selector-count-head{text-align:right;}
@@ -53,7 +53,7 @@ html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
 .pc-selector-option:hover{background:var(--bg);}
 .pc-selector-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pc-selector-option.active{background:var(--primary-50);}
-.pc-selector-code{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-option-label{font-size:13px;font-weight:500;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-count{font-size:13px;font-weight:500;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
-.pc-selector-empty{padding:28px 14px;text-align:center;font-size:13px;color:var(--ink-500);}
+.pc-selector-code{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-option-label{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-count{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
+.pc-selector-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

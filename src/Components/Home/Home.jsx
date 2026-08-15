@@ -16,8 +16,10 @@ import {
   LuFileText,
   LuHeart,
   LuHeartPulse,
+  LuShieldPlus,
   LuSiren,
   LuStethoscope,
+  LuSyringe,
   LuUsers,
 } from 'react-icons/lu';
 
@@ -75,6 +77,19 @@ const MODULE_GROUPS = [
     ],
   },
   {
+    title: 'PyMS',
+    icon: LuShieldPlus,
+    items: [
+      {
+        title: 'Vacunación',
+        description: 'Registro y seguimiento del esquema de vacunación de pacientes.',
+        icon: LuSyringe,
+        href: '/vacunacion',
+        enabled: true,
+      },
+    ],
+  },
+  {
     title: 'Hospitalización',
     icon: LuBed,
     items: [
@@ -123,33 +138,35 @@ export default function Home() {
         <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }} />
 
         <div className="content home-content">
+          <div className="home-inner">
 
-          <div className="home-hero">
-            <h1>Bienvenido a Clintos</h1>
-            <p>Selecciona un módulo para continuar.</p>
+            <div className="home-hero">
+              <h1>Bienvenido a Clintos</h1>
+              <p>Selecciona un módulo para continuar.</p>
+            </div>
+
+            {MODULE_GROUPS.map((group) => (
+              <section className="module-section" key={group.title}>
+                <div className="module-section-header">
+                  <group.icon className="icon" />
+                  <h2>{group.title}</h2>
+                </div>
+                <div className="module-grid">
+                  {group.items.map((item) => (
+                    <ModuleCard
+                      key={item.title}
+                      icon={item.icon}
+                      title={item.title}
+                      description={item.description}
+                      href={item.href}
+                      enabled={item.enabled}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+
           </div>
-
-          {MODULE_GROUPS.map((group) => (
-            <section className="module-section" key={group.title}>
-              <div className="module-section-header">
-                <group.icon className="icon" />
-                <h2>{group.title}</h2>
-              </div>
-              <div className="module-grid">
-                {group.items.map((item) => (
-                  <ModuleCard
-                    key={item.title}
-                    icon={item.icon}
-                    title={item.title}
-                    description={item.description}
-                    href={item.href}
-                    enabled={item.enabled}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ import ConsultaStep from './ConsultaStep/ConsultaStep';
 import AntecedentesStep from './AntecedentesStep/AntecedentesStep';
 import RiesgoStep from './RiesgoStep/RiesgoStep';
 import AlimentacionStep from './AlimentacionStep/AlimentacionStep';
-import VacunacionStep from './VacunacionStep/VacunacionStep';
+import VacunacionStep from '@/Components/EsquemaVacunacion/EsquemaVacunacion';
 import FactoresRiesgoStep from './FactoresRiesgoStep/FactoresRiesgoStep';
 import ValeStep from './ValeStep/ValeStep';
 import EadStep from './EadStep/EadStep';

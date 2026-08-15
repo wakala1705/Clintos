@@ -2,7 +2,7 @@
 .toast{
   position:fixed;bottom:24px;right:24px;z-index:var(--z-toast);
   background:var(--ink-900);color:#fff;padding:12px 18px;border-radius:10px;
-  font-size:13px;font-weight:500;box-shadow:0 16px 36px rgba(16,24,39,.28);
+  font-size:var(--fs-base);font-weight:500;box-shadow:0 16px 36px rgba(16,24,39,.28);
   display:flex;align-items:center;gap:10px;max-width:340px;
   opacity:0;transform:translateY(10px);pointer-events:none;
   transition:opacity .2s ease,transform .2s ease;
@@ -12,7 +12,7 @@
 .toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
 .toast-action-btn{
   margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.14);color:#fff;border:none;
-  font-family:inherit;font-size:13px;font-weight:700;padding:6px var(--space-3);border-radius:7px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:700;padding:6px var(--space-3);border-radius:7px;
   cursor:pointer;white-space:nowrap;transition:background .15s;
 }
 .toast-action-btn:hover{background:rgba(255,255,255,.24);}

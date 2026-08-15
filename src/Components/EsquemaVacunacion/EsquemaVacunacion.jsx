@@ -1,8 +1,18 @@
 'use client';
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import './VacunacionStep.css';
+import './EsquemaVacunacion.css';
 import { LuChevronDown, LuCircle, LuCircleCheck, LuExpand, LuPlus, LuSyringe, LuTrash2, LuX } from 'react-icons/lu';
+
+// Componente app-wide (usado por 2+ features: paso "Vacunación" del wizard
+// CRECIMT2 de Historia Clínica y la acción "Ver esquema completo" de la
+// pantalla PyMS/Vacunación) — ver AGENTS.md "App-wide components". Nació
+// como VacunacionStep.jsx (paso propio de ese wizard); movido acá al ganar
+// un segundo consumidor real, con TODAS sus clases renombradas a prefijo
+// ev- y auto-contenidas en EsquemaVacunacion.css (ya no cascan desde
+// PlantillaCrecimt2.css, que ninguna otra ruta carga). Las clases con
+// prefijo vac- (matriz, tarjetas mobile, otras vacunas) ya eran exclusivas
+// de este componente y se conservan tal cual.
 
 // Los 8 momentos del esquema legacy, en orden — "sub" es la línea secundaria
 // que algunos momentos llevan (dosis/refuerzo) para no apretar todo en una
@@ -20,9 +30,8 @@ const MOMENTOS = [
 
 // `aplica` es la regla clínica que distingue una combinación biológico×momento
 // pendiente (aplica, sin fecha) de una que no aplica en absoluto (esquema no
-// contempla esa dosis en ese momento) — ver 2. SECCIÓN: ANTECEDENTES
-// VACUNALES del encargo. Los biológicos con dosis únicas (BCG) o de 2 tomas
-// (Antirotavirus) simplemente traen menos momentos en su lista.
+// contempla esa dosis en ese momento). Los biológicos con dosis únicas (BCG)
+// o de 2 tomas (Antirotavirus) simplemente traen menos momentos en su lista.
 const BIOLOGICOS = [
   { key: 'bcg', label: 'B.C.G.', aplica: ['rn'] },
   { key: 'polio', label: 'Polio', aplica: ['m2', 'm4', 'm6', 'ref1', 'ref5'] },
@@ -38,11 +47,10 @@ const BIOLOGICOS = [
   { key: 'varicela', label: 'Varicela', aplica: ['a1'] },
 ];
 
-// Valores de ejemplo del formulario legacy (punto 5 del encargo: "no
-// modificar ni eliminar estos valores del ejemplo visual") — asignados al
-// primer momento aplicable de cada biológico, en formato ISO porque
-// <input type="date"> solo acepta yyyy-mm-dd como value sin importar el
-// locale con el que el navegador lo muestre.
+// Valores de ejemplo del formulario legacy — asignados al primer momento
+// aplicable de cada biológico, en formato ISO porque <input type="date">
+// solo acepta yyyy-mm-dd como value sin importar el locale con el que el
+// navegador lo muestre.
 function initialFechas() {
   return {
     bcg: { rn: '2026-08-13' },
@@ -52,13 +60,11 @@ function initialFechas() {
   };
 }
 
-// Tabla en sí de la matriz — extraída como función local (no exportada, no
-// vive en su propio archivo: depende de MOMENTOS/BIOLOGICOS, ambos locales a
-// este módulo) porque el punto 6 del encargo la reutiliza 2 veces: la
-// versión compacta de siempre (dentro de .vac-matrix-wrap, con scroll
-// horizontal en pantallas angostas) y la copia ampliada del modal "Expandir
-// esquema" (ver VacunacionStep, más abajo) — mismo estado `fechas`/`setFecha`
-// en ambas, así que nunca hay 2 fuentes de verdad para el mismo esquema.
+// Tabla en sí de la matriz — extraída como función local porque se reutiliza
+// 2 veces: la versión compacta de siempre (dentro de .vac-matrix-wrap, con
+// scroll horizontal en pantallas angostas) y la copia ampliada del modal
+// "Expandir esquema" — mismo estado `fechas`/`setFecha` en ambas, así que
+// nunca hay 2 fuentes de verdad para el mismo esquema.
 function VacMatrixTable({ fechas, setFecha }) {
   return (
     <table className="vac-matrix">
@@ -119,41 +125,33 @@ function VacMatrixTable({ fechas, setFecha }) {
   );
 }
 
-// Paso 5 del wizard (ver SECCIONES en PlantillaCrecimt2.jsx) — rediseño del
-// formulario legacy "Vacunación / Antecedentes vacunales": misma info
-// clínica (13 biológicos × 8 momentos), reorganizada en una matriz
-// escaneable en vez de la tabla legacy. Se mantiene SIEMPRE montado (el
-// padre lo oculta con `hidden`) para no perder lo ya diligenciado al ir y
-// volver entre pasos. La matriz de escritorio, las tarjetas de mobile y la
-// copia ampliada del modal "Expandir esquema" comparten el mismo estado
-// `fechas` (ver VacMatrixTable arriba) — se renderizan según corresponda y
-// la CSS decide cuál mostrar en cada breakpoint (mismo patrón que
-// AgendaTable, ver AGENTS.md), así que no hay dos fuentes de verdad para el
-// mismo esquema.
-//
-// "Factores de riesgo en el hogar" vivía acá como segunda subsección (punto
-// 7 del encargo original), pero se separó a su propio paso (ver
-// FactoresRiesgoStep.jsx) — con una sola subsección real ya no hace falta
-// scrollspy acá (mismo criterio de simplicidad que RiesgoStep.jsx: una card,
-// `scrollToSub` no-op), y evita el salto de scroll que el scrollIntoView
-// entre dos bloques tan distintos disparaba al navegar por el panel
-// izquierdo.
-const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
+// `hidden`: mismo uso que dentro del wizard CRECIMT2 (el padre lo mantiene
+// montado y solo alterna display, para no perder lo diligenciado al navegar
+// entre pasos) — al usarse fuera de un wizard (ej. dentro de un modal),
+// simplemente se omite y el componente queda visible.
+// `mostrarEncabezado`/`mostrarOtrasVacunas`: true por defecto (comportamiento
+// exacto del wizard, sin cambios). La pantalla PyMS/Vacunación ("Ver esquema
+// completo", ver Vacunacion.jsx) los pone en false: ese modal ya trae su
+// propio encabezado con los datos del paciente y su propio botón de cerrar,
+// así que el título/descripción/pill de progreso/"Expandir esquema" internos
+// (pensados para el wizard, donde no hay ese contexto alrededor) sobran, y
+// "Otras vacunas" es un registro de diligenciamiento que no aplica a una
+// vista de solo consulta del esquema.
+const EsquemaVacunacion = forwardRef(function EsquemaVacunacion(
+  { hidden, mostrarEncabezado = true, mostrarOtrasVacunas = true },
+  ref,
+) {
   const [fechas, setFechas] = useState(initialFechas);
   const [otrasVacunas, setOtrasVacunas] = useState([{ nombre: '', fecha: '' }]);
   const [openBio, setOpenBio] = useState(null); // acordeón mobile: un biológico abierto a la vez
-  const [expandOpen, setExpandOpen] = useState(false); // modal "Expandir esquema" (punto 6 del encargo)
+  const [expandOpen, setExpandOpen] = useState(false); // modal "Expandir esquema"
   const expandCloseRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     scrollToSub() {},
   }));
 
-  // Escape cierra el modal — igual que PlantillaModal.jsx, pero sin su focus
-  // trap: acá adentro no hay un flujo secuencial que "elegir" (es una vista
-  // de zoom sobre la misma matriz, no un catálogo con Cancelar/Elegir), así
-  // que Tab escapándose hacia el resto de la página detrás del overlay no
-  // rompe ninguna tarea en curso.
+  // Escape cierra el modal de "Expandir esquema".
   useEffect(() => {
     if (!expandOpen) return;
     function handleKeyDown(e) {
@@ -184,28 +182,33 @@ const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
   );
 
   return (
-    <div className="ac-wrap" style={hidden ? { display: 'none' } : undefined}>
-      <div className="vac-header-row">
-        <div className="vac-header-text">
-          <div className="vac-title-row">
-            <h1 className="pf-section-title">Esquema de vacunación</h1>
-            <span className={`vac-progress-pill${totalAplicadas === totalAplicables ? ' complete' : ''}`}>
-              {totalAplicadas}/{totalAplicables} dosis aplicadas
-            </span>
+    <div
+      className={`ev-wrap${!mostrarEncabezado ? ' ev-wrap-compact' : ''}`}
+      style={hidden ? { display: 'none' } : undefined}
+    >
+      {mostrarEncabezado && (
+        <div className="vac-header-row">
+          <div className="vac-header-text">
+            <div className="vac-title-row">
+              <h1 className="ev-title">Esquema de vacunación</h1>
+              <span className={`vac-progress-pill${totalAplicadas === totalAplicables ? ' complete' : ''}`}>
+                {totalAplicadas}/{totalAplicables} dosis aplicadas
+              </span>
+            </div>
+            <p className="ev-desc">Registra la fecha de aplicación de cada dosis. Las combinaciones que no hacen parte del esquema
+            quedan deshabilitadas.</p>
           </div>
-          <p className="pf-section-desc">Registra la fecha de aplicación de cada dosis. Las combinaciones que no hacen parte del esquema
-          quedan deshabilitadas.</p>
+          <div className="vac-header-actions">
+            <button type="button" className="btn btn-secondary vac-expand-btn" onClick={() => setExpandOpen(true)}>
+              <LuExpand className="icon" aria-hidden="true" />
+              Expandir esquema
+            </button>
+          </div>
         </div>
-        <div className="vac-header-actions">
-          <button type="button" className="btn btn-secondary vac-expand-btn" onClick={() => setExpandOpen(true)}>
-            <LuExpand className="icon" aria-hidden="true" />
-            Expandir esquema
-          </button>
-        </div>
-      </div>
+      )}
 
-      <div className="pf-group">
-        
+      <div className="ev-group">
+
         <div className="vac-matrix-wrap">
           <VacMatrixTable fechas={fechas} setFecha={setFecha} />
         </div>
@@ -248,7 +251,7 @@ const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
                               {aplicada ? 'Aplicada' : 'Pendiente'}
                             </span>
                           </div>
-                          <div className="form-field vac-dose-date">
+                          <div className="ev-field vac-dose-date">
                             <label htmlFor={inputId} className="sr-only">
                               Fecha — {bio.label} — {m.label}{m.sub ? ` ${m.sub}` : ''}
                             </label>
@@ -270,70 +273,72 @@ const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
         </div>
       </div>
 
-      <div className="pf-group">
-        <h2 className="pf-card-title">Otras vacunas</h2>
-        <p className="pf-card-desc">Registra vacunas adicionales no incluidas en el esquema principal.</p>
+      {mostrarOtrasVacunas && (
+        <div className="ev-group">
+          <h2 className="ev-card-title">Otras vacunas</h2>
+          <p className="ev-card-desc">Registra vacunas adicionales no incluidas en el esquema principal.</p>
 
-        <div className="vac-otras-list">
-          <div className="vac-otras-col-labels" aria-hidden="true">
-            <span>Nombre de la vacuna</span>
-            <span>Fecha de aplicación</span>
-          </div>
-          {otrasVacunas.map((v, i) => (
-            <div className="vac-otra-row" key={i}>
-              <div className="form-field">
-                <label htmlFor={`vac-otra-nombre-${i}`} className="sr-only">Nombre de la vacuna</label>
-                <input
-                  id={`vac-otra-nombre-${i}`}
-                  type="text"
-                  placeholder="Nombre de la vacuna"
-                  value={v.nombre}
-                  onChange={(e) => updateOtraVacuna(i, { nombre: e.target.value })}
-                />
-              </div>
-              <div className="form-field vac-otra-fecha">
-                <label htmlFor={`vac-otra-fecha-${i}`} className="sr-only">Fecha de aplicación</label>
-                <input
-                  id={`vac-otra-fecha-${i}`}
-                  type="date"
-                  value={v.fecha}
-                  onChange={(e) => updateOtraVacuna(i, { fecha: e.target.value })}
-                />
-              </div>
-              {otrasVacunas.length > 1 && (
-                <button
-                  type="button"
-                  className="vac-otra-remove-btn"
-                  onClick={() => removeOtraVacuna(i)}
-                  aria-label={`Quitar fila de vacuna ${i + 1}`}
-                >
-                  <LuTrash2 className="icon" aria-hidden="true" />
-                </button>
-              )}
+          <div className="vac-otras-list">
+            <div className="vac-otras-col-labels" aria-hidden="true">
+              <span>Nombre de la vacuna</span>
+              <span>Fecha de aplicación</span>
             </div>
-          ))}
-        </div>
+            {otrasVacunas.map((v, i) => (
+              <div className="vac-otra-row" key={i}>
+                <div className="ev-field">
+                  <label htmlFor={`vac-otra-nombre-${i}`} className="sr-only">Nombre de la vacuna</label>
+                  <input
+                    id={`vac-otra-nombre-${i}`}
+                    type="text"
+                    placeholder="Nombre de la vacuna"
+                    value={v.nombre}
+                    onChange={(e) => updateOtraVacuna(i, { nombre: e.target.value })}
+                  />
+                </div>
+                <div className="ev-field vac-otra-fecha">
+                  <label htmlFor={`vac-otra-fecha-${i}`} className="sr-only">Fecha de aplicación</label>
+                  <input
+                    id={`vac-otra-fecha-${i}`}
+                    type="date"
+                    value={v.fecha}
+                    onChange={(e) => updateOtraVacuna(i, { fecha: e.target.value })}
+                  />
+                </div>
+                {otrasVacunas.length > 1 && (
+                  <button
+                    type="button"
+                    className="vac-otra-remove-btn"
+                    onClick={() => removeOtraVacuna(i)}
+                    aria-label={`Quitar fila de vacuna ${i + 1}`}
+                  >
+                    <LuTrash2 className="icon" aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
 
-        <button type="button" className="btn btn-secondary vac-add-btn" onClick={addOtraVacuna}>
-          <LuPlus className="icon" aria-hidden="true" />
-          Agregar vacuna
-        </button>
-      </div>
+          <button type="button" className="btn btn-secondary vac-add-btn" onClick={addOtraVacuna}>
+            <LuPlus className="icon" aria-hidden="true" />
+            Agregar vacuna
+          </button>
+        </div>
+      )}
 
       {expandOpen && (
-        <div className="modal-overlay vac-expand-overlay" role="presentation" onClick={() => setExpandOpen(false)}>
+        <div className="ev-modal-overlay vac-expand-overlay" role="presentation" onClick={() => setExpandOpen(false)}>
           <div
-            className="modal-card vac-expand-modal"
+            className="ev-modal-card vac-expand-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="vac-expand-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
+            <div className="ev-modal-header">
               <h3 id="vac-expand-title">Esquema de vacunación</h3>
               <button
                 type="button"
-                className="modal-close-btn"
+                className="ev-modal-close-btn"
                 onClick={() => setExpandOpen(false)}
                 aria-label="Cerrar vista ampliada"
                 ref={expandCloseRef}
@@ -343,7 +348,7 @@ const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
               </button>
             </div>
 
-            <div className="modal-body vac-expand-body">
+            <div className="ev-modal-body vac-expand-body">
               <div className="vac-matrix-wrap">
                 <VacMatrixTable fechas={fechas} setFecha={setFecha} />
               </div>
@@ -355,4 +360,4 @@ const VacunacionStep = forwardRef(function VacunacionStep({ hidden }, ref) {
   );
 });
 
-export default VacunacionStep;
+export default EsquemaVacunacion;

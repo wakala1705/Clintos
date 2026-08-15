@@ -36,9 +36,17 @@ export default function RegistrosPanel({
   return (
     <div className="rg-panel">
       <div className="rg-top">
-        <button type="button" className="btn btn-primary rg-nueva-atencion-btn" onClick={onNuevaAtencion}>
-          <LuPlus className="icon" />
-          {nuevaAtencionLabel}
+        <button
+          type="button"
+          className="btn btn-primary rg-nueva-atencion-btn"
+          onClick={onNuevaAtencion}
+          title={`${nuevaAtencionLabel} (+)`}
+        >
+          <span className="rg-nueva-atencion-label">
+            <LuPlus className="icon" />
+            {nuevaAtencionLabel}
+          </span>
+          <span className="rg-shortcut-hint" aria-hidden="true">+</span>
         </button>
       </div>
 

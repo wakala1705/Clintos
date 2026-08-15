@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './ConfigModal.css';
 import { LuBell, LuLock, LuLogOut, LuMoon, LuShieldCheck, LuUser, LuX } from 'react-icons/lu';
+import { getFieldSelectionMode, setFieldSelectionMode } from '@/hooks/HistoriaClinica/fieldSelectionMode';
 
 const SECTIONS = [
   { id: 'perfil', label: 'Perfil', icon: LuUser },
@@ -30,28 +31,41 @@ function setVerificacionClinicaEnabled(enabled) {
 
 // Modal de configuración del aplicativo, abierto desde UserMenu. Nav lateral
 // de secciones + panel de contenido a la derecha (mismo patrón de dos
-// columnas que un modal de settings). Apariencia tiene dos preferencias con
+// columnas que un modal de settings). Apariencia tiene tres preferencias con
 // efecto real: el tema oscuro (misma lógica que applyTheme en
-// legacy-app.js, para que quede en sync con el switch del Sidebar) y el
+// legacy-app.js, para que quede en sync con el switch del Sidebar), el
 // resaltado ámbar de campos obligatorios (atributo data-required-highlight
-// en <html>, leído por ConsultaStep.css y NuevaCitaFlow.css). El resto de
-// campos son configuración del perfil/notificaciones sin backend, igual de
-// "demo" que el resto del aplicativo.
+// en <html>, leído por ConsultaStep.css y NuevaCitaFlow.css) y el alto
+// contraste (atributo data-contrast en <html>, leído por globals.css y por
+// el bloque --border/--ink-500/--ink-400 que cada feature de nivel superior
+// duplica junto a su propio html[data-theme="dark"], ver AGENTS.md). El
+// resto de campos son configuración del perfil/notificaciones sin backend,
+// igual de "demo" que el resto del aplicativo. Clínico también tiene
+// "Selección rápida en formularios clínicos" (ver src/hooks/HistoriaClinica/
+// fieldSelectionMode.js), que decide si los campos Sí/No del wizard CRECIMT2
+// (SiNoField.jsx) se ven como botones o como <select> — mismo criterio de
+// window+CustomEvent que "Verificación de los 5 correctos", pero con
+// suscripción reactiva porque acá sí hay que re-renderizar campos ya
+// montados si el ajuste cambia con el wizard abierto.
 export default function ConfigModal({ open, onClose, name, role, initials }) {
   const [section, setSection] = useState('perfil');
   const [isDark, setIsDark] = useState(false);
   const [requiredHighlight, setRequiredHighlightState] = useState(true);
+  const [highContrast, setHighContrastState] = useState(false);
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifApp, setNotifApp] = useState(true);
   const [notifSound, setNotifSound] = useState(false);
   const [verificacionClinica, setVerificacionClinica] = useState(false);
+  const [fieldSelectionMode, setFieldSelectionModeState] = useState('rapida');
   const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
     setIsDark(document.documentElement.getAttribute('data-theme') === 'dark');
     setRequiredHighlightState(document.documentElement.getAttribute('data-required-highlight') !== 'off');
+    setHighContrastState(document.documentElement.getAttribute('data-contrast') === 'high');
     setVerificacionClinica(isVerificacionClinicaEnabled());
+    setFieldSelectionModeState(getFieldSelectionMode());
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
     }
@@ -73,9 +87,20 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
     setRequiredHighlightState(enabled);
   }
 
+  function setHighContrast(enabled) {
+    document.documentElement.setAttribute('data-contrast', enabled ? 'high' : 'normal');
+    setHighContrastState(enabled);
+  }
+
   function toggleVerificacionClinica(enabled) {
     setVerificacionClinicaEnabled(enabled);
     setVerificacionClinica(enabled);
+  }
+
+  function handleFieldSelectionModeChange(useRapida) {
+    const mode = useRapida ? 'rapida' : 'select';
+    setFieldSelectionMode(mode);
+    setFieldSelectionModeState(mode);
   }
 
   function handleLogoutEverywhere() {
@@ -160,6 +185,22 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
                     <span className="config-switch-slider"></span>
                   </label>
                 </div>
+                <div className="config-toggle-row">
+                  <div>
+                    <div className="config-toggle-label">Alto contraste</div>
+                    <div className="config-toggle-hint">
+                      Aumenta el contraste de bordes y texto secundario en toda la aplicación.
+                    </div>
+                  </div>
+                  <label className="config-switch">
+                    <input
+                      type="checkbox"
+                      checked={highContrast}
+                      onChange={(e) => setHighContrast(e.target.checked)}
+                    />
+                    <span className="config-switch-slider"></span>
+                  </label>
+                </div>
               </div>
             )}
 
@@ -215,6 +256,23 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
                       type="checkbox"
                       checked={verificacionClinica}
                       onChange={(e) => toggleVerificacionClinica(e.target.checked)}
+                    />
+                    <span className="config-switch-slider"></span>
+                  </label>
+                </div>
+                <div className="config-toggle-row">
+                  <div>
+                    <div className="config-toggle-label">Selección rápida en formularios clínicos</div>
+                    <div className="config-toggle-hint">
+                      Muestra los campos Sí/No como botones en vez de listas desplegables en el
+                      formulario de primera infancia.
+                    </div>
+                  </div>
+                  <label className="config-switch">
+                    <input
+                      type="checkbox"
+                      checked={fieldSelectionMode === 'rapida'}
+                      onChange={(e) => handleFieldSelectionModeChange(e.target.checked)}
                     />
                     <span className="config-switch-slider"></span>
                   </label>

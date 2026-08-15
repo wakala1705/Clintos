@@ -13,7 +13,7 @@
 }
 .card-tabs-bar::-webkit-scrollbar{display:none;height:0;}
 .card-tab{
-  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink-500);
+  display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:500;color:var(--ink-500);
   cursor:pointer;padding:13px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
   border:none;background:none;font-family:inherit;outline-offset:2px;
 }

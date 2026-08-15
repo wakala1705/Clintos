@@ -1,0 +1,54 @@
+/* .rv-section-title/.rv-field/.rv-dosis-badge/.rv-alert/.rv-empty-state:
+   ../shared/shared.css. */
+.rv-vacuna-step{display:flex;flex-direction:column;gap:16px;}
+
+.rv-paciente-context{
+  display:flex;flex-direction:column;gap:2px;
+  padding:10px 14px;background:var(--bg);border-radius:var(--radius);
+}
+.rv-paciente-context-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.rv-paciente-context-esquema{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.rv-dosis-list{display:flex;flex-direction:column;gap:8px;}
+.rv-dosis-card{
+  width:100%;display:flex;align-items:center;gap:12px;text-align:left;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:12px 14px;cursor:pointer;font-family:inherit;
+}
+.rv-dosis-card:hover{border-color:var(--primary-100);background:var(--primary-50);}
+.rv-dosis-card.selected{border-color:var(--primary);background:var(--primary-50);}
+.rv-dosis-card.disabled{cursor:not-allowed;opacity:.6;}
+.rv-dosis-card.disabled:hover{border-color:var(--border);background:var(--surface);}
+.rv-dosis-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+.rv-dosis-radio{
+  width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.rv-dosis-card.selected .rv-dosis-radio{border-color:var(--primary);}
+.rv-dosis-card.selected .rv-dosis-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);}
+
+.rv-dosis-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.rv-dosis-nombre{font-weight:600;color:var(--ink-900);}
+.rv-dosis-meta{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.rv-dosis-detalle{
+  display:flex;gap:20px;flex-wrap:wrap;
+  padding:8px 14px 4px 42px;font-size:var(--fs-sm);color:var(--ink-700);
+}
+.rv-dosis-detalle strong{color:var(--ink-900);font-weight:600;}
+
+.rv-fuera-esquema-link{
+  display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--primary);
+  background:none;border:none;cursor:pointer;padding:4px 0;
+}
+.rv-fuera-esquema-link .icon{width:15px;height:15px;}
+.rv-fuera-esquema-link:hover{color:var(--primary-dark);text-decoration:underline;}
+
+.rv-fuera-esquema{display:flex;flex-direction:column;gap:14px;}
+.rv-back-link{
+  align-self:flex-start;font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink-500);
+  background:none;border:none;cursor:pointer;padding:2px 0;
+}
+.rv-back-link:hover{color:var(--ink-900);}

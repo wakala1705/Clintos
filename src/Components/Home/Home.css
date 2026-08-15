@@ -44,15 +44,31 @@ html[data-theme="dark"]{
   --gray-fg:#9aa3b2;
   --gray-bg:#242c3d;
 }
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+   --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+   vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
 html[data-theme="dark"] body{background:var(--bg);}
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family:'Inter',sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
   background:var(--bg);
   color:var(--ink-900);
-  font-size:14px;
+  font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
 .icon{
@@ -83,20 +99,26 @@ body{
 }
 
 /* ---------- HOME ---------- */
-.home-content{padding:32px;gap:32px;max-width:960px;margin:0 auto;width:100%;}
+/* .home-content es el propio contenedor con scroll (.content, overflow-y:auto
+   a lo ancho completo de .main) — el centrado/max-width vive en .home-inner
+   (hijo), NUNCA en .home-content: ponerlos en el mismo elemento hace que la
+   barra de scroll se dibuje en el borde del bloque angosto en vez del borde
+   real de la ventana ("scroll en medio de la pantalla"). */
+.home-content{padding:32px;}
+.home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px;}
 
-.home-hero h1{font-size:22px;font-weight:700;color:var(--ink-900);}
-.home-hero p{font-size:13.5px;color:var(--ink-500);margin-top:4px;}
+.home-hero h1{font-size:var(--fs-3xl);font-weight:700;color:var(--ink-900);}
+.home-hero p{font-size:var(--fs-base);color:var(--ink-500);margin-top:4px;}
 
 .module-section-header{
   display:flex;align-items:center;gap:10px;
   margin-bottom:14px;
 }
 .module-section-header .icon{width:19px;height:19px;color:var(--primary-dark);}
-.module-section-header h2{font-size:15px;font-weight:600;color:var(--ink-900);}
+.module-section-header h2{font-size:var(--fs-xl);font-weight:600;color:var(--ink-900);}
 
 .module-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:14px;
 }

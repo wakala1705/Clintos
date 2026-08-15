@@ -20,7 +20,7 @@
 
 /* Programación — mismo criterio de "nunca solo color" que .task-badge: cada
    tono trae su propio ícono, no solo un texto tintado. */
-.task-prog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;white-space:nowrap;}
+.task-prog{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-base);font-weight:600;white-space:nowrap;}
 .task-prog .icon{width:14px;height:14px;flex-shrink:0;}
 .task-prog-vence-pronto{color:var(--amber-fg);}
 .task-prog-vencida{color:var(--red);}
@@ -30,6 +30,6 @@
 .task-prog-completada{color:#0d7a3d;}
 .task-prog-neutral{color:var(--ink-500);font-weight:500;}
 
-.task-table-empty{padding:48px 20px;text-align:center;color:var(--ink-500);font-size:13.5px;}
+.task-table-empty{padding:48px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 
 html[data-theme="dark"] .task-prog-completada{color:var(--green);}

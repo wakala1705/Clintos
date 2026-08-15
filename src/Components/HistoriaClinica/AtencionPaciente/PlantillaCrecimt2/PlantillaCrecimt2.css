@@ -23,7 +23,7 @@
 }
 .pf-titlebar-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .pf-titlebar-icon-btn .icon{width:17px;height:17px;}
-.pf-titlebar-title{font-size:var(--fs-md);font-weight:600;color:var(--ink-900);}
+.pf-titlebar-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
 
 /* .pf-body es el contenedor de scroll principal de .pf-content (antes cada
    columna scrolleaba por su cuenta: el panel izquierdo se desincronizaba del
@@ -83,7 +83,7 @@
   flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
   padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);
 }
-.pf-footer-saved{font-size:var(--fs-xs);color:var(--ink-500);}
+.pf-footer-saved{font-size:var(--fs-sm);color:var(--ink-500);}
 .pf-footer-saved b{color:var(--ink-900);font-weight:600;}
 .pf-footer-actions{display:flex;align-items:center;gap:10px;}
 .pf-footer-actions .btn{min-height:40px;}
@@ -95,15 +95,15 @@
    vive en AntecedentesNav.css.
    ===================================================================== */
 
-.pf-section-title{font-size:var(--fs-xl);font-weight:700;color:var(--ink-900);margin:0 0 4px;}
-.pf-section-desc{font-size:var(--fs-sm);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
+.pf-section-title{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);margin:0 0 4px;}
+.pf-section-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .pf-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:20px 24px;margin-bottom:20px;scroll-margin-top:16px;
 }
 .pf-card-title{font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);margin:0 0 4px;}
-.pf-card-desc{font-size:var(--fs-sm);color:var(--ink-500);margin:0 0 16px;line-height:1.5;}
+.pf-card-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 16px;line-height:1.5;}
 
 /* Bloque colapsable completo (Antecedentes familiares / Antecedentes
    personales, ver AntecedentesStep.jsx): .pf-card-split le quita el padding
@@ -169,8 +169,8 @@
 /* Nivel 3 de encabezado (Hemoclasificación, dentro del grupo "Antecedentes
    Perinatales del recién nacido") — un tono más chico que .pf-card-title/
    h3.pf-subheading (nivel 2) para que la jerarquía se lea de un vistazo. */
-.pf-subheading{font-size:var(--fs-md);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
-.pf-subheading2{font-size:var(--fs-md);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading2{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
 /* Mismo borde divisor que separa un .pf-group del siguiente (ver
    .pf-group + .pf-group) — un sub-bloque nivel 3 que no es el primero de su
    grupo se separa del bloque anterior igual que un sub-bloque de nivel 2. */
@@ -179,22 +179,12 @@
 .pf-note{
   display:flex;align-items:flex-start;gap:10px;background:var(--status-info-bg);
   border:1px solid var(--interactive-selected-border);border-radius:var(--radius);
-  padding:12px 14px;font-size:var(--fs-sm);color:var(--status-info-fg);line-height:1.5;margin-bottom:24px;
+  padding:12px 14px;font-size:var(--fs-base);color:var(--status-info-fg);line-height:1.5;margin-bottom:24px;
 }
 .pf-note .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
 
 .pf-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 .pf-grid-4 .full{grid-column:1 / -1;}
-/* 5 columnas reales — solo para la fila de 5 condiciones de "Antecedentes /
-   condiciones de salud" (ver AntecedentesStep.jsx), la única grilla del
-   wizard con esta cantidad de campos angostos en una sola fila. Bug real ya
-   visto en vivo: a diferencia de .pf-grid-4/.pf-grid-3 (que sí caben en
-   1280-1366px), 5 columnas de .pf-condition (cada una con un
-   .pf-toggle-group de 3 botones, que no se comprime más allá de su texto)
-   ya no caben ahí — ver el breakpoint dedicado más abajo
-   (max-width:1440px), 200-300px más ancho que el resto de grillas porque
-   esta es la única con 5 columnas en vez de 4/3/2. */
-.pf-grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
 /* 1 columna, apilado — para parejas de campos anchos (textareas de Motivo de
    consulta/Enfermedad actual) donde .pf-grid-4 dejaría cada uno en un cuarto
    del ancho, demasiado angosto para un textarea. */
@@ -210,10 +200,10 @@
 .pf-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 
 .form-field{display:flex;flex-direction:column;gap:6px;}
-.form-field label{font-size:var(--fs-sm);font-weight:400;color:var(--ink-700);}
+.form-field label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
-  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:var(--surface);width:100%;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
 }
 /* Altura controlada por "Tipo de formulario" (ver --pf-input-height en
    .pf-content más arriba) — no incluye textarea, cuya altura depende de
@@ -238,12 +228,12 @@
 .form-field input::placeholder, .form-field textarea::placeholder{color:var(--ink-400);}
 .form-field .pf-field-suffix{display:flex;align-items:center;gap:8px;}
 .form-field .pf-field-suffix input{flex:1;}
-.form-field .pf-field-suffix span{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+.form-field .pf-field-suffix span{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
 
 /* Mensaje de error de validación puntual — vivía solo en ConsultaStep.css
    hasta que ValeStep sumó su propia validación bloqueante (ver
    ValeQuestion.jsx); se mueve acá por tener 2+ consumidores (ver AGENTS.md). */
-.pf-field-error{display:block;font-size:var(--fs-xs);color:var(--red);margin-top:6px;}
+.pf-field-error{display:block;font-size:var(--fs-sm);color:var(--red);margin-top:6px;}
 
 /* Asterisco de campo obligatorio + resaltado ámbar de "obligatorio y vacío
    todavía" — vivía solo en ConsultaStep.css hasta que ExamenFisicoStep sumó
@@ -304,7 +294,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    con id propio + aria-labelledby en el grupo (ver ValeQuestion.jsx, mismo
    criterio). */
 .form-field.pf-question-row label,
-.form-field.pf-question-row p{font-size:var(--fs-sm);font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
+.form-field.pf-question-row p{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
 .form-field.pf-question-row select{width:200px;flex-shrink:0;}
 
 /* Pill pequeña junto a un <label>, para marcar que el campo de abajo NO se
@@ -316,7 +306,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    propio tinte de fondo para el <input> en sí (.ef-calculated-input,
    .al-tipo-lactancia-result), acá solo la pill. */
 .pf-field-tag{
-  display:inline-block;margin-left:8px;font-size:var(--fs-2xs);font-weight:600;letter-spacing:.02em;
+  display:inline-block;margin-left:8px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.02em;
   text-transform:uppercase;color:var(--primary-dark);background:var(--primary-50);
   border-radius:20px;padding:2px 8px;vertical-align:middle;
 }
@@ -333,7 +323,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
 .pf-checklist.pf-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:2px 16px;}
 .pf-checklist.pf-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;}
 .pf-check-row{
-  display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);color:var(--ink-700);
+  display:flex;align-items:center;gap:10px;font-size:var(--fs-base);color:var(--ink-700);
   padding:9px 4px;border-radius:var(--radius);cursor:pointer;min-height:44px;
 }
 .pf-check-row:hover{background:var(--bg);}
@@ -351,7 +341,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    largo de cada etiqueta (se veía inconsistente entre las 8 condiciones). */
 .pf-grid-4 .pf-condition-row{flex-direction:column;align-items:flex-start;gap:8px;}
 .pf-condition-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.pf-condition-label{font-size:var(--fs-sm);font-weight:500;color:var(--ink-900);}
+.pf-condition-label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
 .pf-toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
 /* Cuando .pf-toggle-group es hijo directo de .form-field (ver "¿Requiere
    remisión?" en ProximasCitasStep.jsx — único caso hoy; el resto de usos
@@ -363,7 +353,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    vuelve a su ancho de contenido real. */
 .form-field > .pf-toggle-group{align-self:flex-start;}
 .pf-toggle-btn{
-  font-family:inherit;font-size:var(--fs-xs);font-weight:600;color:var(--ink-700);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink-700);background:var(--surface);
   border:none;padding:8px 12px;min-height:38px;cursor:pointer;white-space:nowrap;
   border-left:1px solid var(--border);
 }
@@ -372,18 +362,6 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
 .pf-toggle-btn.active{background:var(--primary);color:#fff;}
 .pf-toggle-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pf-condition-desc{margin-top:10px;}
-
-/* A diferencia de los breakpoints de abajo (1024/900/720, todavía
-   inalcanzables solo redimensionando la ventana — ver el comentario
-   siguiente), este SÍ es real hoy: 1280-1366px es una resolución de laptop
-   común, y ahí .pf-grid-5 (la única grilla de 5 columnas del wizard, ver
-   AntecedentesStep.jsx) desbordaba — bug visto en vivo con capturas. Las
-   demás grillas (.pf-grid-4/.pf-grid-3, 4 y 3 columnas) sí caben en ese
-   rango, por eso este breakpoint es más ancho que el de ellas (900px) y
-   exclusivo de .pf-grid-5. */
-@media (max-width: 1440px){
-  .pf-grid-5{grid-template-columns:1fr 1fr 1fr;}
-}
 
 /* .app{min-width:1024px} (ver HistoriaClinica.css) todavía no permite llegar
    a estos anchos solo redimensionando la ventana — mismo caso que
@@ -402,7 +380,6 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
   .pf-grid-4{grid-template-columns:1fr;}
   .pf-grid-3{grid-template-columns:1fr;}
   .pf-grid-2col{grid-template-columns:1fr;}
-  .pf-grid-5{grid-template-columns:1fr;}
   .pf-checklist.pf-grid-4{grid-template-columns:1fr;}
   .pf-checklist.pf-grid-3{grid-template-columns:1fr;}
   .pf-card{padding:16px;}

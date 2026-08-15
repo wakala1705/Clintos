@@ -17,17 +17,17 @@
   padding:14px 20px;background:var(--surface);border-left:3px solid var(--primary);
 }
 .recep-order-header .row-expand-btn{color:var(--primary);}
-.recep-order-number{font-size:14.5px;font-weight:700;color:var(--link-text);}
-.recep-order-date{font-size:13px;color:var(--ink-500);white-space:nowrap;}
+.recep-order-number{font-size:var(--fs-base);font-weight:700;color:var(--link-text);}
+.recep-order-date{font-size:var(--fs-base);color:var(--ink-500);white-space:nowrap;}
 .recep-order-status{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .recep-order-body{display:flex;flex-direction:column;}
 .recep-order-body.collapsed{display:none;}
 .recep-med{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#f5f6f8;border-top:1px solid var(--border);}
 .recep-med .row-expand-btn{color:var(--ink-700);}
-.recep-med-name{font-size:12px;font-weight:700;color:var(--ink-900);text-transform:uppercase;letter-spacing:.01em;}
+.recep-med-name{font-size:var(--fs-sm);font-weight:700;color:var(--ink-900);text-transform:uppercase;letter-spacing:.01em;}
 .recep-med-detail{border-top:1px solid var(--border);}
 .recep-med-detail.collapsed{display:none;}
-.recep-med-detail .detail-table{font-size:13px;table-layout:fixed;}
+.recep-med-detail .detail-table{font-size:var(--fs-base);table-layout:fixed;}
 .recep-med-detail .detail-table thead th{background:var(--primary-50);}
 /* Columnas en % (no px): así la tabla nunca puede pedir más ancho que el que
    tiene disponible — con px fijos, sumaban más que el panel en pantallas
@@ -46,13 +46,13 @@
 
 /* ---------- Recepción parcial: separador "Recibido" / "Falta por recibir" ---------- */
 .detail-section-label{
-  padding:8px 14px 4px;font-size:11px;font-weight:700;color:var(--ink-500);
+  padding:8px 14px 4px;font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;background:var(--surface);
 }
 .detail-section-label--faltante{color:var(--amber-fg);background:var(--amber-bg);padding-top:8px;padding-bottom:8px;}
 .recep-faltante-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:10px 14px;background:var(--amber-bg);font-size:13px;color:var(--ink-900);
+  padding:10px 14px;background:var(--amber-bg);font-size:var(--fs-base);color:var(--ink-900);
 }
 
 html[data-theme="dark"] .recep-med{background:#1a2130;}

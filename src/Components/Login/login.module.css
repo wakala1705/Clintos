@@ -60,8 +60,7 @@
     text-align: center;
 
 /* Caption/Regular */
-    font-family: Inter;
-    font-size: 12px;
+    font-size: var(--fs-sm);
     font-style: normal;
     font-weight: 400;
     line-height: 16px; /* 133.333% */
@@ -93,8 +92,7 @@
     color: #06192A;
 
     /* Heading/M */
-    font-family: Inter;
-    font-size: 28px;
+    font-size: var(--fs-4xl);
     font-style: normal;
     font-weight: 600;
     line-height: 36px; /* 128.571% */
@@ -113,8 +111,7 @@
     color: #06192A;
 
     /* Body/Large */
-    font-family: Inter;
-    font-size: 14px;
+    font-size: var(--fs-base);
     font-style: normal;
     font-weight: 400;
     line-height: 24px; /* 150% */
@@ -142,8 +139,7 @@
     color: #a7aebd;
 
     /* Body/Large */
-    font-family: Inter;
-    font-size: 14px;
+    font-size: var(--fs-base);
     font-style: normal;
     font-weight: 400;
     line-height: 24px; /* 150% */
@@ -173,8 +169,7 @@
     cursor: pointer;
 
     /* Body/Large */
-    font-family: Inter;
-    font-size: 14px;
+    font-size: var(--fs-base);
     font-style: normal;
     font-weight: 400;
     line-height: 24px; /* 150% */
@@ -184,8 +179,7 @@
     color: #48546E;
 
     /* Body/Large */
-    font-family: Inter;
-    font-size: 14px;
+    font-size: var(--fs-base);
     font-style: normal;
     font-weight: 400;
     line-height: 24px; /* 150% */
@@ -255,8 +249,7 @@
 .block-form .form-group .error {
     align-self: stretch;
     color: #C0152F;
-    font-family: Inter;
-    font-size: 13px;
+    font-size: var(--fs-base);
     font-style: normal;
     font-weight: 400;
     line-height: 18px;
@@ -284,8 +277,7 @@
     cursor: pointer;
 
     /* Label/M */
-    font-family: Inter;
-    font-size: 16px;
+    font-size: var(--fs-lg);
     font-style: normal;
     font-weight: 500;
     line-height: 24px; /* 150% */
@@ -309,8 +301,7 @@
     text-decoration: none;
 
     /* Label/M */
-    font-family: Inter;
-    font-size: 12px;
+    font-size: var(--fs-sm);
     font-style: normal;
     font-weight: 400;
     line-height: 24px; /* 150% */

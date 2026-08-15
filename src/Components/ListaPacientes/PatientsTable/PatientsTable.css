@@ -8,7 +8,7 @@
 table{width:100%;border-collapse:collapse;}
 thead th{
   position:sticky;top:0;background:#f7f8fb;z-index:1;
-  text-align:left;font-size:11px;font-weight:600;color:var(--ink-500);
+  text-align:left;font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
   padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
 }
@@ -16,15 +16,15 @@ html[data-theme="dark"] thead th{background:#161c2b;}
 .lp-th-acciones{text-align:right;}
 tbody td{
   padding:10px 16px;border-bottom:1px solid #eef0f4;
-  color:var(--ink-700);white-space:nowrap;vertical-align:middle;font-size:13px;
+  color:var(--ink-700);white-space:nowrap;vertical-align:middle;font-size:var(--fs-base);
 }
-tbody tr:hover{background:#f7f9fd;}
+tbody tr:hover{background:#f7f9fd;cursor:pointer;}
 tbody tr:last-child td{border-bottom:none;}
 
 .lp-patient-cell{display:flex;align-items:center;gap:10px;}
 /* Color/forma vienen de .patient-avatar-badge (PatientAvatar.css) — acá solo
    el tamaño/tipografía propios de esta tabla. */
-.lp-avatar{width:32px;height:32px;font-weight:500;font-size:12px;}
+.lp-avatar{width:32px;height:32px;font-weight:500;font-size:var(--fs-sm);}
 .lp-pname{font-weight:500;color:var(--ink-900);}
 
 .lp-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px;}
@@ -54,7 +54,7 @@ tbody tr:last-child td{border-bottom:none;}
 }
 .lp-card-top{display:flex;align-items:center;gap:10px;}
 .lp-card-id{flex:1;min-width:0;}
-.lp-card-doc{font-size:12px;color:var(--ink-500);margin-top:2px;}
-.lp-card-meta{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--ink-700);}
+.lp-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.lp-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-base);color:var(--ink-700);}
 .lp-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .lp-card-actions .btn{flex:1;justify-content:center;}

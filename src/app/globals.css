@@ -1,6 +1,22 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Escala tipográfica global (8 pasos) — ver AGENTS.md "Tipografía".
+     A diferencia de --primary/--ink-900/etc., NO se duplica por feature:
+     no tiene variante de tema oscuro/alto contraste, y este archivo ya
+     carga en toda ruta vía layout.js, así que un solo bloque acá alcanza
+     (mismo razonamiento que el bloque de alto contraste de inputs más
+     abajo). Cualquier font-size nuevo debe tomar uno de estos 8 valores en
+     vez de un px suelto. */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 18px;
+  --fs-2xl: 20px;
+  --fs-3xl: 24px;
+  --fs-4xl: 28px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,13 +36,19 @@ body {
   overflow-x: hidden;
 }
 
+/* Fuente global del proyecto: stack system-ui (mismo enfoque que interfaces
+   modernas como ChatGPT) — cada feature de nivel superior duplica su propio
+   reset/`body{font-family:...}` (ver AGENTS.md, mismo criterio que los
+   tokens de color), así que este mismo stack se repite ahí en vez de
+   heredarse de acá solamente; mantenerlos sincronizados es intencional para
+   que ninguna ruta quede en un fallback distinto. */
 body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,4 +68,21 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — único
+   CSS que carga en toda ruta vía layout.js, así que el grosor de borde de
+   inputs/selects/textareas (no tokenizado como --border, que sí se sube por
+   feature en cada shared.css) vive acá para no repetirlo por feature.
+   !important necesario: sin él, la especificidad (0,1,1) de este selector
+   empata con reglas como ".form-field input" y el orden de inyección de
+   cada hoja decide, no algo estable entre navegaciones (mismo problema ya
+   documentado en varios comentarios del repo, ej. PlantillaModal.css). */
+html[data-contrast="high"] input,
+html[data-contrast="high"] select,
+html[data-contrast="high"] textarea {
+  border-width: 2px !important;
+}
+html[data-contrast="high"] :focus-visible {
+  outline-width: 3px;
 }

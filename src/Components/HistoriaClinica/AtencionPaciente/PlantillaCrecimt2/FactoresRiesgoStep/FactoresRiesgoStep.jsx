@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import './FactoresRiesgoStep.css';
+import SiNoField from '../SiNoField/SiNoField';
 
 const SI_NO = [
   { value: 'no', label: 'No' },
@@ -66,33 +67,21 @@ const FactoresRiesgoStep = forwardRef(function FactoresRiesgoStep({ hidden }, re
               }}
             />
           </div>
-          <div className="form-field">
-            <label htmlFor="fr-fumadores">Fumadores en el hogar</label>
-            <select
-              id="fr-fumadores" value={factoresRiesgo.fumadores}
-              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, fumadores: e.target.value }))}
-            >
-              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="fr-vectores">Vectores en el hogar</label>
-            <select
-              id="fr-vectores" value={factoresRiesgo.vectores}
-              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, vectores: e.target.value }))}
-            >
-              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="fr-hacinamiento">Hacinamiento</label>
-            <select
-              id="fr-hacinamiento" value={factoresRiesgo.hacinamiento}
-              onChange={(e) => setFactoresRiesgo((prev) => ({ ...prev, hacinamiento: e.target.value }))}
-            >
-              {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
+          <SiNoField
+            id="fr-fumadores" label="Fumadores en el hogar" options={SI_NO}
+            value={factoresRiesgo.fumadores}
+            onChange={(v) => setFactoresRiesgo((prev) => ({ ...prev, fumadores: v }))}
+          />
+          <SiNoField
+            id="fr-vectores" label="Vectores en el hogar" options={SI_NO}
+            value={factoresRiesgo.vectores}
+            onChange={(v) => setFactoresRiesgo((prev) => ({ ...prev, vectores: v }))}
+          />
+          <SiNoField
+            id="fr-hacinamiento" label="Hacinamiento" options={SI_NO}
+            value={factoresRiesgo.hacinamiento}
+            onChange={(v) => setFactoresRiesgo((prev) => ({ ...prev, hacinamiento: v }))}
+          />
         </div>
       </div>
     </div>

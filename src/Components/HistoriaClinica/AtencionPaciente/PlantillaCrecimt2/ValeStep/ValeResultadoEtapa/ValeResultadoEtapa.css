@@ -3,7 +3,7 @@
   padding:48px 24px;color:var(--ink-500);
 }
 .vale-res-pending .icon{width:32px;height:32px;color:var(--ink-400);}
-.vale-res-pending p{margin:0;font-size:var(--fs-sm);max-width:420px;}
+.vale-res-pending p{margin:0;font-size:var(--fs-base);max-width:420px;}
 
 /* ---------- HEADLINE (resultado general) ---------- */
 .vale-res-headline{
@@ -11,11 +11,11 @@
   margin-bottom:20px;
 }
 .vale-res-headline .icon{width:28px;height:28px;flex-shrink:0;margin-top:2px;}
-/* --fs-xl (no --fs-lg, el más cercano al 18px original): es el titular del
+/* --fs-2xl (no --fs-lg, el más cercano al 18px original): es el titular del
    resultado final de VALE — mismo peso visual que .pf-section-title, que ya
-   usa --fs-xl, en vez de leerse como un simple título de card. */
-.vale-res-headline h2{margin:0 0 4px;font-size:var(--fs-xl);font-weight:700;}
-.vale-res-headline p{margin:0;font-size:var(--fs-sm);color:var(--ink-700);}
+   usa --fs-2xl, en vez de leerse como un simple título de card. */
+.vale-res-headline h2{margin:0 0 4px;font-size:var(--fs-2xl);font-weight:700;}
+.vale-res-headline p{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
 .vale-res-headline p b{color:var(--ink-900);}
 /* #0d7a3d (no var(--green)) para el texto/ícono sobre --green-bg — mismo
    ajuste de contraste que .dp-status-badge.st-administered en
@@ -33,8 +33,8 @@
   background:var(--amber-bg);border:1px solid #eccb85;border-radius:var(--radius-lg);
   padding:18px 24px;margin-bottom:20px;
 }
-.vale-res-conducta h3{margin:0 0 8px;font-size:var(--fs-md);font-weight:700;color:var(--amber-fg);}
-.vale-res-conducta p{margin:0;font-size:var(--fs-sm);line-height:1.6;color:var(--ink-900);}
+.vale-res-conducta h3{margin:0 0 8px;font-size:var(--fs-base);font-weight:700;color:var(--amber-fg);}
+.vale-res-conducta p{margin:0;font-size:var(--fs-base);line-height:1.6;color:var(--ink-900);}
 
 /* ---------- CARDS DE RESULTADO POR DIMENSIÓN ----------
    Adapta el shell de .kpi-card (KpiFilterCard.css) como <div> NO
@@ -51,11 +51,11 @@
 }
 .vale-res-card-icon .icon{width:20px;height:20px;}
 .vale-res-card-body{display:flex;flex-direction:column;gap:5px;min-width:0;}
-.vale-res-card-label{font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);}
+.vale-res-card-label{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
 
 .vale-res-badge{
   display:inline-flex;align-items:center;gap:6px;width:fit-content;
-  font-size:var(--fs-2xs);font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
 }
 .vale-res-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
 

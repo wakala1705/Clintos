@@ -1,0 +1,234 @@
+/* Estilos exclusivos del shell de la página /vacunacion (Vacunacion.jsx no es
+   reutilizable — es la ruta, ver AGENTS.md). .topbar/.breadcrumb/.divider-v
+   viven en Topbar.css (componente app-wide); acá el reset, el :root propio de
+   esta ruta (misma copia que Home.css/ListaPacientes.css — cada feature de
+   nivel superior es dueña de la suya) y el layout propio de la pantalla
+   (encabezado + card shell de la tabla). */
+
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#9aa3b2;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --bg:#f4f6fb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --radius:8px;
+  --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
+     bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#5b6272;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --bg:#0c0f17;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+}
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md). El grosor de borde de inputs vive en src/app/globals.css
+   (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.app{display:flex;height:100vh;min-width:1024px;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{padding:16px;display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;overflow-y:auto;}
+
+.icon{width:20px;height:20px;display:inline-block;vertical-align:middle;flex-shrink:0;stroke:currentColor;}
+
+/* Oculta visualmente pero deja disponible para lectores de pantalla — usado
+   por el th "Acciones" de VacTable.css (columna sin texto visible, solo el
+   botón "Ver detalle" + menú por fila). Mismo criterio que
+   HistoriaClinica/shared/shared.css: cada feature es dueña de su copia. */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:500;font-size:var(--fs-base);
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+
+/* ---------- ENCABEZADO DE CONTENIDO ---------- */
+.vac-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-shrink:0;flex-wrap:wrap;}
+.vac-page-head h1{font-size:var(--fs-3xl);font-weight:700;margin:0 0 4px;color:var(--ink-900);letter-spacing:-.01em;}
+.vac-page-head p{margin:0;color:var(--ink-500);font-size:var(--fs-base);}
+.vac-page-head-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* ---------- CARD SHELL de la tabla ---------- */
+.vac-card-shell{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+.vac-results-count{
+  font-size:var(--fs-sm);color:var(--ink-500);padding:12px 16px 0;flex-shrink:0;
+}
+
+/* ---------- SEARCH FIELD / CHIPS DE FILTRO ----------
+   Mismo patrón .search-field / .chip-group.segmented + .chip-filter que
+   HistoriaClinica.css / SolicitudConsumo/shared/shared.css /
+   GestionEnfermeria/shared/shared.css — cada feature de nivel superior es
+   dueña de su copia (ver AGENTS.md). Reemplaza los .vac-search-field/
+   .vac-quick-filter-btn que tenía esta pantalla, para que la barra de
+   búsqueda y el segmented control se vean idénticos al resto del proyecto. */
+.search-field{position:relative;width:320px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
+
+.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:7px 12px;cursor:pointer;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:700;color:var(--ink-400);}
+.chip-filter.active{background:var(--interactive-selected-bg,var(--primary-50));border-color:var(--interactive-selected-border,var(--primary-100));color:var(--interactive-selected-text,var(--primary-dark));}
+.chip-filter.active .count{color:inherit;opacity:.75;}
+
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
+html[data-theme="dark"] .search-field input:focus{background:var(--surface);}
+
+/* ---------- MODAL scaffolding ----------
+   Mismo patrón que HistoriaClinica/shared/shared.css / GestionEnfermeria/
+   shared/shared.css (ver AGENTS.md) — primer modal de esta feature (ver
+   "Ver esquema completo" en VacRowMenu → Vacunacion.jsx), cualquier modal
+   futuro de esta pantalla (Gestionar esquemas, Registrar vacunación) lo
+   reutiliza sin duplicar. */
+.modal-overlay{
+  position:fixed;inset:0;z-index:50;background:rgba(16,24,39,.45);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.modal-card{
+  background:var(--surface);border-radius:var(--radius-lg);width:560px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
+.modal-close-btn{
+  width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
+}
+.modal-close-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.modal-close-btn .icon{width:18px;height:18px;}
+.modal-body{padding:16px;overflow-y:auto;}
+
+/* "Ver esquema completo" (VacRowMenu) — reutiliza EsquemaVacunacion.jsx
+   (componente app-wide, ver AGENTS.md), que ya trae su propio padding
+   interno (.ev-wrap), así que .vac-esquema-body va sin padding propio para
+   no duplicarlo. Mismo ancho ampliado que .vac-expand-modal
+   (EsquemaVacunacion.css): la matriz de 8 momentos necesita el ancho real
+   de la pantalla. */
+.vac-esquema-overlay{padding:12px;}
+.vac-esquema-modal{width:min(1680px, 98vw);max-height:calc(100vh - 24px);}
+.vac-esquema-body{padding:0;}
+.vac-esquema-patient-header{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.vac-esquema-patient-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.vac-esquema-patient-sep{color:var(--ink-400);}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+}

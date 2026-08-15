@@ -6,12 +6,12 @@
 .ead-res-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;
 }
-/* --fs-lg (no --fs-md, el más cercano al 15px original): mismo rol semántico
+/* --fs-lg (no --fs-base, el más cercano al 15px original): mismo rol semántico
    que .pf-card-title (título de card), que ya usa --fs-lg en toda la app —
    consistencia de significado por encima de la distancia numérica mínima. */
 .ead-res-card-title{margin:0 0 14px;font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
 .ead-res-card-list{display:flex;flex-direction:column;gap:8px;}
-.ead-res-card-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);}
+.ead-res-card-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-base);}
 .ead-res-card-label{color:var(--ink-500);}
 .ead-res-card-value{font-weight:600;color:var(--ink-900);text-align:right;}
 

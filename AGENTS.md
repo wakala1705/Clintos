@@ -65,6 +65,42 @@ All non-visual logic (custom hooks, imperative init/controller modules like
   all nest inside that same module folder — never as loose files directly
   under `src/hooks/`.
 
+# Tipografía
+
+Todo diseño/componente nuevo debe ajustarse a este sistema tipográfico único
+— no introducir una tipografía, un `font-size` en px suelto, ni una escala
+paralela.
+
+- **Familia**: `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  Helvetica, Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"`. Definida
+  en el `body` de `src/app/globals.css` (carga en toda ruta vía `layout.js`)
+  y repetida en el `body{}` de cada feature de nivel superior — mismo
+  criterio de duplicación por feature que los tokens de color (ver
+  "Component organization" arriba). Al crear una feature nueva, copia ese
+  mismo stack en su propio `body{font-family:...}`; nunca una tipografía
+  distinta (`Inter`, `Manrope`, etc.) aunque una referencia de diseño la
+  pida — tradúcela a este stack.
+- **Escala de `font-size`** (8 pasos, tokens `--fs-*`): a diferencia de los
+  tokens de color, esta escala **no se duplica por feature** — vive una sola
+  vez en el `:root` de `src/app/globals.css`, porque no tiene variante de
+  tema oscuro/alto contraste y ese archivo ya carga en toda ruta.
+
+  | Token | Valor | Uso |
+  |---|---|---|
+  | `--fs-xs` | 11px | badges/contadores mínimos, etiquetas uppercase, meta, kickers de tabla |
+  | `--fs-sm` | 12px | texto secundario, hints, captions |
+  | `--fs-base` | 14px | **base**: botones, inputs, labels, tabla, párrafos, `body` |
+  | `--fs-lg` | 16px | CTAs primarios, valor destacado pequeño |
+  | `--fs-xl` | 18px | subtítulos de sección, headers de panel/wizard |
+  | `--fs-2xl` | 20px | `h1` de página |
+  | `--fs-3xl` | 24px | valores de KPI grandes, hero |
+  | `--fs-4xl` | 28px | heading principal (el más grande del proyecto) |
+
+  Cualquier `font-size` nuevo toma el token más cercano de esta tabla
+  (`font-size:var(--fs-base)`, nunca `font-size:14px`) — no crear un paso
+  intermedio nuevo; la jerarquía adicional dentro de un mismo tamaño se logra
+  con `font-weight`/color.
+
 # Icons
 
 Work the whole project with Lucide icons — never hand-write inline `<svg>`

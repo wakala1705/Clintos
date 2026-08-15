@@ -48,8 +48,8 @@
    que el switcher completo "salte" de tamaño y empuje el resumen a la
    izquierda de vuelta a 2 líneas. */
 .gcm-switcher-label{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:150px;}
-.gcm-switcher-text{font-size:var(--fs-sm);font-weight:700;color:var(--ink-900);white-space:nowrap;}
-.gcm-switcher-count{font-size:var(--fs-2xs);color:var(--ink-500);}
+.gcm-switcher-text{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);white-space:nowrap;}
+.gcm-switcher-count{font-size:var(--fs-xs);color:var(--ink-500);}
 
 /* Resumen compacto (encargo: "sin generar una tarjeta excesivamente
    grande") — 2 grupos: Paciente/Edad/Sexo (a quién pertenece la gráfica) y
@@ -63,8 +63,8 @@
   padding:8px 14px;background:var(--bg);border-radius:var(--radius);
 }
 .gcm-summary-item{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
-.gcm-summary-label{font-size:var(--fs-2xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);white-space:nowrap;}
-.gcm-summary-value{font-size:var(--fs-md);font-weight:700;color:var(--ink-900);white-space:nowrap;}
+.gcm-summary-label{font-size:var(--fs-xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);white-space:nowrap;}
+.gcm-summary-value{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);white-space:nowrap;}
 /* Separa el grupo Paciente/Edad/Sexo del grupo Peso/Talla/PC/IMC — mismo
    tono que el resto de bordes sutiles del feature (var(--border)), como
    línea en vez de espaciado extra porque ambos grupos comparten el mismo
@@ -89,8 +89,8 @@
 
 .gcm-gridline{stroke:var(--border);stroke-width:1;}
 .gcm-axis{stroke:var(--ink-400);stroke-width:1.2;}
-.gcm-axis-label{font-size:var(--fs-2xs);fill:var(--ink-500);font-family:inherit;}
-.gcm-axis-title{font-size:var(--fs-2xs);font-weight:600;fill:var(--ink-700);font-family:inherit;}
+.gcm-axis-label{font-size:var(--fs-xs);fill:var(--ink-500);font-family:inherit;}
+.gcm-axis-title{font-size:var(--fs-xs);font-weight:600;fill:var(--ink-700);font-family:inherit;}
 
 /* Curvas: DE 0 (mediana) sólida y más gruesa, ±1/±2/±3 escalan en grosor +
    patrón de trazo (no solo color) para diferenciarse incluso en escala de
@@ -113,10 +113,10 @@
 .gcm-estado-no-aplica.gcm-punto-halo,.gcm-estado-no-aplica.gcm-punto-dot{stroke:var(--gray-fg);fill:var(--gray-fg);}
 
 .gcm-tooltip-bg{fill:var(--ink-900);opacity:.94;}
-.gcm-tooltip-text{font-size:var(--fs-2xs);fill:#fff;font-family:inherit;}
+.gcm-tooltip-text{font-size:var(--fs-xs);fill:#fff;font-family:inherit;}
 
 .gcm-legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:8px 4px 2px;}
-.gcm-legend-item{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-2xs);color:var(--ink-700);}
+.gcm-legend-item{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);color:var(--ink-700);}
 .gcm-legend-swatch{width:16px;height:0;border-top:2.5px solid;display:inline-block;flex-shrink:0;}
 .gcm-legend-swatch.gcm-curve-0{border-color:var(--primary);}
 .gcm-legend-swatch.gcm-curve-1{border-color:var(--ink-400);}
@@ -143,14 +143,14 @@
 .gcm-interpretation-no-aplica{background:var(--gray-bg);border-color:var(--gray-fg);}
 
 .gcm-interpretation-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.gcm-interpretation-text{margin:0;font-size:var(--fs-md);font-weight:600;color:var(--ink-900);}
+.gcm-interpretation-text{margin:0;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
 .gcm-interpretation-label{
-  font-size:var(--fs-2xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);
+  font-size:var(--fs-xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);
   margin-right:8px;
 }
-.gcm-interpretation-meta{margin:4px 0 0;font-size:var(--fs-xs);color:var(--ink-700);}
+.gcm-interpretation-meta{margin:4px 0 0;font-size:var(--fs-sm);color:var(--ink-700);}
 .gcm-interpretation-meta b{color:var(--ink-900);font-weight:600;}
-.gcm-interpretation-empty{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.gcm-interpretation-empty{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
 /* Estado — siempre ícono + texto, nunca solo color (encargo WCAG). Borde
    propio (en vez de solo el tinte -bg, que ahora comparte con la card que
@@ -158,7 +158,7 @@
    perdía contra un fondo del mismo color. */
 .gcm-estado-badge{
   display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
-  font-size:var(--fs-xs);font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-sm);font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;
   border:1px solid transparent;
 }
 .gcm-estado-badge .icon{width:14px;height:14px;}

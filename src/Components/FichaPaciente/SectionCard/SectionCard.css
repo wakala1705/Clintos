@@ -13,6 +13,6 @@
   display:flex;align-items:center;justify-content:center;
 }
 .fp-section-icon .icon{width:17px;height:17px;}
-.fp-section-head h2{font-size:15px;font-weight:600;color:var(--ink-900);margin:0;}
-.fp-section-head p{font-size:12px;color:var(--ink-500);margin:2px 0 0;}
+.fp-section-head h2{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);margin:0;}
+.fp-section-head p{font-size:var(--fs-sm);color:var(--ink-500);margin:2px 0 0;}
 .fp-section-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}

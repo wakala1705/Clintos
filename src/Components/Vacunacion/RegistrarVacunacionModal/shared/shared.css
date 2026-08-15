@@ -1,0 +1,77 @@
+/* Reglas reutilizadas por 2+ pasos del wizard "Registrar vacunación"
+   (VacunaStep/AplicacionStep/ConfirmacionStep/ExitoStep) — importado una
+   sola vez desde RegistrarVacunacionModal.jsx, ver AGENTS.md (mismo criterio
+   que PlantillaCrecimt2/shared). Reglas usadas por un solo paso viven en el
+   .css propio de ese paso. .modal-overlay/.modal-card/.modal-header/
+   .modal-close-btn/.modal-body, .search-field, .btn, .icon, .sr-only,
+   .vac-esquema-badge NO se repiten acá: ya están definidas en
+   ../../Vacunacion.css (dueño de tokens de esta ruta), este wizard vive
+   dentro de esa misma página. */
+
+/* ---------- SECCIÓN / CAMPO ---------- */
+.rv-section{margin-bottom:20px;}
+.rv-section:last-child{margin-bottom:0;}
+.rv-section-title{font-size:var(--fs-sm);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
+
+.rv-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* Par primario/secundario de texto dentro de un bloque con fondo — usado por
+   ConfirmacionStep (resumen) y ExitoStep ("Próxima dosis"), 2+ consumidores. */
+.rv-resumen-primary{margin:0;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.rv-resumen-secondary{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+.rv-field{display:flex;flex-direction:column;gap:6px;}
+.rv-field label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
+.rv-field .rv-required{color:var(--red);margin-left:2px;}
+.rv-field input,.rv-field select,.rv-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 12px;height:var(--input-md);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.rv-field textarea{height:auto;min-height:72px;padding:10px 12px;resize:vertical;}
+.rv-field select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;
+}
+.rv-field input:focus,.rv-field select:focus,.rv-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.rv-field input::placeholder,.rv-field textarea::placeholder{color:var(--ink-400);}
+.rv-field.has-error input,.rv-field.has-error select{border-color:var(--red);}
+.rv-error-text{font-size:var(--fs-sm);color:var(--red);}
+
+/* ---------- BADGE: estado de una dosis puntual ----------
+   Mismo criterio que .vac-status-badge (VacTable.css): cada estado se
+   distingue por texto + ícono propio, nunca solo por color (1.4.1). */
+.rv-dosis-badge{
+  display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
+}
+.rv-dosis-badge .icon{width:12px;height:12px;flex-shrink:0;}
+.rv-dosis-badge.pendiente{background:var(--amber-bg);color:var(--amber-fg);}
+.rv-dosis-badge.proxima{background:var(--primary-50);color:var(--primary-dark);}
+.rv-dosis-badge.atrasada{background:var(--red-bg);color:var(--red);}
+.rv-dosis-badge.aplicada{background:var(--gray-bg);color:var(--gray-fg);}
+
+/* ---------- ALERTA CONTEXTUAL (dosis ya aplicada / avisos inline) ---------- */
+.rv-alert{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--amber-bg);color:var(--amber-fg);border-radius:var(--radius);
+  padding:10px 12px;font-size:var(--fs-sm);line-height:1.4;margin-top:8px;
+}
+.rv-alert .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+
+/* ---------- ESTADO VACÍO (sin resultados / sin esquema) ---------- */
+.rv-empty-state{
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  padding:40px 24px;color:var(--ink-500);
+}
+.rv-empty-state .icon{width:32px;height:32px;color:var(--ink-400);margin-bottom:6px;}
+.rv-empty-state h4{margin:0;font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);}
+.rv-empty-state p{margin:0;font-size:var(--fs-base);max-width:340px;}
+.rv-empty-state-actions{display:flex;align-items:center;gap:10px;margin-top:14px;}
+
+/* ---------- FOOTER de acciones del wizard ---------- */
+.rv-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.rv-footer-end{display:flex;align-items:center;gap:10px;margin-left:auto;}

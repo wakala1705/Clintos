@@ -6,7 +6,25 @@
 }
 
 .rg-top{padding:16px;flex-shrink:0;border-bottom:1px solid var(--border);}
-.rg-nueva-atencion-btn{width:100%;justify-content:center;}
+/* justify-content:space-between (no center): dos grupos reales en el botón
+   -- ícono+label a la izquierda, atajo de teclado a la derecha -- en vez de
+   miembros de un mismo grupo, mismo criterio que .hc-top-row en
+   HistoriaClinica.css. .rg-nueva-atencion-label agrupa ícono+label con su
+   propio gap para que ese par se lea junto y no se separe con el resto del
+   espacio libre que reparte space-between. */
+.rg-nueva-atencion-btn{width:100%;justify-content:space-between;}
+.rg-nueva-atencion-label{display:inline-flex;align-items:center;gap:8px;}
+/* Atajo "+" (ver AtencionPaciente.jsx) representado como un badge tipo
+   "kbd" -- mismo par translúcido blanco-sobre-primario que ya usa el proyecto
+   para chips secundarios encima de superficies de color (ver .badge en
+   PatientBanner.css), no un color nuevo. aria-hidden porque el atajo ya es
+   redundante con el title del botón (lectores de pantalla no necesitan leer
+   "+" dos veces). */
+.rg-shortcut-hint{
+  font-size:var(--fs-xs);font-weight:600;color:rgba(255,255,255,.85);
+  border:1px solid rgba(255,255,255,.35);border-radius:5px;
+  padding:2px 6px;line-height:1.3;flex-shrink:0;
+}
 
 .rg-header{border-bottom:1px solid var(--border);flex-shrink:0;}
 .rg-header-btn{
@@ -14,7 +32,7 @@
   padding:10px 16px;background:none;border:none;cursor:pointer;font-family:inherit;
 }
 .rg-header-btn:hover{background:var(--gray-bg);}
-.rg-header-title{font-size:13px;font-weight:700;color:var(--ink-900);}
+.rg-header-title{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);}
 .rg-header-chevron{width:16px;height:16px;color:var(--ink-500);transition:transform .15s;}
 .rg-header-chevron.open{transform:rotate(90deg);}
 
@@ -31,13 +49,13 @@
 .rg-group-row-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .rg-group-chevron{width:14px;height:14px;color:var(--ink-400);flex-shrink:0;transition:transform .15s;}
 .rg-group-chevron.open{transform:rotate(90deg);}
-.rg-group-count{font-size:13px;font-weight:700;color:var(--primary);flex-shrink:0;min-width:14px;}
+.rg-group-count{font-size:var(--fs-base);font-weight:700;color:var(--primary);flex-shrink:0;min-width:14px;}
 .rg-group-name{
-  font-size:12px;font-weight:600;color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
+  font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
   flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .rg-badge-activa{
-  font-size:11px;font-weight:700;color:var(--green);background:var(--green-bg);
+  font-size:var(--fs-xs);font-weight:700;color:var(--green);background:var(--green-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
 }
 
@@ -63,10 +81,10 @@
 .rg-subrow:hover{background:var(--gray-bg);}
 .rg-subrow.selected{background:var(--interactive-selected-bg);}
 .rg-subrow:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.rg-subrow-datetime{font-size:13px;color:var(--ink-500);}
-.rg-subrow-title{font-size:14px;font-weight:500;color:var(--ink-900);}
-.rg-subrow-author{font-size:13px;color:var(--ink-700);}
-.rg-subrow-role{font-size:13px;color:var(--ink-500);}
+.rg-subrow-datetime{font-size:var(--fs-base);color:var(--ink-500);}
+.rg-subrow-title{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);}
+.rg-subrow-author{font-size:var(--fs-base);color:var(--ink-700);}
+.rg-subrow-role{font-size:var(--fs-base);color:var(--ink-500);}
 
 html[data-theme="dark"] .rg-group{border-color:#242c3d;}
 html[data-theme="dark"] .rg-subrow{border-color:#242c3d;}

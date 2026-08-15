@@ -68,15 +68,31 @@ html[data-theme="dark"]{
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
 }
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+   --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+   vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
 html[data-theme="dark"] body{background:var(--bg);}
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family:'Inter',sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
   background:var(--bg);
   color:var(--ink-900);
-  font-size:14px;
+  font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
 .icon{
@@ -121,7 +137,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 /* ---------- BOTONES / ICON-BTN (duplicados desde asignacion-citas.css) ---------- */
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:inherit;font-weight:500;font-size:13px;
+  font-family:inherit;font-weight:500;font-size:var(--fs-base);
   padding:8px 16px;border-radius:var(--radius);
   border:1px solid transparent;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s,opacity .15s;
@@ -145,8 +161,8 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;
   flex-shrink:0;
 }
-.pc-page-header h1{font-size:20px;font-weight:600;color:var(--ink-900);letter-spacing:-.01em;}
-.pc-page-header p{font-size:13px;color:var(--ink-500);margin-top:2px;}
+.pc-page-header h1{font-size:var(--fs-2xl);font-weight:600;color:var(--ink-900);letter-spacing:-.01em;}
+.pc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
 .pc-page-header-actions{display:flex;align-items:center;gap:10px;}
 
 /* ---------- WORKSPACE (2 columnas) ---------- */
@@ -159,7 +175,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
   background:var(--ink-900);color:#fff;
   padding:12px 20px;border-radius:var(--radius);
-  font-size:13px;font-weight:600;
+  font-size:var(--fs-base);font-weight:600;
   opacity:0;pointer-events:none;
   display:flex;align-items:center;gap:8px;z-index:60;
 }

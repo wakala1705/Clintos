@@ -64,15 +64,31 @@ html[data-theme="dark"]{
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
 }
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+   --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+   vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
 html[data-theme="dark"] body{background:var(--bg);}
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family:'Inter',sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
   background:var(--bg);
   color:var(--ink-900);
-  font-size:14px;
+  font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
 .icon{
@@ -100,7 +116,7 @@ body{
 
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:inherit;font-weight:500;font-size:13px;
+  font-family:inherit;font-weight:500;font-size:var(--fs-base);
   padding:8px 16px;border-radius:var(--radius);
   border:1px solid transparent;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s,opacity .15s;

@@ -22,5 +22,5 @@
 .kpi-info .kpi-icon{background:var(--status-info-bg);color:var(--status-info-fg);}
 
 .kpi-body{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.kpi-value{font-size:24px;font-weight:700;color:var(--ink-900);line-height:1.15;font-variant-numeric:tabular-nums;}
-.kpi-label{font-size:13px;font-weight:500;color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi-value{font-size:var(--fs-3xl);font-weight:700;color:var(--ink-900);line-height:1.15;font-variant-numeric:tabular-nums;}
+.kpi-label{font-size:var(--fs-base);font-weight:500;color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}

@@ -1,0 +1,24 @@
+.vac-toolbar{
+  display:flex;flex-direction:column;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.vac-toolbar-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+/* .search-field (barra de búsqueda): definida en ../Vacunacion.css — mismo
+   patrón que el resto del proyecto (ver AGENTS.md). */
+.vac-toolbar-row .search-field{flex:1;min-width:260px;max-width:420px;}
+
+.vac-select-field{display:flex;flex-direction:column;gap:4px;min-width:160px;max-width:200px;}
+.vac-select-field label{
+  font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+.vac-select-field select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-md,36px);padding:0 32px 0 12px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);
+  background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+}
+.vac-select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+/* .chip-group.segmented / .chip-filter (segmented control de acceso rápido):
+   definidos en ../Vacunacion.css — mismo patrón que el resto del proyecto
+   (ver AGENTS.md). */

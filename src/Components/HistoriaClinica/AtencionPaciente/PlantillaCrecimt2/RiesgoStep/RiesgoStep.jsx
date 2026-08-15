@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import './RiesgoStep.css';
+import SiNoField from '../SiNoField/SiNoField';
 
 const RIESGO_OPCIONES = [
   { value: 'no_evaluado', label: 'Riesgo no evaluado' },
@@ -47,15 +48,12 @@ const RiesgoStep = forwardRef(function RiesgoStep({ hidden }, ref) {
       <div className="pf-group">
         <div className="pf-grid-3">
           {CAMPOS_RIESGO.map((c) => (
-            <div className="form-field" key={c.key}>
-              <label htmlFor={`rg-${c.key}`}>{c.label}</label>
-              <select
-                id={`rg-${c.key}`} value={riesgos[c.key]}
-                onChange={(e) => setRiesgos((p) => ({ ...p, [c.key]: e.target.value }))}
-              >
-                {RIESGO_OPCIONES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
+            <SiNoField
+              key={c.key}
+              id={`rg-${c.key}`} label={c.label} options={RIESGO_OPCIONES}
+              value={riesgos[c.key]}
+              onChange={(v) => setRiesgos((p) => ({ ...p, [c.key]: v }))}
+            />
           ))}
         </div>
       </div>

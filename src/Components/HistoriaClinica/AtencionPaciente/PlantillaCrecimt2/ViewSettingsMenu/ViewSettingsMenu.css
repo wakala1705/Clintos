@@ -11,13 +11,13 @@
 }
 .vsm-item{
   display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
-  font-size:var(--fs-sm);font-weight:500;color:var(--ink-700);cursor:pointer;
+  font-size:var(--fs-base);font-weight:500;color:var(--ink-700);cursor:pointer;
   background:none;border:none;font-family:inherit;width:100%;text-align:left;
 }
 .vsm-item:hover{background:var(--bg);}
 .vsm-item .icon{width:17px;height:17px;color:var(--ink-500);flex-shrink:0;}
 .vsm-divider{height:1px;background:var(--border);margin:5px 4px;}
-.vsm-section-label{font-size:var(--fs-2xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;padding:8px 10px 6px;}
+.vsm-section-label{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;padding:8px 10px 6px;}
 .vsm-type-toggle{margin:0 10px 6px;}
 /* padding lateral reducido (8px 12px por defecto en .pf-toggle-btn, ver
    PlantillaCrecimt2.css) — con 3 opciones ("Compacto"/"Normal"/"Amplio", el

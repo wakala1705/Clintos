@@ -93,6 +93,22 @@ html[data-theme="dark"]{
   --violet-fg:#b79bf7;
 }
 
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+   --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+   vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+
 /* ---------- RESET + APP SHELL (sidebar + topbar + content wrapper) ----------
    Antes solo en gestion-enfermeria.css (único consumidor, la pantalla de
    atención a un paciente) — ahora que "Hospitalización / Gestión de
@@ -103,10 +119,10 @@ html[data-theme="dark"]{
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family:'Inter',sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
   background:var(--bg);
   color:var(--ink-900);
-  font-size:14px;
+  font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
 .app{
@@ -156,26 +172,26 @@ body{
 }
 .admin-summary-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
 .admin-summary-row + .admin-summary-row{margin-top:6px;}
-.admin-summary-name{font-size:14px;font-weight:700;color:var(--ink-900);line-height:1.3;}
+.admin-summary-name{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);line-height:1.3;}
 .admin-summary-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;}
-.admin-summary-meta .asm-item{display:inline-flex;align-items:baseline;gap:6px;font-size:12.5px;}
-.admin-summary-meta .asm-k{color:var(--ink-500);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.03em;}
+.admin-summary-meta .asm-item{display:inline-flex;align-items:baseline;gap:6px;font-size:var(--fs-sm);}
+.admin-summary-meta .asm-k{color:var(--ink-500);font-weight:600;text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.03em;}
 .admin-summary-meta .asm-v{color:var(--ink-900);font-weight:600;}
 .admin-summary-meta .asm-sep{width:1px;height:12px;background:var(--border);}
-.admin-summary-time{display:flex;align-items:center;gap:5px;color:var(--ink-500);font-size:12.5px;flex-shrink:0;}
+.admin-summary-time{display:flex;align-items:center;gap:5px;color:var(--ink-500);font-size:var(--fs-sm);flex-shrink:0;}
 .admin-summary-time .icon{width:13px;height:13px;}
 .admin-summary-time b{color:var(--ink-700);font-weight:600;}
 
 .admin-lote-section{margin-bottom:16px;}
-.admin-lote-label{display:block;font-size:14px;font-weight:600;color:var(--ink-700);margin-bottom:8px;}
+.admin-lote-label{display:block;font-size:var(--fs-base);font-weight:600;color:var(--ink-700);margin-bottom:8px;}
 .lote-table-wrap{
   border:1px solid var(--border);border-radius:var(--radius);
   max-height:224px;overflow-y:auto;
 }
-.lote-table{width:100%;border-collapse:collapse;font-size:13px;}
+.lote-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .lote-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:#f7f8fb;color:var(--ink-500);
-  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
   padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);
 }
 .lote-table th.col-radio{width:36px;}
@@ -193,7 +209,7 @@ body{
 .admin-insumos-empty{color:var(--ink-500);}
 .lote-badge{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
 }
 .lote-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor;}
 .lote-badge.ok{background:var(--green-bg);color:#0d7a3d;}
@@ -202,7 +218,7 @@ body{
 .admin-lote-warning{
   display:flex;align-items:flex-start;gap:8px;margin-top:10px;padding:10px 12px;
   background:var(--amber-bg);border:1px solid #f4dfae;border-radius:var(--radius);
-  font-size:12px;color:var(--amber-fg);line-height:1.4;
+  font-size:var(--fs-sm);color:var(--amber-fg);line-height:1.4;
 }
 .admin-lote-warning .icon{width:15px;height:15px;flex-shrink:0;margin-top:1px;}
 
@@ -217,12 +233,12 @@ body{
   padding:12px 14px;margin-top:6px;background:var(--primary-50);
 }
 .admin-safety-check-title{
-  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:700;
   color:var(--primary-dark);margin-bottom:8px;
 }
 .admin-safety-check-title .icon{width:16px;height:16px;flex-shrink:0;}
 .admin-safety-check-item{
-  display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);
+  display:flex;align-items:center;gap:10px;font-size:var(--fs-base);color:var(--ink-700);
   padding:5px 0;cursor:pointer;line-height:1.4;
 }
 .admin-safety-check-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer;}
@@ -289,7 +305,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 /* ---------- BUTTONS ---------- */
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:inherit;font-weight:500;font-size:13px;
+  font-family:inherit;font-weight:500;font-size:var(--fs-base);
   padding:8px 16px;border-radius:var(--radius);
   border:1px solid transparent;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s,opacity .15s;
@@ -310,7 +326,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .btn-danger:hover{background:#a82323;}
 .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
-.btn-sm{padding:var(--space-2) var(--space-3);font-size:12px;gap:6px;}
+.btn-sm{padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);gap:6px;}
 .btn-sm .icon{width:15px;height:15px;}
 
 /* ---------- FILTER BAR (chips, search, popovers) ---------- */
@@ -322,7 +338,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
 .search-field input{
   width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:13px;background:var(--bg);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);
 }
 .search-field input::placeholder{color:var(--ink-400);}
 .search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
@@ -330,13 +346,13 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .chip-filter{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:13px;font-weight:600;color:var(--ink-700);
+  font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
   padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
   background:var(--surface);cursor:pointer;white-space:nowrap;
   font-family:inherit;transition:background .15s,border-color .15s,color .15s;
 }
 .chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
-.chip-filter .count{font-size:11px;font-weight:700;color:var(--ink-400);}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:700;color:var(--ink-400);}
 .chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
 .chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
 
@@ -366,7 +382,7 @@ html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
 html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
 html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
 
-.filter-label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
+.filter-label{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
 .filter-cluster{display:flex;align-items:center;gap:8px;}
 .filter-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
 .filter-spacer{flex:1;}
@@ -375,7 +391,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .date-picker-btn, .filters-more-btn{
   display:inline-flex;align-items:center;gap:8px;
   border:1px solid var(--border);border-radius:var(--radius);
-  padding:var(--space-2) var(--space-3);font-size:13px;font-weight:600;color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
   background:var(--surface);cursor:pointer;white-space:nowrap;font-family:inherit;
   transition:background .15s,border-color .15s,color .15s;
 }
@@ -385,7 +401,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .date-picker-btn.active, .filters-more-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
 .date-picker-btn.active .icon, .filters-more-btn.active .icon{color:var(--primary);}
 .filters-more-btn .badge-count{
-  background:var(--primary);color:#fff;font-size:11px;font-weight:700;min-width:16px;height:16px;
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:700;min-width:16px;height:16px;
   border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
 }
 
@@ -398,24 +414,24 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .filter-popover.open{display:block;}
 .filter-popover-wide{min-width:300px;}
 .filter-popover-right{left:auto;right:0;}
-.fp-title{font-size:13px;font-weight:600;color:var(--ink-900);margin-bottom:12px;}
+.fp-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);margin-bottom:12px;}
 .fp-date-row{display:flex;gap:10px;margin-bottom:14px;}
 .fp-date-field{flex:1;display:flex;flex-direction:column;gap:4px;}
-.fp-date-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.fp-date-field label{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .fp-date-field input{
   border:1px solid var(--border);border-radius:var(--radius);height:var(--input-sm);padding:0 8px;
-  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--bg);width:100%;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);width:100%;
 }
 .fp-date-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
 .fp-section{margin-bottom:16px;}
 .fp-section:last-of-type{margin-bottom:14px;}
-.fp-section-title{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fp-section-title{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
-.fp-actions .btn{padding:7px 14px;font-size:13px;}
+.fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
 
 /* ---------- Popover "info list" pattern (PatientBanner allergy popover + DosePopover) ---------- */
 .dp-info{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
-.dp-info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;}
+.dp-info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-base);}
 .dp-info-row .k{color:var(--ink-500);white-space:nowrap;}
 .dp-info-row .v{color:var(--ink-900);font-weight:600;text-align:right;}
 
@@ -426,14 +442,14 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   flex-shrink:0;
 }
 .selection-toolbar.open{display:flex;}
-.sel-info{font-size:13px;font-weight:600;color:var(--primary-dark);white-space:nowrap;}
+.sel-info{font-size:var(--fs-base);font-weight:600;color:var(--primary-dark);white-space:nowrap;}
 .sel-info b{font-weight:700;}
-.sel-hint{font-size:13px;color:var(--ink-500);}
+.sel-hint{font-size:var(--fs-base);color:var(--ink-500);}
 .sel-spacer{flex:1;}
 .sel-actions{display:flex;align-items:center;gap:10px;}
-.sel-actions .btn{padding:7px 14px;font-size:13px;}
+.sel-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
 .sel-cancel-btn{
-  background:none;border:none;font-size:13px;font-weight:600;color:var(--ink-700);
+  background:none;border:none;font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
   cursor:pointer;padding:var(--space-2) var(--space-2);border-radius:7px;font-family:inherit;
 }
 .sel-cancel-btn:hover{background:rgba(16,24,39,.06);}
@@ -450,7 +466,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   padding:14px 20px 0 20px;flex-shrink:0;
 }
 .subnav-tab{
-  display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink-700);
+  display:inline-flex;align-items:center;gap:7px;font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
   padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);
   cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s,border-color .15s,color .15s;
   outline-offset:2px;
@@ -462,7 +478,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 
 /* ---------- BADGE DE ESTADO DE DOSIS (DosePopover + vista "Lista" de MedicamentosPanel) ---------- */
 .dp-status-badge{
-  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+  font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;
   display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
 }
 .dp-status-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
@@ -483,8 +499,8 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;gap:12px 20px;
 }
 .footer-title-block{flex-shrink:0;}
-.footer-title-block .ft-sub{font-size:13px;font-weight:600;color:var(--ink-700);}
-.footer-updated{font-size:12px;color:var(--ink-500);}
+.footer-title-block .ft-sub{font-size:var(--fs-base);font-weight:600;color:var(--ink-700);}
+.footer-updated{font-size:var(--fs-sm);color:var(--ink-500);}
 .footer-updated b{color:var(--ink-900);font-weight:600;}
 
 /* ---------- MODAL scaffolding (overlay / card / header / body / footer / form-field) ---------- */
@@ -506,9 +522,9 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.modal-header h3{margin:0;font-size:16px;font-weight:700;color:var(--ink-900);}
+.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
 .modal-header-titles{display:flex;align-items:center;gap:var(--space-3);}
-.modal-header-titles .modal-header-sub{font-size:12px;color:var(--ink-500);margin-top:2px;}
+.modal-header-titles .modal-header-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .modal-close-btn{
   width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
@@ -529,10 +545,10 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 
 .form-field{display:flex;flex-direction:column;gap:4px;}
 .form-field.full{grid-column:1 / -1;}
-.form-field label{font-size:14px;font-weight:600;color:var(--ink-700);}
+.form-field label{font-size:var(--fs-base);font-weight:600;color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
-  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);width:100%;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
 }
 /* Variante md (36px, ver --input-md en :root) — no incluye textarea, cuya
    altura depende de `rows` (ver .form-field textarea abajo). */
@@ -544,7 +560,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 
 .admin-summary-time{
   display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;
-  ;font-size:13px;font-weight:600;color:var(--primary-dark);
+  ;font-size:var(--fs-base);font-weight:600;color:var(--primary-dark);
 }
 .admin-summary-time .icon{width:15px;height:15px;flex-shrink:0;color:var(--primary);}
 .admin-summary-time b{font-variant-numeric:tabular-nums;}
@@ -558,7 +574,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .suspend-header-icon .icon{width:19px;height:19px;}
 
 .suspend-patient-strip{
-  display:flex;align-items:center;gap:var(--space-2);font-size:14px;color:var(--ink-700);
+  display:flex;align-items:center;gap:var(--space-2);font-size:var(--fs-base);color:var(--ink-700);
   background:var(--bg);border-radius:var(--radius);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-4);
 }
 .suspend-patient-strip .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);}
@@ -574,26 +590,26 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   padding:var(--space-3) var(--space-3);
 }
 .suspend-med-row + .suspend-med-row{border-top:1px solid #eef0f4;}
-.suspend-med-row .sm-name{font-size:13px;font-weight:600;color:var(--ink-900);}
-.suspend-med-row .sm-meta{font-size:12px;color:var(--ink-500);margin-top:4px;}
+.suspend-med-row .sm-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.suspend-med-row .sm-meta{font-size:var(--fs-sm);color:var(--ink-500);margin-top:4px;}
 .suspend-med-row.with-qty{align-items:center;}
 .suspend-med-row .sm-qty-result{text-align:right;flex-shrink:0;}
-.suspend-med-row .sm-qty-result .program-chip{font-size:13px;padding:4px 10px;}
-.suspend-med-row .sm-qty-result .sm-qty-note{font-size:12px;color:var(--ink-500);margin-top:8px;}
+.suspend-med-row .sm-qty-result .program-chip{font-size:var(--fs-base);padding:4px 10px;}
+.suspend-med-row .sm-qty-result .sm-qty-note{font-size:var(--fs-sm);color:var(--ink-500);margin-top:8px;}
 .program-chip{
-  font-size:12px;font-weight:600;color:var(--primary-dark);background:var(--primary-50);
+  font-size:var(--fs-sm);font-weight:600;color:var(--primary-dark);background:var(--primary-50);
   padding:3px var(--space-2);border-radius:12px;font-variant-numeric:tabular-nums;
 }
 .program-chip.overflow{color:var(--ink-500);background:var(--gray-bg);font-weight:500;font-style:italic;}
 
 .field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
-.field-label-row label{font-size:14px;font-weight:600;color:var(--ink-700);margin-bottom:0;}
+.field-label-row label{font-size:var(--fs-base);font-weight:600;color:var(--ink-700);margin-bottom:0;}
 .required-pill{
-  display:inline-flex;align-items:center;font-size:11px;font-weight:700;color:var(--red);
+  display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:700;color:var(--red);
   background:var(--red-bg);padding:1px var(--space-2);border-radius:10px;letter-spacing:.02em;
 }
 .suspend-audit-note{
-  display:flex;align-items:flex-start;gap:var(--space-2);font-size:12px;color:var(--ink-500);
+  display:flex;align-items:flex-start;gap:var(--space-2);font-size:var(--fs-sm);color:var(--ink-500);
   line-height:1.4;margin-top:var(--space-2);
 }
 .suspend-audit-note .icon{width:14px;height:14px;flex-shrink:0;margin-top:1px;}
@@ -604,10 +620,10 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .data-table-wrap{
   flex:1;min-height:0;min-width:0;overflow:auto;
 }
-.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .data-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:#f7f8fb;color:var(--ink-500);
-  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
   padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
 }
 .data-table th.col-right, .data-table td.col-right{text-align:right;}
@@ -615,7 +631,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:#fafbfd;}
 .data-table .cell-primary{font-weight:600;color:var(--ink-900);}
-.data-table .cell-sub{display:block;color:var(--ink-500);font-size:12px;font-weight:500;margin-top:2px;}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:500;margin-top:2px;}
 .data-table .cell-muted{color:var(--ink-500);}
 .data-table tr.filtered-out{display:none;}
 
@@ -624,7 +640,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
    (ProgramarCita) y .estado-badge (asignación de citas) — ver AGENTS.md. */
 .order-badge{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
 }
 .order-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor;}
 .order-badge.pendiente{background:var(--amber-bg);color:var(--amber-fg);}
@@ -640,7 +656,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .order-badge.no-solicitado{background:var(--gray-bg);color:var(--ink-500);}
 .order-badge.sin-programar{background:var(--gray-bg);color:var(--ink-500);}
 .order-badge.solicitado{background:var(--green-bg);color:#0d7a3d;}
-.confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0d7a3d;}
+.confirmed-tag{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:600;color:#0d7a3d;}
 .confirmed-tag .icon{width:15px;height:15px;}
 
 /* ---------- FILAS EXPANDIBLES (patrón genérico padre → hijo: orden → ítems, medicamento → lotes) ---------- */
@@ -656,16 +672,16 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .row-expand-btn[aria-expanded="false"] .icon{transform:rotate(-90deg);}
 .row-expand-spacer{display:inline-block;width:20px;height:20px;flex-shrink:0;}
 .child-count-badge{
-  font-size:11px;font-weight:700;color:var(--ink-500);background:var(--gray-bg);
+  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);background:var(--gray-bg);
   padding:2px 8px;border-radius:10px;white-space:nowrap;
 }
 .data-table tr.child-row td{background:#fafbfd;padding-top:8px;padding-bottom:8px;}
 .data-table tr.child-row.collapsed{display:none;}
-.row-indent{display:flex;align-items:center;gap:8px;padding-left:26px;font-size:13px;color:var(--ink-700);}
+.row-indent{display:flex;align-items:center;gap:8px;padding-left:26px;font-size:var(--fs-base);color:var(--ink-700);}
 .row-indent.level-3{padding-left:46px;}
-.row-indent .row-indent-icon{color:var(--ink-400);font-size:13px;line-height:1;flex-shrink:0;margin-top:1px;align-self:flex-start;}
+.row-indent .row-indent-icon{color:var(--ink-400);font-size:var(--fs-base);line-height:1;flex-shrink:0;margin-top:1px;align-self:flex-start;}
 .row-indent b{color:var(--ink-900);font-weight:600;}
-.row-indent .row-indent-sub{display:block;color:var(--ink-500);font-size:12px;font-weight:500;margin-top:2px;}
+.row-indent .row-indent-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:500;margin-top:2px;}
 .row-indent .row-expand-btn{margin-left:-2px;}
 
 /* ---------- TABLA DE DETALLE ANIDADA (artículo / lote dentro de un medicamento) ---------- */
@@ -673,9 +689,9 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   margin:10px 20px 12px 46px;border:1px solid var(--border);border-radius:var(--radius);
   overflow:hidden;
 }
-.detail-table{width:100%;border-collapse:collapse;font-size:13px;}
+.detail-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .detail-table thead th{
-  background:var(--primary-50);color:var(--ink-700);font-weight:700;font-size:11px;
+  background:var(--primary-50);color:var(--ink-700);font-weight:700;font-size:var(--fs-xs);
   text-transform:uppercase;letter-spacing:.03em;padding:9px 14px;text-align:left;
   border-bottom:1px solid var(--primary-100);
 }
@@ -687,7 +703,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 /* ---------- INDICADOR ORTOGONAL "PARCIAL" (no reemplaza el estado, lo acompaña) ---------- */
 .partial-flag{
   display:inline-flex;align-items:center;gap:4px;margin-left:6px;
-  font-size:11px;font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
+  font-size:var(--fs-xs);font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
   padding:2px 8px;border-radius:10px;white-space:nowrap;border:1px solid #f4dfae;
 }
 .partial-flag .icon{width:11px;height:11px;flex-shrink:0;}
@@ -705,7 +721,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .dev-header-row{
   display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
   background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
-  font-size:11px;font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
 }
 .dev-header-row .col-actions{text-align:right;}
 

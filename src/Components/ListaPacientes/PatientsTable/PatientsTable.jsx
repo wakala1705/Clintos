@@ -42,7 +42,7 @@ export default function PatientsTable({
           </thead>
           <tbody>
             {patients.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} onDoubleClick={() => onVerFicha(p)}>
                 <td>
                   <div className="lp-patient-cell">
                     <PatientAvatar iniciales={p.iniciales} className="lp-avatar" />
@@ -56,7 +56,7 @@ export default function PatientsTable({
                 <td><span className={`estado-badge ${p.estado}`}><span className="dot"></span>{ESTADO_LABEL[p.estado]}</span></td>
                 <td>{p.celular}</td>
                 {showSede && <td>{p.sede}</td>}
-                <td>
+                <td onDoubleClick={(e) => e.stopPropagation()}>
                   <div className="lp-row-actions">
                     <button type="button" className="lp-row-action-btn" onClick={() => onVerFicha(p)} aria-label="Ver ficha completa" title="Ver ficha completa">
                       <LuEye className="icon" />

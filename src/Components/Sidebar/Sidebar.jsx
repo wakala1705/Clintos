@@ -13,6 +13,7 @@ import {
   LuChevronDown,
   LuChevronLeft,
   LuFileText,
+  LuFlaskConical,
   LuFolder,
   LuHeart,
   LuHeartPulse,
@@ -21,6 +22,7 @@ import {
   LuMoon,
   LuPackage,
   LuSettings,
+  LuShieldPlus,
   LuSiren,
   LuSquarePlus,
   LuStethoscope,
@@ -46,6 +48,8 @@ export default function Sidebar() {
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
   const isSolicitudConsumo = pathname === '/solicitud-consumo';
   const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isSolicitudConsumo;
+  const isVacunacion = pathname === '/vacunacion';
+  const isPyms = isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
 
   return (
@@ -99,6 +103,17 @@ export default function Sidebar() {
               </div>
             </div>
 
+            <div className={`nav-group sub${isPyms ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuShieldPlus className="icon nav-icon" />
+                <span className="label">PyMS</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                <Link href="/vacunacion" className={`nav-subitem${isVacunacion ? ' active' : ''}`}><LuSyringe className="icon" />Vacunación</Link>
+              </div>
+            </div>
+
             <div className={`nav-group sub${isGestionEnfermeria ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuBed className="icon nav-icon" />
@@ -112,7 +127,7 @@ export default function Sidebar() {
 
             <div className="nav-group sub">
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuSyringe className="icon nav-icon" />
+                <LuFlaskConical className="icon nav-icon" />
                 <span className="label">Ayudas DX</span>
                 <LuChevronDown className="icon chev" />
               </div>

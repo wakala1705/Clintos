@@ -1,0 +1,9 @@
+.vac-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.vac-pagination-label{font-size:var(--fs-base);color:var(--ink-500);}
+.vac-pagination-label b{color:var(--ink-900);font-weight:600;}
+.vac-pagination-controls{display:flex;align-items:center;gap:12px;}
+.vac-pagination-page{font-size:var(--fs-base);font-weight:600;color:var(--ink-700);white-space:nowrap;}
+.vac-pagination-controls .icon-btn-circle[disabled]{opacity:.4;cursor:not-allowed;}

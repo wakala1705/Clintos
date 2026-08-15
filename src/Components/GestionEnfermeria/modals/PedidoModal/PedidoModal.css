@@ -7,27 +7,27 @@
 .pedido-custom-wrap input[type="number"]{
   width:100px;border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-sm);padding:0 var(--space-3);
-  font-family:inherit;font-size:13px;color:var(--ink-900);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
 }
 .pedido-custom-wrap input[type="number"]:focus{outline:2px solid var(--primary);outline-offset:1px;}
-.pedido-custom-wrap span{font-size:13px;color:var(--ink-500);}
+.pedido-custom-wrap span{font-size:var(--fs-base);color:var(--ink-500);}
 
 .insumo-row{display:flex;align-items:center;gap:8px;padding:var(--space-2) 0;}
 .insumo-row + .insumo-row{border-top:1px solid #eef0f4;}
 .insumo-row select{
   flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-sm);padding:0 var(--space-3);
-  font-family:inherit;font-size:13px;color:var(--ink-900);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
 }
 .insumo-row .insumo-otro-input{
   flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-sm);padding:0 var(--space-3);
-  font-family:inherit;font-size:13px;color:var(--ink-900);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
 }
 .insumo-row .insumo-cantidad-input{
   width:70px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-sm);padding:0 var(--space-3);
-  font-family:inherit;font-size:13px;color:var(--ink-900);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
 }
 .insumo-row select:focus, .insumo-row input:focus{outline:2px solid var(--primary);outline-offset:1px;}
 .insumo-remove-btn{
@@ -42,10 +42,10 @@
 .insumos-resumen{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:4px;}
 .insumos-resumen-row{
   display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
-  padding:var(--space-2) var(--space-3);font-size:13px;
+  padding:var(--space-2) var(--space-3);font-size:var(--fs-base);
 }
 .insumos-resumen-row + .insumos-resumen-row{border-top:1px solid #eef0f4;}
 .insumos-resumen-row .ir-name{color:var(--ink-900);flex:1;min-width:0;}
-.insumos-resumen-row .ir-qty{font-size:12px;font-weight:600;color:var(--link-text);white-space:nowrap;}
+.insumos-resumen-row .ir-qty{font-size:var(--fs-sm);font-weight:600;color:var(--link-text);white-space:nowrap;}
 .insumos-resumen-row .insumo-remove-btn{width:26px;height:26px;}
 .insumos-resumen-row .insumo-remove-btn .icon{width:14px;height:14px;}

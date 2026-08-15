@@ -14,7 +14,7 @@
 }
 .card-tabs-bar::-webkit-scrollbar{display:none;height:0;}
 .card-tab{
-  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink-500);
+  display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:500;color:var(--ink-500);
   cursor:pointer;padding:12px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
   border:none;background:none;font-family:inherit;outline-offset:2px;
 }
@@ -40,7 +40,7 @@
 .ap-status-live{display:flex;flex-direction:column;flex:1;min-height:0;}
 .ap-loading{
   display:flex;align-items:center;justify-content:center;flex:1;
-  color:var(--ink-500);font-size:14px;
+  color:var(--ink-500);font-size:var(--fs-base);
 }
 .ap-not-found{
   display:flex;flex-direction:column;align-items:center;justify-content:center;

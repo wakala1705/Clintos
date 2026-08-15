@@ -11,7 +11,7 @@
 }
 .lp-search-field input{
   width:100%;height:var(--input-lg);padding:0 16px 0 38px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:14px;color:var(--ink-900);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
 }
 .lp-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
 .lp-search-field input::placeholder{color:var(--ink-400);}

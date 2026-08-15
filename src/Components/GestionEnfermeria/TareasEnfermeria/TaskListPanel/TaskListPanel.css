@@ -18,6 +18,6 @@
    dentro de un popover "Más filtros" que este toolbar no usa, así que se
    redeclara acotado a este botón en vez de generalizar esa regla). */
 .task-filtros-activos-btn .badge-count{
-  background:var(--primary);color:#fff;font-size:11px;font-weight:700;min-width:16px;height:16px;
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:700;min-width:16px;height:16px;
   border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
 }

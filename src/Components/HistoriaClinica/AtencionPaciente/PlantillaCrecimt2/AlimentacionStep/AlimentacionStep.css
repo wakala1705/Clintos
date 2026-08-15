@@ -7,7 +7,7 @@
   border:1px solid var(--border);border-radius:var(--radius);
   padding:16px;background:var(--surface);
 }
-.al-feed-title{font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);margin:0 0 12px;}
+.al-feed-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);margin:0 0 12px;}
 
 /* ---------- Tipo de lactancia (resultado derivado, no editable) ----------
    .pf-field-tag/.pf-field-tag-green: definidas en ../PlantillaCrecimt2.css
@@ -35,5 +35,5 @@
    competir visualmente con los campos clínicos — btn-secondary ya es el
    tratamiento menos prominente del set de botones, acá solo se reduce el
    padding para que se lea como una acción auxiliar, no como un CTA. */
-.al-hist-link{padding:6px 12px;font-size:var(--fs-xs);margin-top:16px;}
+.al-hist-link{padding:6px 12px;font-size:var(--fs-sm);margin-top:16px;}
 .al-hist-link .icon{width:15px;height:15px;}

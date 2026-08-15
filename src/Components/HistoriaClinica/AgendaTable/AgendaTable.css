@@ -88,17 +88,17 @@
 .hc-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .hc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .hc-card-id{min-width:0;}
-.hc-card-name{font-weight:600;color:var(--ink-900);font-size:13px;}
-.hc-card-doc{font-size:12px;color:var(--ink-500);margin-top:2px;}
-.hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink-700);}
+.hc-card-name{font-weight:600;color:var(--ink-900);font-size:var(--fs-base);}
+.hc-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:var(--fs-sm);color:var(--ink-700);}
 .hc-card-times b{color:var(--ink-500);font-weight:600;margin-right:4px;}
-.hc-card-meta{font-size:12px;color:var(--ink-500);border-top:1px solid #eef0f4;padding-top:8px;}
+.hc-card-meta{font-size:var(--fs-sm);color:var(--ink-500);border-top:1px solid #eef0f4;padding-top:8px;}
 /* Mismo motivo que .row-open-btn arriba: la tarjeta mobile también depende
    de onDoubleClick, sin equivalente táctil/teclado — este botón le da a
    cada tarjeta una acción explícita y enfocable. */
 .hc-card-open-btn{
   align-self:flex-end;display:flex;align-items:center;gap:4px;
-  font-family:inherit;font-size:12px;font-weight:600;color:var(--primary);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--primary);
   background:none;border:none;padding:4px 0;cursor:pointer;
 }
 .hc-card-open-btn .icon{width:15px;height:15px;}

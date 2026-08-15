@@ -11,9 +11,9 @@
   border:1px solid var(--border);border-radius:var(--radius);padding:16px;
   display:flex;flex-direction:column;gap:12px;
 }
-.vale-estr-card-title{margin:0;font-size:var(--fs-md);font-weight:600;color:var(--ink-900);}
+.vale-estr-card-title{margin:0;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
 .vale-estr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.vale-estr-row-label{font-size:var(--fs-xs);color:var(--ink-500);flex-shrink:0;}
+.vale-estr-row-label{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
 
 @media (min-width:1600px){
   .vale-estr-grid{grid-template-columns:repeat(3,1fr);}

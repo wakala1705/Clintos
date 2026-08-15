@@ -13,11 +13,11 @@
 }
 .pc-nav-btn:hover{background:var(--bg);}
 .pc-nav-btn .icon{width:16px;height:16px;}
-.pc-date-label{font-weight:600;font-size:14px;color:var(--ink-900);min-width:200px;text-align:center;}
+.pc-date-label{font-weight:600;font-size:var(--fs-base);color:var(--ink-900);min-width:200px;text-align:center;}
 
 .pc-toolbar-selectors{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .pc-select-wrap{display:flex;align-items:center;gap:8px;}
-.pc-select-wrap label{font-size:12px;color:var(--ink-500);font-weight:600;flex-shrink:0;}
+.pc-select-wrap label{font-size:var(--fs-sm);color:var(--ink-500);font-weight:600;flex-shrink:0;}
 
 /* Botón que reemplaza al <select> nativo — abre SelectorModal en vez de
    desplegar una lista del navegador (ver AgendaToolbar.jsx). Ancho fijo (no
@@ -27,7 +27,7 @@
   display:inline-flex;align-items:center;justify-content:space-between;gap:8px;
   width:200px;
   border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;
-  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-900);
+  font-family:inherit;font-size:var(--fs-base);font-weight:500;color:var(--ink-900);
   background:var(--surface);cursor:pointer;
 }
 .pc-picker-trigger:hover{background:var(--bg);border-color:var(--ink-400);}
@@ -47,7 +47,7 @@
 .pc-view-switch button{
   border:1px solid transparent;background:transparent;box-shadow:none;
   padding:7px 14px;border-radius:999px;font-weight:600;
-  color:var(--ink-700);font-size:12.5px;cursor:pointer;
+  color:var(--ink-700);font-size:var(--fs-sm);cursor:pointer;
   font-family:inherit;transition:background .15s,border-color .15s,color .15s;
 }
 .pc-view-switch button:hover{background:rgba(16,24,39,.05);}

@@ -41,6 +41,22 @@
     --link-text:var(--primary);
   }
 
+  /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+     patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+     AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+     --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+     vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+  html[data-contrast="high"]{
+    --border:#cbd3dd;
+    --ink-500:#4b5563;
+    --ink-400:#5b6474;
+  }
+  html[data-theme="dark"][data-contrast="high"]{
+    --border:#5b6a85;
+    --ink-500:#b7bfcc;
+    --ink-400:#a9b2c1;
+  }
+
   html[data-theme="dark"]{
     --primary-50:rgba(0,101,205,.16);
     --primary-100:rgba(0,101,205,.30);
@@ -81,10 +97,10 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    font-family:'Inter',sans-serif;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
     background:var(--bg);
     color:var(--ink-900);
-    font-size:14px;
+    font-size:var(--fs-base);
     -webkit-font-smoothing:antialiased;
   }
   .icon{
@@ -132,13 +148,13 @@
   }
 
   /* ---------- EMPTY STATES INTERNOS (contrato / servicios / agenda) ---------- */
-  .panel-empty-hint{font-size:12px;color:var(--ink-500);font-style:italic;padding:2px 0;}
+  .panel-empty-hint{font-size:var(--fs-sm);color:var(--ink-500);font-style:italic;padding:2px 0;}
   .services-empty, .agenda-empty-row{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:8px;padding:32px 16px;text-align:center;flex:1;
   }
   .services-empty .icon, .agenda-empty-row .icon{width:26px;height:26px;color:var(--ink-500);}
-  .services-empty .se-text, .agenda-empty-row .ae-text{font-size:13px;color:var(--ink-500);max-width:200px;line-height:1.4;}
+  .services-empty .se-text, .agenda-empty-row .ae-text{font-size:var(--fs-base);color:var(--ink-500);max-width:200px;line-height:1.4;}
 
   /* ---------- LEFT PANEL: CONTRATO + SERVICIOS (bloque único) ---------- */
   .side-panel{
@@ -161,19 +177,19 @@
   }
   .panel-card-title .lbl{
     display:flex;align-items:center;gap:8px;
-    font-size:11px;font-weight:600;color:var(--ink-500);
+    font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
     text-transform:uppercase;letter-spacing:.04em;
   }
   .panel-card-title .lbl .icon{width:16px;height:16px;color:var(--ink-500);}
   .link-btn{
-    font-size:12px;font-weight:500;color:var(--primary);cursor:pointer;
+    font-size:var(--fs-sm);font-weight:500;color:var(--primary);cursor:pointer;
     background:none;border:none;padding:0;
   }
   .link-btn:hover{text-decoration:underline;}
   .contract-row{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;}
   .contract-row:last-child{margin-bottom:0;}
-  .contract-row .k{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
-  .contract-row .v{font-size:14px;font-weight:500;color:var(--ink-900);}
+  .contract-row .k{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+  .contract-row .v{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);}
   .contract-row .v.link{color:var(--primary);}
 
   .services-card{
@@ -189,7 +205,7 @@
   .services-search input{
     width:100%;height:var(--input-md);padding:0 12px 0 32px;
     border:1px solid var(--border);border-radius:var(--radius);
-    font-family:inherit;font-size:13px;background:var(--bg);
+    font-family:inherit;font-size:var(--fs-base);background:var(--bg);
   }
   .services-search input::placeholder{color:var(--ink-400);}
   .services-search input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
@@ -203,9 +219,9 @@
   .service-item:hover{background:#f7f9fd;}
   .service-item.active{background:var(--primary-50);}
   .service-item .s-info{min-width:0;}
-  .service-item .s-name{font-size:13px;font-weight:500;color:var(--ink-900);line-height:1.3;}
-  .service-item .s-code{font-size:11px;font-weight:400;color:var(--ink-500);letter-spacing:.01em;margin-top:2px;}
-  .service-item .s-price{font-size:13px;font-weight:500;color:var(--ink-900);white-space:nowrap;flex-shrink:0;}
+  .service-item .s-name{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);line-height:1.3;}
+  .service-item .s-code{font-size:var(--fs-xs);font-weight:400;color:var(--ink-500);letter-spacing:.01em;margin-top:2px;}
+  .service-item .s-price{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);white-space:nowrap;flex-shrink:0;}
 
   /* ---------- RIGHT PANEL ---------- */
   .agenda-panel{
@@ -229,19 +245,19 @@
   }
   .filters-row .filter-icon{
     display:flex;align-items:center;gap:8px;
-    font-size:11px;font-weight:600;color:var(--ink-500);
+    font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
     text-transform:uppercase;letter-spacing:.04em;
     padding-bottom:8px;flex-shrink:0;
   }
   .filters-row .filter-icon .icon{width:17px;height:17px;color:var(--ink-500);}
   .select-field{display:flex;flex-direction:column;gap:4px;flex:1;max-width:180px;}
-  .select-field label{font-size:11px;font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+  .select-field label{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
   .select-field select{
     appearance:none;-webkit-appearance:none;
     background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
     border:1px solid var(--border);border-radius:var(--radius);
     height:var(--input-md);padding:0 32px 0 12px;
-    font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-900);
+    font-family:inherit;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);
     width:100%;cursor:pointer;
   }
   .select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
@@ -253,13 +269,13 @@
   .tabs{display:flex;gap:24px;}
   .tab{
     display:flex;align-items:center;gap:8px;
-    font-size:14px;font-weight:500;color:var(--ink-500);
+    font-size:var(--fs-base);font-weight:500;color:var(--ink-500);
     cursor:pointer;padding:4px 0;position:relative;
   }
   .tab:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
   .tab .count{
     background:var(--gray-bg,#eef0f4);color:var(--ink-700);
-    font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;
+    font-size:var(--fs-xs);font-weight:600;padding:1px 8px;border-radius:20px;
   }
   .tab.active{color:var(--primary);font-weight:500;}
   .tab.active .count{background:var(--primary-100);color:var(--primary-dark);}
@@ -269,7 +285,7 @@
   .date-picker-chip{
     display:flex;align-items:center;gap:8px;
     border:1px solid var(--border);border-radius:var(--radius);
-    padding:8px 12px;font-size:13px;font-weight:500;color:var(--ink-900);
+    padding:8px 12px;font-size:var(--fs-base);font-weight:500;color:var(--ink-900);
     cursor:pointer;background:var(--surface);flex-shrink:0;
   }
   .date-picker-chip .icon{width:17px;height:17px;color:var(--primary);}
@@ -278,11 +294,11 @@
     border-top:1px solid var(--border);
     flex:1;min-height:200px;overflow-y:auto;overflow-x:auto;
   }
-  table{width:100%;border-collapse:collapse;font-size:13px;}
+  table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
   thead th{
     position:sticky;top:0;z-index:1;
     background:#f7f8fb;text-align:left;
-    font-size:11px;font-weight:600;color:var(--ink-500);
+    font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
     text-transform:uppercase;letter-spacing:.03em;
     padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
   }
@@ -303,10 +319,10 @@
   tbody tr.row-empty:hover{background:transparent;}
 
   .hora-cell{display:flex;align-items:center;gap:8px;height:37px;padding-top:0;padding-bottom:0;}
-  .hora-cell .h{font-weight:500;color:var(--ink-900);font-size:14px;}
-  .hora-cell .m{font-size:11px;color:var(--ink-500);}
+  .hora-cell .h{font-weight:500;color:var(--ink-900);font-size:var(--fs-base);}
+  .hora-cell .m{font-size:var(--fs-xs);color:var(--ink-500);}
   .llegada-cell{height:37px;padding-top:0;padding-bottom:0;}
-  .llegada-chip{display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:500;font-size:13px;}
+  .llegada-chip{display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:500;font-size:var(--fs-base);}
   .llegada-chip .icon{width:15px;height:15px;}
   .llegada-dash{color:var(--ink-500);font-weight:400;}
   .paciente-cell{height:37px;padding-top:0;padding-bottom:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -314,7 +330,7 @@
   .paciente-cell .p-name.muted{font-weight:600;font-style:italic;color:var(--ink-500);}
 
   .badge{
-    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+    font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;
     white-space:nowrap;display:inline-block;
   }
   .badge.eps{background:var(--status-info-bg);color:var(--status-info-fg);}
@@ -324,7 +340,7 @@
      .dp-status-badge (GestionEnfermeria) — mismo tamaño, padding y radio. */
   .estado-badge{
     display:inline-flex;align-items:center;gap:6px;
-    font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+    font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
   }
   .estado-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .estado-badge.disponible{background:var(--green-bg);color:#0d7a3d;}
@@ -359,7 +375,7 @@
     display:flex;align-items:center;gap:24px;
     padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;
   }
-  .legend-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-700);}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:600;color:var(--ink-700);}
   .legend-item .dot{width:8px;height:8px;border-radius:50%;}
   .legend-item .dot.green{background:var(--green);}
   .legend-item .dot.red{background:var(--red);}
@@ -371,13 +387,13 @@
     display:flex;align-items:center;justify-content:space-between;
     flex-shrink:0;
   }
-  .footer-note{font-size:13px;color:var(--ink-500);}
+  .footer-note{font-size:var(--fs-base);color:var(--ink-500);}
   .footer-note b{color:var(--ink-900);font-weight:500;}
   .footer-actions{display:flex;gap:12px;}
 
   .btn{
     display:inline-flex;align-items:center;gap:8px;
-    font-family:inherit;font-weight:500;font-size:13px;
+    font-family:inherit;font-weight:500;font-size:var(--fs-base);
     padding:8px 16px;border-radius:var(--radius);
     border:1px solid transparent;cursor:pointer;
     transition:background .15s,border-color .15s,color .15s,opacity .15s;

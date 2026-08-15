@@ -5,7 +5,7 @@
 .form-select-trigger{
   display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
   height:var(--input-md);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--surface);font-family:inherit;font-size:13px;color:var(--ink-900);cursor:pointer;text-align:left;
+  background:var(--surface);font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;text-align:left;
 }
 .form-select-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .form-select-trigger:disabled{background:var(--bg);color:var(--ink-400);cursor:not-allowed;}
@@ -23,7 +23,7 @@
 .form-select-option{
   display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
-  font-size:13px;font-weight:500;color:var(--ink-700);cursor:pointer;text-align:left;
+  font-size:var(--fs-base);font-weight:500;color:var(--ink-700);cursor:pointer;text-align:left;
 }
 .form-select-option:hover{background:var(--bg);}
 .form-select-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

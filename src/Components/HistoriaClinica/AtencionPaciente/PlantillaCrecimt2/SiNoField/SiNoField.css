@@ -1,0 +1,4 @@
+/* Todas las clases que usa este componente (.form-field, .pf-condition-label,
+   .pf-toggle-group, .pf-toggle-btn) están definidas en ../PlantillaCrecimt2.css
+   — cascan desde ahí porque son primitivos reutilizables (mismo criterio que
+   TriStateField.css, ver AGENTS.md). Nada exclusivo de SiNoField todavía. */

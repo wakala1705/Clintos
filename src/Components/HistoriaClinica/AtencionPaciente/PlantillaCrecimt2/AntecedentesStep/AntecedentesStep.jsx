@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import './AntecedentesStep.css';
 import TriStateField from '../TriStateField/TriStateField';
+import SiNoField from '../SiNoField/SiNoField';
 import { LuChevronDown, LuUser, LuUsers } from 'react-icons/lu';
 
 const SI_NO_DESCONOCE = [
@@ -63,17 +64,19 @@ const VDRL_PARTO = [
   { value: 'desconoce', label: 'Desconoce' },
 ];
 
-// "Antecedentes / condiciones de salud" (Bloque 1): checklist rápido de 5,
-// sin "Describa" al marcar "Sí" (encargo explícito, no aplica progressive
-// disclosure acá). Asma queda aparte, en su propia fila de 1 — a diferencia
-// de las 5 de arriba, SÍ lleva "Describa" al marcar "Sí" (encargo explícito).
+// "Antecedentes / condiciones de salud" (Bloque 1): checklist rápido de 4 en
+// una fila, sin "Describa" al marcar "Sí" (encargo explícito, no aplica
+// progressive disclosure acá). Alergias y Asma quedan aparte, en su propia
+// fila de 2 (encargo explícito de reagrupar el layout) — a diferencia de las
+// 4 de arriba, Asma SÍ lleva "Describa" al marcar "Sí" (encargo explícito);
+// Alergias no, mismo criterio que el resto del checklist de 4.
 const CONDICIONES_SALUD = [
   { key: 'diabetes', label: 'Diabetes' },
   { key: 'tuberculosis', label: 'Tuberculosis' },
-  { key: 'alergias', label: 'Alergias' },
   { key: 'dermatitis', label: 'Dermatitis atópica' },
   { key: 'mentales', label: 'Enfermedades mentales' },
 ];
+const CONDICION_ALERGIAS = { key: 'alergias', label: 'Alergias' };
 const CONDICION_ASMA = { key: 'asma', label: 'Asma' };
 // "Antecedentes familiares y desarrollo" (Bloque 2): a diferencia del
 // checklist de arriba, SÍ mantiene el "Describa" al marcar "Sí" — mismo
@@ -84,7 +87,7 @@ const CONDICIONES_FAMILIARES_DESARROLLO = [
   { key: 'desarrolloInfantil', label: 'Problemas de desarrollo infantil' },
 ];
 const CONDICIONES_FAMILIARES = [
-  ...CONDICIONES_SALUD, CONDICION_ASMA, ...CONDICIONES_FAMILIARES_DESARROLLO,
+  ...CONDICIONES_SALUD, CONDICION_ALERGIAS, CONDICION_ASMA, ...CONDICIONES_FAMILIARES_DESARROLLO,
 ];
 
 const SUCESOS_VITALES = [
@@ -238,7 +241,7 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
           <div className="pf-block-body">
           <div className="pf-group">
             <h2 className="pf-card-title">Antecedentes / condiciones de salud</h2>
-            <div className="pf-grid-5">
+            <div className="pf-grid-4">
               {CONDICIONES_SALUD.map((c) => {
                 const estado = antecedentesFamiliares[c.key];
                 return (
@@ -251,7 +254,12 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                 );
               })}
             </div>
-            <div className="pf-grid-2 ac-field-spaced">
+            <div className="pf-grid-2col ac-field-spaced">
+              <TriStateField
+                label={CONDICION_ALERGIAS.label}
+                value={antecedentesFamiliares[CONDICION_ALERGIAS.key].valor}
+                onChange={(v) => updateCondicion(setAntecedentesFamiliares, CONDICION_ALERGIAS.key, { valor: v })}
+              />
               <TriStateField
                 label={CONDICION_ASMA.label}
                 value={antecedentesFamiliares[CONDICION_ASMA.key].valor}
@@ -394,24 +402,16 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
           <div className="pf-group">
             <h3 className="pf-subheading">Antecedentes Perinatales Obstétricos</h3>
             <div className="pf-grid-4">
-              <div className="form-field">
-                <label htmlFor="ob-deseado">Embarazo deseado</label>
-                <select
-                  id="ob-deseado" value={embarazo.embarazoDeseado}
-                  onChange={(e) => setEmbarazo((p) => ({ ...p, embarazoDeseado: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="ob-control">Control prenatal</label>
-                <select
-                  id="ob-control" value={embarazo.controlPrenatal}
-                  onChange={(e) => setEmbarazo((p) => ({ ...p, controlPrenatal: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="ob-deseado" label="Embarazo deseado" options={SI_NO_DESCONOCE}
+                value={embarazo.embarazoDeseado}
+                onChange={(v) => setEmbarazo((p) => ({ ...p, embarazoDeseado: v }))}
+              />
+              <SiNoField
+                id="ob-control" label="Control prenatal" options={SI_NO_DESCONOCE}
+                value={embarazo.controlPrenatal}
+                onChange={(v) => setEmbarazo((p) => ({ ...p, controlPrenatal: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="ob-ncontroles">No. de controles</label>
                 <input
@@ -446,42 +446,26 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                   onChange={(e) => setGestacion((p) => ({ ...p, vacunasAntitetanicas: e.target.value }))}
                 />
               </div>
-              <div className="form-field">
-                <label htmlFor="ge-dtpa">Vacuna DTPa</label>
-                <select
-                  id="ge-dtpa" value={gestacion.vacunaDTPa}
-                  onChange={(e) => setGestacion((p) => ({ ...p, vacunaDTPa: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="ge-vdrl">VDRL prenatal</label>
-                <select
-                  id="ge-vdrl" value={gestacion.vdrlPrenatal}
-                  onChange={(e) => setGestacion((p) => ({ ...p, vdrlPrenatal: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="ge-elisa">ELISA para VIH</label>
-                <select
-                  id="ge-elisa" value={gestacion.elisaVIH}
-                  onChange={(e) => setGestacion((p) => ({ ...p, elisaVIH: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="ge-western">Western Blood</label>
-                <select
-                  id="ge-western" value={gestacion.westernBlot}
-                  onChange={(e) => setGestacion((p) => ({ ...p, westernBlot: e.target.value }))}
-                >
-                  {SI_NO_DESCONOCE.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="ge-dtpa" label="Vacuna DTPa" options={SI_NO_DESCONOCE}
+                value={gestacion.vacunaDTPa}
+                onChange={(v) => setGestacion((p) => ({ ...p, vacunaDTPa: v }))}
+              />
+              <SiNoField
+                id="ge-vdrl" label="VDRL prenatal" options={SI_NO_DESCONOCE}
+                value={gestacion.vdrlPrenatal}
+                onChange={(v) => setGestacion((p) => ({ ...p, vdrlPrenatal: v }))}
+              />
+              <SiNoField
+                id="ge-elisa" label="ELISA para VIH" options={SI_NO_DESCONOCE}
+                value={gestacion.elisaVIH}
+                onChange={(v) => setGestacion((p) => ({ ...p, elisaVIH: v }))}
+              />
+              <SiNoField
+                id="ge-western" label="Western Blood" options={SI_NO_DESCONOCE}
+                value={gestacion.westernBlot}
+                onChange={(v) => setGestacion((p) => ({ ...p, westernBlot: v }))}
+              />
             </div>
           </div>
 
@@ -523,15 +507,11 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                   {PRESENTACION_PRODUCTO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <div className="form-field">
-                <label htmlFor="pn-producto-unico">Producto único</label>
-                <select
-                  id="pn-producto-unico" value={perinatalNeonato.productoUnico}
-                  onChange={(e) => setPerinatalNeonato((p) => ({ ...p, productoUnico: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pn-producto-unico" label="Producto único" options={SI_NO}
+                value={perinatalNeonato.productoUnico}
+                onChange={(v) => setPerinatalNeonato((p) => ({ ...p, productoUnico: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="pn-producto-no">No.</label>
                 <input
@@ -582,34 +562,22 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                   onChange={(e) => setPerinatalNeonato((p) => ({ ...p, apgar5Min: e.target.value }))}
                 />
               </div>
-              <div className="form-field">
-                <label htmlFor="pn-apgar-desconoce">Desconoce</label>
-                <select
-                  id="pn-apgar-desconoce" value={perinatalNeonato.apgarDesconoce}
-                  onChange={(e) => setPerinatalNeonato((p) => ({ ...p, apgarDesconoce: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pn-apgar-desconoce" label="Desconoce" options={SI_NO}
+                value={perinatalNeonato.apgarDesconoce}
+                onChange={(v) => setPerinatalNeonato((p) => ({ ...p, apgarDesconoce: v }))}
+              />
 
-              <div className="form-field">
-                <label htmlFor="pn-reanimacion">Necesidad de reanimación</label>
-                <select
-                  id="pn-reanimacion" value={perinatalNeonato.necesidadReanimacion}
-                  onChange={(e) => setPerinatalNeonato((p) => ({ ...p, necesidadReanimacion: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pn-tsh">TSH Neonatal</label>
-                <select
-                  id="pn-tsh" value={perinatalNeonato.tshNeonatal}
-                  onChange={(e) => setPerinatalNeonato((p) => ({ ...p, tshNeonatal: e.target.value }))}
-                >
-                  {SI_NO_NA.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pn-reanimacion" label="Necesidad de reanimación" options={SI_NO}
+                value={perinatalNeonato.necesidadReanimacion}
+                onChange={(v) => setPerinatalNeonato((p) => ({ ...p, necesidadReanimacion: v }))}
+              />
+              <SiNoField
+                id="pn-tsh" label="TSH Neonatal" options={SI_NO_NA}
+                value={perinatalNeonato.tshNeonatal}
+                onChange={(v) => setPerinatalNeonato((p) => ({ ...p, tshNeonatal: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="pn-tsh-resultado">Resultado TSH</label>
                 <select
@@ -670,116 +638,68 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
           <div className="pf-group">
             <h3 className="pf-subheading">Antecedentes Patológicos</h3>
             <div className="pf-grid-4">
-              <div className="form-field">
-                <label htmlFor="pt-respiratorias">Enfermedades respiratorias</label>
-                <select
-                  id="pt-respiratorias" value={antecedentesPatologicos.respiratorias}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, respiratorias: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-diarrea">Diarrea</label>
-                <select
-                  id="pt-diarrea" value={antecedentesPatologicos.diarrea}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, diarrea: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-fiebre">Fiebre</label>
-                <select
-                  id="pt-fiebre" value={antecedentesPatologicos.fiebre}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, fiebre: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-sarampion">Sarampión</label>
-                <select
-                  id="pt-sarampion" value={antecedentesPatologicos.sarampion}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, sarampion: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-polio">Polio</label>
-                <select
-                  id="pt-polio" value={antecedentesPatologicos.polio}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, polio: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-respiratorias" label="Enfermedades respiratorias" options={SI_NO}
+                value={antecedentesPatologicos.respiratorias}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, respiratorias: v }))}
+              />
+              <SiNoField
+                id="pt-diarrea" label="Diarrea" options={SI_NO}
+                value={antecedentesPatologicos.diarrea}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, diarrea: v }))}
+              />
+              <SiNoField
+                id="pt-fiebre" label="Fiebre" options={SI_NO}
+                value={antecedentesPatologicos.fiebre}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, fiebre: v }))}
+              />
+              <SiNoField
+                id="pt-sarampion" label="Sarampión" options={SI_NO}
+                value={antecedentesPatologicos.sarampion}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, sarampion: v }))}
+              />
+              <SiNoField
+                id="pt-polio" label="Polio" options={SI_NO}
+                value={antecedentesPatologicos.polio}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, polio: v }))}
+              />
 
-              <div className="form-field">
-                <label htmlFor="pt-convulsivos">Síndromes convulsivos</label>
-                <select
-                  id="pt-convulsivos" value={antecedentesPatologicos.convulsivos}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, convulsivos: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-parotiditis">Parotiditis</label>
-                <select
-                  id="pt-parotiditis" value={antecedentesPatologicos.parotiditis}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, parotiditis: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-oido">Probl. de oído</label>
-                <select
-                  id="pt-oido" value={antecedentesPatologicos.probOido}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, probOido: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-tosferina">Tosferina</label>
-                <select
-                  id="pt-tosferina" value={antecedentesPatologicos.tosferina}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, tosferina: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-garganta">Probl. Garganta</label>
-                <select
-                  id="pt-garganta" value={antecedentesPatologicos.probGarganta}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, probGarganta: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-convulsivos" label="Síndromes convulsivos" options={SI_NO}
+                value={antecedentesPatologicos.convulsivos}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, convulsivos: v }))}
+              />
+              <SiNoField
+                id="pt-parotiditis" label="Parotiditis" options={SI_NO}
+                value={antecedentesPatologicos.parotiditis}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, parotiditis: v }))}
+              />
+              <SiNoField
+                id="pt-oido" label="Probl. de oído" options={SI_NO}
+                value={antecedentesPatologicos.probOido}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, probOido: v }))}
+              />
+              <SiNoField
+                id="pt-tosferina" label="Tosferina" options={SI_NO}
+                value={antecedentesPatologicos.tosferina}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, tosferina: v }))}
+              />
+              <SiNoField
+                id="pt-garganta" label="Probl. Garganta" options={SI_NO}
+                value={antecedentesPatologicos.probGarganta}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, probGarganta: v }))}
+              />
 
-              <div className="form-field">
-                <label htmlFor="pt-bucal">Problemas de salud bucal</label>
-                <select
-                  id="pt-bucal" value={antecedentesPatologicos.saludBucal}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, saludBucal: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-hipotiroidismo">Hipotiroidismo congénito</label>
-                <select
-                  id="pt-hipotiroidismo" value={antecedentesPatologicos.hipotiroidismoCongenito}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, hipotiroidismoCongenito: e.target.value }))}
-                >
-                  {SI_NO_NA.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-bucal" label="Problemas de salud bucal" options={SI_NO}
+                value={antecedentesPatologicos.saludBucal}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, saludBucal: v }))}
+              />
+              <SiNoField
+                id="pt-hipotiroidismo" label="Hipotiroidismo congénito" options={SI_NO_NA}
+                value={antecedentesPatologicos.hipotiroidismoCongenito}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, hipotiroidismoCongenito: v }))}
+              />
             </div>
 
             <div className="pf-grid-2col ac-field-spaced">
@@ -808,24 +728,16 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
             </div>
 
             <div className="pf-grid-4">
-              <div className="form-field">
-                <label htmlFor="pt-urgencias">Consultas a urgencias</label>
-                <select
-                  id="pt-urgencias" value={antecedentesPatologicos.consultasUrgencias}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, consultasUrgencias: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-sintomatologia">Sintomatología Recurrente</label>
-                <select
-                  id="pt-sintomatologia" value={antecedentesPatologicos.sintomatologiaRecurrente}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, sintomatologiaRecurrente: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-urgencias" label="Consultas a urgencias" options={SI_NO}
+                value={antecedentesPatologicos.consultasUrgencias}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, consultasUrgencias: v }))}
+              />
+              <SiNoField
+                id="pt-sintomatologia" label="Sintomatología Recurrente" options={SI_NO}
+                value={antecedentesPatologicos.sintomatologiaRecurrente}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, sintomatologiaRecurrente: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="pt-describa-sintomatologia">Describa</label>
                 <input
@@ -833,43 +745,27 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                   onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, describaSintomatologia: e.target.value }))}
                 />
               </div>
-              <div className="form-field">
-                <label htmlFor="pt-hospitalarios">Hospitalarios</label>
-                <select
-                  id="pt-hospitalarios" value={antecedentesPatologicos.hospitalarios}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, hospitalarios: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-transfusionales">Transfusionales</label>
-                <select
-                  id="pt-transfusionales" value={antecedentesPatologicos.transfusionales}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, transfusionales: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-hospitalarios" label="Hospitalarios" options={SI_NO}
+                value={antecedentesPatologicos.hospitalarios}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, hospitalarios: v }))}
+              />
+              <SiNoField
+                id="pt-transfusionales" label="Transfusionales" options={SI_NO}
+                value={antecedentesPatologicos.transfusionales}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, transfusionales: v }))}
+              />
 
-              <div className="form-field">
-                <label htmlFor="pt-alergicos">Alérgicos</label>
-                <select
-                  id="pt-alergicos" value={antecedentesPatologicos.alergicos}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, alergicos: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label htmlFor="pt-farmacologicos">Farmacológicos</label>
-                <select
-                  id="pt-farmacologicos" value={antecedentesPatologicos.farmacologicos}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, farmacologicos: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-alergicos" label="Alérgicos" options={SI_NO}
+                value={antecedentesPatologicos.alergicos}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, alergicos: v }))}
+              />
+              <SiNoField
+                id="pt-farmacologicos" label="Farmacológicos" options={SI_NO}
+                value={antecedentesPatologicos.farmacologicos}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, farmacologicos: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="pt-describa-alergicos">Describa</label>
                 <input
@@ -878,15 +774,11 @@ const AntecedentesStep = forwardRef(function AntecedentesStep(
                 />
               </div>
 
-              <div className="form-field">
-                <label htmlFor="pt-otros">Otros</label>
-                <select
-                  id="pt-otros" value={antecedentesPatologicos.otros}
-                  onChange={(e) => setAntecedentesPatologicos((p) => ({ ...p, otros: e.target.value }))}
-                >
-                  {SI_NO.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+              <SiNoField
+                id="pt-otros" label="Otros" options={SI_NO}
+                value={antecedentesPatologicos.otros}
+                onChange={(v) => setAntecedentesPatologicos((p) => ({ ...p, otros: v }))}
+              />
               <div className="form-field">
                 <label htmlFor="pt-describa-otros">Describa</label>
                 <input

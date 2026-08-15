@@ -33,7 +33,7 @@
 .ef-bp-field:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
 .ef-bp-field input{
   border:none;padding:0;height:auto;width:100%;min-width:0;text-align:center;
-  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:transparent;
 }
 .ef-bp-field input:focus{outline:none;}
 /* -moz-appearance:textfield: Firefox no acepta appearance:none en number
@@ -44,7 +44,7 @@
   -webkit-appearance:none;margin:0;
 }
 .ef-bp-sep{color:var(--ink-400);font-weight:600;flex-shrink:0;}
-.ef-bp-unit{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
+.ef-bp-unit{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
 
 /* ---------- Examen físico por sistemas ----------
    2 columnas reales en desktop (Columna izquierda / Columna derecha del

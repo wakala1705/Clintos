@@ -7,8 +7,8 @@
   display:flex;flex-direction:column;gap:10px;
 }
 .ef-system-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.ef-system-label{font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);}
-.ef-system-toggle .pf-toggle-btn{font-size:var(--fs-2xs);padding:7px 10px;min-height:32px;}
+.ef-system-label{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.ef-system-toggle .pf-toggle-btn{font-size:var(--fs-xs);padding:7px 10px;min-height:32px;}
 
 /* Mismo par "fondo claro + texto saturado" que .badge.status-* (ver
    PatientBanner.css) en vez de fondo saturado + texto blanco — ya validado

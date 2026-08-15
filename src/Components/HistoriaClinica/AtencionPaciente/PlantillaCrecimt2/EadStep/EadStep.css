@@ -19,7 +19,7 @@
   padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
 .ead-actionbar-caption{
-  font-size:var(--fs-2xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
+  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
 }
 .ead-actionbar-buttons{display:flex;align-items:center;gap:10px;}
 
