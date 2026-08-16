@@ -1,20 +1,32 @@
 import './ScheduleGrid.css';
 import {
-  NOW_DEMO, SLOTS, START_HOUR, STATE_LABEL, TIPO_LABEL, slotIndex, timeLabel,
+  NOW_DEMO, SLOTS, SLOTS_PER_HOUR, START_HOUR, STATE_LABEL, TIPO_LABEL, slotIndex, timeLabel,
 } from '@/hooks/ProgramarCita/agendaMockData';
 
 const HEADER_H = 52;
-const ROW_H = 32;
+// Altura de franja por defecto (32px, la opción "Media" de
+// RowHeightDropdown) — 24/32/40px por franja de 20 min, elegible desde el
+// header de la página (ver rowHeight en ProgramarCita.jsx).
+const DEFAULT_ROW_H = 32;
 
 // Grilla genérica de horario: no sabe si las columnas son días de la semana
 // de un médico o médicos de una especialidad — solo pinta lo que recibe.
 // `resolveColId(appt)` le dice a qué columna pertenece cada cita.
-export default function ScheduleGrid({ columns, appointments, resolveColId, onSelectAppointment }) {
+// `onEmptyCellClick(colId, slotIdx)` reemplaza al `window.ncOpen()` sin
+// contexto que había antes: el padre (ProgramarCita.jsx) sabe a qué
+// médico/día/hora real corresponde esa columna+franja y arma el prefill del
+// wizard con eso, en vez de forzar a re-elegir lo que el usuario ya señaló
+// con el clic.
+export default function ScheduleGrid({
+  columns, appointments, resolveColId, onSelectAppointment, onEmptyCellClick, showNow = true,
+  rowHeight = DEFAULT_ROW_H,
+}) {
   const nCols = columns.length;
+  const ROW_H = rowHeight;
 
   const [nowH, nowM] = NOW_DEMO.split(':').map(Number);
-  const nowIdxFraction = (nowH - START_HOUR) * 2 + nowM / 30;
-  const showNowLine = nowIdxFraction >= 0 && nowIdxFraction <= SLOTS;
+  const nowIdxFraction = (nowH - START_HOUR) * SLOTS_PER_HOUR + nowM / (60 / SLOTS_PER_HOUR);
+  const showNowLine = showNow && nowIdxFraction >= 0 && nowIdxFraction <= SLOTS;
   const nowTopPx = HEADER_H + nowIdxFraction * ROW_H;
 
   const hourSlots = Array.from({ length: SLOTS }, (_, s) => s);
@@ -39,7 +51,7 @@ export default function ScheduleGrid({ columns, appointments, resolveColId, onSe
 
         {hourSlots.map((s) => (
           <div key={`gutter-${s}`} className="pc-time-gutter" style={{ gridColumn: 1, gridRow: s + 2 }}>
-            {s % 2 === 0 ? timeLabel(s) : ''}
+            {s % SLOTS_PER_HOUR === 0 ? timeLabel(s) : ''}
           </div>
         ))}
 
@@ -47,9 +59,9 @@ export default function ScheduleGrid({ columns, appointments, resolveColId, onSe
           <button
             type="button"
             key={`cell-${s}-${c.id}`}
-            className={`pc-slot-cell${s % 2 === 0 ? ' hour-line' : ''}`}
+            className={`pc-slot-cell${s % SLOTS_PER_HOUR === 0 ? ' hour-line' : ''}`}
             style={{ gridColumn: i + 2, gridRow: s + 2 }}
-            onClick={() => window.ncOpen()}
+            onClick={() => (onEmptyCellClick ? onEmptyCellClick(c.id, s) : window.ncOpen())}
           >
             <span className="pc-add-hint">+ Agendar</span>
           </button>

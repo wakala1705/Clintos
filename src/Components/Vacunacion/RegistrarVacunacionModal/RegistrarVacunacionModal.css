@@ -7,7 +7,7 @@
 /* Wide modal, no drawer, no página propia (encargo explícito) — 720-800px. */
 .rv-modal{width:760px;}
 
-.modal-header{align-items:flex-start;}
+.modal-header{align-items:center;}
 .rv-modal-desc{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
 
 .rv-modal-body{padding:20px 24px;overflow-y:auto;}

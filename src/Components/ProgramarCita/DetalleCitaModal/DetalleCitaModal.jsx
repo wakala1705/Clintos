@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import './DetalleCitaModal.css';
 import {
-  DOCTORS, STATE_LABEL, VALOR_BY_TIPO, fmtCOP,
+  DOCTORS, SERVICIO_BY_TIPO, STATE_LABEL, VALOR_BY_TIPO, fmtCOP,
 } from '@/hooks/ProgramarCita/agendaMockData';
 import {
   LuX, LuCheck, LuReceipt, LuCalendarClock, LuUserX, LuCalendarX,
@@ -30,6 +30,11 @@ export default function DetalleCitaModal({ appointment, onClose }) {
   if (!appointment) return null;
   const doctor = DOCTORS.find((d) => d.id === appointment.doctorId);
   const estadoClass = appointment.estado.replace('_', '-');
+  // Las citas agendadas por el wizard traen su propio `servicio` (el/los
+  // procedimiento(s) elegidos en el paso "Servicios") — el resto (citas de
+  // ejemplo del panel) cae al servicio por defecto según `tipo`, ver
+  // SERVICIO_BY_TIPO.
+  const servicioLabel = appointment.servicio || SERVICIO_BY_TIPO[appointment.tipo]?.nombre || SIN_DATO;
 
   return (
     <div className="pc-modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -52,8 +57,9 @@ export default function DetalleCitaModal({ appointment, onClose }) {
             <div className="pc-detail-grid">
               <div className="pc-detail-field"><span className="k">Médico</span><span className="v">{doctor?.nombre}</span></div>
               <div className="pc-detail-field"><span className="k">Consultorio</span><span className="v">{doctor?.consultorio}</span></div>
-              <div className="pc-detail-field"><span className="k">Horario</span><span className="v">{appointment.start} · {appointment.duration * 30} min</span></div>
+              <div className="pc-detail-field"><span className="k">Horario</span><span className="v">{appointment.start} · {appointment.duration * 20} min</span></div>
               <div className="pc-detail-field"><span className="k">EPS</span><span className="v">{appointment.eps}</span></div>
+              <div className="pc-detail-field full"><span className="k">Servicio</span><span className="v">{servicioLabel}</span></div>
             </div>
           </div>
 

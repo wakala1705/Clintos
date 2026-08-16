@@ -4,18 +4,27 @@
 // — ver AGENTS.md y src/Components/NuevaCita/NuevaCitaFlow.jsx.
 // getPatient()/setPatient() son inyectados por la página anfitriona: quién
 // es 'el paciente activo' para fines de agendamiento sigue siendo dueño de
-// esa página (en AsignacionCitas también alimenta el PatientBanner; en
-// ProgramarCita solo vive para este flujo). onAppointmentConfirmed es opcional
-// y solo lo usa AsignacionCitas hoy, para reflejar la cita en su tabla
-// "Agenda del día" cuando es para hoy — ver ncConfirmar(). El catálogo de
-// especialidades/médicos del paso "Selecciona la especialidad"/"Selecciona
+// esa página (en AsignacionCitas también alimenta el PatientBanner y debe
+// seguir activo tras agendar, para poder hacer más cosas con ese mismo
+// paciente sin re-buscarlo; en ProgramarCita el ref solo vive para este
+// flujo — ver clearPatientAfterConfirm más abajo). onAppointmentConfirmed es
+// opcional y solo lo usa AsignacionCitas hoy, para reflejar la cita en su
+// tabla "Agenda del día" cuando es para hoy — ver ncConfirmar(). El catálogo
+// de especialidades/médicos del paso "Selecciona la especialidad"/"Selecciona
 // el médico" se deriva de SPECIALTIES/DOCTORS (agendaMockData.js) en vez de
 // tener su propia lista — mismas especialidades y médicos que ya usa
 // Programar Cita, para que se sientan la misma base de datos en todo el
 // producto (ver NC_ESPECIALIDADES/NC_MEDICOS/NC_SLOTS más abajo).
 import { SPECIALTIES, DOCTORS } from '@/hooks/ProgramarCita/agendaMockData';
 
-export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, onAppointmentConfirmed } = {}) {
+export function initNuevaCita({
+  getPatient = () => null, setPatient = () => {}, onAppointmentConfirmed,
+  // true en páginas donde el paciente solo existe para este wizard (ver
+  // ProgramarCita.jsx): al confirmar, se limpia para que la próxima cita
+  // vuelva a arrancar en el buscador de pacientes en vez de reutilizar en
+  // silencio al mismo paciente de la cita anterior.
+  clearPatientAfterConfirm = false,
+} = {}) {
 
   const PATIENTS = [
     { iniciales:'LS', nombre:'Laura Sofía Martínez Gómez',   edad:34, sexo:'Femenino',  ciudad:'Bogotá D.C.',    documento:'1.032.847.291', telefono:'310 842 9173', eps:'Sura',       estado:'activo',     citasFuturas:2 },
@@ -27,6 +36,19 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
     { iniciales:'SM', nombre:'Sandra Milena Vargas Díaz',    edad:41, sexo:'Femenino',  ciudad:'Pereira',        documento:'52.483.917',    telefono:'305 555 6789', eps:'Coomeva',    estado:'activo',     citasFuturas:1 },
   ];
   const PATIENT_ESTADO_LABEL = { activo:'Activo', inactivo:'Inactivo', suspendido:'Suspendido' };
+
+  // Este flujo se monta de forma independiente en varias páginas
+  // (AsignacionCitas, FichaPaciente, ProgramarCita), cada una con su propia
+  // instancia de <NuevaCitaFlow/> pero usando los MISMOS ids de overlay
+  // (nc-overlay, ps-overlay...). Si la navegación entre rutas ocurre
+  // mientras el wizard estaba abierto en la página anterior (ej. se
+  // abandona sin cerrar), el nuevo montaje puede heredar visualmente ese
+  // estado "open" antes de que este módulo vuelva a tomar control — se
+  // fuerza a cerrado acá para que cada montaje arranque siempre limpio, sin
+  // depender de en qué estado haya quedado la página anterior.
+  ['ps-overlay', 'nc-overlay', 'nc-discard-overlay', 'ap-overlay', 'ps-context-menu'].forEach((id) => {
+    document.getElementById(id)?.classList.remove('open');
+  });
 
   let psSelectedIdx = null;
 
@@ -135,7 +157,9 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
     if(psSelectedIdx === null) return;
     setPatient(PATIENTS[psSelectedIdx]);
     closePatientSearch();
-    ncOpen();
+    const prefill = ncPendingPrefill;
+    ncPendingPrefill = null;
+    ncOpen(prefill);
   }
 
   /* ================================================================
@@ -290,6 +314,11 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
   ];
 
   const NC_FINALIDADES = ['Primera vez','Control','Urgencia','Procedimiento','Valoración'];
+  // Traduce la finalidad (dominio del wizard) al `tipo` que ya conocen
+  // ScheduleGrid/DetalleCitaModal en Programar Cita (TIPO_LABEL/VALOR_BY_TIPO
+  // en agendaMockData.js solo tienen esas 3 claves) — ver handleAppointmentConfirmed
+  // en ProgramarCita.jsx.
+  const NC_FINALIDAD_TIPO = { 'Primera vez':'primera', 'Control':'control', 'Urgencia':'urgencia', 'Procedimiento':'control', 'Valoración':'primera' };
 
   function fmtCOP(n){ return '$ ' + n.toLocaleString('es-CO'); }
 
@@ -306,13 +335,37 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
   function ncMedico(){ return ncMedicos().find(m=>m.id===NC.data.medicoId); }
   function ncContrato(){ return NC_CONTRATOS.find(c=>c.id===NC.data.contratoId); }
 
-  function ncOpen(){
+  // Slot pendiente de un clic en una celda vacía de la grilla (ver
+  // ScheduleGrid.jsx/ProgramarCita.jsx): si todavía no hay paciente activo,
+  // ncOpen() desvía a openPatientSearch() antes de poder aplicar el prefill
+  // — se guarda acá para no perderlo y aplicarlo cuando confirmPatientSelection()
+  // vuelva a llamar a ncOpen() ya con paciente.
+  let ncPendingPrefill = null;
+
+  // `prefill` (opcional): { doctorId, dia, horario } — doctorId es el id real
+  // de DOCTORS (no el "codigo" que usa NC.data.medicoId), dia es el offset en
+  // días desde hoy (0-5, ver NC_DIAS_VISIBLES) y horario es "HH:MM". Permite
+  // que un clic en una celda concreta de la agenda (médico + día + hora ya
+  // visibles en pantalla) llegue pre-seleccionado al wizard en vez de forzar
+  // a repetir esa misma elección desde el paso "Médico".
+  function ncOpen(prefill){
     const patient = getPatient();
     if(!patient){
+      ncPendingPrefill = prefill || null;
       openPatientSearch();
       return;
     }
     NC.pos = 0; NC.maxReached = 0; NC.data = ncDataInicial();
+    if(prefill && prefill.doctorId){
+      const doctor = DOCTORS.find(d=>d.id===prefill.doctorId);
+      const especialidad = doctor ? SPECIALTIES.find(s=>s.id===doctor.especialidadId) : null;
+      if(doctor && especialidad){
+        NC.data.especialidadId = especialidad.codigo;
+        NC.data.medicoId = doctor.codigo;
+        NC.data.dia = typeof prefill.dia === 'number' ? Math.min(Math.max(prefill.dia,0),5) : 0;
+        NC.data.horario = prefill.horario || null;
+      }
+    }
     document.getElementById('nc-rail-patient-name').textContent = patient.nombre;
     document.getElementById('nc-rail-patient-doc').textContent = `CC ${patient.documento}`;
     document.getElementById('nc-overlay').classList.add('open');
@@ -320,8 +373,32 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
   }
 
   function ncClose(){
+    // Perder 6 de 7 pasos por un clic accidental en el fondo o en la X es
+    // demasiado costoso para no avisar — se pregunta solo si ya se avanzó
+    // más allá del primer paso (régimen solo, sin confirmar, no amerita el
+    // aviso). Modal propio (nc-discard-overlay, ver NuevaCitaFlow.jsx) en vez
+    // de window.confirm() nativo, para que se vea consistente con el resto
+    // de la app.
+    if(NC.pos > 0){
+      document.getElementById('nc-discard-overlay').classList.add('open');
+      return;
+    }
     document.getElementById('nc-overlay').classList.remove('open');
   }
+
+  function ncCancelDiscard(){
+    document.getElementById('nc-discard-overlay').classList.remove('open');
+  }
+
+  function ncConfirmDiscard(){
+    document.getElementById('nc-discard-overlay').classList.remove('open');
+    document.getElementById('nc-overlay').classList.remove('open');
+  }
+
+  function handleDiscardOverlayEscape(e){
+    if(e.key === 'Escape' && document.getElementById('nc-discard-overlay').classList.contains('open')) ncCancelDiscard();
+  }
+  document.addEventListener('keydown', handleDiscardOverlayEscape);
 
   function ncIsValid(key){
     const d = NC.data;
@@ -623,10 +700,11 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
   function ncContentContratacion(){
     const d = NC.data;
     let html = ncStepHeader('Selecciona el contrato','Verifica el contexto y elige el contrato vigente.');
+    const patienteContratacion = getPatient();
     html += `<dl class="ro-fields">
       <div class="ro-field"><dt>Sede</dt><dd class="ro-value">01 — Sede Norte</dd></div>
       <div class="ro-field"><dt>Administradora</dt><dd class="ro-value">${ncRegimen() ? ncRegimen().id : ''}</dd></div>
-      <div class="ro-field"><dt>ID. Afiliado</dt><dd class="ro-value">1.032.847.291</dd></div>
+      <div class="ro-field"><dt>ID. Afiliado</dt><dd class="ro-value">${patienteContratacion ? patienteContratacion.documento : ''}</dd></div>
       <div class="ro-field"><dt>Área</dt><dd class="ro-value">Consulta Externa</dd></div>
       <div class="ro-field"><dt>Especialidad</dt><dd class="ro-value">${ncEspecialidad() ? ncEspecialidad().nombre : ''}</dd></div>
       <div class="ro-field"><dt>Régimen</dt><dd class="ro-value">${ncRegimen() ? ncRegimen().nombre : ''}</dd></div>
@@ -797,6 +875,7 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
     const servicios = NC_SERVICIOS.filter(s=>d.servicios.includes(s.id));
     const total = servicios.reduce((a,s)=>a+s.valor, 0);
     const medico = ncMedico();
+    const doctorRecord = DOCTORS.find(doc=>doc.codigo===d.medicoId);
     const fechaCita = ncFechaParaDia(dia).toLocaleDateString('es-CO');
 
     const filaNueva = {
@@ -813,11 +892,29 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
     // La agenda "de hoy" (tabla de Asignación de Citas) es un concepto propio
     // de esa página, no de este flujo compartido — se delega vía callback
     // opcional para que otras páginas (p. ej. Programar Cita) puedan usar el
-    // mismo wizard sin depender de esa tabla.
-    onAppointmentConfirmed?.(filaNueva, { dia });
+    // mismo wizard sin depender de esa tabla. El segundo argumento lleva
+    // además los campos que ScheduleGrid necesita y `filaNueva` no tiene
+    // (doctorId real, tipo mapeado a las 3 claves de TIPO_LABEL, documento
+    // del paciente) — AsignacionCitas solo desestructura `{ dia }`, así que
+    // agregar campos acá no rompe ese consumidor existente.
+    onAppointmentConfirmed?.(filaNueva, {
+      dia,
+      doctorId: doctorRecord ? doctorRecord.id : null,
+      patientDoc: patient ? `CC ${patient.documento}` : '',
+      tipo: NC_FINALIDAD_TIPO[d.finalidad] || 'control',
+      horario: d.horario,
+      // Nombre(s) real(es) del/los servicio(s) elegidos en el paso
+      // "Servicios" — ver DetalleCitaModal.jsx (campo "Servicio"), que antes
+      // solo mostraba esta info en el tooltip nativo de la tarjeta.
+      servicio: servicios.map(s=>s.nombre).join(', '),
+    });
 
-    ncClose();
+    // Cierre directo (no ncClose()): la cita ya quedó confirmada, no hay
+    // nada que "descartar" — ncClose() solo debe pedir confirmación cuando
+    // se abandona el wizard CON progreso sin guardar.
+    document.getElementById('nc-overlay').classList.remove('open');
     ncToast(`Cita agendada para el ${ncFechaLegible(dia)} a las ${d.horario} con ${medico ? medico.nombre : ''}.`);
+    if(clearPatientAfterConfirm) setPatient(null);
   }
 
   function ncToast(msg){
@@ -1272,7 +1369,7 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
     openPatientSearch, closePatientSearch, filterPatients, setPsSelected,
     togglePsRowMenu, psAccionEditar, psAccionHistorial, psAccionDesactivar,
     confirmPatientSelection,
-    ncOpen, ncClose, ncBack, ncGoTo, ncSelectRegimen, ncSelectEspecialidad,
+    ncOpen, ncClose, ncCancelDiscard, ncConfirmDiscard, ncBack, ncGoTo, ncSelectRegimen, ncSelectEspecialidad,
     ncSelectMedico, ncSelectDia, ncSelectSlot, ncSelectContrato,
     ncToggleServicio, ncSelectFinalidad, ncFiltrar, ncUpdateContinueState, ncToast,
     apOpen, apOpenEditExternal, apClose, apGoTo, apBack,
@@ -1280,7 +1377,15 @@ export function initNuevaCita({ getPatient = () => null, setPatient = () => {}, 
   Object.assign(window, exported);
 
   return function cleanup() {
+    // Mismo motivo que el reset al inicio de initNuevaCita(): si esta
+    // instancia se desmonta con algún overlay todavía abierto (se navegó a
+    // otra ruta sin cerrar el wizard), no debe dejar ese estado visible
+    // detrás para la siguiente página que monte este mismo flujo.
+    ['ps-overlay', 'nc-overlay', 'nc-discard-overlay', 'ap-overlay', 'ps-context-menu'].forEach((id) => {
+      document.getElementById(id)?.classList.remove('open');
+    });
     document.removeEventListener('click', cerrarPsRowMenu);
+    document.removeEventListener('keydown', handleDiscardOverlayEscape);
     psTableWrapEl?.removeEventListener('scroll', cerrarPsRowMenu);
     clearTimeout(window.__ncToastTimer);
     delete window.NC;

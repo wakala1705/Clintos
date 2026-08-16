@@ -201,6 +201,30 @@
   /* ---- Tablas de selección (Régimen / Especialidad / Médico / Contratación / Servicios) ---- */
   .wiz-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
   .wiz-table-wrap table{width:100%;}
+  /* Mismo problema que .ps-table-wrap (ver comentario más abajo): sin este
+     scope, la tabla dependía de selectores de elemento sin scope de
+     asignacion-citas.css, que Programar Cita no carga. Se usan combinadores
+     ">" completos hasta thead/tbody porque el paso Régimen anida una
+     segunda tabla (el acordeón de detalle, dentro de .wiz-detail-inner) que
+     NO debe heredar este estilo — un descendiente "thead th" normal la
+     habría alcanzado igual al ser ancestro transitivo de la tabla externa.
+     tr:not(.wiz-detail-row) excluye la fila del acordeón, que ya tiene su
+     propio padding:0/background en ".wiz-detail-row td" más abajo. */
+  .wiz-table-wrap > table > thead > tr > th{
+    position:sticky;top:0;z-index:1;
+    background:#f7f8fb;text-align:left;
+    font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;
+    padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  html[data-theme="dark"] .wiz-table-wrap > table > thead > tr > th{background:#1c2333;}
+  .wiz-table-wrap > table > tbody > tr:not(.wiz-detail-row) > td{
+    padding:8px 16px;border-bottom:1px solid #eef0f4;
+    color:var(--ink-700);white-space:nowrap;
+    vertical-align:middle;
+  }
+  .wiz-table-wrap > table > tbody > tr:not(.wiz-detail-row):hover{background:#f7f9fd;}
+  .wiz-table-wrap > table > tbody > tr:not(.wiz-detail-row):last-child > td{border-bottom:none;}
   .wiz-table-wrap tbody tr{cursor:pointer;}
   .wiz-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
   .wiz-table-wrap tbody tr.row-disabled{cursor:not-allowed;opacity:.45;}
@@ -374,6 +398,26 @@
   .nc-toast.show{opacity:1;transform:translateY(0);}
   .nc-toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
 
+  /* ---- Confirmación: descartar cita (cerrar el wizard con progreso) ----
+     Se apila sobre .modal-overlay#nc-overlay (mismo z-index:100) así que
+     necesita el suyo propio más alto para quedar encima — ver ncClose() en
+     legacy-nueva-cita.js. */
+  .nc-discard-overlay{z-index:160;}
+  .nc-discard-modal{
+    width:400px;max-width:100%;background:var(--surface-modal);
+    border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(6,25,42,.28);
+    padding:24px;text-align:center;
+  }
+  .nc-discard-icon{
+    width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
+    background:var(--amber-bg);color:var(--amber-fg);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .nc-discard-icon .icon{width:22px;height:22px;}
+  .nc-discard-modal h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);}
+  .nc-discard-modal p{margin:0 0 20px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.45;}
+  .nc-discard-actions{display:flex;justify-content:center;gap:10px;}
+
   /* ================= MODAL: BÚSQUEDA DE PACIENTES ================= */
   .ps-modal{
     width:940px;max-width:100%;max-height:82vh;
@@ -400,6 +444,33 @@
   .ps-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
   .ps-search-field input::placeholder{color:var(--ink-400);}
   .ps-table-wrap{flex:1;overflow-y:auto;}
+  /* Estilo base de tabla propio del modal (antes vivía como selectores de
+     elemento sin scope — table/thead th/tbody td — en asignacion-citas.css;
+     como este modal es un componente compartido montado también desde
+     ProgramarCita.jsx, que no carga ese CSS de página, la tabla salía sin
+     estilo ahí. Se scopea acá para que el componente no dependa de qué
+     página lo monta. */
+  .ps-table-wrap table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+  .ps-table-wrap thead th{
+    position:sticky;top:0;z-index:1;
+    background:#f7f8fb;text-align:left;
+    font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
+    text-transform:uppercase;letter-spacing:.03em;
+    padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  html[data-theme="dark"] .ps-table-wrap thead th{background:#1c2333;}
+  .ps-table-wrap tbody td{
+    padding:8px 16px;border-bottom:1px solid #eef0f4;
+    color:var(--ink-700);white-space:nowrap;
+    vertical-align:middle;
+  }
+  .ps-table-wrap tbody tr{cursor:pointer;transition:background .1s;}
+  .ps-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+  .ps-table-wrap tbody tr:hover{background:#f7f9fd;}
+  .ps-table-wrap tbody tr.selected{background:var(--primary-50);}
+  .ps-table-wrap tbody tr.selected td{color:var(--ink-900);}
+  .ps-table-wrap tbody tr:last-child td{border-bottom:none;}
+  .ps-table-wrap tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
   .ps-patient-cell{display:flex;align-items:center;gap:12px;}
   /* Mismo color neutral y fijo que .patient-avatar-badge (PatientAvatar.css,
      usado por Lista de Pacientes/Ficha/PatientBanner) — antes cada paciente
@@ -407,10 +478,11 @@
      se homologa el mismo criterio: sin semántica, solo las iniciales
      diferencian una fila de otra. Es HTML armado a mano (no un componente
      React), así que no puede importar PatientAvatar — el color queda
-     hardcodeado acá en vez de repetir el inline style por paciente. */
+     hardcodeado acá igual que en PatientAvatar.css en vez de repetir el
+     inline style por paciente. */
   .ps-avatar{
     width:34px;height:34px;border-radius:50%;flex-shrink:0;
-    background:#64748B;color:#fff;
+    background:#dbe8fe;color:#004e9e;
     display:flex;align-items:center;justify-content:center;font-weight:500;font-size:var(--fs-sm);
   }
   .ps-pname{font-weight:500;color:var(--ink-900);}

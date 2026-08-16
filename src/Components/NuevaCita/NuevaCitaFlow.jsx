@@ -8,6 +8,8 @@ import {
   LuScanLine,
   LuSearch,
   LuSquarePen,
+  LuTrash2,
+  LuTriangleAlert,
   LuUser,
   LuUserPlus,
   LuUserX,
@@ -173,6 +175,25 @@ export default function NuevaCitaFlow() {
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* CONFIRMACIÓN: DESCARTAR CITA (cerrar el wizard con progreso sin guardar) */}
+      <div
+        className="modal-overlay nc-discard-overlay"
+        id="nc-discard-overlay"
+        onClick={(e) => { if (e.target === e.currentTarget) window.ncCancelDiscard(); }}
+      >
+        <div className="nc-discard-modal" role="alertdialog" aria-modal="true" aria-labelledby="nc-discard-title" aria-describedby="nc-discard-desc">
+          <div className="nc-discard-icon"><LuTriangleAlert className="icon" /></div>
+          <h3 id="nc-discard-title">¿Descartar esta cita?</h3>
+          <p id="nc-discard-desc">Perderás la información ingresada en este agendamiento. Esta acción no se puede deshacer.</p>
+          <div className="nc-discard-actions">
+            <button type="button" className="btn btn-secondary" onClick={() => window.ncCancelDiscard()}>Seguir editando</button>
+            <button type="button" className="btn btn-danger-outline" onClick={() => window.ncConfirmDiscard()}>
+              <LuTrash2 className="icon" />Sí, descartar
+            </button>
+          </div>
         </div>
       </div>
     </>

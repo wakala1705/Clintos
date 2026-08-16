@@ -20,6 +20,7 @@
   padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
 }
 .pc-detail-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.pc-detail-field.full{grid-column:1 / -1;}
 .pc-detail-field .k{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);}
 .pc-detail-field .v{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);word-break:break-word;}
 

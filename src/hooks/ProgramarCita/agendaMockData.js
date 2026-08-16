@@ -83,6 +83,20 @@ export const VALOR_BY_TIPO = {
   urgencia: 42000,
 };
 
+// Servicio/procedimiento agendado, para el campo "Servicio" de
+// DetalleCitaModal — antes esa información solo se veía en el tooltip nativo
+// (`title`) de la tarjeta de ScheduleGrid. Es un valor por defecto derivado
+// del `tipo` de la cita (mismo catálogo de nombres/código que el paso
+// "Servicios" del wizard, ver NC_SERVICIOS en legacy-nueva-cita.js); las
+// citas agendadas por el wizard traen su propio `appointment.servicio` con
+// el/los procedimiento(s) real(es) elegidos, que tiene prioridad sobre este
+// mapa (ver ProgramarCita.jsx: handleAppointmentConfirmed).
+export const SERVICIO_BY_TIPO = {
+  primera: { codigo: '890228C', nombre: 'Consulta de primera vez por especialista' },
+  control: { codigo: '890328C', nombre: 'Consulta de control o de seguimiento' },
+  urgencia: { codigo: '890302', nombre: 'Consulta de urgencias' },
+};
+
 // ---------- Semana visible (Lunes-Viernes de la semana actual) ----------
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const DAY_NAMES_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -96,8 +110,46 @@ function startOfWeekMonday(date) {
   return d;
 }
 
-export function weekDays() {
-  const monday = startOfWeekMonday(new Date());
+function startOfDay(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+export function addDays(date, n) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + n);
+  return d;
+}
+
+// Diferencia en días de calendario entre `date` y `refDate` (positiva si
+// `date` es posterior) — usada para traducir la fecha real de una celda de
+// la grilla clickeada al offset `dia` (0=hoy) que espera el wizard "Nueva
+// cita" (ver ncOpen/ncDataInicial en legacy-nueva-cita.js).
+export function diffInDays(date, refDate = new Date()) {
+  return Math.round((startOfDay(date) - startOfDay(refDate)) / 86400000);
+}
+
+// Salta fines de semana (no hay agenda Sáb/Dom): "Día siguiente" desde un
+// viernes cae en el lunes, no en el sábado.
+export function addWeekday(date, direction) {
+  const d = new Date(date);
+  do {
+    d.setDate(d.getDate() + direction);
+  } while (d.getDay() === 0 || d.getDay() === 6);
+  return d;
+}
+
+export function isSameDate(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+// `refDate` es cualquier día dentro de la semana a mostrar (por defecto hoy)
+// — se navega moviendo refDate con addDays/addWeekday desde el llamador
+// (ver AgendaToolbar/ProgramarCita.jsx) en vez de que este helper conozca
+// ningún estado de navegación.
+export function weekDays(refDate = new Date()) {
+  const monday = startOfWeekMonday(refDate);
   const days = [];
   for (let i = 0; i < 5; i++) {
     const f = new Date(monday);
@@ -112,50 +164,64 @@ export function weekDays() {
   return days;
 }
 
-export function weekRangeLabel() {
-  const days = weekDays();
+export function weekRangeLabel(refDate = new Date()) {
+  const days = weekDays(refDate);
   const first = days[0].date;
   const last = days[days.length - 1].date;
   const mes = last.toLocaleDateString('es-CO', { month: 'long' });
   return `${first.getDate()} - ${last.getDate()} de ${mes} de ${last.getFullYear()}`;
 }
 
-// Índice 0-4 (Lun-Vie) de "hoy" sobre weekDays(). Si hoy cae en fin de
+// Índice 0-4 (Lun-Vie) de `date` sobre weekDays(date). Si cae en fin de
 // semana (la semana visible solo cubre Lun-Vie) se usa el lunes como
 // referencia para la vista "Día", ya que no hay agenda de fin de semana.
-export function todayDayIndex() {
-  const jsDay = new Date().getDay(); // 0=Dom .. 6=Sáb
+export function dayIndexForDate(date) {
+  const jsDay = date.getDay(); // 0=Dom .. 6=Sáb
   if (jsDay === 0 || jsDay === 6) return 0;
   return jsDay - 1;
 }
 
-export function todayLabel() {
-  const f = new Date();
-  const dia = DAY_NAMES[f.getDay()];
-  const mes = f.toLocaleDateString('es-CO', { month: 'long' });
-  return `${dia}, ${f.getDate()} de ${mes} de ${f.getFullYear()}`;
+export function todayDayIndex() {
+  return dayIndexForDate(new Date());
 }
 
-// ---------- Horario (grilla de 30 min, 07:00-17:00) ----------
+export function dateLabel(date) {
+  const dia = DAY_NAMES[date.getDay()];
+  const mes = date.toLocaleDateString('es-CO', { month: 'long' });
+  return `${dia}, ${date.getDate()} de ${mes} de ${date.getFullYear()}`;
+}
+
+export function todayLabel() {
+  return dateLabel(new Date());
+}
+
+// ---------- Horario (grilla de 20 min, 07:00-18:00) ----------
+// 20 min en vez de 30: mismo tamaño de bloque que ya usa el wizard "Nueva
+// cita" para generar horarios reales (ver ncGenerarHorarios en
+// legacy-nueva-cita.js, incrementos de 20 min desde las 07:00) — antes el
+// panel general mostraba bloques de 30 min mientras el selector de horario
+// del wizard ya ofrecía cada 20, una inconsistencia entre ambas pantallas.
 export const START_HOUR = 7;
-export const END_HOUR = 17;
-export const SLOTS = (END_HOUR - START_HOUR) * 2;
-export const NOW_DEMO = '10:15'; // hora fija de demo para la línea "ahora"
+export const END_HOUR = 18;
+export const SLOT_MINUTES = 20;
+export const SLOTS_PER_HOUR = 60 / SLOT_MINUTES;
+export const SLOTS = (END_HOUR - START_HOUR) * SLOTS_PER_HOUR;
+export const NOW_DEMO = '10:20'; // hora fija de demo para la línea "ahora" (alineada a la grilla de 20 min)
 
 export function slotIndex(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
-  return (h - START_HOUR) * 2 + (m === 30 ? 1 : 0);
+  return (h - START_HOUR) * SLOTS_PER_HOUR + Math.floor(m / SLOT_MINUTES);
 }
 export function timeLabel(idx) {
-  const totalMin = idx * 30;
+  const totalMin = idx * SLOT_MINUTES;
   const h = START_HOUR + Math.floor(totalMin / 60);
   const m = totalMin % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
 // ---------- Citas de ejemplo ----------
-// day: índice 0-4 sobre weekDays() (0=Lunes). duration: en franjas de 30 min
-// — la duración de la cita está pre-configurada en 30 min (1 franja) para
+// day: índice 0-4 sobre weekDays() (0=Lunes). duration: en franjas de 20 min
+// — la duración de la cita está pre-configurada en 20 min (1 franja) para
 // todo el consultorio, así que la tarjeta en ScheduleGrid siempre ocupa un
 // solo bloque en la grilla sin importar este valor (ver ScheduleGrid.jsx).
 export const APPOINTMENTS = [
@@ -165,53 +231,60 @@ export const APPOINTMENTS = [
   { id: 4, doctorId: 'd1', day: 2, start: '09:00', duration: 1, patient: 'Jorge Salazar', doc: 'CC 71.556.204', eps: 'Nueva EPS', tipo: 'primera', estado: 'pendiente', motivo: 'Dolor abdominal recurrente', telefonoAviso: '3145589021', fechaSolicitud: '5/8/2026', consecutivo: '0201084075' },
   { id: 5, doctorId: 'd1', day: 2, start: '11:00', duration: 1, patient: 'Lucía Herrera', doc: 'CC 52.884.117', eps: 'Sanitas', tipo: 'urgencia', estado: 'confirmada', motivo: 'Fiebre persistente 3 días', telefonoAviso: '3012239876', fechaSolicitud: '5/8/2026', consecutivo: '0201084076' },
   { id: 6, doctorId: 'd1', day: 3, start: '10:00', duration: 1, patient: 'Fabián Castaño', doc: 'CC 71.223.887', eps: 'Nueva EPS', tipo: 'urgencia', estado: 'pendiente', motivo: 'Dolor torácico leve', telefonoAviso: '3204471123', fechaSolicitud: '6/8/2026', consecutivo: '0201084077' },
-  { id: 7, doctorId: 'd1', day: 4, start: '08:30', duration: 1, patient: 'Gloria Ceballos', doc: 'CC 32.667.119', eps: 'Sanitas', tipo: 'control', estado: 'reprogramada', motivo: 'Control de tiroides', telefonoAviso: '3167783345', fechaSolicitud: '6/8/2026', consecutivo: '0201084078' },
+  { id: 7, doctorId: 'd1', day: 4, start: '08:20', duration: 1, patient: 'Gloria Ceballos', doc: 'CC 32.667.119', eps: 'Sanitas', tipo: 'control', estado: 'reprogramada', motivo: 'Control de tiroides', telefonoAviso: '3167783345', fechaSolicitud: '6/8/2026', consecutivo: '0201084078' },
 
-  { id: 8, doctorId: 'd2', day: 2, start: '08:30', duration: 1, patient: 'Andrés Cifuentes', doc: 'CC 80.331.567', eps: 'Compensar', tipo: 'control', estado: 'no_asistio', motivo: 'Control post-quirúrgico', telefonoAviso: '3229981234', fechaSolicitud: '3/8/2026', consecutivo: '0201084079' },
+  { id: 8, doctorId: 'd2', day: 2, start: '08:20', duration: 1, patient: 'Andrés Cifuentes', doc: 'CC 80.331.567', eps: 'Compensar', tipo: 'control', estado: 'no_asistio', motivo: 'Control post-quirúrgico', telefonoAviso: '3229981234', fechaSolicitud: '3/8/2026', consecutivo: '0201084079' },
   { id: 9, doctorId: 'd2', day: 2, start: '10:00', duration: 1, patient: 'Paula Restrepo', doc: 'CC 1.020.445.982', eps: 'Sura', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración general', telefonoAviso: '3101122998', fechaSolicitud: '3/8/2026', consecutivo: '0201084080' },
   { id: 10, doctorId: 'd2', day: 2, start: '13:00', duration: 1, patient: 'Ricardo Mesa', doc: 'CC 19.887.302', eps: 'Nueva EPS', tipo: 'control', estado: 'cancelada', motivo: 'Control de diabetes', telefonoAviso: '3187765432', fechaSolicitud: '4/8/2026', consecutivo: '0201084081' },
 
   { id: 11, doctorId: 'd3', day: 2, start: '08:00', duration: 1, patient: 'Samuel Ortiz (5a)', doc: 'RC 1.098.776.234', eps: 'Sanitas', tipo: 'control', estado: 'confirmada', motivo: 'Control de crecimiento', telefonoAviso: '3056667788', fechaSolicitud: '4/8/2026', consecutivo: '0201084082' },
-  { id: 12, doctorId: 'd3', day: 2, start: '09:30', duration: 1, patient: 'Isabella Marín (2a)', doc: 'RC 1.099.887.112', eps: 'Sura', tipo: 'urgencia', estado: 'pendiente', motivo: 'Tos y dificultad respiratoria', telefonoAviso: '3219988771', fechaSolicitud: '5/8/2026', consecutivo: '0201084083' },
+  { id: 12, doctorId: 'd3', day: 2, start: '09:20', duration: 1, patient: 'Isabella Marín (2a)', doc: 'RC 1.099.887.112', eps: 'Sura', tipo: 'urgencia', estado: 'pendiente', motivo: 'Tos y dificultad respiratoria', telefonoAviso: '3219988771', fechaSolicitud: '5/8/2026', consecutivo: '0201084083' },
   { id: 13, doctorId: 'd3', day: 2, start: '14:00', duration: 1, patient: 'Tomás Vélez (7a)', doc: 'TI 1.098.223.456', eps: 'Compensar', tipo: 'primera', estado: 'reprogramada', motivo: 'Valoración por pediatría', telefonoAviso: '3143322119', fechaSolicitud: '5/8/2026', consecutivo: '0201084084' },
 
   { id: 14, doctorId: 'd4', day: 2, start: '09:00', duration: 1, patient: 'Camila Duque', doc: 'CC 1.036.778.221', eps: 'Sanitas', tipo: 'control', estado: 'confirmada', motivo: 'Control prenatal', telefonoAviso: '3002211445', fechaSolicitud: '6/8/2026', consecutivo: '0201084085' },
   { id: 15, doctorId: 'd4', day: 2, start: '12:00', duration: 1, patient: 'Natalia Correa', doc: 'CC 1.037.556.902', eps: 'Sura', tipo: 'primera', estado: 'pendiente', motivo: 'Consulta ginecológica general', telefonoAviso: '3176654321', fechaSolicitud: '6/8/2026', consecutivo: '0201084086' },
 
-  { id: 16, doctorId: 'd5', day: 2, start: '10:30', duration: 1, patient: 'Verónica Salazar', doc: 'CC 1.045.223.887', eps: 'Coomeva', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración de lesión en piel', telefonoAviso: '3239987654', fechaSolicitud: '6/8/2026', consecutivo: '0201084087' },
+  { id: 16, doctorId: 'd5', day: 2, start: '10:20', duration: 1, patient: 'Verónica Salazar', doc: 'CC 1.045.223.887', eps: 'Coomeva', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración de lesión en piel', telefonoAviso: '3239987654', fechaSolicitud: '6/8/2026', consecutivo: '0201084087' },
 
   // Agenda casi completa (Dra. Ana Ruiz, Viernes) — caso de prueba para ver
   // cómo se ve la grilla con un médico saturado de citas y el color por
-  // estado conviviendo en franjas contiguas. Quedan libres 10:30, 14:00 y
-  // 15:30 a propósito, para que "+ Agendar" también sea visible.
+  // estado conviviendo en franjas contiguas. Quedan libres 10:20, 14:00 y
+  // 15:20 a propósito, para que "+ Agendar" también sea visible.
   { id: 17, doctorId: 'd1', day: 4, start: '07:00', duration: 1, patient: 'Andrea Bermúdez', doc: 'CC 52.114.887', eps: 'Sura', tipo: 'control', estado: 'confirmada', motivo: 'Control de hipertensión', telefonoAviso: '3201122334', fechaSolicitud: '2/8/2026', consecutivo: '0201084088' },
-  { id: 18, doctorId: 'd1', day: 4, start: '07:30', duration: 1, patient: 'Felipe Rojas Nieto', doc: 'CC 79.887.213', eps: 'Compensar', tipo: 'control', estado: 'confirmada', motivo: 'Control de diabetes', telefonoAviso: '3112233445', fechaSolicitud: '2/8/2026', consecutivo: '0201084089' },
+  { id: 18, doctorId: 'd1', day: 4, start: '07:20', duration: 1, patient: 'Felipe Rojas Nieto', doc: 'CC 79.887.213', eps: 'Compensar', tipo: 'control', estado: 'confirmada', motivo: 'Control de diabetes', telefonoAviso: '3112233445', fechaSolicitud: '2/8/2026', consecutivo: '0201084089' },
   { id: 19, doctorId: 'd1', day: 4, start: '08:00', duration: 1, patient: 'Camilo Andrés Peña', doc: 'CC 1.019.887.334', eps: 'Nueva EPS', tipo: 'primera', estado: 'pendiente', motivo: 'Chequeo general', telefonoAviso: '3145566778', fechaSolicitud: '3/8/2026', consecutivo: '0201084090' },
   { id: 20, doctorId: 'd1', day: 4, start: '09:00', duration: 1, patient: 'Silvia Marcela Duarte', doc: 'CC 43.667.229', eps: 'Sanitas', tipo: 'control', estado: 'confirmada', motivo: 'Control de tiroides', telefonoAviso: '3167788990', fechaSolicitud: '3/8/2026', consecutivo: '0201084091' },
-  { id: 21, doctorId: 'd1', day: 4, start: '09:30', duration: 1, patient: 'Julián Esteban Rico', doc: 'CC 80.223.115', eps: 'Sura', tipo: 'control', estado: 'no_asistio', motivo: 'Control post-quirúrgico', telefonoAviso: '3198899001', fechaSolicitud: '3/8/2026', consecutivo: '0201084092' },
+  { id: 21, doctorId: 'd1', day: 4, start: '09:20', duration: 1, patient: 'Julián Esteban Rico', doc: 'CC 80.223.115', eps: 'Sura', tipo: 'control', estado: 'no_asistio', motivo: 'Control post-quirúrgico', telefonoAviso: '3198899001', fechaSolicitud: '3/8/2026', consecutivo: '0201084092' },
   { id: 22, doctorId: 'd1', day: 4, start: '10:00', duration: 1, patient: 'Norma Patricia León', doc: 'CC 41.556.902', eps: 'Coomeva', tipo: 'urgencia', estado: 'confirmada', motivo: 'Dolor abdominal agudo', telefonoAviso: '3223344556', fechaSolicitud: '4/8/2026', consecutivo: '0201084093' },
   { id: 23, doctorId: 'd1', day: 4, start: '11:00', duration: 1, patient: 'Oscar Iván Castaño', doc: 'CC 19.334.771', eps: 'Nueva EPS', tipo: 'control', estado: 'confirmada', motivo: 'Control de hipertensión', telefonoAviso: '3134455667', fechaSolicitud: '4/8/2026', consecutivo: '0201084094' },
-  { id: 24, doctorId: 'd1', day: 4, start: '11:30', duration: 1, patient: 'Diana Carolina Puentes', doc: 'CC 1.022.887.556', eps: 'Sanitas', tipo: 'primera', estado: 'pendiente', motivo: 'Valoración general', telefonoAviso: '3156677889', fechaSolicitud: '4/8/2026', consecutivo: '0201084095' },
+  { id: 24, doctorId: 'd1', day: 4, start: '11:20', duration: 1, patient: 'Diana Carolina Puentes', doc: 'CC 1.022.887.556', eps: 'Sanitas', tipo: 'primera', estado: 'pendiente', motivo: 'Valoración general', telefonoAviso: '3156677889', fechaSolicitud: '4/8/2026', consecutivo: '0201084095' },
   { id: 25, doctorId: 'd1', day: 4, start: '12:00', duration: 1, patient: 'Héctor Fabio Ramírez', doc: 'CC 8.334.221', eps: 'Compensar', tipo: 'control', estado: 'cancelada', motivo: 'Control de diabetes', telefonoAviso: '3178899002', fechaSolicitud: '5/8/2026', consecutivo: '0201084096' },
-  { id: 26, doctorId: 'd1', day: 4, start: '12:30', duration: 1, patient: 'Adriana Lucía Bonilla', doc: 'CC 52.667.334', eps: 'Sura', tipo: 'control', estado: 'confirmada', motivo: 'Control de tiroides', telefonoAviso: '3189900113', fechaSolicitud: '5/8/2026', consecutivo: '0201084097' },
+  { id: 26, doctorId: 'd1', day: 4, start: '12:20', duration: 1, patient: 'Adriana Lucía Bonilla', doc: 'CC 52.667.334', eps: 'Sura', tipo: 'control', estado: 'confirmada', motivo: 'Control de tiroides', telefonoAviso: '3189900113', fechaSolicitud: '5/8/2026', consecutivo: '0201084097' },
   { id: 27, doctorId: 'd1', day: 4, start: '13:00', duration: 1, patient: 'Wilson Alexander Prada', doc: 'CC 79.556.223', eps: 'Nueva EPS', tipo: 'control', estado: 'reprogramada', motivo: 'Control post-quirúrgico', telefonoAviso: '3201133445', fechaSolicitud: '5/8/2026', consecutivo: '0201084098' },
-  { id: 28, doctorId: 'd1', day: 4, start: '13:30', duration: 1, patient: 'Martha Cecilia Nova', doc: 'CC 41.887.665', eps: 'Sanitas', tipo: 'primera', estado: 'confirmada', motivo: 'Chequeo general', telefonoAviso: '3212244556', fechaSolicitud: '6/8/2026', consecutivo: '0201084099' },
-  { id: 29, doctorId: 'd1', day: 4, start: '14:30', duration: 1, patient: 'Iván Darío Suárez', doc: 'CC 19.887.334', eps: 'Coomeva', tipo: 'control', estado: 'confirmada', motivo: 'Control de hipertensión', telefonoAviso: '3223355667', fechaSolicitud: '6/8/2026', consecutivo: '0201084100' },
+  { id: 28, doctorId: 'd1', day: 4, start: '13:20', duration: 1, patient: 'Martha Cecilia Nova', doc: 'CC 41.887.665', eps: 'Sanitas', tipo: 'primera', estado: 'confirmada', motivo: 'Chequeo general', telefonoAviso: '3212244556', fechaSolicitud: '6/8/2026', consecutivo: '0201084099' },
+  { id: 29, doctorId: 'd1', day: 4, start: '14:20', duration: 1, patient: 'Iván Darío Suárez', doc: 'CC 19.887.334', eps: 'Coomeva', tipo: 'control', estado: 'confirmada', motivo: 'Control de hipertensión', telefonoAviso: '3223355667', fechaSolicitud: '6/8/2026', consecutivo: '0201084100' },
   { id: 30, doctorId: 'd1', day: 4, start: '15:00', duration: 1, patient: 'Claudia Patricia Rueda', doc: 'CC 43.221.556', eps: 'Sura', tipo: 'urgencia', estado: 'pendiente', motivo: 'Fiebre persistente 2 días', telefonoAviso: '3234466778', fechaSolicitud: '6/8/2026', consecutivo: '0201084101' },
   { id: 31, doctorId: 'd1', day: 4, start: '16:00', duration: 1, patient: 'Sergio Andrés Malaver', doc: 'CC 80.667.112', eps: 'Compensar', tipo: 'control', estado: 'confirmada', motivo: 'Control de diabetes', telefonoAviso: '3245577889', fechaSolicitud: '6/8/2026', consecutivo: '0201084102' },
-  { id: 32, doctorId: 'd1', day: 4, start: '16:30', duration: 1, patient: 'Liliana Marcela Cortés', doc: 'CC 52.334.887', eps: 'Nueva EPS', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración general', telefonoAviso: '3256688990', fechaSolicitud: '6/8/2026', consecutivo: '0201084103' },
+  { id: 32, doctorId: 'd1', day: 4, start: '16:20', duration: 1, patient: 'Liliana Marcela Cortés', doc: 'CC 52.334.887', eps: 'Nueva EPS', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración general', telefonoAviso: '3256688990', fechaSolicitud: '6/8/2026', consecutivo: '0201084103' },
 ];
 
 // ---------- Mini-calendario (mes actual) ----------
 const DOW_LABELS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+
+export function addMonths(date, n) {
+  return new Date(date.getFullYear(), date.getMonth() + n, 1);
+}
 
 export function monthLabel(date = new Date()) {
   const label = date.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-// Devuelve { dowLabels, days: [{ n, muted, today }] } — semanas completas
-// (incluye días del mes anterior/siguiente para llenar la grilla de 7 columnas).
+// Devuelve { dowLabels, days: [{ n, date, muted, today }] } — semanas
+// completas (incluye días del mes anterior/siguiente para llenar la grilla
+// de 7 columnas). `date` es la fecha real de cada celda (también en las
+// muted, que sí pertenecen a un mes válido) para poder navegar el día
+// clickeado en el mini-calendario — ver MiniCalendar.jsx.
 export function generateMonthGrid(date = new Date()) {
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -225,14 +298,16 @@ export function generateMonthGrid(date = new Date()) {
 
   const days = [];
   for (let i = firstWeekday - 1; i >= 0; i--) {
-    days.push({ n: daysInPrevMonth - i, muted: true, today: false });
+    const n = daysInPrevMonth - i;
+    days.push({ n, date: new Date(year, month - 1, n), muted: true, today: false });
   }
   for (let d = 1; d <= daysInMonth; d++) {
-    days.push({ n: d, muted: false, today: isCurrentMonth && d === today.getDate() });
+    days.push({ n: d, date: new Date(year, month, d), muted: false, today: isCurrentMonth && d === today.getDate() });
   }
   let trailing = 1;
   while (days.length % 7 !== 0) {
-    days.push({ n: trailing++, muted: true, today: false });
+    days.push({ n: trailing, date: new Date(year, month + 1, trailing), muted: true, today: false });
+    trailing++;
   }
 
   return { dowLabels: DOW_LABELS, days };

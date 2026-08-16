@@ -44,7 +44,7 @@
   box-shadow:0 1px 3px rgba(0,0,0,.2);
 }
 
-/* Cada cita ocupa siempre un único bloque de 30 min (la duración real de la
+/* Cada cita ocupa siempre un único bloque de 20 min (la duración real de la
    cita no expande la tarjeta — ver comentario en agendaMockData.js), así que
    solo hay espacio (y necesidad) de mostrar hora + paciente en una sola
    línea. El resto (motivo, estado, tipo) va en el tooltip nativo (`title`,
