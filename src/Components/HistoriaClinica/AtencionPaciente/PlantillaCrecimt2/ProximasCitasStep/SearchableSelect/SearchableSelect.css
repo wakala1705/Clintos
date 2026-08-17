@@ -46,5 +46,5 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .ss-control:has(inp
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;
 }
 .ss-option:hover{background:var(--bg);}
-.ss-option.active{background:var(--primary-50);color:var(--primary-dark);font-weight:600;}
+.ss-option.active{background:var(--primary-50);color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .ss-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}

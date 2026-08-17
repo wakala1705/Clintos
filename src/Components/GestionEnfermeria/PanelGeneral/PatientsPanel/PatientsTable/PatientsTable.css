@@ -19,7 +19,7 @@
    sin agregar una octava columna a una tabla ya densa. */
 .pg-estancia-flag{
   display:inline-flex;align-items:center;gap:4px;margin-left:8px;
-  font-size:var(--fs-xs);font-weight:700;color:var(--amber-fg);background:var(--amber-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--amber-fg);background:var(--amber-bg);
   padding:2px 8px;border-radius:10px;white-space:nowrap;
 }
 .pg-estancia-flag .icon{width:11px;height:11px;flex-shrink:0;}
@@ -28,7 +28,7 @@
    nombres propios del dominio (ver comentario en PatientsTable.jsx). */
 .pg-med-badge{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
 }
 .pg-med-badge .icon{width:13px;height:13px;}
 .pg-med-badge.pg-med-al-dia{background:var(--green-bg);color:#0d7a3d;}

@@ -6,7 +6,7 @@
   display:flex;flex-direction:column;gap:2px;
   padding:10px 14px;background:var(--bg);border-radius:var(--radius);
 }
-.rv-paciente-context-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.rv-paciente-context-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rv-paciente-context-esquema{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .rv-dosis-list{display:flex;flex-direction:column;gap:8px;}
@@ -29,18 +29,18 @@
 .rv-dosis-card.selected .rv-dosis-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);}
 
 .rv-dosis-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-.rv-dosis-nombre{font-weight:600;color:var(--ink-900);}
+.rv-dosis-nombre{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rv-dosis-meta{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .rv-dosis-detalle{
   display:flex;gap:20px;flex-wrap:wrap;
   padding:8px 14px 4px 42px;font-size:var(--fs-sm);color:var(--ink-700);
 }
-.rv-dosis-detalle strong{color:var(--ink-900);font-weight:600;}
+.rv-dosis-detalle strong{color:var(--ink-900);font-weight:var(--fw-semibold);}
 
 .rv-fuera-esquema-link{
   display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
-  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--primary);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
   background:none;border:none;cursor:pointer;padding:4px 0;
 }
 .rv-fuera-esquema-link .icon{width:15px;height:15px;}
@@ -48,7 +48,7 @@
 
 .rv-fuera-esquema{display:flex;flex-direction:column;gap:14px;}
 .rv-back-link{
-  align-self:flex-start;font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink-500);
+  align-self:flex-start;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);
   background:none;border:none;cursor:pointer;padding:2px 0;
 }
 .rv-back-link:hover{color:var(--ink-900);}

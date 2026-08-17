@@ -28,13 +28,13 @@
 .task-summary-gray .task-summary-icon{background:var(--gray-bg);color:var(--gray-fg);}
 
 .task-summary-body{display:flex;flex-direction:column;gap:1px;min-width:0;}
-.task-summary-value{font-size:var(--fs-xl);font-weight:700;color:var(--ink-900);line-height:1.15;font-variant-numeric:tabular-nums;}
+.task-summary-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.15;font-variant-numeric:tabular-nums;}
 .task-summary-label{
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .task-summary-card.active .task-summary-label{color:var(--interactive-selected-text);}
-.task-summary-sublabel{font-size:var(--fs-xs);font-weight:600;color:var(--red);white-space:nowrap;}
+.task-summary-sublabel{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--red);white-space:nowrap;}
 
 /* Completadas (encargo: "mantener como información secundaria, con menor
    peso visual") — mismas reglas que las demás, aplicadas después en el

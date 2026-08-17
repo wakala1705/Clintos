@@ -11,9 +11,9 @@
 }
 .day-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
 .day-nav-btn .icon{width:16px;height:16px;}
-.day-nav-label{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);min-width:108px;text-align:center;white-space:nowrap;}
+.day-nav-label{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);min-width:108px;text-align:center;white-space:nowrap;}
 .day-nav-today-btn{
-  font-size:var(--fs-sm);font-weight:600;color:var(--primary);background:none;border:none;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);background:none;border:none;cursor:pointer;
   padding:4px var(--space-2);border-radius:6px;font-family:inherit;white-space:nowrap;
 }
 .day-nav-today-btn:hover{background:var(--primary-50);}
@@ -43,7 +43,7 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .density-level-label{
   min-width:68px;height:32px;padding:0 10px;
   display:flex;align-items:center;justify-content:center;
-  font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);
   border-left:1px solid var(--border);border-right:1px solid var(--border);
   white-space:nowrap;
 }
@@ -54,13 +54,13 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 }
 .segmented-btn{
   border:none;background:var(--surface);color:var(--ink-700);
-  font-family:inherit;font-size:var(--fs-sm);font-weight:600;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
   padding:8px 12px;cursor:pointer;white-space:nowrap;
 }
 .segmented-btn:not(:last-child){border-right:1px solid var(--border);}
 .segmented-btn:hover{background:#f3f5f9;}
 .segmented-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);font-weight:700;}
+.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);font-weight:var(--fw-bold);}
 html[data-theme="dark"] .density-step-btn:hover,
 html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 
@@ -86,12 +86,12 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
 }
 .hour-head{
   width:var(--hour-col-width, 52px);min-width:var(--hour-col-width, 52px);text-align:center;
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   padding:10px 0;border-bottom:1px solid var(--border);
   background:#f7f8fb;white-space:nowrap;
 }
 .med-col-head{
-  text-align:left;font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);
+  text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
   padding:10px 20px;border-bottom:1px solid var(--border);
   background:#f7f8fb;z-index:calc(var(--z-sticky) + 4);
@@ -100,11 +100,11 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
 .timeline-table thead .med-col-head{z-index:calc(var(--z-sticky) + 4);}
 .timeline-table thead .check-col-head{z-index:calc(var(--z-sticky) + 5);}
 
-.med-cell{padding:12px 20px;border-bottom:1px solid #eef0f4;vertical-align:middle;text-align:left;font-weight:normal;}
-.med-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);line-height:1.35;}
+.med-cell{padding:12px 20px;border-bottom:1px solid #eef0f4;vertical-align:middle;text-align:left;font-weight:var(--fw-regular);}
+.med-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.35;}
 .med-status-badge{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-xs);font-weight:600;padding:4px 10px;border-radius:20px;margin-left:8px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;margin-left:8px;
   vertical-align:middle;position:relative;top:-1px;white-space:nowrap;
 }
 .med-status-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor;}
@@ -197,7 +197,7 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 /* ---------- LEYENDA de marcadores (contenido interno del legend-bar compartido) ---------- */
 .legend-divider{width:1px;height:26px;background:var(--border);flex-shrink:0;}
 .legend-items{display:flex;align-items:center;gap:20px;flex-wrap:wrap;flex:1;}
-.legend-item{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);font-weight:600;color:var(--ink-700);}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
 .legend-marker{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .legend-marker .icon{width:9px;height:9px;stroke-width:3;}
 .legend-marker.scheduled{border:1.5px solid #6b7280;color:#6b7280;}
@@ -238,10 +238,10 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 .dlm-icon{width:26px;height:26px;flex-shrink:0;}
 .dlm-icon .icon{width:13px;height:13px;}
 .dlm-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-.dlm-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.dlm-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .dlm-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:1px;}
 .dlm-meta{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.dlm-time{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.dlm-time{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
 
 .dose-list-empty{
   display:flex;flex-direction:column;align-items:center;gap:8px;
@@ -250,12 +250,12 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 
 /* Mobile: cada fila colapsa a card apilada en una sola columna, sin que el
    contenedor necesite scroll horizontal (a diferencia del timeline).
-   NOTA: esto todavía no es alcanzable en la práctica — .app{min-width:1440px}
-   (gestion-enfermeria.css, excepción documentada de WCAG 1.4.10) recorta todo
-   el shell por debajo de 1440px con overflow:hidden, así que el breakpoint
-   de abajo nunca llega a mostrarse hasta que se aborde el shell completo
-   (sidebar/topbar responsive) como iniciativa aparte. Decisión explícita:
-   dejar esta regla lista para ese momento, no expandir el alcance ahora. */
+   NOTA: esto todavía no es alcanzable en la práctica — el shell
+   (.app{min-width:768px}, --bp-tablet, ver GestionEnfermeria/shared/
+   shared.css) recorta todo por debajo de 768px con overflow:hidden, y este
+   breakpoint pide 640px, por debajo del piso del shell. Queda lista para
+   cuando el shell baje más allá de --bp-tablet (fuera de scope: la app es
+   tablet-first, no mobile-first). */
 @media (max-width:640px){
   .dose-marker.dose-list-marker{flex-wrap:wrap;}
   .dlm-icon{order:1;}

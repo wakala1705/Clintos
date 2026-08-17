@@ -9,7 +9,7 @@
   background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
 }
 .odm-item{display:flex;flex-direction:column;gap:2px;}
-.odm-lbl{font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.odm-lbl{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .odm-item b{font-size:var(--fs-base);color:var(--ink-900);}
 
 .orden-detalle-med-badges{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}

@@ -7,7 +7,7 @@
   border:1px solid var(--border);border-radius:var(--radius);
   padding:16px;background:var(--surface);
 }
-.al-feed-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);margin:0 0 12px;}
+.al-feed-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 12px;}
 
 /* ---------- Tipo de lactancia (resultado derivado, no editable) ----------
    .pf-field-tag/.pf-field-tag-green: definidas en ../PlantillaCrecimt2.css
@@ -18,7 +18,7 @@
    ExamenFisicoStep.css — mismo mecanismo, semántica de color distinta). */
 .al-tipo-lactancia-result{
   background:var(--green-bg) !important;border-color:transparent !important;
-  color:var(--green) !important;font-weight:700;text-transform:uppercase;letter-spacing:.01em;
+  color:var(--green) !important;font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.01em;
   cursor:default;
 }
 

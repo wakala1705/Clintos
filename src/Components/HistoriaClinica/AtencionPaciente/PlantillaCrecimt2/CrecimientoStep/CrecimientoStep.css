@@ -111,10 +111,10 @@ html[data-theme="dark"] .gc-hist-wrap::after{background:linear-gradient(to right
   padding:18px 24px;
 }
 .gc-apgar-result-item{display:flex;flex-direction:column;gap:4px;}
-.gc-apgar-result-label{font-size:var(--fs-xs);font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
-.gc-apgar-result-value{font-size:var(--fs-3xl);font-weight:700;color:var(--ink-900);line-height:1;}
+.gc-apgar-result-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500);}
+.gc-apgar-result-value{font-size:var(--fs-3xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1;}
 .gc-apgar-class{
-  display:inline-block;font-size:var(--fs-base);font-weight:700;color:var(--ink-500);
+  display:inline-block;font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-500);
   background:var(--gray-bg);border-radius:20px;padding:5px 14px;line-height:1.3;
 }
 .gc-apgar-class-green{color:var(--green);background:var(--green-bg);}

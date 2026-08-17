@@ -4,7 +4,7 @@
 }
 .fp-inactive-banner{
   display:flex;align-items:center;gap:8px;
-  background:var(--amber-bg);color:var(--amber-fg);font-size:var(--fs-base);font-weight:500;
+  background:var(--amber-bg);color:var(--amber-fg);font-size:var(--fs-base);font-weight:var(--fw-medium);
   padding:10px 20px;border-bottom:1px solid var(--border);
   border-radius:var(--radius-lg) var(--radius-lg) 0 0;
 }
@@ -12,7 +12,7 @@
 
 .fp-back-link{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-sm);font-weight:600;color:var(--ink-500);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);
   padding:12px 20px 0;
 }
 .fp-back-link .icon{width:14px;height:14px;}
@@ -25,8 +25,8 @@
 .fp-header-identity{display:flex;align-items:center;gap:14px;min-width:0;}
 /* Color/forma vienen de .patient-avatar-badge (PatientAvatar.css) — acá solo
    el tamaño/tipografía propios de este header. */
-.fp-avatar{width:48px;height:48px;font-size:var(--fs-lg);font-weight:600;}
-.fp-header-identity h1{font-size:var(--fs-xl);font-weight:600;color:var(--ink-900);margin:0;}
+.fp-avatar{width:48px;height:48px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);}
+.fp-header-identity h1{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;}
 .fp-header-meta{
   display:flex;align-items:center;gap:8px;margin-top:4px;
   font-size:var(--fs-sm);color:var(--ink-500);flex-wrap:wrap;

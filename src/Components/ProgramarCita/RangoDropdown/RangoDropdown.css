@@ -4,7 +4,7 @@
   display:inline-flex;align-items:center;gap:8px;
   border:1px solid var(--border);border-radius:999px;
   background:var(--surface);color:var(--ink-900);
-  font-family:inherit;font-size:var(--fs-base);font-weight:500;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);
   padding:8px 14px;cursor:pointer;
 }
 .pc-rango-trigger:hover{background:var(--bg);}
@@ -21,14 +21,14 @@
 .pc-rango-option{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:9px 10px;border-radius:8px;
-  font-size:var(--fs-base);font-weight:500;color:var(--ink-700);cursor:pointer;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
   background:none;border:none;font-family:inherit;width:100%;text-align:left;
 }
 .pc-rango-option:hover{background:var(--bg);}
-.pc-rango-option.active{color:var(--primary-dark);font-weight:600;}
+.pc-rango-option.active{color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .pc-rango-option .icon{width:16px;height:16px;color:var(--primary);flex-shrink:0;}
 .pc-rango-shortcut{
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink-400);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-400);
   border:1px solid var(--border);border-radius:5px;
   width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }

@@ -46,6 +46,6 @@
 }
 .insumos-resumen-row + .insumos-resumen-row{border-top:1px solid #eef0f4;}
 .insumos-resumen-row .ir-name{color:var(--ink-900);flex:1;min-width:0;}
-.insumos-resumen-row .ir-qty{font-size:var(--fs-sm);font-weight:600;color:var(--link-text);white-space:nowrap;}
+.insumos-resumen-row .ir-qty{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--link-text);white-space:nowrap;}
 .insumos-resumen-row .insumo-remove-btn{width:26px;height:26px;}
 .insumos-resumen-row .insumo-remove-btn .icon{width:14px;height:14px;}

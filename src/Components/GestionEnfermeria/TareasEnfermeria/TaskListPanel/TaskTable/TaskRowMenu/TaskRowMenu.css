@@ -18,7 +18,7 @@
 .task-row-menu-item{
   display:flex;align-items:center;gap:10px;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
-  font-size:var(--fs-base);font-weight:600;color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
 }
 .task-row-menu-item:hover{background:var(--bg);}
 .task-row-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

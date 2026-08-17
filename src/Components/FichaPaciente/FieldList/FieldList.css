@@ -3,7 +3,7 @@
   gap:16px 24px;margin:0;
 }
 .fp-field-item dt{font-size:var(--fs-sm);color:var(--ink-500);margin-bottom:4px;}
-.fp-field-item dd{font-size:var(--fs-base);color:var(--ink-900);font-weight:500;margin:0;word-break:break-word;}
+.fp-field-item dd{font-size:var(--fs-base);color:var(--ink-900);font-weight:var(--fw-medium);margin:0;word-break:break-word;}
 
 @media (max-width:900px){
   .fp-field-list{grid-template-columns:repeat(2,1fr);}

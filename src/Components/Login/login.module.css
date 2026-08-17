@@ -62,7 +62,7 @@
 /* Caption/Regular */
     font-size: var(--fs-sm);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 16px; /* 133.333% */
 }
 
@@ -94,7 +94,7 @@
     /* Heading/M */
     font-size: var(--fs-4xl);
     font-style: normal;
-    font-weight: 600;
+    font-weight:var(--fw-semibold);
     line-height: 36px; /* 128.571% */
 }
 
@@ -113,7 +113,7 @@
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
 }
 
@@ -141,7 +141,7 @@
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
 }
 
@@ -171,7 +171,7 @@
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
 }
 
@@ -181,7 +181,7 @@
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
 }
 
@@ -251,7 +251,7 @@
     color: #C0152F;
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 18px;
 }
 
@@ -271,7 +271,7 @@
     gap: 12px;
     align-self: stretch;
     border: none;
-    border-radius: 300px;
+    border-radius: 12px;
     background: #0065CD;
     color: #FFF;
     cursor: pointer;
@@ -279,7 +279,7 @@
     /* Label/M */
     font-size: var(--fs-lg);
     font-style: normal;
-    font-weight: 500;
+    font-weight:var(--fw-medium);
     line-height: 24px; /* 150% */
 }
 
@@ -303,7 +303,7 @@
     /* Label/M */
     font-size: var(--fs-sm);
     font-style: normal;
-    font-weight: 400;
+    font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
 
 }

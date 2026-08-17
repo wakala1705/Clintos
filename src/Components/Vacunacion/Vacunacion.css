@@ -86,7 +86,15 @@ body{
   font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
-.app{display:flex;height:100vh;min-width:1024px;overflow:hidden;}
+/* Piso bajado de 1024px a 768px (--bp-tablet, ver AGENTS.md "Responsive /
+   Breakpoints") — mismo criterio ya aplicado en GestionEnfermeria/shared/
+   shared.css. Sigue sin ser reflow real: por debajo de 1024px las tablas/
+   grillas densas de este módulo todavía no se apilan, ganan su propio
+   scroll horizontal en vez de romper el layout. El sidebar ya se
+   auto-colapsa a riel de íconos por debajo de 1024px (--bp-desktop, ver
+   applySidebarAutoState en legacy-shell-chrome.js), independiente de este
+   valor. */
+.app{display:flex;height:100vh;min-width:768px;overflow:hidden;}
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
 .content{padding:16px;display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;overflow-y:auto;}
 
@@ -104,7 +112,7 @@ body{
 /* ---------- BUTTONS ---------- */
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:inherit;font-weight:500;font-size:var(--fs-base);
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
   padding:8px 16px;border-radius:var(--radius);
   border:1px solid transparent;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s,opacity .15s;
@@ -120,7 +128,7 @@ body{
 
 /* ---------- ENCABEZADO DE CONTENIDO ---------- */
 .vac-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-shrink:0;flex-wrap:wrap;}
-.vac-page-head h1{font-size:var(--fs-3xl);font-weight:700;margin:0 0 4px;color:var(--ink-900);letter-spacing:-.01em;}
+.vac-page-head h1{font-size:var(--fs-3xl);font-weight:var(--fw-bold);margin:0 0 4px;color:var(--ink-900);letter-spacing:-.01em;}
 .vac-page-head p{margin:0;color:var(--ink-500);font-size:var(--fs-base);}
 .vac-page-head-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
@@ -152,13 +160,13 @@ body{
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .chip-filter{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-base);font-weight:600;color:var(--ink-700);
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:7px 12px;cursor:pointer;
   font-family:inherit;transition:background .15s,border-color .15s,color .15s;
 }
 .chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
-.chip-filter .count{font-size:var(--fs-xs);font-weight:700;color:var(--ink-400);}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
 .chip-filter.active{background:var(--interactive-selected-bg,var(--primary-50));border-color:var(--interactive-selected-border,var(--primary-100));color:var(--interactive-selected-text,var(--primary-dark));}
 .chip-filter.active .count{color:inherit;opacity:.75;}
 
@@ -200,7 +208,7 @@ html[data-theme="dark"] .search-field input:focus{background:var(--surface);}
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
+.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
 .modal-close-btn{
   width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
@@ -223,7 +231,7 @@ html[data-theme="dark"] .search-field input:focus{background:var(--surface);}
   padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
   font-size:var(--fs-sm);color:var(--ink-500);
 }
-.vac-esquema-patient-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.vac-esquema-patient-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .vac-esquema-patient-sep{color:var(--ink-400);}
 
 @media (prefers-reduced-motion: reduce){

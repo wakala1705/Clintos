@@ -9,7 +9,7 @@
   border-left:3px solid var(--primary);
 }
 .dev-order-header .row-expand-btn{color:var(--primary);}
-.dev-consecutivo{font-size:var(--fs-base);font-weight:700;color:var(--link-text);}
+.dev-consecutivo{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--link-text);}
 .dev-cell{font-size:var(--fs-base);color:var(--ink-900);}
 .dev-cell.muted{color:var(--ink-500);}
 .dev-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end;}

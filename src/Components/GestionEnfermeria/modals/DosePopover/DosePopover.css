@@ -11,7 +11,7 @@
 }
 .dose-popover.open{opacity:1;pointer-events:auto;transform:translateY(0);}
 .dp-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
-.dp-time{font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
+.dp-time{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
 /* .dp-status-badge (+ estados st-*) vive en shared/shared.css: lo reutiliza
    también la vista "Lista" de MedicamentosPanel. */
 
@@ -30,7 +30,7 @@
 .dp-actions{display:flex;flex-direction:column;gap:1px;}
 .dp-action{
   display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:8px;
-  font-size:var(--fs-base);font-weight:500;color:var(--ink-700);cursor:pointer;background:none;border:none;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;background:none;border:none;
   font-family:inherit;width:100%;text-align:left;
 }
 .dp-action:hover{background:#f3f5f9;}

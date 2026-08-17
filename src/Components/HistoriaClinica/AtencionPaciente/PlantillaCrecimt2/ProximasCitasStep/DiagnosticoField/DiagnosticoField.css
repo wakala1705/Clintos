@@ -56,7 +56,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .pcs-diag-input-wra
 .pcs-diag-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pcs-diag-option-texto{font-size:var(--fs-base);color:var(--ink-900);}
 .pcs-diag-option-codigo{
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);background:var(--gray-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);background:var(--gray-bg);
   border-radius:10px;padding:2px 8px;flex-shrink:0;
 }
 

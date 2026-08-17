@@ -28,16 +28,16 @@
 .ev-wrap-compact .vac-cell{padding:5px 4px;}
 .ev-wrap-compact .vac-date-input{padding:5px 4px;}
 
-.ev-title{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);margin:0 0 4px;}
+.ev-title{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 4px;}
 .ev-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .ev-group + .ev-group{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
 
-.ev-card-title{font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);margin:0 0 4px;}
+.ev-card-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 4px;}
 .ev-card-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 16px;line-height:1.5;}
 
 .ev-field{display:flex;flex-direction:column;gap:6px;}
-.ev-field label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
+.ev-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
 .ev-field input{
   border:1px solid var(--border);border-radius:var(--radius);padding:0 12px;height:var(--input-md);
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
@@ -59,7 +59,7 @@
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.ev-modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:700;color:var(--ink-900);}
+.ev-modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
 .ev-modal-close-btn{
   width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
@@ -84,7 +84,7 @@
 .vac-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .vac-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .vac-progress-pill{
-  font-size:var(--fs-sm);font-weight:600;color:var(--primary-dark);background:var(--primary-50);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary-dark);background:var(--primary-50);
   padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;
 }
 .vac-progress-pill.complete{color:var(--green);background:var(--green-bg);}
@@ -101,17 +101,17 @@
 .vac-matrix{border-collapse:separate;border-spacing:0;min-width:940px;width:100%;font-size:var(--fs-sm);}
 .vac-matrix thead th{
   background:#f7f8fb;color:var(--ink-500);
-  font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
+  font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
   padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-matrix-corner{position:sticky;left:0;z-index:1;text-align:left;}
 .vac-momento-label{display:block;}
-.vac-momento-sub{display:block;font-size:var(--fs-xs);font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-400);}
+.vac-momento-sub{display:block;font-size:var(--fs-xs);font-weight:var(--fw-medium);text-transform:none;letter-spacing:0;color:var(--ink-400);}
 
 .vac-matrix-row-head{
   position:sticky;left:0;z-index:1;background:var(--surface);
-  text-align:left;font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);white-space:nowrap;min-width:170px;
+  text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;min-width:170px;
   padding:8px 12px;border-bottom:1px solid var(--border);
   box-shadow:2px 0 4px -2px rgba(16,24,39,.08);
 }
@@ -154,9 +154,9 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
   padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;
 }
 .vac-card-icon{width:18px;height:18px;color:var(--primary);flex-shrink:0;}
-.vac-card-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);flex:1;min-width:0;}
+.vac-card-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);flex:1;min-width:0;}
 .vac-card-progress{
-  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);background:var(--gray-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);background:var(--gray-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
 }
 .vac-card-progress.complete{color:var(--green);background:var(--green-bg);}
@@ -167,8 +167,8 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-card-body{padding:2px 14px 14px;display:flex;flex-direction:column;border-top:1px solid var(--border);}
 .vac-dose-row{display:flex;flex-direction:column;gap:6px;padding-top:12px;}
 .vac-dose-info{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.vac-dose-label{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);}
-.vac-dose-state{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);flex-shrink:0;}
+.vac-dose-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.vac-dose-state{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);flex-shrink:0;}
 .vac-dose-state .icon{width:13px;height:13px;}
 .vac-dose-state.done{color:var(--green);}
 .vac-dose-date{margin:0;}
@@ -177,7 +177,7 @@ html[data-theme="dark"] .vac-matrix thead th{background:#161c2b;}
 .vac-otras-list{display:flex;flex-direction:column;gap:8px;margin:16px 0 12px;}
 .vac-otras-col-labels{
   display:grid;grid-template-columns:1fr 200px 34px;gap:12px;
-  font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
   padding:0 2px 2px;
 }
 .vac-otra-row{display:grid;grid-template-columns:1fr 200px 34px;gap:12px;align-items:start;}

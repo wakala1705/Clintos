@@ -5,6 +5,6 @@
 .rv-vacuna-context{
   padding:12px 14px;background:var(--bg);border-radius:var(--radius);margin-bottom:18px;
 }
-.rv-vacuna-context h4{margin:0 0 4px;font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);}
+.rv-vacuna-context h4{margin:0 0 4px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rv-vacuna-context-meta{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:var(--fs-sm);color:var(--ink-700);}
-.rv-vacuna-context-meta strong{color:var(--ink-900);font-weight:600;}
+.rv-vacuna-context-meta strong{color:var(--ink-900);font-weight:var(--fw-semibold);}

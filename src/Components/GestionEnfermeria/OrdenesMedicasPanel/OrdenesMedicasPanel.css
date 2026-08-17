@@ -38,7 +38,7 @@
 .ome-header-row{
   display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-2) var(--space-4);
   background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
-  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
 }
 .ome-header-row .col-actions{text-align:right;justify-self:end;}
 .ome-order{border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -49,7 +49,7 @@
   border-left:3px solid var(--primary);
 }
 .ome-order-header .ome-order-actions-cell{justify-self:end;}
-.ome-order-number{font-size:var(--fs-base);font-weight:700;color:var(--link-text);}
+.ome-order-number{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--link-text);}
 .ome-order-cell{font-size:var(--fs-base);color:var(--ink-900);}
 .ome-order-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end;}
 .ome-order-body{display:flex;flex-direction:column;}

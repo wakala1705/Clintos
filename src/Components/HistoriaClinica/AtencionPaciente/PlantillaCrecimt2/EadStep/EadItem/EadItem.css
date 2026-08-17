@@ -6,7 +6,7 @@
   padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;
 }
 .ead-item:last-child{border-bottom:none;}
-.ead-item-text{margin:0;font-size:var(--fs-base);font-weight:500;color:var(--ink-900);line-height:1.5;flex:1;min-width:220px;}
+.ead-item-text{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.5;flex:1;min-width:220px;}
 .ead-item-answer{flex-shrink:0;}
 
 @media (max-width:720px){

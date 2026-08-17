@@ -17,14 +17,14 @@
   padding:14px 20px;background:var(--surface);border-left:3px solid var(--primary);
 }
 .recep-order-header .row-expand-btn{color:var(--primary);}
-.recep-order-number{font-size:var(--fs-base);font-weight:700;color:var(--link-text);}
+.recep-order-number{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--link-text);}
 .recep-order-date{font-size:var(--fs-base);color:var(--ink-500);white-space:nowrap;}
 .recep-order-status{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .recep-order-body{display:flex;flex-direction:column;}
 .recep-order-body.collapsed{display:none;}
 .recep-med{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#f5f6f8;border-top:1px solid var(--border);}
 .recep-med .row-expand-btn{color:var(--ink-700);}
-.recep-med-name{font-size:var(--fs-sm);font-weight:700;color:var(--ink-900);text-transform:uppercase;letter-spacing:.01em;}
+.recep-med-name{font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--ink-900);text-transform:uppercase;letter-spacing:.01em;}
 .recep-med-detail{border-top:1px solid var(--border);}
 .recep-med-detail.collapsed{display:none;}
 .recep-med-detail .detail-table{font-size:var(--fs-base);table-layout:fixed;}
@@ -42,11 +42,11 @@
 .recep-med-detail .detail-table--indent th:nth-child(3), .recep-med-detail .detail-table--indent td:nth-child(3){width:32%;white-space:normal;overflow-wrap:break-word;}
 .recep-med-detail .detail-table--indent th:nth-child(4), .recep-med-detail .detail-table--indent td:nth-child(4){width:18%;}
 .recep-med-detail .detail-table--indent th:nth-child(5), .recep-med-detail .detail-table--indent td:nth-child(5){width:16%;}
-.recep-med-detail .cant-entregada{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
+.recep-med-detail .cant-entregada{color:var(--primary);font-weight:var(--fw-bold);font-variant-numeric:tabular-nums;}
 
 /* ---------- Recepción parcial: separador "Recibido" / "Falta por recibir" ---------- */
 .detail-section-label{
-  padding:8px 14px 4px;font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);
+  padding:8px 14px 4px;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;background:var(--surface);
 }
 .detail-section-label--faltante{color:var(--amber-fg);background:var(--amber-bg);padding-top:8px;padding-bottom:8px;}

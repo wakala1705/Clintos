@@ -4,7 +4,7 @@
   min-width:320px;justify-content:center;
 }
 .wdp-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);}
-.wdp-month-label{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);text-transform:capitalize;}
+.wdp-month-label{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);text-transform:capitalize;}
 .wdp-nav-btn{
   width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;
@@ -20,8 +20,8 @@
   background:transparent;cursor:pointer;font-family:inherit;
   transition:background .15s,border-color .15s,color .15s;
 }
-.wdp-day-letter{font-size:var(--fs-xs);font-weight:600;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
-.wdp-day-number{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.wdp-day-letter{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.wdp-day-number{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .wdp-day:hover{background:var(--gray-bg);}
 .wdp-day.today{border-color:var(--primary-100);}
 .wdp-day.active{background:var(--primary);}

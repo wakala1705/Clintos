@@ -6,6 +6,6 @@
 }
 .restante-item-row:last-child{margin-bottom:0;}
 .restante-item-info{margin-bottom:var(--space-2);}
-.restante-item-name{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.restante-item-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .restante-item-meta{font-size:var(--fs-sm);color:var(--amber-fg);margin-top:2px;}
 .restante-item-row .detail-table{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}

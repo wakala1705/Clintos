@@ -13,7 +13,7 @@
 }
 .card-tabs-bar::-webkit-scrollbar{display:none;height:0;}
 .card-tab{
-  display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:500;color:var(--ink-500);
+  display:flex;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
   cursor:pointer;padding:12px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
   border:none;background:none;font-family:inherit;outline-offset:2px;
 }
@@ -22,7 +22,7 @@
 .card-tab:focus-visible{outline:2px solid var(--primary);border-radius:4px;}
 .card-tab[disabled]{opacity:.45;cursor:not-allowed;}
 .card-tab[disabled]:hover{color:var(--ink-500);}
-.card-tab.active{color:var(--primary);font-weight:600;}
+.card-tab.active{color:var(--primary);font-weight:var(--fw-semibold);}
 .card-tab.active::after{
   content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary);
 }

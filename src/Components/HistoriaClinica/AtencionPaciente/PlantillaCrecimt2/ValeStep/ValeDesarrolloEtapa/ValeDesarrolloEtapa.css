@@ -6,12 +6,12 @@
    necesitan hacer wrap en varias filas, no 2-3 opciones en una sola fila. */
 .vale-rango-select{margin-bottom:20px;}
 .vale-rango-label{
-  margin:0 0 10px;font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);
+  margin:0 0 10px;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
 .vale-rango-chips{display:flex;flex-wrap:wrap;gap:8px;}
 .vale-rango-chip{
-  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink-700);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   background:var(--surface);border:1px solid var(--border);border-radius:999px;
   padding:8px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s;
 }

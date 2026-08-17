@@ -11,9 +11,9 @@
    leerse de un vistazo como "esto se calculó solo, no se escribe acá". */
 .gc-de-input{
   background:var(--primary-50) !important;border-style:dashed !important;
-  color:var(--primary-dark) !important;font-weight:600;cursor:default;
+  color:var(--primary-dark) !important;font-weight:var(--fw-semibold);cursor:default;
 }
-.gc-de-input::placeholder{color:var(--ink-400);font-weight:400;}
+.gc-de-input::placeholder{color:var(--ink-400);font-weight:var(--fw-regular);}
 
 /* Mismo mecanismo que .ef-calculated-input (ExamenFisicoStep.css, IMC):
    fondo + borde discontinuo, para que se lea como "esto no se escribe acá"
@@ -26,9 +26,9 @@
    el mismo color para el mismo resultado). */
 .gc-clasificacion-input{
   background:var(--primary-50) !important;border-style:dashed !important;
-  color:var(--primary-dark) !important;font-weight:600;cursor:default;
+  color:var(--primary-dark) !important;font-weight:var(--fw-semibold);cursor:default;
 }
-.gc-clasificacion-input::placeholder{color:var(--ink-400);font-weight:400;}
+.gc-clasificacion-input::placeholder{color:var(--ink-400);font-weight:var(--fw-regular);}
 
 .gc-clasificacion-input.gc-clasificacion-esperado{background:var(--green-bg) !important;color:var(--green) !important;border-color:var(--green);}
 .gc-clasificacion-input.gc-clasificacion-alerta{background:var(--amber-bg) !important;color:var(--amber-fg) !important;border-color:var(--amber-fg);}

@@ -9,5 +9,5 @@
 }
 .lp-empty-icon .icon{width:24px;height:24px;}
 .lp-empty-state-error .lp-empty-icon{background:var(--red-bg);color:var(--red);}
-.lp-empty-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);max-width:360px;}
+.lp-empty-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);max-width:360px;}
 .lp-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;line-height:1.4;margin-bottom:8px;}

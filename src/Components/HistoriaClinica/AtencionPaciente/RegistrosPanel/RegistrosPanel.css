@@ -21,7 +21,7 @@
    redundante con el title del botón (lectores de pantalla no necesitan leer
    "+" dos veces). */
 .rg-shortcut-hint{
-  font-size:var(--fs-xs);font-weight:600;color:rgba(255,255,255,.85);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:rgba(255,255,255,.85);
   border:1px solid rgba(255,255,255,.35);border-radius:5px;
   padding:2px 6px;line-height:1.3;flex-shrink:0;
 }
@@ -32,7 +32,7 @@
   padding:10px 16px;background:none;border:none;cursor:pointer;font-family:inherit;
 }
 .rg-header-btn:hover{background:var(--gray-bg);}
-.rg-header-title{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);}
+.rg-header-title{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);}
 .rg-header-chevron{width:16px;height:16px;color:var(--ink-500);transition:transform .15s;}
 .rg-header-chevron.open{transform:rotate(90deg);}
 
@@ -49,13 +49,13 @@
 .rg-group-row-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .rg-group-chevron{width:14px;height:14px;color:var(--ink-400);flex-shrink:0;transition:transform .15s;}
 .rg-group-chevron.open{transform:rotate(90deg);}
-.rg-group-count{font-size:var(--fs-base);font-weight:700;color:var(--primary);flex-shrink:0;min-width:14px;}
+.rg-group-count{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--primary);flex-shrink:0;min-width:14px;}
 .rg-group-name{
-  font-size:var(--fs-sm);font-weight:600;color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);text-transform:uppercase;letter-spacing:.02em;
   flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .rg-badge-activa{
-  font-size:var(--fs-xs);font-weight:700;color:var(--green);background:var(--green-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--green);background:var(--green-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
 }
 
@@ -82,7 +82,7 @@
 .rg-subrow.selected{background:var(--interactive-selected-bg);}
 .rg-subrow:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .rg-subrow-datetime{font-size:var(--fs-base);color:var(--ink-500);}
-.rg-subrow-title{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);}
+.rg-subrow-title{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 .rg-subrow-author{font-size:var(--fs-base);color:var(--ink-700);}
 .rg-subrow-role{font-size:var(--fs-base);color:var(--ink-500);}
 

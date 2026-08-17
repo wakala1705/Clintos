@@ -26,13 +26,13 @@
 .rv-stepper-item:last-child{flex:0 0 auto;}
 .rv-stepper-dot{
   display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
-  width:22px;height:22px;border-radius:50%;font-size:var(--fs-xs);font-weight:700;
+  width:22px;height:22px;border-radius:50%;font-size:var(--fs-xs);font-weight:var(--fw-bold);
   background:var(--surface);border:1px solid var(--border);color:var(--ink-400);
 }
 .rv-stepper-dot .icon{width:12px;height:12px;}
 .rv-stepper-dot.active{background:var(--primary);border-color:var(--primary);color:#fff;}
 .rv-stepper-dot.done{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
-.rv-stepper-label{font-size:var(--fs-sm);font-weight:600;color:var(--ink-400);margin-left:8px;white-space:nowrap;}
+.rv-stepper-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-400);margin-left:8px;white-space:nowrap;}
 .rv-stepper-label.active{color:var(--ink-900);}
 .rv-stepper-label.done{color:var(--ink-500);}
 .rv-stepper-connector{flex:1;height:1px;background:var(--border);margin:0 12px;}

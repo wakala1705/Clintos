@@ -12,10 +12,10 @@
 .pg-kpi-warning .pg-kpi-icon{background:var(--amber-bg);color:var(--amber-fg);}
 
 .pg-kpi-label{
-  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.pg-kpi-value{font-size:var(--fs-3xl);font-weight:700;color:var(--ink-900);line-height:1.1;font-variant-numeric:tabular-nums;}
+.pg-kpi-value{font-size:var(--fs-3xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.1;font-variant-numeric:tabular-nums;}
 .pg-kpi-desc{font-size:var(--fs-sm);color:var(--ink-500);}
 
 /* Exclusiva de "Ocupación" — barra delgada en vez de repetir el ícono

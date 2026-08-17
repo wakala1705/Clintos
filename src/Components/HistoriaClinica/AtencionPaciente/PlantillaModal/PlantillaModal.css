@@ -21,8 +21,8 @@
    ".data-table td" (0,1,1, ver shared.css) sin depender del orden de
    inyección de cada hoja — un solo ".pm-cell-desc" (0,1,0) perdía ahí
    justo el font-weight. */
-.pm-table-wrap .pm-cell-codigo{font-weight:400;color:var(--primary);}
-.pm-table-wrap .pm-cell-desc{font-weight:500;color:var(--ink-900);}
+.pm-table-wrap .pm-cell-codigo{font-weight:var(--fw-regular);color:var(--primary);}
+.pm-table-wrap .pm-cell-desc{font-weight:var(--fw-medium);color:var(--ink-900);}
 /* Las filas son enfocables (tabIndex, ver PlantillaModal.jsx) para elegir
    plantilla con Enter sin mouse — .data-table no trae :focus-visible propio
    porque hasta ahora ninguna fila de otras tablas del proyecto era

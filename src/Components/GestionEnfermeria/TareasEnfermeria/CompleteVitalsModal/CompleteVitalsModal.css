@@ -4,4 +4,4 @@
 .task-vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .task-vitals-bp{display:flex;align-items:center;gap:6px;}
 .task-vitals-bp input{width:0;flex:1;}
-.task-vitals-bp span{color:var(--ink-400);font-weight:600;}
+.task-vitals-bp span{color:var(--ink-400);font-weight:var(--fw-semibold);}

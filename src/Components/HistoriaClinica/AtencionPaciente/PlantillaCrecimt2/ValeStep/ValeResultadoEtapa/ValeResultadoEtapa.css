@@ -14,7 +14,7 @@
 /* --fs-2xl (no --fs-lg, el más cercano al 18px original): es el titular del
    resultado final de VALE — mismo peso visual que .pf-section-title, que ya
    usa --fs-2xl, en vez de leerse como un simple título de card. */
-.vale-res-headline h2{margin:0 0 4px;font-size:var(--fs-2xl);font-weight:700;}
+.vale-res-headline h2{margin:0 0 4px;font-size:var(--fs-2xl);font-weight:var(--fw-bold);}
 .vale-res-headline p{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
 .vale-res-headline p b{color:var(--ink-900);}
 /* #0d7a3d (no var(--green)) para el texto/ícono sobre --green-bg — mismo
@@ -33,7 +33,7 @@
   background:var(--amber-bg);border:1px solid #eccb85;border-radius:var(--radius-lg);
   padding:18px 24px;margin-bottom:20px;
 }
-.vale-res-conducta h3{margin:0 0 8px;font-size:var(--fs-base);font-weight:700;color:var(--amber-fg);}
+.vale-res-conducta h3{margin:0 0 8px;font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--amber-fg);}
 .vale-res-conducta p{margin:0;font-size:var(--fs-base);line-height:1.6;color:var(--ink-900);}
 
 /* ---------- CARDS DE RESULTADO POR DIMENSIÓN ----------
@@ -51,11 +51,11 @@
 }
 .vale-res-card-icon .icon{width:20px;height:20px;}
 .vale-res-card-body{display:flex;flex-direction:column;gap:5px;min-width:0;}
-.vale-res-card-label{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.vale-res-card-label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 .vale-res-badge{
   display:inline-flex;align-items:center;gap:6px;width:fit-content;
-  font-size:var(--fs-xs);font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:20px;white-space:nowrap;
 }
 .vale-res-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
 

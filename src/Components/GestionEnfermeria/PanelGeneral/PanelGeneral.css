@@ -3,7 +3,7 @@
    de este dashboard. */
 
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
-.pg-header h1{margin:0 0 4px;font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);}
+.pg-header h1{margin:0 0 4px;font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);}
 .pg-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
 /* "Tareas" + selector "Área operativa" agrupados al extremo derecho del

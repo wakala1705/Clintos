@@ -17,6 +17,27 @@
   --fs-2xl: 20px;
   --fs-3xl: 24px;
   --fs-4xl: 28px;
+
+  /* Escala de pesos global (4 pasos, mismo criterio de no-duplicación por
+     feature que --fs-*: no tiene variante de tema oscuro/alto contraste).
+     Formaliza el patrón ya usado en todo el código: el peso lo determina el
+     rol del texto, no su tamaño (un --fs-base puede llevar cualquiera de
+     estos 4 según sea cuerpo, dato con énfasis, label o heading). */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Breakpoints canónicos — ver AGENTS.md "Responsive / Breakpoints".
+     Declarados acá para que JS pueda leerlos en runtime
+     (getComputedStyle(document.documentElement).getPropertyValue('--bp-desktop'))
+     y quedar sincronizado con el CSS, PERO un custom property no es válido
+     dentro de la condición de un @media (la spec de CSS no lo permite y este
+     proyecto no corre un plugin de "custom media") — dentro de @media hay
+     que repetir el valor numérico literal, nunca inventar uno nuevo. */
+  --bp-tablet: 768px;
+  --bp-desktop: 1024px;
+  --bp-wide: 1440px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -11,17 +11,17 @@
 /* ---------- SECCIÓN / CAMPO ---------- */
 .rv-section{margin-bottom:20px;}
 .rv-section:last-child{margin-bottom:0;}
-.rv-section-title{font-size:var(--fs-sm);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
+.rv-section-title{font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
 
 .rv-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 
 /* Par primario/secundario de texto dentro de un bloque con fondo — usado por
    ConfirmacionStep (resumen) y ExitoStep ("Próxima dosis"), 2+ consumidores. */
-.rv-resumen-primary{margin:0;font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.rv-resumen-primary{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rv-resumen-secondary{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
 
 .rv-field{display:flex;flex-direction:column;gap:6px;}
-.rv-field label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
+.rv-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
 .rv-field .rv-required{color:var(--red);margin-left:2px;}
 .rv-field input,.rv-field select,.rv-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:0 12px;height:var(--input-md);
@@ -43,7 +43,7 @@
    distingue por texto + ícono propio, nunca solo por color (1.4.1). */
 .rv-dosis-badge{
   display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
-  font-size:var(--fs-xs);font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:20px;white-space:nowrap;
 }
 .rv-dosis-badge .icon{width:12px;height:12px;flex-shrink:0;}
 .rv-dosis-badge.pendiente{background:var(--amber-bg);color:var(--amber-fg);}
@@ -65,7 +65,7 @@
   padding:40px 24px;color:var(--ink-500);
 }
 .rv-empty-state .icon{width:32px;height:32px;color:var(--ink-400);margin-bottom:6px;}
-.rv-empty-state h4{margin:0;font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);}
+.rv-empty-state h4{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rv-empty-state p{margin:0;font-size:var(--fs-base);max-width:340px;}
 .rv-empty-state-actions{display:flex;align-items:center;gap:10px;margin-top:14px;}
 

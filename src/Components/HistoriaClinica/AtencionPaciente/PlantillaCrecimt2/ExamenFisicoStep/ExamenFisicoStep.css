@@ -16,7 +16,7 @@
    PlantillaCrecimt2.css pero no distingue "calculado" de "bloqueado"). */
 .ef-calculated-input{
   background:var(--primary-50) !important;border-style:dashed !important;
-  color:var(--primary-dark) !important;font-weight:600;cursor:default;
+  color:var(--primary-dark) !important;font-weight:var(--fw-semibold);cursor:default;
 }
 
 /* ---------- Presión arterial (sistólica / diastólica) ----------
@@ -43,7 +43,7 @@
 .ef-bp-field input::-webkit-outer-spin-button, .ef-bp-field input::-webkit-inner-spin-button{
   -webkit-appearance:none;margin:0;
 }
-.ef-bp-sep{color:var(--ink-400);font-weight:600;flex-shrink:0;}
+.ef-bp-sep{color:var(--ink-400);font-weight:var(--fw-semibold);flex-shrink:0;}
 .ef-bp-unit{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
 
 /* ---------- Examen físico por sistemas ----------

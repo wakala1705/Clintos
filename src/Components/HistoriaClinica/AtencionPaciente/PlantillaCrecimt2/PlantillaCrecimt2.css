@@ -23,7 +23,7 @@
 }
 .pf-titlebar-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .pf-titlebar-icon-btn .icon{width:17px;height:17px;}
-.pf-titlebar-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.pf-titlebar-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 /* .pf-body es el contenedor de scroll principal de .pf-content (antes cada
    columna scrolleaba por su cuenta: el panel izquierdo se desincronizaba del
@@ -84,7 +84,7 @@
   padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);
 }
 .pf-footer-saved{font-size:var(--fs-sm);color:var(--ink-500);}
-.pf-footer-saved b{color:var(--ink-900);font-weight:600;}
+.pf-footer-saved b{color:var(--ink-900);font-weight:var(--fw-semibold);}
 .pf-footer-actions{display:flex;align-items:center;gap:10px;}
 .pf-footer-actions .btn{min-height:40px;}
 
@@ -95,14 +95,14 @@
    vive en AntecedentesNav.css.
    ===================================================================== */
 
-.pf-section-title{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);margin:0 0 4px;}
+.pf-section-title{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 4px;}
 .pf-section-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .pf-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:20px 24px;margin-bottom:20px;scroll-margin-top:16px;
 }
-.pf-card-title{font-size:var(--fs-lg);font-weight:600;color:var(--ink-900);margin:0 0 4px;}
+.pf-card-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 4px;}
 .pf-card-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 16px;line-height:1.5;}
 
 /* Bloque colapsable completo (Antecedentes familiares / Antecedentes
@@ -169,8 +169,8 @@
 /* Nivel 3 de encabezado (Hemoclasificación, dentro del grupo "Antecedentes
    Perinatales del recién nacido") — un tono más chico que .pf-card-title/
    h3.pf-subheading (nivel 2) para que la jerarquía se lea de un vistazo. */
-.pf-subheading{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
-.pf-subheading2{font-size:var(--fs-base);font-weight:700;color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading2{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 12px;}
 /* Mismo borde divisor que separa un .pf-group del siguiente (ver
    .pf-group + .pf-group) — un sub-bloque nivel 3 que no es el primero de su
    grupo se separa del bloque anterior igual que un sub-bloque de nivel 2. */
@@ -200,7 +200,7 @@
 .pf-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 
 .form-field{display:flex;flex-direction:column;gap:6px;}
-.form-field label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
+.form-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
@@ -294,7 +294,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    con id propio + aria-labelledby en el grupo (ver ValeQuestion.jsx, mismo
    criterio). */
 .form-field.pf-question-row label,
-.form-field.pf-question-row p{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);flex:1;min-width:0;margin:0;}
+.form-field.pf-question-row p{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);flex:1;min-width:0;margin:0;}
 .form-field.pf-question-row select{width:200px;flex-shrink:0;}
 
 /* Pill pequeña junto a un <label>, para marcar que el campo de abajo NO se
@@ -306,7 +306,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    propio tinte de fondo para el <input> en sí (.ef-calculated-input,
    .al-tipo-lactancia-result), acá solo la pill. */
 .pf-field-tag{
-  display:inline-block;margin-left:8px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.02em;
+  display:inline-block;margin-left:8px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);letter-spacing:.02em;
   text-transform:uppercase;color:var(--primary-dark);background:var(--primary-50);
   border-radius:20px;padding:2px 8px;vertical-align:middle;
 }
@@ -341,7 +341,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    largo de cada etiqueta (se veía inconsistente entre las 8 condiciones). */
 .pf-grid-4 .pf-condition-row{flex-direction:column;align-items:flex-start;gap:8px;}
 .pf-condition-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.pf-condition-label{font-size:var(--fs-base);font-weight:400;color:var(--ink-700);}
+.pf-condition-label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
 .pf-toggle-group{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
 /* Cuando .pf-toggle-group es hijo directo de .form-field (ver "¿Requiere
    remisión?" en ProximasCitasStep.jsx — único caso hoy; el resto de usos
@@ -353,7 +353,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
    vuelve a su ancho de contenido real. */
 .form-field > .pf-toggle-group{align-self:flex-start;}
 .pf-toggle-btn{
-  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--ink-700);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);background:var(--surface);
   border:none;padding:8px 12px;min-height:38px;cursor:pointer;white-space:nowrap;
   border-left:1px solid var(--border);
 }
@@ -363,10 +363,11 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
 .pf-toggle-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pf-condition-desc{margin-top:10px;}
 
-/* .app{min-width:1024px} (ver HistoriaClinica.css) todavía no permite llegar
-   a estos anchos solo redimensionando la ventana — mismo caso que
-   AgendaTable.css: quedan listos para cuando el shell adopte un modo
-   realmente responsive. */
+/* Ya alcanzables redimensionando la ventana: el shell se bajó a
+   .app{min-width:768px} (--bp-tablet, ver HistoriaClinica.css) — mismo caso
+   que AgendaTable.css. El bloque de 720px sigue por debajo del piso del
+   shell y queda sin efecto por ahora (ver AGENTS.md "Responsive /
+   Breakpoints"). */
 @media (max-width: 1024px){
   .pf-body{flex-direction:column;}
 }

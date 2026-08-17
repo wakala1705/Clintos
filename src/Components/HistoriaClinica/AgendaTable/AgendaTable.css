@@ -66,11 +66,11 @@
 .data-table tbody tr.row-atendido:hover{background:var(--green-bg);}
 
 /* ---------- TARJETAS MOBILE ----------
-   La tabla colapsa a una tarjeta por cita por debajo de 768px — mismo umbral
-   y criterio que .lp-cards en PatientsTable (ver AGENTS.md): el shell
-   .app{min-width:1024px} todavía no permite llegar a ese ancho solo
-   redimensionando la ventana, así que esta vista queda lista para cuando el
-   shell adopte un modo realmente responsive. */
+   La tabla colapsa a una tarjeta por cita por debajo de 768px (--bp-tablet)
+   — mismo umbral y criterio que .lp-cards en PatientsTable (ver AGENTS.md).
+   Ya es alcanzable: el shell .app se bajó a min-width:768px (ver
+   HistoriaClinica.css), así que esta vista entra en juego en el extremo
+   inferior del rango tablet, no solo en teoría. */
 .hc-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
 @media (max-width:768px){
   .hc-table-wrap{display:none;}
@@ -88,17 +88,17 @@
 .hc-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .hc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .hc-card-id{min-width:0;}
-.hc-card-name{font-weight:600;color:var(--ink-900);font-size:var(--fs-base);}
+.hc-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);}
 .hc-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:var(--fs-sm);color:var(--ink-700);}
-.hc-card-times b{color:var(--ink-500);font-weight:600;margin-right:4px;}
+.hc-card-times b{color:var(--ink-500);font-weight:var(--fw-semibold);margin-right:4px;}
 .hc-card-meta{font-size:var(--fs-sm);color:var(--ink-500);border-top:1px solid #eef0f4;padding-top:8px;}
 /* Mismo motivo que .row-open-btn arriba: la tarjeta mobile también depende
    de onDoubleClick, sin equivalente táctil/teclado — este botón le da a
    cada tarjeta una acción explícita y enfocable. */
 .hc-card-open-btn{
   align-self:flex-end;display:flex;align-items:center;gap:4px;
-  font-family:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--primary);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
   background:none;border:none;padding:4px 0;cursor:pointer;
 }
 .hc-card-open-btn .icon{width:15px;height:15px;}

@@ -5,6 +5,6 @@
 }
 .fp-doc-icon{width:22px;height:22px;flex-shrink:0;color:var(--ink-400);}
 .fp-doc-item.cargado .fp-doc-icon{color:var(--green);}
-.fp-doc-tipo{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);}
+.fp-doc-tipo{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fp-doc-meta{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .fp-doc-pendiente{color:var(--amber-fg);}

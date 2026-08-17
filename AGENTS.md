@@ -100,6 +100,54 @@ paralela.
   (`font-size:var(--fs-base)`, nunca `font-size:14px`) — no crear un paso
   intermedio nuevo; la jerarquía adicional dentro de un mismo tamaño se logra
   con `font-weight`/color.
+- **Escala de `font-weight`** (4 pasos, tokens `--fw-*`): mismo criterio de
+  no-duplicación por feature que `--fs-*` — vive una sola vez en el `:root`
+  de `src/app/globals.css`. El peso lo determina el **rol** del texto, no su
+  tamaño: un mismo `--fs-base` puede llevar cualquiera de estos 4 según sea
+  cuerpo, dato con énfasis, label o heading.
+
+  | Token | Valor | Uso |
+  |---|---|---|
+  | `--fw-regular` | 400 | texto de cuerpo plano, labels sin énfasis |
+  | `--fw-medium` | 500 | texto de cuerpo con énfasis (nombres, valores de tabla, botones secundarios, tabs activos) |
+  | `--fw-semibold` | 600 | sub-headings, títulos de modal/card menores, labels de formulario, badges/chips, botones |
+  | `--fw-bold` | 700 | headings de página/sección, valores KPI grandes, cifras destacadas |
+
+  Cualquier `font-weight` nuevo toma uno de estos 4 tokens
+  (`font-weight:var(--fw-semibold)`, nunca `font-weight:600`) — no usar
+  `bold`/`normal` ni pesos intermedios (300/800/900).
+
+# Responsive / Breakpoints
+
+El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada
+feature define `.app{min-width:...}`). Se está extendiendo el soporte hacia
+tablet (min. 768px de ancho) de forma incremental — este es el contrato de
+breakpoints único que hay que usar en ese trabajo, para no repetir el caos
+actual de valores sueltos (`600/640/720/900/1100/1280/1600px` dispersos sin
+coordinar entre componentes).
+
+| Token | Valor | Significado |
+|---|---|---|
+| `--bp-tablet` | 768px | Piso mínimo soportado. Por debajo de esto (teléfono) la app no está en scope todavía. |
+| `--bp-desktop` | 1024px | Techo del rango tablet. Debajo de este ancho aplican las adaptaciones tablet (sidebar colapsado, tablas/grillas reflowadas); en o por encima, la experiencia desktop actual queda intacta. |
+| `--bp-wide` | 1440px | Piso de pantallas que necesitan espacio extra (grillas densas tipo `asignacion-citas`), ya usado ahí de forma ad-hoc — formalizado para no inventar un valor nuevo la próxima vez que haga falta. |
+
+Los tres están declarados en el `:root` de `src/app/globals.css` (no se
+duplican por feature — mismo criterio que `--fs-*`/`--fw-*`: no tienen
+variante de tema oscuro/alto contraste). Sirven para que JS los lea en
+runtime vía `getComputedStyle`, pero **no son usables dentro de la condición
+de un `@media`** — CSS no permite custom properties ahí y el proyecto no
+corre ningún plugin de "custom media". Por eso, dentro de un `@media` hay que
+repetir el valor numérico literal (`@media (max-width:1024px)`), pero siempre
+uno de estos tres — nunca un breakpoint intermedio nuevo. Si una pantalla
+necesita un ajuste que no encaja en ninguno de los tres, es señal de que el
+componente necesita un patrón de layout distinto (ver plan de fases), no un
+cuarto breakpoint.
+
+Los `@media` ya existentes en componentes individuales con valores fuera de
+esta tabla (720/900/1100/1280px, etc.) quedan pendientes de migrar a este
+contrato en las fases siguientes del trabajo de responsive — no son el
+estándar a seguir para código nuevo.
 
 # Icons
 

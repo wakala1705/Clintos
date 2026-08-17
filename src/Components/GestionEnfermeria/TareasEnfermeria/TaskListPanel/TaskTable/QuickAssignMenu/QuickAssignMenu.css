@@ -11,7 +11,7 @@
 .task-quick-assign-option{
   display:flex;align-items:center;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
-  font-size:var(--fs-base);font-weight:600;color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
 }
 .task-quick-assign-option:hover{background:var(--bg);}
 .task-quick-assign-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

@@ -8,4 +8,4 @@
   margin:0;padding:12px 14px;background:var(--primary-50);color:var(--primary-dark);
   border-radius:var(--radius);font-size:var(--fs-sm);line-height:1.5;
 }
-.rv-safety-text strong{font-weight:700;}
+.rv-safety-text strong{font-weight:var(--fw-bold);}

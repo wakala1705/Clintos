@@ -15,7 +15,7 @@
   font-size:var(--fs-base);color:var(--ink-500);display:flex;align-items:center;gap:8px;
 }
 .breadcrumb a:hover{color:var(--primary);text-decoration:underline;}
-.breadcrumb .current{color:var(--ink-900);font-weight:600;}
+.breadcrumb .current{color:var(--ink-900);font-weight:var(--fw-semibold);}
 .breadcrumb .sep{color:var(--ink-400);}
 .topbar .spacer{flex:1;}
 .topbar-right{display:flex;align-items:center;gap:16px;}
@@ -24,7 +24,7 @@
   font-size:var(--fs-base);color:var(--ink-700);
 }
 .meta-item .icon{width:18px;height:18px;color:var(--primary);}
-.meta-item b{font-weight:500;color:var(--ink-900);}
+.meta-item b{font-weight:var(--fw-medium);color:var(--ink-900);}
 .divider-v{width:1px;height:24px;background:var(--border);}
 .icon-btn-circle{
   width:34px;height:34px;border-radius:50%;

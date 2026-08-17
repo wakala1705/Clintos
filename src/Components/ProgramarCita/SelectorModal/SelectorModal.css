@@ -39,7 +39,7 @@
 }
 .pc-selector-row-head{
   background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
-  font-size:var(--fs-xs);font-weight:700;color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
 }
 html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
 .pc-selector-count-head{text-align:right;}
@@ -54,6 +54,6 @@ html[data-theme="dark"] .pc-selector-row-head{background:#1c2333;}
 .pc-selector-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pc-selector-option.active{background:var(--primary-50);}
 .pc-selector-code{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-option-label{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pc-selector-count{font-size:var(--fs-base);font-weight:500;color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
+.pc-selector-option-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pc-selector-count{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);text-align:right;font-variant-numeric:tabular-nums;}
 .pc-selector-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

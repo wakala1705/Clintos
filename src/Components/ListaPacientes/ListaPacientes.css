@@ -98,10 +98,18 @@ body{
   flex-shrink:0;
   stroke:currentColor;
 }
+/* Piso bajado de 1024px a 768px (--bp-tablet, ver AGENTS.md "Responsive /
+   Breakpoints") — mismo criterio ya aplicado en GestionEnfermeria/shared/
+   shared.css. Sigue sin ser reflow real: por debajo de 1024px las tablas/
+   grillas densas de este módulo todavía no se apilan, ganan su propio
+   scroll horizontal en vez de romper el layout. El sidebar ya se
+   auto-colapsa a riel de íconos por debajo de 1024px (--bp-desktop, ver
+   applySidebarAutoState en legacy-shell-chrome.js), independiente de este
+   valor. */
 .app{
   display:flex;
   height:100vh;
-  min-width:1024px;
+  min-width:768px;
   overflow:hidden;
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
@@ -116,7 +124,7 @@ body{
 
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:inherit;font-weight:500;font-size:var(--fs-base);
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
   padding:8px 16px;border-radius:var(--radius);
   border:1px solid transparent;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s,opacity .15s;

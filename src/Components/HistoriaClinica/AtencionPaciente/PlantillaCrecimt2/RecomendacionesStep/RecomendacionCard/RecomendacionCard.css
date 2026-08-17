@@ -18,7 +18,7 @@
    checkbox] en PlantillaCrecimt2.css, ya validado en esta app. */
 .rc-checkbox{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
 .rc-checkbox:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.rc-card-title{font-size:var(--fs-base);font-weight:600;color:var(--ink-900);line-height:1.4;}
+.rc-card-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.4;}
 
 .rc-card-body{margin-top:12px;}
 .rc-textarea{

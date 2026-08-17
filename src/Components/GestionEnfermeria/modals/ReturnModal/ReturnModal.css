@@ -8,7 +8,7 @@
    .suspend-med-list agrega por defecto duplicaba el borde de cada bloque. */
 #return-med-list{border:none;background:none;border-radius:0;overflow:visible;}
 .return-qty-field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.return-qty-field label{font-size:var(--fs-xs);color:var(--ink-500);font-weight:600;white-space:nowrap;}
+.return-qty-field label{font-size:var(--fs-xs);color:var(--ink-500);font-weight:var(--fw-semibold);white-space:nowrap;}
 .return-qty-field input{
   width:96px;border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-sm);padding:0 var(--space-2);font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
