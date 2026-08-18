@@ -1,3 +1,4 @@
-/* .modal-overlay/.modal-card/.form-field/.suspend-header-icon/.btn/
-   .task-mini-modal-card: definidas en ../../shared/shared.css (shared del
-   feature) — este componente no tiene reglas propias además de esas. */
+/* .modal-overlay/.modal-card/.form-field/.btn/.task-mini-modal-card:
+   definidas en ../../shared/shared.css (shared del feature). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — este componente no
+   tiene reglas propias además de esas. */

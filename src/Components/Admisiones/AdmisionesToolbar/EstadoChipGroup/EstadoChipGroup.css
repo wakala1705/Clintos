@@ -1,0 +1,25 @@
+/* Mismo lenguaje visual que .pc-view-switch (ProgramarCita) y
+   .chip-group.segmented (GestionEnfermeria): track en píldora con fondo
+   tenue, opción activa "elevada" (surface + sombra) en vez de relleno
+   azul sólido. */
+.adm-chip-group{
+  display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.adm-chip{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+  padding:7px 14px;border-radius:999px;font-weight:var(--fw-semibold);
+  color:var(--ink-700);font-size:var(--fs-base);cursor:pointer;
+  font-family:inherit;white-space:nowrap;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.adm-chip:hover{background:rgba(16,24,39,.05);}
+.adm-chip:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.adm-chip.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+html[data-theme="dark"] .adm-chip-group{background:#0c0f17;}
+html[data-theme="dark"] .adm-chip:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .adm-chip.active{background:#20283a;border-color:#333e54;}

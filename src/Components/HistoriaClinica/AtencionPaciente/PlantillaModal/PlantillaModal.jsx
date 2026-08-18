@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './PlantillaModal.css';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { PLANTILLAS } from '@/hooks/HistoriaClinica/mockPlantillas';
-import { LuCheck, LuSearch, LuX } from 'react-icons/lu';
+import { LuCheck, LuSearch } from 'react-icons/lu';
 
 // Selector de elementos que pueden recibir foco de teclado dentro del modal
 // — usado para el focus trap (ver efecto de Tab más abajo) y para decidir a
@@ -81,12 +82,12 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
         onClick={(e) => e.stopPropagation()}
         ref={cardRef}
       >
-        <div className="modal-header">
-          <h3 id="pm-title">Catálogo de plantillas de historia clínica</h3>
-          <button type="button" className="modal-close-btn" onClick={handleClose} aria-label="Cerrar catálogo">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          title="Catálogo de plantillas de historia clínica"
+          titleId="pm-title"
+          onClose={handleClose}
+          closeLabel="Cerrar catálogo"
+        />
 
         <div className="modal-body pm-body">
           <div className="search-field pm-search">

@@ -66,6 +66,8 @@ export default function AsignacionCitasPage() {
           edad: `${patient.edad} años`,
           sexo: patient.sexo,
           eps: patient.eps,
+          ciudad: patient.ciudad,
+          telefono: patient.telefono,
         } : null}
         secondRow={patient ? [
           { label: 'Ciudad', value: patient.ciudad },

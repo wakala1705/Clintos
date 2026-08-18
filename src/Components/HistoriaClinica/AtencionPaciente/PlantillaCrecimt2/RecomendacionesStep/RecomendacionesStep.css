@@ -1,8 +1,9 @@
 /* .ac-wrap/.pf-section-title/.pf-section-desc/.btn/.modal-overlay/
-   .modal-card/.modal-header/.modal-body/.modal-footer/.modal-close-btn:
-   definidas en ../PlantillaCrecimt2.css / ../../shared/shared.css (mismo
-   scaffolding de modal que VacunacionStep.jsx/MedicamentosStep.jsx) — acá
-   solo lo exclusivo de este paso. */
+   .modal-card/.modal-body/.modal-footer: definidas en ../PlantillaCrecimt2.css
+   / ../../shared/shared.css (mismo scaffolding de modal que
+   VacunacionStep.jsx/MedicamentosStep.jsx). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — acá solo lo exclusivo
+   de este paso. */
 
 /* Grid de 2 columnas en escritorio (encargo explícito), 1 columna en
    pantallas angostas — mismo breakpoint que .pf-grid-4/.pf-grid-3 en

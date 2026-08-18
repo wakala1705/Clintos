@@ -33,3 +33,24 @@
 .task-table-empty{padding:48px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 
 html[data-theme="dark"] .task-prog-completada{color:var(--green);}
+
+/* ---------- TARJETAS MOBILE ----------
+   La tabla colapsa a una tarjeta por tarea por debajo de 768px
+   (--bp-tablet) — mismo umbral y criterio que .lp-cards en
+   ListaPacientes/PatientsTable y .hc-cards en HistoriaClinica/AgendaTable
+   (ver AGENTS.md). */
+.task-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .task-table-wrap{display:none;}
+  .task-cards{display:flex;}
+}
+.task-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
+}
+.task-card.selected{background:var(--interactive-selected-bg);}
+.task-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.task-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.task-card-id{display:flex;flex-direction:column;gap:2px;}
+.task-card-meta{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-base);color:var(--ink-700);}
+.task-card .task-row-actions{margin-top:2px;}

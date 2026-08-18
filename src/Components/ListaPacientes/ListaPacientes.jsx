@@ -24,6 +24,7 @@ import PatientsTable from '@/Components/ListaPacientes/PatientsTable/PatientsTab
 import PatientsTableSkeleton from '@/Components/ListaPacientes/PatientsTableSkeleton/PatientsTableSkeleton';
 import PatientsEmptyState from '@/Components/ListaPacientes/PatientsEmptyState/PatientsEmptyState';
 import Pagination from '@/Components/ListaPacientes/Pagination/Pagination';
+import { LuDownload, LuUserPlus } from 'react-icons/lu';
 
 const PAGE_SIZE = 10;
 const EMPTY_FILTERS = { estado: '', eps: '', sexo: '', rangoEdad: '', sede: '' };
@@ -233,16 +234,35 @@ export default function ListaPacientes() {
         />
 
         <div className="content">
-          <div className="lp-card-shell">
-            <ActionsBar query={query} onQueryChange={setQuery} onExport={handleExport} />
+          <div className="lp-page-header">
+            <div>
+              <h1>Lista de pacientes</h1>
+              <p>Consulta, filtra y gestiona la información de tus pacientes.</p>
+            </div>
+            <div className="lp-page-header-actions">
+              <button type="button" className="btn btn-secondary" onClick={handleExport}>
+                <LuDownload className="icon" />
+                Exportar
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => window.apOpen()}>
+                <LuUserPlus className="icon" />
+                Agregar paciente
+              </button>
+            </div>
+          </div>
 
-            <FiltersRow
-              filters={filters}
-              onChangeFilter={handleChangeFilter}
-              showSede={showSede}
-              sortBy={sortBy}
-              onChangeSortBy={handleChangeSortBy}
-            />
+          <div className="lp-card-shell">
+            <div className="lp-toolbar">
+              <ActionsBar query={query} onQueryChange={setQuery} />
+
+              <FiltersRow
+                filters={filters}
+                onChangeFilter={handleChangeFilter}
+                showSede={showSede}
+                sortBy={sortBy}
+                onChangeSortBy={handleChangeSortBy}
+              />
+            </div>
 
             {status === 'loading' && <PatientsTableSkeleton columns={showSede ? 8 : 7} />}
 

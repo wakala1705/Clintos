@@ -78,7 +78,22 @@ export default function NuevaCitaFlow() {
               Agregar paciente
             </button>
             <div className="wizard-footer-actions">
-              <button className="btn btn-primary" id="ps-accept-btn" onClick={() => window.confirmPatientSelection()} disabled>
+              {/* Sin `disabled` literal acá a propósito: openPatientSearch()/
+                  setPsSelected() (legacy-nueva-cita.js) ya manejan
+                  habilitado/deshabilitado por su cuenta mutando
+                  el.disabled directamente en el DOM (fuera de React, como el
+                  resto de este flujo imperativo). Si el JSX también fija
+                  `disabled` como literal estático, React nunca vuelve a
+                  tocar ese atributo (no hay re-render de este componente),
+                  pero su sistema de eventos sintéticos igual descarta el
+                  click basado en el prop que recuerda del último render
+                  (`true`) en vez del valor real del DOM — el botón queda
+                  visualmente habilitado pero el clic nunca dispara
+                  onClick. Confirmado con un doble clic sobre la fila (que
+                  sí funciona: llama confirmPatientSelection() directo,
+                  sin pasar por el sistema sintético de React) mientras un
+                  solo clic + "Aceptar" no hacía nada. */}
+              <button className="btn btn-primary" id="ps-accept-btn" onClick={() => window.confirmPatientSelection()}>
                 <LuCheck className="icon" />
                 Aceptar
               </button>

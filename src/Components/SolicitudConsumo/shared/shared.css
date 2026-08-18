@@ -131,24 +131,9 @@ html[data-theme="dark"] .row-menu-item.danger:hover{background:#2a1620;}
 .modal-sm{width:440px;}
 .modal-md{width:580px;}
 .modal-xl{width:95vw;max-width:1400px;height:92vh;max-height:92vh;}
-.modal-header{
-  display:flex;align-items:center;justify-content:space-between;padding:12px;
-  border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.modal-header .left{display:flex;gap:12px;align-items:center;}
-.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.card-icon{
-  width:36px;height:36px;border-radius:9px;background:var(--primary-50);
-  display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;
-}
-.card-icon .icon{width:18px;height:18px;}
-.modal-close{
-  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  color:var(--ink-500);cursor:pointer;border:1px solid transparent;flex-shrink:0;background:none;
-}
-.modal-close:hover{background:#f3f5f9;border-color:var(--border);}
-html[data-theme="dark"] .modal-close:hover{background:#20283a;border-color:var(--border);}
-.modal-close .icon{width:18px;height:18px;}
+/* Header homologado: ver @/Components/ModalHeader/ModalHeader (.modal-header/
+   .card-icon/.modal-close ya no se redefinen acá — el ícono usa el círculo
+   34px de ModalHeader en vez del squircle 36px propio de esta feature). */
 .modal-body{padding:24px;overflow-y:auto;}
 .modal-body-plain{padding:24px;overflow-y:auto;}
 .modal-footer{

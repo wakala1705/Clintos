@@ -15,10 +15,15 @@
 .patient-meta .pm-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .patient-meta .pm-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);}
 .patient-meta .pm-item b{color:var(--ink-900);font-weight:var(--fw-medium);}
-/* "Ver más datos" no está implementado (no dispara ninguna acción) — se
-   muestra como texto atenuado en vez de enlace para no exponer a
-   tecnología de asistencia una función que no existe (WCAG 4.1.2). */
-.patient-meta .pm-item-more{color:var(--ink-500);font-size:var(--fs-base);}
+/* "Ver más" abre PatientDetailModal (ver PatientBanner.jsx) con el detalle
+   completo del paciente — estilo de link-button, mismo criterio que
+   .pc-link-btn en ProgramarCita/shared/shared.css. */
+.patient-meta .pm-item-more{
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--primary);
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;white-space:nowrap;
+}
+.patient-meta .pm-item-more:hover{text-decoration:underline;}
+.patient-meta .pm-item-more:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:2px;}
 .patient-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
 
 /* ---------- VARIANTE COMPACTA (maximizar, ver PlantillaCrecimt2.jsx) ----------

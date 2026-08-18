@@ -1,5 +1,6 @@
 import './PedidoModal.css';
-import { LuBox, LuClock, LuPlus, LuShield, LuUser, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuBox, LuClock, LuPlus, LuShield, LuUser } from 'react-icons/lu';
 
 // Modal "Pedido a farmacia": cobertura a solicitar (6/12/24h o personalizada),
 // resumen de cantidades calculadas por medicamento según su frecuencia, e
@@ -9,19 +10,14 @@ export default function PedidoModal() {
   return (
     <div className="modal-overlay" id="pedido-modal-overlay">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="pedido-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon icon-primary">
-              <LuBox className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="pedido-modal-title">Pedido a farmacia</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="pedido-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuBox}
+          tone="primary"
+          title="Pedido a farmacia"
+          titleId="pedido-modal-title"
+          closeId="pedido-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="suspend-patient-strip">

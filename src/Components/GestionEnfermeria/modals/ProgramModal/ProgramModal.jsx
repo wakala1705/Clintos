@@ -1,5 +1,6 @@
 import './ProgramModal.css';
-import { LuCalendarCheck, LuClock, LuShield, LuUser, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCalendarCheck, LuClock, LuShield, LuUser } from 'react-icons/lu';
 
 // Modal "Programar tratamiento": fecha/hora de inicio del esquema + preview de
 // las dosis calculadas (agrupadas por día) para cada medicamento pendiente de
@@ -9,19 +10,14 @@ export default function ProgramModal() {
   return (
     <div className="modal-overlay" id="program-modal-overlay">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="program-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon icon-primary">
-              <LuCalendarCheck className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="program-modal-title">Programar tratamiento</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="program-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuCalendarCheck}
+          tone="primary"
+          title="Programar tratamiento"
+          titleId="program-modal-title"
+          closeId="program-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="suspend-patient-strip">

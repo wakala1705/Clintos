@@ -3,7 +3,10 @@
    solo existe en la ruta de Historia Clínica, y ConfigModal se abre también
    desde /asignacion-citas vía UserMenu — ver AGENTS.md sobre componentes
    app-wide. El z-index se deja fijo por la misma razón (--z-modal no está
-   definido en todas las rutas). */
+   definido en todas las rutas). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado en todo el proyecto,
+   solo consume tokens ya duplicados en cada feature — funciona igual sin
+   importar desde qué ruta se abra este modal). */
 .config-modal-overlay{
   position:fixed;inset:0;z-index:1000;background:rgba(16,24,39,.45);
   display:flex;align-items:center;justify-content:center;padding:24px;
@@ -13,17 +16,6 @@
   height:620px;max-height:calc(100vh - 48px);display:flex;flex-direction:column;
   box-shadow:0 24px 64px rgba(16,24,39,.32);overflow:hidden;
 }
-.config-modal-header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.config-modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
-.config-modal-close{
-  width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
-}
-.config-modal-close:hover{background:var(--bg);color:var(--ink-900);}
-.config-modal-close .icon{width:18px;height:18px;}
 
 .config-modal-body{flex:1;display:flex;min-height:0;}
 
@@ -42,7 +34,7 @@
 .config-nav-item.active .icon{color:var(--primary-dark);}
 
 .config-panel{flex:1;padding:22px 24px;overflow-y:auto;}
-.config-section-title{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);margin-bottom:18px;}
+.config-section-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:18px;}
 
 .config-profile-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
 .config-profile-avatar{

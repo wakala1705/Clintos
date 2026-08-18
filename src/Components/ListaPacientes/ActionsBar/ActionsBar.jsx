@@ -1,10 +1,14 @@
 import './ActionsBar.css';
-import { LuDownload, LuSearch, LuUserPlus } from 'react-icons/lu';
+import { LuSearch } from 'react-icons/lu';
 
-export default function ActionsBar({ query, onQueryChange, onExport }) {
+// Los CTA principales ("Exportar"/"Agregar paciente") viven en
+// .lp-page-header-actions (ver ListaPacientes.jsx), mismo patrón que el
+// resto de páginas de nivel superior (ej. .adm-page-header-actions en
+// Admisiones) — esta barra solo lleva el buscador.
+export default function ActionsBar({ query, onQueryChange }) {
   return (
     <div className="lp-actions-bar">
-      <div className="lp-search-field">
+      <div className="search-field">
         <LuSearch className="icon" />
         <input
           type="text"
@@ -13,16 +17,6 @@ export default function ActionsBar({ query, onQueryChange, onExport }) {
           onChange={(e) => onQueryChange(e.target.value)}
           aria-label="Buscar paciente por nombre o documento"
         />
-      </div>
-      <div className="lp-actions-bar-buttons">
-        <button type="button" className="btn btn-secondary" onClick={onExport}>
-          <LuDownload className="icon" />
-          Exportar
-        </button>
-        <button type="button" className="btn btn-primary" onClick={() => window.apOpen()}>
-          <LuUserPlus className="icon" />
-          Agregar paciente
-        </button>
       </div>
     </div>
   );

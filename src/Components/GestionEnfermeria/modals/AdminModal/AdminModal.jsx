@@ -1,5 +1,6 @@
 import './AdminModal.css';
-import { LuClock, LuShieldCheck, LuTriangleAlert, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuClock, LuShieldCheck, LuTriangleAlert } from 'react-icons/lu';
 
 // Modal "Registrar administración": resumen compacto del medicamento en dos
 // líneas (nombre + dosis/vía/frecuencia a la derecha; fecha/hora programada +
@@ -15,12 +16,14 @@ export default function AdminModal() {
   return (
     <div className="modal-overlay" id="admin-modal-overlay">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
-        <div className="modal-header">
-          <h3 id="admin-modal-title">Registrar administración</h3>
-          <button className="modal-close-btn" type="button" id="admin-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuShieldCheck}
+          tone="primary"
+          title="Registrar administración"
+          titleId="admin-modal-title"
+          closeId="admin-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="admin-summary">

@@ -1,7 +1,8 @@
-/* .modal-close-btn/.btn/.btn-primary/.btn-secondary: definidas en
-   ../../shared/shared.css (shared del feature) — acá solo el overlay+panel
-   propio de este drawer lateral (no existía un patrón "drawer" en el
-   proyecto, ver .modal-overlay/.modal-card para el equivalente centrado). */
+/* .btn/.btn-primary/.btn-secondary: definidas en ../../shared/shared.css
+   (shared del feature); el header usa @/Components/ModalHeader/ModalHeader
+   (homologado) — acá solo el overlay+panel propio de este drawer lateral
+   (no existía un patrón "drawer" en el proyecto, ver .modal-overlay/
+   .modal-card para el equivalente centrado). */
 .task-detail-overlay{
   position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.32);
   display:flex;justify-content:flex-end;
@@ -18,12 +19,6 @@
 @media (prefers-reduced-motion: reduce){
   .task-detail-overlay,.task-detail-panel{animation:none;}
 }
-
-.task-detail-header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.task-detail-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
 
 .task-detail-body{padding:20px;overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:18px;}
 

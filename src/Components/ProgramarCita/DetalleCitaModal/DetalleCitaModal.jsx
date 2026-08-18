@@ -2,11 +2,12 @@
 
 import { useEffect } from 'react';
 import './DetalleCitaModal.css';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import {
   DOCTORS, SERVICIO_BY_TIPO, STATE_LABEL, VALOR_BY_TIPO, fmtCOP,
 } from '@/hooks/ProgramarCita/agendaMockData';
 import {
-  LuX, LuCheck, LuReceipt, LuCalendarClock, LuUserX, LuCalendarX,
+  LuCheck, LuReceipt, LuCalendarClock, LuUserX, LuCalendarX,
 } from 'react-icons/lu';
 
 const SIN_DATO = '—';
@@ -39,10 +40,7 @@ export default function DetalleCitaModal({ appointment, onClose }) {
   return (
     <div className="pc-modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="pc-modal pc-modal-lg">
-        <div className="pc-modal-header">
-          <h3>Detalle de la cita</h3>
-          <button type="button" className="pc-close-x" aria-label="Cerrar" onClick={onClose}><LuX className="icon" /></button>
-        </div>
+        <ModalHeader title="Detalle de la cita" onClose={onClose} />
         <div className="pc-modal-body">
           <div className="pc-detail-top">
             <div>

@@ -110,6 +110,24 @@ function iniciales(nombre) {
   return nombre.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 }
 
+// Ciudad/dirección/teléfono para PatientDetailModal (ver PatientBanner.jsx)
+// — APPOINTMENTS no trae estos campos (es data de agenda, no de afiliación),
+// así que se derivan de forma determinística por id en vez de agregar 4
+// columnas más a cada una de sus filas. El correo se arma a partir del
+// nombre, mismo criterio que iniciales() arriba.
+const CONTACTO_DEMO = [
+  { ciudad: 'Bogotá D.C.', direccion: 'Carrera 15 # 88-21, Apto 302' },
+  { ciudad: 'Medellín', direccion: 'Calle 10 # 43-50, Casa 4' },
+  { ciudad: 'Cali', direccion: 'Avenida 6N # 28-14' },
+  { ciudad: 'Barranquilla', direccion: 'Calle 84 # 51-30' },
+];
+function contactoDemo(appt) {
+  const { ciudad, direccion } = CONTACTO_DEMO[appt.id % CONTACTO_DEMO.length];
+  const telefono = `3${String(100000000 + (appt.id * 7919) % 899999999).slice(0, 9)}`;
+  const email = `${appt.nombreAfiliado.toLowerCase().normalize('NFD').replace(/[^a-z\s]/g, '').trim().replace(/\s+/g, '.')}@example.com`;
+  return { ciudad, direccion, telefono, email };
+}
+
 // pendiente: aún no llega. en-sala: llegó pero no ha terminado. atendido:
 // finalizó la atención. Alimenta tanto los conteos KPI como el filtro toggle
 // que las tarjetas KPI aplican sobre la tabla.
@@ -154,6 +172,7 @@ export function getAtencionData(citaId) {
       sexo: appt.sexo,
       eps: appt.eps,
       allergies: appt.allergies,
+      ...contactoDemo(appt),
     },
   });
 }

@@ -1,0 +1,22 @@
+/* Reglas compartidas por 2+ componentes del feature (ver "Component
+   organization" en AGENTS.md) — se importa una sola vez desde Admisiones.jsx,
+   no desde cada componente. */
+
+/* ---------- SCAFFOLDING DE MODAL (AdmisionDetalleModal, PreIngresoModal) ---------- */
+.adm-modal-overlay{
+  position:fixed;inset:0;background:rgba(16,24,39,.5);
+  display:none;align-items:center;justify-content:center;z-index:100;padding:24px;
+}
+.adm-modal-overlay.open{display:flex;}
+.adm-modal{
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  width:100%;max-width:560px;max-height:90vh;overflow:auto;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+/* Header homologado: ver @/Components/ModalHeader/ModalHeader (.modal-header/
+   .modal-close-btn) — ya no se redefine acá. */
+.adm-modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.adm-modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}

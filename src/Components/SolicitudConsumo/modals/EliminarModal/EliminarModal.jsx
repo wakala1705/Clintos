@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import './EliminarModal.css';
-import { LuTrash2, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuTrash2 } from 'react-icons/lu';
 
 // Confirma la eliminación/cancelación de una reposición. Se abre tanto desde
 // el menú "···" de una fila como desde el botón "Cancelar Pedido" de
@@ -20,14 +21,7 @@ export default function EliminarModal({ open, repId, onCancel, onConfirm }) {
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
       <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="eliminar-modal-title">
-        <div className="modal-header">
-          <div className="left">
-            <h3 id="eliminar-modal-title" style={{ fontSize: 16 }}>Eliminar solicitud</h3>
-          </div>
-          <button type="button" className="modal-close" onClick={onCancel} aria-label="Cerrar">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader title="Eliminar solicitud" titleId="eliminar-modal-title" onClose={onCancel} />
         <div className="modal-body-plain" style={{ padding: '16px 24px 8px' }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--ink-700)' }}>
             ¿Estás seguro de que querés eliminar la solicitud <b>{repId}</b>? Esta acción no se puede deshacer.

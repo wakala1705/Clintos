@@ -1,5 +1,6 @@
 import './CatalogModal.css';
-import { LuCheck, LuSearch, LuShoppingCart, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCheck, LuSearch, LuShoppingCart } from 'react-icons/lu';
 
 // Catálogo de insumos (overlay por encima del modal de Pedido a farmacia):
 // búsqueda + filtro Todos/Disponibles, tabla de artículos con cantidad y botón
@@ -9,12 +10,12 @@ export default function CatalogModal() {
   return (
     <div className="catalog-overlay" id="catalog-overlay" role="dialog" aria-modal="true" aria-labelledby="catalog-title">
       <div className="catalog-card">
-        <div className="catalog-header">
-          <h3 id="catalog-title">Seleccionar insumos</h3>
-          <button type="button" className="modal-close-btn" id="catalog-close-btn" aria-label="Cerrar catálogo">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          title="Seleccionar insumos"
+          titleId="catalog-title"
+          closeId="catalog-close-btn"
+          closeLabel="Cerrar catálogo"
+        />
 
         <div className="catalog-body">
           <div className="catalog-main">

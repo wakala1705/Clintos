@@ -1,5 +1,6 @@
 import './SuspendModal.css';
-import { LuCirclePause, LuClock, LuShield, LuTriangleAlert, LuUser, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCirclePause, LuClock, LuShield, LuTriangleAlert, LuUser } from 'react-icons/lu';
 
 // Modal "Suspender tratamiento": lista de medicamentos a suspender (uno desde
 // el popover de dosis, o varios desde la selección masiva), motivo obligatorio
@@ -9,19 +10,14 @@ export default function SuspendModal() {
   return (
     <div className="modal-overlay" id="suspend-modal-overlay">
       <div className="modal-card danger-scope" role="dialog" aria-modal="true" aria-labelledby="suspend-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon">
-              <LuTriangleAlert className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="suspend-modal-title">Suspender tratamiento</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="suspend-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuTriangleAlert}
+          tone="warning"
+          title="Suspender tratamiento"
+          titleId="suspend-modal-title"
+          closeId="suspend-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="suspend-patient-strip">

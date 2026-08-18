@@ -1,5 +1,6 @@
 import './CerrarParcialModal.css';
-import { LuBan, LuClock, LuShield, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuBan, LuClock, LuShield } from 'react-icons/lu';
 
 // Modal "Cerrar parcial con justificación": cierre definitivo de una orden de
 // Recepción que quedó parcial y no va a completarse (desabasto, cambio de
@@ -10,19 +11,14 @@ export default function CerrarParcialModal() {
   return (
     <div className="modal-overlay" id="cerrar-parcial-modal-overlay">
       <div className="modal-card danger-scope" role="dialog" aria-modal="true" aria-labelledby="cerrar-parcial-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon">
-              <LuBan className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="cerrar-parcial-modal-title">Cerrar recepción parcial</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="cerrar-parcial-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuBan}
+          tone="warning"
+          title="Cerrar recepción parcial"
+          titleId="cerrar-parcial-modal-title"
+          closeId="cerrar-parcial-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="suspend-patient-strip">

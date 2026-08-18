@@ -12,6 +12,7 @@ import {
   LuChartColumn,
   LuChevronDown,
   LuChevronLeft,
+  LuClipboardCheck,
   LuFileText,
   LuFlaskConical,
   LuFolder,
@@ -51,6 +52,8 @@ export default function Sidebar() {
   const isVacunacion = pathname === '/vacunacion';
   const isPyms = isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
+  const isAdmisiones = pathname === '/admisiones';
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones;
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -77,7 +80,7 @@ export default function Sidebar() {
           <span className="label">Inicio</span>
         </Link>
 
-        <div className={`nav-group${isConsultaExterna || isGestionEnfermeria ? ' open' : ''}`}>
+        <div className={`nav-group${isConsultaExterna || isHospitalizacion ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuStethoscope className="icon nav-icon" />
             <span className="label">Módulo Asistencial</span>
@@ -114,7 +117,7 @@ export default function Sidebar() {
               </div>
             </div>
 
-            <div className={`nav-group sub${isGestionEnfermeria ? ' open' : ''}`}>
+            <div className={`nav-group sub${isHospitalizacion ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuBed className="icon nav-icon" />
                 <span className="label">Hospitalización</span>
@@ -122,6 +125,7 @@ export default function Sidebar() {
               </div>
               <div className="nav-body">
                 <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
+                <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
               </div>
             </div>
 

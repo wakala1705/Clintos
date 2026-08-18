@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import './DescarteModal.css';
-import { LuTrash2, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuTrash2 } from 'react-icons/lu';
 
 // Confirmación de cierre de ArticulosModal cuando el carrito tiene cambios
 // sin guardar. El texto cambia según el modo: crear una solicitud nueva
@@ -27,14 +28,7 @@ export default function DescarteModal({ open, mode, onKeepEditing, onConfirm }) 
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onKeepEditing(); }}>
       <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="descarte-modal-title">
-        <div className="modal-header">
-          <div className="left">
-            <h3 id="descarte-modal-title" style={{ fontSize: 16 }}>{title}</h3>
-          </div>
-          <button type="button" className="modal-close" onClick={onKeepEditing} aria-label="Cerrar">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader title={title} titleId="descarte-modal-title" onClose={onKeepEditing} />
         <div className="modal-body-plain" style={{ padding: '16px 24px 8px' }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--ink-700)' }}>{text}</p>
         </div>

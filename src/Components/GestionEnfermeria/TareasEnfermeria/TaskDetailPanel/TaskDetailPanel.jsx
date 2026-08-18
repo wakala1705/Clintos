@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import './TaskDetailPanel.css';
 import { PriorityBadge, StatusBadge } from '../TaskBadges/TaskBadges';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { AREA_LABEL, timelineDeTarea } from '@/hooks/GestionEnfermeria/mockTareasData';
-import { LuCalendarClock, LuCircleCheck, LuPlay, LuUserRoundCog, LuX } from 'react-icons/lu';
+import { LuCalendarClock, LuCircleCheck, LuPlay, LuUserRoundCog } from 'react-icons/lu';
 
 // Panel lateral derecho de detalle (encargo: "al seleccionar una tarea,
 // abrir un panel lateral derecho") — overlay fijo con backdrop + transform
@@ -29,12 +30,7 @@ export default function TaskDetailPanel({ tarea, onClose, onIniciar, onReprogram
   return (
     <div className="task-detail-overlay" onClick={onClose}>
       <aside className="task-detail-panel" onClick={(e) => e.stopPropagation()} aria-label={`Detalle de ${tarea.nombre}`}>
-        <div className="task-detail-header">
-          <h3>{tarea.nombre}</h3>
-          <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar panel de detalle">
-            <LuX className="icon" />
-          </button>
-        </div>
+        <ModalHeader title={tarea.nombre} onClose={onClose} closeLabel="Cerrar panel de detalle" />
 
         <div className="task-detail-body">
           <div className="task-detail-grid">

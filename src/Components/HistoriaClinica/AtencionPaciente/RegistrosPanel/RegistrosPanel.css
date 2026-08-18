@@ -32,7 +32,7 @@
   padding:10px 16px;background:none;border:none;cursor:pointer;font-family:inherit;
 }
 .rg-header-btn:hover{background:var(--gray-bg);}
-.rg-header-title{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);}
+.rg-header-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rg-header-chevron{width:16px;height:16px;color:var(--ink-500);transition:transform .15s;}
 .rg-header-chevron.open{transform:rotate(90deg);}
 

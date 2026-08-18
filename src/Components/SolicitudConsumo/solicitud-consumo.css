@@ -20,6 +20,7 @@
   --border:#e5e8ef;
   --surface:#ffffff;
   --bg:#f4f6fb;
+  --gray-bg:#eef0f4;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --green:#12a150;
@@ -44,6 +45,7 @@ html[data-theme="dark"]{
   --border:#2a3242;
   --surface:#161c2b;
   --bg:#0c0f17;
+  --gray-bg:#242c3d;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
   --green:#34d399;

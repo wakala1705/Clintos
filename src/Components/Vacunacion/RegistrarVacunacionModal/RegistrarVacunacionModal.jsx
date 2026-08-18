@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import './shared/shared.css';
 import './RegistrarVacunacionModal.css';
-import { LuCheck, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCheck } from 'react-icons/lu';
 import PacienteStep from './PacienteStep/PacienteStep';
 import VacunaStep from './VacunaStep/VacunaStep';
 import AplicacionStep from './AplicacionStep/AplicacionStep';
@@ -105,17 +106,12 @@ export default function RegistrarVacunacionModal({ pacienteInicial, onClose, onV
         aria-labelledby="rv-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-header">
-          <div>
-            <h3 id="rv-modal-title">{headerTitle}</h3>
-            {step !== 'confirmacion' && step !== 'exito' && (
-              <p className="rv-modal-desc">Registra la aplicación de una vacuna al paciente.</p>
-            )}
-          </div>
-          <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          title={headerTitle}
+          titleId="rv-modal-title"
+          subtitle={step !== 'confirmacion' && step !== 'exito' ? 'Registra la aplicación de una vacuna al paciente.' : null}
+          onClose={onClose}
+        />
 
         {showStepper && (
           <div className="rv-stepper" role="tablist" aria-label="Progreso del registro">

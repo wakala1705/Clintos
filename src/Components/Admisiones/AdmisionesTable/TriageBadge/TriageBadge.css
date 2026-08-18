@@ -1,0 +1,11 @@
+.triage-dot{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:#fff;
+}
+.triage-dot.triage-none{background:var(--gray-fg);}
+.triage-dot.triage-1{background:var(--red);}
+.triage-dot.triage-2{background:var(--triage-orange);}
+.triage-dot.triage-3{background:var(--amber-fg);}
+.triage-dot.triage-4{background:var(--green);}
+.triage-dot.triage-5{background:var(--violet-fg);}

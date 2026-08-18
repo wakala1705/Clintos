@@ -48,6 +48,55 @@ only ever used by that one component (goes in its own `.css`) or reused by
 others (goes in `shared.css`) — don't guess, grep the other components in the
 same feature folder first.
 
+# Modales
+
+Todo modal del proyecto usa un único header homologado — no reinventar
+`.modal-header`/botón de cerrar por feature. Antes de esto había 13
+variantes estructurales distintas repartidas en 8 features (paddings,
+radios del botón cerrar, y hasta su color de hover divergían sin querer
+entre features — ver bitácora de homologación de modales para el detalle).
+
+- **Componente**: `@/Components/ModalHeader/ModalHeader` — úsalo para la fila
+  de título+cerrar de todo modal nuevo, sin excepción.
+  ```jsx
+  <ModalHeader
+    icon={LuTriangleAlert}         // opcional — omití el prop si el modal no necesita ícono
+    tone="warning"                 // neutral (default) | primary | warning | danger
+    title="Suspender tratamiento"
+    titleId="suspend-modal-title"  // opcional, para aria-labelledby del modal
+    subtitle="Turno mañana · 07:00–15:00" // opcional, línea secundaria bajo el título
+    onClose={onClose}
+    closeLabel="Cerrar formulario" // opcional, default "Cerrar"
+    trailing={<span className="badge">Confirmado</span>} // opcional, entre título y botón cerrar
+    closeId="admin-modal-close"    // solo para modales legacy-imperativos, ver abajo
+    autoFocusClose                 // opcional, foco inicial en el botón cerrar
+  />
+  ```
+- **Spec fija** (no se overridea por feature): padding `16px 24px`; heading
+  siempre `<h3>` (nunca un `<div>`) en `--fs-lg`/`--fw-semibold`; ícono
+  opcional en círculo 34px con 4 tonos semánticos; botón cerrar `30px` de
+  lado / radio `8px` con hover `var(--gray-bg)` (nunca un hex hardcodeado
+  tipo `#f3f5f9`).
+- **Solo consume tokens, no los define**: `ModalHeader.css` lee
+  `--gray-bg`/`--border`/`--primary`/`--primary-50`/`--amber-bg`/`--amber-fg`/
+  `--red-bg`/`--red`/`--ink-500`/`--ink-700`/`--ink-900` del `:root` de la
+  feature donde se monta — por eso funciona igual en cualquier ruta sin que
+  el componente sepa dónde está montado. **Toda feature nueva debe declarar
+  estos tokens en su propio `:root`** (mismo criterio de duplicación por
+  feature que el resto de tokens de color, ver "Component organization"
+  arriba) — a SolicitudConsumo le faltaba `--gray-bg` y el hover del botón
+  cerrar quedaba sin efecto visible hasta que se agregó.
+- **Modales legacy-imperativos** (los que abre/cierra `legacy-app.js` vía
+  `document.getElementById(...).addEventListener(...)` en vez de un
+  `onClose` de React, ver "Hooks / logic organization" abajo): pasales
+  `closeId` para que el botón conserve el id que ese script escucha.
+- **Fuera de este componente** (son otro tipo de elemento, no un header de
+  modal clásico — no los fuerces al patrón de arriba): diálogos de
+  confirmación centrados sin fila de header (ver `.nc-discard-modal` en
+  `NuevaCitaFlow.jsx`) y los rails de wizard (`.wizard-rail-header`/
+  `.wizard-main-header`, son navegación de pasos, no el título de un
+  diálogo).
+
 # Hooks / logic organization
 
 All non-visual logic (custom hooks, imperative init/controller modules like
@@ -110,12 +159,20 @@ paralela.
   |---|---|---|
   | `--fw-regular` | 400 | texto de cuerpo plano, labels sin énfasis |
   | `--fw-medium` | 500 | texto de cuerpo con énfasis (nombres, valores de tabla, botones secundarios, tabs activos) |
-  | `--fw-semibold` | 600 | sub-headings, títulos de modal/card menores, labels de formulario, badges/chips, botones |
-  | `--fw-bold` | 700 | headings de página/sección, valores KPI grandes, cifras destacadas |
+  | `--fw-semibold` | 600 | **todo título/heading** (página, sección, card, panel, modal), labels de formulario, badges/chips, botones |
+  | `--fw-bold` | 700 | valores KPI grandes, cifras destacadas — nunca headings |
 
   Cualquier `font-weight` nuevo toma uno de estos 4 tokens
   (`font-weight:var(--fw-semibold)`, nunca `font-weight:600`) — no usar
   `bold`/`normal` ni pesos intermedios (300/800/900).
+
+  **Títulos siempre en `--fw-semibold`, nunca `--fw-bold`**: el `h1`/`h2`/`h3`
+  o clase `*-title`/`*-header h*` de una página, sección, card, panel o modal
+  usa `--fw-semibold` sin importar su `font-size` (un `h1` en `--fs-2xl` pesa
+  igual que un `title` de card en `--fs-lg` — la jerarquía visual la da el
+  tamaño, no el peso). `--fw-bold` queda reservado para cifras/valores
+  destacados (KPIs, resultados numéricos) que necesitan distinguirse de los
+  títulos que los rodean, no para headings en sí.
 
 # Responsive / Breakpoints
 

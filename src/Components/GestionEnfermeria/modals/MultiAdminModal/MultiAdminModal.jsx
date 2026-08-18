@@ -1,5 +1,6 @@
 import './MultiAdminModal.css';
-import { LuClock, LuShieldCheck, LuTriangleAlert, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuClock, LuShieldCheck, LuTriangleAlert } from 'react-icons/lu';
 
 // Modal "Registrar administración" en modo múltiple: wizard de un paso por
 // medicamento (mismo resumen/tabla de lotes/insumos/checklist de 5 correctos
@@ -15,12 +16,14 @@ export default function MultiAdminModal() {
   return (
     <div className="modal-overlay" id="madmin-modal-overlay">
       <div className="modal-card madmin-card" role="dialog" aria-modal="true" aria-labelledby="madmin-modal-title">
-        <div className="modal-header">
-          <h3 id="madmin-modal-title">Registrar administración</h3>
-          <button className="modal-close-btn" type="button" id="madmin-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuShieldCheck}
+          tone="primary"
+          title="Registrar administración"
+          titleId="madmin-modal-title"
+          closeId="madmin-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="madmin-body">
           <nav className="madmin-rail" id="madmin-steps" aria-label="Medicamentos a registrar">

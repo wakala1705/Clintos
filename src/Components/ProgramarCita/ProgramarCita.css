@@ -116,10 +116,17 @@ html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
 html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
 html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
+/* Piso bajado de 1200px a 768px (--bp-tablet, ver AGENTS.md "Responsive /
+   Breakpoints") — mismo criterio ya aplicado en Home/FichaPaciente/etc.
+   Sigue sin ser reflow real: la grilla de horarios de este módulo todavía
+   no tiene vista alternativa en tablet, gana su propio scroll horizontal
+   en vez de romper el layout. El sidebar ya se auto-colapsa a riel de
+   íconos por debajo de 1024px (--bp-desktop, ver applySidebarAutoState en
+   legacy-shell-chrome.js), independiente de este valor. */
 .app{
   display:flex;
   height:100vh;
-  min-width:1200px;
+  min-width:768px;
   overflow:hidden;
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
@@ -161,7 +168,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;
   flex-shrink:0;
 }
-.pc-page-header h1{font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.pc-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
 .pc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
 .pc-page-header-actions{display:flex;align-items:center;gap:10px;}
 
@@ -169,6 +176,24 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .pc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
 .pc-side-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
 .pc-main-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0;}
+
+/* Rango tablet (<=1024px, --bp-desktop, ver AGENTS.md "Responsive /
+   Breakpoints"): la columna lateral (MiniCalendar + ContractPanel) deja de
+   caber al lado de la agenda sin aplastarla, así que se apila arriba en vez
+   de al costado — mismo orden del DOM que en desktop (sin `order`) para no
+   romper el orden de lectura/tabulación. La agenda (ScheduleGrid/
+   ScheduleList, ver ese componente) ya no necesita su propio scroll
+   acotado: todo el workspace se vuelve una columna que scrollea entera. */
+@media (max-width:1024px){
+  .pc-workspace{flex-direction:column;overflow-y:auto;}
+  .pc-side-col{width:100%;overflow-y:visible;}
+  /* Piso fijo: sin esto, si MiniCalendar+ContractPanel (arriba, sin límite
+     de alto en este modo) superan el alto disponible, flex-basis:0% de
+     .pc-main-col (viene de flex:1) lo deja crecer a 0 y la agenda
+     desaparece entera en vez de simplemente empujar el scroll — con el
+     piso, en cambio, es el workspace el que scrollea de más (ver arriba). */
+  .pc-main-col{min-height:480px;}
+}
 
 /* ---------- TOAST (estático, sin trigger todavía) ---------- */
 .pc-toast{

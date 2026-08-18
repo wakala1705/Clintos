@@ -4,7 +4,7 @@
 .pc-modal.pc-modal-lg{max-width:900px;}
 
 .pc-detail-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.pc-detail-patient{font-weight:var(--fw-bold);font-size:var(--fs-lg);color:var(--ink-900);}
+.pc-detail-patient{font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
 .pc-detail-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 
 /* Datos agrupados por categoría (cita / contrato / seguimiento), cada una en
@@ -12,7 +12,7 @@
    una sola columna. */
 .pc-detail-section{display:flex;flex-direction:column;gap:8px;}
 .pc-detail-section-title{
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
 .pc-detail-grid{

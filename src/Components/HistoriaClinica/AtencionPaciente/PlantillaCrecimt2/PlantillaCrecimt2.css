@@ -95,7 +95,7 @@
    vive en AntecedentesNav.css.
    ===================================================================== */
 
-.pf-section-title{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 4px;}
+.pf-section-title{font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 4px;}
 .pf-section-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .pf-card{
@@ -169,8 +169,8 @@
 /* Nivel 3 de encabezado (Hemoclasificación, dentro del grupo "Antecedentes
    Perinatales del recién nacido") — un tono más chico que .pf-card-title/
    h3.pf-subheading (nivel 2) para que la jerarquía se lea de un vistazo. */
-.pf-subheading{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 12px;}
-.pf-subheading2{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 12px;}
+.pf-subheading2{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 12px;}
 /* Mismo borde divisor que separa un .pf-group del siguiente (ver
    .pf-group + .pf-group) — un sub-bloque nivel 3 que no es el primero de su
    grupo se separa del bloque anterior igual que un sub-bloque de nivel 2. */

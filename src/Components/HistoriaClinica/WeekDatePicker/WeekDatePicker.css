@@ -4,7 +4,7 @@
   min-width:320px;justify-content:center;
 }
 .wdp-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);}
-.wdp-month-label{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);text-transform:capitalize;}
+.wdp-month-label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);text-transform:capitalize;}
 .wdp-nav-btn{
   width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:var(--ink-500);
   cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;

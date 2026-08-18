@@ -24,6 +24,15 @@ export function initNuevaCita({
   // vuelva a arrancar en el buscador de pacientes en vez de reutilizar en
   // silencio al mismo paciente de la cita anterior.
   clearPatientAfterConfirm = false,
+  // Opcional — cuando el consumidor SÍ lo pasa, elegir un paciente en el
+  // buscador (fila existente + "Aceptar", o "Agregar paciente" nuevo) llama
+  // a esto en vez de encadenar directo al wizard de agendamiento (ncOpen).
+  // Pensado para páginas que reutilizan el mismo modal de búsqueda/alta de
+  // pacientes (.ps-overlay/.ap-overlay) para un flujo que NO es agendar una
+  // cita — ej. Admisiones/pre-ingreso (ver Admisiones.jsx). Sin este
+  // callback, el comportamiento por defecto (asignacion-citas, programar-cita,
+  // ListaPacientes) no cambia.
+  onPatientConfirmed,
 } = {}) {
 
   const PATIENTS = [
@@ -155,10 +164,12 @@ export function initNuevaCita({
 
   function confirmPatientSelection(){
     if(psSelectedIdx === null) return;
-    setPatient(PATIENTS[psSelectedIdx]);
+    const patient = PATIENTS[psSelectedIdx];
+    setPatient(patient);
     closePatientSearch();
     const prefill = ncPendingPrefill;
     ncPendingPrefill = null;
+    if(onPatientConfirmed){ onPatientConfirmed(patient); return; }
     ncOpen(prefill);
   }
 
@@ -1359,6 +1370,13 @@ export function initNuevaCita({
       setPatient(nuevoPaciente);
       apClose();
       ncToast(`Paciente ${nuevoPaciente.nombre} agregado correctamente.`);
+      // Mismo criterio que confirmPatientSelection(): si el consumidor pidió
+      // enterarse de qué paciente quedó activo (ver onPatientConfirmed más
+      // arriba), un paciente recién registrado cuenta igual que uno elegido
+      // de la tabla — quien busca "Agregar paciente" desde acá normalmente
+      // es porque no lo encontró en la lista, no porque quiera un paciente
+      // distinto del que ya venía buscando.
+      onPatientConfirmed?.(nuevoPaciente);
     }
   }
 

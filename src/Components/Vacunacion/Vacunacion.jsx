@@ -9,7 +9,8 @@ import VacKpiRow from './VacKpiRow/VacKpiRow';
 import VacToolbar from './VacToolbar/VacToolbar';
 import VacTable from './VacTable/VacTable';
 import VacPagination from './VacPagination/VacPagination';
-import { LuListChecks, LuSyringe, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuListChecks, LuSyringe } from 'react-icons/lu';
 import { ESTADO_URGENCIA, MOCK_PACIENTES, matchesProxima, normalize } from '@/hooks/Vacunacion/mockVacunacionData';
 import EsquemaVacunacion from '@/Components/EsquemaVacunacion/EsquemaVacunacion';
 import RegistrarVacunacionModal from './RegistrarVacunacionModal/RegistrarVacunacionModal';
@@ -190,18 +191,13 @@ export default function Vacunacion() {
             aria-labelledby="vac-esquema-modal-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
-              <h3 id="vac-esquema-modal-title">Esquema de vacunación</h3>
-              <button
-                type="button"
-                className="modal-close-btn"
-                onClick={() => setEsquemaPaciente(null)}
-                aria-label="Cerrar esquema de vacunación"
-                autoFocus
-              >
-                <LuX className="icon" aria-hidden="true" />
-              </button>
-            </div>
+            <ModalHeader
+              title="Esquema de vacunación"
+              titleId="vac-esquema-modal-title"
+              onClose={() => setEsquemaPaciente(null)}
+              closeLabel="Cerrar esquema de vacunación"
+              autoFocusClose
+            />
             <div className="vac-esquema-patient-header">
               <span className="vac-esquema-patient-name">{esquemaPaciente.nombre}</span>
               <span className="vac-esquema-patient-sep" aria-hidden="true">·</span>

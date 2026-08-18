@@ -1,8 +1,9 @@
 'use client';
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import './EsquemaVacunacion.css';
-import { LuChevronDown, LuCircle, LuCircleCheck, LuExpand, LuPlus, LuSyringe, LuTrash2, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuChevronDown, LuCircle, LuCircleCheck, LuExpand, LuPlus, LuSyringe, LuTrash2 } from 'react-icons/lu';
 
 // Componente app-wide (usado por 2+ features: paso "Vacunación" del wizard
 // CRECIMT2 de Historia Clínica y la acción "Ver esquema completo" de la
@@ -145,7 +146,6 @@ const EsquemaVacunacion = forwardRef(function EsquemaVacunacion(
   const [otrasVacunas, setOtrasVacunas] = useState([{ nombre: '', fecha: '' }]);
   const [openBio, setOpenBio] = useState(null); // acordeón mobile: un biológico abierto a la vez
   const [expandOpen, setExpandOpen] = useState(false); // modal "Expandir esquema"
-  const expandCloseRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     scrollToSub() {},
@@ -334,19 +334,13 @@ const EsquemaVacunacion = forwardRef(function EsquemaVacunacion(
             aria-labelledby="vac-expand-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="ev-modal-header">
-              <h3 id="vac-expand-title">Esquema de vacunación</h3>
-              <button
-                type="button"
-                className="ev-modal-close-btn"
-                onClick={() => setExpandOpen(false)}
-                aria-label="Cerrar vista ampliada"
-                ref={expandCloseRef}
-                autoFocus
-              >
-                <LuX className="icon" aria-hidden="true" />
-              </button>
-            </div>
+            <ModalHeader
+              title="Esquema de vacunación"
+              titleId="vac-expand-title"
+              onClose={() => setExpandOpen(false)}
+              closeLabel="Cerrar vista ampliada"
+              autoFocusClose
+            />
 
             <div className="ev-modal-body vac-expand-body">
               <div className="vac-matrix-wrap">

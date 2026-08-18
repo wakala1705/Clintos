@@ -42,17 +42,8 @@
   width:100%;max-width:480px;max-height:90vh;overflow:auto;
   box-shadow:0 12px 32px rgba(6,25,42,.22);
 }
-.pc-modal-header{
-  padding:16px 24px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
-.pc-modal-header h3{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.pc-close-x{
-  width:28px;height:28px;border:none;background:transparent;color:var(--ink-500);
-  border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
-}
-.pc-close-x:hover{background:#f3f5f9;color:var(--ink-900);}
-.pc-close-x .icon{width:18px;height:18px;}
+/* Header homologado: ver @/Components/ModalHeader/ModalHeader (.modal-header/
+   .modal-close-btn) — ya no se redefine acá. */
 .pc-modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
 .pc-field{display:flex;flex-direction:column;gap:6px;}
 .pc-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}

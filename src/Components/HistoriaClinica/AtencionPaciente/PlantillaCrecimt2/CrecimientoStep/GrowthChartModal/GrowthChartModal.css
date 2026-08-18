@@ -1,16 +1,13 @@
-/* .modal-overlay/.modal-card/.modal-header/.modal-close-btn/.modal-body/
-   .modal-footer/.pf-block-icon/.pf-toggle-group/.pf-toggle-btn/.btn:
-   definidas en ../../PlantillaCrecimt2.css / ../../../shared/shared.css
-   (shared del feature/proyecto) — acá solo lo exclusivo de este modal. */
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.pf-toggle-group/
+   .pf-toggle-btn/.btn: definidas en ../../PlantillaCrecimt2.css /
+   ../../../shared/shared.css (shared del feature/proyecto). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — acá solo lo
+   exclusivo de este modal. */
 
 /* Modal grande (encargo: "80-90% del ancho disponible en desktop") — mismo
    patrón que .vac-expand-modal (VacunacionStep.css): ancho propio sobre
    .modal-card en vez de tocar la base compartida. */
 .gcm-modal{width:min(1400px, 88vw);}
-
-.gcm-header{align-items:center;}
-.gcm-header-titles{display:flex;align-items:center;gap:12px;}
-.gcm-header-titles h3{margin:0;}
 
 /* Selector + resumen en la misma fila — resumen (Paciente/Edad/Sexo +
    Peso/Talla/PC/IMC) a la izquierda, selector de indicador pegado a la

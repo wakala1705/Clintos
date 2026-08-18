@@ -74,6 +74,10 @@ export default function AtencionEnfermeria({ id }) {
           edad: '34 años 10 meses 14 días',
           sexo: 'Femenino',
           eps: 'Salud Total Entidad Promotora de Salud del Régimen Contributivo y del Régimen S',
+          ciudad: 'Bogotá D.C.',
+          direccion: 'Calle 134 # 45-12, Apto 601',
+          telefono: '310 842 9173',
+          email: 'isabella.rodriguez@example.com',
           allergies: [
             { name: 'Penicilina', reaction: 'Reacción cutánea moderada' },
             { name: 'Mariscos', reaction: 'Anafilaxia leve' },

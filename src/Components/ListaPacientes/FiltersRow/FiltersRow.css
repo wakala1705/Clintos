@@ -1,7 +1,50 @@
-.lp-filters-row{
-  display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;
-  padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+/* Sin caja propia: sus hijos se aplanan como ítems directos de .lp-toolbar
+   (ver ListaPacientes.css), que es quien controla el layout de la fila. */
+.lp-filters-row{display:contents;}
+
+/* Botón "Filtros" + popover — mismo patrón .filters-more-btn/.filter-popover
+   que "Otros filtros" en GestionEnfermeria/shared/shared.css, duplicado acá
+   siguiendo el mismo criterio de copia por feature que el resto de clases
+   compartidas (ver AGENTS.md "Component organization"). */
+.filter-popover-wrap{position:relative;flex-shrink:0;}
+.filters-more-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-md);padding:0 12px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  background:var(--surface);cursor:pointer;white-space:nowrap;font-family:inherit;
+  transition:background .15s,border-color .15s,color .15s;
 }
+.filters-more-btn .icon{width:16px;height:16px;color:var(--ink-500);}
+.filters-more-btn .chev{width:14px;height:14px;color:var(--ink-400);margin-left:2px;}
+.filters-more-btn:hover{background:var(--bg);border-color:var(--ink-400);}
+.filters-more-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.filters-more-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
+.filters-more-btn.active .icon{color:var(--primary);}
+.badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+.filter-popover{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:20;min-width:260px;
+  background:var(--surface);border-radius:var(--radius-lg);
+  box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
+}
+.filter-popover-wide{min-width:300px;}
+.fp-section{margin-bottom:16px;}
+.fp-section:last-of-type{margin-bottom:14px;}
+.fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fp-section select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;width:100%;
+  border:1px solid var(--border);border-radius:var(--radius);
+  height:var(--input-md);padding:0 32px 0 12px;font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  background:var(--bg) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+}
+.fp-section select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
+.fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
+
+.lp-filters-spacer{flex:1;min-width:12px;}
 .lp-select-field{display:flex;flex-direction:column;gap:4px;min-width:150px;max-width:190px;}
 .lp-select-field label{
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
@@ -14,5 +57,4 @@
   background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
 }
 .lp-select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
-.lp-filters-spacer{flex:1;min-width:12px;}
 .lp-sort-field{min-width:200px;max-width:240px;}

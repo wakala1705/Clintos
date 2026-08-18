@@ -15,6 +15,7 @@ import MiniCalendar from '@/Components/ProgramarCita/MiniCalendar/MiniCalendar';
 import ContractPanel from '@/Components/ProgramarCita/ContractPanel/ContractPanel';
 import AgendaToolbar from '@/Components/ProgramarCita/AgendaToolbar/AgendaToolbar';
 import ScheduleGrid from '@/Components/ProgramarCita/ScheduleGrid/ScheduleGrid';
+import ScheduleList from '@/Components/ProgramarCita/ScheduleList/ScheduleList';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import DetalleCitaModal from '@/Components/ProgramarCita/DetalleCitaModal/DetalleCitaModal';
 import RangoDropdown from '@/Components/ProgramarCita/RangoDropdown/RangoDropdown';
@@ -150,9 +151,12 @@ export default function ProgramarCita() {
 
   // Un clic en una celda vacía ya identifica médico/especialidad + día + hora
   // — antes se descartaba todo eso y el wizard arrancaba siempre desde cero
-  // (ver ncOpen en legacy-nueva-cita.js).
+  // (ver ncOpen en legacy-nueva-cita.js). `slotIdx` es opcional: el botón
+  // "Nueva cita" de ScheduleList (vista tablet, ver ese componente) solo
+  // identifica columna, no una franja puntual — el wizard igual deja elegir
+  // la hora en su paso "Médico".
   function handleEmptyCellClick(colId, slotIdx) {
-    const horario = timeLabel(slotIdx);
+    const horario = typeof slotIdx === 'number' ? timeLabel(slotIdx) : undefined;
     if (vista === 'medico') {
       const col = columns.find((c) => c.id === colId);
       const dia = col?.date ? diffInDays(col.date) : 0;
@@ -180,7 +184,7 @@ export default function ProgramarCita() {
 
           <div className="pc-page-header">
             <div>
-              <h1>Agendamiento · Consulta Externa</h1>
+              <h1>Programar cita</h1>
               <p>Gestiona la disponibilidad y las citas de los consultorios activos.</p>
             </div>
             <div className="pc-page-header-actions">
@@ -219,6 +223,16 @@ export default function ProgramarCita() {
                 onEmptyCellClick={handleEmptyCellClick}
                 showNow={showNow}
                 rowHeight={rowHeight}
+              />
+              {/* Vista tablet de la misma agenda (<=1024px, --bp-desktop) —
+                  mismos columns/appointments/resolveColId, la CSS decide
+                  cuál de las dos se ve según el ancho (ver ScheduleList.css). */}
+              <ScheduleList
+                columns={columns}
+                appointments={appointments}
+                resolveColId={resolveColId}
+                onSelectAppointment={setSelectedAppointment}
+                onEmptyCellClick={handleEmptyCellClick}
               />
             </div>
           </div>

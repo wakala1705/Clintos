@@ -138,9 +138,30 @@ body{
 .btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
 
+/* ---------- HEADER DE PÁGINA ----------
+   Mismo patrón que .pc-page-header (ProgramarCita.css) / .adm-page-header
+   (Admisiones.css): título+subtítulo a la izquierda, CTAs principales a la
+   derecha, en vez de arrancar directo en la tabla. */
+.lp-page-header{
+  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  flex-shrink:0;
+}
+.lp-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.lp-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+.lp-page-header-actions{display:flex;align-items:center;gap:10px;}
+
 /* ---------- LISTA DE PACIENTES ---------- */
 .lp-card-shell{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   display:flex;flex-direction:column;flex:1;min-height:0;
 }
-.lp-card-shell > .lp-actions-bar{padding:16px;}
+/* Una sola fila para buscador+filtros+orden (antes 2 filas separadas:
+   ActionsBar y FiltersRow). Cada subcomponente conserva su propio wrapper
+   (.lp-actions-bar/.lp-filters-row) para no romper el límite de componente,
+   pero ese wrapper pasa a display:contents (ver ActionsBar.css/
+   FiltersRow.css) para que sus hijos se aplanen como ítems directos de este
+   flex — así el gap/wrap de .lp-toolbar controla el layout real. */
+.lp-toolbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:16px;border-bottom:1px solid var(--border);
+}

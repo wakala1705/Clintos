@@ -28,7 +28,7 @@
 .ev-wrap-compact .vac-cell{padding:5px 4px;}
 .ev-wrap-compact .vac-date-input{padding:5px 4px;}
 
-.ev-title{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);margin:0 0 4px;}
+.ev-title{font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 4px;}
 .ev-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
 
 .ev-group + .ev-group{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
@@ -55,17 +55,8 @@
   max-height:calc(100vh - 48px);display:flex;flex-direction:column;
   box-shadow:0 24px 64px rgba(16,24,39,.32);
 }
-.ev-modal-header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.ev-modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
-.ev-modal-close-btn{
-  width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
-}
-.ev-modal-close-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
-.ev-modal-close-btn .icon{width:18px;height:18px;}
+/* Header homologado: ver @/Components/ModalHeader/ModalHeader — ya no se
+   redefine con prefijo ev-. */
 .ev-modal-body{padding:16px;overflow-y:auto;}
 
 /* width:min(...) en vez del 560px por defecto de .ev-modal-card: la matriz

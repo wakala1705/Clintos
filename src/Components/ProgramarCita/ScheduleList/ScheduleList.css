@@ -1,0 +1,49 @@
+/* Oculta por defecto (desktop usa ScheduleGrid) — visible solo en el rango
+   tablet, ver el @media al final de este archivo y el comentario en
+   ScheduleGrid.css/ProgramarCita.css sobre el contrato de breakpoints. */
+.pc-schedule-list{
+  display:none;
+  flex:1;min-height:0;overflow-y:auto;
+  flex-direction:column;gap:12px;
+}
+
+.pc-list-section{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px;
+}
+.pc-list-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.pc-list-col-top{font-weight:var(--fw-semibold);font-size:var(--fs-base);color:var(--ink-900);}
+.pc-list-col-bottom{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.pc-list-empty{font-size:var(--fs-sm);color:var(--ink-500);padding:6px 2px;}
+
+.pc-list-items{display:flex;flex-direction:column;gap:6px;}
+.pc-list-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--bg);padding:8px 10px;cursor:pointer;text-align:left;font-family:inherit;
+}
+.pc-list-item:hover{border-color:var(--ink-400);}
+.pc-list-item:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.pc-list-item.cancelada{opacity:.7;}
+.pc-list-item.cancelada .pc-list-item-patient{text-decoration:line-through;color:var(--ink-500);}
+
+.pc-list-item-time{
+  display:inline-flex;align-items:center;gap:4px;flex-shrink:0;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+}
+.pc-list-item-time .icon{width:14px;height:14px;}
+.pc-list-item-patient{
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* Motivo de la cita — flex-shrink:0 (igual que el badge) para que sea
+   .pc-list-item-patient quien ceda espacio primero (flex:1 + min-width:0 +
+   ellipsis arriba) si la fila no alcanza; nunca hace falta un breakpoint
+   propio para esto porque el piso ya soportado (--bp-tablet:768px, ver
+   AGENTS.md) siempre deja ancho suficiente para hora+estado+algo de nombre. */
+.pc-list-item-meta{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
+
+@media (max-width:1024px){
+  .pc-schedule-panel{display:none;}
+  .pc-schedule-list{display:flex;}
+}

@@ -1,0 +1,22 @@
+/* border-bottom (no un border-top en la tabla/skeleton/empty state por
+   separado): esta es la única frontera entre el toolbar y el contenido de
+   abajo sea cual sea su estado (tabla, skeleton o empty state, ver
+   Admisiones.jsx), así que un solo borde acá cubre los tres casos. */
+.adm-toolbar{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding:16px;flex-shrink:0;border-bottom:1px solid var(--border);
+}
+.adm-search-field{
+  display:flex;align-items:center;gap:8px;
+  height:var(--input-md);padding:0 12px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;
+}
+.adm-search-field:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
+.adm-search-field .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.adm-search-field-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.adm-search-field input{
+  border:none;background:none;font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+  width:180px;min-width:0;
+}
+.adm-search-field input:focus{outline:none;}
+.adm-search-field input::placeholder{color:var(--ink-400);}

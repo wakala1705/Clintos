@@ -1,6 +1,6 @@
-/* .modal-overlay/.modal-card/.form-field/.suspend-header-icon/.btn/
-   .task-mini-modal-card: definidas en ../../shared/shared.css (shared del
-   feature). */
+/* .modal-overlay/.modal-card/.form-field/.btn/.task-mini-modal-card:
+   definidas en ../../shared/shared.css (shared del feature). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado). */
 .task-vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .task-vitals-bp{display:flex;align-items:center;gap:6px;}
 .task-vitals-bp input{width:0;flex:1;}

@@ -1,7 +1,8 @@
 /* .ac-wrap/.pf-section-title/.pf-section-desc/.btn/.modal-overlay/
-   .modal-card/.modal-header/.modal-body/.modal-close-btn: definidas en
-   ../PlantillaCrecimt2.css / ../../shared/shared.css (shared del feature/
-   proyecto, mismo scaffolding de modal que VacunacionStep.jsx) — acá solo
-   lo exclusivo de este paso. */
+   .modal-card/.modal-body: definidas en ../PlantillaCrecimt2.css /
+   ../../shared/shared.css (shared del feature/proyecto, mismo scaffolding
+   de modal que VacunacionStep.jsx). El header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — acá solo lo exclusivo
+   de este paso. */
 .med-info-btn{margin-top:8px;}
 .med-info-text{margin:0;font-size:var(--fs-base);color:var(--ink-700);line-height:1.6;}

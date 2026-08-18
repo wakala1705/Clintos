@@ -3,7 +3,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import './MedicamentosStep.css';
 import MedicamentoCard, { ESTADO_OPCIONES_ALBENDAZOL, ESTADO_OPCIONES_COMPLETO } from './MedicamentoCard/MedicamentoCard';
-import { LuInfo, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuInfo } from 'react-icons/lu';
 
 function initialMedicamentos() {
   return {
@@ -113,15 +114,13 @@ const MedicamentosStep = forwardRef(function MedicamentosStep({ hidden }, ref) {
             aria-labelledby="med-info-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
-              <h3 id="med-info-title">Información de prescripción de medicamentos</h3>
-              <button
-                type="button" className="modal-close-btn" onClick={() => setInfoOpen(false)}
-                aria-label="Cerrar información de prescripción" autoFocus
-              >
-                <LuX className="icon" aria-hidden="true" />
-              </button>
-            </div>
+            <ModalHeader
+              title="Información de prescripción de medicamentos"
+              titleId="med-info-title"
+              onClose={() => setInfoOpen(false)}
+              closeLabel="Cerrar información de prescripción"
+              autoFocusClose
+            />
             <div className="modal-body">
               <p className="med-info-text">
                 Verifica siempre las guías institucionales de dosificación pediátrica vigentes y las

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import './CompleteVitalsModal.css';
-import { LuActivity, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuActivity } from 'react-icons/lu';
 
 // "Completar tarea" para tareas de tipo Signos vitales abre este registro
 // clínico en vez de solo cambiar el estado (encargo explícito: "Toma de
@@ -29,20 +30,14 @@ export default function CompleteVitalsModal({ tarea, onClose, onConfirm }) {
     <div className="modal-overlay open">
       <div className="modal-card task-mini-modal-card" role="dialog" aria-modal="true" aria-labelledby="vitals-title">
         <form onSubmit={handleSubmit}>
-          <div className="modal-header">
-            <div className="modal-header-titles">
-              <div className="suspend-header-icon icon-primary">
-                <LuActivity className="icon" aria-hidden="true" />
-              </div>
-              <div>
-                <h3 id="vitals-title">Registrar signos vitales</h3>
-                <div className="modal-header-sub">{tarea.paciente} · Hab. {tarea.cama}</div>
-              </div>
-            </div>
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
+          <ModalHeader
+            icon={LuActivity}
+            tone="primary"
+            title="Registrar signos vitales"
+            titleId="vitals-title"
+            subtitle={`${tarea.paciente} · Hab. ${tarea.cama}`}
+            onClose={onClose}
+          />
           <div className="modal-body">
             <div className="task-vitals-grid">
               <div className="form-field">

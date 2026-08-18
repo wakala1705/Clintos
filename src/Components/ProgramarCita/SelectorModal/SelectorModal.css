@@ -1,6 +1,7 @@
-/* El scaffolding de modal (.pc-modal-overlay, .pc-modal, .pc-modal-header,
-   .pc-close-x, .pc-modal-footer) vive en ../shared/shared.css — aquí solo el
-   tamaño y la tabla buscable propios de este picker.
+/* El scaffolding de modal (.pc-modal-overlay, .pc-modal, .pc-modal-footer)
+   vive en ../shared/shared.css; el header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — aquí solo el tamaño y
+   la tabla buscable propios de este picker.
    Alto fijo (no max-height): header, buscador, encabezado de tabla y footer
    quedan fijos: la lista de filas (.pc-selector-list) es la única que crece
    y hace scroll para llenar el espacio restante. */

@@ -1,5 +1,6 @@
 import './ReturnModal.css';
-import { LuClock, LuShield, LuUndo2, LuUser, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuClock, LuShield, LuUndo2, LuUser } from 'react-icons/lu';
 
 // Modal "Devolver a farmacia": reutiliza el patrón visual del modal de
 // Suspender. legacy-app.js calcula automáticamente, por medicamento, qué dosis
@@ -9,19 +10,14 @@ export default function ReturnModal() {
   return (
     <div className="modal-overlay" id="return-modal-overlay">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="return-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon icon-primary">
-              <LuUndo2 className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="return-modal-title">Devolver a farmacia</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="return-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuUndo2}
+          tone="primary"
+          title="Devolver a farmacia"
+          titleId="return-modal-title"
+          closeId="return-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div className="suspend-patient-strip">

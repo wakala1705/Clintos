@@ -1,5 +1,6 @@
 import './RestanteModal.css';
-import { LuClock, LuInbox, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuClock, LuInbox } from 'react-icons/lu';
 
 // Modal "Recepcionar restante": lista los ítems faltantes de una orden de
 // Recepción parcial junto con el artículo/lote/vencimiento que farmacia ya
@@ -12,19 +13,14 @@ export default function RestanteModal() {
   return (
     <div className="modal-overlay" id="restante-modal-overlay">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="restante-modal-title">
-        <div className="modal-header">
-          <div className="modal-header-titles">
-            <div className="suspend-header-icon icon-primary">
-              <LuInbox className="icon" aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="restante-modal-title">Recepcionar restante</h3>
-            </div>
-          </div>
-          <button className="modal-close-btn" type="button" id="restante-modal-close" aria-label="Cerrar formulario">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuInbox}
+          tone="primary"
+          title="Recepcionar restante"
+          titleId="restante-modal-title"
+          closeId="restante-modal-close"
+          closeLabel="Cerrar formulario"
+        />
 
         <div className="modal-body">
           <div id="restante-items-list">{/* filas generadas por legacy-app.js */}</div>

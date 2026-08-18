@@ -18,11 +18,8 @@
   box-shadow:0 24px 64px rgba(16,24,39,.32);
   overflow:hidden;
 }
-.catalog-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.catalog-header h3{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);margin:0;}
+/* Header homologado: ver @/Components/ModalHeader/ModalHeader (.modal-header
+   ya no se redefine como .catalog-header). */
 .catalog-body{display:flex;flex:1;min-height:0;}
 
 .catalog-main{display:flex;flex-direction:column;flex:1;min-width:0;padding:var(--space-4);}

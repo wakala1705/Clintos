@@ -110,7 +110,8 @@ const MODULE_GROUPS = [
         title: 'Admisiones',
         description: 'Registro y gestión de ingresos hospitalarios.',
         icon: LuClipboardCheck,
-        enabled: false,
+        href: '/admisiones',
+        enabled: true,
       },
       {
         title: 'Historia clínica',

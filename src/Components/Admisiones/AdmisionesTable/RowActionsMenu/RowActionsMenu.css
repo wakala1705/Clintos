@@ -1,0 +1,21 @@
+.adm-row-menu{position:relative;flex-shrink:0;}
+.adm-row-menu-btn{
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.adm-row-menu-btn .icon{width:17px;height:17px;}
+.adm-row-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.adm-row-menu-dropdown{
+  position:absolute;top:calc(100% + 4px);right:0;min-width:200px;z-index:20;
+  background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14);
+  padding:6px;
+}
+.adm-row-menu-item{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;
+}
+.adm-row-menu-item:hover{background:var(--bg);}
+.adm-row-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.adm-row-menu-item .icon{width:16px;height:16px;color:var(--ink-500);}

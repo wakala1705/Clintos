@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import './ReassignModal.css';
 import { RESPONSABLES } from '@/hooks/GestionEnfermeria/mockTareasData';
-import { LuUserRoundCog, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuUserRoundCog } from 'react-icons/lu';
 
 // "Reasignar" — modal mínimo (1 solo campo) reutilizado desde TaskRowMenu y
 // el footer de TaskDetailPanel.jsx (mismo `tarea` que ya se está viendo).
@@ -22,20 +23,14 @@ export default function ReassignModal({ tarea, onClose, onConfirm }) {
     <div className="modal-overlay open">
       <div className="modal-card task-mini-modal-card" role="dialog" aria-modal="true" aria-labelledby="reassign-title">
         <form onSubmit={handleSubmit}>
-          <div className="modal-header">
-            <div className="modal-header-titles">
-              <div className="suspend-header-icon icon-primary">
-                <LuUserRoundCog className="icon" aria-hidden="true" />
-              </div>
-              <div>
-                <h3 id="reassign-title">Reasignar tarea</h3>
-                <div className="modal-header-sub">{tarea.nombre}</div>
-              </div>
-            </div>
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
+          <ModalHeader
+            icon={LuUserRoundCog}
+            tone="primary"
+            title="Reasignar tarea"
+            titleId="reassign-title"
+            subtitle={tarea.nombre}
+            onClose={onClose}
+          />
           <div className="modal-body">
             <div className="form-field">
               <label htmlFor="reassign-responsable">Nuevo responsable</label>

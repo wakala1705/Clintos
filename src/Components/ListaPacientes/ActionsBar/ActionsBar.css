@@ -1,18 +1,16 @@
-.lp-actions-bar{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  flex-wrap:wrap;
+/* Sin caja propia: sus hijos se aplanan como ítems directos de .lp-toolbar
+   (ver ListaPacientes.css), que es quien controla el layout de la fila. */
+.lp-actions-bar{display:contents;}
+/* .search-field sin prefijo — mismo patrón que Vacunacion.css/
+   HistoriaClinica.css/GestionEnfermeria/shared/shared.css (ver AGENTS.md
+   "Component organization"), para que el buscador se vea idéntico al resto
+   del proyecto en vez de la variante propia (.lp-search-field) que tenía
+   antes esta pantalla. */
+.search-field{position:relative;width:320px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);color:var(--ink-900);
 }
-.lp-search-field{
-  position:relative;flex:1;min-width:280px;max-width:480px;
-}
-.lp-search-field .icon{
-  position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  width:17px;height:17px;color:var(--ink-500);
-}
-.lp-search-field input{
-  width:100%;height:var(--input-lg);padding:0 16px 0 38px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
-}
-.lp-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
-.lp-search-field input::placeholder{color:var(--ink-400);}
-.lp-actions-bar-buttons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}

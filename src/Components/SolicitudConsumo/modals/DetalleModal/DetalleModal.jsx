@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import './DetalleModal.css';
-import { LuCircleX, LuReceiptText, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCircleX, LuReceiptText } from 'react-icons/lu';
 
 // Detalle de una reposición: datos de cabecera + tabla de artículos. La
 // única acción posible es "Cancelar Pedido" (delega a EliminarModal, ver
@@ -21,18 +22,15 @@ export default function DetalleModal({ open, rep, onClose, onCancelarPedido }) {
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby="detalle-modal-title">
-        <div className="modal-header">
-          <div className="left">
-            <div className="card-icon"><LuReceiptText className="icon" aria-hidden="true" /></div>
-            <h3 id="detalle-modal-title">Detalle de reposición {rep.id}</h3>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span className={`badge ${rep.estado.cls}`}>{rep.estado.text}</span>
-            <button type="button" className="modal-close" onClick={onClose} aria-label="Cerrar detalle">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
+        <ModalHeader
+          icon={LuReceiptText}
+          tone="primary"
+          title={`Detalle de reposición ${rep.id}`}
+          titleId="detalle-modal-title"
+          onClose={onClose}
+          closeLabel="Cerrar detalle"
+          trailing={<span className={`badge ${rep.estado.cls}`}>{rep.estado.text}</span>}
+        />
 
         <div className="modal-body">
           <div className="info-grid">

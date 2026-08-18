@@ -1,0 +1,172 @@
+/* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
+   Home.css / ListaPacientes.css / ProgramarCita.css (cada feature de nivel
+   superior es dueña de su propia copia) — ver AGENTS.md. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --radius:8px;
+  --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
+     bloque en ProgramarCita.css/GestionEnfermeria/shared/shared.css. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+
+  /* Quinto color semántico, propio de este feature: los otros cuatro
+     (verde/rojo/ámbar/violeta) ya están tomados por otros niveles de
+     TriageBadge (ver ese componente) — naranja distingue el nivel 2 del
+     nivel 3 (ámbar) sin inventar un token de alcance global. */
+  --triage-orange:#e8720c;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --triage-orange:#ff9142;
+}
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md). */
+html[data-contrast="high"]{
+  --border:#cbd3dd;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+/* Piso de 768px (--bp-tablet) desde el arranque — módulo nuevo, entra
+   directo con el piso ya vigente del resto del proyecto (ver AGENTS.md
+   "Responsive / Breakpoints"), sin el piso viejo de 1024-1440px que las
+   features más antiguas tuvieron que bajar en una fase aparte. La tabla ya
+   reflowa a tarjetas por debajo de ese piso (ver AdmisionesTable.css), así
+   que acá sí es reflow real, no solo scroll horizontal. */
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{
+  padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+  flex:1;min-height:0;
+  overflow:hidden;
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:var(--bg);border-color:var(--ink-400);}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+
+/* ---------- HEADER DE PÁGINA ----------
+   La referencia (screenshots de Admisiones) no traía un h1/subtítulo propio
+   — se agrega este bloque siguiendo el mismo patrón que .pc-page-header en
+   ProgramarCita.css, para que la página tenga el mismo encabezado que el
+   resto de módulos de nivel superior en vez de arrancar directo en la
+   tabla. */
+.adm-page-header{
+  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  flex-shrink:0;
+}
+.adm-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.adm-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+.adm-page-header-actions{display:flex;align-items:center;gap:10px;}
+
+/* ---------- CARD SHELL (toolbar + tabla) ---------- */
+.adm-card-shell{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+
+/* ---------- TOAST ---------- */
+.adm-toast{
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
+  background:var(--ink-900);color:#fff;
+  padding:12px 20px;border-radius:var(--radius);
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);
+  opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:8px;z-index:60;
+  transition:opacity .15s,transform .15s;
+}
+.adm-toast.show{opacity:1;transform:translate(-50%,0);}
+.adm-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+html[data-theme="dark"] .adm-toast{background:var(--surface-modal);border:1px solid var(--border);}

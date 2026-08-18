@@ -1,14 +1,12 @@
 /* Shell propio del wizard "Registrar vacunación" — .modal-overlay/.modal-card/
-   .modal-header/.modal-close-btn/.modal-body/.btn ya viven en
-   ../Vacunacion.css (dueño de tokens de esta ruta, ver AGENTS.md); acá solo
-   el ancho propio de este modal, el stepper y el layout de header/footer que
-   .modal-card no trae por defecto. */
+   .modal-body/.btn ya viven en ../Vacunacion.css (dueño de tokens de esta
+   ruta, ver AGENTS.md); el header usa @/Components/ModalHeader/ModalHeader
+   (homologado, subtítulo incluido) — acá solo el ancho propio de este
+   modal, el stepper y el layout de footer que .modal-card no trae por
+   defecto. */
 
 /* Wide modal, no drawer, no página propia (encargo explícito) — 720-800px. */
 .rv-modal{width:760px;}
-
-.modal-header{align-items:center;}
-.rv-modal-desc{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
 
 .rv-modal-body{padding:20px 24px;overflow-y:auto;}
 

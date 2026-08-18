@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import './ArticulosModal.css';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import DescarteModal from '../DescarteModal/DescarteModal';
 import { DEFAULT_BODEGA_DESPACHA, DEFAULT_BODEGA_PIDE } from '../CabeceraModal/CabeceraModal';
 import { CATALOGO_ARTICULOS, TIPOS_ARTICULO } from '@/hooks/SolicitudConsumo/mockSolicitudConsumoData';
@@ -123,15 +124,13 @@ export default function ArticulosModal({ mode, rep, tipoArticuloNuevo, onBack, o
     <>
       <div className="modal-overlay">
         <div className="modal modal-xl" role="dialog" aria-modal="true" aria-labelledby="articulos-modal-title">
-          <div className="modal-header">
-            <div className="left">
-              <div className="card-icon"><LuBoxes className="icon" aria-hidden="true" /></div>
-              <h3 id="articulos-modal-title">{mode === 'editar' ? `Editar solicitud ${rep.id}` : 'Nueva solicitud de consumo'}</h3>
-            </div>
-            <button type="button" className="modal-close" onClick={pedirCerrar} aria-label="Cerrar">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
+          <ModalHeader
+            icon={LuBoxes}
+            tone="primary"
+            title={mode === 'editar' ? `Editar solicitud ${rep.id}` : 'Nueva solicitud de consumo'}
+            titleId="articulos-modal-title"
+            onClose={pedirCerrar}
+          />
 
           {mode === 'nuevo' ? (
             <div className="modal-progress-bar">

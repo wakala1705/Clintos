@@ -6,7 +6,8 @@ import {
   AREA_LABEL, PRIORIDADES, RESPONSABLES, TIPOS_TAREA, TURNO_ACTUAL,
 } from '@/hooks/GestionEnfermeria/mockTareasData';
 import { PACIENTES_PISO, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
-import { LuCalendarPlus, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCalendarPlus } from 'react-icons/lu';
 import FormSelect from './FormSelect/FormSelect';
 
 const RECURRENCIAS = [
@@ -90,20 +91,15 @@ export default function NewTaskModal({ onClose, onCreate }) {
     <div className="modal-overlay open">
       <div className="modal-card task-new-modal-card" role="dialog" aria-modal="true" aria-labelledby="new-task-title">
         <form onSubmit={handleSubmit}>
-          <div className="modal-header">
-            <div className="modal-header-titles">
-              <div className="suspend-header-icon icon-primary">
-                <LuCalendarPlus className="icon" aria-hidden="true" />
-              </div>
-              <div>
-                <h3 id="new-task-title">Nueva tarea</h3>
-                <div className="modal-header-sub">{TURNO_ACTUAL.label} · {TURNO_ACTUAL.rango}</div>
-              </div>
-            </div>
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar formulario">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
+          <ModalHeader
+            icon={LuCalendarPlus}
+            tone="primary"
+            title="Nueva tarea"
+            titleId="new-task-title"
+            subtitle={`${TURNO_ACTUAL.label} · ${TURNO_ACTUAL.rango}`}
+            onClose={onClose}
+            closeLabel="Cerrar formulario"
+          />
 
           <div className="modal-body">
             <div className="subnav-bar task-new-categoria" role="radiogroup" aria-label="Tipo de vínculo">

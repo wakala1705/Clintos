@@ -1,7 +1,8 @@
 /* Estilos exclusivos de PedidoModal. El patrón de modal compartido (overlay,
-   suspend-header-icon, suspend-patient-strip, suspend-med-list, form-field,
-   admin-summary-time, suspend-audit-note) vive en shared/shared.css junto a
-   los otros 3 modales que lo reutilizan. */
+   suspend-patient-strip, suspend-med-list, form-field, admin-summary-time,
+   suspend-audit-note) vive en shared/shared.css junto a los otros 3 modales
+   que lo reutilizan; el header usa @/Components/ModalHeader/ModalHeader
+   (homologado). */
 #pedido-cobertura-group{margin-top:2px;}
 .pedido-custom-wrap{display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-2);}
 .pedido-custom-wrap input[type="number"]{

@@ -2,16 +2,16 @@
    (VacunaStep/AplicacionStep/ConfirmacionStep/ExitoStep) — importado una
    sola vez desde RegistrarVacunacionModal.jsx, ver AGENTS.md (mismo criterio
    que PlantillaCrecimt2/shared). Reglas usadas por un solo paso viven en el
-   .css propio de ese paso. .modal-overlay/.modal-card/.modal-header/
-   .modal-close-btn/.modal-body, .search-field, .btn, .icon, .sr-only,
-   .vac-esquema-badge NO se repiten acá: ya están definidas en
-   ../../Vacunacion.css (dueño de tokens de esta ruta), este wizard vive
-   dentro de esa misma página. */
+   .css propio de ese paso. .modal-overlay/.modal-card/.modal-body,
+   .search-field, .btn, .icon, .sr-only, .vac-esquema-badge NO se repiten
+   acá: ya están definidas en ../../Vacunacion.css (dueño de tokens de esta
+   ruta), este wizard vive dentro de esa misma página. El header usa
+   @/Components/ModalHeader/ModalHeader (homologado en todo el proyecto). */
 
 /* ---------- SECCIÓN / CAMPO ---------- */
 .rv-section{margin-bottom:20px;}
 .rv-section:last-child{margin-bottom:0;}
-.rv-section-title{font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
+.rv-section-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
 
 .rv-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 

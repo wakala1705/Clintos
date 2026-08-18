@@ -37,3 +37,26 @@
 .pg-med-badge.pg-med-no-aplica{background:var(--gray-bg);color:var(--gray-fg);}
 
 html[data-theme="dark"] .pg-med-badge.pg-med-al-dia{color:var(--green);}
+
+/* ---------- TARJETAS MOBILE ----------
+   La tabla colapsa a una tarjeta por paciente por debajo de 768px
+   (--bp-tablet) — mismo umbral y criterio que .lp-cards en
+   ListaPacientes/PatientsTable y .hc-cards en HistoriaClinica/AgendaTable
+   (ver AGENTS.md). */
+.pg-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .pg-table-wrap{display:none;}
+  .pg-cards{display:flex;}
+}
+.pg-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;
+}
+.pg-card.selected{background:var(--interactive-selected-bg);}
+.pg-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.pg-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.pg-card-id{min-width:0;}
+.pg-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);}
+.pg-card-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.pg-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);color:var(--ink-700);}
+.pg-card-actions{display:flex;justify-content:flex-end;}

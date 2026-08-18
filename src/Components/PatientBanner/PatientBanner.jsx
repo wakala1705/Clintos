@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './PatientBanner.css';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
+import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
 import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 
 // Banner de identidad del paciente, compartido por /asignacion-citas y
@@ -21,6 +22,7 @@ import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 // onClose/alergias para dejar sitio real a la card que crece por encima.
 export default function PatientBanner({ patient, secondRow, statusBadge, onClose, empty, compact }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const allergyRef = useRef(null);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function PatientBanner({ patient, secondRow, statusBadge, onClose
         <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
         <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
         <div className="pm-item"><b>{patient.eps}</b></div>
-        <div className="pm-item pm-item-more">Ver más datos</div>
+        <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
       </div>
       <div className="patient-banner-right">
         {patient.allergies && patient.allergies.length > 0 && (
@@ -132,6 +134,9 @@ export default function PatientBanner({ patient, secondRow, statusBadge, onClose
             </div>
           ))}
         </div>
+      )}
+      {detailOpen && (
+        <PatientDetailModal patient={patient} secondRow={secondRow} onClose={() => setDetailOpen(false)} />
       )}
     </div>
   );

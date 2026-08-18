@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './GrowthChartModal.css';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import {
-  LuBan, LuChartNoAxesCombined, LuChevronLeft, LuChevronRight, LuCircleAlert, LuCircleCheck, LuOctagonAlert, LuX,
+  LuBan, LuChartNoAxesCombined, LuChevronLeft, LuChevronRight, LuCircleAlert, LuCircleCheck, LuOctagonAlert,
 } from 'react-icons/lu';
 import {
   ESTADO_LABEL, INDICADORES_GRAFICA, estadoDeClasificacion, muestrearCurvas, posicionPuntoActual,
@@ -59,7 +60,6 @@ export default function GrowthChartModal({
   examenFisico,
 }) {
   const [hoverPunto, setHoverPunto] = useState(false);
-  const closeRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
@@ -120,22 +120,15 @@ export default function GrowthChartModal({
         aria-labelledby="gcm-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-header gcm-header">
-          <div className="gcm-header-titles">
-            <span className="pf-block-icon"><LuChartNoAxesCombined className="icon" aria-hidden="true" /></span>
-            <h3 id="gcm-title">Gráfica de patrones de crecimiento OMS para niñas, niños y adolescentes menores de 18 años</h3>
-          </div>
-          <button
-            type="button"
-            className="modal-close-btn"
-            onClick={onClose}
-            aria-label="Cerrar gráficas de crecimiento"
-            ref={closeRef}
-            autoFocus
-          >
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          icon={LuChartNoAxesCombined}
+          tone="primary"
+          title="Gráfica de patrones de crecimiento OMS para niñas, niños y adolescentes menores de 18 años"
+          titleId="gcm-title"
+          onClose={onClose}
+          closeLabel="Cerrar gráficas de crecimiento"
+          autoFocusClose
+        />
 
         <div className="modal-body gcm-body">
           <div className="gcm-toolbar">

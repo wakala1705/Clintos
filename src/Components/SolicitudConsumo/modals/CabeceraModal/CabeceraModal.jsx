@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import './CabeceraModal.css';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { TIPOS_ARTICULO } from '@/hooks/SolicitudConsumo/mockSolicitudConsumoData';
 import { LuArrowRight, LuX } from 'react-icons/lu';
 
@@ -28,14 +29,7 @@ export default function CabeceraModal({ open, tipoArticulo, onChangeTipoArticulo
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
       <div className="modal modal-md" role="dialog" aria-modal="true" aria-labelledby="cabecera-modal-title">
-        <div className="modal-header">
-          <div className="left">
-            <h3 id="cabecera-modal-title">Nueva solicitud de consumo</h3>
-          </div>
-          <button type="button" className="modal-close" onClick={onCancel} aria-label="Cerrar">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader title="Nueva solicitud de consumo" titleId="cabecera-modal-title" onClose={onCancel} />
 
         <div className="modal-progress-bar">
           <div className="progress-step active"><span className="dot">1</span><span className="label">Datos de la solicitud</span></div>

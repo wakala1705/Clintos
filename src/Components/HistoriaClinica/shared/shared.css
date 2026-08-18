@@ -181,7 +181,9 @@ html[data-theme="dark"] .data-table thead th{background:#161c2b;}
 /* ---------- MODAL scaffolding ----------
    Primer modal de la feature (selector de plantilla, ver PlantillaModal) —
    mismo patrón que el resto del proyecto (ver AGENTS.md) para que cualquier
-   modal futuro de Historia Clínica lo reutilice sin duplicar. */
+   modal futuro de Historia Clínica lo reutilice sin duplicar. Header
+   homologado: ver @/Components/ModalHeader/ModalHeader (.modal-header/
+   .modal-close-btn ya no se redefinen acá). */
 .modal-overlay{
   position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
   display:flex;align-items:center;justify-content:center;padding:24px;
@@ -191,17 +193,6 @@ html[data-theme="dark"] .data-table thead th{background:#161c2b;}
   max-height:calc(100vh - 48px);display:flex;flex-direction:column;
   box-shadow:0 24px 64px rgba(16,24,39,.32);
 }
-.modal-header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);}
-.modal-close-btn{
-  width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--ink-500);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;
-}
-.modal-close-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
-.modal-close-btn .icon{width:18px;height:18px;}
 .modal-body{padding:16px;overflow-y:auto;}
 .modal-footer{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;

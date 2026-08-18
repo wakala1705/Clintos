@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './ConfigModal.css';
-import { LuBell, LuLock, LuLogOut, LuMoon, LuShieldCheck, LuUser, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuBell, LuLock, LuLogOut, LuMoon, LuShieldCheck, LuUser } from 'react-icons/lu';
 import { getFieldSelectionMode, setFieldSelectionMode } from '@/hooks/HistoriaClinica/fieldSelectionMode';
 
 const SECTIONS = [
@@ -111,12 +112,12 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
   return (
     <div className="config-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="config-modal-card" role="dialog" aria-modal="true" aria-labelledby="config-modal-title">
-        <div className="config-modal-header">
-          <h3 id="config-modal-title">Configuración</h3>
-          <button type="button" className="config-modal-close" onClick={onClose} aria-label="Cerrar configuración">
-            <LuX className="icon" aria-hidden="true" />
-          </button>
-        </div>
+        <ModalHeader
+          title="Configuración"
+          titleId="config-modal-title"
+          onClose={onClose}
+          closeLabel="Cerrar configuración"
+        />
 
         <div className="config-modal-body">
           <nav className="config-nav" aria-label="Secciones de configuración">

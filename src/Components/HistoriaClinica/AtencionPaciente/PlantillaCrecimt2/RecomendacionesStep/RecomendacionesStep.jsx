@@ -3,8 +3,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import './RecomendacionesStep.css';
 import RecomendacionCard from './RecomendacionCard/RecomendacionCard';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { RECOMENDACIONES, buildPlantilla } from './recomendacionesData';
-import { LuX } from 'react-icons/lu';
 
 function initialRecomendaciones() {
   return Object.fromEntries(RECOMENDACIONES.map((r) => [r.id, { checked: false, contenido: '' }]));
@@ -103,15 +103,13 @@ const RecomendacionesStep = forwardRef(function RecomendacionesStep({ hidden }, 
             aria-labelledby="rc-confirm-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
-              <h3 id="rc-confirm-title">¿Ocultar &quot;{pendingLabel}&quot;?</h3>
-              <button
-                type="button" className="modal-close-btn" onClick={() => setPendingUncheckId(null)}
-                aria-label="Cancelar" autoFocus
-              >
-                <LuX className="icon" aria-hidden="true" />
-              </button>
-            </div>
+            <ModalHeader
+              title={`¿Ocultar "${pendingLabel}"?`}
+              titleId="rc-confirm-title"
+              onClose={() => setPendingUncheckId(null)}
+              closeLabel="Cancelar"
+              autoFocusClose
+            />
             <div className="modal-body">
               <p className="rc-confirm-text">
                 Esta recomendación tiene contenido diligenciado. Si continúas, se perderá el texto que hayas

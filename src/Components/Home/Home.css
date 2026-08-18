@@ -115,7 +115,7 @@ body{
 .home-content{padding:32px;}
 .home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px;}
 
-.home-hero h1{font-size:var(--fs-3xl);font-weight:var(--fw-bold);color:var(--ink-900);}
+.home-hero h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .home-hero p{font-size:var(--fs-base);color:var(--ink-500);margin-top:4px;}
 
 .module-section-header{

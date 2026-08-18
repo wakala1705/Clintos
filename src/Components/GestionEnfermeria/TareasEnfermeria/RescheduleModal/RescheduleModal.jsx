@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import './RescheduleModal.css';
-import { LuCalendarClock, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuCalendarClock } from 'react-icons/lu';
 
 // "Reprogramar" — mismo patrón mínimo que ReassignModal.jsx (fecha + hora
 // nuevas), reutilizado desde TaskRowMenu y el footer de TaskDetailPanel.jsx.
@@ -19,20 +20,14 @@ export default function RescheduleModal({ tarea, onClose, onConfirm }) {
     <div className="modal-overlay open">
       <div className="modal-card task-mini-modal-card" role="dialog" aria-modal="true" aria-labelledby="reschedule-title">
         <form onSubmit={handleSubmit}>
-          <div className="modal-header">
-            <div className="modal-header-titles">
-              <div className="suspend-header-icon icon-primary">
-                <LuCalendarClock className="icon" aria-hidden="true" />
-              </div>
-              <div>
-                <h3 id="reschedule-title">Reprogramar tarea</h3>
-                <div className="modal-header-sub">{tarea.nombre}</div>
-              </div>
-            </div>
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
+          <ModalHeader
+            icon={LuCalendarClock}
+            tone="primary"
+            title="Reprogramar tarea"
+            titleId="reschedule-title"
+            subtitle={tarea.nombre}
+            onClose={onClose}
+          />
           <div className="modal-body">
             <div className="task-reschedule-grid">
               <div className="form-field">

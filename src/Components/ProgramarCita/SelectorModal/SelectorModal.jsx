@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import './SelectorModal.css';
-import { LuSearch, LuX } from 'react-icons/lu';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import { LuSearch } from 'react-icons/lu';
 
 // Quita tildes para que la búsqueda encuentre "cardiologia" al escribir
 // "cardiología" o viceversa (compara por rango de código en vez de una
@@ -55,10 +56,7 @@ export default function SelectorModal({
   return (
     <div className="pc-modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="pc-modal pc-modal-sm">
-        <div className="pc-modal-header">
-          <h3>{title}</h3>
-          <button type="button" className="pc-close-x" aria-label="Cerrar" onClick={onClose}><LuX className="icon" /></button>
-        </div>
+        <ModalHeader title={title} onClose={onClose} />
 
         <div className="pc-selector-search">
           <LuSearch className="icon" aria-hidden="true" />
