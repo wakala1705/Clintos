@@ -33,6 +33,13 @@ export function initNuevaCita({
   // callback, el comportamiento por defecto (asignacion-citas, programar-cita,
   // ListaPacientes) no cambia.
   onPatientConfirmed,
+  // Opcional — se llama con `true`/`false` cada vez que el wizard entra o
+  // sale del paso "Servicios" (grupo 1, ver NC_FLOW abajo), incluido al
+  // cerrarse el modal entero. Hoy solo lo usa AsignacionCitas para mostrar
+  // su panel lateral "Servicios contratados" únicamente mientras ese paso
+  // está activo, en vez de apenas se elige el paciente (ver
+  // renderServiciosPanel() en legacy-app.js).
+  onServiciosStepChange,
 } = {}) {
 
   const PATIENTS = [
@@ -95,7 +102,16 @@ export function initNuevaCita({
     tbody.innerHTML = list.map(p=>{
       const idx = PATIENTS.indexOf(p);
       const selected = psSelectedIdx === idx;
-      return `<tr class="${selected?'selected':''}" tabindex="0" onclick="setPsSelected(${idx},this)" ondblclick="setPsSelected(${idx},this); confirmPatientSelection();">
+      // Un paciente Inactivo/Suspendido no puede agendarse (prevención de
+      // error, no solo informativo): antes la fila era clicable igual que
+      // una Activa, y el wizard completo se dejaba recorrer sin ninguna
+      // advertencia hasta el final, con el riesgo real de una cita agendada
+      // sobre una cobertura suspendida (auditoría heurística #5). Mismo
+      // patrón `row-disabled` sin onclick/ondblclick que ya usan las
+      // especialidades sin médicos disponibles (ver ncContentEspecialidad).
+      const disabled = p.estado !== 'activo';
+      const disabledTitle = disabled ? ` title="No se puede agendar: paciente ${PATIENT_ESTADO_LABEL[p.estado].toLowerCase()}. Reactiva el registro desde “Editar” para continuar."` : '';
+      return `<tr class="${selected?'selected':''} ${disabled?'row-disabled':''}" ${disabled?'':`tabindex="0" onclick="setPsSelected(${idx},this)" ondblclick="setPsSelected(${idx},this); confirmPatientSelection();"`}${disabledTitle}>
         <td>
           <div class="ps-patient-cell">
             <span class="ps-avatar">${p.iniciales}</span>
@@ -188,6 +204,16 @@ export function initNuevaCita({
   const NC_CHEVRON_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
   const NC_CLOCK_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
   const NC_EDIT_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>';
+  // Íconos de los círculos de grupo 2/3 del riel (Información de cita /
+  // Resumen, ver ncRenderRail) — reemplazan el dígito plano "2"/"3" que
+  // antes mostraban: ese número competía visualmente con "Paso X de 7" del
+  // header (ver ncRenderMainHeader), leyéndose como si fueran el mismo
+  // contador (auditoría heurística #1, hallazgo "numeración dual"). El
+  // grupo 1 sí conserva su dígito "1": nunca coexiste con un "Paso 1 de 7"
+  // ambiguo porque para cuando el usuario avanza más allá del primer paso,
+  // ese círculo ya pasó a check (ver idx<pos en ncRailMainStepHtml).
+  const NC_INFO_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+  const NC_CLIPBOARD_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>';
 
   const NC_FLOW = [
     { key:'regimen',      label:'Régimen',      group:1 },
@@ -395,6 +421,7 @@ export function initNuevaCita({
       return;
     }
     document.getElementById('nc-overlay').classList.remove('open');
+    onServiciosStepChange?.(false);
   }
 
   function ncCancelDiscard(){
@@ -404,6 +431,7 @@ export function initNuevaCita({
   function ncConfirmDiscard(){
     document.getElementById('nc-discard-overlay').classList.remove('open');
     document.getElementById('nc-overlay').classList.remove('open');
+    onServiciosStepChange?.(false);
   }
 
   function handleDiscardOverlayEscape(e){
@@ -514,10 +542,13 @@ export function initNuevaCita({
     document.getElementById('nc-progress-text').textContent = `Paso ${NC.pos + 1} de ${NC_FLOW.length}`;
   }
 
-  function ncRailMainStepHtml(idx, numero, titulo, descripcion, extraClickable){
+  // `marca` es el contenido del círculo mientras el grupo no está "done": un
+  // dígito plano (grupo 1, ver ncRenderRail) o un ícono SVG (grupos 2/3) —
+  // ambos son válidos porque solo se insertan como innerHTML.
+  function ncRailMainStepHtml(idx, marca, titulo, descripcion, extraClickable){
     const pos = NC.pos;
     let cls = 'rail-main-step';
-    let circle = String(numero);
+    let circle = String(marca);
     if(idx < pos){ cls += ' done'; circle = NC_CHECK_SVG; }
     else if(idx === pos){ cls += ' active'; }
     else if(idx > NC.maxReached && !extraClickable){ cls += ' locked'; }
@@ -553,10 +584,10 @@ export function initNuevaCita({
     html += `</div>`;
 
     // Grupo 2 · Información de cita
-    html += ncRailMainStepHtml(5, 2, 'Información de cita', 'Finalidad y teléfono de aviso', false);
+    html += ncRailMainStepHtml(5, NC_INFO_SVG, 'Información de cita', 'Finalidad y teléfono de aviso', false);
 
     // Grupo 3 · Resumen
-    html += ncRailMainStepHtml(6, 3, 'Resumen', 'Confirmar y guardar', false);
+    html += ncRailMainStepHtml(6, NC_CLIPBOARD_SVG, 'Resumen', 'Confirmar y guardar', false);
 
     rail.innerHTML = html;
   }
@@ -877,6 +908,15 @@ export function initNuevaCita({
     ncRenderStepper();
     ncRenderContent();
     ncRenderFooter();
+    ncNotifyServiciosStep();
+  }
+
+  // ncRender() solo corre mientras el wizard está abierto (ver ncOpen/
+  // ncGoTo/ncNext/ncBack/ncMaybeAdvance) así que acá alcanza con mirar el
+  // paso actual; los cierres (ncClose/ncConfirmDiscard/ncConfirmar) avisan
+  // `false` explícito porque no pasan por ncRender().
+  function ncNotifyServiciosStep(){
+    onServiciosStepChange?.(NC_FLOW[NC.pos]?.key === 'servicios');
   }
 
   function ncConfirmar(){
@@ -924,6 +964,7 @@ export function initNuevaCita({
     // nada que "descartar" — ncClose() solo debe pedir confirmación cuando
     // se abandona el wizard CON progreso sin guardar.
     document.getElementById('nc-overlay').classList.remove('open');
+    onServiciosStepChange?.(false);
     ncToast(`Cita agendada para el ${ncFechaLegible(dia)} a las ${d.horario} con ${medico ? medico.nombre : ''}.`);
     if(clearPatientAfterConfirm) setPatient(null);
   }

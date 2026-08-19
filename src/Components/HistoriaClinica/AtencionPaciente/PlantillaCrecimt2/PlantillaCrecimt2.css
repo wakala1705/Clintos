@@ -363,11 +363,10 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
 .pf-toggle-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .pf-condition-desc{margin-top:10px;}
 
-/* Ya alcanzables redimensionando la ventana: el shell se bajó a
-   .app{min-width:768px} (--bp-tablet, ver HistoriaClinica.css) — mismo caso
-   que AgendaTable.css. El bloque de 720px sigue por debajo del piso del
-   shell y queda sin efecto por ahora (ver AGENTS.md "Responsive /
-   Breakpoints"). */
+/* Alcanzables con el shell bajado a .app{min-width:768px} (--bp-tablet, ver
+   HistoriaClinica.css) — mismo caso que AgendaTable.css. El bloque de 768px
+   (antes 720px, por debajo del piso del shell y sin efecto real) ya se
+   dispara en el extremo inferior del rango tablet. */
 @media (max-width: 1024px){
   .pf-body{flex-direction:column;}
 }
@@ -377,7 +376,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input[t
   .pf-grid-3{grid-template-columns:1fr 1fr;}
 }
 
-@media (max-width: 720px){
+@media (max-width: 768px){
   .pf-grid-4{grid-template-columns:1fr;}
   .pf-grid-3{grid-template-columns:1fr;}
   .pf-grid-2col{grid-template-columns:1fr;}

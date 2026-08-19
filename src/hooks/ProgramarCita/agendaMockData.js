@@ -58,9 +58,18 @@ export const DOCTORS = [
   { id: 'd8', codigo: '8680569', nombre: 'Dr. Iván Salgado', especialidadId: 'gineco', consultorio: 'Consultorio 302', citasDisponibles: 11 },
   { id: 'd5', codigo: '52667334', nombre: 'Dra. Camila Torres', especialidadId: 'derma', consultorio: 'Consultorio 401', citasDisponibles: 4 },
   { id: 'd9', codigo: '79556223', nombre: 'Dra. Sofía Herrera', especialidadId: 'derma', consultorio: 'Consultorio 402', citasDisponibles: 13 },
+  // Agenda de referencia de una especialidad con consultas más largas que la
+  // general: `slotMinutes:30` (ver slotIndex/timeLabel/slotsCount arriba)
+  // hace que ScheduleGrid renderice la franja horaria de este médico en
+  // bloques de 30 min en vez de los 20 min del resto — ver slotMinutes en
+  // ProgramarCita.jsx. citasDisponibles:0 porque el día de hoy (ver
+  // APPOINTMENTS más abajo) está deliberadamente lleno de punta a punta, sin
+  // huecos, para simular la agenda real de un médico saturado.
+  { id: 'd10', codigo: '1073994521', nombre: 'Dr. Mauricio Rivas', especialidadId: 'oncologia', consultorio: 'Consultorio 501', citasDisponibles: 0, slotMinutes: 30 },
 ];
 
 export const STATE_LABEL = {
+  agendada: 'Agendada',
   confirmada: 'Confirmada',
   pendiente: 'Pendiente',
   cancelada: 'Cancelada',
@@ -208,15 +217,24 @@ export const SLOTS_PER_HOUR = 60 / SLOT_MINUTES;
 export const SLOTS = (END_HOUR - START_HOUR) * SLOTS_PER_HOUR;
 export const NOW_DEMO = '10:20'; // hora fija de demo para la línea "ahora" (alineada a la grilla de 20 min)
 
-export function slotIndex(hhmm) {
+// `slotMinutes` es opcional (default SLOT_MINUTES=20, la grilla general): la
+// agenda de oncología (ver DOCTORS, Dr. Mauricio Rivas) usa bloques de 30 min
+// — consultas oncológicas más largas que la consulta general — así que
+// ScheduleGrid le pasa su propio `slotMinutes` en vez de asumir siempre 20
+// (ver slotMinutes en ProgramarCita.jsx). Todo lo demás del sistema (wizard
+// "Nueva cita", resto de médicos) sigue en el default de 20 sin cambios.
+export function slotIndex(hhmm, slotMinutes = SLOT_MINUTES) {
   const [h, m] = hhmm.split(':').map(Number);
-  return (h - START_HOUR) * SLOTS_PER_HOUR + Math.floor(m / SLOT_MINUTES);
+  return (h - START_HOUR) * (60 / slotMinutes) + Math.floor(m / slotMinutes);
 }
-export function timeLabel(idx) {
-  const totalMin = idx * SLOT_MINUTES;
+export function timeLabel(idx, slotMinutes = SLOT_MINUTES) {
+  const totalMin = idx * slotMinutes;
   const h = START_HOUR + Math.floor(totalMin / 60);
   const m = totalMin % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+export function slotsCount(slotMinutes = SLOT_MINUTES) {
+  return (END_HOUR - START_HOUR) * (60 / slotMinutes);
 }
 
 // ---------- Citas de ejemplo ----------
@@ -266,6 +284,36 @@ export const APPOINTMENTS = [
   { id: 30, doctorId: 'd1', day: 4, start: '15:00', duration: 1, patient: 'Claudia Patricia Rueda', doc: 'CC 43.221.556', eps: 'Sura', tipo: 'urgencia', estado: 'pendiente', motivo: 'Fiebre persistente 2 días', telefonoAviso: '3234466778', fechaSolicitud: '6/8/2026', consecutivo: '0201084101' },
   { id: 31, doctorId: 'd1', day: 4, start: '16:00', duration: 1, patient: 'Sergio Andrés Malaver', doc: 'CC 80.667.112', eps: 'Compensar', tipo: 'control', estado: 'confirmada', motivo: 'Control de diabetes', telefonoAviso: '3245577889', fechaSolicitud: '6/8/2026', consecutivo: '0201084102' },
   { id: 32, doctorId: 'd1', day: 4, start: '16:20', duration: 1, patient: 'Liliana Marcela Cortés', doc: 'CC 52.334.887', eps: 'Nueva EPS', tipo: 'primera', estado: 'confirmada', motivo: 'Valoración general', telefonoAviso: '3256688990', fechaSolicitud: '6/8/2026', consecutivo: '0201084103' },
+
+  // Agenda completa (Dr. Mauricio Rivas, Oncología, Miércoles — "hoy" en el
+  // contexto de esta demo) — a diferencia de la agenda "casi completa" de la
+  // Dra. Ana Ruiz más arriba (deja 3 huecos a propósito), acá TODOS los
+  // bloques de 07:00 a 17:30 quedan ocupados en estado "agendada" (azul, ver
+  // STATE_LABEL): simula la agenda real de un médico saturado, agendada pero
+  // sin confirmar todavía una por una. Franjas de 30 min (slotMinutes:30 en
+  // DOCTORS), no 20 — ver slotIndex/timeLabel/slotsCount arriba.
+  { id: 33, doctorId: 'd10', day: 2, start: '07:00', duration: 1, patient: 'Marcela Restrepo Uribe', doc: 'CC 43.556.778', eps: 'Sura', tipo: 'primera', estado: 'agendada', motivo: 'Valoración oncológica inicial', telefonoAviso: '3201456778', fechaSolicitud: '10/8/2026', consecutivo: '0201084104' },
+  { id: 34, doctorId: 'd10', day: 2, start: '07:30', duration: 1, patient: 'Jaime Alberto Cuartas', doc: 'CC 71.223.998', eps: 'Nueva EPS', tipo: 'control', estado: 'agendada', motivo: 'Control post-quimioterapia', telefonoAviso: '3112456789', fechaSolicitud: '10/8/2026', consecutivo: '0201084105' },
+  { id: 35, doctorId: 'd10', day: 2, start: '08:00', duration: 1, patient: 'Lina María Zapata', doc: 'CC 52.887.113', eps: 'Sanitas', tipo: 'control', estado: 'agendada', motivo: 'Seguimiento de tratamiento oncológico', telefonoAviso: '3145678902', fechaSolicitud: '10/8/2026', consecutivo: '0201084106' },
+  { id: 36, doctorId: 'd10', day: 2, start: '08:30', duration: 1, patient: 'Rodrigo Escobar Toro', doc: 'CC 19.556.443', eps: 'Compensar', tipo: 'control', estado: 'agendada', motivo: 'Revisión de resultados de biopsia', telefonoAviso: '3167890123', fechaSolicitud: '11/8/2026', consecutivo: '0201084107' },
+  { id: 37, doctorId: 'd10', day: 2, start: '09:00', duration: 1, patient: 'Beatriz Elena Marín', doc: 'CC 41.223.667', eps: 'Coomeva', tipo: 'primera', estado: 'agendada', motivo: 'Valoración por sospecha de neoplasia', telefonoAviso: '3178901234', fechaSolicitud: '11/8/2026', consecutivo: '0201084108' },
+  { id: 38, doctorId: 'd10', day: 2, start: '09:30', duration: 1, patient: 'Gustavo Adolfo Henao', doc: 'CC 79.667.221', eps: 'Salud Total', tipo: 'control', estado: 'agendada', motivo: 'Control post-radioterapia', telefonoAviso: '3189012345', fechaSolicitud: '11/8/2026', consecutivo: '0201084109' },
+  { id: 39, doctorId: 'd10', day: 2, start: '10:00', duration: 1, patient: 'Consuelo Patricia Arango', doc: 'CC 43.887.556', eps: 'Sura', tipo: 'control', estado: 'agendada', motivo: 'Ajuste de esquema de quimioterapia', telefonoAviso: '3190123456', fechaSolicitud: '11/8/2026', consecutivo: '0201084110' },
+  { id: 40, doctorId: 'd10', day: 2, start: '10:30', duration: 1, patient: 'Fernando José Villa', doc: 'CC 8.223.998', eps: 'Famisanar', tipo: 'control', estado: 'agendada', motivo: 'Control de marcadores tumorales', telefonoAviso: '3201234567', fechaSolicitud: '12/8/2026', consecutivo: '0201084111' },
+  { id: 41, doctorId: 'd10', day: 2, start: '11:00', duration: 1, patient: 'Ángela María Correa', doc: 'CC 52.445.887', eps: 'Nueva EPS', tipo: 'control', estado: 'agendada', motivo: 'Control oncológico de rutina', telefonoAviso: '3212345678', fechaSolicitud: '12/8/2026', consecutivo: '0201084112' },
+  { id: 42, doctorId: 'd10', day: 2, start: '11:30', duration: 1, patient: 'Édgar Iván Muñoz', doc: 'CC 19.887.221', eps: 'Sanitas', tipo: 'primera', estado: 'agendada', motivo: 'Valoración oncológica inicial', telefonoAviso: '3223456789', fechaSolicitud: '12/8/2026', consecutivo: '0201084113' },
+  { id: 43, doctorId: 'd10', day: 2, start: '12:00', duration: 1, patient: 'Rosa Amparo Giraldo', doc: 'CC 41.667.334', eps: 'Compensar', tipo: 'control', estado: 'agendada', motivo: 'Seguimiento post-mastectomía', telefonoAviso: '3234567890', fechaSolicitud: '12/8/2026', consecutivo: '0201084114' },
+  { id: 44, doctorId: 'd10', day: 2, start: '12:30', duration: 1, patient: 'Álvaro Enrique Botero', doc: 'CC 71.556.998', eps: 'Coomeva', tipo: 'control', estado: 'agendada', motivo: 'Control post-quimioterapia', telefonoAviso: '3245678901', fechaSolicitud: '13/8/2026', consecutivo: '0201084115' },
+  { id: 45, doctorId: 'd10', day: 2, start: '13:00', duration: 1, patient: 'Luz Dary Ospina', doc: 'CC 43.221.667', eps: 'Sura', tipo: 'control', estado: 'agendada', motivo: 'Seguimiento de tratamiento oncológico', telefonoAviso: '3256789012', fechaSolicitud: '13/8/2026', consecutivo: '0201084116' },
+  { id: 46, doctorId: 'd10', day: 2, start: '13:30', duration: 1, patient: 'Jairo Humberto Cano', doc: 'CC 19.223.556', eps: 'Salud Total', tipo: 'urgencia', estado: 'agendada', motivo: 'Dolor oncológico agudo', telefonoAviso: '3267890123', fechaSolicitud: '13/8/2026', consecutivo: '0201084117' },
+  { id: 47, doctorId: 'd10', day: 2, start: '14:00', duration: 1, patient: 'Mónica Alejandra Vélez', doc: 'CC 52.998.221', eps: 'Nueva EPS', tipo: 'primera', estado: 'agendada', motivo: 'Valoración por sospecha de neoplasia', telefonoAviso: '3278901234', fechaSolicitud: '13/8/2026', consecutivo: '0201084118' },
+  { id: 48, doctorId: 'd10', day: 2, start: '14:30', duration: 1, patient: 'Reinaldo Antonio Gil', doc: 'CC 8.667.445', eps: 'Famisanar', tipo: 'control', estado: 'agendada', motivo: 'Control de marcadores tumorales', telefonoAviso: '3289012345', fechaSolicitud: '14/8/2026', consecutivo: '0201084119' },
+  { id: 49, doctorId: 'd10', day: 2, start: '15:00', duration: 1, patient: 'Yolanda Patricia Duque', doc: 'CC 41.334.887', eps: 'Sanitas', tipo: 'control', estado: 'agendada', motivo: 'Control post-radioterapia', telefonoAviso: '3290123456', fechaSolicitud: '14/8/2026', consecutivo: '0201084120' },
+  { id: 50, doctorId: 'd10', day: 2, start: '15:30', duration: 1, patient: 'Camilo Ernesto Aristizábal', doc: 'CC 79.223.667', eps: 'Compensar', tipo: 'control', estado: 'agendada', motivo: 'Ajuste de esquema de quimioterapia', telefonoAviso: '3301234567', fechaSolicitud: '14/8/2026', consecutivo: '0201084121' },
+  { id: 51, doctorId: 'd10', day: 2, start: '16:00', duration: 1, patient: 'Nohora Cecilia Londoño', doc: 'CC 43.556.221', eps: 'Coomeva', tipo: 'control', estado: 'agendada', motivo: 'Control oncológico de rutina', telefonoAviso: '3312345678', fechaSolicitud: '14/8/2026', consecutivo: '0201084122' },
+  { id: 52, doctorId: 'd10', day: 2, start: '16:30', duration: 1, patient: 'Wilmer Orlando Ríos', doc: 'CC 19.887.556', eps: 'Sura', tipo: 'primera', estado: 'agendada', motivo: 'Valoración oncológica inicial', telefonoAviso: '3323456789', fechaSolicitud: '15/8/2026', consecutivo: '0201084123' },
+  { id: 53, doctorId: 'd10', day: 2, start: '17:00', duration: 1, patient: 'Esperanza del Carmen Yepes', doc: 'CC 52.223.998', eps: 'Nueva EPS', tipo: 'control', estado: 'agendada', motivo: 'Seguimiento post-tratamiento de linfoma', telefonoAviso: '3334567890', fechaSolicitud: '15/8/2026', consecutivo: '0201084124' },
+  { id: 54, doctorId: 'd10', day: 2, start: '17:30', duration: 1, patient: 'Diego Fernando Palacio', doc: 'CC 71.667.334', eps: 'Salud Total', tipo: 'control', estado: 'agendada', motivo: 'Control post-quimioterapia', telefonoAviso: '3345678901', fechaSolicitud: '15/8/2026', consecutivo: '0201084125' },
 ];
 
 // ---------- Mini-calendario (mes actual) ----------

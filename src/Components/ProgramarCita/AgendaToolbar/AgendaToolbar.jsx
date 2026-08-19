@@ -60,11 +60,11 @@ export default function AgendaToolbar({
           <label id="pc-especialidad-label">Especialidad</label>
           <button
             type="button"
-            className="pc-picker-trigger"
+            className={`pc-picker-trigger${especialidadActual ? '' : ' placeholder'}`}
             aria-labelledby="pc-especialidad-label"
             onClick={() => setModalAbierto('especialidad')}
           >
-            <span>{especialidadActual?.nombre}</span>
+            <span>{especialidadActual?.nombre ?? 'Seleccionar'}</span>
             <LuChevronDown className="icon chev" aria-hidden="true" />
           </button>
         </div>
@@ -74,11 +74,13 @@ export default function AgendaToolbar({
             <label id="pc-medico-label">Médico</label>
             <button
               type="button"
-              className="pc-picker-trigger"
+              className={`pc-picker-trigger${doctorActual ? '' : ' placeholder'}`}
               aria-labelledby="pc-medico-label"
+              disabled={!especialidadId}
+              title={!especialidadId ? 'Elegí primero una especialidad' : undefined}
               onClick={() => setModalAbierto('medico')}
             >
-              <span>{doctorActual?.nombre}</span>
+              <span>{doctorActual?.nombre ?? 'Seleccionar'}</span>
               <LuChevronDown className="icon chev" aria-hidden="true" />
             </button>
           </div>

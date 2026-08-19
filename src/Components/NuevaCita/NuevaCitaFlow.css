@@ -486,7 +486,13 @@
     display:flex;align-items:center;justify-content:center;font-weight:var(--fw-medium);font-size:var(--fs-sm);
   }
   .ps-pname{font-weight:var(--fw-medium);color:var(--ink-900);}
-  .ps-table-wrap tbody tr.row-disabled{cursor:default;}
+  /* row-disabled: antes solo lo usaba la fila "No se encontraron pacientes"
+     (sin nada que atenuar). Ahora también marca pacientes Inactivo/
+     Suspendido, no seleccionables para agendar (ver renderPatientTable en
+     legacy-nueva-cita.js) — mismo opacity:.45/cursor:not-allowed que
+     .wiz-table-wrap tbody tr.row-disabled (especialidades sin médicos), para
+     que se lean igual de "no disponible" en todo el wizard. */
+  .ps-table-wrap tbody tr.row-disabled{cursor:not-allowed;opacity:.45;}
   .ps-table-wrap tbody tr.row-disabled:hover{background:transparent;}
 
   /* ================= FORMULARIO: AGREGAR PACIENTE ================= */

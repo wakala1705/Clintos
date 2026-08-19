@@ -34,7 +34,7 @@
 .vale-q-error .icon{width:14px;height:14px;flex-shrink:0;}
 .vale-q.no-code .vale-q-error{padding-left:0;}
 
-@media (max-width:720px){
+@media (max-width:768px){
   .vale-q-controls{padding-left:0;flex-direction:column;align-items:flex-start;gap:10px;}
   .vale-q-error{padding-left:0;}
 }

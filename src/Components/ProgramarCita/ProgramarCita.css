@@ -172,6 +172,48 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .pc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
 .pc-page-header-actions{display:flex;align-items:center;gap:10px;}
 
+/* ---------- LEYENDA de estados de cita ----------
+   6 colores en ScheduleGrid (.pc-appt-card.agendada/confirmada/pendiente/
+   reprogramada/no-asistio/cancelada) sin ningún punto de referencia visible
+   en pantalla — antes solo se distinguían pasando el mouse (title nativo) o
+   abriendo el detalle de cada cita (auditoría heurística #6). Mismos colores
+   que .pc-appt-card/.pc-estado-badge (shared.css), sin duplicar hex nuevos.
+   Vive debajo de la agenda (no arriba, junto al toolbar): es una referencia
+   de consulta ocasional, no algo que deba competir con los controles de
+   navegación/filtro al entrar a la pantalla. */
+.pc-legend{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0;
+  padding:8px 4px;
+}
+.pc-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);}
+.pc-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.pc-legend-dot.agendada{background:var(--primary);}
+.pc-legend-dot.confirmada{background:var(--green);}
+.pc-legend-dot.pendiente{background:var(--amber-fg);}
+.pc-legend-dot.reprogramada{background:var(--violet-fg);}
+.pc-legend-dot.no-asistio{background:var(--red);}
+.pc-legend-dot.cancelada{background:var(--ink-400);}
+
+/* ---------- EMPTY STATE (sin especialidad/médico elegido) ----------
+   Ocupa el mismo espacio que .pc-schedule-panel (ScheduleGrid.css) mientras
+   `agendaLista` es false en ProgramarCita.jsx — antes la agenda cargaba de
+   entrada con DOCTORS[0]/SPECIALTIES[0] precargados; ahora el usuario elige
+   explícitamente desde AgendaToolbar antes de ver cualquier cita. */
+.pc-agenda-empty{
+  flex:1;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  text-align:center;padding:32px;
+}
+.pc-agenda-empty-icon{
+  width:48px;height:48px;border-radius:50%;margin-bottom:8px;
+  background:var(--gray-bg);color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;
+}
+.pc-agenda-empty-icon .icon{width:22px;height:22px;}
+.pc-agenda-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pc-agenda-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;}
+
 /* ---------- WORKSPACE (2 columnas) ---------- */
 .pc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
 .pc-side-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}

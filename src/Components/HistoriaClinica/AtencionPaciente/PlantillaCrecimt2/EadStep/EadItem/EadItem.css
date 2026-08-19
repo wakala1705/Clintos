@@ -9,6 +9,6 @@
 .ead-item-text{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.5;flex:1;min-width:220px;}
 .ead-item-answer{flex-shrink:0;}
 
-@media (max-width:720px){
+@media (max-width:768px){
   .ead-item{flex-direction:column;align-items:flex-start;gap:8px;}
 }

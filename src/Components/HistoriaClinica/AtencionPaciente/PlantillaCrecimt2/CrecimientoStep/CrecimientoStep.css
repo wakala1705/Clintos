@@ -25,7 +25,7 @@
 .gc-indicator-grid-3{grid-template-columns:repeat(3,1fr);}
 .gc-indicator-grid-2{grid-template-columns:repeat(2,1fr);}
 
-@media (max-width: 720px){
+@media (max-width: 768px){
   .gc-indicator-grid-3,
   .gc-indicator-grid-2{grid-template-columns:1fr;}
 }
@@ -122,7 +122,7 @@ html[data-theme="dark"] .gc-hist-wrap::after{background:linear-gradient(to right
 .gc-apgar-class-red{color:var(--red);background:var(--red-bg);}
 .gc-apgar-result-hint{margin:0;font-size:var(--fs-sm);color:var(--ink-500);flex-basis:100%;}
 
-@media (max-width: 720px){
+@media (max-width: 768px){
   .gc-apgar-toggle{flex-wrap:wrap;}
   .gc-apgar-result{padding:16px;gap:20px;}
 }

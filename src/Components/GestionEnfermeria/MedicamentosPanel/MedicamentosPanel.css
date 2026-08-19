@@ -249,14 +249,11 @@ tr.row-devuelto .check-col-cell{background:var(--violet-bg);}
 }
 
 /* Mobile: cada fila colapsa a card apilada en una sola columna, sin que el
-   contenedor necesite scroll horizontal (a diferencia del timeline).
-   NOTA: esto todavía no es alcanzable en la práctica — el shell
-   (.app{min-width:768px}, --bp-tablet, ver GestionEnfermeria/shared/
-   shared.css) recorta todo por debajo de 768px con overflow:hidden, y este
-   breakpoint pide 640px, por debajo del piso del shell. Queda lista para
-   cuando el shell baje más allá de --bp-tablet (fuera de scope: la app es
-   tablet-first, no mobile-first). */
-@media (max-width:640px){
+   contenedor necesite scroll horizontal (a diferencia del timeline). Alineado
+   al piso real del shell (.app{min-width:768px}, --bp-tablet, ver
+   GestionEnfermeria/shared/shared.css) — antes pedía 640px y quedaba sin
+   efecto porque el shell nunca baja de 768px. */
+@media (max-width:768px){
   .dose-marker.dose-list-marker{flex-wrap:wrap;}
   .dlm-icon{order:1;}
   .dlm-main{order:2;flex:1 1 calc(100% - 38px);}

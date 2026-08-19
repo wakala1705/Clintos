@@ -88,12 +88,11 @@ body{
 }
 /* Piso bajado de 1024px a 768px (--bp-tablet, ver AGENTS.md "Responsive /
    Breakpoints") — mismo criterio ya aplicado en GestionEnfermeria/shared/
-   shared.css. Sigue sin ser reflow real: por debajo de 1024px las tablas/
-   grillas densas de este módulo todavía no se apilan, ganan su propio
-   scroll horizontal en vez de romper el layout. El sidebar ya se
-   auto-colapsa a riel de íconos por debajo de 1024px (--bp-desktop, ver
-   applySidebarAutoState en legacy-shell-chrome.js), independiente de este
-   valor. */
+   shared.css. VacTable ya reflowa de verdad a tarjetas apiladas por debajo
+   de 768px (ver .vac-cards en VacTable.css) — no es solo scroll horizontal.
+   El sidebar ya se auto-colapsa a riel de íconos por debajo de 1024px
+   (--bp-desktop, ver applySidebarAutoState en legacy-shell-chrome.js),
+   independiente de este valor. */
 .app{display:flex;height:100vh;min-width:768px;overflow:hidden;}
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
 .content{padding:16px;display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;overflow-y:auto;}
@@ -161,7 +160,7 @@ body{
 .chip-filter{
   display:inline-flex;align-items:center;gap:6px;
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
   padding:7px 12px;cursor:pointer;
   font-family:inherit;transition:background .15s,border-color .15s,color .15s;
 }

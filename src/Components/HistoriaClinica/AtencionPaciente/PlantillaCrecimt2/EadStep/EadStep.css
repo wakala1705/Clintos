@@ -26,7 +26,7 @@
 @media (max-width:1024px){
   .ead-step-root{flex-direction:column;}
 }
-@media (max-width:720px){
+@media (max-width:768px){
   .ead-actionbar{padding-left:16px;padding-right:16px;}
   .ead-actionbar-caption{display:none;}
 }

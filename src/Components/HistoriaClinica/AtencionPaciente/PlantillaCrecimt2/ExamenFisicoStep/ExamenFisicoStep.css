@@ -55,6 +55,6 @@
    que la derecha completa, no intercalada. */
 .ef-systems-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;align-items:start;}
 .ef-systems-col{display:flex;flex-direction:column;gap:12px;}
-@media (max-width: 720px){
+@media (max-width: 768px){
   .ef-systems-grid{grid-template-columns:1fr;}
 }

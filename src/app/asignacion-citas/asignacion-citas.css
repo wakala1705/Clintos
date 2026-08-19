@@ -110,6 +110,14 @@
     flex-shrink:0;
     stroke:currentColor;
   }
+  /* Fuera de alcance del trabajo de responsive tablet (ver AGENTS.md
+     "Responsive / Breakpoints" y la bitácora de fases): la grilla de
+     asignación de citas se queda en min-width:1440px (--bp-wide) a
+     propósito, sin colapsar a 1024/768px como el resto de features. Es el
+     módulo de grilla más costoso de adaptar (columnas de servicio + franjas
+     horarias densas) — decisión explícita de dejarlo solo-desktop por ahora
+     en vez de forzar un reflow a medias. Revisar cuando se retome esta
+     feature específicamente, no como parte de un ajuste incidental. */
   .app{
     display:flex;
     height:100vh;
@@ -149,16 +157,34 @@
 
   /* ---------- EMPTY STATES INTERNOS (contrato / servicios / agenda) ---------- */
   .panel-empty-hint{font-size:var(--fs-sm);color:var(--ink-500);font-style:italic;padding:2px 0;}
-  .services-empty, .agenda-empty-row{
+  .services-empty{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:8px;padding:32px 16px;text-align:center;flex:1;
   }
-  .services-empty .icon, .agenda-empty-row .icon{width:26px;height:26px;color:var(--ink-500);}
-  .services-empty .se-text, .agenda-empty-row .ae-text{font-size:var(--fs-base);color:var(--ink-500);max-width:200px;line-height:1.4;}
+  .services-empty .icon{width:26px;height:26px;color:var(--ink-500);}
+  .services-empty .se-text{font-size:var(--fs-base);color:var(--ink-500);max-width:200px;line-height:1.4;}
+
+  /* Empty state de la agenda (sin paciente elegido) — mismo patrón que
+     .pc-agenda-empty en ProgramarCita.css (ícono en círculo + título +
+     subtítulo), más grande que services-empty de arriba porque ocupa el
+     panel principal en vez de la barra lateral. Ver renderAgenda() en
+     legacy-app.js. */
+  .agenda-empty-row{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;padding:32px;text-align:center;flex:1;
+  }
+  .agenda-empty-row .ae-icon-circle{
+    width:48px;height:48px;border-radius:50%;margin-bottom:8px;
+    background:var(--gray-bg);color:var(--ink-500);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .agenda-empty-row .ae-icon-circle .icon{width:22px;height:22px;}
+  .agenda-empty-row .ae-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+  .agenda-empty-row .ae-text{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;line-height:1.4;}
 
   /* ---------- LEFT PANEL: CONTRATO + SERVICIOS (bloque único) ---------- */
   .side-panel{
-    width:300px;flex-shrink:0;
+    width:360px;flex-shrink:0;
     display:flex;flex-direction:column;
     min-height:0;
     background:var(--surface);
@@ -238,58 +264,101 @@
     flex:1;min-height:0;
   }
 
-  .filters-row{
-    display:flex;align-items:flex-end;gap:12px;flex-shrink:0;
-    padding:16px 16px 12px;
+  /* ---------- TOOLBAR (fecha + filtros) ----------
+     Mismo patrón que .pc-toolbar en ProgramarCita/AgendaToolbar.jsx: una
+     sola barra con navegación de fecha a la izquierda y selectores inline al
+     centro (antes: fila de filtros label-arriba + chip de fecha estático
+     separado en tabs-bar). No se reutiliza la clase .pc-toolbar ni su CSS
+     directamente: ese shared.css no carga en esta página y generaría el
+     mismo tipo de colisión que .pc-modal-sm (ver bitácora de homologación de
+     modales) — se replica el patrón con clases .ac-* propias. */
+  .ac-toolbar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    padding:12px 16px;flex-shrink:0;
     border-bottom:1px solid var(--border);
   }
-  .filters-row .filter-icon{
-    display:flex;align-items:center;gap:8px;
-    font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-    text-transform:uppercase;letter-spacing:.04em;
-    padding-bottom:8px;flex-shrink:0;
+
+  .ac-date-nav{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .ac-nav-btn{
+    width:28px;height:28px;border-radius:var(--radius);border:1px solid var(--border);
+    background:var(--surface);display:flex;align-items:center;justify-content:center;
+    color:var(--ink-500);cursor:pointer;flex-shrink:0;
   }
-  .filters-row .filter-icon .icon{width:17px;height:17px;color:var(--ink-500);}
-  .select-field{display:flex;flex-direction:column;gap:4px;flex:1;max-width:180px;}
-  .select-field label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
-  .select-field select{
+  .ac-nav-btn:hover{background:var(--bg);}
+  .ac-nav-btn .icon{width:16px;height:16px;}
+  .ac-date-label{font-weight:var(--fw-semibold);font-size:var(--fs-base);color:var(--ink-900);min-width:150px;text-align:center;}
+
+  .ac-toolbar-selectors{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .ac-select-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .ac-select-wrap label{font-size:var(--fs-sm);color:var(--ink-500);font-weight:var(--fw-semibold);flex-shrink:0;}
+
+  /* Botón que reemplaza al <select> nativo para Especialidad/Médico — abre
+     FiltroPickerModal (tabla buscable) en vez de un desplegable, mismo
+     patrón que .pc-picker-trigger en ProgramarCita/AgendaToolbar.css.
+     "Clase de orden" sigue siendo un <select> nativo (.ac-native-select) con
+     medidas iguales para que los 3 selectores queden alineados entre sí. */
+  .ac-picker-trigger{
+    display:inline-flex;align-items:center;justify-content:space-between;gap:8px;
+    width:180px;
+    border:1px solid var(--border);border-radius:var(--radius);
+    height:var(--input-md);padding:0 10px 0 12px;
+    font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+    background:var(--surface);cursor:pointer;
+  }
+  .ac-picker-trigger:hover{background:var(--bg);border-color:var(--ink-400);}
+  .ac-picker-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+  .ac-picker-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .ac-picker-trigger .chev{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+
+  .ac-native-select{
     appearance:none;-webkit-appearance:none;
     background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+    width:180px;
     border:1px solid var(--border);border-radius:var(--radius);
     height:var(--input-md);padding:0 32px 0 12px;
     font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
-    width:100%;cursor:pointer;
+    cursor:pointer;
   }
-  .select-field select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+  .ac-native-select:focus{outline:2px solid var(--primary);outline-offset:1px;}
 
   .tabs-bar{
     display:flex;align-items:center;justify-content:space-between;
     padding:12px 16px;flex-shrink:0;gap:16px;
   }
-  .tabs{display:flex;gap:24px;}
+  /* Chips en track segmentado — mismo patrón que .chip-group.segmented +
+     .chip-filter (Vacunacion.css) / .pc-view-switch (ProgramarCita) /
+     .adm-chip-group (Admisiones): fondo tenue en píldora, opción activa
+     "elevada" (surface + sombra) en vez del indicador de subrayado que tenía
+     antes. No reutiliza esas clases directamente (features distintas, ver
+     AGENTS.md) — se replica el patrón con las clases .tabs/.tab ya usadas
+     acá y en legacy-app.js (cambiarTab solo alterna la clase .active, sin
+     depender de su CSS). */
+  .tabs{
+    display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap;
+    background:var(--bg);border:1px solid var(--border);border-radius:999px;
+    padding:3px;
+  }
   .tab{
     display:flex;align-items:center;gap:8px;
-    font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
-    cursor:pointer;padding:4px 0;position:relative;
+    border:1px solid transparent;background:transparent;box-shadow:none;
+    font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+    cursor:pointer;padding:7px 14px;border-radius:999px;
+    font-family:inherit;transition:background .15s,border-color .15s,color .15s;
   }
-  .tab:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+  .tab:hover{background:rgba(16,24,39,.05);}
+  .tab:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
   .tab .count{
     background:var(--gray-bg,#eef0f4);color:var(--ink-700);
     font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:1px 8px;border-radius:20px;
   }
-  .tab.active{color:var(--primary);font-weight:var(--fw-medium);}
+  .tab.active{
+    background:var(--surface);border-color:var(--border);color:var(--ink-900);
+    box-shadow:0 1px 2px rgba(16,24,39,.10);font-weight:var(--fw-semibold);
+  }
   .tab.active .count{background:var(--primary-100);color:var(--primary-dark);}
-  .tab.active::after{
-    content:'';position:absolute;left:0;right:0;bottom:-13px;height:2px;background:var(--primary);
-  }
-  .date-picker-chip{
-    display:flex;align-items:center;gap:8px;
-    border:1px solid var(--border);border-radius:var(--radius);
-    padding:8px 12px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
-    cursor:pointer;background:var(--surface);flex-shrink:0;
-  }
-  .date-picker-chip .icon{width:17px;height:17px;color:var(--primary);}
-
+  html[data-theme="dark"] .tabs{background:#0c0f17;}
+  html[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06);}
+  html[data-theme="dark"] .tab.active{background:#20283a;border-color:#333e54;}
   .table-wrap{
     border-top:1px solid var(--border);
     flex:1;min-height:200px;overflow-y:auto;overflow-x:auto;
@@ -302,8 +371,13 @@
     text-transform:uppercase;letter-spacing:.03em;
     padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
   }
+  /* Alto fijo (37px) en vez de dejar que cada celda calcule el suyo con
+     padding:8px 16px + line-height del contenido: eso daba ~40.5px en las
+     celdas de puro texto (EPS/Valor/Teléfono/F.Solicitud/Estado) contra los
+     37px que .hora-cell/.llegada-cell/.paciente-cell ya forzaban explícito
+     — mismo alto ahora en las 8 columnas de la fila. */
   tbody td{
-    padding:8px 16px;border-bottom:1px solid #eef0f4;
+    height:37px;padding:0 16px;border-bottom:1px solid #eef0f4;
     color:var(--ink-700);white-space:nowrap;
     vertical-align:middle;
   }
@@ -318,14 +392,13 @@
   tbody tr.row-empty{cursor:default;}
   tbody tr.row-empty:hover{background:transparent;}
 
-  .hora-cell{display:flex;align-items:center;gap:8px;height:37px;padding-top:0;padding-bottom:0;}
+  .hora-cell{display:flex;align-items:center;gap:8px;}
   .hora-cell .h{font-weight:var(--fw-medium);color:var(--ink-900);font-size:var(--fs-base);}
   .hora-cell .m{font-size:var(--fs-xs);color:var(--ink-500);}
-  .llegada-cell{height:37px;padding-top:0;padding-bottom:0;}
   .llegada-chip{display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:var(--fw-medium);font-size:var(--fs-base);}
   .llegada-chip .icon{width:15px;height:15px;}
   .llegada-dash{color:var(--ink-500);font-weight:var(--fw-regular);}
-  .paciente-cell{height:37px;padding-top:0;padding-bottom:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .paciente-cell{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .paciente-cell .p-name{font-weight:var(--fw-medium);color:var(--ink-900);}
   .paciente-cell .p-name.muted{font-weight:var(--fw-semibold);font-style:italic;color:var(--ink-500);}
 

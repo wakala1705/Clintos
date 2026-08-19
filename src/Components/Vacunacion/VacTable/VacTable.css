@@ -84,3 +84,25 @@ html[data-theme="dark"] .vac-esquema-badge.esquema-gestante{color:var(--accent-t
 .vac-row-action-btn .icon{width:16px;height:16px;}
 .vac-row-action-btn:hover{background:var(--gray-bg);color:var(--primary);}
 .vac-row-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* ---------- TARJETAS MOBILE ----------
+   La tabla colapsa a una tarjeta por paciente por debajo de 768px
+   (--bp-tablet) — mismo umbral y criterio que .lp-cards (PatientsTable) /
+   .hc-cards (AgendaTable). Ya es alcanzable: el shell se bajó a
+   .app{min-width:768px} (ver Vacunacion.css). */
+.vac-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .vac-table-wrap{display:none;}
+  .vac-cards{display:flex;}
+}
+.vac-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:10px;
+}
+.vac-card.row-atrasado{box-shadow:inset 3px 0 0 var(--red);}
+.vac-card-top{display:flex;align-items:center;gap:10px;}
+.vac-card-id{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.vac-card-meta{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-base);color:var(--ink-700);}
+.vac-card-meta .vac-muted{color:var(--ink-400);}
+.vac-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.vac-card-actions .btn{flex:1;justify-content:center;}

@@ -63,6 +63,12 @@
 /* Color semántico por estado — mismo lenguaje que .pc-estado-badge (ver
    shared/shared.css): tinte de fondo + acento en el borde izquierdo, para
    que la agenda se pueda leer de un vistazo sin abrir cada cita. */
+/* "Agendada": estado inicial real de toda cita creada por el wizard "Nueva
+   cita" (ver handleAppointmentConfirmed en ProgramarCita.jsx) — pasa a
+   "Confirmada" recién cuando alguien acciona el botón "Confirmar" en
+   DetalleCitaModal.jsx, no automáticamente al agendar. */
+.pc-appt-card.agendada{background:var(--status-info-bg);border-left-color:var(--primary);}
+.pc-appt-card.agendada .pc-appt-patient{color:var(--primary-dark);}
 .pc-appt-card.confirmada{background:var(--green-bg);border-left-color:var(--green);}
 .pc-appt-card.confirmada .pc-appt-patient{color:#0d7a3d;}
 .pc-appt-card.pendiente{background:var(--amber-bg);border-left-color:var(--amber-fg);}

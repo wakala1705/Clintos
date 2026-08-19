@@ -1,12 +1,14 @@
 import './ScheduleGrid.css';
 import {
-  NOW_DEMO, SLOTS, SLOTS_PER_HOUR, START_HOUR, STATE_LABEL, TIPO_LABEL, slotIndex, timeLabel,
+  NOW_DEMO, SLOT_MINUTES, START_HOUR, STATE_LABEL, TIPO_LABEL, slotIndex, slotsCount, timeLabel,
 } from '@/hooks/ProgramarCita/agendaMockData';
 
 const HEADER_H = 52;
 // Altura de franja por defecto (32px, la opción "Media" de
-// RowHeightDropdown) — 24/32/40px por franja de 20 min, elegible desde el
-// header de la página (ver rowHeight en ProgramarCita.jsx).
+// RowHeightDropdown) — 24/32/40px por franja, elegible desde el header de la
+// página (ver rowHeight en ProgramarCita.jsx). Es densidad visual (px), no
+// duración real de la franja (ver `slotMinutes` abajo) — son dos ejes
+// independientes.
 const DEFAULT_ROW_H = 32;
 
 // Grilla genérica de horario: no sabe si las columnas son días de la semana
@@ -16,13 +18,19 @@ const DEFAULT_ROW_H = 32;
 // contexto que había antes: el padre (ProgramarCita.jsx) sabe a qué
 // médico/día/hora real corresponde esa columna+franja y arma el prefill del
 // wizard con eso, en vez de forzar a re-elegir lo que el usuario ya señaló
-// con el clic.
+// con el clic. `slotMinutes` (default 20, el de casi toda la agenda) es la
+// duración real de cada franja — el médico de Oncología (ver DOCTORS en
+// agendaMockData.js) usa 30 min, consultas más largas que la consulta
+// general; ProgramarCita.jsx decide cuál pasar según el médico/columna
+// activo (ver `slotMinutes` ahí).
 export default function ScheduleGrid({
   columns, appointments, resolveColId, onSelectAppointment, onEmptyCellClick, showNow = true,
-  rowHeight = DEFAULT_ROW_H,
+  rowHeight = DEFAULT_ROW_H, slotMinutes = SLOT_MINUTES,
 }) {
   const nCols = columns.length;
   const ROW_H = rowHeight;
+  const SLOTS = slotsCount(slotMinutes);
+  const SLOTS_PER_HOUR = 60 / slotMinutes;
 
   const [nowH, nowM] = NOW_DEMO.split(':').map(Number);
   const nowIdxFraction = (nowH - START_HOUR) * SLOTS_PER_HOUR + nowM / (60 / SLOTS_PER_HOUR);
@@ -51,7 +59,7 @@ export default function ScheduleGrid({
 
         {hourSlots.map((s) => (
           <div key={`gutter-${s}`} className="pc-time-gutter" style={{ gridColumn: 1, gridRow: s + 2 }}>
-            {s % SLOTS_PER_HOUR === 0 ? timeLabel(s) : ''}
+            {s % SLOTS_PER_HOUR === 0 ? timeLabel(s, slotMinutes) : ''}
           </div>
         ))}
 
@@ -70,7 +78,7 @@ export default function ScheduleGrid({
         {appointments.map((a) => {
           const colIdx = columns.findIndex((c) => c.id === resolveColId(a));
           if (colIdx < 0) return null;
-          const startIdx = slotIndex(a.start);
+          const startIdx = slotIndex(a.start, slotMinutes);
           return (
             <button
               type="button"

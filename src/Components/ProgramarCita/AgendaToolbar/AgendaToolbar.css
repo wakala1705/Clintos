@@ -34,6 +34,11 @@
 .pc-picker-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .pc-picker-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .pc-picker-trigger .chev{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
+/* Sin especialidad/médico elegido todavía (ver agendaLista en
+   ProgramarCita.jsx) — "Seleccionar" en vez del nombre, en tono más suave
+   para no leerse como un valor real ya elegido. */
+.pc-picker-trigger.placeholder span{color:var(--ink-500);font-weight:var(--fw-regular);}
+.pc-picker-trigger[disabled]{opacity:.55;cursor:not-allowed;}
 
 /* Mismo patrón que .chip-group.segmented en
    GestionEnfermeria/shared/shared.css (filtro de estado/rango rápido de

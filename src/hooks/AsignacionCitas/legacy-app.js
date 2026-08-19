@@ -13,6 +13,7 @@
 // responsive) viven en el chrome global — ver src/hooks/Shell/legacy-shell-chrome.js.
 import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { generarAgendaMedico } from '@/hooks/AsignacionCitas/filtrosData';
 
 export function initAsignacionCitas() {
 
@@ -48,15 +49,28 @@ export function initAsignacionCitas() {
     document.getElementById('contrato-tipo').textContent = currentPatient ? CONTRATO_ACTIVO.tipo : '—';
   }
 
+  // El panel solo se puebla mientras el wizard "Nueva cita" está en su paso
+  // "Servicios" (ver onServiciosStepChange más abajo, initNuevaCita) — antes
+  // se llenaba apenas se elegía el paciente, mostrando datos mock detrás del
+  // wizard antes de que el usuario llegara siquiera a ese paso.
+  let serviciosStepActivo = false;
+  function setServiciosStepActivo(activo){
+    serviciosStepActivo = activo;
+    renderServiciosPanel();
+  }
+
   function renderServiciosPanel(){
     const list = document.getElementById('services-list');
     const count = document.getElementById('servicios-count');
-    if(!currentPatient){
+    if(!currentPatient || !serviciosStepActivo){
       count.textContent = '0';
+      const texto = currentPatient
+        ? 'Los servicios contratados aparecen acá al llegar al paso "Servicios" de Nueva cita'
+        : 'Selecciona un paciente para ver sus servicios contratados';
       list.innerHTML = `<div class="services-empty">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
   <path d="M14 2v5a1 1 0 0 0 1 1h5" /></svg>
-        <div class="se-text">Selecciona un paciente para ver sus servicios contratados</div>
+        <div class="se-text">${texto}</div>
       </div>`;
       return;
     }
@@ -95,35 +109,57 @@ export function initAsignacionCitas() {
     renderPatientBanner();
   }
 
-  /* ================= AGENDA DEL DÍA ================= */
-  const AGENDA = [
-    { hora:'07:00', dur:'20min', paciente:'Pedro Arango Ruiz', tipo:'Consulta general', eps:'Sura', valor:'$ 28.500', tel:'300 123 4567', fsol:'02/07/2025', estado:'expirado' },
-    { hora:'07:20', dur:'20min', paciente:'Camila Torres Mesa', tipo:'Control', eps:'Nueva EPS', valor:'$ 28.500', tel:'316 234 5678', fsol:'01/07/2025', estado:'expirado' },
-    { hora:'07:40', dur:'20min', paciente:'Roberto Cárdenas', tipo:'Primera vez', eps:'Compensar', valor:'$ 28.500', tel:'314 345 6789', fsol:'30/06/2025', estado:'expirado' },
-    { hora:'08:00', dur:'20min', paciente:'Ana Lucía Vargas', tipo:'Control crónico', eps:'Sura', valor:'$ 28.500', tel:'312 456 7890', fsol:'05/07/2025', estado:'ocupado', llegada:'07:55' },
-    { hora:'08:20', dur:'20min', paciente:'Mario Pineda León', tipo:'Consulta general', eps:'Colsanitas', valor:'$ 28.500', tel:'321 567 8901', fsol:'06/07/2025', estado:'ocupado' },
-    { hora:'08:40', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
-    { hora:'09:00', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
-    { hora:'09:20', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
-    { hora:'09:40', dur:'20min', paciente:'Gloria Estela Ríos', tipo:'Seguimiento', eps:'Famisanar', valor:'$ 28.500', tel:'315 678 9012', fsol:'04/07/2025', estado:'ocupado' },
-    { hora:'10:00', dur:'20min', paciente:null, tipo:null, estado:'bloqueado' },
-    { hora:'10:20', dur:'20min', paciente:null, tipo:null, estado:'bloqueado' },
-    { hora:'10:40', dur:'20min', paciente:null, tipo:null, estado:'disponible' },
-  ];
+  /* ================= AGENDA DEL DÍA =================
+     Ya no es una lista fija: se genera por médico (7:00-18:00, franjas de
+     30 min) al elegir especialidad + médico en el toolbar de page.jsx —
+     ver setMedicoAgenda()/generarAgendaMedico() (filtrosData.js) más abajo.
+     `medicoAgendaId` es independiente de `currentPatient`: el banner es
+     sobre a quién se está atendiendo, esta tabla es la agenda del día de
+     ese consultorio. */
+  let AGENDA = [];
+  let medicoAgendaId = null;
 
   const ESTADO_LABEL = {
     disponible:'Disponible', ocupado:'Ocupado', expirado:'Expirado', bloqueado:'Bloqueado'
   };
 
-  let selectedHora = '08:20';
+  let selectedHora = null;
+
+  function setMedicoAgenda(medicoId){
+    medicoAgendaId = medicoId || null;
+    AGENDA = medicoAgendaId ? generarAgendaMedico(medicoAgendaId) : [];
+    // Preselecciona la primera cita ocupada (si hay) para que la fila
+    // resaltada y el footer ("Cita seleccionada: ...") arranquen en algo
+    // real en vez de quedar apuntando a una hora que puede no existir en
+    // esta grilla — mismo criterio que el '08:20' fijo que había antes.
+    const primeraOcupada = AGENDA.find(c => c.estado === 'ocupado');
+    selectedHora = primeraOcupada ? primeraOcupada.hora : (AGENDA[0]?.hora ?? null);
+    renderAgenda();
+    reaplicarSeleccion();
+    if(selectedHora) actualizarFooter(selectedHora);
+  }
+
+  // Mismo ícono (lucide "calendar-search") que .pc-agenda-empty en
+  // ProgramarCita.jsx — acá va como string porque este módulo genera HTML a
+  // mano (innerHTML), no JSX; mismo patrón que NC_INFO_SVG/NC_CLIPBOARD_SVG
+  // en legacy-nueva-cita.js para inyectar íconos Lucide en HTML imperativo.
+  const AC_CALENDAR_SEARCH_SVG = '<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2v4"/><path d="M21 11.75V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7.25"/><path d="m22 22-1.875-1.875"/><path d="M3 10h18"/><path d="M8 2v4"/><circle cx="18" cy="18" r="3"/></svg>';
 
   function renderAgenda(){
     const tbody = document.getElementById('agenda-tbody');
-    if(!currentPatient){
+    if(!medicoAgendaId){
+      // Mismo patrón que .pc-agenda-empty en ProgramarCita.css (ícono en
+      // círculo + título + subtítulo) — ver AGENTS.md, "reutiliza el mismo
+      // empty state" no significa importar esa CSS (no carga en esta
+      // página, mismo riesgo de colisión que .pc-modal-sm) sino replicar el
+      // patrón visual con clases propias de esta feature. Depende de
+      // medicoAgendaId (especialidad + médico elegidos en el toolbar), no
+      // de currentPatient — son cosas independientes, ver setMedicoAgenda().
       tbody.innerHTML = `<tr class="row-empty"><td colspan="8">
         <div class="agenda-empty-row">
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 2v4" /><path d="M16 2v4" /></svg>
-          <div class="ae-text">Selecciona un paciente para ver la agenda del día</div>
+          <div class="ae-icon-circle">${AC_CALENDAR_SEARCH_SVG}</div>
+          <div class="ae-title">Configura la agenda para continuar</div>
+          <div class="ae-text">Elegí una especialidad y un médico arriba para ver su agenda del día.</div>
         </div>
       </td></tr>`;
       return;
@@ -277,6 +313,7 @@ export function initAsignacionCitas() {
     getPatient: () => currentPatient,
     setPatient: setCurrentPatient,
     onAppointmentConfirmed: handleAppointmentConfirmed,
+    onServiciosStepChange: setServiciosStepActivo,
   });
 
   // Every function/value called from HTML generated via innerHTML (or wired up
@@ -289,6 +326,10 @@ export function initAsignacionCitas() {
     cambiarTab, clearPatient, seleccionarCita, toggleRowMenu,
     accionMarcarLlegada, accionCancelar, accionReprogramar, accionVerDetalle,
   };
+  // Puente React → legacy (dirección inversa a __setAsignacionCitasPatient,
+  // que va de legacy a React): page.jsx llama esto cada vez que cambia el
+  // médico elegido en el toolbar (FiltroPickerModal), ver useEffect ahí.
+  window.__setAsignacionCitasMedicoAgenda = setMedicoAgenda;
   Object.assign(window, exported);
 
   return function cleanup() {
@@ -298,5 +339,6 @@ export function initAsignacionCitas() {
     cleanupShellChrome?.();
     cleanupNuevaCita?.();
     for (const name of Object.keys(exported)) delete window[name];
+    delete window.__setAsignacionCitasMedicoAgenda;
   };
 }

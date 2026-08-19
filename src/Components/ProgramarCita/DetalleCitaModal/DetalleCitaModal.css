@@ -2,6 +2,16 @@
    bloques de datos a 4 columnas necesita más aire horizontal para ganar
    espacio vertical (ver .pc-detail-grid más abajo). */
 .pc-modal.pc-modal-lg{max-width:900px;}
+/* Variante angosta para la confirmación "¿Cancelar esta cita?" (ver
+   DetalleCitaModal.jsx) — ese contenido es solo texto + 2 botones, no
+   necesita el ancho de 900px pensado para las cuadrículas de 4 columnas del
+   detalle. Mismo ancho que .nc-discard-modal (NuevaCitaFlow.css), mismo
+   patrón visual de confirmación. Nombre propio (no ".pc-modal-sm"): esa
+   clase ya la usa SelectorModal.css para el picker de especialidad/médico
+   —alto fijo 480px, layout de tabla totalmente distinto— y ambos .css
+   cargan en la misma página (ver AgendaToolbar.jsx), así que reusar el
+   nombre pisaba ese alto fijo encima de este modal de confirmación. */
+.pc-modal.pc-modal-confirm{max-width:400px;}
 
 .pc-detail-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .pc-detail-patient{font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
@@ -15,6 +25,18 @@
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
+/* "Contrato y facturación" / "Solicitud y seguimiento" arrancan expandidas
+   (ver seccionAbierta en DetalleCitaModal.jsx) pero siguen siendo
+   colapsables — el título deja de ser un <div> suelto y pasa a ser el
+   propio trigger del toggle, para que el usuario pueda achicarlas si
+   prefiere una lectura más rápida de "Datos de la cita" (auditoría
+   heurística #8). El chevron (.chev/.chev.open) es la primitiva compartida
+   con ContractPanel, ver shared.css. */
+.pc-detail-section-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+}
+.pc-detail-section-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
 .pc-detail-grid{
   display:grid;grid-template-columns:repeat(4, 1fr);gap:12px 16px;
   padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
@@ -26,3 +48,25 @@
 
 .pc-detail-actions{flex-wrap:nowrap;justify-content:flex-start !important;gap:8px;}
 .pc-detail-actions .btn{flex:1;padding-left:10px;padding-right:10px;justify-content:center;}
+
+/* ---------- Confirmación "¿Cancelar esta cita?" ----------
+   Antes "Cancelar cita" cerraba el modal igual que cualquier otro botón del
+   footer, sin ningún resguardo pese a ser la única acción irreversible del
+   grupo (auditoría heurística #3/#5). Mismo lenguaje visual que
+   .nc-discard-modal (NuevaCitaFlow.css) — ícono en círculo + título +
+   descripción + 2 acciones centradas — pero en tono "danger" (rojo, no
+   ámbar): acá se cancela la cita en firme, no se pierde un progreso sin
+   guardar. Vive dentro de la misma .pc-modal (no un overlay aparte, a
+   diferencia de nc-discard-overlay) porque este componente ya es 100% React
+   — no necesita la coordinación imperativa que sí le hace falta al wizard. */
+.pc-cancel-confirm{padding:32px 28px 24px;text-align:center;}
+.pc-cancel-confirm-icon{
+  width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
+  background:var(--red-bg);color:var(--red);
+  display:flex;align-items:center;justify-content:center;
+}
+.pc-cancel-confirm-icon .icon{width:22px;height:22px;}
+.pc-cancel-confirm h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pc-cancel-confirm p{margin:0 0 20px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.5;}
+.pc-cancel-confirm p b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+.pc-cancel-confirm-actions{display:flex;justify-content:center;gap:10px;}

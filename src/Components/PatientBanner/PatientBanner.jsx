@@ -20,7 +20,16 @@ import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 // PlantillaCrecimt2 al maximizar, ver ViewSettingsMenu.jsx) reduce el banner
 // a una sola línea con solo nombre/sexo/edad — ignora secondRow/statusBadge/
 // onClose/alergias para dejar sitio real a la card que crece por encima.
-export default function PatientBanner({ patient, secondRow, statusBadge, onClose, empty, compact }) {
+// `leadingSelect` (un <select> nativo antes del primer chip de secondRow —
+// hoy solo lo usa Asignación de Citas para "Régimen", ver
+// asignacion-citas/page.jsx; estilo tipo .pc-select-wrap/.pc-picker-trigger
+// de ProgramarCita/AgendaToolbar.css, reimplementado acá con clases propias
+// .pb-* porque este componente es global y no puede depender de tokens de
+// una sola feature): { label, value, options: [{value,label}], onChange }.
+// `secondRowButton` (botón al final de esa misma fila — hoy solo lo usa
+// Asignación de Citas para "Historial de citas", ver asignacion-citas/
+// page.jsx): { label, icon: Icon, onClick }.
+export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const allergyRef = useRef(null);
@@ -126,13 +135,34 @@ export default function PatientBanner({ patient, secondRow, statusBadge, onClose
           </button>
         )}
       </div>
-      {secondRow && secondRow.length > 0 && (
+      {((secondRow && secondRow.length > 0) || leadingSelect || secondRowButton) && (
         <div className="admission-row">
-          {secondRow.map((item) => (
+          {leadingSelect && (
+            <div className="pb-select-wrap">
+              <label htmlFor="pb-leading-select">{leadingSelect.label}</label>
+              <select
+                id="pb-leading-select"
+                className="pb-select"
+                value={leadingSelect.value}
+                onChange={(e) => leadingSelect.onChange?.(e.target.value)}
+              >
+                {leadingSelect.options.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {secondRow?.map((item) => (
             <div className="ar-item" key={item.label}>
               <span className="lbl">{item.label}</span> <b>{item.value}</b>
             </div>
           ))}
+          {secondRowButton && (
+            <button type="button" className="pb-row-btn" onClick={secondRowButton.onClick}>
+              {secondRowButton.icon && <secondRowButton.icon className="icon" aria-hidden="true" />}
+              {secondRowButton.label}
+            </button>
+          )}
         </div>
       )}
       {detailOpen && (

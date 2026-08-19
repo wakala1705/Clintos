@@ -7,7 +7,7 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import {
   addDays, addWeekday, APPOINTMENTS, dateLabel, dayIndexForDate, diffInDays,
-  DOCTORS, isSameDate, SPECIALTIES, timeLabel, weekDays, weekRangeLabel,
+  DOCTORS, isSameDate, SLOT_MINUTES, SPECIALTIES, timeLabel, weekDays, weekRangeLabel,
 } from '@/hooks/ProgramarCita/agendaMockData';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
@@ -20,7 +20,22 @@ import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import DetalleCitaModal from '@/Components/ProgramarCita/DetalleCitaModal/DetalleCitaModal';
 import RangoDropdown from '@/Components/ProgramarCita/RangoDropdown/RangoDropdown';
 import RowHeightDropdown from '@/Components/ProgramarCita/RowHeightDropdown/RowHeightDropdown';
-import { LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
+import { LuCalendarSearch, LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
+
+// Leyenda de estados de cita (ver ScheduleGrid.css .pc-appt-card.*): 5
+// colores sin ningún punto de referencia en pantalla — la única forma de
+// saber qué significa cada uno era pasar el mouse sobre una cita (title
+// nativo, no descubrible) o abrir su detalle uno por uno (auditoría
+// heurística #6). Reutiliza las mismas clases .pc-estado-badge/estado que
+// ya pinta DetalleCitaModal, para no duplicar la paleta de colores.
+const ESTADO_LEYENDA = [
+  { estado: 'agendada', label: 'Agendada' },
+  { estado: 'confirmada', label: 'Confirmada' },
+  { estado: 'pendiente', label: 'Pendiente' },
+  { estado: 'reprogramada', label: 'Reprogramada' },
+  { estado: 'no-asistio', label: 'No asistió' },
+  { estado: 'cancelada', label: 'Cancelada' },
+];
 
 // Vista "Por especialidad" muestra un solo día (el miércoles de la semana
 // visible), igual que el mockup de referencia — el usuario ya filtró a una
@@ -35,7 +50,7 @@ export default function ProgramarCita() {
   // src/hooks/NuevaCita/legacy-nueva-cita.js.
   const nuevaCitaPatientRef = useRef(null);
 
-  // Citas confirmadas por el wizard "Nueva cita" se agregan acá (ver
+  // Citas agendadas por el wizard "Nueva cita" se agregan acá (ver
   // handleAppointmentConfirmed) — sin esto, "Confirmar cita" cerraba el
   // wizard sin que la agenda reflejara nunca la cita recién creada.
   const [appointmentsList, setAppointmentsList] = useState(APPOINTMENTS);
@@ -55,7 +70,11 @@ export default function ProgramarCita() {
         doc: extra.patientDoc,
         eps: filaNueva.eps,
         tipo: extra.tipo,
-        estado: 'confirmada',
+        // Toda cita nueva nace "Agendada" (azul, ver ESTADO_LEYENDA) — pasa a
+        // "Confirmada" recién cuando alguien acciona "Confirmar" en
+        // DetalleCitaModal (ver handleConfirmarCita más abajo), nunca de
+        // entrada al agendarla.
+        estado: 'agendada',
         motivo: filaNueva.tipo,
         servicio: extra.servicio,
         telefonoAviso: filaNueva.tel,
@@ -63,6 +82,14 @@ export default function ProgramarCita() {
         consecutivo: '—',
       },
     ]);
+  }
+
+  // Única acción del footer de DetalleCitaModal que de verdad muta el estado
+  // de la cita (el resto — Facturar/Reprogramar/No asistió/Cancelar — sigue
+  // siendo solo feedback, ver plan "Rediseño de /programar-cita"): "Agendada"
+  // → "Confirmada" al accionar "Confirmar".
+  function handleConfirmarCita(id) {
+    setAppointmentsList((prev) => prev.map((a) => (a.id === id ? { ...a, estado: 'confirmada' } : a)));
   }
 
   useEffect(() => {
@@ -81,8 +108,12 @@ export default function ProgramarCita() {
 
   const [vista, setVista] = useState('medico');
   const [rango, setRango] = useState('dia');
-  const [doctorId, setDoctorId] = useState(DOCTORS[0].id);
-  const [especialidadId, setEspecialidadId] = useState(SPECIALTIES[0].id);
+  // Arrancan sin elegir (a diferencia de antes, que precargaba DOCTORS[0]/
+  // SPECIALTIES[0]): la agenda solo se pinta una vez que el usuario configura
+  // especialidad (+ médico en vista "Por médico") desde AgendaToolbar — ver
+  // `agendaLista` y el empty state más abajo.
+  const [doctorId, setDoctorId] = useState(null);
+  const [especialidadId, setEspecialidadId] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   // Fecha foco de la agenda — "Día/Semana anterior/siguiente" del toolbar la
   // mueven (ver handlePrevDate/handleNextDate); antes esos botones no tenían
@@ -125,8 +156,15 @@ export default function ProgramarCita() {
     setRango('dia');
   }
 
-  let columns, appointments, resolveColId, showNow;
-  if (vista === 'medico') {
+  // La agenda solo se arma una vez que hay suficiente contexto elegido en
+  // AgendaToolbar: un médico puntual en vista "Por médico", o al menos una
+  // especialidad en "Por especialidad" (ese modo agrupa varios médicos, no
+  // necesita uno solo elegido). Antes de eso no hay columns/appointments que
+  // calcular — se muestra el empty state en vez del grid (ver más abajo).
+  const agendaLista = vista === 'medico' ? Boolean(doctorId) : Boolean(especialidadId);
+
+  let columns = [], appointments = [], resolveColId = () => null, showNow = false, slotMinutes = SLOT_MINUTES;
+  if (agendaLista && vista === 'medico') {
     if (rango === 'dia') {
       const dayIdx = dayIndexForDate(viewDate);
       const dayCol = days[dayIdx];
@@ -139,7 +177,11 @@ export default function ProgramarCita() {
       showNow = days.some((d) => isSameDate(d.date, today));
     }
     resolveColId = (a) => a.day;
-  } else {
+    // Duración real de franja del médico activo (default 20 min) — el de
+    // Oncología usa 30 (ver DOCTORS en agendaMockData.js), consultas más
+    // largas que la consulta general.
+    slotMinutes = DOCTORS.find((d) => d.id === doctorId)?.slotMinutes || SLOT_MINUTES;
+  } else if (agendaLista) {
     const doctoresEspecialidad = DOCTORS.filter((d) => d.especialidadId === especialidadId);
     columns = doctoresEspecialidad.map((d) => ({ id: d.id, headerTop: d.nombre, headerBottom: d.consultorio }));
     appointments = appointmentsList.filter(
@@ -147,6 +189,11 @@ export default function ProgramarCita() {
     );
     resolveColId = (a) => a.doctorId;
     showNow = isSameDate(days[ESPECIALIDAD_DAY_ID].date, today);
+    // Aproximación para "Por especialidad": toma la franja del primer médico
+    // del grupo — sostenible mientras cada especialidad tenga médicos con la
+    // misma duración de franja (hoy es el caso: Oncología es la única con
+    // 30 min y por ahora tiene un solo médico).
+    slotMinutes = doctoresEspecialidad[0]?.slotMinutes || SLOT_MINUTES;
   }
 
   // Un clic en una celda vacía ya identifica médico/especialidad + día + hora
@@ -156,7 +203,7 @@ export default function ProgramarCita() {
   // identifica columna, no una franja puntual — el wizard igual deja elegir
   // la hora en su paso "Médico".
   function handleEmptyCellClick(colId, slotIdx) {
-    const horario = typeof slotIdx === 'number' ? timeLabel(slotIdx) : undefined;
+    const horario = typeof slotIdx === 'number' ? timeLabel(slotIdx, slotMinutes) : undefined;
     if (vista === 'medico') {
       const col = columns.find((c) => c.id === colId);
       const dia = col?.date ? diffInDays(col.date) : 0;
@@ -188,8 +235,8 @@ export default function ProgramarCita() {
               <p>Gestiona la disponibilidad y las citas de los consultorios activos.</p>
             </div>
             <div className="pc-page-header-actions">
-              <button type="button" className="icon-btn-circle" aria-label="Buscar"><LuSearch className="icon" /></button>
-              <button type="button" className="icon-btn-circle" aria-label="Configuración"><LuSettings className="icon" /></button>
+              <button type="button" className="icon-btn-circle" aria-label="Buscar" onClick={() => window.ncToast?.('Búsqueda de citas en desarrollo.')}><LuSearch className="icon" /></button>
+              <button type="button" className="icon-btn-circle" aria-label="Configuración" onClick={() => window.ncToast?.('Configuración de la agenda en desarrollo.')}><LuSettings className="icon" /></button>
               <RowHeightDropdown value={rowHeight} onChange={setRowHeight} />
               {vista === 'medico' && <RangoDropdown value={rango} onChange={setRango} />}
               <button type="button" className="btn btn-primary" onClick={() => window.ncOpen()}><LuPlus className="icon" />Agendar cita</button>
@@ -215,25 +262,46 @@ export default function ProgramarCita() {
                 onPrevDate={handlePrevDate}
                 onNextDate={handleNextDate}
               />
-              <ScheduleGrid
-                columns={columns}
-                appointments={appointments}
-                resolveColId={resolveColId}
-                onSelectAppointment={setSelectedAppointment}
-                onEmptyCellClick={handleEmptyCellClick}
-                showNow={showNow}
-                rowHeight={rowHeight}
-              />
-              {/* Vista tablet de la misma agenda (<=1024px, --bp-desktop) —
-                  mismos columns/appointments/resolveColId, la CSS decide
-                  cuál de las dos se ve según el ancho (ver ScheduleList.css). */}
-              <ScheduleList
-                columns={columns}
-                appointments={appointments}
-                resolveColId={resolveColId}
-                onSelectAppointment={setSelectedAppointment}
-                onEmptyCellClick={handleEmptyCellClick}
-              />
+              {agendaLista ? (
+                <>
+                  <ScheduleGrid
+                    columns={columns}
+                    appointments={appointments}
+                    resolveColId={resolveColId}
+                    onSelectAppointment={setSelectedAppointment}
+                    onEmptyCellClick={handleEmptyCellClick}
+                    showNow={showNow}
+                    rowHeight={rowHeight}
+                    slotMinutes={slotMinutes}
+                  />
+                  {/* Vista tablet de la misma agenda (<=1024px, --bp-desktop) —
+                      mismos columns/appointments/resolveColId, la CSS decide
+                      cuál de las dos se ve según el ancho (ver ScheduleList.css). */}
+                  <ScheduleList
+                    columns={columns}
+                    appointments={appointments}
+                    resolveColId={resolveColId}
+                    onSelectAppointment={setSelectedAppointment}
+                    onEmptyCellClick={handleEmptyCellClick}
+                  />
+                  <div className="pc-legend" aria-label="Referencia de colores de estado de cita">
+                    {ESTADO_LEYENDA.map((e) => (
+                      <span key={e.estado} className="pc-legend-item">
+                        <span className={`pc-legend-dot ${e.estado}`} aria-hidden="true"></span>
+                        {e.label}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="pc-agenda-empty">
+                  <div className="pc-agenda-empty-icon"><LuCalendarSearch className="icon" aria-hidden="true" /></div>
+                  <div className="pc-agenda-empty-title">Configura la agenda para continuar</div>
+                  <div className="pc-agenda-empty-sub">
+                    Elegí una especialidad{vista === 'medico' ? ' y un médico' : ''} arriba para ver su disponibilidad.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -241,7 +309,7 @@ export default function ProgramarCita() {
       </div>
 
       <NuevaCitaFlow />
-      <DetalleCitaModal appointment={selectedAppointment} onClose={() => setSelectedAppointment(null)} />
+      <DetalleCitaModal appointment={selectedAppointment} onClose={() => setSelectedAppointment(null)} onConfirmar={handleConfirmarCita} />
 
       <div className="pc-toast">
         <span className="pc-toast-dot"></span>

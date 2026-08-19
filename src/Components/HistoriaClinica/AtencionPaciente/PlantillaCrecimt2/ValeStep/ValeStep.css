@@ -42,7 +42,7 @@
 @media (max-width:1024px){
   .vale-step-root{flex-direction:column;}
 }
-@media (max-width:720px){
+@media (max-width:768px){
   .vale-actionbar{padding-left:16px;padding-right:16px;}
   .vale-actionbar-caption{display:none;}
 }

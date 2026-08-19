@@ -78,6 +78,40 @@
 .admission-row .ar-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.02em;margin-right:4px;}
 .admission-row .ar-item b{color:var(--ink-900);font-weight:var(--fw-semibold);}
 
+/* leadingSelect (ver PatientBanner.jsx) — mismo lenguaje visual que
+   .pc-select-wrap/.pc-picker-trigger de ProgramarCita/AgendaToolbar.css
+   (label + control con chevron), reimplementado con clases propias porque
+   este componente es global y no puede depender de las clases/tokens de esa
+   feature. Es un <select> nativo (no abre un modal como el picker de
+   Especialidad/Médico de ProgramarCita): pocas opciones fijas, no necesita
+   búsqueda. */
+.pb-select-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.pb-select-wrap label{font-size:var(--fs-sm);color:var(--ink-500);font-weight:var(--fw-semibold);flex-shrink:0;}
+.pb-select{
+  appearance:none;-webkit-appearance:none;
+  background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>') no-repeat right 10px center;
+  width:160px;
+  border:1px solid var(--border);border-radius:var(--radius);padding:6px 30px 6px 10px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  cursor:pointer;
+}
+.pb-select:hover{border-color:var(--ink-400);}
+.pb-select:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* secondRowButton (ver PatientBanner.jsx) — acción al final de la fila de
+   admisión (hoy "Historial de citas" en Asignación de Citas). margin-left:
+   auto la separa del resto de chips de datos en vez de quedar pegada al
+   último, mismo criterio que .patient-banner-right en la fila principal. */
+.pb-row-btn{
+  display:inline-flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  padding:6px 12px;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+  cursor:pointer;
+}
+.pb-row-btn .icon{width:15px;height:15px;flex-shrink:0;}
+.pb-row-btn:hover{background:var(--bg);border-color:var(--ink-400);color:var(--ink-900);}
+.pb-row-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
 /* ---------- ESTADO VACÍO (sin paciente seleccionado) ---------- */
 .patient-banner-empty{
   background:var(--surface);
