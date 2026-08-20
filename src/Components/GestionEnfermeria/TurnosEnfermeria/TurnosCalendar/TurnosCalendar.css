@@ -1,0 +1,163 @@
+/* Grilla propia (no extiende .data-table de shared.css): la fila "ENFERMERA"
+   necesita quedar fija en ambos ejes de scroll a la vez (columna al
+   desplazar los días, encabezado al desplazar muchas enfermeras) — un caso
+   más específico que cualquier .data-table existente, así que vive con sus
+   propias reglas en vez de pelear la cascada contra esa clase compartida.
+   Reutiliza los mismos tokens/valores que .data-table (radio, bordes,
+   tipografía) para no divergir visualmente del resto de tablas del feature. */
+.tc-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
+.tc-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:var(--fs-base);}
+
+.tc-col-nurse{width:232px;min-width:232px;}
+.tc-col-day{width:160px;min-width:160px;}
+
+.tc-table thead th{
+  position:sticky;top:0;z-index:2;background:#f7f8fb;color:var(--ink-500);
+  font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
+  text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);
+}
+.tc-table thead th.tc-col-day{text-align:center;}
+.tc-table thead th.tc-col-nurse{z-index:3;}
+/* Encabezado del día actual (único lugar donde se resalta "hoy", encargo
+   explícito) — tinte apenas perceptible, nunca un fondo saturado. */
+.tc-table thead th.tc-col-day.today{background:var(--primary-50);color:var(--primary-dark);}
+.tc-day-label{display:block;}
+.tc-day-num{display:block;font-size:var(--fs-sm);font-weight:var(--fw-bold);color:var(--ink-900);margin-top:2px;text-transform:none;letter-spacing:0;}
+.tc-table thead th.tc-col-day.today .tc-day-num{color:var(--primary-dark);}
+
+.tc-table td{border-bottom:1px solid #eef0f4;vertical-align:top;padding:8px;}
+/* Ancla de posicionamiento del panel de hover (position:absolute, ver más
+   abajo) — vive DENTRO del padding de la celda a propósito, así el panel en
+   reposo (top:0/left:0/right:0) cae exactamente sobre la tarjeta compacta
+   sin overflow:hidden que lo recorte al crecer hacia abajo sobre la fila
+   siguiente. */
+.tc-cell{position:relative;}
+.tc-table tbody tr:last-child td{border-bottom:none;}
+/* Columna del día actual: el tinte ahora se extiende a toda la columna, no
+   solo al encabezado (encargo explícito) — mucho más tenue que el del th
+   (--primary-50 ya en sí es sutil) para que las tarjetas de turno de esa
+   columna se sigan leyendo con su propio color de tipo, no compitiendo con
+   un fondo azul detrás. */
+.tc-table td.tc-col-day.today{background:rgba(0,101,205,.035);}
+
+/* Columna "Enfermera" fija a la izquierda en ambos ejes — el borde derecho
+   marca visualmente el límite del área que no se desplaza (mismo criterio
+   que un separador de panel, sin sombra para no romper "sombras mínimas"). */
+.tc-table td.tc-col-nurse, .tc-table th.tc-col-nurse{
+  position:sticky;left:0;background:var(--surface);border-right:1px solid var(--border);
+}
+.tc-table td.tc-col-nurse{z-index:1;padding:8px 12px;}
+
+.tc-nurse{display:flex;align-items:center;gap:10px;}
+.tc-avatar{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:var(--primary-100);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:var(--fw-medium);font-size:var(--fs-sm);
+}
+.tc-nurse-id{min-width:0;display:flex;flex-direction:column;}
+.tc-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tc-role{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---------- TARJETA DE TURNO (reposo) ----------
+   3 variantes tonales suaves (mañana=azul/tarde=violeta/noche=verde, mismos
+   pares bg/fg ya usados para otros estados del feature — ver AGENTS.md) que
+   nunca son el único indicador: ícono + etiqueta de texto identifican el
+   tipo igual que el color, mismo criterio que ESTADO_ICONO en
+   PatientsTable.jsx. Densidad fija (encargo explícito: "no aumentar la
+   altura de la fila") — icono+tipo y horario, nada más en reposo. */
+.tc-turno{
+  display:flex;flex-direction:column;gap:2px;
+  border-radius:var(--radius);padding:7px 8px;
+  border:1px solid transparent;cursor:pointer;
+  transition:box-shadow .15s ease,border-color .15s ease;
+}
+.tc-turno:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.tc-turno-manana{background:var(--primary-50);color:var(--primary-dark);}
+.tc-turno-tarde{background:var(--violet-bg);color:var(--violet-fg);}
+.tc-turno-noche{background:var(--green-bg);color:#0d7a3d;}
+
+.tc-turno-tipo{display:flex;align-items:center;gap:5px;font-weight:var(--fw-semibold);font-size:var(--fs-sm);}
+.tc-turno-tipo .icon{width:14px;height:14px;flex-shrink:0;}
+.tc-turno-horario{font-size:var(--fs-xs);font-weight:var(--fw-medium);opacity:.8;font-variant-numeric:tabular-nums;}
+
+/* Seleccionado (popover de detalle abierto, ver TurnoCellPopover) — anillo
+   azul sobre el tono propio de la tarjeta, nunca lo reemplaza. */
+.tc-turno.selected{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-100);}
+
+/* Conflicto: reemplaza el tono de tipo por un lavado rojo suave (--red-bg ya
+   es un pastel, nunca un rojo saturado) + el ícono de alerta en vez del de
+   tipo (ver TurnosCalendar.jsx) — eso solo ya lo hace "mucho más fácil de
+   identificar a simple vista" sin sumar una línea de texto permanente
+   ("Conflicto" queda para el hover/popover, encargo explícito: "no añadir
+   permanentemente texto adicional si aumenta la densidad"). */
+.tc-turno.conflicto{background:var(--red-bg);color:var(--red);border-color:var(--red-bg);}
+.tc-turno.conflicto .tc-turno-horario{color:var(--red);opacity:.85;}
+
+/* ---------- DESCANSO (reposo) ----------
+   Sin caja ni borde propio (a diferencia de .tc-turno) para que se lea de
+   inmediato como "nada que gestionar acá", no como una variante más de
+   turno — nunca colores de alerta. */
+.tc-descanso{
+  text-align:center;padding:9px 4px;border-radius:var(--radius);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-400);
+  cursor:pointer;border:1px solid transparent;transition:background .15s ease,color .15s ease;
+}
+.tc-descanso:hover{background:var(--bg);color:var(--ink-700);}
+.tc-descanso:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.tc-descanso.selected{background:var(--bg);color:var(--ink-900);border-color:var(--border);}
+
+/* ---------- SIN ASIGNAR (reposo) ----------
+   Distinto de Descanso: acá SÍ hay una necesidad de programación pendiente,
+   así que queda siempre visible con un lavado ámbar apenas perceptible —
+   nunca compite en peso visual con las tarjetas de turno normales. El
+   detalle + "Asignar turno" viven en el panel de hover (ver abajo); el
+   click va directo al modal de asignación, sin popover intermedio (encargo
+   explícito). */
+.tc-vacio{
+  width:100%;min-height:38px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--amber-bg);border-radius:var(--radius);
+  background:var(--amber-bg);color:var(--amber-fg);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.tc-vacio:hover{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
+.tc-vacio:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* ---------- PANEL DE HOVER (capa 2 del progressive disclosure) ----------
+   `position:absolute` sobre el mismo footprint de la tarjeta en reposo
+   (top/left/right:0, ver .tc-cell) — al no estar en flujo, revelarlo NO
+   empuja el resto de la fila ni de la tabla (encargo explícito: "no
+   aumentar la altura de fila", "no provocar desplazamientos"). Reutiliza el
+   mismo tono que la tarjeta de turno cuando aplica (.tc-turno.tc-turno-*),
+   así que solo agrega elevación + el contenido/acciones secundarias; para
+   Descanso/Sin asignar usa su propio tono neutro/ámbar. 150-200ms, sin
+   animaciones llamativas (encargo explícito). */
+.tc-hover-panel{
+  position:absolute;top:0;left:0;right:0;z-index:5;cursor:pointer;
+  border-radius:var(--radius);box-shadow:0 8px 20px rgba(16,24,39,.16);
+  padding:7px 8px;display:flex;flex-direction:column;gap:2px;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .18s ease,visibility .18s ease;
+}
+.tc-cell:hover .tc-hover-panel, .tc-cell:focus-within .tc-hover-panel{opacity:1;visibility:visible;pointer-events:auto;}
+.tc-hover-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);margin-top:3px;}
+.tc-hover-sub{font-size:var(--fs-xs);opacity:.85;}
+.tc-hover-actions{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.tc-hover-actions button{
+  background:none;border:none;padding:0;font-family:inherit;cursor:pointer;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:inherit;
+  text-decoration:underline;text-underline-offset:2px;
+}
+.tc-hover-actions .sep{opacity:.5;font-size:var(--fs-xs);}
+
+.tc-hover-descanso{background:var(--surface);border:1px solid var(--border);color:var(--ink-900);}
+.tc-hover-descanso .tc-hover-sub{color:var(--ink-500);opacity:1;}
+.tc-hover-vacio{background:var(--amber-bg);color:var(--amber-fg);}
+
+.tc-table-empty{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+html[data-theme="dark"] .tc-table thead th{background:#1a2130;}
+html[data-theme="dark"] .tc-table td.tc-col-nurse, html[data-theme="dark"] .tc-table th.tc-col-nurse{background:var(--surface);}
+html[data-theme="dark"] .tc-turno-noche{color:#34d399;}

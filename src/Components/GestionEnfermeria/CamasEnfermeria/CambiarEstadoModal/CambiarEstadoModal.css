@@ -1,0 +1,10 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.form-field/
+   .tf-readonly-value/.field-label-row/.required-pill: definidas en
+   ../../shared/shared.css — acá solo el ancho propio del modal. */
+.cb-modal-card{width:440px;}
+
+/* El formulario es corto y nunca necesita scroll propio — sin esto, el
+   listbox absoluto de FormSelect (ver .form-select-dropdown en
+   FormSelect.css) queda recortado por el overflow-y:auto genérico de
+   .modal-body en modales bajos (mismo fix que ReasignarTurnoModal.css). */
+.cb-modal-card .modal-body{overflow-y:visible;}

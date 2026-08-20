@@ -35,6 +35,7 @@ const MENU = [
       { id: 'gestion-consultorios', label: 'Gestión de consultorios' },
       { id: 'cancelar-citas', label: 'Cancelar citas paciente' },
       { id: 'programacion-agendas', label: 'Programación Agendas' },
+      { id: 'configuracion-turnos', label: 'Configuración de turnos', href: '/configuracion-turnos' },
       { id: 'correcciones', label: 'Correcciones', hasSubmenu: true },
       { id: 'gestor-autorizaciones', label: 'Gestor de autorizaciones' },
       { id: 'cambio-medico', label: 'Cambio de médico' },

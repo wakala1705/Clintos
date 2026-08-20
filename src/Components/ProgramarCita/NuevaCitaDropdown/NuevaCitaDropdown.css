@@ -1,0 +1,34 @@
+/* Ancho completo: vive dentro de .pc-mini-cal (panel de 300px, ver
+   MiniCalendar.jsx), un botón primario a tamaño de contenido quedaría
+   descentrado. El menú hereda ese mismo ancho (width:100%) en vez del ancho
+   fijo de RowHeightDropdown/RangoDropdown, que viven en una toolbar. */
+.pc-nc-dropdown{position:relative;width:100%;}
+
+/* Split button: dos <button> pegados que se leen como uno solo (radio
+   compartido en las esquinas externas, divisor entre ambos) — el cuerpo
+   dispara el flujo directo, el chevron es un trigger aparte para el menú. */
+.pc-nc-split{display:flex;width:100%;}
+.pc-nc-main{
+  flex:1;justify-content:center;
+  border-top-right-radius:0;border-bottom-right-radius:0;
+}
+.pc-nc-toggle{
+  flex:0 0 auto;width:38px;padding:8px 0;justify-content:center;
+  border-top-left-radius:0;border-bottom-left-radius:0;
+  border-left:1px solid rgba(255,255,255,.3);
+}
+.pc-nc-chev{transition:transform .15s ease;}
+.pc-nc-toggle[aria-expanded="true"] .pc-nc-chev{transform:rotate(180deg);}
+
+.pc-nc-menu{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:400;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
+  display:flex;flex-direction:column;gap:1px;
+}
+.pc-nc-option{
+  padding:9px 10px;border-radius:8px;text-align:left;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+  background:none;border:none;font-family:inherit;width:100%;
+}
+.pc-nc-option:hover{background:var(--bg);}

@@ -1,0 +1,15 @@
+/* .filters-more-btn/.filter-popover/.filter-popover-right/.fp-section/
+   .fp-section-title/.fp-actions/.badge-count: definidas en
+   ../../shared/shared.css — acá solo el input y las filas de checkbox
+   propios de este panel. */
+.cb-mf-input{
+  width:100%;height:var(--input-sm);padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);
+}
+.cb-mf-input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+
+.cb-mf-check{
+  display:flex;align-items:center;gap:8px;padding:6px 0;
+  font-size:var(--fs-base);color:var(--ink-700);cursor:pointer;
+}
+.cb-mf-check input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}

@@ -1,0 +1,55 @@
+/* .app/.main/.content/.card (base shell) + .btn/.filter-bar/.search-field/
+   .data-table: definidas en ../shared/shared.css — acá solo el layout propio
+   de este dashboard. */
+
+.cb-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.cb-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* 8 KPIs en 3 grupos (Capacidad/Estados operativos/Métrica, encargo:
+   "diferenciar visualmente" con "los primeros cuatro con mayor jerarquía") —
+   .pg-kpi-row (PanelGeneral.css) es un grid plano de 5 columnas y no aplica
+   acá. Capacidad y Métrica quedan al tamaño por defecto de KpiCard
+   (--fs-3xl, ya el valor de dato más grande de la escala tipográfica); solo
+   Estados operativos se reduce (ver overrides de .pg-kpi-value/.pg-kpi-icon
+   más abajo) — nunca se toca KpiCard.jsx/.css en sí, es un componente
+   compartido con PanelGeneral. */
+.cb-kpi-row{display:flex;gap:20px;align-items:stretch;flex-shrink:0;flex-wrap:wrap;}
+.cb-kpi-group{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.cb-kpi-group .filter-label{display:block;margin:0;}
+.cb-kpi-group-primary{flex:2.6 1 480px;}
+.cb-kpi-group-secondary{flex:1.7 1 340px;padding-left:20px;border-left:1px solid var(--border);}
+.cb-kpi-group-metric{flex:1 1 220px;padding-left:20px;border-left:1px solid var(--border);}
+.cb-kpi-group-cards{display:grid;gap:10px;flex:1;}
+.cb-kpi-group-primary .cb-kpi-group-cards{grid-template-columns:repeat(4,1fr);}
+.cb-kpi-group-secondary .cb-kpi-group-cards{grid-template-columns:repeat(3,1fr);}
+.cb-kpi-group-metric .cb-kpi-group-cards{grid-template-columns:1fr;}
+
+/* Estados operativos: jerarquía secundaria — mismo componente KpiCard, valor
+   e ícono más chicos y menos padding, para que Capacidad/Ocupación ganen el
+   primer vistazo sin que la etiqueta ("LIMPIEZA"/"MANTENIM."/"BLOQUEADAS")
+   se corte por falta de ancho. */
+.cb-kpi-group-secondary .pg-kpi-card{padding:12px 10px;}
+.cb-kpi-group-secondary .pg-kpi-value{font-size:var(--fs-2xl);}
+.cb-kpi-group-secondary .pg-kpi-icon{width:26px;height:26px;}
+.cb-kpi-group-secondary .pg-kpi-icon .icon{width:14px;height:14px;}
+/* La etiqueta en mayúsculas ("MANTENIM."/"BLOQUEADAS") es la que más sufre
+   el ancho reducido de este grupo — permitir que envuelva a 2 líneas en vez
+   de truncar con "..." (nunca se introduce un font-size fuera de la escala
+   --fs-* del proyecto para "hacerla caber", ver AGENTS.md "Tipografía"). */
+.cb-kpi-group-secondary .pg-kpi-label{white-space:normal;line-height:1.15;}
+
+.cb-board-card{min-height:0;}
+.cb-body-wrap{flex:1;min-height:0;overflow:auto;}
+
+.cb-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;padding:16px 20px;
+}
+
+.cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+@media (max-width:1280px){
+  .cb-kpi-group-secondary, .cb-kpi-group-metric{border-left:none;padding-left:0;}
+  .cb-kpi-group-secondary .cb-kpi-group-cards{grid-template-columns:repeat(3,1fr);}
+}

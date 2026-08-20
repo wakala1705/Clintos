@@ -1,3 +1,16 @@
+/* flex:1 en vez de alto fijo: con ContractPanel sacado temporalmente de
+   .pc-side-col (ver ProgramarCita.jsx/css), este es el único panel ahí y
+   debe ocupar todo el alto disponible en vez de dejar hueco vacío debajo.
+   Columna interna (display:flex/column) para poder anclar la leyenda al
+   fondo del panel con margin-top:auto (ver .pc-legend más abajo) en vez de
+   que quede pegada justo debajo de la grilla con un hueco grande después. */
+.pc-mini-cal{flex:1;display:flex;flex-direction:column;}
+
+/* Divider debajo del dropdown "Agendar cita" (ver NuevaCitaDropdown, montado
+   arriba de este panel) — lo separa del calendario para que se lea como una
+   acción aparte, no como parte de la navegación de mes. */
+.pc-mini-cal-divider{height:1px;background:var(--border);margin:12px 0;flex-shrink:0;}
+
 .pc-mini-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .pc-mini-cal-head.collapsed{margin-bottom:0;}
 .pc-mini-cal-month{font-weight:var(--fw-semibold);font-size:var(--fs-base);color:var(--ink-900);}
@@ -36,3 +49,24 @@
 }
 .pc-mini-cal-day.today{background:var(--primary);color:#fff;font-weight:var(--fw-bold);}
 .pc-mini-cal-day.today:hover{background:var(--primary-dark);}
+
+/* ---------- LEYENDA de estados de cita ----------
+   6 colores en ScheduleGrid (.pc-appt-card.agendada/confirmada/pendiente/
+   reprogramada/no-asistio/cancelada) sin ningún punto de referencia visible
+   en pantalla — antes solo se distinguían pasando el mouse (title nativo) o
+   abriendo el detalle de cada cita (auditoría heurística #6). Mismos colores
+   que .pc-appt-card/.pc-estado-badge (shared.css), sin duplicar hex nuevos.
+   margin-top:auto la ancla al fondo del panel (ver flex-direction:column en
+   .pc-mini-cal arriba) en vez de quedar pegada a la grilla. */
+.pc-legend{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0;
+  margin-top:auto;padding-top:12px;border-top:1px solid var(--border);
+}
+.pc-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);}
+.pc-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.pc-legend-dot.agendada{background:var(--primary);}
+.pc-legend-dot.confirmada{background:var(--green);}
+.pc-legend-dot.pendiente{background:var(--amber-fg);}
+.pc-legend-dot.reprogramada{background:var(--violet-fg);}
+.pc-legend-dot.no-asistio{background:var(--red);}
+.pc-legend-dot.cancelada{background:var(--ink-400);}

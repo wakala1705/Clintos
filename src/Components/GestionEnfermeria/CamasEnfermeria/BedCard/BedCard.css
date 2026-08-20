@@ -1,0 +1,47 @@
+.cb-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;
+  transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;
+}
+/* Hover discreto (encargo: "elevar ligeramente", "reforzar que es
+   interactiva sin generar ruido") — solo sombra+borde, sin crecer ni sumar
+   contenido nuevo (eso ya vive siempre visible en el CTA/menú de abajo). */
+.cb-card:hover, .cb-card:focus-within{
+  border-color:var(--primary-100);box-shadow:0 4px 14px rgba(16,24,39,.10);transform:translateY(-1px);
+}
+
+.cb-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.cb-card-numero{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-card-meta{font-size:var(--fs-sm);color:var(--ink-500);}
+.cb-card-tipo{font-size:var(--fs-xs);color:var(--ink-400);}
+
+/* Bloque contextual (paciente/reserva/limpieza/mantenimiento/motivo) — único
+   tramo que cambia según el estado, ver BloqueContextual en BedCard.jsx.
+   Nunca información clínica más allá de nombre+HC (encargo explícito). */
+.cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
+.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
+.cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
+.cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
+
+.cb-card-footer{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.cb-card-btn{flex:1;justify-content:center;}
+
+/* El menú "⋯" (acción secundaria) solo se revela en hover/foco — progressive
+   disclosure (encargo: "revelar acciones secundarias", "mantener compacta"):
+   el CTA principal siempre visible, el resto solo cuando hace falta.
+   :focus-within cubre el caso de haber abierto el menú y alejado el mouse
+   (el botón sigue enfocado mientras el dropdown está abierto). */
+.cb-card-footer .cb-actions-menu{opacity:0;transition:opacity .15s ease;}
+.cb-card:hover .cb-actions-menu, .cb-card:focus-within .cb-actions-menu{opacity:1;}
+
+/* El botón de tipo por estado (verde/rojo/ámbar/azul/naranja/gris) tiñe
+   apenas el borde izquierdo de la tarjeta — mismo lenguaje de color que
+   EstadoCamaBadge (ESTADO_COLOR), refuerzo sutil, no un rediseño de la
+   tarjeta por estado. */
+.cb-card-libre{border-left:3px solid var(--green);}
+.cb-card-ocupada{border-left:3px solid var(--red);}
+.cb-card-reservada{border-left:3px solid var(--amber);}
+.cb-card-limpieza{border-left:3px solid var(--blue);}
+.cb-card-mantenimiento{border-left:3px solid var(--orange);}
+.cb-card-bloqueada{border-left:3px solid var(--gray-fg);}

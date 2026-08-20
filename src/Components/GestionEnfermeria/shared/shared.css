@@ -39,6 +39,16 @@
   --gray-bg:#eef0f4;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
+  /* Camas (Bed Board): Limpieza/Mantenimiento — deliberadamente NO reusan
+     --primary (ya significa "CTA primario/tab activo") ni --triage-orange
+     de Admisiones.css (cross-import entre features rompe el criterio de
+     duplicación, ver AGENTS.md) — se duplican acá con su propio nombre. */
+  --blue:#0284c7;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
+  --orange:#e8720c;
+  --orange-bg:#fdead9;
+  --orange-fg:#a6520a;
   --radius:8px;
   --radius-lg:12px;
 
@@ -91,6 +101,12 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
+  --blue:#38bdf8;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
+  --orange:#f5975a;
+  --orange-bg:rgba(232,114,12,.20);
+  --orange-fg:#f5975a;
 }
 
 /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
@@ -391,6 +407,26 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .filter-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
 .filter-spacer{flex:1;}
 
+/* ---------- NAVEGACIÓN DE DÍA/SEMANA ----------
+   Antes exclusiva de MedicamentosPanel (navegación de día del cronograma de
+   medicación) — TurnosEnfermeria reutiliza el mismo patrón para su
+   navegación semanal (‹ rango ›+Hoy), 2 consumidores → vive acá (ver
+   AGENTS.md). */
+.day-nav{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.day-nav-btn{
+  width:30px;height:30px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-700);flex-shrink:0;
+}
+.day-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.day-nav-btn .icon{width:16px;height:16px;}
+.day-nav-label{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);min-width:108px;text-align:center;white-space:nowrap;}
+.day-nav-today-btn{
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);background:none;border:none;cursor:pointer;
+  padding:4px var(--space-2);border-radius:6px;font-family:inherit;white-space:nowrap;
+}
+.day-nav-today-btn:hover{background:var(--primary-50);}
+html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e54;}
+
 .filter-popover-wrap{position:relative;flex-shrink:0;}
 .date-picker-btn, .filters-more-btn{
   display:inline-flex;align-items:center;gap:8px;
@@ -552,6 +588,30 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   outline:2px solid var(--primary);outline-offset:1px;
 }
 .form-field textarea{resize:vertical;min-height:64px;}
+
+/* Nota de advertencia dentro de un modal — ej. reemplazar un descanso
+   programado (AsignarTurnoModal) o el resumen de consecuencias antes de
+   confirmar una reasignación con conflicto potencial (ReasignarTurnoModal),
+   2 consumidores. Mismo lenguaje de "advertencia" que el resto del sistema
+   (ámbar, nunca rojo — el rojo queda para error/conflicto real). */
+.tf-warning-note{
+  display:flex;align-items:flex-start;gap:8px;
+  background:var(--amber-bg);color:var(--amber-fg);
+  border-radius:var(--radius);padding:10px 12px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.4;
+}
+.tf-warning-note .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+
+/* Valor de solo-lectura dentro de un .form-field (su <label> ya cumple el
+   rol de "k") — campos ya decididos por el contexto de la celda clickeada
+   (ej. Enfermera/Fecha/Área al asignar un turno "Sin asignar", ver
+   AsignarTurnoModal.jsx/EditarTurnoModal.jsx) que no tiene sentido reabrir a
+   edición ahí mismo. Mismo alto que un input real (--input-md) para que la
+   grilla del formulario no salte de tamaño entre campos editables y fijos. */
+.tf-readonly-value{
+  display:flex;align-items:center;height:var(--input-md);
+  font-size:var(--fs-base);color:var(--ink-900);padding:0 10px;background:var(--bg);border-radius:var(--radius);
+}
 
 .admin-summary-time{
   display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;

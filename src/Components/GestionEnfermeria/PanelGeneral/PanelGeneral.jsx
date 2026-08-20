@@ -7,6 +7,7 @@ import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
+import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
 import KpiCard from './KpiCard/KpiCard';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import AlertsPanel from './AlertsPanel/AlertsPanel';
@@ -16,7 +17,7 @@ import {
   PACIENTES_PISO, sectorDeCama,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import {
-  LuBedDouble, LuClipboardList, LuHourglass, LuListChecks, LuPill, LuUsers,
+  LuBedDouble, LuClipboardList, LuHourglass, LuPill, LuUsers,
 } from 'react-icons/lu';
 
 // Dashboard operativo del piso — reemplaza a AtencionEnfermeria.jsx como
@@ -84,13 +85,11 @@ export default function PanelGeneral() {
               <p>Resumen de actividad y estado del piso</p>
             </div>
             <div className="pg-header-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => router.push('/gestion-enfermeria/tareas')}>
-                <LuListChecks className="icon" />
-                Tareas
-              </button>
               <AreaSelector options={AREAS_OPERATIVAS} value={areaOperativa} onChange={setAreaOperativa} />
             </div>
           </div>
+
+          <GestionEnfermeriaNav />
 
           <div className="pg-kpi-row">
             <KpiCard

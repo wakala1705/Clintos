@@ -1,0 +1,120 @@
+/* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
+   el resto de features de nivel superior (Home.css / FichaPaciente.css /
+   ProgramarCita.css...) — ver AGENTS.md. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --radius:8px;
+  --radius-lg:12px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+}
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md). */
+html[data-contrast="high"]{
+  --border:#cbd3dd;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.ct-content{
+  padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+  flex:1;min-height:0;
+  overflow:hidden;
+}
+
+/* ---------- HEADER DE PÁGINA (mismo patrón que .pc-page-header) ---------- */
+.ct-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.ct-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+
+/* ---------- EMPTY STATE (mismo patrón que AdmisionesEmptyState/FichaNotFound) ---------- */
+.ct-empty-state{
+  flex:1;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  text-align:center;padding:32px;
+}
+.ct-empty-icon{
+  width:52px;height:52px;border-radius:50%;margin-bottom:4px;
+  background:var(--gray-bg);color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;
+}
+.ct-empty-icon .icon{width:24px;height:24px;}
+.ct-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ct-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;}

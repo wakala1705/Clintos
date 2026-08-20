@@ -12,7 +12,6 @@ import {
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import MiniCalendar from '@/Components/ProgramarCita/MiniCalendar/MiniCalendar';
-import ContractPanel from '@/Components/ProgramarCita/ContractPanel/ContractPanel';
 import AgendaToolbar from '@/Components/ProgramarCita/AgendaToolbar/AgendaToolbar';
 import ScheduleGrid from '@/Components/ProgramarCita/ScheduleGrid/ScheduleGrid';
 import ScheduleList from '@/Components/ProgramarCita/ScheduleList/ScheduleList';
@@ -21,21 +20,6 @@ import DetalleCitaModal from '@/Components/ProgramarCita/DetalleCitaModal/Detall
 import RangoDropdown from '@/Components/ProgramarCita/RangoDropdown/RangoDropdown';
 import RowHeightDropdown from '@/Components/ProgramarCita/RowHeightDropdown/RowHeightDropdown';
 import { LuCalendarSearch, LuPlus, LuSearch, LuSettings } from 'react-icons/lu';
-
-// Leyenda de estados de cita (ver ScheduleGrid.css .pc-appt-card.*): 5
-// colores sin ningún punto de referencia en pantalla — la única forma de
-// saber qué significa cada uno era pasar el mouse sobre una cita (title
-// nativo, no descubrible) o abrir su detalle uno por uno (auditoría
-// heurística #6). Reutiliza las mismas clases .pc-estado-badge/estado que
-// ya pinta DetalleCitaModal, para no duplicar la paleta de colores.
-const ESTADO_LEYENDA = [
-  { estado: 'agendada', label: 'Agendada' },
-  { estado: 'confirmada', label: 'Confirmada' },
-  { estado: 'pendiente', label: 'Pendiente' },
-  { estado: 'reprogramada', label: 'Reprogramada' },
-  { estado: 'no-asistio', label: 'No asistió' },
-  { estado: 'cancelada', label: 'Cancelada' },
-];
 
 // Vista "Por especialidad" muestra un solo día (el miércoles de la semana
 // visible), igual que el mockup de referencia — el usuario ya filtró a una
@@ -239,14 +223,17 @@ export default function ProgramarCita() {
               <button type="button" className="icon-btn-circle" aria-label="Configuración" onClick={() => window.ncToast?.('Configuración de la agenda en desarrollo.')}><LuSettings className="icon" /></button>
               <RowHeightDropdown value={rowHeight} onChange={setRowHeight} />
               {vista === 'medico' && <RangoDropdown value={rango} onChange={setRango} />}
-              <button type="button" className="btn btn-primary" onClick={() => window.ncOpen()}><LuPlus className="icon" />Agendar cita</button>
+              
             </div>
           </div>
 
           <div className="pc-workspace">
             <div className="pc-side-col">
-              <MiniCalendar selectedDate={viewDate} onSelectDate={handleSelectMiniCalDate} />
-              <ContractPanel />
+              <MiniCalendar
+                selectedDate={viewDate}
+                onSelectDate={handleSelectMiniCalDate}
+                onNuevaCita={() => window.ncOpen()}
+              />
             </div>
 
             <div className="pc-main-col">
@@ -284,14 +271,6 @@ export default function ProgramarCita() {
                     onSelectAppointment={setSelectedAppointment}
                     onEmptyCellClick={handleEmptyCellClick}
                   />
-                  <div className="pc-legend" aria-label="Referencia de colores de estado de cita">
-                    {ESTADO_LEYENDA.map((e) => (
-                      <span key={e.estado} className="pc-legend-item">
-                        <span className={`pc-legend-dot ${e.estado}`} aria-hidden="true"></span>
-                        {e.label}
-                      </span>
-                    ))}
-                  </div>
                 </>
               ) : (
                 <div className="pc-agenda-empty">

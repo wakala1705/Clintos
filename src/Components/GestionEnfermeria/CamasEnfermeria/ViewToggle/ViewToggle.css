@@ -1,0 +1,21 @@
+/* Mismo peso visual que .date-picker-btn (shared.css) pero como par
+   segmentado de 2 botones en un solo contenedor con borde, en vez de 2
+   botones sueltos. */
+.cb-view-toggle{
+  display:inline-flex;align-items:center;flex-shrink:0;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.cb-view-toggle button{
+  display:inline-flex;align-items:center;gap:6px;
+  border:none;background:var(--surface);color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);font-size:var(--fs-base);font-weight:var(--fw-semibold);
+  font-family:inherit;cursor:pointer;white-space:nowrap;
+  transition:background .15s,color .15s;
+}
+.cb-view-toggle button + button{border-left:1px solid var(--border);}
+.cb-view-toggle button .icon{width:16px;height:16px;}
+.cb-view-toggle button:hover{background:#f3f5f9;}
+.cb-view-toggle button.active{background:var(--primary-50);color:var(--primary-dark);}
+.cb-view-toggle button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+html[data-theme="dark"] .cb-view-toggle button:hover{background:#20283a;}

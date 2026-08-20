@@ -1,0 +1,7 @@
+/* .data-table/.data-table-wrap/.cell-primary/.cell-muted/.col-acciones/
+   .sr-only: definidas en ../../shared/shared.css — acá solo lo exclusivo de
+   esta tabla. */
+.cb-table-wrap{flex:1;}
+.cb-table{width:100%;}
+.cb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+.cb-table-actions{display:inline-flex;align-items:center;gap:4px;}

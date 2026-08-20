@@ -1,0 +1,8 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.form-field/
+   .tf-readonly-value: definidas en ../../shared/shared.css — acá solo el
+   ancho propio del modal. */
+.ap-modal-card{width:440px;}
+
+/* Formulario corto, sin campos con dropdown propio — no necesita el fix de
+   overflow-y:visible que sí requieren CambiarEstadoModal/ReasignarTurnoModal
+   (no hay ningún FormSelect acá). */

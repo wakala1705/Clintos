@@ -6,6 +6,7 @@ import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
+import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
 import AreaSelector from '../PanelGeneral/AreaSelector/AreaSelector';
 import TaskSummaryCard from './TaskSummaryCard/TaskSummaryCard';
 import TaskListPanel from './TaskListPanel/TaskListPanel';
@@ -188,6 +189,8 @@ export default function TareasEnfermeria() {
               </button>
             </div>
           </div>
+
+          <GestionEnfermeriaNav />
 
           <div className="tk-summary-row">
             {KPIS.map((k) => (

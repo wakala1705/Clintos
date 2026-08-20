@@ -1,0 +1,10 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.form-field/
+   .tf-readonly-value/.tf-warning-note: definidas en ../../shared/shared.css
+   — acá solo el layout propio de los 2 campos fijos (tipo+horario / área). */
+.rt-fixed{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+
+/* El formulario es corto (1 campo real) y nunca necesita scroll propio —
+   sin esto, el listbox absoluto de FormSelect (ver .form-select-dropdown en
+   FormSelect.css) queda recortado por el overflow-y:auto genérico de
+   .modal-body apenas el modal es más bajo que el listbox + el trigger. */
+.rt-modal-card .modal-body{overflow-y:visible;}

@@ -6,10 +6,10 @@
 .pg-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pg-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
-/* "Tareas" + selector "Área operativa" agrupados al extremo derecho del
-   header (encargo explícito) — el selector queda último/más a la derecha
-   del grupo, mismo criterio de "la acción de filtro global vive al final"
-   que .filter-spacer en PatientsPanel.css. */
+/* "Turnos"/"Tareas" vivían acá como botones sueltos — ahora son 2 de las 4
+   pestañas de GestionEnfermeriaNav (ver ese componente, montado debajo de
+   .pg-header), así que el header solo conserva el selector "Área
+   operativa". */
 .pg-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
 .pg-kpi-row{

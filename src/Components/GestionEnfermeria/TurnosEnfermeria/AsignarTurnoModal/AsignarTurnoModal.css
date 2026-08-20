@@ -1,0 +1,16 @@
+/* .modal-overlay/.modal-card/.form-field/.tf-readonly-value/.tf-warning-note:
+   definidas en ../../shared/shared.css — acá solo el ancho propio del modal
+   y la grilla de 2 columnas del formulario. */
+.at-modal-card{width:480px;}
+.at-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.at-warning{margin-bottom:16px;}
+
+/* El formulario nunca crece más de lo que el modal ya reserva — sin esto,
+   el listbox absoluto de FormSelect (ver .form-select-dropdown en
+   FormSelect.css) queda recortado por el overflow-y:auto genérico de
+   .modal-body en los campos que caen cerca del borde inferior. */
+.at-modal-card .modal-body{overflow-y:visible;}
+
+@media (max-width:480px){
+  .at-grid{grid-template-columns:1fr;}
+}

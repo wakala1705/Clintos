@@ -12,8 +12,12 @@ import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 // AreaSelector.css) y el desplegable siga el mismo look que
 // RowActionsMenu/ViewSettingsMenu. `value`/`onChange` controlados desde
 // PanelGeneral.jsx — este componente no guarda su propia copia del área
-// elegida, igual que lo haría un <select> controlado.
-export default function AreaSelector({ options, value, onChange }) {
+// elegida, igual que lo haría un <select> controlado. `label` es opcional:
+// sin él el trigger solo muestra la opción elegida (PanelGeneral/Tareas,
+// comportamiento original); con él antepone "<label>: " (ej. Turnos, encargo
+// explícito "Área operativa: Todas") — las opciones del listbox nunca
+// repiten ese prefijo, solo el trigger.
+export default function AreaSelector({ options, value, onChange, label }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -50,12 +54,12 @@ export default function AreaSelector({ options, value, onChange }) {
         aria-expanded={open}
       >
         <LuMapPin className="icon" aria-hidden="true" />
-        {selected.label}
+        {label ? `${label}: ${selected.label}` : selected.label}
         <LuChevronDown className={`icon pg-area-select-chev${open ? ' open' : ''}`} aria-hidden="true" />
       </button>
 
       {open && (
-        <ul className="pg-area-select-dropdown" role="listbox" aria-label="Área operativa">
+        <ul className="pg-area-select-dropdown" role="listbox" aria-label={label ?? 'Área operativa'}>
           {options.map((o) => (
             <li key={o.value} role="presentation">
               <button

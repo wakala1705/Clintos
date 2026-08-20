@@ -3,21 +3,10 @@
    leyenda de marcadores. Filtros, popovers, selection-toolbar, tab-panel y el
    wrapper del legend-bar son compartidos — ver shared/shared.css. */
 
-/* ---------- NAVEGACIÓN DE DÍA ---------- */
-.day-nav{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.day-nav-btn{
-  width:30px;height:30px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-700);flex-shrink:0;
-}
-.day-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
-.day-nav-btn .icon{width:16px;height:16px;}
-.day-nav-label{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);min-width:108px;text-align:center;white-space:nowrap;}
-.day-nav-today-btn{
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);background:none;border:none;cursor:pointer;
-  padding:4px var(--space-2);border-radius:6px;font-family:inherit;white-space:nowrap;
-}
-.day-nav-today-btn:hover{background:var(--primary-50);}
-html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e54;}
+/* ---------- NAVEGACIÓN DE DÍA ----------
+   .day-nav/.day-nav-btn/.day-nav-label/.day-nav-today-btn viven en
+   ../shared/shared.css desde que TurnosEnfermeria empezó a reutilizar el
+   mismo patrón para su navegación semanal (2 consumidores, ver AGENTS.md). */
 
 /* ---------- Popover "Vista" (densidad de columnas + intervalo de tiempo) ----------
    Antes eran 4 botones-ícono sueltos (view-toggle-group) al extremo derecho de
