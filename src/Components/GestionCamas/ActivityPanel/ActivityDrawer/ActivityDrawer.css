@@ -1,0 +1,5 @@
+/* .cb-drawer-overlay/.cb-drawer-panel/.cb-drawer-body/.cb-drawer-count +
+   .cb-activity-item/.cb-activity-dot/.cb-activity-body: definidas en
+   ../../GestionCamas.css — acá solo el padding propio de la lista completa
+   (más generoso que el del panel compacto de la columna derecha). */
+.cb-drawer-body.cb-activity-list{padding:6px 10px 20px;}

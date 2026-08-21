@@ -1,21 +1,23 @@
-/* Mismo peso visual que .date-picker-btn (shared.css) pero como par
-   segmentado de 2 botones en un solo contenedor con borde, en vez de 2
-   botones sueltos. */
-.cb-view-toggle{
-  display:inline-flex;align-items:center;flex-shrink:0;
-  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+/* .filter-popover-wrap/.date-picker-btn/.filter-popover/.filter-popover-right/
+   .fp-section/.fp-section-title: definidas en ../GestionCamas.css — acá solo
+   el segmented-control interno del popover (único consumidor en la
+   feature, a diferencia de .date-picker-btn/.filter-popover que ya
+   comparte con MasFiltrosPopover). */
+.segmented-control{
+  display:flex;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;width:max-content;
 }
-.cb-view-toggle button{
+.segmented-btn{
   display:inline-flex;align-items:center;gap:6px;
   border:none;background:var(--surface);color:var(--ink-700);
-  padding:var(--space-2) var(--space-3);font-size:var(--fs-base);font-weight:var(--fw-semibold);
-  font-family:inherit;cursor:pointer;white-space:nowrap;
-  transition:background .15s,color .15s;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  padding:8px 12px;cursor:pointer;white-space:nowrap;
 }
-.cb-view-toggle button + button{border-left:1px solid var(--border);}
-.cb-view-toggle button .icon{width:16px;height:16px;}
-.cb-view-toggle button:hover{background:#f3f5f9;}
-.cb-view-toggle button.active{background:var(--primary-50);color:var(--primary-dark);}
-.cb-view-toggle button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.segmented-btn .icon{width:15px;height:15px;}
+.segmented-btn:not(:last-child){border-right:1px solid var(--border);}
+.segmented-btn:hover{background:#f3f5f9;}
+.segmented-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);font-weight:var(--fw-bold);}
 
-html[data-theme="dark"] .cb-view-toggle button:hover{background:#20283a;}
+html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}

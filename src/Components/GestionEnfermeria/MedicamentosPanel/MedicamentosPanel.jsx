@@ -15,7 +15,7 @@ export default function MedicamentosPanel() {
           <input type="text" placeholder="Buscar medicamento..." id="search-input"/>
         </div>
 
-        
+
 
         <div className="day-nav" id="day-nav">
           <button type="button" className="day-nav-btn" id="day-prev-btn" title="Día anterior" aria-label="Ver día anterior">

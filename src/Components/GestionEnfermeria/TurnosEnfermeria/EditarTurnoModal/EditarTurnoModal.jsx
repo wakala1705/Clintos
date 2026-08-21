@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import './EditarTurnoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
-import FormSelect from '@/Components/GestionEnfermeria/TareasEnfermeria/NewTaskModal/FormSelect/FormSelect';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   AREA_TURNO_LABEL, NURSES, TIPO_TURNO_META, diaLargoLabel,
 } from '@/hooks/GestionEnfermeria/mockTurnosData';

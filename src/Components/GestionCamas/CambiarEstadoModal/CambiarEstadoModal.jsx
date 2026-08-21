@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import './CambiarEstadoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
-import FormSelect from '@/Components/GestionEnfermeria/TareasEnfermeria/NewTaskModal/FormSelect/FormSelect';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import {
   AREA_LABEL, ESTADOS_CRITICOS, ESTADO_LABEL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL, TRANSICIONES_PERMITIDAS,
-} from '@/hooks/GestionEnfermeria/mockCamasData';
+} from '@/hooks/GestionCamas/mockCamasData';
 import { LuBedDouble } from 'react-icons/lu';
 
 // "Cambiar estado" — el select de destino solo ofrece
@@ -18,7 +18,7 @@ import { LuBedDouble } from 'react-icons/lu';
 // pendiente de confirmación de negocio, mismo criterio que el doc fuente).
 // `presetEstado` preselecciona el destino cuando se llega desde una acción
 // puntual del menú "⋯" (ej. "Bloquear"/"Mantenimiento", ver
-// BedActionsMenu/CamasEnfermeria.jsx) — el usuario igual puede cambiarlo,
+// BedActionsMenu/GestionCamas.jsx) — el usuario igual puede cambiarlo,
 // sigue siendo el mismo modal genérico, no uno nuevo por acción.
 export default function CambiarEstadoModal({
   cama, presetEstado, onClose, onConfirm,

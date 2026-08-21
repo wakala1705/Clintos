@@ -3,7 +3,7 @@ import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import BedActionsMenu from '../BedActionsMenu/BedActionsMenu';
 import {
   AREA_LABEL, CTA_PRINCIPAL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL,
-} from '@/hooks/GestionEnfermeria/mockCamasData';
+} from '@/hooks/GestionCamas/mockCamasData';
 
 export default function BedTable({ camas, onAction }) {
   return (

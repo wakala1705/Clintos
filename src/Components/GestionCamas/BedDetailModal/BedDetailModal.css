@@ -1,0 +1,44 @@
+/* Definidas en ../GestionCamas.css: .modal-overlay, .modal-card,
+   .modal-body, .modal-footer, .fp-section-title, los ítems de actividad
+   (.cb-activity-item y compañía) y el bloque contextual paciente/reserva
+   (.cb-card-paciente, .cb-card-status-text, .cb-card-contexto). Acá solo lo
+   exclusivo de este modal (secciones con separador, grilla de Ubicación y
+   características, links "Ver más"). Tamaño medium/large (encargo): el
+   ancho default de .modal-card (780px) ya cubre eso, sin necesidad de una
+   variante nueva. */
+
+.cb-detail-body{display:flex;flex-direction:column;gap:0;}
+
+/* Cada bloque (Estado actual/Ubicación y características/Actividad
+   reciente/Historial) separado por un borde superior — mismo criterio que
+   .pdm-section en PatientDetailModal (label+value modal ya existente en el
+   proyecto), pero con tokens propios de esta feature en vez de cruzar el
+   import de otra. */
+.cb-detail-section{padding:16px 0;}
+.cb-detail-section:first-child{padding-top:0;}
+.cb-detail-section + .cb-detail-section{border-top:1px solid var(--border);}
+
+.cb-detail-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;
+}
+.cb-detail-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.cb-detail-field-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.cb-detail-field-value{font-size:var(--fs-base);color:var(--ink-900);word-break:break-word;}
+
+.cb-detail-link{
+  display:inline-flex;align-items:center;gap:4px;margin-top:10px;
+  background:none;border:none;font-family:inherit;cursor:pointer;padding:0;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
+}
+.cb-detail-link .icon{width:14px;height:14px;}
+.cb-detail-link:hover{text-decoration:underline;}
+.cb-detail-link:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.cb-detail-historial-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:8px;}
+.cb-detail-historial-row{
+  display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;
+  font-size:var(--fs-sm);color:var(--ink-700);padding:8px 0;border-top:1px solid var(--border);
+}

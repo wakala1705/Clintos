@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import './TaskListPanel.css';
 import TaskTable from './TaskTable/TaskTable';
-import FilterDropdown from './FilterDropdown/FilterDropdown';
+import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import {
   ESTADOS, PRIORIDADES, RESPONSABLES, TIPOS_TAREA, TURNOS, USUARIO_ACTUAL, fechaDeTarea,
 } from '@/hooks/GestionEnfermeria/mockTareasData';

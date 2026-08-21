@@ -7,7 +7,7 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
-import AreaSelector from '../PanelGeneral/AreaSelector/AreaSelector';
+import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import TaskSummaryCard from './TaskSummaryCard/TaskSummaryCard';
 import TaskListPanel from './TaskListPanel/TaskListPanel';
 import ShiftChangeBanner from './ShiftChangeBanner/ShiftChangeBanner';

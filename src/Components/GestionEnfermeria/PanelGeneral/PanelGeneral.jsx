@@ -8,10 +8,10 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
-import KpiCard from './KpiCard/KpiCard';
+import KpiCard from '@/Components/KpiCard/KpiCard';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import AlertsPanel from './AlertsPanel/AlertsPanel';
-import AreaSelector from './AreaSelector/AreaSelector';
+import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import {
   AREAS_OPERATIVAS, CAMAS_POR_AREA, DOSIS_PROGRAMADAS_HOY, ORDENES_PENDIENTES,
   PACIENTES_PISO, sectorDeCama,

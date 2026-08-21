@@ -1,5 +1,5 @@
 import './EstadoCamaBadge.css';
-import { ESTADO_COLOR, ESTADO_LABEL } from '@/hooks/GestionEnfermeria/mockCamasData';
+import { ESTADO_COLOR, ESTADO_LABEL } from '@/hooks/GestionCamas/mockCamasData';
 import {
   LuCircleCheck, LuClock, LuLock, LuSprayCan, LuUser, LuWrench,
 } from 'react-icons/lu';

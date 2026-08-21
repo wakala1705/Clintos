@@ -1,0 +1,18 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/
+   .modal-footer/.form-field/.tf-readonly-value: definidas en
+   ../GestionCamas.css — acá solo el input con ícono de búsqueda
+   (Paciente/Admisión) y el layout de 2 columnas de las fechas. */
+
+/* Variante de .search-field (GestionCamas.css) dimensionada para ocupar
+   todo el ancho de un .form-field en vez de su width:320px fijo — mismo
+   ícono+input, solo cambia el contenedor. */
+.rc-search-field{position:relative;}
+.rc-search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
+.rc-search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.rc-search-field input::placeholder{color:var(--ink-400);}
+.rc-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.rc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}

@@ -3,12 +3,13 @@
 import { useMemo, useState } from 'react';
 import './PatientsPanel.css';
 import PatientsTable from './PatientsTable/PatientsTable';
+import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import { LuGrid2X2, LuSearch } from 'react-icons/lu';
 
 const FILTROS = [
-  { key: 'todos', label: 'Todos' },
-  { key: 'pendientes', label: 'Con pendientes' },
-  { key: 'prolongados', label: 'Prolongados' },
+  { value: 'todos', label: 'Todos' },
+  { value: 'pendientes', label: 'Con pendientes' },
+  { value: 'prolongados', label: 'Prolongados' },
 ];
 
 // "Con pendientes" cuenta Pendiente + Retrasada (ambos necesitan acción de
@@ -30,6 +31,8 @@ export default function PatientsPanel({ pacientes, onOpenAtencion }) {
     prolongados: pacientes.filter((p) => matchesFiltro(p, 'prolongados')).length,
   }), [pacientes]);
 
+  const opcionesFiltro = useMemo(() => FILTROS.map((f) => ({ ...f, count: counts[f.value] })), [counts]);
+
   const filteredPacientes = useMemo(() => {
     const q = query.trim().toLowerCase();
     return pacientes.filter((p) => {
@@ -46,20 +49,12 @@ export default function PatientsPanel({ pacientes, onOpenAtencion }) {
       </div>
 
       <div className="pg-patients-toolbar">
-        <div className="chip-group segmented" role="tablist" aria-label="Filtrar pacientes en piso">
-          {FILTROS.map((f) => (
-            <button
-              type="button"
-              key={f.key}
-              role="tab"
-              aria-selected={filtro === f.key}
-              className={`chip-filter${filtro === f.key ? ' active' : ''}`}
-              onClick={() => setFiltro(f.key)}
-            >
-              {f.label} <span className="count">({counts[f.key]})</span>
-            </button>
-          ))}
-        </div>
+        <SegmentedFilterBar
+          options={opcionesFiltro}
+          value={filtro}
+          onChange={setFiltro}
+          ariaLabel="Filtrar pacientes en piso"
+        />
 
         <div className="filter-spacer" />
 

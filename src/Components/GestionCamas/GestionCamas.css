@@ -1,43 +1,403 @@
-/* .app/.main/.content/.card (base shell) + .btn/.filter-bar/.search-field/
-   .data-table: definidas en ../shared/shared.css — acá solo el layout propio
-   de este dashboard. */
+/* Tokens + shell + primitivas reutilizadas (botones, filter-bar, popovers,
+   modal, tabla) duplicados acá siguiendo el mismo criterio que
+   Admisiones.css/ProgramarCita.css: cada feature de nivel superior es dueña
+   de su propia copia en vez de importar el shared.css de otra feature (ver
+   AGENTS.md "Component organization" — el propio shared.css de Gestión de
+   Enfermería ya advertía esto para los tokens --blue/--orange de Camas).
+   Solo se listan acá los tokens y clases que este dashboard realmente usa. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --amber:#e08a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --blue:#0284c7;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
+  --orange:#e8720c;
+  --orange-bg:#fdead9;
+  --orange-fg:#a6520a;
+  --radius:8px;
+  --radius-lg:12px;
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --z-sticky:10;
+  --z-popover:20;
+  --z-modal:50;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --amber:#f5b942;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --blue:#38bdf8;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
+  --orange:#f5975a;
+  --orange-bg:rgba(232,114,12,.20);
+  --orange-fg:#f5975a;
+}
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
+  padding:8px 16px;border-radius:var(--radius);
+  border:1px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn .icon{width:18px;height:18px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.btn-sm{padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);gap:6px;}
+.btn-sm .icon{width:15px;height:15px;}
+html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#333e54;}
+
+/* ---------- FILTER BAR (chips, search, popovers) ---------- */
+.filter-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.search-field{position:relative;width:320px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+
+.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
+.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
+.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+/* Variante "píldora contenedora" del widget Estados operativos (encargo:
+   "franja horizontal segmentada" — ver SegmentedFilterBar.jsx, mismo patrón
+   que "Todos/Con pendientes/Prolongados" de Panel General). */
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
+
+.filter-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
+.filter-spacer{flex:1;}
+
+.filter-popover-wrap{position:relative;flex-shrink:0;}
+.filters-more-btn, .date-picker-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:var(--space-2) var(--space-3);font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  background:var(--surface);cursor:pointer;white-space:nowrap;font-family:inherit;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.filters-more-btn .icon, .date-picker-btn .icon{width:16px;height:16px;color:var(--ink-500);}
+.date-picker-btn .chev{width:14px;height:14px;color:var(--ink-400);margin-left:2px;}
+.filters-more-btn:hover, .date-picker-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.filters-more-btn:focus-visible, .date-picker-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.filters-more-btn.active, .date-picker-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
+.filters-more-btn.active .icon, .date-picker-btn.active .icon{color:var(--primary);}
+.filters-more-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+.filter-popover{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:var(--z-popover);min-width:260px;
+  background:var(--surface);border-radius:var(--radius-lg);
+  box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;display:none;
+  isolation:isolate;
+}
+.filter-popover.open{display:block;}
+.filter-popover-right{left:auto;right:0;}
+.fp-section{margin-bottom:16px;}
+.fp-section:last-of-type{margin-bottom:14px;}
+.fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
+.fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
+
+/* ---------- MODAL scaffolding ----------
+   Header homologado: ver @/Components/ModalHeader/ModalHeader. */
+.modal-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .15s ease;
+  isolation:isolate;
+}
+.modal-overlay.open{display:flex;opacity:1;}
+.modal-card{
+  background:var(--surface-modal);border-radius:var(--radius-lg);width:780px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+  transform:translateY(8px) scale(.98);opacity:0;transition:transform .15s ease,opacity .15s ease;
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;}
+.task-mini-modal-card{width:400px;}
+.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field input, .form-field select, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input, .form-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  outline:2px solid var(--primary);outline-offset:1px;
+}
+.form-field textarea{resize:vertical;min-height:64px;}
+
+.field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
+.field-label-row label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);margin-bottom:0;}
+.required-pill{
+  display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--red);
+  background:var(--red-bg);padding:1px var(--space-2);border-radius:10px;letter-spacing:.02em;
+}
+.tf-readonly-value{
+  display:flex;align-items:center;height:var(--input-md);
+  font-size:var(--fs-base);color:var(--ink-900);padding:0 10px;background:var(--bg);border-radius:var(--radius);
+}
+
+/* ---------- Bloque contextual "Estado actual" (paciente/reserva/motivo) ----------
+   Reusado por BedCard (reposo de la tarjeta) y BedDetailModal (bloque
+   "Estado actual", ver EstadoActual en BedDetailModal.jsx) — por eso vive
+   acá y no en BedCard.css. Nunca información clínica más allá de
+   nombre+HC (encargo explícito). */
+.cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
+.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
+.cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
+.cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
+
+/* Texto de situación (Libre: "Disponible para asignación") — genérico a
+   propósito para que futuros sub-estados (Pendiente de limpieza, En
+   preparación) lo reutilicen sin una clase nueva por estado. */
+.cb-card-status-text{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);margin:2px 0;}
+
+/* ---------- ACTIVIDAD RECIENTE (ítem reusado por ActivityPanel + ActivityDrawer) ---------- */
+.cb-activity-empty{padding:24px 12px;text-align:center;color:var(--ink-500);font-size:var(--fs-sm);}
+.cb-activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-radius:var(--radius);}
+.cb-activity-item + .cb-activity-item{border-top:1px solid #eef0f4;}
+.cb-activity-dot{
+  flex-shrink:0;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.cb-activity-dot .icon{width:15px;height:15px;}
+.cb-activity-dot.dot-green{background:var(--green-bg);color:#0d7a3d;}
+.cb-activity-dot.dot-blue{background:var(--blue-bg);color:var(--blue-fg);}
+.cb-activity-dot.dot-amber{background:var(--amber-bg);color:var(--amber-fg);}
+.cb-activity-dot.dot-gray{background:var(--gray-bg);color:var(--gray-fg);}
+.cb-activity-dot.dot-orange{background:var(--orange-bg);color:var(--orange-fg);}
+.cb-activity-body{min-width:0;flex:1;}
+.cb-activity-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.3;}
+.cb-activity-desc{font-size:var(--fs-sm);color:var(--ink-700);margin-top:2px;line-height:1.35;}
+.cb-activity-time{font-size:var(--fs-xs);color:var(--ink-500);margin-top:4px;}
+
+/* ---------- DRAWER lateral (Actividad completa / Próximos ingresos) ----------
+   Variante lateral de .modal-overlay/.modal-card (mismo overlay/backdrop,
+   mismo ModalHeader) — 2 consumidores dentro de este feature (ActivityDrawer/
+   UpcomingAdmissionsDrawer), por eso vive acá y no en cada componente. */
+.cb-drawer-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:none;opacity:0;transition:opacity .15s ease;
+}
+.cb-drawer-overlay.open{display:block;opacity:1;}
+.cb-drawer-panel{
+  position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100%;
+  background:var(--surface-modal);box-shadow:-24px 0 64px rgba(16,24,39,.25);
+  display:flex;flex-direction:column;
+  transform:translateX(16px);opacity:0;transition:transform .15s ease,opacity .15s ease;
+}
+.cb-drawer-overlay.open .cb-drawer-panel{transform:translateX(0);opacity:1;}
+.cb-drawer-body{padding:12px 14px;overflow-y:auto;flex:1;min-height:0;}
+.cb-drawer-count{
+  font-size:var(--fs-sm);color:var(--ink-500);padding:12px 20px 0;flex-shrink:0;
+}
+
+/* ---------- DATA TABLE genérica (BedTable) ---------- */
+.data-table-wrap{
+  flex:1;min-height:0;min-width:0;overflow:auto;
+}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.data-table thead th{
+  position:sticky;top:0;z-index:var(--z-sticky);background:#f7f8fb;color:var(--ink-500);
+  font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+}
+.data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover{background:#fafbfd;}
+.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-medium);margin-top:2px;}
+.data-table .cell-muted{color:var(--ink-500);}
+
+/* ---------- Layout propio de este dashboard ---------- */
 
 .cb-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
 .cb-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cb-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.cb-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.cb-header-actions .btn .icon{width:15px;height:15px;}
+/* El trigger de Actividad solo existe para el layout de 1 columna (ver
+   .cb-activity-panel en ActivityPanel.css) — en desktop la columna derecha
+   ya está siempre visible, así que este botón sobraría ahí. */
+.cb-activity-mobile-trigger{display:none;}
 
-/* 8 KPIs en 3 grupos (Capacidad/Estados operativos/Métrica, encargo:
-   "diferenciar visualmente" con "los primeros cuatro con mayor jerarquía") —
-   .pg-kpi-row (PanelGeneral.css) es un grid plano de 5 columnas y no aplica
-   acá. Capacidad y Métrica quedan al tamaño por defecto de KpiCard
-   (--fs-3xl, ya el valor de dato más grande de la escala tipográfica); solo
-   Estados operativos se reduce (ver overrides de .pg-kpi-value/.pg-kpi-icon
-   más abajo) — nunca se toca KpiCard.jsx/.css en sí, es un componente
-   compartido con PanelGeneral. */
-.cb-kpi-row{display:flex;gap:20px;align-items:stretch;flex-shrink:0;flex-wrap:wrap;}
+/* Bed Board (izquierda, flexible) + Actividad reciente (derecha, ancho fijo
+   — ver .cb-activity-panel en ActivityPanel.css) — encargo: "layout en dos
+   columnas", panel siempre visible en desktop. */
+.cb-layout{display:grid;grid-template-columns:1fr 320px;gap:16px;flex:1;min-height:0;}
+.cb-main{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0;}
+
+/* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
+   la columna derecha se oculta (.cb-activity-panel) y el trigger de arriba
+   la reemplaza por un drawer — la grilla vuelve a 1 sola columna para que
+   ese espacio no quede reservado en blanco. */
+@media (max-width:1024px){
+  .cb-layout{grid-template-columns:1fr;}
+  .cb-activity-mobile-trigger{display:inline-flex;}
+}
+
+/* Capacidad — único grupo de KPIs que queda (Estados operativos pasó a
+   chips dentro del filter-bar, ver más abajo). */
+.cb-kpi-row{display:flex;gap:20px;align-items:flex-start;flex-shrink:0;flex-wrap:wrap;}
 .cb-kpi-group{display:flex;flex-direction:column;gap:8px;min-width:0;}
 .cb-kpi-group .filter-label{display:block;margin:0;}
-.cb-kpi-group-primary{flex:2.6 1 480px;}
-.cb-kpi-group-secondary{flex:1.7 1 340px;padding-left:20px;border-left:1px solid var(--border);}
-.cb-kpi-group-metric{flex:1 1 220px;padding-left:20px;border-left:1px solid var(--border);}
-.cb-kpi-group-cards{display:grid;gap:10px;flex:1;}
-.cb-kpi-group-primary .cb-kpi-group-cards{grid-template-columns:repeat(4,1fr);}
-.cb-kpi-group-secondary .cb-kpi-group-cards{grid-template-columns:repeat(3,1fr);}
-.cb-kpi-group-metric .cb-kpi-group-cards{grid-template-columns:1fr;}
-
-/* Estados operativos: jerarquía secundaria — mismo componente KpiCard, valor
-   e ícono más chicos y menos padding, para que Capacidad/Ocupación ganen el
-   primer vistazo sin que la etiqueta ("LIMPIEZA"/"MANTENIM."/"BLOQUEADAS")
-   se corte por falta de ancho. */
-.cb-kpi-group-secondary .pg-kpi-card{padding:12px 10px;}
-.cb-kpi-group-secondary .pg-kpi-value{font-size:var(--fs-2xl);}
-.cb-kpi-group-secondary .pg-kpi-icon{width:26px;height:26px;}
-.cb-kpi-group-secondary .pg-kpi-icon .icon{width:14px;height:14px;}
-/* La etiqueta en mayúsculas ("MANTENIM."/"BLOQUEADAS") es la que más sufre
-   el ancho reducido de este grupo — permitir que envuelva a 2 líneas en vez
-   de truncar con "..." (nunca se introduce un font-size fuera de la escala
-   --fs-* del proyecto para "hacerla caber", ver AGENTS.md "Tipografía"). */
-.cb-kpi-group-secondary .pg-kpi-label{white-space:normal;line-height:1.15;}
+.cb-kpi-group-primary{flex:1 1 520px;}
+.cb-kpi-group-cards{display:grid;gap:10px;flex:1;grid-template-columns:repeat(4,1fr);}
 
 .cb-board-card{min-height:0;}
 .cb-body-wrap{flex:1;min-height:0;overflow:auto;}
@@ -49,7 +409,15 @@
 
 .cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 
+/* Footer de la tarjeta del tablero (encargo: "Última actualización" pasa acá
+   en vez de vivir como fila propia arriba) — mismo lenguaje que .legend-bar
+   en GestionEnfermeria/shared/shared.css (padding/borde superior), con su
+   propio nombre porque vive en otro feature-folder, sin import cruzado. */
+.cb-board-footer{
+  display:flex;align-items:center;padding:10px 20px;
+  border-top:1px solid var(--border);flex-shrink:0;
+}
+
 @media (max-width:1280px){
-  .cb-kpi-group-secondary, .cb-kpi-group-metric{border-left:none;padding-left:0;}
-  .cb-kpi-group-secondary .cb-kpi-group-cards{grid-template-columns:repeat(3,1fr);}
+  .cb-kpi-group-primary .cb-kpi-group-cards{grid-template-columns:repeat(2,1fr);}
 }

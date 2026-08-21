@@ -1,0 +1,25 @@
+.cb-last-updated{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.cb-last-updated-refresh{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:22px;height:22px;border-radius:6px;border:none;background:transparent;
+  color:var(--ink-500);cursor:pointer;padding:0;
+}
+.cb-last-updated-refresh .icon, .cb-last-updated .icon{width:14px;height:14px;}
+.cb-last-updated-refresh:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cb-last-updated-refresh:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cb-last-updated-error{color:var(--red);}
+.cb-last-updated-retry{
+  background:none;border:none;font-family:inherit;cursor:pointer;padding:0;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--red);text-decoration:underline;
+}
+.cb-last-updated-retry:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cb-last-updated-spin{animation:cb-last-updated-spin .8s linear infinite;}
+@keyframes cb-last-updated-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){
+  .cb-last-updated-spin{animation:none;}
+}

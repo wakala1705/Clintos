@@ -1,8 +1,8 @@
-// Datos de ejemplo para "Camas" / Bed Board (ver
-// src/Components/GestionEnfermeria/CamasEnfermeria/) — inventario y estado
-// operativo de las 199 camas del hospital (número real conocido de
-// CWEB.HABCAMA, ver Bed_Management_Define.md). Ficticio, igual que el resto
-// del módulo (ver mockPanelGeneralData.js/mockTurnosData.js).
+// Datos de ejemplo para "Gestión de Camas" / Bed Board (ver
+// src/Components/GestionCamas/) — inventario y estado operativo de las 199
+// camas del hospital (número real conocido de CWEB.HABCAMA, ver
+// Bed_Management_Define.md). Ficticio, igual que el resto del módulo (ver
+// mockPanelGeneralData.js/mockTurnosData.js en GestionEnfermeria).
 
 // ---------- Filtros del Bed Board (Sede/Área/Piso/Sector/Estado/Tipo) ----------
 // Cada lista arranca con la opción "todos/as" (mismo criterio que
@@ -15,10 +15,14 @@ export const SEDES = [
 ];
 export const AREAS = [
   { value: 'todas', label: 'Todas las áreas' },
+  { value: 'urgencias', label: 'Urgencias' },
   { value: 'uci', label: 'UCI' },
-  { value: 'medicina-interna', label: 'Medicina Interna' },
-  { value: 'cirugia', label: 'Cirugía' },
-  { value: 'pediatria', label: 'Pediatría' },
+  { value: 'hosp-general-p4-t1', label: 'Hospitalización General P4 T1' },
+  { value: 'hosp-piso2-t1', label: 'Hospitalización Piso 2 T1' },
+  { value: 'hosp-piso3-t1', label: 'Hospitalización Piso 3 T1' },
+  { value: 'hosp-piso4-t1', label: 'Hospitalización Piso 4 T1' },
+  { value: 'hosp-piso4-t2', label: 'Hospitalización Piso 4 T2' },
+  { value: 'hosp-piso5-t2', label: 'Hospitalización Piso 5 T2' },
 ];
 export const PISOS = [
   { value: 'todos', label: 'Todos los pisos' },
@@ -33,7 +37,7 @@ export const SECTORES = [
   { value: 'C', label: 'Sector C' },
 ];
 export const ESTADOS = [
-  { value: 'todos', label: 'Todos los estados' },
+  { value: 'todos', label: 'Todos' },
   { value: 'libre', label: 'Libre' },
   { value: 'ocupada', label: 'Ocupada' },
   { value: 'reservada', label: 'Reservada' },
@@ -54,6 +58,15 @@ export const TIPOS = [
   { value: '11', label: '11' },
 ];
 
+// Prioridad de una reserva de cama (formulario "Reservar cama", ver
+// ReservarCamaModal.jsx) — escala de 3 niveles, sin "todos" al frente porque
+// no es un filtro, es un campo de formulario con default "Normal".
+export const PRIORIDADES_RESERVA = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'alta', label: 'Alta' },
+  { value: 'urgente', label: 'Urgente' },
+];
+
 // Lookups value->label (mismo patrón que AREA_TURNO_LABEL en
 // mockTurnosData.js) para mostrar texto legible a partir del código guardado
 // en cada cama, sin duplicar los mismos pares a mano en cada componente.
@@ -62,6 +75,7 @@ export const AREA_LABEL = Object.fromEntries(AREAS.slice(1).map((a) => [a.value,
 export const PISO_LABEL = Object.fromEntries(PISOS.slice(1).map((p) => [p.value, p.label]));
 export const SECTOR_LABEL = Object.fromEntries(SECTORES.slice(1).map((s) => [s.value, s.label]));
 export const ESTADO_LABEL = Object.fromEntries(ESTADOS.slice(1).map((e) => [e.value, e.label]));
+export const PRIORIDAD_LABEL = Object.fromEntries(PRIORIDADES_RESERVA.map((p) => [p.value, p.label]));
 
 // ---------- Estado de cama: color de representación ----------
 // Códigos frontend-only para pintar cada estado (verde/rojo/ámbar/azul/
@@ -196,11 +210,11 @@ export const HOY_ADMISION = '2026-08-20';
 
 // ---------- Generación del inventario (199 camas) ----------
 // Determinística (sin Math.random, mismo criterio que mockPanelGeneralData.js)
-// para que los conteos del Bed Board no cambien entre recargas. Recorre
-// Sede×Área×Piso×Sector generando hasta 3 camas por combinación (numeradas
-// "<piso><secuencia>-<sector>", ej. "101-A" = piso 1, cama 01, sector A) y
-// corta apenas se alcanzan las 199 — el mismo orden produce siempre el mismo
-// inventario.
+// para que los conteos del Bed Board no cambien entre recargas. Por cada
+// área, recorre Sede×Piso×Sector generando hasta 3 camas por combinación
+// (numeradas "<piso><secuencia>-<sector>", ej. "101-A" = piso 1, cama 01,
+// sector A) y corta apenas se alcanza el cupo de esa área (CAMAS_POR_AREA,
+// ver abajo) — el mismo orden produce siempre el mismo inventario.
 const SEDES_VALUES = SEDES.slice(1).map((s) => s.value);
 const AREAS_VALUES = AREAS.slice(1).map((a) => a.value);
 const PISOS_VALUES = PISOS.slice(1).map((p) => p.value);
@@ -217,40 +231,96 @@ const CAMAS_POR_COMBINACION = 3;
 // de arriba. `hc` seguí el mismo formato "HC-#####" que PatientsTable.jsx
 // (mockPanelGeneralData.js) para no introducir una convención de
 // identificador distinta dentro del mismo módulo de Enfermería.
+// (sede, piso1, sector) combinaciones — a propósito siempre "piso1" (ver
+// generateCamas: combo0/1/2 = central-piso1-{A,B,C}), la única garantizada
+// para cualquier área sin importar cuántas camas le tocaron en
+// CAMAS_POR_AREA (la más chica, UCI con 16, ya cubre de sobra piso1 A/B/C).
 const CAMAS_CURADAS = [
   {
     sede: 'central', area: 'uci', piso: 'piso1', sector: 'A', estado: 'ocupada',
-    paciente: { nombre: 'Marta Elena Ríos', hc: 'HC-10421', admision: '2026-08-17' },
+    paciente: {
+      nombre: 'Marta Elena Ríos', hc: 'HC-10421', admisionId: '00010421', admision: '2026-08-17', horaIngreso: '08:40',
+    },
   },
   {
-    sede: 'central', area: 'medicina-interna', piso: 'piso2', sector: 'B', estado: 'ocupada',
-    paciente: { nombre: 'Jorge Andrés Peña', hc: 'HC-10437', admision: '2026-08-18' },
+    sede: 'central', area: 'urgencias', piso: 'piso1', sector: 'B', estado: 'ocupada',
+    paciente: {
+      nombre: 'Camila Andrea Vargas', hc: 'HC-10480', admisionId: '00010480', admision: '2026-08-20', horaIngreso: '07:15',
+    },
   },
   {
-    sede: 'norte', area: 'cirugia', piso: 'piso1', sector: 'C', estado: 'ocupada',
-    paciente: { nombre: 'Lucía Fernanda Ortiz', hc: 'HC-10452', admision: '2026-08-19' },
+    sede: 'central', area: 'hosp-piso2-t1', piso: 'piso1', sector: 'C', estado: 'ocupada',
+    paciente: {
+      nombre: 'Jorge Andrés Peña', hc: 'HC-10437', admisionId: '00010437', admision: '2026-08-18', horaIngreso: '11:15',
+    },
   },
   {
-    sede: 'norte', area: 'pediatria', piso: 'piso1', sector: 'A', estado: 'ocupada',
-    paciente: { nombre: 'Samuel David Cabrera', hc: 'HC-10468', admision: '2026-08-20' },
+    sede: 'central', area: 'hosp-piso3-t1', piso: 'piso1', sector: 'A', estado: 'ocupada',
+    paciente: {
+      nombre: 'Lucía Fernanda Ortiz', hc: 'HC-10452', admisionId: '00010452', admision: '2026-08-19', horaIngreso: '16:05',
+    },
   },
   {
-    sede: 'central', area: 'cirugia', piso: 'piso1', sector: 'A', estado: 'limpieza',
-    limpiezaDesde: '10:40 a. m.',
+    sede: 'central', area: 'hosp-general-p4-t1', piso: 'piso1', sector: 'A', estado: 'limpieza',
+    limpiezaDesde: '08:32',
+  },
+  // Reservada/bloqueada: el inventario original no traía ninguna (0 en el
+  // encargo de la v1) — se agregan estas 2 para que la iteración "centro
+  // operativo" tenga al menos un ejemplo real de cada estado que ilustrar
+  // en las tarjetas (ver BedCard.jsx), no solo en el selector de estado.
+  {
+    sede: 'central', area: 'uci', piso: 'piso1', sector: 'B', estado: 'reservada',
+    reserva: {
+      motivo: 'Ingreso programado', fechaInicio: '2026-08-21', fechaVencimiento: '2026-08-22', prioridad: 'normal',
+    },
+  },
+  {
+    sede: 'central', area: 'hosp-piso4-t2', piso: 'piso1', sector: 'A', estado: 'bloqueada',
+    motivo: 'Fuera de servicio',
   },
 ];
 
-// Combinaciones sede×área×piso×sector, cada una repetida CAMAS_POR_COMBINACION
-// veces — se aplana y se corta a TOTAL_CAMAS en vez de un loop anidado con
-// `break` etiquetado, mismo resultado determinístico sin depender de labels.
-function combinacionesCama() {
+// Franja de horas para "Última limpieza" de camas Libres (encargo: "¿está
+// realmente lista para asignar?") — mismo criterio determinístico que `tipo`
+// más abajo (índice % pool), nunca Math.random. Solo se muestra cuando
+// `estado === 'libre'`, así que su valor en camas de otro estado es ignorado.
+const TIEMPOS_ULTIMA_LIMPIEZA = ['06:15', '06:40', '07:05', '07:20', '07:42', '07:58'];
+
+// Cuántas de las 199 camas le tocan a cada área (encargo: "las 199 camas
+// deberían distribuirse en estas 8 áreas" — el número exacto por área no
+// está confirmado por ningún documento fuente, así que queda a criterio de
+// este prototipo: UCI/Urgencias más chicas que los pisos de Hospitalización
+// general, suma exacta = TOTAL_CAMAS). Reemplaza el reparto parejo que
+// resultaba antes de aplanar sede×área×piso×sector y cortar a 199 sin mirar
+// cuántas le tocaban a cada área.
+const CAMAS_POR_AREA = {
+  urgencias: 20,
+  uci: 16,
+  'hosp-general-p4-t1': 30,
+  'hosp-piso2-t1': 28,
+  'hosp-piso3-t1': 28,
+  'hosp-piso4-t1': 27,
+  'hosp-piso4-t2': 25,
+  'hosp-piso5-t2': 25,
+};
+
+// Guarda que la suma siga cuadrando con TOTAL_CAMAS si alguien edita el
+// reparto de arriba sin actualizar las demás áreas a mano.
+if (Object.values(CAMAS_POR_AREA).reduce((sum, n) => sum + n, 0) !== TOTAL_CAMAS) {
+  throw new Error('CAMAS_POR_AREA no suma TOTAL_CAMAS (mockCamasData.js)');
+}
+
+// Combinaciones sede×piso×sector (ya sin área — cada área arma su propio
+// inventario más abajo) — mismo orden central→norte / piso1→piso3 /
+// sector A→C que antes, así que "central-piso1-sector A" (combo0) sigue
+// siendo la primera de cualquier área sin importar su cupo en
+// CAMAS_POR_AREA (ver CAMAS_CURADAS, todas usan piso1 a propósito).
+function combinacionesSedePisoSector() {
   const combos = [];
   SEDES_VALUES.forEach((sede) => {
-    AREAS_VALUES.forEach((area) => {
-      PISOS_VALUES.forEach((piso) => {
-        SECTORES_VALUES.forEach((sector) => {
-          combos.push({ sede, area, piso, sector });
-        });
+    PISOS_VALUES.forEach((piso) => {
+      SECTORES_VALUES.forEach((sector) => {
+        combos.push({ sede, piso, sector });
       });
     });
   });
@@ -258,38 +328,45 @@ function combinacionesCama() {
 }
 
 function generateCamas() {
-  const slots = combinacionesCama()
-    .flatMap((combo) => Array.from({ length: CAMAS_POR_COMBINACION }, (_, i) => ({ ...combo, seq: i + 1 })))
-    .slice(0, TOTAL_CAMAS);
+  const combosBase = combinacionesSedePisoSector();
+  let contador = 0;
 
-  const camas = slots.map((slot, i) => {
-    const contador = i + 1;
-    const pisoNum = slot.piso.slice(-1);
-    const tipo = TIPOS_VALUES[contador % TIPOS_VALUES.length];
-    return {
-      id: `CAM-${String(contador).padStart(4, '0')}`,
-      numero: `${pisoNum}${String(slot.seq).padStart(2, '0')}-${slot.sector}`,
-      sede: slot.sede,
-      area: slot.area,
-      piso: slot.piso,
-      sector: slot.sector,
-      tipo,
-      estado: 'libre',
-      paciente: null,
-      reserva: null,
-      motivo: undefined,
-      limpiezaDesde: undefined,
-      mantenimientoTipo: undefined,
-      // Filtro avanzado "Temporal" — el doc fuente no confirma el
-      // significado de TIPO, así que se deriva de los 2 códigos más
-      // recientes/atípicos (10/11) como aproximación razonable de "cama
-      // temporal/adicional", NO una regla de negocio confirmada.
-      temporal: tipo === '10' || tipo === '11',
-      // Filtro avanzado "Aislamiento" — ver comentario junto a
-      // TRANSICIONES_PERMITIDAS: atributo aparte, no un `estado`. Ninguna
-      // cama del inventario de ejemplo lo trae en `true`.
-      aislamiento: false,
-    };
+  const camas = AREAS_VALUES.flatMap((area) => {
+    const cupo = CAMAS_POR_AREA[area];
+    const slots = combosBase
+      .flatMap((combo) => Array.from({ length: CAMAS_POR_COMBINACION }, (_, i) => ({ ...combo, seq: i + 1 })))
+      .slice(0, cupo);
+
+    return slots.map((slot) => {
+      contador += 1;
+      const pisoNum = slot.piso.slice(-1);
+      const tipo = TIPOS_VALUES[contador % TIPOS_VALUES.length];
+      return {
+        id: `CAM-${String(contador).padStart(4, '0')}`,
+        numero: `${pisoNum}${String(slot.seq).padStart(2, '0')}-${slot.sector}`,
+        sede: slot.sede,
+        area,
+        piso: slot.piso,
+        sector: slot.sector,
+        tipo,
+        estado: 'libre',
+        paciente: null,
+        reserva: null,
+        motivo: undefined,
+        limpiezaDesde: undefined,
+        mantenimientoTipo: undefined,
+        ultimaLimpieza: TIEMPOS_ULTIMA_LIMPIEZA[contador % TIEMPOS_ULTIMA_LIMPIEZA.length],
+        // Filtro avanzado "Temporal" — el doc fuente no confirma el
+        // significado de TIPO, así que se deriva de los 2 códigos más
+        // recientes/atípicos (10/11) como aproximación razonable de "cama
+        // temporal/adicional", NO una regla de negocio confirmada.
+        temporal: tipo === '10' || tipo === '11',
+        // Filtro avanzado "Aislamiento" — ver comentario junto a
+        // TRANSICIONES_PERMITIDAS: atributo aparte, no un `estado`. Ninguna
+        // cama del inventario de ejemplo lo trae en `true`.
+        aislamiento: false,
+      };
+    });
   });
 
   CAMAS_CURADAS.forEach((cur) => {
@@ -301,9 +378,81 @@ function generateCamas() {
     if (cur.paciente) cama.paciente = cur.paciente;
     if (cur.limpiezaDesde) cama.limpiezaDesde = cur.limpiezaDesde;
     if (cur.mantenimientoTipo) cama.mantenimientoTipo = cur.mantenimientoTipo;
+    if (cur.reserva) cama.reserva = cur.reserva;
+    if (cur.motivo) cama.motivo = cur.motivo;
   });
 
   return camas;
 }
 
 export const CAMAS = generateCamas();
+
+// ---------- Próximos ingresos / traslados ----------
+// Cola de movimientos entrantes que todavía no tienen (o ya tienen) cama
+// asignada — alimenta el drawer "Próximos ingresos" del header (encargo:
+// centro operativo, "¿qué pacientes están próximos a ingresar o
+// trasladarse?"). `requerimiento` es el tipo de cama que ese movimiento
+// necesita (null cuando no aplica, ej. un traslado a una cama ya reservada).
+// CTA "Asignar cama" solo tiene sentido mientras `estado === 'pendiente'`.
+export const TIPO_INGRESO_LABEL = {
+  admision: 'Nueva admisión',
+  traslado: 'Traslado',
+  programado: 'Ingreso programado',
+};
+export const PROXIMOS_INGRESOS = [
+  {
+    id: 'PI-1',
+    hora: '08:55',
+    tipo: 'admision',
+    origen: 'Urgencias',
+    destino: 'UCI',
+    requerimiento: null,
+    estado: 'pendiente',
+    detalle: 'Paciente pendiente de asignación',
+  },
+  {
+    id: 'PI-2',
+    hora: '09:10',
+    tipo: 'traslado',
+    origen: 'Hospitalización',
+    destino: 'UCI',
+    requerimiento: '03',
+    estado: 'pendiente',
+    detalle: 'Cama requerida: Tipo 03',
+  },
+  {
+    id: 'PI-3',
+    hora: '09:30',
+    tipo: 'programado',
+    origen: 'Cirugía',
+    destino: 'Hospitalización',
+    requerimiento: null,
+    estado: 'asignada',
+    detalle: 'Cama reservada',
+  },
+];
+
+// ---------- Actividad reciente (seed) ----------
+// 5 eventos de ejemplo del encargo — `haceMs` es un offset relativo (nunca un
+// timestamp absoluto horneado acá): GestionCamas.jsx lo convierte a
+// `timestamp` real recién al montar (`Date.now() - haceMs`), para que "hace 2
+// min" sea correcto sin importar cuándo se cargó este módulo. Íconos por
+// `tipo` viven en ActivityPanel.jsx (mismo criterio que ESTADO_ICONO en
+// EstadoCamaBadge.jsx: la data no importa react-icons).
+export const ACTIVIDAD_INICIAL = [
+  {
+    id: 'EV-1', tipo: 'cama-liberada', titulo: 'Cama 102-A liberada', detalle: 'La cama está disponible para asignación', haceMs: 2 * 60000,
+  },
+  {
+    id: 'EV-2', tipo: 'paciente-trasladado', titulo: 'Paciente trasladado', detalle: 'Marta Elena Ríos → Cama 204-B', haceMs: 5 * 60000,
+  },
+  {
+    id: 'EV-3', tipo: 'limpieza-iniciada', titulo: 'Cama 103-A en limpieza', detalle: 'Limpieza iniciada', haceMs: 8 * 60000,
+  },
+  {
+    id: 'EV-4', tipo: 'nueva-admision', titulo: 'Nueva admisión', detalle: 'Paciente pendiente de asignación', haceMs: 12 * 60000,
+  },
+  {
+    id: 'EV-5', tipo: 'cama-reservada', titulo: 'Cama 201-C reservada', detalle: 'Reserva para procedimiento', haceMs: 15 * 60000,
+  },
+];

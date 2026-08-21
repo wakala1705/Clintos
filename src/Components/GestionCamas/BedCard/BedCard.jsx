@@ -1,9 +1,9 @@
 import './BedCard.css';
 import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import BedActionsMenu from '../BedActionsMenu/BedActionsMenu';
-import {
-  AREA_LABEL, CTA_PRINCIPAL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL,
-} from '@/hooks/GestionEnfermeria/mockCamasData';
+import InfoLine from '../InfoLine/InfoLine';
+import { formatIngreso, formatVentanaReserva, infoLimpieza } from '@/hooks/GestionCamas/bedContextFormat';
+import { CTA_PRINCIPAL } from '@/hooks/GestionCamas/mockCamasData';
 import { LuUser } from 'react-icons/lu';
 
 // Progressive disclosure por estado (encargo explícito): en reposo, la
@@ -12,38 +12,61 @@ import { LuUser } from 'react-icons/lu';
 // reserva/motivo/inicio de limpieza) es la única parte que cambia según
 // `cama.estado`, el resto de la tarjeta (header, ubicación, tipo, CTA+menú)
 // es el mismo esqueleto para los 6 estados.
-function BloqueContextual({ cama }) {
+function BloqueContextual({ cama, etaTimestamp, now }) {
   if (cama.estado === 'ocupada' && cama.paciente) {
     return (
-      <div className="cb-card-paciente">
-        <LuUser className="icon" aria-hidden="true" />
-        <div>
-          <div className="cb-card-paciente-nombre">{cama.paciente.nombre}</div>
-          <div className="cb-card-paciente-hc">{cama.paciente.hc}</div>
+      <>
+        <div className="cb-card-paciente">
+          <LuUser className="icon" aria-hidden="true" />
+          <div>
+            <div className="cb-card-paciente-nombre">{cama.paciente.nombre}</div>
+            <div className="cb-card-paciente-hc">{cama.paciente.hc}</div>
+          </div>
         </div>
-      </div>
+        <InfoLine label="Ingreso" value={formatIngreso(cama.paciente.admision, cama.paciente.horaIngreso)} />
+      </>
+    );
+  }
+  if (cama.estado === 'libre') {
+    return (
+      <>
+        {/* Texto de situación (encargo: "comunicar claramente la condición
+            operativa") — mismo rol que el nombre del paciente en Ocupada:
+            lo primero que se lee después del header. Reutilizable tal cual
+            para futuros sub-estados de Libre (Pendiente de limpieza, En
+            preparación, ver .cb-card-status-text en BedCard.css) sin romper
+            esta jerarquía. */}
+        <div className="cb-card-status-text">Disponible para asignación</div>
+        <InfoLine label="Última limpieza" value={cama.ultimaLimpieza ? `Hoy · ${cama.ultimaLimpieza}` : null} />
+      </>
     );
   }
   if (cama.estado === 'reservada' && cama.reserva) {
+    const ventana = formatVentanaReserva(cama.reserva.fechaInicio, cama.reserva.fechaVencimiento);
+    const valor = ventana ? `${cama.reserva.motivo} · ${ventana}` : cama.reserva.motivo;
     return (
-      <div className="cb-card-contexto">
-        {cama.reserva.paciente} · reserva {cama.reserva.inicio}–{cama.reserva.vencimiento}
-      </div>
+      <>
+        {cama.reserva.paciente && <div className="cb-card-contexto">{cama.reserva.paciente}</div>}
+        <InfoLine label="Reservada para" value={valor} />
+      </>
     );
   }
-  if (cama.estado === 'limpieza' && cama.limpiezaDesde) {
-    return <div className="cb-card-contexto">Desde {cama.limpiezaDesde}</div>;
+  if (cama.estado === 'limpieza') {
+    const { label, valor } = infoLimpieza(cama, etaTimestamp, now);
+    return <InfoLine label={label} value={valor} />;
   }
-  if (cama.estado === 'mantenimiento' && cama.mantenimientoTipo) {
-    return <div className="cb-card-contexto">{cama.mantenimientoTipo}</div>;
+  if (cama.estado === 'mantenimiento') {
+    return <InfoLine label="Mantenimiento" value={cama.mantenimientoTipo} />;
   }
-  if (cama.estado === 'bloqueada' && cama.motivo) {
-    return <div className="cb-card-contexto">{cama.motivo}</div>;
+  if (cama.estado === 'bloqueada') {
+    return <InfoLine label="Motivo" value={cama.motivo} />;
   }
   return null;
 }
 
-export default function BedCard({ cama, onAction }) {
+export default function BedCard({
+  cama, onAction, etaTimestamp, now,
+}) {
   const cta = CTA_PRINCIPAL[cama.estado];
   return (
     <div className={`cb-card cb-card-${cama.estado}`}>
@@ -52,12 +75,7 @@ export default function BedCard({ cama, onAction }) {
         <EstadoCamaBadge estado={cama.estado} />
       </div>
 
-      <BloqueContextual cama={cama} />
-
-      <div className="cb-card-meta">
-        {SEDE_LABEL[cama.sede]} · {AREA_LABEL[cama.area]} · {PISO_LABEL[cama.piso]} · {SECTOR_LABEL[cama.sector]}
-      </div>
-      <div className="cb-card-tipo">Tipo {cama.tipo}</div>
+      <BloqueContextual cama={cama} etaTimestamp={etaTimestamp} now={now} />
 
       <div className="cb-card-footer">
         <button type="button" className="btn btn-secondary btn-sm cb-card-btn" onClick={() => onAction(cta.action, cama.id)}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './BedActionsMenu.css';
-import { MENU_ACCIONES } from '@/hooks/GestionEnfermeria/mockCamasData';
+import { MENU_ACCIONES } from '@/hooks/GestionCamas/mockCamasData';
 import { LuEllipsis } from 'react-icons/lu';
 
 // Menú "⋯" — mismo patrón autocontenido que RowActionsMenu.jsx (estado

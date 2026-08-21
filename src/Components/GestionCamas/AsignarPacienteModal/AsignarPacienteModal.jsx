@@ -5,7 +5,7 @@ import './AsignarPacienteModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import {
   AREA_LABEL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL,
-} from '@/hooks/GestionEnfermeria/mockCamasData';
+} from '@/hooks/GestionCamas/mockCamasData';
 import { LuUser } from 'react-icons/lu';
 
 // CTA principal de una cama Libre (encargo: "Asignar paciente" reemplaza a

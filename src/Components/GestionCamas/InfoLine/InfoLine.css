@@ -1,0 +1,9 @@
+/* "Label / valor" (ver InfoLine.jsx) — mismo par label-caps/valor que
+   .filter-label ya usa en el resto del Bed Board, para no introducir un
+   segundo lenguaje tipográfico de "etiqueta secundaria". */
+.cb-card-info{margin:2px 0;}
+.cb-card-info-label{
+  display:block;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.cb-card-info-value{display:block;font-size:var(--fs-sm);color:var(--ink-700);margin-top:1px;}

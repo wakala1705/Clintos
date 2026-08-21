@@ -1,6 +1,14 @@
 .cb-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;
+  /* Homologa la altura entre estados (encargo) — Ocupada es hoy el contenido
+     más alto (bloque paciente + Ingreso); el resto de estados solo muestra
+     1 InfoLine y se quedaba visiblemente más bajo/con el CTA en otra
+     posición según la fila del grid. min-height fija un piso común y el
+     footer con margin-top:auto (ver .cb-card-footer) empuja el CTA al
+     fondo en los estados con menos contenido, así el botón queda a la
+     misma altura en toda tarjeta, no solo dentro de la misma fila. */
+  min-height:196px;
   transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;
 }
 /* Hover discreto (encargo: "elevar ligeramente", "reforzar que es
@@ -11,20 +19,19 @@
 }
 
 .cb-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.cb-card-numero{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cb-card-meta{font-size:var(--fs-sm);color:var(--ink-500);}
-.cb-card-tipo{font-size:var(--fs-xs);color:var(--ink-400);}
+/* Identificador principal de la tarjeta (encargo: "reforzar la jerarquía de
+   'Cama 101-A'") — un paso de tamaño arriba de fs-base, no de peso: los
+   títulos ya van en --fw-semibold como máximo (ver AGENTS.md, --fw-bold
+   queda para cifras/KPIs), así que la jerarquía extra la da fs-lg, no bold. */
+.cb-card-numero{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
-/* Bloque contextual (paciente/reserva/limpieza/mantenimiento/motivo) — único
-   tramo que cambia según el estado, ver BloqueContextual en BedCard.jsx.
-   Nunca información clínica más allá de nombre+HC (encargo explícito). */
-.cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
-.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
-.cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
-.cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
+/* Bloque contextual paciente/reserva/motivo (.cb-card-paciente,
+   .cb-card-status-text, .cb-card-contexto) e InfoLine (.cb-card-info, ver
+   ../InfoLine/InfoLine.css): definidas en ../GestionCamas.css — viven ahí
+   porque BedDetailModal reusa el mismo bloque "Estado actual" que esta
+   tarjeta. */
 
-.cb-card-footer{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.cb-card-footer{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:8px;}
 .cb-card-btn{flex:1;justify-content:center;}
 
 /* El menú "⋯" (acción secundaria) solo se revela en hover/foco — progressive

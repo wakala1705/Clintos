@@ -1,0 +1,25 @@
+/* .btn/.btn-secondary: definidas en ../../shared/shared.css (shared del
+   feature) — el trigger las reutiliza para leerse igual que "Tareas", su
+   vecino en .pg-header-actions (ver PanelGeneral.css). Acá solo el
+   posicionamiento del dropdown propio (mismo patrón que .pg-row-menu-*,
+   RowActionsMenu.css) y el chevron giratorio. */
+.pg-area-select{position:relative;flex-shrink:0;}
+.pg-area-select-trigger{white-space:nowrap;}
+.pg-area-select-chev{transition:transform .15s ease;}
+.pg-area-select-chev.open{transform:rotate(180deg);}
+
+.pg-area-select-dropdown{
+  position:absolute;top:calc(100% + 4px);right:0;min-width:180px;z-index:var(--z-popover);
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+  list-style:none;margin:0;
+}
+.pg-area-select-option{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.pg-area-select-option:hover{background:var(--bg);}
+.pg-area-select-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.pg-area-select-option.active{color:var(--primary-dark);}
+.pg-area-select-option .icon{width:16px;height:16px;color:var(--primary);flex-shrink:0;}

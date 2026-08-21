@@ -8,7 +8,7 @@ import {
 import { PACIENTES_PISO, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuCalendarPlus } from 'react-icons/lu';
-import FormSelect from './FormSelect/FormSelect';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 
 const RECURRENCIAS = [
   { value: 'unica', label: 'Única vez' },

@@ -1,0 +1,11 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/
+   .modal-footer/.fp-section-title/.cb-card-info* (InfoLine): definidas en
+   ../GestionCamas.css e ../InfoLine/InfoLine.css. Acá solo el footer de 4
+   acciones (encargo) — no cabe cómodo en una sola fila dentro del ancho
+   chico (task-mini-modal-card, 400px) que usan el resto de modales
+   puntuales de esta feature, así que pasa a grid 2×2 en vez del
+   flex-row default de .modal-footer. */
+.cb-paciente-actual-footer{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.cb-paciente-actual-footer .btn{justify-content:center;}
