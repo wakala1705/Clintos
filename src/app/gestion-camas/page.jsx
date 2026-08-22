@@ -1,5 +1,5 @@
-import GestionCamas from '@/Components/GestionCamas/GestionCamas';
+import GestionCamasResumen from '@/Components/GestionCamas/GestionCamasResumen/GestionCamasResumen';
 
 export default function GestionCamasPage() {
-  return <GestionCamas />;
+  return <GestionCamasResumen />;
 }

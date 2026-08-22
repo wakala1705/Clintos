@@ -1,0 +1,8 @@
+.cbi-estado-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.cbi-estado-badge .icon{width:13px;height:13px;}
+.cbi-estado-activa{background:var(--red-bg);color:var(--red);}
+.cbi-estado-corregida{background:var(--green-bg);color:#0d7a3d;}
+.cbi-estado-ignorada{background:var(--gray-bg);color:var(--gray-fg);}

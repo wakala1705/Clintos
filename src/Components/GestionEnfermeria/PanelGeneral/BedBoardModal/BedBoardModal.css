@@ -1,0 +1,79 @@
+/* Variante "casi pantalla completa" de .modal-card (780px por defecto, ver
+   ../../shared/shared.css) — mismo criterio que .pc-modal-lg en
+   DetalleCitaModal.css: una clase extra encima de .modal-card en vez de un
+   enum de tamaños global. 90vw × 90vh fijo (encargo explícito: "siempre",
+   no un tope que se reduzca antes de llegar ahí) en vez de un ancho fijo en
+   px + max-width, para que el tablero de 6 columnas tenga sitio de sobra
+   sin importar el tamaño de pantalla. */
+.bb-modal-card{width:90vw;height:90vh;max-width:90vw;max-height:90vh;}
+
+/* .modal-body ya trae padding:20px 24px (ver shared.css) — se lo cedemos a
+   .cb-grid para que la grilla controle su propio padding igual que en
+   Gestión de Camas (ver .cb-grid en GestionCamas.css), sin quedar duplicado.
+   flex:1/min-height:0 tampoco vienen de shared.css (ese .modal-body es de
+   alto libre, pensado para formularios cortos) — acá el modal es de alto
+   fijo (90vh, ver .bb-modal-card), así que el body necesita crecer y
+   quedarse con todo el espacio sobrante para que el footer (leyenda +
+   indicadores) quede siempre pegado abajo en vez de "flotar" pegado al
+   contenido cuando hay pocas camas (ej. al filtrar por área). Doble clase
+   para ganar por especificidad sin depender del orden de import entre
+   shared.css y este archivo. */
+.modal-body.bb-modal-body{padding:0;overflow-y:auto;flex:1;min-height:0;}
+
+/* 6 columnas fijas (encargo explícito) en vez de auto-fill/minmax — el
+   modal ya reserva 90vw de sobra (ver .bb-modal-card) para que las tarjetas
+   respiren en ese layout. */
+.cb-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:12px;padding:20px 24px;
+}
+
+/* Vista "Lista" (BedListView, ver BedBoardModal.jsx) — .bb-table-outer da
+   el mismo padding que .cb-grid sin ser el contenedor con scroll (eso sigue
+   siendo .data-table-wrap, ver shared.css): así el header sticky de la
+   tabla no deja un hueco raro al hacer scroll, que sí pasaría si el padding
+   viviera en el propio elemento con overflow:auto. Mismo recorte de columna
+   de acciones que .cb-table en BedTable.css (Gestión de Camas). */
+.bb-table-outer{height:100%;display:flex;flex-direction:column;min-height:0;padding:20px 24px;}
+.bb-table-outer .data-table-wrap{flex:1;min-height:0;}
+.bb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+.bb-table-actions{display:inline-flex;align-items:center;gap:4px;}
+
+.cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+/* Bloque contextual paciente/reserva/motivo que BedCard.jsx espera
+   (.cb-card-paciente/.cb-card-contexto/.cb-card-status-text) — en Gestión
+   de Camas vive en GestionCamas.css porque BedDetailModal también lo
+   reusa (ver ese archivo); acá se duplica igual que el resto de tokens de
+   color por feature (ver AGENTS.md "Component organization"), ya que
+   BedCard.css no lo trae consigo. */
+.cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
+.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
+.cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
+.cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
+.cb-card-status-text{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);margin:2px 0;}
+
+/* Footer con indicadores (izquierda) + leyenda de estado (derecha) —
+   reusa el wrapper genérico .legend-bar (ver ../../shared/shared.css,
+   segundo consumidor además de MedicamentosPanel), solo con contenido
+   propio de este modal en vez de los .legend-item con ícono de dosis. */
+.bb-footer-stats{
+  display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap;
+  font-size:var(--fs-sm);color:var(--ink-700);
+}
+.bb-footer-stats b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+
+.bb-legend{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;}
+.bb-legend-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.bb-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}
+.bb-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:currentColor;}
+.bb-legend-dot-green{color:var(--green);}
+.bb-legend-dot-red{color:var(--red);}
+.bb-legend-dot-amber{color:var(--amber);}
+.bb-legend-dot-blue{color:var(--blue);}
+.bb-legend-dot-orange{color:var(--orange);}
+.bb-legend-dot-gray{color:var(--gray-fg);}

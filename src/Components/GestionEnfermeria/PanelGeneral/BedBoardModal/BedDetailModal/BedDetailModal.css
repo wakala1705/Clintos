@@ -1,0 +1,36 @@
+/* .modal-overlay/.modal-card/.modal-body: ver ../../../shared/shared.css
+   (780px por defecto, se conserva acá — este modal no necesita el ancho
+   xlg del tablero). .dp-info/.dp-info-row/.k/.v: mismo par label/valor
+   alineado a la derecha que ya usa el popover de alergias (PatientBanner),
+   ver shared.css. .bb-legend-dot/.bb-legend-dot-*: definidas en
+   ../BedBoardModal.css, siempre cargado antes de que este modal pueda
+   montarse (solo se abre desde dentro de BedBoardModal). */
+.bdm-modal-card{width:520px;}
+
+.bdm-summary{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.bdm-summary-title{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.bdm-summary-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+
+.bdm-patient{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:16px;}
+.bdm-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary-dark);
+  font-size:var(--fs-sm);font-weight:var(--fw-bold);
+}
+.bdm-patient-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.bdm-patient-hc{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.bdm-med-value{display:inline-flex;align-items:center;gap:6px;}
+
+/* Sin border-bottom propio: .bdm-divider ya pone la línea justo antes de
+   .bdm-actions (ver abajo) — con las 2 quedaba un doble borde pegado. */
+.bdm-empty-context{
+  padding:16px 0px 0px 0px;border-top:1px solid var(--border);
+  color:var(--ink-500);font-size:var(--fs-base);
+}
+
+.bdm-divider{height:1px;background:var(--border);margin:16px 0;}
+
+.bdm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.bdm-action-btn{justify-content:center;}

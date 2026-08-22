@@ -21,6 +21,7 @@ import PacienteActualModal from './PacienteActualModal/PacienteActualModal';
 import ActivityPanel from './ActivityPanel/ActivityPanel';
 import ActivityDrawer from './ActivityPanel/ActivityDrawer/ActivityDrawer';
 import UpcomingAdmissionsDrawer from './UpcomingAdmissionsDrawer/UpcomingAdmissionsDrawer';
+import GestionCamasSidebar from './GestionCamasSidebar/GestionCamasSidebar';
 import LastUpdated from '@/Components/GestionCamas/LastUpdated/LastUpdated';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
@@ -449,139 +450,143 @@ export default function GestionCamas() {
 
       <div className="main">
         <Topbar
-          section="Hospitalización"
-          page="Gestión de Camas"
+          section={['Procesos', { label: 'Gestión de Camas', href: '/gestion-camas' }]}
+          page="Camas"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content cb-content">
-          <div className="cb-header">
-            <div>
-              <h1>Gestión de camas</h1>
-              <p>Estado en tiempo real de las camas del hospital.</p>
-            </div>
-            <div className="cb-header-actions">
-              {/* Trigger de Actividad solo visible <1024px (ver
-                  .cb-activity-mobile-trigger en GestionCamas.css) — en
-                  desktop la columna derecha ya está siempre visible. */}
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm cb-activity-mobile-trigger"
-                onClick={() => setActivityDrawerOpen(true)}
-              >
-                <LuBellRing className="icon" aria-hidden="true" />
-                Actividad
-              </button>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setIngresosDrawerOpen(true)}>
-                <LuCalendarClock className="icon" aria-hidden="true" />
-                Próximos ingresos · {PROXIMOS_INGRESOS.length}
-              </button>
-              <AreaSelector label="Sede" options={SEDES} value={sede} onChange={setSede} />
-              <AreaSelector label="Área" options={AREAS} value={area} onChange={setArea} />
-            </div>
-          </div>
+          <GestionCamasSidebar />
 
-          {/* Bed Board (izquierda) + Actividad reciente (derecha, columna fija
-              en desktop — encargo: "panel operativo permanente, no una
-              acción"). Debajo de --bp-desktop colapsa a 1 columna y el panel
-              se abre como drawer (ver .cb-activity-mobile-trigger arriba y
-              @media en GestionCamas.css). */}
-          <div className="cb-layout">
-            <div className="cb-main">
-              {/* Capacidad — hero fijo de 4 tarjetas (Reservadas sale de acá,
-                  queda accesible vía el filtro Estado del filter-bar). Los
-                  chips de Estados operativos ahora viven dentro del
-                  filter-bar, junto al resto de filtros (ver más abajo). */}
-              <div className="cb-kpi-row">
-                <div className="cb-kpi-group cb-kpi-group-primary">
+          <div className="cb-page-body">
+            <div className="cb-header">
+              <div>
+                <h1>Gestión de camas</h1>
+                <p>Estado en tiempo real de las camas del hospital.</p>
+              </div>
+              <div className="cb-header-actions">
+                {/* Trigger de Actividad solo visible <1024px (ver
+                    .cb-activity-mobile-trigger en GestionCamas.css) — en
+                    desktop la columna derecha ya está siempre visible. */}
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm cb-activity-mobile-trigger"
+                  onClick={() => setActivityDrawerOpen(true)}
+                >
+                  <LuBellRing className="icon" aria-hidden="true" />
+                  Actividad
+                </button>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setIngresosDrawerOpen(true)}>
+                  <LuCalendarClock className="icon" aria-hidden="true" />
+                  Próximos ingresos · {PROXIMOS_INGRESOS.length}
+                </button>
+                <AreaSelector label="Sede" options={SEDES} value={sede} onChange={setSede} />
+                <AreaSelector label="Área" options={AREAS} value={area} onChange={setArea} />
+              </div>
+            </div>
+
+            {/* Bed Board (izquierda) + Actividad reciente (derecha, columna fija
+                en desktop — encargo: "panel operativo permanente, no una
+                acción"). Debajo de --bp-desktop colapsa a 1 columna y el panel
+                se abre como drawer (ver .cb-activity-mobile-trigger arriba y
+                @media en GestionCamas.css). */}
+            <div className="cb-layout">
+              <div className="cb-main">
+                {/* Capacidad — hero fijo de 4 tarjetas (Reservadas sale de acá,
+                    queda accesible vía el filtro Estado del filter-bar). Los
+                    chips de Estados operativos ahora viven dentro del
+                    filter-bar, junto al resto de filtros (ver más abajo). */}
+                <div className="cb-kpi-row">
+                  <div className="cb-kpi-group cb-kpi-group-primary">
                     <div className="cb-kpi-group-cards">
-                    <KpiCard icon={LuBedDouble} label="Total" value={kpis.total} description="Camas registradas" variant="neutral" />
-                    <KpiCard icon={LuBedDouble} label="Disponibles" value={kpis.libres} description="Camas listas para asignar" variant="neutral" />
-                    <KpiCard icon={LuUser} label="Ocupadas" value={kpis.ocupadas} description="Con paciente" variant="warning" />
-                    <KpiCard
-                      icon={LuBedDouble}
-                      label="Ocupación"
-                      value={`${kpis.ocupacionPct}%`}
-                      description={`${kpis.ocupadas} de ${kpis.total} camas`}
-                      variant="neutral"
-                      progress={{ percent: kpis.ocupacionPct }}
+                      <KpiCard icon={LuBedDouble} label="Total" value={kpis.total} description="Camas registradas" variant="neutral" />
+                      <KpiCard icon={LuBedDouble} label="Disponibles" value={kpis.libres} description="Camas listas para asignar" variant="neutral" />
+                      <KpiCard icon={LuUser} label="Ocupadas" value={kpis.ocupadas} description="Con paciente" variant="warning" />
+                      <KpiCard
+                        icon={LuBedDouble}
+                        label="Ocupación"
+                        value={`${kpis.ocupacionPct}%`}
+                        description={`${kpis.ocupadas} de ${kpis.total} camas`}
+                        variant="neutral"
+                        progress={{ percent: kpis.ocupacionPct }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="card cb-board-card">
+                  <div className="filter-bar">
+                    {/* Orden (encargo): búsqueda al extremo izquierdo, filtros +
+                        vista agrupados al extremo derecho. */}
+                    <div className="search-field">
+                      <LuSearch className="icon" />
+                      <input
+                        type="text"
+                        placeholder="Buscar cama, paciente, HC o admisión..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        aria-label="Buscar cama, paciente, historia clínica o admisión"
+                      />
+                    </div>
+
+                    <div className="filter-spacer" />
+
+                    {/* Estado — franja siempre visible en vez de dropdown
+                        (encargo: "chip-group segmented"), única fuente de
+                        `estado` (reemplaza también al viejo widget de 3 chips
+                        "Estados operativos", ya cubierto acá). */}
+                    <SegmentedFilterBar
+                      options={estadoOptions}
+                      value={estado}
+                      onChange={setEstado}
+                      ariaLabel="Filtrar camas por estado"
                     />
+                    {/* Piso/Sector/Tipo se agrupan dentro de "Más filtros"
+                        (encargo) — MasFiltrosPopover los recibe como props
+                        propias, separados de `filtros`/`onChange` (esos
+                        siguen siendo solo los booleanos + habitación). */}
+                    <MasFiltrosPopover
+                      piso={piso}
+                      pisoOptions={PISOS}
+                      onChangePiso={setPiso}
+                      sector={sector}
+                      sectorOptions={SECTORES}
+                      onChangeSector={setSector}
+                      tipo={tipo}
+                      tipoOptions={TIPOS}
+                      onChangeTipo={setTipo}
+                      filtros={filtrosAvanzados}
+                      onChange={handleCambioFiltroAvanzado}
+                      onLimpiar={handleLimpiarFiltrosAvanzados}
+                    />
+
+                    <ViewToggle view={view} onChange={setView} />
+                  </div>
+
+                  {camasFiltradas.length === 0 ? (
+                    <div className="cb-empty-state">No se encontraron camas con estos filtros.</div>
+                  ) : (
+                    <div className="cb-body-wrap">
+                      {view === 'tabla' ? (
+                        <BedTable camas={camasFiltradas} onAction={handleCardAction} />
+                      ) : (
+                        <div className="cb-grid">
+                          {camasFiltradas.map((c) => (
+                            <BedCard key={c.id} cama={c} onAction={handleCardAction} etaTimestamp={limpiezaEta[c.id]} now={now} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="cb-board-footer">
+                    <LastUpdated status={updateStatus} lastUpdatedAt={lastUpdatedAt} now={now} onRefresh={handleRefresh} />
                   </div>
                 </div>
               </div>
 
-              <div className="card cb-board-card">
-                <div className="filter-bar">
-                  {/* Orden (encargo): búsqueda al extremo izquierdo, filtros +
-                      vista agrupados al extremo derecho. */}
-                  <div className="search-field">
-                    <LuSearch className="icon" />
-                    <input
-                      type="text"
-                      placeholder="Buscar cama, paciente, HC o admisión..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      aria-label="Buscar cama, paciente, historia clínica o admisión"
-                    />
-                  </div>
-
-                  <div className="filter-spacer" />
-
-                  {/* Estado — franja siempre visible en vez de dropdown
-                      (encargo: "chip-group segmented"), única fuente de
-                      `estado` (reemplaza también al viejo widget de 3 chips
-                      "Estados operativos", ya cubierto acá). */}
-                  <SegmentedFilterBar
-                    options={estadoOptions}
-                    value={estado}
-                    onChange={setEstado}
-                    ariaLabel="Filtrar camas por estado"
-                  />
-                  {/* Piso/Sector/Tipo se agrupan dentro de "Más filtros"
-                      (encargo) — MasFiltrosPopover los recibe como props
-                      propias, separados de `filtros`/`onChange` (esos
-                      siguen siendo solo los booleanos + habitación). */}
-                  <MasFiltrosPopover
-                    piso={piso}
-                    pisoOptions={PISOS}
-                    onChangePiso={setPiso}
-                    sector={sector}
-                    sectorOptions={SECTORES}
-                    onChangeSector={setSector}
-                    tipo={tipo}
-                    tipoOptions={TIPOS}
-                    onChangeTipo={setTipo}
-                    filtros={filtrosAvanzados}
-                    onChange={handleCambioFiltroAvanzado}
-                    onLimpiar={handleLimpiarFiltrosAvanzados}
-                  />
-
-                  <ViewToggle view={view} onChange={setView} />
-                </div>
-
-                {camasFiltradas.length === 0 ? (
-                  <div className="cb-empty-state">No se encontraron camas con estos filtros.</div>
-                ) : (
-                  <div className="cb-body-wrap">
-                    {view === 'tabla' ? (
-                      <BedTable camas={camasFiltradas} onAction={handleCardAction} />
-                    ) : (
-                      <div className="cb-grid">
-                        {camasFiltradas.map((c) => (
-                          <BedCard key={c.id} cama={c} onAction={handleCardAction} etaTimestamp={limpiezaEta[c.id]} now={now} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="cb-board-footer">
-                  <LastUpdated status={updateStatus} lastUpdatedAt={lastUpdatedAt} now={now} onRefresh={handleRefresh} />
-                </div>
-              </div>
+              <ActivityPanel eventos={activity} now={now} onVerTodo={() => setActivityDrawerOpen(true)} />
             </div>
-
-            <ActivityPanel eventos={activity} now={now} onVerTodo={() => setActivityDrawerOpen(true)} />
           </div>
         </div>
       </div>

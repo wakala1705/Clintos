@@ -1,0 +1,18 @@
+.cba-skeleton{display:flex;flex-direction:column;flex:1;overflow:hidden;}
+.cba-skeleton-row{
+  display:flex;align-items:center;gap:16px;
+  padding:12px 16px;border-bottom:1px solid #eef0f4;
+}
+.cba-skeleton-cell{flex:1;min-width:0;}
+.cba-skeleton-bar{
+  display:inline-block;height:11px;border-radius:6px;
+  background:var(--gray-bg);
+  animation:cba-skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cba-skeleton-pulse{
+  0%,100%{opacity:.55;}
+  50%{opacity:1;}
+}
+@media (prefers-reduced-motion: reduce){
+  .cba-skeleton-bar{animation:none;opacity:.75;}
+}

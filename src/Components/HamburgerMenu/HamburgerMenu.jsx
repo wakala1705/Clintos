@@ -33,6 +33,7 @@ const MENU = [
       { id: 'multas', label: 'Multas' },
       { divider: true },
       { id: 'gestion-consultorios', label: 'Gestión de consultorios' },
+      { id: 'gestion-camas', label: 'Gestión de camas', href: '/gestion-camas' },
       { id: 'cancelar-citas', label: 'Cancelar citas paciente' },
       { id: 'programacion-agendas', label: 'Programación Agendas' },
       { id: 'configuracion-turnos', label: 'Configuración de turnos', href: '/configuracion-turnos' },

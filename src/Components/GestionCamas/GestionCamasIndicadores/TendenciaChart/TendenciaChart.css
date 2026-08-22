@@ -1,0 +1,11 @@
+.cbin-trend{display:flex;flex-direction:column;flex:1;min-height:0;}
+.cbin-trend-svg{width:100%;height:160px;display:block;flex-shrink:0;}
+.cbin-trend-area{fill:var(--primary-50);stroke:none;}
+.cbin-trend-line{fill:none;stroke:var(--primary);stroke-width:2;}
+.cbin-trend-dot{fill:var(--primary);}
+.cbin-trend-meta-line{stroke:var(--amber);stroke-width:.6;stroke-dasharray:2.5 2;vector-effect:non-scaling-stroke;}
+.cbin-trend-meta-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--amber-fg);text-align:right;margin-top:2px;}
+.cbin-trend-labels{display:flex;justify-content:space-between;gap:4px;margin-top:10px;}
+.cbin-trend-label-item{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0;}
+.cbin-trend-label-value{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.cbin-trend-label-date{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}

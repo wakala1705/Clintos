@@ -7,11 +7,10 @@ import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
+import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfermeriaSidebar/GestionEnfermeriaSidebar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import AlertsPanel from './AlertsPanel/AlertsPanel';
-import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import {
   AREAS_OPERATIVAS, CAMAS_POR_AREA, DOSIS_PROGRAMADAS_HOY, ORDENES_PENDIENTES,
   PACIENTES_PISO, sectorDeCama,
@@ -78,61 +77,66 @@ export default function PanelGeneral() {
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content pg-content">
-          <div className="pg-header">
-            <div>
-              <h1>Panel General - Enfermería</h1>
-              <p>Resumen de actividad y estado del piso</p>
+        <div className="content ge-shell-content">
+          <GestionEnfermeriaSidebar />
+
+          <div className="ge-page-body">
+            <div className="pg-header">
+              <div>
+                <h1>Panel General - Enfermería</h1>
+                <p>Resumen de actividad y estado del piso</p>
+              </div>
             </div>
-            <div className="pg-header-actions">
-              <AreaSelector options={AREAS_OPERATIVAS} value={areaOperativa} onChange={setAreaOperativa} />
+
+            <div className="pg-kpi-row">
+              <KpiCard
+                icon={LuUsers}
+                label="Total pacientes"
+                value={kpis.total}
+                description="En piso"
+                variant="neutral"
+              />
+              <KpiCard
+                icon={LuHourglass}
+                label="Estancias prolongadas"
+                value={kpis.prolongadas}
+                description="> 7 días ingresados"
+                variant="warning"
+              />
+              <KpiCard
+                icon={LuPill}
+                label="Medicación"
+                value={DOSIS_PROGRAMADAS_HOY}
+                description="Dosis programadas hoy"
+                variant="warning"
+              />
+              <KpiCard
+                icon={LuClipboardList}
+                label="Órdenes médicas"
+                value={ORDENES_PENDIENTES}
+                description="Órdenes pendientes"
+                variant="warning"
+              />
+              <KpiCard
+                icon={LuBedDouble}
+                label="Ocupación"
+                value={`${kpis.ocupacionPct}%`}
+                description={`${kpis.total}/${camasTotales} camas ocupadas`}
+                variant="neutral"
+                progress={{ percent: kpis.ocupacionPct }}
+              />
             </div>
-          </div>
 
-          <GestionEnfermeriaNav />
-
-          <div className="pg-kpi-row">
-            <KpiCard
-              icon={LuUsers}
-              label="Total pacientes"
-              value={kpis.total}
-              description="En piso"
-              variant="neutral"
-            />
-            <KpiCard
-              icon={LuHourglass}
-              label="Estancias prolongadas"
-              value={kpis.prolongadas}
-              description="> 7 días ingresados"
-              variant="warning"
-            />
-            <KpiCard
-              icon={LuPill}
-              label="Medicación"
-              value={DOSIS_PROGRAMADAS_HOY}
-              description="Dosis programadas hoy"
-              variant="warning"
-            />
-            <KpiCard
-              icon={LuClipboardList}
-              label="Órdenes médicas"
-              value={ORDENES_PENDIENTES}
-              description="Órdenes pendientes"
-              variant="warning"
-            />
-            <KpiCard
-              icon={LuBedDouble}
-              label="Ocupación"
-              value={`${kpis.ocupacionPct}%`}
-              description={`${kpis.total}/${camasTotales} camas ocupadas`}
-              variant="neutral"
-              progress={{ percent: kpis.ocupacionPct }}
-            />
-          </div>
-
-          <div className="pg-main-row">
-            <PatientsPanel pacientes={pacientesFiltrados} onOpenAtencion={goToAtencion} />
-            <AlertsPanel />
+            <div className="pg-main-row">
+              <PatientsPanel
+                pacientes={pacientesFiltrados}
+                onOpenAtencion={goToAtencion}
+                areaOperativa={areaOperativa}
+                onAreaOperativaChange={setAreaOperativa}
+                areaOptions={AREAS_OPERATIVAS}
+              />
+              <AlertsPanel />
+            </div>
           </div>
         </div>
       </div>

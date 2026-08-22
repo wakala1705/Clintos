@@ -64,12 +64,34 @@ function BloqueContextual({ cama, etaTimestamp, now }) {
   return null;
 }
 
+// `onOpenDetail` es opcional (encargo: "al accionar la card, abrir el
+// detalle de la cama") — sin él la tarjeta se comporta exactamente igual
+// que antes (Gestión de Camas sigue abriendo su BedDetailModal solo desde
+// "Ver detalle" en el ⋯, sin tocar ese flujo). Con él, la tarjeta completa
+// se vuelve clickeable/enfocable; el CTA y el menú "⋯" cortan la
+// propagación del click para que seguir abriendo el detalle al presionarlos
+// no le "robe" el gesto a su propia acción.
 export default function BedCard({
-  cama, onAction, etaTimestamp, now,
+  cama, onAction, etaTimestamp, now, onOpenDetail,
 }) {
   const cta = CTA_PRINCIPAL[cama.estado];
+
+  function handleKeyDown(e) {
+    if (!onOpenDetail) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onOpenDetail(cama.id);
+    }
+  }
+
   return (
-    <div className={`cb-card cb-card-${cama.estado}`}>
+    <div
+      className={`cb-card cb-card-${cama.estado}${onOpenDetail ? ' cb-card-clickable' : ''}`}
+      role={onOpenDetail ? 'button' : undefined}
+      tabIndex={onOpenDetail ? 0 : undefined}
+      onClick={onOpenDetail ? () => onOpenDetail(cama.id) : undefined}
+      onKeyDown={handleKeyDown}
+    >
       <div className="cb-card-top">
         <span className="cb-card-numero">Cama {cama.numero}</span>
         <EstadoCamaBadge estado={cama.estado} />
@@ -77,7 +99,7 @@ export default function BedCard({
 
       <BloqueContextual cama={cama} etaTimestamp={etaTimestamp} now={now} />
 
-      <div className="cb-card-footer">
+      <div className="cb-card-footer" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="presentation">
         <button type="button" className="btn btn-secondary btn-sm cb-card-btn" onClick={() => onAction(cta.action, cama.id)}>
           {cta.label}
         </button>

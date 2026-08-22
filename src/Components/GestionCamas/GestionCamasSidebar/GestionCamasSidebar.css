@@ -1,0 +1,95 @@
+/* Tokens: ver ../GestionCamas.css (siempre cargado en la página, ambos
+   consumidores de este componente lo importan — ver GestionCamas.jsx/
+   GestionCamasResumen.jsx). Segundo nivel de navegación (encargo): vive
+   DENTRO de .content, a la izquierda del contenido de la página (el
+   breadcrumb/Topbar queda "global" por arriba de los dos, ver .cb-content/
+   .cbr-content) — a diferencia del sidebar global de íconos (Sidebar.jsx,
+   oscuro/var(--sidebar)), éste es un panel claro más (mismo lenguaje que
+   .card: --surface/--border), no una extensión visual del sidebar global.
+   height:100% (no 100vh): estira hasta el alto de .content, que ya excluye
+   la franja del Topbar arriba. */
+.cbs-sidebar{
+  width:232px;flex-shrink:0;height:100%;overflow-y:auto;overflow-x:hidden;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width .2s ease;
+}
+
+.cbs-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
+
+/* Label de sección sobre la lista (encargo: reemplaza al header propio del
+   sidebar, redundante con el nombre del módulo ya visible en el breadcrumb
+   del Topbar y el título de la página en el contenido) — mismo patrón visual
+   que un eyebrow/kicker: --fs-xs + uppercase + letter-spacing, sin fondo. */
+.cbs-nav-label-group{
+  padding:4px 12px 8px;flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+
+/* Fila completa clickeable (Link o button, mismo aspecto) — borde izquierdo
+   transparente en reposo (mismo ancho que el activo, ver .active más abajo)
+   para que el contenido no "salte" al activarse. */
+.cbs-nav-item{
+  position:relative;
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:10px 12px;border-radius:var(--radius);
+  border:none;border-left:3px solid transparent;background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+  text-align:left;text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.cbs-nav-icon{width:18px;height:18px;flex-shrink:0;}
+.cbs-nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+
+.cbs-nav-item:hover{background:var(--bg);color:var(--ink-900);}
+.cbs-nav-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+/* Activo: fondo + borde izquierdo en --primary (encargo explícito: "no solo
+   cambio de texto"), mismos tokens --interactive-selected-* que el resto
+   del proyecto usa para el estado "seleccionado" de un ítem (chips,
+   segmented control...), ver ../GestionCamas.css. */
+.cbs-nav-item.active{
+  background:var(--interactive-selected-bg);
+  border-left-color:var(--primary);
+  color:var(--interactive-selected-text);
+  font-weight:var(--fw-semibold);
+}
+.cbs-nav-item.active .cbs-nav-icon{color:var(--primary);}
+
+/* Badge/contador (encargo: cuenta de "Integridad", trasladado desde la card
+   de Resumen) — mismo par ámbar que .cbr-integrity-badge usaba antes
+   (advertencia/atención, no un contador neutro tipo notificación). */
+.cbs-nav-badge{
+  flex-shrink:0;min-width:20px;text-align:center;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--amber-fg);background:var(--amber-bg);
+  padding:1px 7px;border-radius:10px;
+}
+
+/* Tooltip (solo visible colapsado, ver @media abajo) — mismo patrón que
+   .tooltip-wrap/.tooltip-bubble en ArticulosModal.css (SolicitudConsumo):
+   burbuja oscura fija, no theme-aware a propósito (mismo criterio que ese
+   componente, para no introducir un segundo lenguaje de tooltip). */
+.cbs-tooltip{
+  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;
+  pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20);
+}
+
+/* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
+   colapsa a solo-ícono — mismo umbral que el auto-colapso del sidebar
+   global (SIDEBAR_AUTO_BREAKPOINT en legacy-shell-chrome.js) y mismo ancho
+   64px, para que ambos rieles se lean como una sola transición coherente
+   en vez de 2 anchos distintos. El label se oculta, el ícono queda
+   centrado, y el tooltip (oculto en desktop, ver .cbs-tooltip arriba) se
+   activa en hover/foco para no perder legibilidad. */
+@media (max-width:1024px){
+  .cbs-sidebar{width:64px;}
+  .cbs-nav-label-group{display:none;}
+  .cbs-nav-item{justify-content:center;padding:10px 0;}
+  .cbs-nav-label,
+  .cbs-nav-badge{display:none;}
+  .cbs-nav-item:hover .cbs-tooltip,
+  .cbs-nav-item:focus-visible .cbs-tooltip{display:block;}
+}

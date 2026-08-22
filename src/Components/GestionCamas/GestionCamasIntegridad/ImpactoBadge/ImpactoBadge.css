@@ -1,0 +1,8 @@
+.cbi-impacto-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.cbi-impacto-badge .icon{width:13px;height:13px;}
+.cbi-impacto-red{background:var(--red-bg);color:var(--red);}
+.cbi-impacto-orange{background:var(--amber-bg);color:var(--amber-fg);}
+.cbi-impacto-blue{background:var(--blue-bg);color:var(--blue-fg);}

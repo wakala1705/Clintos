@@ -1,0 +1,10 @@
+.cbin-tooltip-wrap{position:relative;display:inline-flex;flex-shrink:0;}
+.cbin-tooltip-icon{width:14px;height:14px;color:var(--ink-400);cursor:help;}
+.cbin-tooltip-bubble{
+  display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);
+  width:220px;background:var(--ink-900);color:#fff;border-radius:8px;padding:8px 10px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.4;white-space:normal;
+  pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20);
+}
+.cbin-tooltip-wrap:hover .cbin-tooltip-bubble,
+.cbin-tooltip-wrap:focus-visible .cbin-tooltip-bubble{display:block;}

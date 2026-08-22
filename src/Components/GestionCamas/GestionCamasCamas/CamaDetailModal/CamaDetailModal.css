@@ -1,0 +1,37 @@
+/* .modal-overlay/.modal-card: ver ../../GestionCamas.css */
+.cba-detail-modal-card{width:520px;}
+.cba-detail-body{display:flex;flex-direction:column;gap:4px;}
+
+.cba-detail-estado{display:flex;align-items:center;justify-content:space-between;padding:2px 0 8px;}
+.cba-detail-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+
+.cba-detail-divider{height:1px;background:var(--border);margin:12px 0;}
+
+.cba-detail-section-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:10px;}
+
+.cba-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+.cba-detail-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.cba-detail-field-wide{grid-column:1 / -1;}
+.cba-detail-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+.cba-detail-historial{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:2px;}
+.cba-detail-historial-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;}
+.cba-detail-historial-item + .cba-detail-historial-item{border-top:1px solid #eef0f4;}
+.cba-detail-historial-icon{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;margin-top:1px;
+  background:var(--gray-bg);color:var(--gray-fg);
+  display:flex;align-items:center;justify-content:center;
+}
+.cba-detail-historial-icon .icon{width:14px;height:14px;}
+.cba-detail-historial-body{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.cba-detail-historial-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cba-detail-historial-meta{font-size:var(--fs-xs);color:var(--ink-500);}
+.cba-detail-historial-motivo{font-size:var(--fs-sm);color:var(--ink-700);margin-top:2px;}
+
+.cba-link-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  background:none;border:none;font-family:inherit;padding:2px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);cursor:pointer;
+}
+.cba-link-btn:hover{text-decoration:underline;}
+.cba-link-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}

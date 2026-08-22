@@ -6,7 +6,7 @@ import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
+import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfermeriaSidebar/GestionEnfermeriaSidebar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import TaskSummaryCard from './TaskSummaryCard/TaskSummaryCard';
 import TaskListPanel from './TaskListPanel/TaskListPanel';
@@ -167,64 +167,66 @@ export default function TareasEnfermeria() {
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content tk-content">
-          <div className="tk-header">
-            <div>
-              <h1>Tareas de enfermería</h1>
-              <p>Organiza y registra las actividades asistenciales y operativas del turno.</p>
+        <div className="content ge-shell-content">
+          <GestionEnfermeriaSidebar />
+
+          <div className="ge-page-body">
+            <div className="tk-header">
+              <div>
+                <h1>Tareas de enfermería</h1>
+                <p>Organiza y registra las actividades asistenciales y operativas del turno.</p>
+              </div>
+              <div className="tk-header-actions">
+                <span className="tk-turno-indicator">
+                  <LuClock className="icon" aria-hidden="true" />
+                  {TURNO_ACTUAL.label} · {TURNO_ACTUAL.rango}
+                </span>
+                <AreaSelector
+                  options={AREAS_OPERATIVAS.filter((a) => a.value !== 'todo')}
+                  value={areaOperativa}
+                  onChange={setAreaOperativa}
+                />
+                <button type="button" className="btn btn-primary" onClick={() => setShowNewTaskModal(true)}>
+                  <LuCalendarPlus className="icon" />
+                  Nueva tarea
+                </button>
+              </div>
             </div>
-            <div className="tk-header-actions">
-              <span className="tk-turno-indicator">
-                <LuClock className="icon" aria-hidden="true" />
-                {TURNO_ACTUAL.label} · {TURNO_ACTUAL.rango}
-              </span>
-              <AreaSelector
-                options={AREAS_OPERATIVAS.filter((a) => a.value !== 'todo')}
-                value={areaOperativa}
-                onChange={setAreaOperativa}
-              />
-              <button type="button" className="btn btn-primary" onClick={() => setShowNewTaskModal(true)}>
-                <LuCalendarPlus className="icon" />
-                Nueva tarea
-              </button>
+
+            <div className="tk-summary-row">
+              {KPIS.map((k) => (
+                <TaskSummaryCard
+                  key={k.key}
+                  icon={k.icon}
+                  label={k.label}
+                  value={kpiCounts[k.key]}
+                  sublabel={k.key === 'pendientes' && kpiCounts.vencidas > 0 ? `${kpiCounts.vencidas} vencidas` : null}
+                  tono={k.tono}
+                  secondary={k.key === 'completadas'}
+                  active={kpiFiltro === k.key}
+                  onClick={() => setKpiFiltro((f) => (f === k.key ? null : k.key))}
+                />
+              ))}
             </div>
+
+            {tareasTurnoAnterior.length > 0 && (
+              <ShiftChangeBanner tareas={tareasTurnoAnterior} onAsumir={handleAsumir} />
+            )}
+
+            <TaskListPanel
+              tareas={tareasParaLista}
+              areaSeleccionada={areaOperativa}
+              selectedId={selectedTaskId}
+              onSelect={setSelectedTaskId}
+              onIniciar={handleIniciar}
+              onCompletar={handleCompletar}
+              onAsignarRapido={handleAsignarRapido}
+              onReasignar={(id) => setReassignTarget(tareas.find((t) => t.id === id))}
+              onReprogramar={(id) => setRescheduleTarget(tareas.find((t) => t.id === id))}
+              onNoRealizada={handleNoRealizada}
+              onCancelar={handleCancelar}
+            />
           </div>
-
-          <GestionEnfermeriaNav />
-
-          <div className="tk-summary-row">
-            {KPIS.map((k) => (
-              <TaskSummaryCard
-                key={k.key}
-                icon={k.icon}
-                label={k.label}
-                value={kpiCounts[k.key]}
-                sublabel={k.key === 'pendientes' && kpiCounts.vencidas > 0 ? `${kpiCounts.vencidas} vencidas` : null}
-                tono={k.tono}
-                secondary={k.key === 'completadas'}
-                active={kpiFiltro === k.key}
-                onClick={() => setKpiFiltro((f) => (f === k.key ? null : k.key))}
-              />
-            ))}
-          </div>
-
-          {tareasTurnoAnterior.length > 0 && (
-            <ShiftChangeBanner tareas={tareasTurnoAnterior} onAsumir={handleAsumir} />
-          )}
-
-          <TaskListPanel
-            tareas={tareasParaLista}
-            areaSeleccionada={areaOperativa}
-            selectedId={selectedTaskId}
-            onSelect={setSelectedTaskId}
-            onIniciar={handleIniciar}
-            onCompletar={handleCompletar}
-            onAsignarRapido={handleAsignarRapido}
-            onReasignar={(id) => setReassignTarget(tareas.find((t) => t.id === id))}
-            onReprogramar={(id) => setRescheduleTarget(tareas.find((t) => t.id === id))}
-            onNoRealizada={handleNoRealizada}
-            onCancelar={handleCancelar}
-          />
         </div>
       </div>
 

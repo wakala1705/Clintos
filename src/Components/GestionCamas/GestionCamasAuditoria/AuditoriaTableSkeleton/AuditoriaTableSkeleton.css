@@ -1,0 +1,18 @@
+.cbau-skeleton{display:flex;flex-direction:column;flex:1;overflow:hidden;}
+.cbau-skeleton-row{
+  display:flex;align-items:center;gap:16px;
+  padding:12px 16px;border-bottom:1px solid #eef0f4;
+}
+.cbau-skeleton-cell{flex:1;min-width:0;}
+.cbau-skeleton-bar{
+  display:inline-block;height:11px;border-radius:6px;
+  background:var(--gray-bg);
+  animation:cbau-skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cbau-skeleton-pulse{
+  0%,100%{opacity:.55;}
+  50%{opacity:1;}
+}
+@media (prefers-reduced-motion: reduce){
+  .cbau-skeleton-bar{animation:none;opacity:.75;}
+}

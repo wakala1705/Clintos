@@ -9,7 +9,6 @@ import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
 import {
   LuActivity,
   LuBed,
-  LuBedDouble,
   LuCalendarClock,
   LuCalendarDays,
   LuCalendarPlus,
@@ -99,13 +98,6 @@ const MODULE_GROUPS = [
         description: 'Cronograma de medicamentos, órdenes médicas y pedidos.',
         icon: LuHeartPulse,
         href: '/gestion-enfermeria',
-        enabled: true,
-      },
-      {
-        title: 'Gestión de camas',
-        description: 'Estado en tiempo real de las camas del hospital.',
-        icon: LuBedDouble,
-        href: '/gestion-camas',
         enabled: true,
       },
       {

@@ -1,0 +1,13 @@
+.cbin-empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:56px 24px;text-align:center;flex:1;
+}
+.cbin-empty-icon{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--gray-bg);color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;margin-bottom:4px;
+}
+.cbin-empty-icon .icon{width:24px;height:24px;}
+.cbin-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);max-width:400px;}
+.cbin-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:420px;line-height:1.5;}
+.cbin-empty-cta{margin-top:8px;}

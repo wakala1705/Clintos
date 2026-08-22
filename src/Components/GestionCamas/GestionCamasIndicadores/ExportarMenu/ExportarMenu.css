@@ -1,0 +1,16 @@
+.cbin-export-wrap{position:relative;flex-shrink:0;}
+.cbin-export-chev{width:14px;height:14px;color:var(--ink-400);margin-left:-2px;transition:transform .15s ease;}
+.cbin-export-chev.open{transform:rotate(180deg);}
+.cbin-export-dropdown{
+  position:absolute;top:calc(100% + 6px);right:0;min-width:200px;z-index:var(--z-popover);
+  background:var(--surface);border-radius:var(--radius-lg);
+  box-shadow:0 10px 28px rgba(16,24,39,.16);padding:6px;
+}
+.cbin-export-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:9px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.cbin-export-item .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.cbin-export-item:hover{background:var(--bg);}
+.cbin-export-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

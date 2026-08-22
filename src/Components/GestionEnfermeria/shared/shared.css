@@ -178,6 +178,22 @@ body{
   display:flex;flex-direction:column;flex:1;min-height:0;
 }
 
+/* ---------- Segundo nivel de navegación: sidebar interno de módulo ----------
+   Reemplaza a GestionEnfermeriaNav (franja horizontal de tabs) — mismo
+   patrón que GestionCamasSidebar (ver AGENTS.md), pero compartido acá porque
+   las 4 rutas de este feature (Panel general/Pacientes/Turnos/Tareas) lo
+   montan, no solo una. El sidebar (GestionEnfermeriaSidebar) vive DENTRO de
+   .content (encargo: breadcrumb/Topbar quedan "globales", por arriba de
+   sidebar + contenido) — .ge-shell-content pasa .content de columna a fila
+   sin su padding/gap propios, y .ge-page-body retoma ese rol (padding/
+   columna/scroll) para el resto de cada pantalla. */
+.ge-shell-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.ge-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:16px;overflow-y:hidden;
+}
+
 /* ---------- Resumen de dosis + selección de lote + checklist de 5 correctos ----------
    Antes vivían solo en AdminModal.css ("estilos exclusivos"), pero
    MultiAdminModal ahora repite exactamente el mismo resumen/tabla de

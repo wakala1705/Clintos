@@ -6,7 +6,7 @@ import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import GestionEnfermeriaNav from '@/Components/GestionEnfermeria/GestionEnfermeriaNav/GestionEnfermeriaNav';
+import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfermeriaSidebar/GestionEnfermeriaSidebar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import TurnosCalendar from './TurnosCalendar/TurnosCalendar';
@@ -34,7 +34,7 @@ const ESTADO_OPTIONS = [
 ];
 
 // Sección "Turnos" de la navegación interna de Gestión de Enfermería (ver
-// GestionEnfermeriaNav) — programación semanal enfermera x día (encargo
+// GestionEnfermeriaSidebar) — programación semanal enfermera x día (encargo
 // explícito, ver mockTurnosData.js). "Tipo de turno"/"Estado" filtran a
 // nivel de ENFERMERA (fila completa), no de celda individual: ocultar solo
 // algunas celdas de una fila rompería la lectura semanal de esa persona, así
@@ -227,123 +227,125 @@ export default function TurnosEnfermeria() {
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content tu-content">
-          <div className="tu-header">
-            <div>
-              <h1>Programación de turnos</h1>
-              <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
-            </div>
-            <div className="tu-header-actions">
-              <AreaSelector label="Área operativa" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
-              <button type="button" className="date-picker-btn" onClick={() => window.ncToast?.('Vista mensual en desarrollo.')}>
-                <LuCalendarRange className="icon" />
-                Semana
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handleOpenAsignarHeader}>
-                <LuPlus className="icon" />
-                Asignar turno
-              </button>
-            </div>
-          </div>
+        <div className="content ge-shell-content">
+          <GestionEnfermeriaSidebar />
 
-          <GestionEnfermeriaNav />
-
-          <div className="card tu-calendar-card">
-            <div className="tu-calendar-header">
-              <div className="day-nav">
-                <button type="button" className="day-nav-btn" aria-label="Semana anterior" onClick={() => setWeekStart((w) => addDias(w, -7))}>
-                  <LuChevronLeft className="icon" />
-                </button>
-                <span className="day-nav-label">{rangeLabel}</span>
-                <button type="button" className="day-nav-btn" aria-label="Semana siguiente" onClick={() => setWeekStart((w) => addDias(w, 7))}>
-                  <LuChevronRight className="icon" />
-                </button>
-                <button type="button" className="day-nav-today-btn" onClick={() => setWeekStart(SEMANA_ANCLA)}>Hoy</button>
+          <div className="ge-page-body">
+            <div className="tu-header">
+              <div>
+                <h1>Programación de turnos</h1>
+                <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
               </div>
+              <div className="tu-header-actions">
+                <AreaSelector label="Área operativa" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
+                <button type="button" className="date-picker-btn" onClick={() => window.ncToast?.('Vista mensual en desarrollo.')}>
+                  <LuCalendarRange className="icon" />
+                  Semana
+                </button>
+                <button type="button" className="btn btn-primary" onClick={handleOpenAsignarHeader}>
+                  <LuPlus className="icon" />
+                  Asignar turno
+                </button>
+              </div>
+            </div>
 
-              <div className="filter-spacer" />
+            <div className="card tu-calendar-card">
+              <div className="tu-calendar-header">
+                <div className="day-nav">
+                  <button type="button" className="day-nav-btn" aria-label="Semana anterior" onClick={() => setWeekStart((w) => addDias(w, -7))}>
+                    <LuChevronLeft className="icon" />
+                  </button>
+                  <span className="day-nav-label">{rangeLabel}</span>
+                  <button type="button" className="day-nav-btn" aria-label="Semana siguiente" onClick={() => setWeekStart((w) => addDias(w, 7))}>
+                    <LuChevronRight className="icon" />
+                  </button>
+                  <button type="button" className="day-nav-today-btn" onClick={() => setWeekStart(SEMANA_ANCLA)}>Hoy</button>
+                </div>
 
-              <div className="tu-filters">
-                <FilterDropdown label="Tipo de turno" options={TIPO_OPTIONS} value={tipoFiltro} onChange={setTipoFiltro} />
-                <FilterDropdown label="Estado" options={ESTADO_OPTIONS} value={estadoFiltro} onChange={setEstadoFiltro} />
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar enfermera..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar enfermera"
-                  />
+                <div className="filter-spacer" />
+
+                <div className="tu-filters">
+                  <FilterDropdown label="Tipo de turno" options={TIPO_OPTIONS} value={tipoFiltro} onChange={setTipoFiltro} />
+                  <FilterDropdown label="Estado" options={ESTADO_OPTIONS} value={estadoFiltro} onChange={setEstadoFiltro} />
+                  <div className="search-field">
+                    <LuSearch className="icon" />
+                    <input
+                      type="text"
+                      placeholder="Buscar enfermera..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      aria-label="Buscar enfermera"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <TurnosCalendar
-              nurses={nurses}
-              days={days}
-              schedule={schedule}
-              selectedCell={selectedCell}
-              onOpenPopover={handleOpenPopover}
-              onClosePopover={handleClosePopover}
-              onOpenAsignar={handleOpenAsignar}
-              onEditar={handleEditar}
-              onReasignar={handleReasignar}
-              onEliminar={handleEliminar}
-              onResolverConflicto={handleResolverConflicto}
-              onEditarDescanso={handleEditarDescanso}
-            />
+              <TurnosCalendar
+                nurses={nurses}
+                days={days}
+                schedule={schedule}
+                selectedCell={selectedCell}
+                onOpenPopover={handleOpenPopover}
+                onClosePopover={handleClosePopover}
+                onOpenAsignar={handleOpenAsignar}
+                onEditar={handleEditar}
+                onReasignar={handleReasignar}
+                onEliminar={handleEliminar}
+                onResolverConflicto={handleResolverConflicto}
+                onEditarDescanso={handleEditarDescanso}
+              />
 
-            <div className="tu-summary" aria-label="Resumen de la programación">
-              <div className="tu-summary-group">
-                <span className="tu-summary-item">
-                  <LuUsers className="icon" aria-hidden="true" />
-                  {resumen.enfermeras} enfermeras
-                </span>
-                <span className="tu-summary-dot" aria-hidden="true">·</span>
-                <span className="tu-summary-item">
-                  <LuClipboardCheck className="icon" aria-hidden="true" />
-                  {resumen.turnos} turnos programados
-                </span>
+              <div className="tu-summary" aria-label="Resumen de la programación">
+                <div className="tu-summary-group">
+                  <span className="tu-summary-item">
+                    <LuUsers className="icon" aria-hidden="true" />
+                    {resumen.enfermeras} enfermeras
+                  </span>
+                  <span className="tu-summary-dot" aria-hidden="true">·</span>
+                  <span className="tu-summary-item">
+                    <LuClipboardCheck className="icon" aria-hidden="true" />
+                    {resumen.turnos} turnos programados
+                  </span>
+                </div>
+
+                {(resumen.sinAsignar > 0 || resumen.conflictos > 0) && (
+                  <>
+                    <span className="tu-summary-divider" aria-hidden="true" />
+                    <div className="tu-summary-group">
+                      {resumen.sinAsignar > 0 && (
+                        <button
+                          type="button"
+                          className={`tu-summary-item warn tu-summary-clickable${estadoFiltro === 'sin-asignar' ? ' active' : ''}`}
+                          aria-pressed={estadoFiltro === 'sin-asignar'}
+                          onClick={() => setEstadoFiltro((f) => (f === 'sin-asignar' ? 'todos' : 'sin-asignar'))}
+                        >
+                          <LuUserRoundX className="icon" aria-hidden="true" />
+                          {resumen.sinAsignar} sin asignar
+                        </button>
+                      )}
+                      {resumen.sinAsignar > 0 && resumen.conflictos > 0 && (
+                        <span className="tu-summary-dot" aria-hidden="true">·</span>
+                      )}
+                      {resumen.conflictos > 0 && (
+                        <button
+                          type="button"
+                          className={`tu-summary-item danger tu-summary-clickable${estadoFiltro === 'con-conflicto' ? ' active' : ''}`}
+                          aria-pressed={estadoFiltro === 'con-conflicto'}
+                          onClick={() => setEstadoFiltro((f) => (f === 'con-conflicto' ? 'todos' : 'con-conflicto'))}
+                        >
+                          <LuTriangleAlert className="icon" aria-hidden="true" />
+                          {resumen.conflictos} {resumen.conflictos === 1 ? 'conflicto' : 'conflictos'}
+                        </button>
+                      )}
+                      {estadoFiltro === 'sin-asignar' || estadoFiltro === 'con-conflicto' ? (
+                        <button type="button" className="tu-summary-reset" onClick={() => setEstadoFiltro('todos')}>
+                          Ver todos
+                        </button>
+                      ) : null}
+                    </div>
+                  </>
+                )}
               </div>
-
-              {(resumen.sinAsignar > 0 || resumen.conflictos > 0) && (
-                <>
-                  <span className="tu-summary-divider" aria-hidden="true" />
-                  <div className="tu-summary-group">
-                    {resumen.sinAsignar > 0 && (
-                      <button
-                        type="button"
-                        className={`tu-summary-item warn tu-summary-clickable${estadoFiltro === 'sin-asignar' ? ' active' : ''}`}
-                        aria-pressed={estadoFiltro === 'sin-asignar'}
-                        onClick={() => setEstadoFiltro((f) => (f === 'sin-asignar' ? 'todos' : 'sin-asignar'))}
-                      >
-                        <LuUserRoundX className="icon" aria-hidden="true" />
-                        {resumen.sinAsignar} sin asignar
-                      </button>
-                    )}
-                    {resumen.sinAsignar > 0 && resumen.conflictos > 0 && (
-                      <span className="tu-summary-dot" aria-hidden="true">·</span>
-                    )}
-                    {resumen.conflictos > 0 && (
-                      <button
-                        type="button"
-                        className={`tu-summary-item danger tu-summary-clickable${estadoFiltro === 'con-conflicto' ? ' active' : ''}`}
-                        aria-pressed={estadoFiltro === 'con-conflicto'}
-                        onClick={() => setEstadoFiltro((f) => (f === 'con-conflicto' ? 'todos' : 'con-conflicto'))}
-                      >
-                        <LuTriangleAlert className="icon" aria-hidden="true" />
-                        {resumen.conflictos} {resumen.conflictos === 1 ? 'conflicto' : 'conflictos'}
-                      </button>
-                    )}
-                    {estadoFiltro === 'sin-asignar' || estadoFiltro === 'con-conflicto' ? (
-                      <button type="button" className="tu-summary-reset" onClick={() => setEstadoFiltro('todos')}>
-                        Ver todos
-                      </button>
-                    ) : null}
-                  </div>
-                </>
-              )}
             </div>
           </div>
         </div>

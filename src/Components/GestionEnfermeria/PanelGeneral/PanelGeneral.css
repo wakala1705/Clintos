@@ -2,15 +2,9 @@
    ../../shared/shared.css (shared del feature) — acá solo el layout propio
    de este dashboard. */
 
-.pg-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.pg-header{flex-shrink:0;}
 .pg-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pg-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
-
-/* "Turnos"/"Tareas" vivían acá como botones sueltos — ahora son 2 de las 4
-   pestañas de GestionEnfermeriaNav (ver ese componente, montado debajo de
-   .pg-header), así que el header solo conserva el selector "Área
-   operativa". */
-.pg-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
 .pg-kpi-row{
   display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex-shrink:0;

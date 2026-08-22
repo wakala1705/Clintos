@@ -15,6 +15,10 @@
   background:var(--surface);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
+/* Tarjetas cerca del borde inferior del contenedor con scroll (ver
+   getScrollParent en BedActionsMenu.jsx) — el dropdown se abre hacia arriba
+   en vez de desbordar y agrandar el scroll con espacio en blanco extra. */
+.cb-actions-menu-dropdown.menu-up{top:auto;bottom:calc(100% + 4px);}
 .cb-actions-menu-item{
   display:flex;align-items:center;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;

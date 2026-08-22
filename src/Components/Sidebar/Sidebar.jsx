@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import './Sidebar.css';
 import {
   LuBed,
-  LuBedDouble,
   LuBox,
   LuCalendarClock,
   LuCalendarDays,
@@ -53,9 +52,8 @@ export default function Sidebar() {
   const isVacunacion = pathname === '/vacunacion';
   const isPyms = isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
-  const isGestionCamas = pathname.startsWith('/gestion-camas');
   const isAdmisiones = pathname === '/admisiones';
-  const isHospitalizacion = isGestionEnfermeria || isGestionCamas || isAdmisiones;
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones;
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -127,7 +125,6 @@ export default function Sidebar() {
               </div>
               <div className="nav-body">
                 <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
-                <Link href="/gestion-camas" className={`nav-subitem${isGestionCamas ? ' active' : ''}`}><LuBedDouble className="icon" />Gestión de Camas</Link>
                 <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
               </div>
             </div>

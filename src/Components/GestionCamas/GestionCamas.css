@@ -201,13 +201,13 @@ html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#33
 }
 .chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
 .chip-group.segmented .chip-filter.active{
-  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  background:var(--surface);color:var(--ink-900);
   box-shadow:0 1px 2px rgba(16,24,39,.10);
 }
 .chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
 html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
 html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
-html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;}
 
 .filter-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-right:2px;}
 .filter-spacer{flex:1;}
@@ -366,6 +366,20 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 
 /* ---------- Layout propio de este dashboard ---------- */
 
+/* El sidebar del módulo (GestionCamasSidebar) vive DENTRO de .content
+   (encargo explícito: el breadcrumb/Topbar queda "global", por arriba de
+   sidebar + contenido, en vez de arrancar recién al lado del contenido) —
+   .content pasa de columna a fila, y .cb-page-body retoma el rol que
+   .content tenía antes (padding/columna/scroll) para el resto de la
+   pantalla. Sin padding propio ni gap acá: el sidebar necesita quedar a
+   ras contra el borde de .content, no con el padding:16px de .content. */
+.cb-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.cb-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:16px;overflow-y:hidden;
+}
+
 .cb-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
 .cb-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cb-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
@@ -420,4 +434,11 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 
 @media (max-width:1280px){
   .cb-kpi-group-primary .cb-kpi-group-cards{grid-template-columns:repeat(2,1fr);}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
 }

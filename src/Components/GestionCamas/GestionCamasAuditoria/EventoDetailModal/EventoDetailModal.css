@@ -1,0 +1,41 @@
+.cbau-detail-modal-card{width:540px;}
+.cbau-detail-body{display:flex;flex-direction:column;gap:4px;}
+
+.cbau-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+.cbau-detail-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.cbau-detail-field-wide{grid-column:1 / -1;}
+.cbau-detail-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.cbau-detail-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.45;}
+
+.cbau-detail-divider{height:1px;background:var(--border);margin:14px 0 12px;}
+.cbau-detail-section-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:10px;display:block;}
+
+/* Un solo campo modificado (encargo, sección 10) — 2 píldoras + flecha, más
+   legible que una tabla de 1 fila. */
+.cbau-valor-simple{display:flex;align-items:center;gap:14px;}
+.cbau-valor-col{display:flex;flex-direction:column;gap:4px;}
+.cbau-valor-arrow{color:var(--ink-400);font-size:var(--fs-lg);margin-top:16px;}
+.cbau-valor-pill{
+  display:inline-flex;align-items:center;font-size:var(--fs-base);font-weight:var(--fw-semibold);
+  padding:5px 12px;border-radius:20px;white-space:nowrap;
+}
+.cbau-valor-antes{background:var(--gray-bg);color:var(--gray-fg);}
+.cbau-valor-despues{background:var(--primary-50);color:var(--primary-dark);}
+
+/* Varios campos modificados (encargo, sección 10) — tabla Campo/Antes/
+   Después, mismo lenguaje que .data-table pero compacta dentro del modal. */
+.cbau-valores-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.cbau-valores-table th{
+  text-align:left;padding:6px 8px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+}
+.cbau-valores-table td{padding:8px;border-bottom:1px solid #eef0f4;color:var(--ink-900);}
+.cbau-valores-table tr:last-child td{border-bottom:none;}
+.cbau-valores-table-arrow{color:var(--ink-400);width:20px;text-align:center;}
+
+.cbau-info-adicional{display:flex;align-items:flex-start;gap:10px;}
+.cbau-info-adicional .icon{width:16px;height:16px;color:var(--ink-500);margin-top:2px;flex-shrink:0;}
+.cbau-info-adicional-body{display:flex;flex-direction:column;gap:3px;font-size:var(--fs-sm);color:var(--ink-700);}
+
+.cbau-id-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.cbau-id-value{display:block;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);font-family:ui-monospace,monospace;margin-top:2px;}

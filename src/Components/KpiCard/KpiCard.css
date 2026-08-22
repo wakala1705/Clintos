@@ -10,6 +10,8 @@
 .pg-kpi-icon .icon{width:18px;height:18px;}
 .pg-kpi-neutral .pg-kpi-icon{background:var(--primary-50);color:var(--primary);}
 .pg-kpi-warning .pg-kpi-icon{background:var(--amber-bg);color:var(--amber-fg);}
+.pg-kpi-danger .pg-kpi-icon{background:var(--red-bg);color:var(--red);}
+.pg-kpi-info .pg-kpi-icon{background:var(--blue-bg);color:var(--blue-fg);}
 
 .pg-kpi-label{
   font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;

@@ -1,6 +1,5 @@
 /* .app/.main/.content/.card (shell base) viven en ../shared/shared.css —
    acá solo el layout propio de esta página. */
-.pe-content{display:flex;flex-direction:column;gap:16px;}
 .pe-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pe-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 

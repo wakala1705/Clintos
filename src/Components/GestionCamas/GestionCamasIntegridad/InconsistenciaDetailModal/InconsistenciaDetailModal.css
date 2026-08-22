@@ -1,0 +1,15 @@
+.cbi-detail-modal-card{width:520px;}
+.cbi-detail-body{display:flex;flex-direction:column;gap:16px;}
+.cbi-detail-badges{display:flex;align-items:center;gap:8px;}
+
+.cbi-detail-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.cbi-detail-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.cbi-detail-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.45;}
+
+.cbi-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+
+.cbi-detail-resolucion{
+  display:flex;flex-direction:column;gap:3px;padding:12px;
+  background:var(--bg);border-radius:var(--radius);
+}
+.cbi-detail-motivo{font-size:var(--fs-sm);color:var(--ink-700);margin-top:2px;}

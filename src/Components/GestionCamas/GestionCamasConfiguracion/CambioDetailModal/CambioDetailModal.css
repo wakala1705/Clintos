@@ -1,0 +1,14 @@
+.cbc-cd-field{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;}
+.cbc-cd-field:last-child{margin-bottom:0;}
+.cbc-cd-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.cbc-cd-value{font-size:var(--fs-base);color:var(--ink-900);}
+
+.cbc-cd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+
+.cbc-cd-compare{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.cbc-cd-pill{
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+  background:var(--gray-bg);padding:4px 10px;border-radius:8px;
+}
+.cbc-cd-pill.after{color:var(--primary-dark);background:var(--primary-50);}
+.cbc-cd-compare .icon{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}

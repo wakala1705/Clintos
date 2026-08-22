@@ -1,0 +1,64 @@
+/* Tokens/shell/.btn/.filter-bar/.search-field/.data-table/.form-field/etc:
+   ver ../GestionCamas.css (importado también acá) — esta hoja solo trae el
+   layout propio de "Integridad", mismo criterio que GestionCamasCamas.css
+   (prefijo .cbi-) para su propia pantalla. */
+
+/* Selector compuesto (.content.cbi-content), no solo .cbi-content: esta
+   regla pisa a .content (definida en ../GestionCamas.css, otro archivo) y su
+   prioridad NO puede depender del orden de import/inyección de <style> —
+   ver el mismo comentario en GestionCamasCamas.css/GestionCamasResumen.css
+   (bug real observado: navegación client-side entre estas rutas reordena
+   qué <style> se inyectó último, rompiendo el layout si se depende de eso). */
+.content.cbi-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.cbi-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:16px;overflow-y:auto;
+}
+
+.cbi-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+.cbi-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbi-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.cbi-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+.cbi-spin{animation:cbi-spin-anim 1s linear infinite;}
+@keyframes cbi-spin-anim{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.cbi-spin{animation:none;}}
+
+/* Banner de proceso (encargo, sección 12: "Verificando integridad de
+   camas...") — franja informativa temporal, no un overlay bloqueante: el
+   admin puede seguir viendo la tabla mientras corre. */
+.cbi-verificando-banner{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  padding:10px 14px;border-radius:var(--radius);
+  background:var(--primary-50);color:var(--primary-dark);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+}
+.cbi-verificando-banner .icon{width:15px;height:15px;}
+
+/* Resumen superior (encargo, sección 4): contexto rápido, no un dashboard —
+   5 tarjetas fijas (4 conteos + última verificación), sin gráficos. */
+.cbi-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex-shrink:0;}
+
+.cbi-table-card{flex:1;min-height:0;}
+
+.cbi-tipo-cell{width:1%;white-space:nowrap;}
+.cbi-acciones-cell{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+
+@media (max-width:1440px){
+  .cbi-kpi-row{grid-template-columns:repeat(3,1fr);}
+}
+@media (max-width:1024px){
+  .cbi-kpi-row{grid-template-columns:repeat(2,1fr);}
+  .cbi-header-actions{width:100%;}
+}
+
+.cbi-toast{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);
+  display:flex;align-items:center;gap:8px;
+  background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium);
+  padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:var(--z-modal);
+}
+.cbi-toast.show{opacity:1;transform:translate(-50%,0);}
+.cbi-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}

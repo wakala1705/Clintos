@@ -1,0 +1,29 @@
+.cbc-imp-drop{
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+  border:1px dashed var(--border);border-radius:var(--radius-lg);padding:28px 20px;
+}
+.cbc-imp-drop .icon{width:26px;height:26px;color:var(--ink-500);}
+.cbc-imp-hint{font-size:var(--fs-sm);color:var(--ink-500);}
+.cbc-imp-filename{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbc-imp-formato{font-size:var(--fs-xs);color:var(--ink-400);margin-top:2px;}
+
+.cbc-imp-validating{
+  display:flex;flex-direction:column;align-items:center;gap:12px;padding:32px 20px;text-align:center;
+  color:var(--ink-700);font-size:var(--fs-base);
+}
+.cbc-imp-validating .icon{width:24px;height:24px;color:var(--primary);}
+
+.cbc-imp-summary{
+  display:flex;gap:16px;padding:14px 16px;border-radius:var(--radius);background:var(--bg);margin-bottom:14px;
+}
+.cbc-imp-summary-item{flex:1;}
+.cbc-imp-summary-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--ink-900);}
+.cbc-imp-summary-value.warn{color:var(--amber);}
+.cbc-imp-summary-label{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.cbc-imp-errores{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.cbc-imp-errores li{
+  display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-sm);color:var(--ink-700);
+  background:var(--amber-bg);color:var(--amber-fg);padding:8px 10px;border-radius:var(--radius);
+}
+.cbc-imp-errores .icon{width:14px;height:14px;flex-shrink:0;margin-top:2px;}

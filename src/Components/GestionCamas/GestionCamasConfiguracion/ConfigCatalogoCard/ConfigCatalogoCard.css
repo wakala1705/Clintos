@@ -1,0 +1,22 @@
+.cbc-cat-card{
+  display:flex;flex-direction:column;gap:10px;padding:16px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  cursor:pointer;text-align:left;font-family:inherit;width:100%;
+  transition:border-color .15s,box-shadow .15s;
+}
+.cbc-cat-card:hover{border-color:#d7dce6;box-shadow:0 4px 14px rgba(16,24,39,.08);}
+.cbc-cat-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.cbc-cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.cbc-cat-icon{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.cbc-cat-icon .icon{width:20px;height:20px;}
+.cbc-cat-arrow{color:var(--ink-400);flex-shrink:0;margin-top:8px;}
+.cbc-cat-arrow .icon{width:18px;height:18px;}
+
+.cbc-cat-nombre{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbc-cat-desc{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;min-height:34px;}
+.cbc-cat-count{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary-dark);margin-top:2px;}

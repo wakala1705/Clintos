@@ -20,6 +20,3 @@
 
 .cb-last-updated-spin{animation:cb-last-updated-spin .8s linear infinite;}
 @keyframes cb-last-updated-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion: reduce){
-  .cb-last-updated-spin{animation:none;}
-}

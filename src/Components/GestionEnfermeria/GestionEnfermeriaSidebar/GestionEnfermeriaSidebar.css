@@ -1,0 +1,64 @@
+/* Tokens: ver ../shared/shared.css (siempre cargado en las 4 rutas que
+   montan este sidebar). Mismo lenguaje visual que GestionCamasSidebar.css
+   (ver AGENTS.md) — panel claro propio (--surface/--border), no una
+   extensión del sidebar global oscuro (Sidebar.jsx). height:100% (no 100vh):
+   estira hasta el alto de .content, que ya excluye la franja del Topbar. */
+.ges-sidebar{
+  width:232px;flex-shrink:0;height:100%;overflow-y:auto;overflow-x:hidden;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width .2s ease;
+}
+
+.ges-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
+
+/* Label de sección sobre la lista — mismo patrón que un eyebrow/kicker, sin
+   repetir el nombre del módulo (ya visible en el breadcrumb del Topbar). */
+.ges-nav-label-group{
+  padding:4px 12px 8px;flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+
+.ges-nav-item{
+  position:relative;
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:10px 12px;border-radius:var(--radius);
+  border:none;border-left:3px solid transparent;background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+  text-align:left;text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.ges-nav-icon{width:18px;height:18px;flex-shrink:0;}
+.ges-nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+
+.ges-nav-item:hover{background:var(--bg);color:var(--ink-900);}
+.ges-nav-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.ges-nav-item.active{
+  background:var(--interactive-selected-bg);
+  border-left-color:var(--primary);
+  color:var(--interactive-selected-text);
+  font-weight:var(--fw-semibold);
+}
+.ges-nav-item.active .ges-nav-icon{color:var(--primary);}
+
+/* Tooltip (solo visible colapsado, ver @media abajo) — mismo patrón oscuro
+   fijo que .cbs-tooltip (GestionCamasSidebar.css). */
+.ges-tooltip{
+  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;
+  pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20);
+}
+
+/* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
+   colapsa a solo-ícono — mismo umbral/ancho que GestionCamasSidebar.css. */
+@media (max-width:1024px){
+  .ges-sidebar{width:64px;}
+  .ges-nav-label-group{display:none;}
+  .ges-nav-item{justify-content:center;padding:10px 0;}
+  .ges-nav-label{display:none;}
+  .ges-nav-item:hover .ges-tooltip,
+  .ges-nav-item:focus-visible .ges-tooltip{display:block;}
+}

@@ -1,0 +1,23 @@
+/* .card (../../GestionCamas.css) trae flex:1;min-height:0 pensado para UNA
+   sola card que llena el alto restante de la pantalla (ej. .cb-board-card
+   en el Bed Board) — acá hay 2 de estas tablas apiladas como hermanas
+   dentro de .cbin-page-body (columna con scroll propio), así que con
+   flex:1 competían por el mismo alto y se comprimían por debajo de su
+   contenido; con .data-table-wrap en overflow:visible (ver abajo) las filas
+   que no entraban se desbordaban ENCIMA de la tarjeta/tabla siguiente en
+   vez de mostrarse. flex:none + min-height:auto: cada tabla toma su alto
+   natural y es la página la que scrollea, no cada tabla por separado. */
+.cbin-table-card{flex:none;min-height:auto;}
+.cbin-card-head{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cbin-card-head h2{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbin-table-card .data-table-wrap{flex:none;max-height:none;overflow:visible;}
+
+.cbin-th-sort{
+  display:inline-flex;align-items:center;gap:4px;
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+  font-size:inherit;font-weight:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;
+}
+.cbin-th-sort .icon{width:12px;height:12px;}
+.cbin-th-sort-idle{color:var(--ink-400);opacity:.6;}
+.cbin-th-sort:hover .cbin-th-sort-idle{opacity:1;}
+.cbin-th-sort:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}

@@ -1,0 +1,20 @@
+.cbin-barras-card{flex:1;min-width:0;}
+.cbin-card-head{padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cbin-card-head h2{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.cbin-barras-list{display:flex;flex-direction:column;gap:14px;padding:18px 20px;flex:1;}
+.cbin-barras-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.cbin-barras-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);}
+.cbin-barras-valor{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.cbin-barras-bar{height:8px;border-radius:999px;background:var(--gray-bg);overflow:hidden;}
+.cbin-barras-bar-fill{height:100%;border-radius:999px;background:var(--primary);}
+
+.cbin-link-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  background:none;border:none;font-family:inherit;padding:2px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);cursor:pointer;
+}
+.cbin-link-btn:hover{text-decoration:underline;}
+.cbin-link-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.cbin-link-btn .icon{width:14px;height:14px;}
+.cbin-card-footer-link{padding:4px 20px 16px;flex-shrink:0;}

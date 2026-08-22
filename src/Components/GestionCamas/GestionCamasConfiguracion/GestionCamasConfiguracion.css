@@ -1,0 +1,124 @@
+/* Tokens/shell/.btn/.filter-bar/.search-field/.data-table/.form-field/etc:
+   ver ../GestionCamas.css (importado también acá) — esta hoja solo trae el
+   layout propio de "Configuración", mismo criterio que GestionCamasCamas.css/
+   GestionCamasIntegridad.css/GestionCamasIndicadores.css/
+   GestionCamasAuditoria.css (prefijo .cbc-) para su propia pantalla. */
+
+/* Selector compuesto (.content.cbc-content), no solo .cbc-content: pisa a
+   .content (definida en ../GestionCamas.css, otro archivo) y su prioridad
+   NO puede depender del orden de import/inyección de <style> entre rutas —
+   ver el mismo comentario/bug real en GestionCamasCamas.css/
+   GestionCamasResumen.css/GestionCamasIntegridad.css/
+   GestionCamasIndicadores.css/GestionCamasAuditoria.css. */
+.content.cbc-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.cbc-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:16px;overflow-y:auto;
+}
+
+.cbc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+.cbc-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbc-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* La barra de filtros vive en su propia card, sin el border-bottom que
+   .filter-bar trae pensado para cuando está apilada arriba de una tabla
+   (encargo, sección 3: es una franja horizontal propia, no el header de la
+   grilla de catálogos). */
+/* .card (../GestionCamas.css) trae flex:1;min-height:0 pensado para una
+   card que llena el alto restante de una columna — acá es una card chica de
+   una sola fila (la barra de filtros), así que con flex:1 quedaba estirada
+   verticalmente y esa altura sobrante se veía como padding inferior extra
+   debajo de los inputs (el contenido queda arriba, alineado al inicio).
+   flex:none + min-height:auto: la card toma su alto natural, mismo criterio
+   que .cbin-table-card en Indicadores. */
+.cbc-filterbar-card{flex:none;min-height:auto;}
+/* .filter-bar trae padding:14px 20px, pensado para quedar apilada arriba de
+   una tabla dentro de la misma card (más aire a los lados que arriba/abajo)
+   — acá es una card propia y suelta (encargo, sección 3), así que el
+   padding queda parejo en los 4 lados. */
+.cbc-filterbar-card .filter-bar{border-bottom:none;padding:16px;}
+
+/* Grilla de catálogos (encargo, sección 4) — 8 cards fijas, nunca un
+   dashboard por card (sección 4: "no convertir cada card en un dashboard"). */
+.cbc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex-shrink:0;}
+@media (max-width:1440px){.cbc-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:1024px){.cbc-grid{grid-template-columns:1fr;}}
+
+.cbc-inline-empty{
+  grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:32px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);
+}
+
+/* Cambios recientes + Acciones rápidas (encargo, sección 13/15) — layout de
+   dos columnas, la de acciones con ancho fijo (mismo criterio que
+   .cb-layout en GestionCamas.css: contenido flexible + panel fijo). */
+.cbc-bottom-row{display:grid;grid-template-columns:1fr 300px;gap:16px;flex:1;min-height:300px;}
+@media (max-width:1280px){.cbc-bottom-row{grid-template-columns:1fr;}}
+
+.cbc-section-title{
+  padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+
+.cbc-cambios-card{min-height:0;}
+.cbc-cambios-empty{padding:40px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+/* Fila clickeable (abre CambioDetailModal, "Ver detalle →" — encargo
+   sección 13) — mismo criterio que .cbau-row en Auditoría. */
+.cbc-row{cursor:pointer;}
+.cbc-row:hover{background:#fafbfd;}
+.cbc-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cbc-row-ver{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+}
+.cbc-row-ver .icon{width:14px;height:14px;}
+
+.cbc-acciones-card{min-height:0;}
+.cbc-acciones-list{display:flex;flex-direction:column;gap:10px;padding:16px 20px;overflow-y:auto;}
+.cbc-accion-btn{
+  display:flex;align-items:flex-start;gap:10px;width:100%;
+  padding:12px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;text-align:left;font-family:inherit;
+  transition:background .15s,border-color .15s;
+}
+.cbc-accion-btn:hover{background:#fafbfd;border-color:#d7dce6;}
+.cbc-accion-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cbc-accion-icon{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.cbc-accion-icon .icon{width:16px;height:16px;}
+/* El título y la descripción viven en <span> (inline) para poder anidarse
+   dentro del <button> sin romper las reglas de contenido de botones — este
+   wrapper los apila igual que lo haría un <div>/<p>, evitando que corran
+   pegados en una sola línea ("Importar catálogosCarga masiva..."). */
+.cbc-accion-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.cbc-accion-title{display:block;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbc-accion-desc{display:block;font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;}
+.cbc-acciones-sin-permisos{padding:16px 20px;color:var(--ink-500);font-size:var(--fs-sm);}
+
+.cbc-spin{animation:cbc-spin-anim 1s linear infinite;}
+@keyframes cbc-spin-anim{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.cbc-spin{animation:none;}}
+
+/* Botón destructivo (Restablecer configuración, encargo sección 18) — mismo
+   patrón de duplicación por feature que CambiarEstadoAdminModal.css
+   (Camas): .btn-danger no vive en GestionCamas.css compartido. */
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{background:#a02222;}
+.btn-danger:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+.btn-danger[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+
+.cbc-toast{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);
+  display:flex;align-items:center;gap:8px;
+  background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium);
+  padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:var(--z-modal);
+}
+.cbc-toast.show{opacity:1;transform:translate(-50%,0);}
+.cbc-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
