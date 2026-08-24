@@ -18,8 +18,8 @@ import {
   UTILIZACION_SERVICIOS,
 } from '@/hooks/GestionCamas/mockResumenData';
 import {
-  LuArrowUpRight, LuBedDouble, LuChartColumn, LuChevronRight, LuCircleAlert, LuClock,
-  LuServer, LuSettings, LuShieldCheck, LuSprayCan, LuTriangleAlert, LuUser, LuWrench,
+  LuArrowUpRight, LuBedDouble, LuChevronRight, LuCircleAlert, LuClock,
+  LuServer, LuShieldCheck, LuSprayCan, LuTriangleAlert, LuUser, LuWrench,
 } from 'react-icons/lu';
 
 // Gráfica de línea de "Ocupación de camas" — SVG a mano (no hay librería de
@@ -220,10 +220,10 @@ export default function GestionCamasResumen() {
                 </div>
                 <UtilizationBars data={UTILIZACION_SERVICIOS} />
                 <div className="cbr-card-footer-link">
-                  <button type="button" className="cbr-link-btn" onClick={() => irASeccion('Indicadores')}>
+                  <Link className="cbr-link-btn" href="/gestion-camas/indicadores">
                     Ver más indicadores
                     <LuChevronRight className="icon" aria-hidden="true" />
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -270,10 +270,10 @@ export default function GestionCamasResumen() {
                   </button>
                 </div>
                 <div className="cbr-card-footer-link">
-                  <button type="button" className="cbr-link-btn" onClick={() => irASeccion('Integridad')}>
+                  <Link className="cbr-link-btn" href="/gestion-camas/integridad">
                     Ver todas las inconsistencias
                     <LuChevronRight className="icon" aria-hidden="true" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -313,29 +313,6 @@ export default function GestionCamasResumen() {
                     </tbody>
                   </table>
                 </div>
-              </div>
-
-              <div className="cbr-quick-access">
-                <Link className="cbr-quick-card" href="/gestion-camas/camas">
-                  <span className="cbr-quick-icon"><LuBedDouble className="icon" aria-hidden="true" /></span>
-                  <span className="cbr-quick-title">Gestionar camas</span>
-                  <span className="cbr-quick-desc">Crear, editar y activar camas</span>
-                </Link>
-                <button type="button" className="cbr-quick-card" onClick={() => irASeccion('Configuración')}>
-                  <span className="cbr-quick-icon"><LuSettings className="icon" aria-hidden="true" /></span>
-                  <span className="cbr-quick-title">Configurar catálogos</span>
-                  <span className="cbr-quick-desc">Tipos, estados y motivos</span>
-                </button>
-                <button type="button" className="cbr-quick-card" onClick={() => irASeccion('Integridad')}>
-                  <span className="cbr-quick-icon"><LuShieldCheck className="icon" aria-hidden="true" /></span>
-                  <span className="cbr-quick-title">Revisar integridad</span>
-                  <span className="cbr-quick-desc">Detectar y corregir inconsistencias</span>
-                </button>
-                <button type="button" className="cbr-quick-card" onClick={() => irASeccion('Indicadores')}>
-                  <span className="cbr-quick-icon"><LuChartColumn className="icon" aria-hidden="true" /></span>
-                  <span className="cbr-quick-title">Ver indicadores</span>
-                  <span className="cbr-quick-desc">Ocupación, rotación y utilización</span>
-                </button>
               </div>
             </div>
           </div>

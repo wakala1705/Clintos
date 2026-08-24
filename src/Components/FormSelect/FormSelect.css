@@ -15,8 +15,14 @@
 .form-select-chev.open{transform:rotate(180deg);}
 .form-select-trigger:disabled .form-select-chev{color:var(--ink-400);}
 
+/* position:fixed + top/left/width se completan inline en FormSelect.jsx
+   (calculados desde el trigger vía getBoundingClientRect) — el listado se
+   porta a document.body, por eso no puede depender de position:absolute
+   relativo a .form-select (ver comentario en FormSelect.jsx). z-index va por
+   encima de --z-modal porque, al portarse, queda hermano de .modal-overlay
+   en el DOM en vez de descendiente. */
 .form-select-dropdown{
-  position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:240px;overflow-y:auto;z-index:var(--z-popover);
+  position:fixed;max-height:240px;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
   background:var(--surface);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
 }

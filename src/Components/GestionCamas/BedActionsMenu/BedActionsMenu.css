@@ -1,7 +1,7 @@
 /* Mismo lenguaje visual que RowActionsMenu.css (PatientsTable) — acá con su
    propio nombre de clase porque vive en otro feature-folder, sin duplicar
    la definición vía import cruzado. */
-.cb-actions-menu{position:relative;flex-shrink:0;}
+.cb-actions-menu{flex-shrink:0;}
 .cb-actions-menu-btn{
   width:28px;height:28px;border-radius:7px;flex-shrink:0;
   display:inline-flex;align-items:center;justify-content:center;
@@ -10,15 +10,19 @@
 .cb-actions-menu-btn .icon{width:17px;height:17px;}
 .cb-actions-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .cb-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+/* position:fixed + portal a document.body (ver BedActionsMenu.jsx) — top/
+   bottom/right vienen inline desde JS (getBoundingClientRect del botón),
+   nunca calc(100%) relativo a un ancestro: BedCard tiene overflow:hidden en
+   `.cb-card` (recorta los 2 paneles a las esquinas redondeadas) y eso le
+   cortaba el borde inferior al dropdown al estar anidado dentro. z-index
+   +1 sobre --z-modal (mismo criterio que .form-select-dropdown,
+   FormSelect.css) porque el portal queda FUERA del stacking context del
+   modal — con var(--z-popover) a secas perdía contra el overlay del modal. */
 .cb-actions-menu-dropdown{
-  position:absolute;top:calc(100% + 4px);right:0;min-width:190px;z-index:var(--z-popover);
+  position:fixed;min-width:190px;z-index:calc(var(--z-modal, 50) + 1);
   background:var(--surface);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
-/* Tarjetas cerca del borde inferior del contenedor con scroll (ver
-   getScrollParent en BedActionsMenu.jsx) — el dropdown se abre hacia arriba
-   en vez de desbordar y agrandar el scroll con espacio en blanco extra. */
-.cb-actions-menu-dropdown.menu-up{top:auto;bottom:calc(100% + 4px);}
 .cb-actions-menu-item{
   display:flex;align-items:center;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;

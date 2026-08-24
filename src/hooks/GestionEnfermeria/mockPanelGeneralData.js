@@ -29,75 +29,83 @@ export const ORDENES_PENDIENTES = 5;
 // simple ">7 días" automático (con ese criterio puro también calificarían
 // Sofía Torres —11d— y Ana Martínez —9d—; en la práctica un jefe de
 // enfermería cura cuáles casos se seleccionan para seguimiento activo).
+// `genero` alimenta el indicador rosa/azul de BedCard (encargo explícito,
+// "Ajuste de cards — Bed Board", sección color por género) — inferido del
+// nombre de pila de cada paciente ficticio (ningún documento fuente define
+// este campo), 7 femenino / 7 masculino. Ninguno de los 14 es menor de edad
+// en este mock (ver `categoriaPaciente`, bedContextFormat.js): la categoría
+// "niño" queda implementada pero sin ejemplo real acá, mismo criterio que
+// `aislamiento` en mockCamasData.js ("ninguna cama del inventario lo trae
+// en true").
 export const PACIENTES_PISO = [
   {
     id: 'HC-48291', cama: '101-A', admision: '12 Ago', diasEstancia: diasEstancia(12, 7),
-    paciente: 'María González', diagnostico: 'Neumonía adquirida en comunidad', edad: 67,
+    paciente: 'María González', diagnostico: 'Neumonía adquirida en comunidad', edad: 67, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
     id: 'HC-48307', cama: '101-B', admision: '13 Ago', diasEstancia: diasEstancia(13, 7),
-    paciente: 'Carlos Rodríguez', diagnostico: 'Diabetes mellitus tipo 2 descompensada', edad: 59,
+    paciente: 'Carlos Rodríguez', diagnostico: 'Diabetes mellitus tipo 2 descompensada', edad: 59, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
     id: 'HC-48192', cama: '102-A', admision: '05 Ago', diasEstancia: diasEstancia(5, 7),
-    paciente: 'Ana Martínez', diagnostico: 'Insuficiencia cardíaca', edad: 74,
+    paciente: 'Ana Martínez', diagnostico: 'Insuficiencia cardíaca', edad: 74, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
     id: 'HC-48321', cama: '102-B', admision: '13 Ago', diasEstancia: diasEstancia(13, 7),
-    paciente: 'Jorge Ramírez', diagnostico: 'Colecistitis aguda', edad: 48,
+    paciente: 'Jorge Ramírez', diagnostico: 'Colecistitis aguda', edad: 48, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
     id: 'HC-47984', cama: '103-A', admision: '01 Ago', diasEstancia: diasEstancia(1, 7),
-    paciente: 'Patricia López', diagnostico: 'EPOC exacerbado', edad: 71,
+    paciente: 'Patricia López', diagnostico: 'EPOC exacerbado', edad: 71, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: true,
   },
   {
     id: 'HC-48266', cama: '103-B', admision: '10 Ago', diasEstancia: diasEstancia(10, 7),
-    paciente: 'Luis Hernández', diagnostico: 'Infección urinaria', edad: 63,
+    paciente: 'Luis Hernández', diagnostico: 'Infección urinaria', edad: 63, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
     id: 'HC-48031', cama: '104-A', admision: '03 Ago', diasEstancia: diasEstancia(3, 7),
-    paciente: 'Sofía Torres', diagnostico: 'Postoperatorio abdominal', edad: 52,
+    paciente: 'Sofía Torres', diagnostico: 'Postoperatorio abdominal', edad: 52, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
     id: 'HC-48345', cama: '104-B', admision: '14 Ago', diasEstancia: diasEstancia(14, 7),
-    paciente: 'Andrés Castro', diagnostico: 'Hipertensión arterial', edad: 61,
+    paciente: 'Andrés Castro', diagnostico: 'Hipertensión arterial', edad: 61, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
     id: 'HC-47892', cama: '105-A', admision: '28 Jul', diasEstancia: diasEstancia(28, 6),
-    paciente: 'Elena Vargas', diagnostico: 'Accidente cerebrovascular', edad: 79,
+    paciente: 'Elena Vargas', diagnostico: 'Accidente cerebrovascular', edad: 79, genero: 'femenino',
     estadoMedicacion: 'retrasada', prolongada: true,
   },
   {
     id: 'HC-48215', cama: '105-B', admision: '08 Ago', diasEstancia: diasEstancia(8, 7),
-    paciente: 'Ricardo Moreno', diagnostico: 'Fractura de cadera', edad: 82,
+    paciente: 'Ricardo Moreno', diagnostico: 'Fractura de cadera', edad: 82, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
     id: 'HC-48176', cama: '106-A', admision: '07 Ago', diasEstancia: diasEstancia(7, 7),
-    paciente: 'Laura Sánchez', diagnostico: 'Neumonía', edad: 68,
+    paciente: 'Laura Sánchez', diagnostico: 'Neumonía', edad: 68, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
     id: 'HC-48302', cama: '106-B', admision: '12 Ago', diasEstancia: diasEstancia(12, 7),
-    paciente: 'Diego Pérez', diagnostico: 'Pancreatitis aguda', edad: 45,
+    paciente: 'Diego Pérez', diagnostico: 'Pancreatitis aguda', edad: 45, genero: 'masculino',
     estadoMedicacion: 'no-aplica', prolongada: false,
   },
   {
     id: 'HC-47765', cama: '107-A', admision: '25 Jul', diasEstancia: diasEstancia(25, 6),
-    paciente: 'Carmen Ruiz', diagnostico: 'Insuficiencia renal', edad: 76,
+    paciente: 'Carmen Ruiz', diagnostico: 'Insuficiencia renal', edad: 76, genero: 'femenino',
     estadoMedicacion: 'al-dia', prolongada: true,
   },
   {
     id: 'HC-48254', cama: '107-B', admision: '09 Ago', diasEstancia: diasEstancia(9, 7),
-    paciente: 'Felipe Gómez', diagnostico: 'Postoperatorio de hernia', edad: 57,
+    paciente: 'Felipe Gómez', diagnostico: 'Postoperatorio de hernia', edad: 57, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
 ];

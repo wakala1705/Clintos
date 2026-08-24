@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './CamasFiltrosPopover.css';
-import { TIPOS_CAMA, FECHA_ACTUALIZACION_OPTIONS } from '@/hooks/GestionCamas/mockCamasAdminData';
+import FormSelect from '@/Components/FormSelect/FormSelect';
+import {
+  TIPOS_CAMA, PISOS, SECTORES, FECHA_ACTUALIZACION_OPTIONS,
+} from '@/hooks/GestionCamas/mockCamasAdminData';
 import { LuFilter } from 'react-icons/lu';
 
 // Progressive disclosure (encargo, sección 4): Habitación/Tipo de
@@ -13,15 +16,25 @@ import { LuFilter } from 'react-icons/lu';
 // BORRADOR + footer Limpiar todo/Aplicar filtros, mismo patrón que
 // MasFiltrosPopover (Bed Board).
 export default function CamasFiltrosPopover({
-  habitacion, tipo, fechaActualizacion, onChange, onLimpiar,
+  habitacion, tipo, piso, sector, fechaActualizacion, onChange, onLimpiar,
 }) {
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState({ habitacion, tipo, fechaActualizacion });
+  const [draft, setDraft] = useState({
+    habitacion, tipo, piso, sector, fechaActualizacion,
+  });
   const rootRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
+      // FormSelect porta su listbox a document.body (ver FormSelect.jsx),
+      // así que un click en una opción no está dentro de rootRef aunque
+      // visualmente sí lo esté — sin este chequeo, este listener (registrado
+      // antes que el propio de FormSelect) cerraba TODO el popover en el
+      // mousedown, antes de que el click en la opción llegara a disparar
+      // onChange (bug: el dropdown de un filtro dentro de "Más filtros" se
+      // cerraba solo, sin aplicar la selección).
+      if (e.target.closest('.form-select-dropdown')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -36,7 +49,11 @@ export default function CamasFiltrosPopover({
   }, [open]);
 
   function handleToggleOpen() {
-    if (!open) setDraft({ habitacion, tipo, fechaActualizacion });
+    if (!open) {
+      setDraft({
+        habitacion, tipo, piso, sector, fechaActualizacion,
+      });
+    }
     setOpen((v) => !v);
   }
 
@@ -49,7 +66,8 @@ export default function CamasFiltrosPopover({
     setOpen(false);
   }
 
-  const activos = (habitacion.trim() !== '' ? 1 : 0) + (tipo !== 'todos' ? 1 : 0) + (fechaActualizacion !== 'todas' ? 1 : 0);
+  const activos = (habitacion.trim() !== '' ? 1 : 0) + (tipo !== 'todos' ? 1 : 0) + (piso !== 'todos' ? 1 : 0)
+    + (sector !== 'todos' ? 1 : 0) + (fechaActualizacion !== 'todas' ? 1 : 0);
 
   return (
     <div className="filter-popover-wrap" ref={rootRef}>
@@ -81,18 +99,48 @@ export default function CamasFiltrosPopover({
           <div className="fp-section">
             <div className="form-field">
               <label htmlFor="cba-fp-tipo" className="fp-section-title">Tipo de cama</label>
-              <select id="cba-fp-tipo" value={draft.tipo} onChange={(e) => setDraft((d) => ({ ...d, tipo: e.target.value }))}>
-                {TIPOS_CAMA.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <FormSelect
+                id="cba-fp-tipo"
+                value={draft.tipo}
+                onChange={(v) => setDraft((d) => ({ ...d, tipo: v }))}
+                options={TIPOS_CAMA}
+              />
+            </div>
+          </div>
+
+          <div className="fp-section">
+            <div className="form-field">
+              <label htmlFor="cba-fp-piso" className="fp-section-title">Piso</label>
+              <FormSelect
+                id="cba-fp-piso"
+                value={draft.piso}
+                onChange={(v) => setDraft((d) => ({ ...d, piso: v }))}
+                options={PISOS}
+              />
+            </div>
+          </div>
+
+          <div className="fp-section">
+            <div className="form-field">
+              <label htmlFor="cba-fp-sector" className="fp-section-title">Sector</label>
+              <FormSelect
+                id="cba-fp-sector"
+                value={draft.sector}
+                onChange={(v) => setDraft((d) => ({ ...d, sector: v }))}
+                options={SECTORES}
+              />
             </div>
           </div>
 
           <div className="fp-section">
             <div className="form-field">
               <label htmlFor="cba-fp-fecha" className="fp-section-title">Fecha de actualización</label>
-              <select id="cba-fp-fecha" value={draft.fechaActualizacion} onChange={(e) => setDraft((d) => ({ ...d, fechaActualizacion: e.target.value }))}>
-                {FECHA_ACTUALIZACION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <FormSelect
+                id="cba-fp-fecha"
+                value={draft.fechaActualizacion}
+                onChange={(v) => setDraft((d) => ({ ...d, fechaActualizacion: v }))}
+                options={FECHA_ACTUALIZACION_OPTIONS}
+              />
             </div>
           </div>
 

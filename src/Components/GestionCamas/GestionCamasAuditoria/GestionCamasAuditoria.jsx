@@ -22,7 +22,7 @@ import {
 } from '@/hooks/GestionCamas/mockAuditoriaData';
 import {
   LuArrowDown, LuArrowUp, LuArrowUpDown, LuBedDouble, LuCalendarClock, LuCircleAlert, LuClipboardX,
-  LuFileClock, LuPencilLine, LuSearch, LuSearchX, LuTrash2, LuUsers,
+  LuFileClock, LuFilterX, LuPencilLine, LuSearch, LuSearchX, LuTrash2, LuUsers,
 } from 'react-icons/lu';
 
 const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', habitacion: '' };
@@ -145,8 +145,13 @@ export default function GestionCamasAuditoria() {
     showToast(`Exportando historial en ${formato.toUpperCase()} (en desarrollo).`);
   }
 
-  const hayFiltrosActivos = tipo !== 'todos' || modulo !== 'todos' || usuario !== 'todos' || sede !== 'todas'
-    || query.trim() !== '' || filtrosAvanzados.servicio !== 'todos' || filtrosAvanzados.habitacion.trim() !== '';
+  // Un solo conteo en vez de un booleano: alimenta tanto `hayFiltrosActivos`
+  // como el badge del botón "Limpiar filtros" persistente del filter-bar
+  // (mismo criterio que en GestionCamasCamas.jsx/GestionCamasIntegridad.jsx).
+  const cantidadFiltrosActivos = (tipo !== 'todos' ? 1 : 0) + (modulo !== 'todos' ? 1 : 0) + (usuario !== 'todos' ? 1 : 0)
+    + (sede !== 'todas' ? 1 : 0) + (query.trim() !== '' ? 1 : 0) + (filtrosAvanzados.servicio !== 'todos' ? 1 : 0)
+    + (filtrosAvanzados.habitacion.trim() !== '' ? 1 : 0);
+  const hayFiltrosActivos = cantidadFiltrosActivos > 0;
 
   return (
     <div className="app">
@@ -188,8 +193,21 @@ export default function GestionCamasAuditoria() {
               </div>
             )}
 
+            <div className="cbau-kpi-row">
+              <KpiCard icon={LuFileClock} label="Eventos totales" value={INDICADORES_ACTIVIDAD.total.toLocaleString('es-CO')} description="En el período seleccionado" variant="neutral" />
+              <KpiCard icon={LuBedDouble} label="Camas afectadas" value={INDICADORES_ACTIVIDAD.camasAfectadas} description="Camas únicas" variant="neutral" />
+              <KpiCard icon={LuUsers} label="Usuarios" value={INDICADORES_ACTIVIDAD.usuarios} description="Con actividad" variant="neutral" />
+              <KpiCard icon={LuPencilLine} label="Modificaciones" value={INDICADORES_ACTIVIDAD.modificaciones} description={`${((INDICADORES_ACTIVIDAD.modificaciones / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="neutral" />
+              <KpiCard icon={LuTrash2} label="Eliminaciones" value={INDICADORES_ACTIVIDAD.eliminaciones} description={`${((INDICADORES_ACTIVIDAD.eliminaciones / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="danger" />
+              <KpiCard icon={LuClipboardX} label="Consultas" value={INDICADORES_ACTIVIDAD.consultas} description={`${((INDICADORES_ACTIVIDAD.consultas / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="neutral" />
+            </div>
+
             <div className="card cbau-table-card">
               <div className="filter-bar">
+                {/* Orden (mismo criterio que .cba-table-card en
+                    GestionCamasCamas.jsx): búsqueda al extremo izquierdo,
+                    filtros agrupados al extremo derecho vía
+                    .cbau-filters-group (margin-left:auto). */}
                 <div className="search-field">
                   <LuSearch className="icon" />
                   <input
@@ -200,25 +218,29 @@ export default function GestionCamasAuditoria() {
                     aria-label="Buscar eventos, camas, habitaciones, usuarios o ID de evento"
                   />
                 </div>
-                <AreaSelector label="Tipo de evento" options={TIPOS_EVENTO} value={tipo} onChange={handleChangeTipo} />
-                <AreaSelector label="Módulo" options={MODULOS} value={modulo} onChange={handleChangeModulo} />
-                <AreaSelector label="Usuario" options={USUARIOS} value={usuario} onChange={handleChangeUsuario} />
-                <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
-                <AuditoriaFiltrosPopover
-                  servicio={filtrosAvanzados.servicio}
-                  habitacion={filtrosAvanzados.habitacion}
-                  onChange={handleAplicarFiltrosAvanzados}
-                  onLimpiar={handleLimpiarFiltrosAvanzados}
-                />
-              </div>
 
-              <div className="cbau-kpi-row">
-                <KpiCard icon={LuFileClock} label="Eventos totales" value={INDICADORES_ACTIVIDAD.total.toLocaleString('es-CO')} description="En el período seleccionado" variant="neutral" />
-                <KpiCard icon={LuBedDouble} label="Camas afectadas" value={INDICADORES_ACTIVIDAD.camasAfectadas} description="Camas únicas" variant="neutral" />
-                <KpiCard icon={LuUsers} label="Usuarios" value={INDICADORES_ACTIVIDAD.usuarios} description="Con actividad" variant="neutral" />
-                <KpiCard icon={LuPencilLine} label="Modificaciones" value={INDICADORES_ACTIVIDAD.modificaciones} description={`${((INDICADORES_ACTIVIDAD.modificaciones / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="neutral" />
-                <KpiCard icon={LuTrash2} label="Eliminaciones" value={INDICADORES_ACTIVIDAD.eliminaciones} description={`${((INDICADORES_ACTIVIDAD.eliminaciones / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="danger" />
-                <KpiCard icon={LuClipboardX} label="Consultas" value={INDICADORES_ACTIVIDAD.consultas} description={`${((INDICADORES_ACTIVIDAD.consultas / INDICADORES_ACTIVIDAD.total) * 100).toFixed(1)}% del total`} variant="neutral" />
+                <div className="cbau-filters-group">
+                  <AreaSelector label="Tipo de evento" options={TIPOS_EVENTO} value={tipo} onChange={handleChangeTipo} />
+                  <AreaSelector label="Módulo" options={MODULOS} value={modulo} onChange={handleChangeModulo} />
+                  <AreaSelector label="Usuario" options={USUARIOS} value={usuario} onChange={handleChangeUsuario} />
+                  <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
+                  <AuditoriaFiltrosPopover
+                    servicio={filtrosAvanzados.servicio}
+                    habitacion={filtrosAvanzados.habitacion}
+                    onChange={handleAplicarFiltrosAvanzados}
+                    onLimpiar={handleLimpiarFiltrosAvanzados}
+                  />
+                  {/* Persistente en el filter-bar (a diferencia de "Limpiar
+                      todo" dentro de AuditoriaFiltrosPopover, que solo
+                      resetea los filtros avanzados). */}
+                  {hayFiltrosActivos && (
+                    <button type="button" className="btn btn-secondary btn-sm cbau-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
+                      <LuFilterX className="icon" aria-hidden="true" />
+                      Limpiar filtros
+                      <span className="badge-count">{cantidadFiltrosActivos}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {status === 'loading' && <AuditoriaTableSkeleton />}

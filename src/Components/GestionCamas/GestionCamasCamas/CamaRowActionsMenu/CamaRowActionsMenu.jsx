@@ -21,7 +21,7 @@ function getScrollParent(node) {
 }
 
 export default function CamaRowActionsMenu({
-  cama, onVerDetalle, onEditar, onCambiarEstado, onVerHistorial, onMasAcciones,
+  cama, onVerDetalle, onEditar, onCambiarEstado, onVerHistorial, onReservar, onTrasladar, onMantenimiento, onLimpieza,
 }) {
   const [open, setOpen] = useState(false);
   const [openUp, setOpenUp] = useState(false);
@@ -77,7 +77,10 @@ export default function CamaRowActionsMenu({
           <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onEditar)}>Editar</button>
           <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onCambiarEstado)}>Cambiar estado</button>
           <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onVerHistorial)}>Ver historial</button>
-          <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onMasAcciones)}>Más acciones</button>
+          <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onReservar)}>Reservas</button>
+          <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onTrasladar)}>Traslados</button>
+          <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onMantenimiento)}>Mantenimiento</button>
+          <button type="button" className="cba-actions-menu-item" role="menuitem" onClick={() => handleItem(onLimpieza)}>Limpieza</button>
         </div>
       )}
     </div>

@@ -4,8 +4,18 @@
    enum de tamaños global. 90vw × 90vh fijo (encargo explícito: "siempre",
    no un tope que se reduzca antes de llegar ahí) en vez de un ancho fijo en
    px + max-width, para que el tablero de 6 columnas tenga sitio de sobra
-   sin importar el tamaño de pantalla. */
-.bb-modal-card{width:90vw;height:90vh;max-width:90vw;max-height:90vh;}
+   sin importar el tamaño de pantalla.
+
+   Selector compuesto (.modal-card.bb-modal-card), no solo .bb-modal-card:
+   mismo criterio que .modal-body.bb-modal-body (línea de abajo) y que
+   .content.ge-shell-content (shared.css) — esta regla pisa a .modal-card
+   (definida en shared.css, otro archivo) y su prioridad no puede depender
+   del orden de import/inyección de <style>, que se reordena en runtime.
+   Sin esto, la primera vez que se abría el modal en la sesión, .bb-modal-card
+   perdía el empate de especificidad contra .modal-card y el tablero quedaba
+   con el ancho angosto por defecto (780px) en vez de 90vw, apretando las 6
+   columnas — se arreglaba solo recargando la página. */
+.modal-card.bb-modal-card{width:90vw;height:90vh;max-width:90vw;max-height:90vh;}
 
 /* .modal-body ya trae padding:20px 24px (ver shared.css) — se lo cedemos a
    .cb-grid para que la grilla controle su propio padding igual que en
@@ -48,7 +58,7 @@
    color por feature (ver AGENTS.md "Component organization"), ya que
    BedCard.css no lo trae consigo. */
 .cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
-.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
+.cb-card-paciente .icon{width:20px;height:20px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
 .cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
 .cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
@@ -64,16 +74,30 @@
 }
 .bb-footer-stats b{color:var(--ink-900);font-weight:var(--fw-semibold);}
 
-.bb-legend{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;}
+/* Leyenda agrupada (encargo explícito: "actualicemos y agreguemos las
+   leyendas de los estados" + agrupación "Estados clínicos"/"Estados
+   administrativos" de un encargo previo, ver CLINICAL_STATUS_GROUPS en
+   bedContextFormat.js) — 2 filas (una por grupo) en vez de una sola lista
+   plana de 8 puntos, para que la separación clínico/administrativo se lea
+   igual que en la card, no solo en el color. */
+.bb-legend{display:flex;flex-direction:column;gap:6px;}
+.bb-legend-group{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;}
 .bb-legend-label{
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.04em;
+  text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;
 }
 .bb-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}
 .bb-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:currentColor;}
-.bb-legend-dot-green{color:var(--green);}
-.bb-legend-dot-red{color:var(--red);}
-.bb-legend-dot-amber{color:var(--amber);}
-.bb-legend-dot-blue{color:var(--blue);}
-.bb-legend-dot-orange{color:var(--orange);}
-.bb-legend-dot-gray{color:var(--gray-fg);}
+/* Mismos 8 estados/colores que BedCard (ver --clinical-status-* en
+   ../../shared/shared.css) — clave idéntica a lo que devuelve `cardHue`,
+   así el punto de la leyenda es siempre el mismo tono que el panel
+   izquierdo de la tarjeta correspondiente. */
+.bb-legend-dot-occupied-male{color:var(--clinical-status-occupied-male);}
+.bb-legend-dot-occupied-female{color:var(--clinical-status-occupied-female);}
+.bb-legend-dot-occupied-pediatric{color:var(--clinical-status-occupied-pediatric);}
+.bb-legend-dot-available{color:var(--clinical-status-available);}
+.bb-legend-dot-reserved{color:var(--clinical-status-reserved);}
+.bb-legend-dot-maintenance{color:var(--clinical-status-maintenance);}
+.bb-legend-dot-out-of-service{color:var(--clinical-status-out-of-service);}
+.bb-legend-dot-cleaning{color:var(--clinical-status-cleaning);}
+.bb-legend-dot-unknown{color:var(--clinical-status-unknown);}

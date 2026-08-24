@@ -112,7 +112,7 @@
 
 .block-form .header {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 10px;
 }
@@ -142,7 +142,7 @@
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
-    font-weight:var(--fw-regular);
+    font-weight:var(--fw-semibold);
     line-height: 24px; /* 150% */
 }
 
@@ -187,21 +187,32 @@
     display: flex;
     width: 100%;
     height: var(--field-height);
-    padding: 0 40px 0 12px;
+    padding: 0 40px 0 40px;
     justify-content: center;
     align-items: center;
     gap: 10px;
     border-radius: 8px;
     border: 1px solid #E2E8F0;
-    background: #fff;
+    background: #F7F9FC;
     color: #06192A;
     cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
 
     /* Body/Large */
     font-size: var(--fs-base);
     font-style: normal;
     font-weight:var(--fw-regular);
     line-height: 24px; /* 150% */
+}
+
+.block-form .form-group select:hover {
+    border-color: #b7c3d6;
+    background: #F0F3FA;
+}
+
+.block-form .form-group select:hover ~ .selectIcon,
+.block-form .form-group select:focus ~ .selectIcon {
+    color: #0065cd;
 }
 
 .block-form .form-group select option {
@@ -222,7 +233,19 @@
 .block-form .form-group select:focus {
     outline: none;
     border-color: #0065cd;
+    background: #fff;
     box-shadow: 0 0 0 2px rgba(0, 101, 205, 0.2);
+}
+
+.selectLeadingIcon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: #6f7c94;
+    pointer-events: none;
 }
 
 .selectIcon {
@@ -234,6 +257,7 @@
     height: 18px;
     color: #48546E;
     pointer-events: none;
+    transition: color .15s ease;
 }
 
 .passwordWrap {

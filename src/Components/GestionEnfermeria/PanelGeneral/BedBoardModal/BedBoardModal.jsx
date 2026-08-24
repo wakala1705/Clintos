@@ -12,13 +12,9 @@ import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import BedDetailModal from './BedDetailModal/BedDetailModal';
 import { CAMAS_PISO } from '@/hooks/GestionEnfermeria/mockBedBoardData';
 import { AREAS_OPERATIVAS, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
-import { CTA_PRINCIPAL, ESTADO_COLOR, ESTADO_LABEL } from '@/hooks/GestionCamas/mockCamasData';
+import { CTA_PRINCIPAL } from '@/hooks/GestionCamas/mockCamasData';
+import { cardHue, CLINICAL_STATUS_GROUPS, CLINICAL_STATUS_LABEL } from '@/hooks/GestionCamas/bedContextFormat';
 import { LuGrid2X2 } from 'react-icons/lu';
-
-// Orden fijo de la leyenda (encargo: referencia de Bed Board adjunta) — solo
-// se listan los estados que realmente aparecen en `camasArea` (ver abajo),
-// nunca los 6 completos si este mock no los modela todos.
-const ESTADOS_ORDEN = ['libre', 'ocupada', 'reservada', 'limpieza', 'mantenimiento', 'bloqueada'];
 
 const FILTROS_ESTADO = [
   { value: 'todos', label: 'Todos' },
@@ -132,10 +128,18 @@ export default function BedBoardModal({ areaOperativa, onClose, onOpenAtencion }
     estadoFiltro === 'todos' ? camasArea : camasArea.filter((c) => c.estado === estadoFiltro)
   ), [camasArea, estadoFiltro]);
 
-  const estadosPresentes = useMemo(() => {
-    const presentes = new Set(camasArea.map((c) => c.estado));
-    return ESTADOS_ORDEN.filter((e) => presentes.has(e));
-  }, [camasArea]);
+  // `cardHue` (bedContextFormat.js) es la misma función que ya usa BedCard
+  // para pintar cada tarjeta — reusarla acá garantiza que la leyenda nunca
+  // se desincronice de los colores que realmente se ven en la grilla (p.ej.
+  // si algún día `camasArea` trae un paciente sin género/edad, "unknown"
+  // aparece en los 2 lugares o en ninguno, nunca solo en uno). Grupos fijos
+  // (CLINICAL_STATUS_GROUPS), filtrados a las claves realmente presentes —
+  // mismo criterio que antes ("nunca los 8 completos si este mock no los
+  // modela todos").
+  const clavesPresentes = useMemo(() => new Set(camasArea.map(cardHue)), [camasArea]);
+  const legendGroups = useMemo(() => CLINICAL_STATUS_GROUPS
+    .map((grupo) => ({ ...grupo, claves: grupo.claves.filter((c) => clavesPresentes.has(c)) }))
+    .filter((grupo) => grupo.claves.length > 0), [clavesPresentes]);
 
   // BedCard usa `now` solo para el estado "limpieza" (ninguna cama de este
   // mock lo tiene) — inicializador perezoso de useState, para no leer
@@ -224,12 +228,16 @@ export default function BedBoardModal({ areaOperativa, onClose, onOpenAtencion }
               <span>% de ocupación: <b>{ocupacionPct}%</b></span>
             </div>
             <div className="bb-legend">
-              <span className="bb-legend-label">Leyenda:</span>
-              {estadosPresentes.map((estado) => (
-                <span className="bb-legend-item" key={estado}>
-                  <span className={`bb-legend-dot bb-legend-dot-${ESTADO_COLOR[estado]}`} />
-                  {ESTADO_LABEL[estado]}
-                </span>
+              {legendGroups.map((grupo) => (
+                <div className="bb-legend-group" key={grupo.label}>
+                  <span className="bb-legend-label">{grupo.label}:</span>
+                  {grupo.claves.map((clave) => (
+                    <span className="bb-legend-item" key={clave}>
+                      <span className={`bb-legend-dot bb-legend-dot-${clave}`} />
+                      {CLINICAL_STATUS_LABEL[clave]}
+                    </span>
+                  ))}
+                </div>
               ))}
             </div>
           </div>

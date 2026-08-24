@@ -49,6 +49,48 @@
   --orange:#e8720c;
   --orange-bg:#fdead9;
   --orange-fg:#a6520a;
+  /* Reservada (EstadoCamaBadge en toda la app, ESTADO_COLOR.reservada,
+     mockCamasData.js) — BedCard ya no lo usa para su propio panel, ver
+     clinical-status-reserved abajo (encargo posterior con su propia
+     paleta, fuera del alcance de EstadoCamaBadge). */
+  --cyan:#0e7490;
+  --cyan-bg:#e0fbfc;
+  --cyan-fg:#0e7490;
+  /* Sistema de color "clinical-status" de BedCard (encargo explícito,
+     rediseño 2 paneles v2) — mismo criterio, mismos valores y mismas notas
+     de contraste/dark-mode que GestionCamas.css (ver comentario completo
+     ahí, incluida la aclaración de que bed-card-states.html no llegó a
+     adjuntarse). Panel fijo entre temas; -bg/-fg sí varían por tema. */
+  --clinical-status-occupied-male:#0f5fa6;
+  --clinical-status-occupied-male-bg:#dcebf9;
+  --clinical-status-occupied-male-fg:#0f5fa6;
+  --clinical-status-occupied-female:#a30a5c;
+  --clinical-status-occupied-female-bg:#fbdcea;
+  --clinical-status-occupied-female-fg:#a30a5c;
+  --clinical-status-occupied-pediatric:#c2540f;
+  --clinical-status-occupied-pediatric-bg:#fbe3d1;
+  --clinical-status-occupied-pediatric-fg:#c2540f;
+  --clinical-status-available:#177a4c;
+  --clinical-status-available-bg:#d9f2e4;
+  --clinical-status-available-fg:#177a4c;
+  --clinical-status-reserved:#0a7f8c;
+  --clinical-status-reserved-bg:#d7f1f3;
+  --clinical-status-reserved-fg:#0a7f8c;
+  --clinical-status-maintenance:#5c5f66;
+  --clinical-status-maintenance-bg:#e6e7e9;
+  --clinical-status-maintenance-fg:#5c5f66;
+  --clinical-status-out-of-service:#b3312c;
+  --clinical-status-out-of-service-bg:#f9dedd;
+  --clinical-status-out-of-service-fg:#b3312c;
+  /* Excepción de contraste (encargo explícito): ver GestionCamas.css. */
+  --clinical-status-cleaning:#c98a12;
+  --clinical-status-cleaning-bg:#faecd2;
+  --clinical-status-cleaning-fg:#3a2600;
+  --clinical-status-cleaning-panel-text:#3a2600;
+  /* Fallback "Ocupada sin datos de población" — ver GestionCamas.css. */
+  --clinical-status-unknown:#475569;
+  --clinical-status-unknown-bg:#e2e8f0;
+  --clinical-status-unknown-fg:#475569;
   --radius:8px;
   --radius-lg:12px;
 
@@ -107,6 +149,30 @@ html[data-theme="dark"]{
   --orange:#f5975a;
   --orange-bg:rgba(232,114,12,.20);
   --orange-fg:#f5975a;
+  --cyan:#22d3ee;
+  --cyan-bg:rgba(14,116,144,.22);
+  --cyan-fg:#67e8f9;
+  /* clinical-status en oscuro — ver comentario completo en GestionCamas.css
+     (misma fórmula .20 de opacidad para -bg, mismo aclarado ~55% para -fg;
+     el panel sólido no se redefine acá, es fijo entre temas). */
+  --clinical-status-occupied-male-bg:rgba(15,95,166,.20);
+  --clinical-status-occupied-male-fg:#93b7d7;
+  --clinical-status-occupied-female-bg:rgba(163,10,92,.20);
+  --clinical-status-occupied-female-fg:#d691b6;
+  --clinical-status-occupied-pediatric-bg:rgba(194,84,15,.20);
+  --clinical-status-occupied-pediatric-fg:#e4b293;
+  --clinical-status-available-bg:rgba(23,122,76,.20);
+  --clinical-status-available-fg:#97c3ae;
+  --clinical-status-reserved-bg:rgba(10,127,140,.20);
+  --clinical-status-reserved-fg:#91c5cb;
+  --clinical-status-maintenance-bg:rgba(92,95,102,.20);
+  --clinical-status-maintenance-fg:#b6b7ba;
+  --clinical-status-out-of-service-bg:rgba(179,49,44,.20);
+  --clinical-status-out-of-service-fg:#dda2a0;
+  --clinical-status-cleaning-bg:rgba(201,138,18,.20);
+  --clinical-status-cleaning-fg:#e7ca94;
+  --clinical-status-unknown-bg:rgba(71,85,105,.20);
+  --clinical-status-unknown-fg:#acb3bc;
 }
 
 /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
@@ -186,8 +252,19 @@ body{
    .content (encargo: breadcrumb/Topbar quedan "globales", por arriba de
    sidebar + contenido) — .ge-shell-content pasa .content de columna a fila
    sin su padding/gap propios, y .ge-page-body retoma ese rol (padding/
-   columna/scroll) para el resto de cada pantalla. */
-.ge-shell-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+   columna/scroll) para el resto de cada pantalla.
+
+   Selector compuesto (.content.ge-shell-content), no solo .ge-shell-content:
+   esta regla pisa a .content (misma clase reutilizada por otras features,
+   ej. Admisiones.css) y su prioridad no puede depender del orden de
+   import/inyección de <style> — ese orden se reordena en navegación
+   client-side (Next/Turbopack inyecta los chunks de CSS en el orden en que
+   cada ruta monta, no en el orden en que el archivo los importa), lo que
+   rompía este layout al volver acá desde otro módulo (ej. /admisiones) sin
+   recargar. Con selector compuesto (especificidad 0-2-0 > 0-1-0 de
+   .content) esta regla gana siempre, sin importar el orden de inyección —
+   mismo criterio ya aplicado en .content.cbr-content (GestionCamasResumen.css). */
+.content.ge-shell-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
 .ge-page-body{
   flex:1;min-width:0;min-height:0;
   display:flex;flex-direction:column;gap:16px;

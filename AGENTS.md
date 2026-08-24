@@ -97,6 +97,60 @@ entre features — ver bitácora de homologación de modales para el detalle).
   `.wizard-main-header`, son navegación de pasos, no el título de un
   diálogo).
 
+# Selects de formulario
+
+Ningún `<select>` nativo dentro de un `.form-field` (formularios de modal,
+filtros de header, popovers "Más filtros") — el `<select>` del navegador no
+respeta el estilo del proyecto (tipografía, radios, dropdown). Usar siempre
+`@/Components/FormSelect/FormSelect` en su lugar, sin excepción para
+controles nuevos.
+
+```jsx
+<div className="form-field">
+  <label htmlFor="cba-fp-piso" className="fp-section-title">Piso</label>
+  <FormSelect
+    id="cba-fp-piso"
+    value={draft.piso}
+    onChange={(v) => setDraft((d) => ({ ...d, piso: v }))}
+    options={PISOS}           // [{ value, label }, ...] — mismo shape que las opciones de <select>
+    placeholder="Selecciona una opción" // opcional
+    disabled={false}          // opcional
+  />
+</div>
+```
+
+- **Por qué un componente propio y no CSS sobre el `<select>` nativo**: el
+  dropdown nativo no se puede re-estilizar de forma consistente entre
+  navegadores (padding de las opciones, radios, sombra) — `FormSelect`
+  reemplaza el `<select>` por un trigger + listbox propios (mismo criterio
+  que `AreaSelector.jsx`: estado local `open`, cierre por click-afuera/
+  Escape) que sí toma los tokens del proyecto.
+- **`onChange` recibe el value directo**, no un evento — a diferencia del
+  `<select>` nativo (`onChange={(v) => ...}`, nunca
+  `onChange={(e) => ... e.target.value}`).
+- El trigger se porta con `position:fixed` (vía `createPortal` a
+  `document.body`) para no romper el `overflow-y:auto` de un `.modal-body`
+  — no hace falta nada especial al usarlo dentro de un modal, ya lo resuelve
+  el componente.
+- **Dentro de un popover con su propio cierre por click-afuera** (patrón
+  `filter-popover-wrap`: `document.addEventListener('mousedown', ...)` +
+  `rootRef.current.contains(e.target)`, ver `CamasFiltrosPopover.jsx`): ese
+  listener también hay que blindarlo con
+  `if (e.target.closest('.form-select-dropdown')) return;` al principio del
+  handler. Sin eso, un click en una opción de `FormSelect` no cuenta como
+  "adentro" — su listbox está en `document.body`, no en el DOM del popover —
+  y el popover se cierra en el `mousedown` (antes de que el `click` de la
+  opción llegue a disparar `onChange`), o sea: el filtro nunca se aplica,
+  solo parece que el dropdown "no deja elegir". Bug real encontrado al migrar
+  `CamasFiltrosPopover` — cualquier otro popover de la lista de abajo lo va a
+  repetir si se migra sin este chequeo.
+- **Migración incremental**: varios `FiltrosPopover` de Gestión de Camas
+  (`AuditoriaFiltrosPopover`, `ConfiguracionFiltrosPopover`,
+  `InconsistenciasFiltrosPopover`, `MasFiltrosPopover`) todavía usan
+  `<select>` nativo — quedan pendientes de migrar, no son el estándar a
+  seguir para código nuevo. Los selects de paginación ("X por página") no
+  entran en esta regla: son un control de página, no un campo de formulario.
+
 # Hooks / logic organization
 
 All non-visual logic (custom hooks, imperative init/controller modules like
@@ -222,3 +276,12 @@ markup for an icon.
 - When adding a new icon, pick the closest matching `Lu*` component instead of
   pasting a raw SVG path — check `node_modules/react-icons/lu/index.mjs` (or
   lucide.dev) for the exact name.
+- Exception: `react-icons` lags behind Lucide's own release (as of `lu`
+  v5.7.0, it's missing icons that already exist on lucide.dev — confirmed for
+  `mars`/`venus`, used as the gender icons in `BedCard.jsx`). When a needed
+  icon exists on lucide.dev but not in `node_modules/react-icons/lu/index.mjs`,
+  fall back to the official `lucide-react` package instead of hand-drawing
+  SVG or picking an unrelated `Lu*` icon — import by its plain PascalCase name
+  (`import { Mars } from 'lucide-react'`, no `Lu` prefix). Prefer `react-icons/lu`
+  whenever the icon is available there; only reach for `lucide-react` for the
+  specific icons missing from it.

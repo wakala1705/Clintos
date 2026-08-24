@@ -1,7 +1,8 @@
 /* .filters-more-btn/.filter-popover/.filter-popover-right/.fp-section/
-   .fp-section-title/.fp-actions/.badge-count/.form-field/.form-field select:
-   definidas en ../../GestionCamas.css — acá solo el input de texto propio
-   (Habitación/cama). */
+   .fp-section-title/.fp-actions/.badge-count/.form-field: definidas en
+   ../../GestionCamas.css — el select de Servicio usa FormSelect (ver
+   AGENTS.md, "Selects de formulario"), no el `select` nativo; acá solo el
+   input de texto propio (Habitación/cama). */
 .cbau-fp-input{
   width:100%;height:var(--input-sm);padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);

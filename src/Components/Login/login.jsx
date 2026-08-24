@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuChevronDown, LuEye, LuEyeOff } from 'react-icons/lu';
+import {
+  LuChevronDown, LuEye, LuEyeOff, LuBuilding2, LuMapPin,
+} from 'react-icons/lu';
 import styles from './login.module.css';
 
 const COMPANY_OPTIONS = [
@@ -60,6 +62,7 @@ export default function Login() {
               <div className={styles.company}>
                 <label htmlFor="company">Compañía</label>
                 <div className={styles.selectWrap}>
+                  <LuBuilding2 className={styles.selectLeadingIcon} />
                   <select
                     id="company"
                     name="company"
@@ -109,17 +112,18 @@ export default function Login() {
               </div>
 
               <div className={styles.area}>
-                <label htmlFor="area">Área funcional</label>
+                <label htmlFor="area">Sede</label>
                 <div className={styles.selectWrap}>
+                  <LuMapPin className={styles.selectLeadingIcon} />
                   <select
                     id="area"
                     name="area"
                     value={form.area}
                     onChange={handleChange}
                   >
-                    <option value="">Seleccionar área</option>
-                    <option value="area1">Área 1</option>
-                    <option value="area2">Área 2</option>
+                    <option value="">Seleccionar sede</option>
+                    <option value="sede1">Sede 1</option>
+                    <option value="sede2">Sede 2</option>
                   </select>
                   <LuChevronDown className={styles.selectIcon} />
                 </div>

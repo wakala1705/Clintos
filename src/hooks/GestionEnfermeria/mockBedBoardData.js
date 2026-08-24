@@ -25,7 +25,14 @@ const CAMAS_OCUPADAS = PACIENTES_PISO.map((p) => ({
   id: p.cama,
   numero: p.cama,
   estado: 'ocupada',
-  paciente: { nombre: p.paciente, hc: p.id },
+  // genero/edad alimentan el indicador de BedCard (categoriaPaciente, ver
+  // hooks/GestionCamas/bedContextFormat.js); diasEstancia alimenta la línea
+  // "edad · días de estancia" (encargo explícito, formatEdadEstancia) —
+  // misma fuente que la tabla "Pacientes en piso" en los 3 casos, nunca un
+  // valor propio de este mock.
+  paciente: {
+    nombre: p.paciente, hc: p.id, genero: p.genero, edad: p.edad, diasEstancia: p.diasEstancia,
+  },
 }));
 
 const CAMAS_LIBRES = [

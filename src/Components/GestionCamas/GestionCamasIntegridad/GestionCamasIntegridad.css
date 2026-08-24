@@ -42,6 +42,23 @@
 
 .cbi-table-card{flex:1;min-height:0;}
 
+/* Tipo/Impacto/Estado/Sede siempre visibles + "Más filtros" con progressive
+   disclosure, agrupados dentro de .filter-bar (ver comentario en
+   GestionCamasIntegridad.jsx) — margin-left:auto en vez de .filter-spacer
+   (GestionCamas.css), mismo criterio que .cba-filters-group
+   (GestionCamasCamas.css): el grupo necesita moverse como unidad cuando no
+   entra junto al buscador. */
+.cbi-filters-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;}
+
+/* Botón "Limpiar filtros" persistente del filter-bar — mismo .badge-count
+   pill que .filters-more-btn .badge-count (GestionCamas.css), redeclarado
+   acotado a este botón (mismo criterio que .cba-limpiar-filtros-btn
+   .badge-count en GestionCamasCamas.css). */
+.cbi-limpiar-filtros-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
 .cbi-tipo-cell{width:1%;white-space:nowrap;}
 .cbi-acciones-cell{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
 

@@ -27,7 +27,7 @@ import {
   fetchInconsistencias, formatHoraRelativa, formatFecha,
 } from '@/hooks/GestionCamas/mockIntegridadData';
 import {
-  LuCircleAlert, LuCircleCheck, LuHistory, LuInfo, LuRefreshCw, LuSearch, LuSearchX, LuShieldCheck, LuTriangleAlert,
+  LuCircleAlert, LuCircleCheck, LuFilterX, LuHistory, LuInfo, LuRefreshCw, LuSearch, LuSearchX, LuShieldCheck, LuTriangleAlert,
 } from 'react-icons/lu';
 
 const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', detectado: 'cualquiera' };
@@ -53,7 +53,7 @@ export default function GestionCamasIntegridad() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
 
   // Copia local mutable del mock (nunca se muta INCONSISTENCIAS_INICIALES
   // directamente) — Corregir/Ignorar/Verificar ahora actualizan acá, y eso
@@ -188,8 +188,13 @@ export default function GestionCamasIntegridad() {
     }, 1200);
   }
 
-  const hayFiltrosActivos = tipo !== 'todos' || impacto !== 'todos' || estadoFiltro !== 'activa' || sede !== 'todas'
-    || query.trim() !== '' || filtrosAvanzados.servicio !== 'todos' || filtrosAvanzados.detectado !== 'cualquiera';
+  // Un solo conteo en vez de un booleano: alimenta tanto `hayFiltrosActivos`
+  // como el badge del botón "Limpiar filtros" persistente del filter-bar
+  // (mismo criterio que `cantidadFiltrosActivos` en GestionCamasCamas.jsx).
+  const cantidadFiltrosActivos = (tipo !== 'todos' ? 1 : 0) + (impacto !== 'todos' ? 1 : 0) + (estadoFiltro !== 'activa' ? 1 : 0)
+    + (sede !== 'todas' ? 1 : 0) + (query.trim() !== '' ? 1 : 0) + (filtrosAvanzados.servicio !== 'todos' ? 1 : 0)
+    + (filtrosAvanzados.detectado !== 'cualquiera' ? 1 : 0);
+  const hayFiltrosActivos = cantidadFiltrosActivos > 0;
 
   const modalType = modal?.type ?? null;
   const modalInconsistencia = modal?.inconsistencia ?? null;
@@ -247,6 +252,12 @@ export default function GestionCamasIntegridad() {
 
             <div className="card cbi-table-card">
               <div className="filter-bar">
+                {/* Orden (mismo criterio que .cba-table-card en
+                    GestionCamasCamas.jsx): búsqueda al extremo izquierdo,
+                    filtros agrupados al extremo derecho vía .cbi-filters-group
+                    (margin-left:auto en vez de .filter-spacer suelto — con 5
+                    controles + buscador el grupo necesita moverse como
+                    unidad si no entra en una sola línea). */}
                 <div className="search-field">
                   <LuSearch className="icon" />
                   <input
@@ -258,16 +269,30 @@ export default function GestionCamasIntegridad() {
                   />
                 </div>
 
-                <AreaSelector label="Tipo" options={TIPOS} value={tipo} onChange={handleChangeTipo} />
-                <AreaSelector label="Impacto" options={IMPACTOS} value={impacto} onChange={handleChangeImpacto} />
-                <AreaSelector label="Estado" options={ESTADOS} value={estadoFiltro} onChange={handleChangeEstadoFiltro} />
-                <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
-                <InconsistenciasFiltrosPopover
-                  servicio={filtrosAvanzados.servicio}
-                  detectado={filtrosAvanzados.detectado}
-                  onChange={handleAplicarFiltrosAvanzados}
-                  onLimpiar={handleLimpiarFiltrosAvanzados}
-                />
+                <div className="cbi-filters-group">
+                  <AreaSelector label="Tipo" options={TIPOS} value={tipo} onChange={handleChangeTipo} />
+                  <AreaSelector label="Impacto" options={IMPACTOS} value={impacto} onChange={handleChangeImpacto} />
+                  <AreaSelector label="Estado" options={ESTADOS} value={estadoFiltro} onChange={handleChangeEstadoFiltro} />
+                  <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
+                  <InconsistenciasFiltrosPopover
+                    servicio={filtrosAvanzados.servicio}
+                    detectado={filtrosAvanzados.detectado}
+                    onChange={handleAplicarFiltrosAvanzados}
+                    onLimpiar={handleLimpiarFiltrosAvanzados}
+                  />
+                  {/* Persistente en el filter-bar (a diferencia de "Limpiar
+                      todo" dentro de InconsistenciasFiltrosPopover, que solo
+                      resetea los filtros avanzados): filtrar por Tipo/
+                      Impacto/Estado/Sede directamente en el header no dejaba
+                      forma de limpiarlos sin abrir "Más filtros". */}
+                  {hayFiltrosActivos && (
+                    <button type="button" className="btn btn-secondary btn-sm cbi-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
+                      <LuFilterX className="icon" aria-hidden="true" />
+                      Limpiar filtros
+                      <span className="badge-count">{cantidadFiltrosActivos}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {status === 'loading' && <InconsistenciasTableSkeleton />}

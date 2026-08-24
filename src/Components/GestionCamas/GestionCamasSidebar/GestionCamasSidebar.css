@@ -17,15 +17,31 @@
 
 .cbs-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
 
+/* Fila del label de sección + botón de colapso manual (mismo icono/estado
+   que el auto-colapso por breakpoint de abajo, ver .cbs-sidebar.collapsed). */
+.cbs-nav-header{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:4px 4px 8px 8px;flex-shrink:0;
+}
+
 /* Label de sección sobre la lista (encargo: reemplaza al header propio del
    sidebar, redundante con el nombre del módulo ya visible en el breadcrumb
    del Topbar y el título de la página en el contenido) — mismo patrón visual
    que un eyebrow/kicker: --fs-xs + uppercase + letter-spacing, sin fondo. */
 .cbs-nav-label-group{
-  padding:4px 12px 8px;flex-shrink:0;
+  padding:0 0 0 4px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
+
+.cbs-collapse-btn{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:26px;height:26px;border-radius:var(--radius);border:none;background:none;
+  color:var(--ink-500);cursor:pointer;transition:background .15s,color .15s;
+}
+.cbs-collapse-btn:hover{background:var(--bg);color:var(--ink-900);}
+.cbs-collapse-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cbs-collapse-btn .icon{width:17px;height:17px;}
 
 /* Fila completa clickeable (Link o button, mismo aspecto) — borde izquierdo
    transparente en reposo (mismo ancho que el activo, ver .active más abajo)
@@ -66,30 +82,46 @@
   padding:1px 7px;border-radius:10px;
 }
 
-/* Tooltip (solo visible colapsado, ver @media abajo) — mismo patrón que
-   .tooltip-wrap/.tooltip-bubble en ArticulosModal.css (SolicitudConsumo):
-   burbuja oscura fija, no theme-aware a propósito (mismo criterio que ese
-   componente, para no introducir un segundo lenguaje de tooltip). */
-.cbs-tooltip{
-  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+/* Tooltip (solo visible colapsado — mostrado por JS vía hover/focus, ver
+   GestionCamasSidebar.jsx): portado a document.body con position:fixed en
+   vez de position:absolute dentro de .cbs-nav-item, porque .cbs-sidebar
+   necesita overflow-x:hidden para su propio scroll vertical (overflow-y:auto)
+   — eso recorta cualquier hijo absoluto que se salga por el borde derecho,
+   dejando el tooltip invisible. Mismo patrón que .form-select-dropdown
+   (FormSelect.css). Mismo lenguaje visual (burbuja oscura fija, no
+   theme-aware a propósito) que .tooltip-wrap/.tooltip-bubble en
+   ArticulosModal.css (SolicitudConsumo). z-index alto para no quedar detrás
+   de .cb-page-body. */
+.cbs-tooltip-float{
+  position:fixed;transform:translateY(-50%);
   background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px;
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;
-  pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20);
+  pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
 }
 
+/* Colapso a solo-ícono: mismas reglas disparadas por 2 gatillos distintos
+   -- el botón manual (.collapsed, ver GestionCamasSidebar.jsx) y el
+   breakpoint de abajo -- para que ambos rieles se lean como una sola
+   transición coherente en vez de 2 anchos distintos. El label se oculta y
+   el ícono queda centrado; el tooltip lo controla JS (ver arriba), no CSS. */
+.cbs-sidebar.collapsed{width:64px;}
+.cbs-sidebar.collapsed .cbs-nav-header{justify-content:center;padding:4px 0 8px;}
+.cbs-sidebar.collapsed .cbs-nav-label-group{display:none;}
+.cbs-sidebar.collapsed .cbs-nav-item{justify-content:center;padding:10px 0;}
+.cbs-sidebar.collapsed .cbs-nav-label,
+.cbs-sidebar.collapsed .cbs-nav-badge{display:none;}
+
 /* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
-   colapsa a solo-ícono — mismo umbral que el auto-colapso del sidebar
-   global (SIDEBAR_AUTO_BREAKPOINT en legacy-shell-chrome.js) y mismo ancho
-   64px, para que ambos rieles se lean como una sola transición coherente
-   en vez de 2 anchos distintos. El label se oculta, el ícono queda
-   centrado, y el tooltip (oculto en desktop, ver .cbs-tooltip arriba) se
-   activa en hover/foco para no perder legibilidad. */
+   colapsa a solo-ícono aunque el botón manual no se haya usado — mismo
+   umbral que el auto-colapso del sidebar global (SIDEBAR_AUTO_BREAKPOINT en
+   legacy-shell-chrome.js) y mismo ancho 64px. El botón de colapso manual se
+   oculta acá: a este ancho ya no hay espacio de sobra para expandir. */
 @media (max-width:1024px){
   .cbs-sidebar{width:64px;}
+  .cbs-nav-header{justify-content:center;padding:4px 0 8px;}
   .cbs-nav-label-group{display:none;}
+  .cbs-collapse-btn{display:none;}
   .cbs-nav-item{justify-content:center;padding:10px 0;}
   .cbs-nav-label,
   .cbs-nav-badge{display:none;}
-  .cbs-nav-item:hover .cbs-tooltip,
-  .cbs-nav-item:focus-visible .cbs-tooltip{display:block;}
 }

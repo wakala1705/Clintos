@@ -2,9 +2,7 @@
    (780px por defecto, se conserva acá — este modal no necesita el ancho
    xlg del tablero). .dp-info/.dp-info-row/.k/.v: mismo par label/valor
    alineado a la derecha que ya usa el popover de alergias (PatientBanner),
-   ver shared.css. .bb-legend-dot/.bb-legend-dot-*: definidas en
-   ../BedBoardModal.css, siempre cargado antes de que este modal pueda
-   montarse (solo se abre desde dentro de BedBoardModal). */
+   ver shared.css. */
 .bdm-modal-card{width:520px;}
 
 .bdm-summary{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;}
@@ -18,10 +16,24 @@
   background:var(--primary-50);color:var(--primary-dark);
   font-size:var(--fs-sm);font-weight:var(--fw-bold);
 }
-.bdm-patient-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.bdm-patient-hc{font-size:var(--fs-sm);color:var(--ink-500);}
+.bdm-patient-nombre{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.bdm-patient-hc{font-size:var(--fs-base);color:var(--ink-500);}
 
 .bdm-med-value{display:inline-flex;align-items:center;gap:6px;}
+/* Punto de color por estado de medicación (MEDICACION_COLOR, ver
+   BedDetailModal.jsx) — antes reusaba `.bb-legend-dot`/`.bb-legend-dot-*`
+   de ../BedBoardModal.css (mismo "punto de color genérico"), pero ese
+   archivo pasó a nombrar sus clases por clave clinical-status de la card
+   (bb-legend-dot-occupied-male, -available, etc., ver bedContextFormat.js)
+   en vez de por hue genérico (green/amber/red/gray) — sin querer, eso dejó
+   sin color al punto de acá (clase `bb-legend-dot-green` ya no existe en
+   ningún CSS). Se declara acá, con nombre propio, para que la taxonomía de
+   medicación no vuelva a quedar acoplada a cambios en la de la card. */
+.bdm-med-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:currentColor;}
+.bdm-med-dot-green{color:var(--green);}
+.bdm-med-dot-amber{color:var(--amber);}
+.bdm-med-dot-red{color:var(--red);}
+.bdm-med-dot-gray{color:var(--gray-fg);}
 
 /* Sin border-bottom propio: .bdm-divider ya pone la línea justo antes de
    .bdm-actions (ver abajo) — con las 2 quedaba un doble borde pegado. */

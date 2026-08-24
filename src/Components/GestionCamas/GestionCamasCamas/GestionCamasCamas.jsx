@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import '../GestionCamas.css';
 import './GestionCamasCamas.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -20,14 +22,16 @@ import CamaDetailModal from './CamaDetailModal/CamaDetailModal';
 import CamaHistorialModal from './CamaHistorialModal/CamaHistorialModal';
 import CambiarEstadoAdminModal from './CambiarEstadoAdminModal/CambiarEstadoAdminModal';
 import {
-  CAMAS, ESTADOS, KPIS, SEDES, SERVICIOS, SEDE_LABEL, SERVICIO_LABEL, TIPO_LABEL,
-  formatFechaHora, fetchCamas,
+  CAMAS, ESTADOS, SEDES, SERVICIOS, SEDE_LABEL, SERVICIO_LABEL, TIPO_LABEL,
+  formatFechaHora, fetchCamas, filterCamas,
 } from '@/hooks/GestionCamas/mockCamasAdminData';
 import {
-  LuBedDouble, LuCircleAlert, LuPlus, LuSearch, LuSearchX,
+  LuBedDouble, LuCircleAlert, LuFilterX, LuPlus, LuSearch, LuSearchX,
 } from 'react-icons/lu';
 
-const FILTROS_AVANZADOS_INICIALES = { habitacion: '', tipo: 'todos', fechaActualizacion: 'todas' };
+const FILTROS_AVANZADOS_INICIALES = {
+  habitacion: '', tipo: 'todos', piso: 'todos', sector: 'todos', fechaActualizacion: 'todas',
+};
 
 // "Camas" — maestro ADMINISTRATIVO del módulo Gestión de Camas (encargo
 // completo, ver Prompt "Navegación Camas"): responde "qué camas existen y
@@ -94,6 +98,8 @@ export default function GestionCamasCamas() {
       estado: estadoFiltro,
       tipo: filtrosAvanzados.tipo,
       habitacion: filtrosAvanzados.habitacion,
+      piso: filtrosAvanzados.piso,
+      sector: filtrosAvanzados.sector,
       fechaActualizacion: filtrosAvanzados.fechaActualizacion,
       page,
       pageSize,
@@ -138,7 +144,10 @@ export default function GestionCamasCamas() {
   function handleVerDetalle(cama) { setModal({ type: 'detalle', cama }); }
   function handleVerHistorial(cama) { setModal({ type: 'historial', cama }); }
   function handleCambiarEstado(cama) { setModal({ type: 'cambiar-estado', cama }); }
-  function handleMasAcciones(cama) { showToast(`Más acciones de cama ${cama.codigo} (en desarrollo).`); }
+  function handleReservar(cama) { showToast(`Reservas de cama ${cama.codigo} (en desarrollo).`); }
+  function handleTrasladar(cama) { showToast(`Traslados de cama ${cama.codigo} (en desarrollo).`); }
+  function handleMantenimiento(cama) { showToast(`Mantenimiento de cama ${cama.codigo} (en desarrollo).`); }
+  function handleLimpieza(cama) { showToast(`Limpieza de cama ${cama.codigo} (en desarrollo).`); }
 
   function handleSubmitForm(datos) {
     if (modal?.type === 'editar') {
@@ -164,8 +173,58 @@ export default function GestionCamasCamas() {
     setModal(null);
   }
 
-  const hayFiltrosActivos = sede !== 'todas' || servicio !== 'todos' || estadoFiltro !== 'todos'
-    || query.trim() !== '' || filtrosAvanzados.habitacion.trim() !== '' || filtrosAvanzados.tipo !== 'todos' || filtrosAvanzados.fechaActualizacion !== 'todas';
+  // Un solo conteo en vez de un booleano: alimenta tanto `hayFiltrosActivos`
+  // como el badge del botón "Limpiar filtros" persistente del filter-bar
+  // (mismo criterio que `cantidadFiltrosActivos` en TaskListPanel.jsx) — ese
+  // botón limpia TODO (sede/servicio/estado/búsqueda + filtros avanzados,
+  // via `handleLimpiarTodo`), a diferencia del "Limpiar todo" que vive
+  // dentro de `CamasFiltrosPopover`, que solo resetea `filtrosAvanzados`.
+  const cantidadFiltrosActivos = (sede !== 'todas' ? 1 : 0) + (servicio !== 'todos' ? 1 : 0) + (estadoFiltro !== 'todos' ? 1 : 0)
+    + (query.trim() !== '' ? 1 : 0) + (filtrosAvanzados.habitacion.trim() !== '' ? 1 : 0) + (filtrosAvanzados.tipo !== 'todos' ? 1 : 0)
+    + (filtrosAvanzados.piso !== 'todos' ? 1 : 0) + (filtrosAvanzados.sector !== 'todos' ? 1 : 0) + (filtrosAvanzados.fechaActualizacion !== 'todas' ? 1 : 0);
+  const hayFiltrosActivos = cantidadFiltrosActivos > 0;
+
+  // KPIs dinámicos (encargo "KPIs dinámicos"): mismo predicado que alimenta
+  // la tabla (`filterCamas`, ver mockCamasAdminData.js) pero síncrono sobre
+  // `camasState` — a diferencia de `fetchCamas` (usado arriba para `items`/
+  // `total` de la tabla), esto NO pasa por la simulación de latencia/fallo
+  // de red: las tarjetas son instantáneas porque los datos ya están en
+  // memoria (encargo, sin loading state propio para las tarjetas).
+  const camasFiltradas = useMemo(() => filterCamas({
+    dataset: camasState,
+    query: debouncedQuery,
+    sede,
+    servicio,
+    estado: estadoFiltro,
+    tipo: filtrosAvanzados.tipo,
+    habitacion: filtrosAvanzados.habitacion,
+    piso: filtrosAvanzados.piso,
+    sector: filtrosAvanzados.sector,
+    fechaActualizacion: filtrosAvanzados.fechaActualizacion,
+  }), [camasState, debouncedQuery, sede, servicio, estadoFiltro, filtrosAvanzados]);
+
+  // Porcentajes sobre el total FILTRADO, no el global (encargo, punto 3) —
+  // con 0 resultados devuelve '0%' en vez de dividir por cero (encargo,
+  // punto 5: nunca NaN/Infinity). Si "Estado" ya filtra a un solo valor
+  // (ej. "Habilitada"), esto no necesita un caso especial: las otras 2
+  // categorías simplemente dan 0/0%, sin porcentajes contradictorios
+  // (encargo, punto 4).
+  const kpis = useMemo(() => {
+    const kpiTotal = camasFiltradas.length;
+    const habilitadas = camasFiltradas.filter((c) => c.estado === 'habilitada').length;
+    const mantenimiento = camasFiltradas.filter((c) => c.estado === 'mantenimiento').length;
+    const fueraServicio = camasFiltradas.filter((c) => c.estado === 'fuera-servicio').length;
+    const pct = (n) => (kpiTotal > 0 ? `${((n / kpiTotal) * 100).toFixed(1)}% del total` : '0% del total');
+    return {
+      total: kpiTotal,
+      habilitadas,
+      mantenimiento,
+      fueraServicio,
+      habilitadasPct: pct(habilitadas),
+      mantenimientoPct: pct(mantenimiento),
+      fueraServicioPct: pct(fueraServicio),
+    };
+  }, [camasFiltradas]);
 
   // Variables locales en vez de leer `modal.tipo`/`modal.cama` directo
   // dentro de los `&&` de abajo — con `modal` en null eso es seguro en JS
@@ -200,28 +259,30 @@ export default function GestionCamasCamas() {
               </button>
             </div>
 
-            <div className="cba-filters-row">
-              <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
-              <AreaSelector label="Servicio" options={SERVICIOS} value={servicio} onChange={handleChangeServicio} />
-              <AreaSelector label="Estado" options={ESTADOS} value={estadoFiltro} onChange={handleChangeEstadoFiltro} />
-              <CamasFiltrosPopover
-                habitacion={filtrosAvanzados.habitacion}
-                tipo={filtrosAvanzados.tipo}
-                fechaActualizacion={filtrosAvanzados.fechaActualizacion}
-                onChange={handleAplicarFiltrosAvanzados}
-                onLimpiar={handleLimpiarFiltrosAvanzados}
-              />
-            </div>
-
             <div className="cba-kpi-row">
-              <KpiCard icon={LuBedDouble} label="Total de camas" value={KPIS.total} description="En todas las sedes" variant="neutral" />
-              <KpiCard icon={LuBedDouble} label="Habilitadas" value={KPIS.habilitadas} description="91.4% del total" variant="neutral" />
-              <KpiCard icon={LuBedDouble} label="En mantenimiento" value={KPIS.mantenimiento} description="2.3% del total" variant="warning" />
-              <KpiCard icon={LuBedDouble} label="Fuera de servicio" value={KPIS.fueraServicio} description="6.3% del total" variant="danger" />
+              <KpiCard
+                icon={LuBedDouble}
+                label="Total de camas"
+                value={kpis.total}
+                description={hayFiltrosActivos ? 'Con los filtros aplicados' : 'En todas las sedes'}
+                variant="neutral"
+              />
+              <KpiCard icon={LuBedDouble} label="Habilitadas" value={kpis.habilitadas} description={kpis.habilitadasPct} variant="neutral" />
+              <KpiCard icon={LuBedDouble} label="En mantenimiento" value={kpis.mantenimiento} description={kpis.mantenimientoPct} variant="warning" />
+              <KpiCard icon={LuBedDouble} label="Fuera de servicio" value={kpis.fueraServicio} description={kpis.fueraServicioPct} variant="danger" />
             </div>
 
             <div className="card cba-table-card">
               <div className="filter-bar">
+                {/* Orden (mismo criterio que .cb-board-card en
+                    GestionCamas.jsx): búsqueda al extremo izquierdo, filtros
+                    agrupados al extremo derecho. Grupo propio (.cba-filters-group,
+                    margin-left:auto) en vez de .filter-spacer suelto: con 4
+                    controles + buscador no siempre entran en una sola línea
+                    (ver AGENTS.md, breakpoint 1024px), y así el grupo entero
+                    se va como unidad a la línea siguiente y se mantiene
+                    pegado a la derecha en vez de partirse control por
+                    control empezando desde la izquierda. */}
                 <div className="search-field">
                   <LuSearch className="icon" />
                   <input
@@ -231,6 +292,33 @@ export default function GestionCamasCamas() {
                     onChange={(e) => setQuery(e.target.value)}
                     aria-label="Buscar cama por código, habitación, servicio o sede"
                   />
+                </div>
+
+                <div className="cba-filters-group">
+                  <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
+                  <AreaSelector label="Servicio" options={SERVICIOS} value={servicio} onChange={handleChangeServicio} />
+                  <AreaSelector label="Estado" options={ESTADOS} value={estadoFiltro} onChange={handleChangeEstadoFiltro} />
+                  <CamasFiltrosPopover
+                    habitacion={filtrosAvanzados.habitacion}
+                    tipo={filtrosAvanzados.tipo}
+                    piso={filtrosAvanzados.piso}
+                    sector={filtrosAvanzados.sector}
+                    fechaActualizacion={filtrosAvanzados.fechaActualizacion}
+                    onChange={handleAplicarFiltrosAvanzados}
+                    onLimpiar={handleLimpiarFiltrosAvanzados}
+                  />
+                  {/* Persistente en el filter-bar (a diferencia de "Limpiar
+                      todo" dentro de CamasFiltrosPopover, que solo resetea
+                      los filtros avanzados): antes, filtrar por Sede/
+                      Servicio/Estado directamente en el header no dejaba
+                      forma de limpiarlos sin abrir "Más filtros". */}
+                  {hayFiltrosActivos && (
+                    <button type="button" className="btn btn-secondary btn-sm cba-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
+                      <LuFilterX className="icon" aria-hidden="true" />
+                      Limpiar filtros
+                      <span className="badge-count">{cantidadFiltrosActivos}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -303,7 +391,10 @@ export default function GestionCamasCamas() {
                                 onEditar={handleEditar}
                                 onCambiarEstado={handleCambiarEstado}
                                 onVerHistorial={handleVerHistorial}
-                                onMasAcciones={handleMasAcciones}
+                                onReservar={handleReservar}
+                                onTrasladar={handleTrasladar}
+                                onMantenimiento={handleMantenimiento}
+                                onLimpieza={handleLimpieza}
                               />
                             </td>
                           </tr>

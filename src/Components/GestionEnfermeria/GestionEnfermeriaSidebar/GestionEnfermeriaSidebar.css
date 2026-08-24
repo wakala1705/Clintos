@@ -12,13 +12,29 @@
 
 .ges-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
 
+/* Fila del label de sección + botón de colapso manual — mismo patrón que
+   .cbs-nav-header (GestionCamasSidebar.css). */
+.ges-nav-header{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:4px 4px 8px 8px;flex-shrink:0;
+}
+
 /* Label de sección sobre la lista — mismo patrón que un eyebrow/kicker, sin
    repetir el nombre del módulo (ya visible en el breadcrumb del Topbar). */
 .ges-nav-label-group{
-  padding:4px 12px 8px;flex-shrink:0;
+  padding:0 0 0 4px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
+
+.ges-collapse-btn{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:26px;height:26px;border-radius:var(--radius);border:none;background:none;
+  color:var(--ink-500);cursor:pointer;transition:background .15s,color .15s;
+}
+.ges-collapse-btn:hover{background:var(--bg);color:var(--ink-900);}
+.ges-collapse-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.ges-collapse-btn .icon{width:17px;height:17px;}
 
 .ges-nav-item{
   position:relative;
@@ -43,22 +59,39 @@
 }
 .ges-nav-item.active .ges-nav-icon{color:var(--primary);}
 
-/* Tooltip (solo visible colapsado, ver @media abajo) — mismo patrón oscuro
-   fijo que .cbs-tooltip (GestionCamasSidebar.css). */
-.ges-tooltip{
-  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+/* Tooltip (solo visible colapsado — mostrado por JS vía hover/focus, ver
+   GestionEnfermeriaSidebar.jsx): portado a document.body con position:fixed
+   en vez de position:absolute dentro de .ges-nav-item, porque .ges-sidebar
+   necesita overflow-x:hidden para su propio scroll vertical (overflow-y:auto)
+   — eso recorta cualquier hijo absoluto que se salga por el borde derecho,
+   dejando el tooltip invisible. Mismo patrón que .form-select-dropdown
+   (FormSelect.css). z-index alto para no quedar detrás de .ge-page-body. */
+.ges-tooltip-float{
+  position:fixed;transform:translateY(-50%);
   background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px;
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;
-  pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20);
+  pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
 }
 
+/* Colapso a solo-ícono: mismas reglas disparadas por 2 gatillos distintos
+   -- el botón manual (.collapsed, ver GestionEnfermeriaSidebar.jsx) y el
+   breakpoint de abajo -- mismo patrón que .cbs-sidebar.collapsed
+   (GestionCamasSidebar.css). */
+.ges-sidebar.collapsed{width:64px;}
+.ges-sidebar.collapsed .ges-nav-header{justify-content:center;padding:4px 0 8px;}
+.ges-sidebar.collapsed .ges-nav-label-group{display:none;}
+.ges-sidebar.collapsed .ges-nav-item{justify-content:center;padding:10px 0;}
+.ges-sidebar.collapsed .ges-nav-label{display:none;}
+
 /* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
-   colapsa a solo-ícono — mismo umbral/ancho que GestionCamasSidebar.css. */
+   colapsa a solo-ícono aunque el botón manual no se haya usado — mismo
+   umbral/ancho que GestionCamasSidebar.css. El botón de colapso manual se
+   oculta acá: a este ancho ya no hay espacio de sobra para expandir. */
 @media (max-width:1024px){
   .ges-sidebar{width:64px;}
+  .ges-nav-header{justify-content:center;padding:4px 0 8px;}
   .ges-nav-label-group{display:none;}
+  .ges-collapse-btn{display:none;}
   .ges-nav-item{justify-content:center;padding:10px 0;}
   .ges-nav-label{display:none;}
-  .ges-nav-item:hover .ges-tooltip,
-  .ges-nav-item:focus-visible .ges-tooltip{display:block;}
 }

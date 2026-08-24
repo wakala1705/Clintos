@@ -40,24 +40,43 @@ export const SERVICIOS = [
 ];
 export const SERVICIO_LABEL = Object.fromEntries(SERVICIOS.map((s) => [s.value, s.label]));
 
-// 1 tipo de cama por servicio (mismo criterio que TIPOS en mockCamasData.js:
-// el tipo configurado refleja para qué servicio está pensada la cama).
-export const SERVICIO_TIPO = {
-  'uci-adultos': 'uci',
-  'hospitalizacion-general': 'general',
-  pediatria: 'pediatrica',
-  cirugia: 'quirurgica',
-  emergencias: 'emergencia',
-};
+// Tipo de cama: taxonomía clínica propia, independiente del Servicio (a
+// diferencia del modelo anterior de "1 tipo por servicio" — estos 7 valores
+// no mapean 1:1 contra los 5 servicios de arriba, ej. una cama Bariátrica o
+// Neonatal puede estar en cualquier servicio). Por eso se asigna por
+// rotación en CAMAS (mismo criterio que Piso/Sector, ver *_ROTACION más
+// abajo) y es un campo seleccionable en CamaFormModal, no derivado/solo
+// lectura.
 export const TIPOS_CAMA = [
   { value: 'todos', label: 'Todos los tipos' },
-  { value: 'uci', label: 'UCI' },
-  { value: 'general', label: 'General' },
+  { value: 'hospitalaria-estandar', label: 'Hospitalaria estándar' },
   { value: 'pediatrica', label: 'Pediátrica' },
-  { value: 'quirurgica', label: 'Quirúrgica' },
-  { value: 'emergencia', label: 'Emergencia' },
+  { value: 'bariatrica', label: 'Bariátrica' },
+  { value: 'obstetrica', label: 'Obstétrica' },
+  { value: 'cuidados-intensivos', label: 'Cuidados intensivos' },
+  { value: 'cuidados-intermedios', label: 'Cuidados intermedios' },
+  { value: 'neonatal', label: 'Neonatal' },
 ];
 export const TIPO_LABEL = Object.fromEntries(TIPOS_CAMA.map((t) => [t.value, t.label]));
+
+export const PISOS = [
+  { value: 'todos', label: 'Todos los pisos' },
+  { value: '1', label: 'Piso 1' },
+  { value: '2', label: 'Piso 2' },
+  { value: '3', label: 'Piso 3' },
+  { value: '4', label: 'Piso 4' },
+  { value: '5', label: 'Piso 5' },
+];
+export const PISO_LABEL = Object.fromEntries(PISOS.map((p) => [p.value, p.label]));
+
+export const SECTORES = [
+  { value: 'todos', label: 'Todos los sectores' },
+  { value: 'norte', label: 'Ala Norte' },
+  { value: 'sur', label: 'Ala Sur' },
+  { value: 'este', label: 'Ala Este' },
+  { value: 'oeste', label: 'Ala Oeste' },
+];
+export const SECTOR_LABEL = Object.fromEntries(SECTORES.map((s) => [s.value, s.label]));
 
 export const ESTADOS = [
   { value: 'todos', label: 'Todos los estados' },
@@ -97,13 +116,17 @@ const MOTIVOS_POR_ESTADO = {
 
 const SERVICIOS_ROTACION = SERVICIOS.filter((s) => s.value !== 'todos').map((s) => s.value);
 const SEDES_ROTACION = SEDES.filter((s) => s.value !== 'todas').map((s) => s.value);
+const PISOS_ROTACION = PISOS.filter((p) => p.value !== 'todos').map((p) => p.value);
+const SECTORES_ROTACION = SECTORES.filter((s) => s.value !== 'todos').map((s) => s.value);
+const TIPOS_ROTACION = TIPOS_CAMA.filter((t) => t.value !== 'todos').map((t) => t.value);
 
 // 512 camas (encargo, sección 5/14) — 2 camas por habitación. El estado
 // administrativo se asigna por bloque de índice, no al azar, para que los 3
-// conteos (Habilitadas 468 / Mantenimiento 12 / Fuera de servicio 32) den
-// exactos sin tener que recalcular KPIs desde la tabla (mismo criterio que
-// RESUMEN_KPIS en mockResumenData.js: números fijos de contexto, no
-// derivados de los filtros de abajo).
+// conteos SIN filtrar (Habilitadas 468 / Mantenimiento 12 / Fuera de
+// servicio 32) den exactos. Con filtros activos, los 4 KPIs de
+// GestionCamasCamas.jsx se recalculan sobre el subconjunto filtrado (ver
+// `filterCamas` más abajo) — a diferencia de RESUMEN_KPIS en
+// mockResumenData.js, que sí son números fijos de contexto.
 const TOTAL = 512;
 export const CAMAS = Array.from({ length: TOTAL }, (_, i) => {
   let estado = 'habilitada';
@@ -112,6 +135,9 @@ export const CAMAS = Array.from({ length: TOTAL }, (_, i) => {
 
   const servicio = SERVICIOS_ROTACION[i % SERVICIOS_ROTACION.length];
   const sede = SEDES_ROTACION[i % SEDES_ROTACION.length];
+  const piso = PISOS_ROTACION[i % PISOS_ROTACION.length];
+  const sector = SECTORES_ROTACION[i % SECTORES_ROTACION.length];
+  const tipo = TIPOS_ROTACION[i % TIPOS_ROTACION.length];
   const habitacionIndex = Math.floor(i / 2);
   const codigo = `C-${101 + i}`;
   const estadoDesdeDias = 1 + ((i * 7) % 120);
@@ -125,7 +151,9 @@ export const CAMAS = Array.from({ length: TOTAL }, (_, i) => {
     habitacionNombre: `Habitación ${101 + habitacionIndex}`,
     servicio,
     sede,
-    tipo: SERVICIO_TIPO[servicio],
+    piso,
+    sector,
+    tipo,
     estado,
     estadoDesde: AHORA - estadoDesdeDias * DIA_MS,
     fechaCreacion: AHORA - creacionDesdeDias * DIA_MS,
@@ -167,14 +195,6 @@ export function generarHistorial(cama) {
   return eventos.sort((a, b) => b.fecha - a.fecha);
 }
 
-// KPIs de contexto (encargo, sección 5) — números fijos, coinciden con la
-// distribución real de CAMAS de arriba (468+12+32=512) pero no se
-// recalculan desde `camasFiltradas`: son el inventario COMPLETO, igual que
-// los KPIs del Bed Board (GestionCamas.jsx) nunca reflejan los filtros.
-export const KPIS = {
-  total: 512, habilitadas: 468, mantenimiento: 12, fueraServicio: 32,
-};
-
 export const FECHA_ACTUALIZACION_OPTIONS = [
   { value: 'todas', label: 'Cualquier fecha' },
   { value: '7d', label: 'Últimos 7 días' },
@@ -182,16 +202,53 @@ export const FECHA_ACTUALIZACION_OPTIONS = [
   { value: '90d', label: 'Últimos 90 días' },
 ];
 
+// Predicado de filtrado puro y síncrono — única fuente de verdad para "qué
+// camas cumplen los filtros activos", compartida por `fetchCamas` (la
+// tabla, que además simula latencia/fallo de red) y por los KPIs de
+// GestionCamasCamas.jsx (que los recalculan en cada cambio de filtro sin
+// pasar por esa simulación async, ver encargo "KPIs dinámicos" — a
+// diferencia de los KPIs del Bed Board en GestionCamas.jsx, que sí quedan
+// fijos sobre el inventario completo). Separado de `fetchCamas` para que
+// ambos consumidores no puedan divergir en qué cuenta como "match".
+export function filterCamas({
+  dataset = CAMAS, query = '', sede = 'todas', servicio = 'todos', estado = 'todos', tipo = 'todos', habitacion = '', piso = 'todos', sector = 'todos', fechaActualizacion = 'todas',
+} = {}) {
+  const q = query.trim().toLowerCase();
+  const habitacionQ = habitacion.trim().toLowerCase();
+  const limiteFecha = fechaActualizacion === '7d' ? 7 : fechaActualizacion === '30d' ? 30 : fechaActualizacion === '90d' ? 90 : null;
+
+  return dataset.filter((c) => {
+    if (sede !== 'todas' && c.sede !== sede) return false;
+    if (servicio !== 'todos' && c.servicio !== servicio) return false;
+    if (estado !== 'todos' && c.estado !== estado) return false;
+    if (tipo !== 'todos' && c.tipo !== tipo) return false;
+    if (piso !== 'todos' && c.piso !== piso) return false;
+    if (sector !== 'todos' && c.sector !== sector) return false;
+    if (habitacionQ && !c.habitacionCodigo.toLowerCase().includes(habitacionQ) && !c.habitacionNombre.toLowerCase().includes(habitacionQ)) return false;
+    if (limiteFecha !== null && (AHORA - c.estadoDesde) > limiteFecha * DIA_MS) return false;
+    if (!q) return true;
+    return (
+      c.codigo.toLowerCase().includes(q)
+      || c.nombre.toLowerCase().includes(q)
+      || c.habitacionCodigo.toLowerCase().includes(q)
+      || c.habitacionNombre.toLowerCase().includes(q)
+      || SERVICIO_LABEL[c.servicio].toLowerCase().includes(q)
+      || SEDE_LABEL[c.sede].toLowerCase().includes(q)
+    );
+  });
+}
+
 const FETCH_DELAY_MS = 450;
 
-// Simula el fetch server-side (búsqueda + filtros + paginación) — mismo
+// Simula el fetch server-side (paginación + latencia/fallo de red) — mismo
 // patrón que fetchAdmisiones (mockAdmisionesData.js): Promise + setTimeout,
 // para poder tener un estado "loading" real entre cambios de filtro/página.
 // ~1 de cada 14 llamadas falla a propósito (mismo criterio que
 // handleRefresh en GestionCamas.jsx) para poder mostrar el estado de error
-// del encargo sin depender de una falla de red real.
+// del encargo sin depender de una falla de red real. El filtrado en sí vive
+// en `filterCamas` (arriba) — acá solo se le agrega la paginación.
 export function fetchCamas({
-  dataset = CAMAS, query = '', sede = 'todas', servicio = 'todos', estado = 'todos', tipo = 'todos', habitacion = '', fechaActualizacion = 'todas', page = 1, pageSize = 10,
+  dataset = CAMAS, query = '', sede = 'todas', servicio = 'todos', estado = 'todos', tipo = 'todos', habitacion = '', piso = 'todos', sector = 'todos', fechaActualizacion = 'todas', page = 1, pageSize = 10,
 } = {}) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -199,28 +256,9 @@ export function fetchCamas({
         reject(new Error('No pudimos cargar las camas.'));
         return;
       }
-      const q = query.trim().toLowerCase();
-      const habitacionQ = habitacion.trim().toLowerCase();
-      const limiteFecha = fechaActualizacion === '7d' ? 7 : fechaActualizacion === '30d' ? 30 : fechaActualizacion === '90d' ? 90 : null;
-
-      const filtradas = dataset.filter((c) => {
-        if (sede !== 'todas' && c.sede !== sede) return false;
-        if (servicio !== 'todos' && c.servicio !== servicio) return false;
-        if (estado !== 'todos' && c.estado !== estado) return false;
-        if (tipo !== 'todos' && c.tipo !== tipo) return false;
-        if (habitacionQ && !c.habitacionCodigo.toLowerCase().includes(habitacionQ) && !c.habitacionNombre.toLowerCase().includes(habitacionQ)) return false;
-        if (limiteFecha !== null && (AHORA - c.estadoDesde) > limiteFecha * DIA_MS) return false;
-        if (!q) return true;
-        return (
-          c.codigo.toLowerCase().includes(q)
-          || c.nombre.toLowerCase().includes(q)
-          || c.habitacionCodigo.toLowerCase().includes(q)
-          || c.habitacionNombre.toLowerCase().includes(q)
-          || SERVICIO_LABEL[c.servicio].toLowerCase().includes(q)
-          || SEDE_LABEL[c.sede].toLowerCase().includes(q)
-        );
+      const filtradas = filterCamas({
+        dataset, query, sede, servicio, estado, tipo, habitacion, piso, sector, fechaActualizacion,
       });
-
       const total = filtradas.length;
       const start = (page - 1) * pageSize;
       const items = filtradas.slice(start, start + pageSize);

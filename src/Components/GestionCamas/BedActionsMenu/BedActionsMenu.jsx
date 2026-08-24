@@ -3,63 +3,75 @@
 import {
   useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import './BedActionsMenu.css';
 import { MENU_ACCIONES } from '@/hooks/GestionCamas/mockCamasData';
 import { LuEllipsis } from 'react-icons/lu';
-
-// Contenedor con scroll más cercano (overflow-y auto/scroll) — el dropdown
-// necesita saber contra qué borde puede desbordar (el `.cb-body-wrap`/
-// `.modal-body` que lo scrollea, no necesariamente el viewport completo),
-// sin que este componente necesite conocer el nombre de esa clase en cada
-// feature que lo monta (Gestión de Camas/Bed Board de Enfermería...).
-function getScrollParent(node) {
-  let el = node?.parentElement;
-  while (el && el !== document.body) {
-    const { overflowY } = getComputedStyle(el);
-    if (overflowY === 'auto' || overflowY === 'scroll') return el;
-    el = el.parentElement;
-  }
-  return null;
-}
 
 // Menú "⋯" — mismo patrón autocontenido que RowActionsMenu.jsx (estado
 // local de apertura + cierre por click-afuera/Escape). Las opciones vienen
 // de MENU_ACCIONES[estado] (mockCamasData.js): solo las válidas para el
 // estado actual de la cama (encargo explícito), nunca una lista fija.
 //
-// Se abre hacia abajo por defecto; si la tarjeta está cerca del borde
-// inferior del contenedor con scroll (última fila de la grilla), el
-// dropdown desbordaba ese contenedor y agrandaba su scroll con espacio en
-// blanco extra — un useLayoutEffect mide el dropdown apenas se abre (antes
-// de pintar, sin parpadeo) y lo voltea hacia arriba (`.menu-up`) cuando no
-// entra completo.
+// Portal a document.body + position:fixed (mismo patrón que el dropdown de
+// FormSelect y los tooltips flotantes de los sidebars, ver AGENTS.md/bitácora
+// de esta sesión): BedCard tiene `overflow:hidden` en `.cb-card` (recorta
+// los 2 paneles a las esquinas redondeadas de la tarjeta, ver BedCard.css) y
+// el dropdown, con 2-3 ítems, es más alto que la tarjeta compacta — sin
+// portal, el propio `.cb-card` le cortaba el borde inferior. Coordenadas
+// calculadas desde el botón (`getBoundingClientRect`), recalculadas en
+// scroll (capture:true)/resize para que seguir siguiendo al botón dentro
+// del contenedor con scroll (`.cb-body-wrap`/`.bb-modal-body`).
 export default function BedActionsMenu({ estado, numero, onAction }) {
   const [open, setOpen] = useState(false);
-  const [openUp, setOpenUp] = useState(false);
-  const rootRef = useRef(null);
+  const [pos, setPos] = useState(null);
+  const btnRef = useRef(null);
   const dropdownRef = useRef(null);
 
+  function calcularPosicion() {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const dropdownHeight = dropdownRef.current?.offsetHeight ?? 0;
+    const openUp = dropdownHeight > 0 && rect.bottom + 4 + dropdownHeight > window.innerHeight;
+    setPos({
+      openUp,
+      top: openUp ? undefined : rect.bottom + 4,
+      bottom: openUp ? window.innerHeight - rect.top + 4 : undefined,
+      right: window.innerWidth - rect.right,
+    });
+  }
+
+  // 2 pasadas (mismo motivo que el tooltip flotante de los sidebars): la
+  // primera ubica el dropdown hacia abajo para poder medir su altura real;
+  // si no entra antes del borde inferior del viewport, la 2da pasada lo
+  // reubica hacia arriba con esa altura ya conocida.
   useLayoutEffect(() => {
-    if (!open || !dropdownRef.current) return;
-    const dropdownRect = dropdownRef.current.getBoundingClientRect();
-    const scrollParent = getScrollParent(rootRef.current);
-    const limiteInferior = scrollParent ? scrollParent.getBoundingClientRect().bottom : window.innerHeight;
-    setOpenUp(dropdownRect.bottom > limiteInferior);
+    if (!open) return;
+    calcularPosicion();
+    calcularPosicion();
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
-      if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
+      if (
+        btnRef.current && !btnRef.current.contains(e.target)
+        && dropdownRef.current && !dropdownRef.current.contains(e.target)
+      ) setOpen(false);
     }
     function handleKeyDown(e) {
       if (e.key === 'Escape') setOpen(false);
     }
+    function handleReposition() { calcularPosicion(); }
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleReposition, true);
+    window.addEventListener('resize', handleReposition);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleReposition, true);
+      window.removeEventListener('resize', handleReposition);
     };
   }, [open]);
 
@@ -69,9 +81,10 @@ export default function BedActionsMenu({ estado, numero, onAction }) {
   }
 
   return (
-    <div className="cb-actions-menu" ref={rootRef}>
+    <div className="cb-actions-menu">
       <button
         type="button"
+        ref={btnRef}
         className="cb-actions-menu-btn"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
@@ -82,8 +95,13 @@ export default function BedActionsMenu({ estado, numero, onAction }) {
         <LuEllipsis className="icon" />
       </button>
 
-      {open && (
-        <div ref={dropdownRef} className={`cb-actions-menu-dropdown${openUp ? ' menu-up' : ''}`} role="menu">
+      {open && pos && createPortal(
+        <div
+          ref={dropdownRef}
+          className={`cb-actions-menu-dropdown${pos.openUp ? ' menu-up' : ''}`}
+          role="menu"
+          style={{ top: pos.top, bottom: pos.bottom, right: pos.right }}
+        >
           {MENU_ACCIONES[estado].map((item) => (
             <button
               type="button"
@@ -95,7 +113,8 @@ export default function BedActionsMenu({ estado, numero, onAction }) {
               {item.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

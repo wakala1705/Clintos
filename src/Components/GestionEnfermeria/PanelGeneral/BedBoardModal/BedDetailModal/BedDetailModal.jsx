@@ -53,10 +53,12 @@ const ACCIONES_POR_ESTADO = {
   ],
 };
 
-// Punto/color por estado de medicación — mismo idioma visual que la
-// leyenda del footer (.bb-legend-dot, ver BedBoardModal.css, ya cargado por
-// el padre que siempre monta este modal) en vez de una píldora de color
-// nueva.
+// Punto/color por estado de medicación — clases propias (.bdm-med-dot-*,
+// ver BedDetailModal.css) en vez de una píldora de color nueva. Antes
+// reusaba .bb-legend-dot de BedBoardModal.css, pero esa clase pasó a
+// nombrarse por clave clinical-status de la card (ver bedContextFormat.js)
+// y dejó de tener variantes green/amber/red/gray — se desacopló para que
+// esta taxonomía de medicación no vuelva a romperse por un cambio ajeno.
 const MEDICACION_COLOR = {
   'al-dia': 'green', pendiente: 'amber', retrasada: 'red', 'no-aplica': 'gray',
 };
@@ -151,7 +153,7 @@ export default function BedDetailModal({
                 <div className="dp-info-row">
                   <span className="k">Medicación</span>
                   <span className="v bdm-med-value">
-                    <span className={`bb-legend-dot bb-legend-dot-${MEDICACION_COLOR[pacienteCompleto.estadoMedicacion]}`} />
+                    <span className={`bdm-med-dot bdm-med-dot-${MEDICACION_COLOR[pacienteCompleto.estadoMedicacion]}`} />
                     {ESTADO_MEDICACION_LABEL[pacienteCompleto.estadoMedicacion]}
                   </span>
                 </div>

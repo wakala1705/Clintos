@@ -1,12 +1,19 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './GestionCamasSidebar.css';
 import { INCONSISTENCIAS_INICIALES } from '@/hooks/GestionCamas/mockIntegridadData';
 import {
-  LuBedDouble, LuChartColumn, LuHistory, LuLayoutGrid, LuSettings, LuShieldCheck,
+  LuBedDouble, LuChartColumn, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen, LuSettings, LuShieldCheck,
 } from 'react-icons/lu';
+
+// Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
+// manual no se haya usado — mismo umbral que --bp-desktop (ver AGENTS.md
+// "Responsive / Breakpoints") y el @media de GestionCamasSidebar.css.
+const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 
 // Encargo: el header propio del sidebar ("Gestión de Camas" + ícono) es
 // redundante — el nombre del módulo ya está en el breadcrumb del Topbar y el
@@ -61,11 +68,50 @@ const ITEMS = [
 
 export default function GestionCamasSidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [autoCollapsed, setAutoCollapsed] = useState(false);
+  const [tooltip, setTooltip] = useState(null);
+
+  // El tooltip solo tiene sentido en modo solo-ícono (colapsado a mano O por
+  // el breakpoint de abajo, ver GestionCamasSidebar.css) — sin esto no
+  // sabríamos, desde JS, si el auto-colapso por ancho de viewport está
+  // activo (esa parte es puro CSS/@media, no queda reflejada en `collapsed`).
+  useEffect(() => {
+    const mql = window.matchMedia(AUTO_COLLAPSE_BREAKPOINT);
+    const update = () => setAutoCollapsed(mql.matches);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
+
+  const iconOnly = collapsed || autoCollapsed;
+
+  function showTooltip(e, label) {
+    if (!iconOnly) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ label, top: rect.top + rect.height / 2, left: rect.right + 10 });
+  }
+  function hideTooltip() {
+    setTooltip(null);
+  }
 
   return (
-    <aside className="cbs-sidebar">
+    <aside className={`cbs-sidebar${collapsed ? ' collapsed' : ''}`}>
       <nav className="cbs-nav" aria-label="Secciones de Gestión de Camas">
-        <span className="cbs-nav-label-group" aria-hidden="true">Secciones</span>
+        <div className="cbs-nav-header">
+          <span className="cbs-nav-label-group" aria-hidden="true">Secciones</span>
+          <button
+            type="button"
+            className="cbs-collapse-btn"
+            onClick={() => setCollapsed((v) => !v)}
+            aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+            title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+          >
+            {collapsed
+              ? <LuPanelLeftOpen className="icon" aria-hidden="true" />
+              : <LuPanelLeftClose className="icon" aria-hidden="true" />}
+          </button>
+        </div>
         {ITEMS.map((item) => {
           const active = item.href ? pathname === item.href : false;
           const className = `cbs-nav-item${active ? ' active' : ''}`;
@@ -74,9 +120,14 @@ export default function GestionCamasSidebar() {
               <item.icon className="icon cbs-nav-icon" aria-hidden="true" />
               <span className="cbs-nav-label">{item.label}</span>
               {!!item.badge && <span className="cbs-nav-badge">{item.badge}</span>}
-              <span className="cbs-tooltip" role="tooltip">{item.label}</span>
             </>
           );
+          const hoverHandlers = {
+            onMouseEnter: (e) => showTooltip(e, item.label),
+            onMouseLeave: hideTooltip,
+            onFocus: (e) => showTooltip(e, item.label),
+            onBlur: hideTooltip,
+          };
 
           if (!item.href) {
             return (
@@ -85,18 +136,30 @@ export default function GestionCamasSidebar() {
                 type="button"
                 className={className}
                 onClick={() => window.ncToast?.(`${item.label} (en desarrollo).`)}
+                {...hoverHandlers}
               >
                 {inner}
               </button>
             );
           }
           return (
-            <Link key={item.id} href={item.href} className={className} aria-current={active ? 'page' : undefined}>
+            <Link key={item.id} href={item.href} className={className} aria-current={active ? 'page' : undefined} {...hoverHandlers}>
               {inner}
             </Link>
           );
         })}
       </nav>
+
+      {tooltip && createPortal(
+        <div
+          className="cbs-tooltip-float"
+          role="tooltip"
+          style={{ top: tooltip.top, left: tooltip.left }}
+        >
+          {tooltip.label}
+        </div>,
+        document.body,
+      )}
     </aside>
   );
 }

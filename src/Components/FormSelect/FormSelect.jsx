@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useLayoutEffect, useRef, useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 import './FormSelect.css';
 import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
@@ -9,16 +12,41 @@ import { LuCheck, LuChevronDown } from 'react-icons/lu';
 // (estado local `open` + cierre por click-afuera/Escape), pero el trigger
 // se dimensiona como un input de formulario (mismo alto/borde que
 // .form-field input en shared.css) en vez de como un botón de header.
+//
+// El listado se porta a document.body con position:fixed (en vez de
+// position:absolute dentro de .form-select) porque este componente se usa
+// dentro de .modal-body (overflow-y:auto) — si quedara absoluto ahí, su alto
+// suma al scrollHeight del modal y genera un scroll que no debería existir.
 export default function FormSelect({
   id, value, onChange, options, placeholder, disabled = false,
 }) {
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState(null);
   const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    function updateCoords() {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    }
+    updateCoords();
+    window.addEventListener('resize', updateCoords);
+    window.addEventListener('scroll', updateCoords, true);
+    return () => {
+      window.removeEventListener('resize', updateCoords);
+      window.removeEventListener('scroll', updateCoords, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
-      if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
+      const insideTrigger = rootRef.current && rootRef.current.contains(e.target);
+      const insideDropdown = dropdownRef.current && dropdownRef.current.contains(e.target);
+      if (!insideTrigger && !insideDropdown) setOpen(false);
     }
     function handleKeyDown(e) {
       if (e.key === 'Escape') setOpen(false);
@@ -43,6 +71,7 @@ export default function FormSelect({
       <button
         type="button"
         id={id}
+        ref={triggerRef}
         className={`form-select-trigger${open ? ' open' : ''}`}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
@@ -55,8 +84,14 @@ export default function FormSelect({
         <LuChevronDown className={`icon form-select-chev${open ? ' open' : ''}`} aria-hidden="true" />
       </button>
 
-      {open && (
-        <ul className="form-select-dropdown" role="listbox" aria-labelledby={id}>
+      {open && coords && createPortal(
+        <ul
+          ref={dropdownRef}
+          className="form-select-dropdown"
+          role="listbox"
+          aria-labelledby={id}
+          style={{ top: coords.top, left: coords.left, width: coords.width }}
+        >
           {options.map((o) => (
             <li key={o.value} role="presentation">
               <button
@@ -71,7 +106,8 @@ export default function FormSelect({
               </button>
             </li>
           ))}
-        </ul>
+        </ul>,
+        document.body,
       )}
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './AuditoriaFiltrosPopover.css';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import { SERVICIOS } from '@/hooks/GestionCamas/mockAuditoriaData';
 import { LuFilter } from 'react-icons/lu';
 
@@ -24,6 +25,11 @@ export default function AuditoriaFiltrosPopover({
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
+      // Ver AGENTS.md, "Selects de formulario" — el listbox de FormSelect se
+      // porta a document.body, así que un click en una opción no cuenta como
+      // "adentro" de rootRef; sin este chequeo el popover se cerraba antes
+      // de que la selección llegara a aplicarse.
+      if (e.target.closest('.form-select-dropdown')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -65,9 +71,12 @@ export default function AuditoriaFiltrosPopover({
           <div className="fp-section">
             <div className="form-field">
               <label htmlFor="cbau-fp-servicio" className="fp-section-title">Servicio</label>
-              <select id="cbau-fp-servicio" value={draft.servicio} onChange={(e) => setDraft((d) => ({ ...d, servicio: e.target.value }))}>
-                {SERVICIOS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <FormSelect
+                id="cbau-fp-servicio"
+                value={draft.servicio}
+                onChange={(v) => setDraft((d) => ({ ...d, servicio: v }))}
+                options={SERVICIOS}
+              />
             </div>
           </div>
 

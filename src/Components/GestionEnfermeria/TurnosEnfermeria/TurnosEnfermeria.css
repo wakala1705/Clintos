@@ -2,7 +2,7 @@
    .filter-spacer/.search-field/.filters-more-btn/.filter-popover (controles
    de barra) viven en ../shared/shared.css — acá solo el layout propio de
    esta página. */
-.tu-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.tu-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;}
 .tu-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .tu-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 /* Área operativa + "Semana" agrupados antes del CTA primario (encargo

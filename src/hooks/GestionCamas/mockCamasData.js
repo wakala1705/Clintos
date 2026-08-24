@@ -82,10 +82,15 @@ export const PRIORIDAD_LABEL = Object.fromEntries(PRIORIDADES_RESERVA.map((p) =>
 // naranja/gris) — los códigos reales de estado y su semántica los define el
 // backend; este mapeo es solo la representación visual del prototipo (ver
 // EstadoCamaBadge.jsx para el ícono asociado a cada uno).
+// reservada: 'amber' -> 'cyan' (encargo explícito, rediseño 2 paneles
+// BedCard, sección "sistema de color por estado") — cambio de sistema de
+// color, no solo de BedCard: se refleja en cualquier EstadoCamaBadge
+// existente (tabla de camas, detalle, auditoría), a propósito, para que no
+// quede un estado con 2 colores distintos según dónde se mire.
 export const ESTADO_COLOR = {
   libre: 'green',
   ocupada: 'red',
-  reservada: 'amber',
+  reservada: 'cyan',
   limpieza: 'blue',
   mantenimiento: 'orange',
   bloqueada: 'gray',

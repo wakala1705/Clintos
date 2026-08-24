@@ -35,13 +35,30 @@
 }
 
 /* La tabla es el elemento protagonista (encargo, sección 6): buscador +
-   indicadores de actividad + tabla + paginación, todo en una misma card. */
+   tabla + paginación en la misma card — los indicadores de actividad viven
+   arriba, fuera de la card (ver .cbau-kpi-row), mismo criterio que
+   .cba-kpi-row/.cbi-kpi-row en Camas/Integridad. */
 .cbau-table-card{flex:1;min-height:0;}
 
 /* Indicadores de actividad (encargo, sección 5) — contexto de auditoría,
    nunca KPIs operativos: sin barra de progreso ni comparación temporal (a
    diferencia de KpiCard en Indicadores), solo el número + descripción. */
-.cbau-kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cbau-kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;flex-shrink:0;}
+
+/* Tipo de evento/Módulo/Usuario/Sede siempre visibles + "Más filtros" con
+   progressive disclosure, agrupados dentro de .filter-bar (ver comentario
+   en GestionCamasAuditoria.jsx) — margin-left:auto en vez de .filter-spacer
+   (GestionCamas.css), mismo criterio que .cba-filters-group/.cbi-filters-group. */
+.cbau-filters-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;}
+
+/* Botón "Limpiar filtros" persistente del filter-bar — mismo .badge-count
+   pill que .filters-more-btn .badge-count (GestionCamas.css), redeclarado
+   acotado a este botón (mismo criterio que .cba-limpiar-filtros-btn/
+   .cbi-limpiar-filtros-btn .badge-count). */
+.cbau-limpiar-filtros-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
 
 .cbau-th-sort{
   display:inline-flex;align-items:center;gap:4px;

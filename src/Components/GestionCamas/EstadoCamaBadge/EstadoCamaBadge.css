@@ -9,6 +9,7 @@
 .cb-estado-green{background:var(--green-bg);color:#0d7a3d;}
 .cb-estado-red{background:var(--red-bg);color:var(--red);}
 .cb-estado-amber{background:var(--amber-bg);color:var(--amber-fg);}
+.cb-estado-cyan{background:var(--cyan-bg);color:var(--cyan-fg);}
 .cb-estado-blue{background:var(--blue-bg);color:var(--blue-fg);}
 .cb-estado-orange{background:var(--orange-bg);color:var(--orange-fg);}
 .cb-estado-gray{background:var(--gray-bg);color:var(--gray-fg);}

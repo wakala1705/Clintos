@@ -5,21 +5,22 @@ import './CamaFormModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
-  ESTADOS, SEDES, SERVICIOS, SERVICIO_TIPO, TIPO_LABEL,
+  ESTADOS, SEDES, SERVICIOS, TIPOS_CAMA,
 } from '@/hooks/GestionCamas/mockCamasAdminData';
 import { LuBedDouble } from 'react-icons/lu';
 
 const ESTADO_INICIAL_OPTIONS = ESTADOS.filter((e) => e.value !== 'todos');
 const SEDE_OPTIONS = SEDES.filter((s) => s.value !== 'todas');
 const SERVICIO_OPTIONS = SERVICIOS.filter((s) => s.value !== 'todos');
+const TIPO_OPTIONS = TIPOS_CAMA.filter((t) => t.value !== 'todos');
 
 // Un solo formulario para Crear/Editar (encargo, sección 12: "no crear un
 // formulario completamente diferente") — `mode` solo cambia título/CTA del
 // footer y qué valores llegan precargados (ver CamaFormModal.jsx desde
-// GestionCamasCamas.jsx). "Tipo de cama" es de solo lectura: en este modelo
-// el tipo queda definido 1:1 por el Servicio elegido (ver SERVICIO_TIPO,
-// mockCamasAdminData.js) — encargo sección 12, "si algún atributo no puede
-// modificarse... mostrarlo como solo lectura".
+// GestionCamasCamas.jsx). "Tipo de cama" es un campo propio, seleccionable
+// (no derivado del Servicio ni de solo lectura): la taxonomía de tipos
+// (Bariátrica, Neonatal, etc., ver TIPOS_CAMA en mockCamasAdminData.js) no
+// mapea 1:1 contra los 5 servicios, así que puede combinarse libremente.
 export default function CamaFormModal({
   mode, cama, camasExistentes, onClose, onSubmit,
 }) {
@@ -27,11 +28,11 @@ export default function CamaFormModal({
   const [habitacionCodigo, setHabitacionCodigo] = useState(cama?.habitacionCodigo ?? '');
   const [servicio, setServicio] = useState(cama?.servicio ?? '');
   const [sede, setSede] = useState(cama?.sede ?? '');
+  const [tipo, setTipo] = useState(cama?.tipo ?? '');
   const [estado, setEstado] = useState(cama?.estado ?? 'habilitada');
   const [errores, setErrores] = useState({});
 
   const esEdicion = mode === 'editar';
-  const tipo = servicio ? SERVICIO_TIPO[servicio] : null;
 
   function validar() {
     const nuevos = {};
@@ -43,6 +44,7 @@ export default function CamaFormModal({
     if (!habitacionCodigo.trim()) nuevos.habitacionCodigo = 'La habitación es obligatoria.';
     if (!servicio) nuevos.servicio = 'Selecciona un servicio.';
     if (!sede) nuevos.sede = 'Selecciona una sede.';
+    if (!tipo) nuevos.tipo = 'Selecciona un tipo de cama.';
     setErrores(nuevos);
     return Object.keys(nuevos).length === 0;
   }
@@ -127,9 +129,15 @@ export default function CamaFormModal({
 
             <div className="cba-form-row">
               <div className="form-field">
-                <label>Tipo de cama</label>
-                <div className="tf-readonly-value">{tipo ? TIPO_LABEL[tipo] : '—'}</div>
-                <span className="cba-form-hint">Definido automáticamente según el servicio.</span>
+                <label htmlFor="cba-form-tipo">Tipo de cama</label>
+                <FormSelect
+                  id="cba-form-tipo"
+                  value={tipo}
+                  onChange={setTipo}
+                  placeholder="Selecciona un tipo de cama"
+                  options={TIPO_OPTIONS}
+                />
+                {errores.tipo && <span className="cba-form-error">{errores.tipo}</span>}
               </div>
 
               <div className="form-field">

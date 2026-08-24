@@ -49,21 +49,7 @@ export default function PatientsPanel({
 
   return (
     <section className="card pg-patients-card">
-      <div className="pg-patients-header">
-        <h2>Pacientes en piso</h2>
-        <AreaSelector options={areaOptions} value={areaOperativa} onChange={onAreaOperativaChange} />
-      </div>
-
       <div className="pg-patients-toolbar">
-        <SegmentedFilterBar
-          options={opcionesFiltro}
-          value={filtro}
-          onChange={setFiltro}
-          ariaLabel="Filtrar pacientes en piso"
-        />
-
-        <div className="filter-spacer" />
-
         <div className="search-field">
           <LuSearch className="icon" />
           <input
@@ -74,6 +60,18 @@ export default function PatientsPanel({
             aria-label="Buscar paciente u habitación"
           />
         </div>
+
+        <div className="filter-spacer" />
+
+        <SegmentedFilterBar
+          options={opcionesFiltro}
+          value={filtro}
+          onChange={setFiltro}
+          ariaLabel="Filtrar pacientes en piso"
+        />
+
+        <AreaSelector options={areaOptions} value={areaOperativa} onChange={onAreaOperativaChange} />
+
         <button type="button" className="btn btn-secondary" onClick={() => setBedBoardOpen(true)}>
           <LuGrid2X2 className="icon" />
           Mapa de camas

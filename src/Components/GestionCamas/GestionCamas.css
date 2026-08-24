@@ -36,6 +36,88 @@
   --orange:#e8720c;
   --orange-bg:#fdead9;
   --orange-fg:#a6520a;
+  /* Reservada pasa de ámbar a cian (encargo explícito de una sesión previa)
+     — mismo trío -bg/-fg que el resto de estados, consumido por
+     EstadoCamaBadge (ESTADO_COLOR.reservada, mockCamasData.js) en toda la
+     app (tabla, detalle, auditoría). BedCard YA NO lo usa para su propio
+     panel (ver clinical-status-reserved abajo, encargo posterior con su
+     propia paleta) — se deja acá porque EstadoCamaBadge es un componente
+     compartido fuera del alcance de ese 2do encargo. */
+  --cyan:#0e7490;
+  --cyan-bg:#e0fbfc;
+  --cyan-fg:#0e7490;
+  /* ---- Sistema de color "clinical-status" de BedCard (encargo explícito,
+     rediseño 2 paneles v2 — "Ocupada" ya no es un solo color, se separa por
+     población: masculino/femenino/pediátrico) ----
+     Nomenclatura y hex EXACTOS del encargo (tabla "Sistema de color — 8
+     estados en 2 grupos"), sin el archivo bed-card-states.html de
+     referencia (no llegó a adjuntarse — el usuario optó por seguir sin él).
+     3 tokens por estado:
+       --clinical-status-<estado>     panel izquierdo sólido + texto del
+                                       label en el panel derecho (claro).
+                                       Fijo entre temas (igual criterio que
+                                       los "-solid" que reemplaza: fondo
+                                       sólido con texto blanco no puede
+                                       heredar la inversión a tono claro que
+                                       tienen los -fg en dark mode).
+       --clinical-status-<estado>-bg  tinte del panel derecho.
+       --clinical-status-<estado>-fg  color del label EN EL PANEL DERECHO —
+                                       en claro es el mismo tono que el
+                                       panel (ya validado), en oscuro es una
+                                       versión clareada (mezcla ~55% con
+                                       blanco) porque el tinte oscuro es
+                                       case rgba(...,.20) sobre fondo casi
+                                       negro: el tono sólido oscuro leído
+                                       directo ahí perdería contraste.
+     Todos los 8 verificados ≥4.5:1 con blanco excepto cleaning (ver abajo):
+     occupied-male 6.55:1, occupied-female 7.62:1, occupied-pediatric
+     4.59:1 (el más ajustado, aun así pasa), available 5.36:1, reserved
+     4.75:1, maintenance 6.40:1, out-of-service 6.19:1. */
+  --clinical-status-occupied-male:#0f5fa6;
+  --clinical-status-occupied-male-bg:#dcebf9;
+  --clinical-status-occupied-male-fg:#0f5fa6;
+  --clinical-status-occupied-female:#a30a5c;
+  --clinical-status-occupied-female-bg:#fbdcea;
+  --clinical-status-occupied-female-fg:#a30a5c;
+  --clinical-status-occupied-pediatric:#c2540f;
+  --clinical-status-occupied-pediatric-bg:#fbe3d1;
+  --clinical-status-occupied-pediatric-fg:#c2540f;
+  --clinical-status-available:#177a4c;
+  --clinical-status-available-bg:#d9f2e4;
+  --clinical-status-available-fg:#177a4c;
+  --clinical-status-reserved:#0a7f8c;
+  --clinical-status-reserved-bg:#d7f1f3;
+  --clinical-status-reserved-fg:#0a7f8c;
+  --clinical-status-maintenance:#5c5f66;
+  --clinical-status-maintenance-bg:#e6e7e9;
+  --clinical-status-maintenance-fg:#5c5f66;
+  --clinical-status-out-of-service:#b3312c;
+  --clinical-status-out-of-service-bg:#f9dedd;
+  --clinical-status-out-of-service-fg:#b3312c;
+  /* Excepción de contraste (encargo explícito): #c98a12 sobre blanco da
+     2.94:1 — falla incluso el mínimo de texto grande (3:1). Texto oscuro
+     #3a2600 da 4.89:1 sobre el mismo panel y 12.35:1 sobre el tinte propio
+     — se usa en AMBOS lugares (panel Y label), única excepción a "texto
+     blanco siempre"/"el label usa el tono del estado" de las otras 7
+     filas. -panel-text es un token aparte porque el panel es fijo entre
+     temas (igual que el resto) pero el label SÍ necesita variar: en claro
+     usa el mismo oscuro (así no compite con el tinte clarísimo), en
+     oscuro necesita un ámbar claro (ver bloque dark más abajo) porque ahí
+     el tinte es oscuro, no claro. */
+  --clinical-status-cleaning:#c98a12;
+  --clinical-status-cleaning-bg:#faecd2;
+  --clinical-status-cleaning-fg:#3a2600;
+  --clinical-status-cleaning-panel-text:#3a2600;
+  /* Fallback "Ocupada sin datos de población" (paciente sin género ni edad
+     registrados) — NO forma parte de la tabla de 8 estados del encargo;
+     nunca ocurre con el mock actual (los 14 pacientes ya tienen género),
+     pero `cardHue` (bedContextFormat.js) lo necesita para no romper si
+     algún día falta el dato. Gris neutro (7.57:1 con blanco), deliberadamente
+     distinto de --clinical-status-maintenance para no leerse como "En
+     mantenimiento" por error. */
+  --clinical-status-unknown:#475569;
+  --clinical-status-unknown-bg:#e2e8f0;
+  --clinical-status-unknown-fg:#475569;
   --radius:8px;
   --radius-lg:12px;
   --input-sm:32px;
@@ -80,6 +162,44 @@ html[data-theme="dark"]{
   --orange:#f5975a;
   --orange-bg:rgba(232,114,12,.20);
   --orange-fg:#f5975a;
+  --cyan:#22d3ee;
+  --cyan-bg:rgba(14,116,144,.22);
+  --cyan-fg:#67e8f9;
+  /* clinical-status en oscuro: -bg pasa a rgba(<mismo panel>,.20) — misma
+     fórmula de opacidad que el resto de tokens -bg de este bloque (ver
+     --red-bg/--blue-bg/--orange-bg arriba, todos .18-.22) sobre el fondo
+     casi negro de la feature (--bg:#0c0f17). -fg se aclara ~55% hacia
+     blanco (mismo criterio que --orange-fg/--pink-fg arriba: el tono
+     sólido leído directo sobre un tinte oscuro pierde contraste, hace
+     falta una versión más clara) — sin el archivo de referencia, estos 2
+     campos son un cálculo propio (no vinieron del encargo, que solo dio
+     valores para tema claro), documentado por si hace falta ajustar contra
+     el diseño real más adelante. El panel sólido (--clinical-status-<x>,
+     sin sufijo) NO se redefine acá a propósito: es fijo entre temas, ver
+     comentario en el bloque :root de arriba. */
+  --clinical-status-occupied-male-bg:rgba(15,95,166,.20);
+  --clinical-status-occupied-male-fg:#93b7d7;
+  --clinical-status-occupied-female-bg:rgba(163,10,92,.20);
+  --clinical-status-occupied-female-fg:#d691b6;
+  --clinical-status-occupied-pediatric-bg:rgba(194,84,15,.20);
+  --clinical-status-occupied-pediatric-fg:#e4b293;
+  --clinical-status-available-bg:rgba(23,122,76,.20);
+  --clinical-status-available-fg:#97c3ae;
+  --clinical-status-reserved-bg:rgba(10,127,140,.20);
+  --clinical-status-reserved-fg:#91c5cb;
+  --clinical-status-maintenance-bg:rgba(92,95,102,.20);
+  --clinical-status-maintenance-fg:#b6b7ba;
+  --clinical-status-out-of-service-bg:rgba(179,49,44,.20);
+  --clinical-status-out-of-service-fg:#dda2a0;
+  /* cleaning es la excepción (ver :root): en claro el label usa el mismo
+     oscuro #3a2600 que el panel porque el tinte ahí es clarísimo; en
+     oscuro el tinte pasa a ser oscuro (rgba sobre --bg casi negro), así
+     que #3a2600 sobre #3a2600-ish fallaría — acá SÍ se aclara como el
+     resto de -fg de este bloque. */
+  --clinical-status-cleaning-bg:rgba(201,138,18,.20);
+  --clinical-status-cleaning-fg:#e7ca94;
+  --clinical-status-unknown-bg:rgba(71,85,105,.20);
+  --clinical-status-unknown-fg:#acb3bc;
 }
 html[data-contrast="high"]{
   --border:#94a3b8;
@@ -241,7 +361,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .filter-popover-right{left:auto;right:0;}
 .fp-section{margin-bottom:16px;}
 .fp-section:last-of-type{margin-bottom:14px;}
-.fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
 .fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
 
@@ -269,7 +389,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 }
 
 .form-field{display:flex;flex-direction:column;gap:4px;}
-.form-field label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
@@ -297,7 +417,7 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
    acá y no en BedCard.css. Nunca información clínica más allá de
    nombre+HC (encargo explícito). */
 .cb-card-paciente{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
-.cb-card-paciente .icon{width:15px;height:15px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
+.cb-card-paciente .icon{width:20px;height:20px;flex-shrink:0;color:var(--ink-500);margin-top:2px;}
 .cb-card-paciente-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cb-card-paciente-hc{font-size:var(--fs-sm);color:var(--ink-500);}
 .cb-card-contexto{font-size:var(--fs-sm);color:var(--ink-700);margin:2px 0;}
@@ -372,8 +492,15 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
    .content pasa de columna a fila, y .cb-page-body retoma el rol que
    .content tenía antes (padding/columna/scroll) para el resto de la
    pantalla. Sin padding propio ni gap acá: el sidebar necesita quedar a
-   ras contra el borde de .content, no con el padding:16px de .content. */
-.cb-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+   ras contra el borde de .content, no con el padding:16px de .content.
+
+   Selector compuesto (.content.cb-content), no solo .cb-content: mismo
+   criterio que .content.cbr-content (GestionCamasResumen.css) — esta regla
+   pisa a .content (clase reutilizada por otras features) y su prioridad no
+   puede depender del orden de inyección de <style>, que se reordena en
+   navegación client-side. Con selector compuesto (especificidad 0-2-0 >
+   0-1-0 de .content) esta regla gana siempre. */
+.content.cb-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
 .cb-page-body{
   flex:1;min-width:0;min-height:0;
   display:flex;flex-direction:column;gap:16px;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './InconsistenciasFiltrosPopover.css';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import { SERVICIOS } from '@/hooks/GestionCamas/mockIntegridadData';
 import { LuFilter } from 'react-icons/lu';
 
@@ -25,6 +26,11 @@ export default function InconsistenciasFiltrosPopover({ servicio, detectado, onC
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
+      // Ver AGENTS.md, "Selects de formulario" — el listbox de FormSelect se
+      // porta a document.body, así que un click en una opción no cuenta como
+      // "adentro" de rootRef; sin este chequeo el popover se cerraba antes
+      // de que la selección llegara a aplicarse.
+      if (e.target.closest('.form-select-dropdown')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -66,18 +72,24 @@ export default function InconsistenciasFiltrosPopover({ servicio, detectado, onC
           <div className="fp-section">
             <div className="form-field">
               <label htmlFor="cbi-fp-servicio" className="fp-section-title">Servicio</label>
-              <select id="cbi-fp-servicio" value={draft.servicio} onChange={(e) => setDraft((d) => ({ ...d, servicio: e.target.value }))}>
-                {SERVICIOS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <FormSelect
+                id="cbi-fp-servicio"
+                value={draft.servicio}
+                onChange={(v) => setDraft((d) => ({ ...d, servicio: v }))}
+                options={SERVICIOS}
+              />
             </div>
           </div>
 
           <div className="fp-section">
             <div className="form-field">
               <label htmlFor="cbi-fp-detectado" className="fp-section-title">Detectado</label>
-              <select id="cbi-fp-detectado" value={draft.detectado} onChange={(e) => setDraft((d) => ({ ...d, detectado: e.target.value }))}>
-                {DETECTADO_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <FormSelect
+                id="cbi-fp-detectado"
+                value={draft.detectado}
+                onChange={(v) => setDraft((d) => ({ ...d, detectado: v }))}
+                options={DETECTADO_OPTIONS}
+              />
             </div>
           </div>
 
