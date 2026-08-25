@@ -1,18 +1,42 @@
 /* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/
    .modal-footer/.form-field/.tf-readonly-value: definidas en
-   ../GestionCamas.css — acá solo el input con ícono de búsqueda
-   (Paciente/Admisión) y el layout de 2 columnas de las fechas. */
+   ../GestionCamas.css — acá solo el ancho propio del modal, el gap entre
+   campos, el layout de 2 columnas de las fechas, el asterisco de
+   obligatorio, el error inline y el spinner del botón "Reservando…". El
+   campo de búsqueda de Paciente/Admisión (ícono+dropdown) vive en
+   Typeahead.jsx/Typeahead.css, no acá. */
 
-/* Variante de .search-field (GestionCamas.css) dimensionada para ocupar
-   todo el ancho de un .form-field en vez de su width:320px fijo — mismo
-   ícono+input, solo cambia el contenedor. */
-.rc-search-field{position:relative;}
-.rc-search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
-.rc-search-field input{
-  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
-}
-.rc-search-field input::placeholder{color:var(--ink-400);}
-.rc-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+/* Selector compuesto (.modal-card.rc-modal-card), no solo .rc-modal-card:
+   pisa a .task-mini-modal-card (misma especificidad 0-1-0, otro archivo) y
+   necesita ganar sin depender del orden de inyección de <style> entre
+   rutas — mismo bug/fix ya documentado en GestionCamasResumen.css
+   (".content.cbr-content"). 600px (encargo explícito) en vez de los 400px
+   de .task-mini-modal-card: con Paciente/Admisión + su dropdown, el modal
+   angosto original quedaba justo. */
+.modal-card.rc-modal-card{width:600px;}
+
+.rc-required-mark{color:var(--red);margin-left:2px;}
+
+/* Respiro entre campos (encargo explícito) — .modal-body no trae gap propio
+   (GestionCamas.css), cada .form-field solo separa su propio label/input
+   (gap:4px interno). Acá se convierte .modal-body en columna flex para que
+   los campos (y el banner de error de envío) queden separados 8px entre
+   sí, sin tocar la definición compartida de .modal-body. */
+.rc-modal-card .modal-body{display:flex;flex-direction:column;gap:8px;}
 
 .rc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* Mismo color/tamaño que .cb-form-error (NuevaCamaModal.css) — la spec de
+   este formulario pedía 13px/var(--text-danger), pero el proyecto no tiene
+   ninguno de los 2 (escala fija --fs-* sin paso de 13px, token de color
+   --red en vez de --text-danger, ver AGENTS.md "Tipografía") — se usa el
+   token más cercano en vez de introducir uno nuevo. */
+.rc-error{display:block;margin-top:4px;font-size:var(--fs-sm);color:var(--red);}
+
+.rc-submit-error{
+  margin-top:4px;padding:10px 12px;border-radius:var(--radius);
+  background:var(--red-bg);color:var(--red);font-size:var(--fs-sm);font-weight:var(--fw-medium);
+}
+
+.rc-spin{animation:rc-spin .6s linear infinite;}
+@keyframes rc-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}

@@ -26,7 +26,11 @@ export default function CambiarEstadoModal({
   const [nuevoEstado, setNuevoEstado] = useState(presetEstado ?? '');
   const [motivo, setMotivo] = useState('');
 
-  const opciones = TRANSICIONES_PERMITIDAS[cama.estado].map((estado) => ({ value: estado, label: ESTADO_LABEL[estado] }));
+  // `|| []`: Aislamiento/Inactiva no tienen entrada en TRANSICIONES_PERMITIDAS
+  // (mockCamasData.js) — hoy ningún trigger real abre este modal desde esos 2
+  // estados (MENU_ACCIONES/CTA_PRINCIPAL tampoco los tienen), pero sin el
+  // fallback un futuro trigger rompería el modal en vez de mostrar 0 opciones.
+  const opciones = (TRANSICIONES_PERMITIDAS[cama.estado] || []).map((estado) => ({ value: estado, label: ESTADO_LABEL[estado] }));
   const motivoRequerido = nuevoEstado !== '' && ESTADOS_CRITICOS.includes(nuevoEstado);
   const puedeConfirmar = nuevoEstado !== '' && (!motivoRequerido || motivo.trim() !== '');
 

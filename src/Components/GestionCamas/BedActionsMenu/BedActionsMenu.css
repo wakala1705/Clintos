@@ -24,9 +24,15 @@
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
 .cb-actions-menu-item{
-  display:flex;align-items:center;width:100%;
+  display:flex;align-items:center;gap:8px;width:100%;
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
 }
+.cb-actions-menu-item .icon{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
 .cb-actions-menu-item:hover{background:var(--bg);}
 .cb-actions-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+/* Aislamiento/Inactiva: MENU_ACCIONES vacío (mockCamasData.js) — sin esto el
+   dropdown abría como una caja en blanco, indistinguible de un glitch. */
+.cb-actions-menu-empty{
+  display:block;padding:8px 10px;font-size:var(--fs-base);color:var(--ink-500);white-space:nowrap;
+}

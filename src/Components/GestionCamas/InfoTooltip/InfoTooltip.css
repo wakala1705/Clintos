@@ -1,0 +1,13 @@
+.cbnt-tooltip-wrap{position:relative;display:inline-flex;flex-shrink:0;}
+.cbnt-tooltip-icon{width:14px;height:14px;color:var(--ink-400);cursor:help;}
+/* position:fixed + left/bottom se completan inline (InfoTooltip.jsx, desde
+   getBoundingClientRect del ícono) — la burbuja se porta a document.body,
+   por eso no depende de position:absolute relativo a .cbnt-tooltip-wrap (ver
+   comentario en InfoTooltip.jsx). z-index va por encima de --z-modal por el
+   mismo motivo que .form-select-dropdown en FormSelect.css: al portarse,
+   queda hermano de .modal-overlay en el DOM en vez de descendiente. */
+.cbnt-tooltip-bubble{
+  position:fixed;background:var(--ink-900);color:#fff;border-radius:8px;padding:8px 10px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.4;white-space:normal;
+  pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+}

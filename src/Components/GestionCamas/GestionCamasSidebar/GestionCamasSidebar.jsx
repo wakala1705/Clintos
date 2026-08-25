@@ -34,6 +34,11 @@ const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 // fallback de botón + aviso "en desarrollo" (ver el bloque `!item.href` más
 // abajo) queda para si se agrega un ítem nuevo sin pantalla todavía, mismo
 // criterio que el resto de accesos sin pantalla propia en el proyecto.
+// "Camas" (antes "Mapa de camas") absorbió a la vieja pantalla de inventario
+// administrativo que vivía en /gestion-camas/camas (GestionCamasCamas.jsx,
+// eliminada — duplicaba lo que ya cubre este tablero operativo) — mismo
+// ícono que tenía ese ítem (LuBedDouble), reutilizado acá en vez de uno
+// nuevo, ya que quedó libre.
 // Conteo del badge de "Integridad" = inconsistencias Activas del mock
 // inicial (mismo número que muestra la propia pantalla de Integridad al
 // entrar) — no se recalcula en vivo si el admin corrige/ignora algo en esa
@@ -46,8 +51,14 @@ const ITEMS = [
   {
     id: 'resumen', label: 'Resumen', href: '/gestion-camas', icon: LuLayoutGrid,
   },
+  // Tablero operativo (Estados visuales, encargo sección 6) — vista de
+  // tarjetas/tabla en tiempo real (Libre/Ocupada/Reservada/Limpieza/
+  // Mantenimiento/Bloqueada/Aislamiento/Inactiva, ver mockCamasData.js).
+  // Ruta (/gestion-camas/tablero) y componente (GestionCamas.jsx) quedan
+  // igual que antes — solo cambia label/ícono de este ítem, ver comentario
+  // arriba.
   {
-    id: 'camas', label: 'Camas', href: '/gestion-camas/camas', icon: LuBedDouble,
+    id: 'tablero', label: 'Camas', href: '/gestion-camas/tablero', icon: LuBedDouble,
   },
   {
     id: 'integridad', label: 'Integridad', href: '/gestion-camas/integridad', icon: LuShieldCheck, badge: INCONSISTENCIAS_ACTIVAS,

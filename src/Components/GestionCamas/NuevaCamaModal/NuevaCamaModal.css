@@ -1,0 +1,92 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field/
+   .fp-section-title: ver ../GestionCamas.css — acá solo lo exclusivo de
+   este formulario. */
+.cb-form-modal-card{width:620px;}
+.cb-form-body{display:flex;flex-direction:column;gap:0;}
+.cb-form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.cb-form-error{font-size:var(--fs-sm);color:var(--red);}
+/* Asterisco de campo obligatorio (Código/Número/Sede/Área/Habitación/Tipo,
+   encargo) — marca compacta en el propio label, a diferencia de
+   .required-pill (GestionCamas.css): ese es para un campo condicionalmente
+   requerido y aislado (Motivo en CambiarEstadoModal); acá son 6 campos
+   siempre obligatorios en un mismo formulario, donde una píldora por cada
+   uno sería ruido visual. */
+.cb-required-mark{color:var(--red);margin-left:2px;}
+
+/* 3 secciones (Identificación/Ubicación/Configuración, encargo) separadas
+   por un borde superior — mismo criterio que .cb-detail-section en
+   BedDetailModal.css, pero para un formulario editable en vez de una vista
+   de solo lectura. */
+.cb-form-section{padding:16px 0;display:flex;flex-direction:column;gap:16px;}
+.cb-form-section:first-child{padding-top:0;}
+.cb-form-section + .cb-form-section{border-top:1px solid var(--border);}
+.cb-form-section .fp-section-title{margin-bottom:0;}
+
+.cb-form-checkbox{display:flex;align-items:center;gap:8px;cursor:pointer;width:fit-content;}
+.cb-form-checkbox input{accent-color:var(--primary);width:16px;height:16px;flex-shrink:0;}
+.cb-form-checkbox span{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+/* Fila label+ícono de ayuda (Tipo/Clase/Nivel, rediseño "5 problemas") — ver
+   InfoTooltip.jsx. Sin margin propio: el gap:4 de .form-field ya separa esta
+   fila del select de abajo. */
+.cb-form-label-row{display:flex;align-items:center;gap:6px;}
+
+/* Microcopy bajo "Cama temporal" y bajo el panel de expiración — mismo
+   patrón que .cb-form-error pero en tono neutro (ink-500) en vez de alerta.
+   margin-left:24px alinea con el texto del checkbox (16px de input + 8px de
+   gap), no con el borde de la fila. */
+.cb-form-help{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.45;margin-top:4px;margin-left:24px;}
+.cb-form-help-flush{margin-left:0;margin-top:0;}
+.cb-optional-mark{color:var(--ink-500);font-weight:var(--fw-regular);}
+
+/* Panel condicional "Fecha de expiración" (solo si Cama temporal está
+   tildado, rediseño "5 problemas") — mismo criterio visual que
+   .cb-temporal-panel siendo la única sección con fondo propio del
+   formulario, para separarlo del resto de Configuración sin un borde extra. */
+.cb-temporal-panel{
+  margin-top:10px;margin-left:24px;padding:12px;background:var(--bg);
+  border:1px solid var(--border);border-radius:var(--radius);
+  display:flex;flex-direction:column;gap:8px;max-width:320px;
+}
+.cb-temporal-panel .form-field input{max-width:220px;}
+
+/* Grilla de pills "Estado inicial" (4 columnas, encargo explícito) —
+   reemplaza el FormSelect que tenía antes: son solo 6 opciones fijas (nunca
+   una lista larga que justifique un dropdown) y su listado portado se
+   recortaba contra el viewport cuando el campo caía cerca del borde
+   inferior del modal (bug real, reportado). Radios reales (no botones) para
+   mantener la semántica de "una sola opción" con teclado/lector de
+   pantalla nativos — el <input> se oculta visualmente pero ocupa toda la
+   pill (position:absolute;inset:0) para que el click funcione en cualquier
+   punto, no solo sobre el texto. */
+.cb-estado-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cb-estado-pill{
+  position:relative;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:8px 6px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+  transition:background .12s ease,border-color .12s ease,color .12s ease;
+}
+.cb-estado-pill input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;}
+.cb-estado-pill:hover{background:#f3f5f9;}
+.cb-estado-pill.selected{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);font-weight:var(--fw-semibold);}
+.cb-estado-pill:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:1px;}
+@media (max-width:768px){
+  .cb-estado-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Colapsable "Mostrar más" (Características/Restricciones/Observaciones,
+   rediseño "5 problemas") — acorta el flujo por defecto para el caso de uso
+   principal (carga en lote vía "Guardar y crear otra"). */
+.cb-mas-toggle{
+  display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:2px 0;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
+  cursor:pointer;width:fit-content;
+}
+.cb-mas-toggle:hover{color:var(--primary-dark);}
+.cb-mas-toggle .icon{width:14px;height:14px;transition:transform .15s ease;}
+.cb-mas-toggle .icon.open{transform:rotate(180deg);}
+.cb-mas-section{display:flex;flex-direction:column;gap:16px;padding-top:2px;}
+
+@media (max-width:768px){
+  .cb-form-row{grid-template-columns:1fr;}
+}

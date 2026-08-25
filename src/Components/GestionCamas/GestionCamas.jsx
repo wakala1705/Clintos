@@ -18,23 +18,23 @@ import AsignarPacienteModal from './AsignarPacienteModal/AsignarPacienteModal';
 import ReservarCamaModal from './ReservarCamaModal/ReservarCamaModal';
 import BedDetailModal from './BedDetailModal/BedDetailModal';
 import PacienteActualModal from './PacienteActualModal/PacienteActualModal';
-import ActivityPanel from './ActivityPanel/ActivityPanel';
-import ActivityDrawer from './ActivityPanel/ActivityDrawer/ActivityDrawer';
-import UpcomingAdmissionsDrawer from './UpcomingAdmissionsDrawer/UpcomingAdmissionsDrawer';
+import NuevaCamaModal from './NuevaCamaModal/NuevaCamaModal';
 import GestionCamasSidebar from './GestionCamasSidebar/GestionCamasSidebar';
-import LastUpdated from '@/Components/GestionCamas/LastUpdated/LastUpdated';
-import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import CamasPagination from './CamasPagination/CamasPagination';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
 import {
-  ACTIVIDAD_INICIAL, AREAS, CAMAS, ESTADOS, ESTADO_LABEL, HOY_ADMISION, PISOS, PROXIMOS_INGRESOS,
-  SECTORES, SEDES, TIPOS, TIPO_INGRESO_LABEL,
+  ACTIVIDAD_INICIAL, AREAS, CAMAS, ESTADOS, ESTADO_LABEL, HOY_ADMISION, PISOS,
+  SECTORES, SEDES, TIPOS,
 } from '@/hooks/GestionCamas/mockCamasData';
 import {
-  LuBedDouble, LuBellRing, LuCalendarClock, LuSearch, LuUser,
+  LuBedDouble, LuFilterX, LuPlus, LuSearch, LuUser,
 } from 'react-icons/lu';
 
+// Solo `habitacion` — Temporal/Con reserva/Aislamiento/Bloqueada/Limpieza/
+// Mantenimiento se quitaron de "Más filtros" (salvo Temporal/Con reserva,
+// duplicaban valores que ya cubre el filtro "Estado", ver MasFiltrosPopover.jsx).
 const FILTROS_AVANZADOS_INICIALES = {
-  habitacion: '', temporal: false, reserva: false, aislamiento: false, limpieza: false, mantenimiento: false, bloqueada: false,
+  habitacion: '',
 };
 
 // Duración simulada de una limpieza (encargo: "comportamiento de tiempo
@@ -63,6 +63,13 @@ const EVENTO_POR_ESTADO = {
 const ACCIONES_EN_DESARROLLO = {
   historial: (cama) => `Historial de cama ${cama.numero} (en desarrollo).`,
   'ver-mantenimiento': (cama) => `Detalle de mantenimiento de cama ${cama.numero} (en desarrollo).`,
+  // Editar datos maestros de la cama (número/sede/área/piso/sector/tipo...,
+  // mismo alcance que NuevaCamaModal pero para modificar en vez de crear) —
+  // sin pantalla propia todavía: las 197 camas generadas por generateCamas
+  // no tienen código/habitación/clase/nivel poblados (solo las creadas desde
+  // "Nueva cama" sí), así que reusar ese formulario en modo edición hoy
+  // mostraría esos campos vacíos para casi todo el inventario existente.
+  editar: (cama) => `Editar cama ${cama.numero} (en desarrollo).`,
   // Acciones del modal "Paciente actual" (ver PacienteActualModal) — ninguna
   // tiene pantalla propia todavía: "Ver paciente" ahí es la ficha clínica
   // completa (más allá de este snapshot), distinta del "Ver paciente" que
@@ -95,7 +102,9 @@ export default function GestionCamas() {
   const [tipo, setTipo] = useState('todos');
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(FILTROS_AVANZADOS_INICIALES);
   const [query, setQuery] = useState('');
-  const [view, setView] = useState('tarjetas');
+  // Default "tabla" (Lista) — encargo explícito, a diferencia del resto del
+  // Bed Board que arrancaba en tarjetas.
+  const [view, setView] = useState('tabla');
   // Copia local mutable del mock (nunca se muta CAMAS directamente, mismo
   // criterio que SCHEDULE en TurnosEnfermeria.jsx).
   const [camas, setCamas] = useState(CAMAS);
@@ -120,10 +129,6 @@ export default function GestionCamas() {
     return map;
   });
   const [now, setNow] = useState(() => Date.now());
-  const [lastUpdatedAt, setLastUpdatedAt] = useState(() => Date.now());
-  const [updateStatus, setUpdateStatus] = useState('idle'); // idle | loading | error
-  const [activityDrawerOpen, setActivityDrawerOpen] = useState(false);
-  const [ingresosDrawerOpen, setIngresosDrawerOpen] = useState(false);
 
   // El intervalo de tick vive en un efecto sin deps (no se re-crea en cada
   // render) — lee `camas`/`limpiezaEta` desde refs en vez de closures para
@@ -145,9 +150,8 @@ export default function GestionCamas() {
   // Tick de "tiempo real" (encargo explícito, sección 7): cada segundo
   // avanza `now` (recalcula "hace N min"/ETA restante en cada tarjeta) y
   // revisa si alguna limpieza venció su ETA — si venció, la cama pasa sola a
-  // Libre y eso cascada a KPIs (derivados de `camas`, ya reactivos),
-  // Actividad reciente y el timestamp de "Última actualización", en ese
-  // orden, tal como pide el encargo.
+  // Libre y eso cascada a KPIs (derivados de `camas`, ya reactivos) y
+  // Actividad reciente, en ese orden.
   useEffect(() => {
     const id = setInterval(() => {
       const nowMs = Date.now();
@@ -171,38 +175,13 @@ export default function GestionCamas() {
         vencidas.forEach((camaId) => delete next[camaId]);
         return next;
       });
-      setLastUpdatedAt(nowMs);
     }, 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Botón ↻ / "Reintentar" (encargo: 4 estados — "Actualizando…"/error acá,
-  // "Actualizado hace Ns"/"Actualizado ahora" ya salen de formatRelativeTime
-  // según qué tan reciente sea `lastUpdatedAt`, ver LastUpdated.jsx). La
-  // falla ~1 de cada 8 es deliberada, para poder demostrar el estado de
-  // error sin depender de una falla real de red que este prototipo no tiene.
-  function handleRefresh() {
-    setUpdateStatus('loading');
-    window.setTimeout(() => {
-      if (Math.random() < 0.12) {
-        setUpdateStatus('error');
-        return;
-      }
-      setUpdateStatus('idle');
-      const nowMs = Date.now();
-      setNow(nowMs);
-      setLastUpdatedAt(nowMs);
-    }, 700);
-  }
-
   function iniciarLimpieza(camaId, extra = {}) {
     mutarCama(camaId, { estado: 'limpieza', limpiezaDesde: horaAhora(), ...extra });
     setLimpiezaEta((prev) => ({ ...prev, [camaId]: Date.now() + LIMPIEZA_DURACION_MS }));
-  }
-
-  function handleAsignarCamaIngreso(ingreso) {
-    setIngresosDrawerOpen(false);
-    window.ncToast?.(`Asignar cama para ${TIPO_INGRESO_LABEL[ingreso.tipo].toLowerCase()} (en desarrollo).`);
   }
 
   // KPIs dinámicos por Sede/Área (encargo) — alcance más amplio que
@@ -215,38 +194,15 @@ export default function GestionCamas() {
   )), [camas, sede, area]);
 
   const kpis = useMemo(() => {
-    const contarPorEstado = (est) => camasEnAlcance.filter((c) => c.estado === est).length;
     const total = camasEnAlcance.length;
-    const ocupadas = contarPorEstado('ocupada');
+    const ocupadas = camasEnAlcance.filter((c) => c.estado === 'ocupada').length;
     return {
       total,
-      libres: contarPorEstado('libre'),
+      libres: camasEnAlcance.filter((c) => c.estado === 'libre').length,
       ocupadas,
-      reservadas: contarPorEstado('reservada'),
-      limpieza: contarPorEstado('limpieza'),
-      mantenimiento: contarPorEstado('mantenimiento'),
-      bloqueadas: contarPorEstado('bloqueada'),
       ocupacionPct: total > 0 ? Math.round((ocupadas / total) * 100) : 0,
     };
   }, [camasEnAlcance]);
-
-  // Chips del filtro Estado (ver render) — franja siempre visible en vez del
-  // FilterDropdown con popover que tenía antes (encargo: "chip-group
-  // segmented"), mismos valores/labels que ya definía ESTADOS
-  // (mockCamasData.js) — solo se les suma el conteo de `kpis` acá.
-  // Limpieza/Mantenimiento quedan afuera de esta franja (encargo: "ya viven
-  // en los filtros avanzados", ver checkboxes "Operativo de soporte" en
-  // MasFiltrosPopover) para no tener dos controles distintos filtrando lo
-  // mismo — siguen contando dentro de "Todos" y de los KPIs.
-  const CONTEO_POR_ESTADO = {
-    todos: kpis.total,
-    libre: kpis.libres,
-    ocupada: kpis.ocupadas,
-    reservada: kpis.reservadas,
-    bloqueada: kpis.bloqueadas,
-  };
-  const estadoOptions = ESTADOS.filter((e) => e.value !== 'limpieza' && e.value !== 'mantenimiento')
-    .map((e) => ({ ...e, count: CONTEO_POR_ESTADO[e.value] }));
 
   const camasFiltradas = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -259,12 +215,6 @@ export default function GestionCamas() {
       if (estado !== 'todos' && c.estado !== estado) return false;
       if (tipo !== 'todos' && c.tipo !== tipo) return false;
       if (habitacionQ && !c.numero.toLowerCase().includes(habitacionQ)) return false;
-      if (filtrosAvanzados.temporal && !c.temporal) return false;
-      if (filtrosAvanzados.reserva && !c.reserva) return false;
-      if (filtrosAvanzados.aislamiento && !c.aislamiento) return false;
-      if (filtrosAvanzados.limpieza && c.estado !== 'limpieza') return false;
-      if (filtrosAvanzados.mantenimiento && c.estado !== 'mantenimiento') return false;
-      if (filtrosAvanzados.bloqueada && c.estado !== 'bloqueada') return false;
       if (!q) return true;
       return (
         c.numero.toLowerCase().includes(q)
@@ -275,6 +225,31 @@ export default function GestionCamas() {
     });
   }, [camas, sede, area, piso, sector, estado, tipo, filtrosAvanzados, query]);
 
+  // Paginación (mismo componente/patrón que "Camas" admin, ver
+  // CamasPagination.jsx) — client-side acá (a diferencia de fetchCamas en
+  // GestionCamasCamas.jsx) porque este tablero ya tiene todo `camas` en
+  // memoria, sin simulación de latencia/red de por medio.
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const camasPaginadas = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return camasFiltradas.slice(start, start + pageSize);
+  }, [camasFiltradas, page, pageSize]);
+  function handleChangePageSize(n) {
+    setPageSize(n);
+    setPage(1);
+  }
+  // `page` se resetea a 1 en cada handler que cambia un filtro (nunca en un
+  // efecto — react-hooks/set-state-in-effect, mismo criterio que
+  // handleChangeSede/handleChangeEstadoFiltro en GestionCamasCamas.jsx).
+  function handleChangeSede(v) { setPage(1); setSede(v); }
+  function handleChangeArea(v) { setPage(1); setArea(v); }
+  function handleChangeEstado(v) { setPage(1); setEstado(v); }
+  function handleChangeQuery(v) { setPage(1); setQuery(v); }
+  function handleChangePiso(v) { setPage(1); setPiso(v); }
+  function handleChangeSector(v) { setPage(1); setSector(v); }
+  function handleChangeTipo(v) { setPage(1); setTipo(v); }
+
   const modalCama = modal ? camas.find((c) => c.id === modal.camaId) : null;
 
   function mutarCama(camaId, cambios) {
@@ -282,16 +257,33 @@ export default function GestionCamas() {
   }
 
   function handleCambioFiltroAvanzado(key, value) {
+    setPage(1);
     setFiltrosAvanzados((prev) => ({ ...prev, [key]: value }));
   }
   // Piso/Sector/Tipo ahora viven dentro de "Más filtros" (ver render) — su
   // "Limpiar filtros" resetea todo lo que ese popover contiene, no solo los
   // checkboxes/habitación que tenía antes de agruparlos.
   function handleLimpiarFiltrosAvanzados() {
+    setPage(1);
     setFiltrosAvanzados(FILTROS_AVANZADOS_INICIALES);
     setPiso('todos');
     setSector('todos');
     setTipo('todos');
+  }
+  // Botón "Limpiar filtros" persistente del filter-bar (mismo criterio que
+  // handleLimpiarTodo en GestionCamasCamas.jsx) — limpia TODO (Sede/Área/
+  // Estado/búsqueda + los de "Más filtros"), a diferencia de
+  // handleLimpiarFiltrosAvanzados de arriba, que solo resetea ese popover.
+  const cantidadFiltrosActivos = (sede !== 'todas' ? 1 : 0) + (area !== 'todas' ? 1 : 0) + (estado !== 'todos' ? 1 : 0)
+    + (query.trim() !== '' ? 1 : 0) + (piso !== 'todos' ? 1 : 0) + (sector !== 'todos' ? 1 : 0) + (tipo !== 'todos' ? 1 : 0)
+    + (filtrosAvanzados.habitacion.trim() !== '' ? 1 : 0);
+  const hayFiltrosActivos = cantidadFiltrosActivos > 0;
+  function handleLimpiarTodo() {
+    setQuery('');
+    setSede('todas');
+    setArea('todas');
+    setEstado('todos');
+    handleLimpiarFiltrosAvanzados();
   }
 
   function handleCloseModal() {
@@ -324,6 +316,14 @@ export default function GestionCamas() {
       case 'mantenimiento':
         setModal({ type: 'cambiar-estado', camaId, presetEstado: 'mantenimiento' });
         return;
+      // Atajo directo a "Cambiar estado" preseleccionado en Limpieza (mismo
+      // patrón que 'mantenimiento'/'bloquear') — solo llega acá desde Libre
+      // (único estado con esta entrada en el menú, ver MENU_ACCIONES en
+      // mockCamasData.js); Ocupada/Mantenimiento ya resuelven esta misma
+      // transición vía 'liberar'/'finalizar-mantenimiento'.
+      case 'limpieza':
+        setModal({ type: 'cambiar-estado', camaId, presetEstado: 'limpieza' });
+        return;
       case 'bloquear':
         setModal({ type: 'cambiar-estado', camaId, presetEstado: 'bloqueada' });
         return;
@@ -336,7 +336,6 @@ export default function GestionCamas() {
       case 'liberar':
         iniciarLimpieza(camaId, { paciente: null });
         pushActivity('limpieza-iniciada', `Cama ${cama.numero} en limpieza`, 'Limpieza iniciada');
-        setLastUpdatedAt(Date.now());
         window.ncToast?.(`Cama ${cama.numero} liberada — pasa a limpieza.`);
         return;
       case 'utilizar-reserva':
@@ -357,7 +356,6 @@ export default function GestionCamas() {
             },
           });
           pushActivity('paciente-asignado', `Paciente asignado a cama ${cama.numero}`, `${cama.reserva.paciente} · reserva utilizada`);
-          setLastUpdatedAt(Date.now());
           window.ncToast?.(`Reserva de cama ${cama.numero} utilizada.`);
         } else {
           setModal({ type: 'asignar-paciente', camaId });
@@ -366,7 +364,6 @@ export default function GestionCamas() {
       case 'cancelar-reserva':
         mutarCama(camaId, { estado: 'libre', reserva: null });
         pushActivity('cama-liberada', `Reserva de cama ${cama.numero} cancelada`, 'La cama queda libre');
-        setLastUpdatedAt(Date.now());
         window.ncToast?.(`Reserva de cama ${cama.numero} cancelada.`);
         return;
       case 'finalizar-limpieza':
@@ -378,19 +375,16 @@ export default function GestionCamas() {
           return next;
         });
         pushActivity('cama-liberada', `Cama ${cama.numero} liberada`, 'La cama está disponible para asignación');
-        setLastUpdatedAt(Date.now());
         window.ncToast?.(`Cama ${cama.numero} lista — limpieza finalizada.`);
         return;
       case 'finalizar-mantenimiento':
         iniciarLimpieza(camaId, { mantenimientoTipo: undefined });
         pushActivity('limpieza-iniciada', `Cama ${cama.numero} en limpieza`, 'Mantenimiento finalizado');
-        setLastUpdatedAt(Date.now());
         window.ncToast?.(`Mantenimiento de cama ${cama.numero} finalizado — pasa a limpieza.`);
         return;
       case 'desbloquear':
         mutarCama(camaId, { estado: 'libre', motivo: undefined });
         pushActivity('cama-liberada', `Cama ${cama.numero} habilitada`, 'La cama vuelve a estar libre');
-        setLastUpdatedAt(Date.now());
         window.ncToast?.(`Cama ${cama.numero} desbloqueada.`);
         return;
       default:
@@ -419,7 +413,6 @@ export default function GestionCamas() {
       });
     }
     pushActivity(EVENTO_POR_ESTADO[nuevoEstado], `Cama ${cama.numero} actualizada a ${ESTADO_LABEL[nuevoEstado]}`, motivo || 'Cambio de estado manual');
-    setLastUpdatedAt(Date.now());
     setModal(null);
     window.ncToast?.(`Cama ${cama.numero} actualizada a ${ESTADO_LABEL[nuevoEstado]}.`);
   }
@@ -431,7 +424,6 @@ export default function GestionCamas() {
     });
     setModal(null);
     pushActivity('paciente-asignado', `Paciente asignado a cama ${cama.numero}`, `${nombre} · ${hc}`);
-    setLastUpdatedAt(Date.now());
     window.ncToast?.(`${nombre} asignado a cama ${cama.numero}.`);
   }
 
@@ -440,8 +432,44 @@ export default function GestionCamas() {
     mutarCama(camaId, { estado: 'reservada', reserva });
     setModal(null);
     pushActivity('cama-reservada', `Cama ${cama.numero} reservada`, reserva.motivo);
-    setLastUpdatedAt(Date.now());
     window.ncToast?.(`Cama ${cama.numero} reservada.`);
+  }
+
+  // Misma lógica que "Nueva cama" en GestionCamasCamas.jsx (encargo):
+  // formulario validado en modal (NuevaCamaModal) → arma el registro
+  // completo → lo antepone a `camas` (nunca muta CAMAS directamente, mismo
+  // criterio que handleSubmitForm en GestionCamasCamas.jsx) → toast.
+  function handleNuevaCama() {
+    setModal({ type: 'nueva-cama' });
+  }
+
+  // `datos.estadoInicial` llega validado contra ESTADO_INICIAL_OPTIONS (sin
+  // ocupada/reservada, ver NuevaCamaModal.jsx) — si nace en limpieza, se
+  // engancha al mismo tick de "tiempo real" que `iniciarLimpieza` (si no,
+  // quedaría atascada en limpieza para siempre, a diferencia de cualquier
+  // otra cama que entra a ese estado). `keepOpen` (desde "Guardar y crear
+  // otra") deja el modal abierto — NuevaCamaModal ya se resetea solo.
+  function handleSubmitNuevaCama(datos, { keepOpen } = {}) {
+    const { estadoInicial, ...resto } = datos;
+    const nueva = {
+      id: `CAM-${Date.now()}`,
+      ...resto,
+      estado: estadoInicial,
+      paciente: null,
+      reserva: null,
+      motivo: undefined,
+      limpiezaDesde: estadoInicial === 'limpieza' ? horaAhora() : undefined,
+      mantenimientoTipo: estadoInicial === 'mantenimiento' ? (datos.observaciones ?? undefined) : undefined,
+      ultimaLimpieza: undefined,
+      aislamiento: false,
+    };
+    setCamas((prev) => [nueva, ...prev]);
+    if (estadoInicial === 'limpieza') {
+      setLimpiezaEta((prev) => ({ ...prev, [nueva.id]: Date.now() + LIMPIEZA_DURACION_MS }));
+    }
+    pushActivity('cama-liberada', `Cama ${nueva.numero} registrada`, 'Nueva cama creada');
+    window.ncToast?.(`Cama ${nueva.numero} creada.`);
+    if (!keepOpen) setModal(null);
   }
 
   return (
@@ -461,35 +489,15 @@ export default function GestionCamas() {
           <div className="cb-page-body">
             <div className="cb-header">
               <div>
-                <h1>Gestión de camas</h1>
+                <h1>Camas</h1>
                 <p>Estado en tiempo real de las camas del hospital.</p>
               </div>
-              <div className="cb-header-actions">
-                {/* Trigger de Actividad solo visible <1024px (ver
-                    .cb-activity-mobile-trigger en GestionCamas.css) — en
-                    desktop la columna derecha ya está siempre visible. */}
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm cb-activity-mobile-trigger"
-                  onClick={() => setActivityDrawerOpen(true)}
-                >
-                  <LuBellRing className="icon" aria-hidden="true" />
-                  Actividad
-                </button>
-                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setIngresosDrawerOpen(true)}>
-                  <LuCalendarClock className="icon" aria-hidden="true" />
-                  Próximos ingresos · {PROXIMOS_INGRESOS.length}
-                </button>
-                <AreaSelector label="Sede" options={SEDES} value={sede} onChange={setSede} />
-                <AreaSelector label="Área" options={AREAS} value={area} onChange={setArea} />
-              </div>
+              <button type="button" className="btn btn-primary" onClick={handleNuevaCama}>
+                <LuPlus className="icon" aria-hidden="true" />
+                Nueva cama
+              </button>
             </div>
 
-            {/* Bed Board (izquierda) + Actividad reciente (derecha, columna fija
-                en desktop — encargo: "panel operativo permanente, no una
-                acción"). Debajo de --bp-desktop colapsa a 1 columna y el panel
-                se abre como drawer (ver .cb-activity-mobile-trigger arriba y
-                @media en GestionCamas.css). */}
             <div className="cb-layout">
               <div className="cb-main">
                 {/* Capacidad — hero fijo de 4 tarjetas (Reservadas sale de acá,
@@ -524,23 +532,16 @@ export default function GestionCamas() {
                         type="text"
                         placeholder="Buscar cama, paciente, HC o admisión..."
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => handleChangeQuery(e.target.value)}
                         aria-label="Buscar cama, paciente, historia clínica o admisión"
                       />
                     </div>
 
                     <div className="filter-spacer" />
 
-                    {/* Estado — franja siempre visible en vez de dropdown
-                        (encargo: "chip-group segmented"), única fuente de
-                        `estado` (reemplaza también al viejo widget de 3 chips
-                        "Estados operativos", ya cubierto acá). */}
-                    <SegmentedFilterBar
-                      options={estadoOptions}
-                      value={estado}
-                      onChange={setEstado}
-                      ariaLabel="Filtrar camas por estado"
-                    />
+                    <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
+                    <AreaSelector label="Área" options={AREAS} value={area} onChange={handleChangeArea} />
+                    <AreaSelector label="Estado" options={ESTADOS} value={estado} onChange={handleChangeEstado} />
                     {/* Piso/Sector/Tipo se agrupan dentro de "Más filtros"
                         (encargo) — MasFiltrosPopover los recibe como props
                         propias, separados de `filtros`/`onChange` (esos
@@ -548,17 +549,28 @@ export default function GestionCamas() {
                     <MasFiltrosPopover
                       piso={piso}
                       pisoOptions={PISOS}
-                      onChangePiso={setPiso}
+                      onChangePiso={handleChangePiso}
                       sector={sector}
                       sectorOptions={SECTORES}
-                      onChangeSector={setSector}
+                      onChangeSector={handleChangeSector}
                       tipo={tipo}
                       tipoOptions={TIPOS}
-                      onChangeTipo={setTipo}
+                      onChangeTipo={handleChangeTipo}
                       filtros={filtrosAvanzados}
                       onChange={handleCambioFiltroAvanzado}
                       onLimpiar={handleLimpiarFiltrosAvanzados}
                     />
+                    {/* Persistente en el filter-bar (a diferencia de "Limpiar
+                        todo" dentro de MasFiltrosPopover, que solo resetea
+                        los filtros avanzados) — mismo patrón que
+                        .cba-limpiar-filtros-btn en GestionCamasCamas.jsx. */}
+                    {hayFiltrosActivos && (
+                      <button type="button" className="btn btn-secondary btn-sm cb-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
+                        <LuFilterX className="icon" aria-hidden="true" />
+                        Limpiar filtros
+                        <span className="badge-count">{cantidadFiltrosActivos}</span>
+                      </button>
+                    )}
 
                     <ViewToggle view={view} onChange={setView} />
                   </div>
@@ -568,10 +580,10 @@ export default function GestionCamas() {
                   ) : (
                     <div className="cb-body-wrap">
                       {view === 'tabla' ? (
-                        <BedTable camas={camasFiltradas} onAction={handleCardAction} />
+                        <BedTable camas={camasPaginadas} onAction={handleCardAction} />
                       ) : (
                         <div className="cb-grid">
-                          {camasFiltradas.map((c) => (
+                          {camasPaginadas.map((c) => (
                             <BedCard key={c.id} cama={c} onAction={handleCardAction} etaTimestamp={limpiezaEta[c.id]} now={now} />
                           ))}
                         </div>
@@ -579,13 +591,15 @@ export default function GestionCamas() {
                     </div>
                   )}
 
-                  <div className="cb-board-footer">
-                    <LastUpdated status={updateStatus} lastUpdatedAt={lastUpdatedAt} now={now} onRefresh={handleRefresh} />
-                  </div>
+                  <CamasPagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={camasFiltradas.length}
+                    onChangePage={setPage}
+                    onChangePageSize={handleChangePageSize}
+                  />
                 </div>
               </div>
-
-              <ActivityPanel eventos={activity} now={now} onVerTodo={() => setActivityDrawerOpen(true)} />
             </div>
           </div>
         </div>
@@ -621,7 +635,6 @@ export default function GestionCamas() {
           etaTimestamp={limpiezaEta[modalCama.id]}
           onClose={handleCloseModal}
           onAction={handleCardAction}
-          onVerActividad={() => setActivityDrawerOpen(true)}
         />
       )}
       {modal?.type === 'ver-paciente' && modalCama?.paciente && (
@@ -631,14 +644,13 @@ export default function GestionCamas() {
           onAction={handleCardAction}
         />
       )}
-
-      <ActivityDrawer open={activityDrawerOpen} eventos={activity} now={now} onClose={() => setActivityDrawerOpen(false)} />
-      <UpcomingAdmissionsDrawer
-        open={ingresosDrawerOpen}
-        ingresos={PROXIMOS_INGRESOS}
-        onClose={() => setIngresosDrawerOpen(false)}
-        onAsignar={handleAsignarCamaIngreso}
-      />
+      {modal?.type === 'nueva-cama' && (
+        <NuevaCamaModal
+          camasExistentes={camas}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitNuevaCama}
+        />
+      )}
     </div>
   );
 }

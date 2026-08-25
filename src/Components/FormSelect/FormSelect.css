@@ -14,6 +14,18 @@
 .form-select-chev{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
 .form-select-chev.open{transform:rotate(180deg);}
 .form-select-trigger:disabled .form-select-chev{color:var(--ink-400);}
+/* Resaltado ámbar "obligatorio y vacío" (prop `required`, ver FormSelect.jsx)
+   — mismo selector/colores que .form-field input:required:placeholder-shown
+   en cada feature dueña del formulario (ej. GestionCamas.css), gateado por
+   data-required-highlight en <html> (Configuración > Apariencia). --amber-bg
+   se consume tal cual el resto de este archivo (solo tokens, nunca los
+   define) — cada feature que monta un FormSelect ya declara ese token. */
+html:not([data-required-highlight="off"]) .form-select-trigger[data-required-empty="true"]{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigger[data-required-empty="true"]{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
 
 /* position:fixed + top/left/width se completan inline en FormSelect.jsx
    (calculados desde el trigger vía getBoundingClientRect) — el listado se

@@ -98,12 +98,13 @@ const ICONO_INCONSISTENCIA = {
 
 // Pantalla administrativa "Resumen" (Procesos > Gestión de Camas > Resumen,
 // ver AGENTS.md/encargo) — reemplaza al viejo /gestion-camas como landing
-// del módulo; el antiguo Bed Board operativo (asignar paciente, trasladar,
-// tareas de limpieza...) se movió intacto a /gestion-camas/camas (ver
-// GestionCamas.jsx) y es deliberadamente la ÚNICA pantalla del módulo que
-// muestra esas acciones — esta, en cambio, es supervisión + indicadores +
-// integridad + auditoría, sin protagonismo del paciente ni acciones
-// clínicas/operativas en tiempo real (encargo explícito, sección 10).
+// del módulo; el Bed Board operativo (asignar paciente, trasladar, tareas de
+// limpieza...) vive en /gestion-camas/tablero (ver GestionCamas.jsx,
+// sección "Camas" del sidebar) y es deliberadamente la ÚNICA pantalla del
+// módulo que muestra esas acciones — esta, en cambio, es supervisión +
+// indicadores + integridad + auditoría, sin protagonismo del paciente ni
+// acciones clínicas/operativas en tiempo real (encargo explícito, sección
+// 10).
 //
 // Sede/Servicio/Periodo son selectores controlados de verdad, pero el mock
 // (mockResumenData.js) no modela un desglose por cada combinación de los

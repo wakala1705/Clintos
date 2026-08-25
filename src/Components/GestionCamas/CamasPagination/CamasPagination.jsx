@@ -12,6 +12,14 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50];
 // BedBoardModal: no forzar un componente ajeno cuyo shape no encaja).
 // Colapsa el rango de páginas con "…" cuando hay muchas (52 en el caso de
 // 512 camas / 10 por página) para no listar 52 botones.
+// Vive directamente bajo GestionCamas/ (no dentro de un feature-folder
+// puntual) — usado por GestionCamas.jsx (Camas, tablero operativo), mismo
+// criterio que GestionCamasSidebar (AGENTS.md, "App-wide components"). Antes
+// también lo usaba la vieja pantalla de inventario administrativo en
+// /gestion-camas/camas (GestionCamasCamas.jsx, eliminada por duplicar este
+// tablero) — se mantiene como componente propio en vez de volver a anidarlo
+// en un solo feature-folder, por si un futuro listado grande del módulo
+// vuelve a necesitarlo.
 function rangoPaginas(page, totalPages) {
   const delta = 1;
   const rango = [];

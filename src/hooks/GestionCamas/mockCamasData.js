@@ -36,14 +36,39 @@ export const SECTORES = [
   { value: 'B', label: 'Sector B' },
   { value: 'C', label: 'Sector C' },
 ];
+// `group` (opcional, ignorado por ESTADO_LABEL/ESTADO_COLOR más abajo) — solo
+// lo usa el <AreaSelector> "Estado" del filter-bar (GestionCamas.jsx) para
+// separar la lista en 2 secciones con label+divider: mismo criterio
+// clínicos/administrativos que CLINICAL_STATUS_GROUPS en bedContextFormat.js
+// (Aislamiento se suma a clínicos, Inactiva a administrativos). Orden del
+// array = orden de la lista, por eso van agrupados de forma contigua (no
+// alfabético) — mezclarlos dejaría el label de grupo repitiéndose.
 export const ESTADOS = [
   { value: 'todos', label: 'Todos' },
-  { value: 'libre', label: 'Libre' },
-  { value: 'ocupada', label: 'Ocupada' },
-  { value: 'reservada', label: 'Reservada' },
-  { value: 'limpieza', label: 'Limpieza' },
-  { value: 'mantenimiento', label: 'Mantenimiento' },
-  { value: 'bloqueada', label: 'Bloqueada' },
+  {
+    value: 'libre', label: 'Libre', group: 'Clínicos',
+  },
+  {
+    value: 'ocupada', label: 'Ocupada', group: 'Clínicos',
+  },
+  {
+    value: 'reservada', label: 'Reservada', group: 'Clínicos',
+  },
+  {
+    value: 'aislamiento', label: 'Aislamiento', group: 'Clínicos',
+  },
+  {
+    value: 'limpieza', label: 'Limpieza', group: 'Administrativos',
+  },
+  {
+    value: 'mantenimiento', label: 'Mantenimiento', group: 'Administrativos',
+  },
+  {
+    value: 'bloqueada', label: 'Bloqueada', group: 'Administrativos',
+  },
+  {
+    value: 'inactiva', label: 'Inactiva', group: 'Administrativos',
+  },
 ];
 // Códigos crudos de `TIPO` en CWEB.HABCAMA (01/02/03/04/10/11) — su
 // significado clínico NO está confirmado por el documento fuente, así que se
@@ -67,6 +92,145 @@ export const PRIORIDADES_RESERVA = [
   { value: 'urgente', label: 'Urgente' },
 ];
 
+// ---------- Directorio buscable para "Reservar cama" ----------
+// Pool ficticio de pacientes/admisiones para alimentar el typeahead de
+// Paciente/Admisión (ver ReservarCamaModal.jsx/Typeahead.jsx) — el
+// prototipo no tiene un directorio de pacientes real (mismo recorte de
+// alcance que AsignarPacienteModal.jsx, "sin flujo de admisión completo"),
+// así que esta lista es solo para esta búsqueda puntual, no un maestro de
+// pacientes del sistema. Determinístico (sin Math.random en los datos en
+// sí), mismo criterio que el resto del módulo.
+export const PACIENTES_BUSCABLES = [
+  { id: 'PAC-1', nombre: 'Marta Elena Ríos', hc: 'HC-10421' },
+  { id: 'PAC-2', nombre: 'Camila Andrea Vargas', hc: 'HC-10480' },
+  { id: 'PAC-3', nombre: 'Jorge Andrés Peña', hc: 'HC-10437' },
+  { id: 'PAC-4', nombre: 'Lucía Fernanda Ortiz', hc: 'HC-10452' },
+  { id: 'PAC-5', nombre: 'Andrés Felipe Cardona', hc: 'HC-10511' },
+  { id: 'PAC-6', nombre: 'Valentina Gómez Castro', hc: 'HC-10534' },
+  { id: 'PAC-7', nombre: 'Sebastián Molina Duarte', hc: 'HC-10549' },
+  { id: 'PAC-8', nombre: 'Isabella Reyes Marín', hc: 'HC-10562' },
+  { id: 'PAC-9', nombre: 'Mateo Salazar Uribe', hc: 'HC-10578' },
+  { id: 'PAC-10', nombre: 'Daniela Restrepo Vélez', hc: 'HC-10593' },
+];
+// `pacienteId` referencia PACIENTES_BUSCABLES — cada admisión ya trae su
+// paciente asociado (por eso seleccionar una admisión autocompleta Paciente
+// en el formulario, encargo explícito: "evita inconsistencia de datos").
+export const ADMISIONES_BUSCABLES = [
+  {
+    admisionId: '00010421', pacienteId: 'PAC-1', fecha: '2026-08-17', origen: 'Urgencias',
+  },
+  {
+    admisionId: '00010480', pacienteId: 'PAC-2', fecha: '2026-08-20', origen: 'Urgencias',
+  },
+  {
+    admisionId: '00010437', pacienteId: 'PAC-3', fecha: '2026-08-18', origen: 'Hospitalización Piso 2 T1',
+  },
+  {
+    admisionId: '00010452', pacienteId: 'PAC-4', fecha: '2026-08-19', origen: 'Hospitalización Piso 3 T1',
+  },
+  {
+    admisionId: '00010601', pacienteId: 'PAC-5', fecha: '2026-08-21', origen: 'Cirugía',
+  },
+  {
+    admisionId: '00010612', pacienteId: 'PAC-6', fecha: '2026-08-21', origen: 'Urgencias',
+  },
+  {
+    admisionId: '00010623', pacienteId: 'PAC-7', fecha: '2026-08-22', origen: 'Hospitalización Piso 4 T1',
+  },
+  {
+    admisionId: '00010634', pacienteId: 'PAC-8', fecha: '2026-08-22', origen: 'UCI',
+  },
+];
+
+function coincide(query, ...campos) {
+  const q = query.trim().toLowerCase();
+  return campos.some((c) => c && c.toLowerCase().includes(q));
+}
+
+// Simula el fetch server-side del typeahead — mismo patrón Promise+setTimeout
+// que fetchCamas/fetchInconsistencias/fetchEventos/fetchConfiguracion, con
+// una falla ocasional para poder ejercitar el estado de error del buscador
+// sin depender de una falla de red real. El debounce (~300ms) es
+// responsabilidad del componente que llama a esto (Typeahead.jsx); acá solo
+// se simula la latencia de red en sí.
+export function buscarPacientes(query) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < 0.06) { reject(new Error('No fue posible buscar pacientes.')); return; }
+      resolve(PACIENTES_BUSCABLES.filter((p) => coincide(query, p.nombre, p.hc)).slice(0, 6));
+    }, 250);
+  });
+}
+
+export function buscarAdmisiones(query) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < 0.06) { reject(new Error('No fue posible buscar admisiones.')); return; }
+      const resultados = ADMISIONES_BUSCABLES
+        .map((a) => ({ ...a, paciente: PACIENTES_BUSCABLES.find((p) => p.id === a.pacienteId) }))
+        .filter((a) => coincide(query, a.admisionId, a.paciente?.nombre, a.paciente?.hc));
+      resolve(resultados.slice(0, 6));
+    }, 250);
+  });
+}
+
+// Simula la creación de la reserva en el backend (encargo: "cierra el modal
+// solo tras respuesta exitosa" / "si falla, mantén el modal abierto") — la
+// tasa de falla es más alta que las búsquedas de arriba a propósito, para
+// que el estado de error del submit sea fácil de ejercitar en la demo sin
+// tener que reintentar muchas veces.
+export function crearReserva(payload) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < 0.12) { reject(new Error('No fue posible crear la reserva. Intenta nuevamente.')); return; }
+      resolve(payload);
+    }, 500);
+  });
+}
+
+// Clase/Nivel de cama (formulario "Nueva cama", ver NuevaCamaModal.jsx) —
+// campos propios de este modelo OPERATIVO, no confundir con `tipo` (código
+// crudo de CWEB.HABCAMA, arriba) ni con TIPOS_CAMA del modelo administrativo
+// que tenía este módulo (eliminado — ver bitácora de "Camas" en el sidebar).
+// Sin "todos" al frente, mismo criterio que PRIORIDADES_RESERVA: son campos
+// de formulario, no filtros.
+export const CLASES = [
+  { value: 'estandar', label: 'Estándar' },
+  { value: 'pediatrica', label: 'Pediátrica' },
+  { value: 'bariatrica', label: 'Bariátrica' },
+  { value: 'obstetrica', label: 'Obstétrica' },
+  { value: 'cuidados-intensivos', label: 'Cuidados intensivos' },
+  { value: 'cuidados-intermedios', label: 'Cuidados intermedios' },
+  { value: 'neonatal', label: 'Neonatal' },
+];
+export const NIVELES = [
+  { value: 'nivel-1', label: 'Nivel I — Baja complejidad' },
+  { value: 'nivel-2', label: 'Nivel II — Mediana complejidad' },
+  { value: 'nivel-3', label: 'Nivel III — Alta complejidad' },
+];
+
+// Catálogo semilla de Características/Restricciones (formulario "Nueva
+// cama", ver TagChipField.jsx) — mismo caso que TIPOS más arriba: no hay un
+// documento fuente que confirme una lista cerrada de atributos clínicos/
+// operativos, así que esta selección parte de los ejemplos que el
+// formulario ya traía como placeholder de texto libre antes de migrar a
+// chips, pendiente de validación real con clínica/operaciones. El
+// formulario permite agregar una etiqueta nueva sin pasar por acá — esta
+// lista es solo el punto de partida, no un límite cerrado.
+export const CARACTERISTICAS_CAMA = [
+  'Cama articulada',
+  'Colchón antiescaras',
+  'Monitor integrado',
+  'Barandas de seguridad',
+  'Bomba de infusión incorporada',
+];
+export const RESTRICCIONES_CAMA = [
+  'No apta para bariátricos',
+  'Solo para aislamiento',
+  'No trasladable',
+  'Requiere mantenimiento previo',
+];
+
 // Lookups value->label (mismo patrón que AREA_TURNO_LABEL en
 // mockTurnosData.js) para mostrar texto legible a partir del código guardado
 // en cada cama, sin duplicar los mismos pares a mano en cada componente.
@@ -79,21 +243,34 @@ export const PRIORIDAD_LABEL = Object.fromEntries(PRIORIDADES_RESERVA.map((p) =>
 
 // ---------- Estado de cama: color de representación ----------
 // Códigos frontend-only para pintar cada estado (verde/rojo/ámbar/azul/
-// naranja/gris) — los códigos reales de estado y su semántica los define el
-// backend; este mapeo es solo la representación visual del prototipo (ver
-// EstadoCamaBadge.jsx para el ícono asociado a cada uno).
+// naranja/gris/morado/gris oscuro) — los códigos reales de estado y su
+// semántica los define el backend; este mapeo es solo la representación
+// visual del prototipo (ver EstadoCamaBadge.jsx para el ícono asociado a
+// cada uno).
 // reservada: 'amber' -> 'cyan' (encargo explícito, rediseño 2 paneles
 // BedCard, sección "sistema de color por estado") — cambio de sistema de
 // color, no solo de BedCard: se refleja en cualquier EstadoCamaBadge
 // existente (tabla de camas, detalle, auditoría), a propósito, para que no
-// quede un estado con 2 colores distintos según dónde se mire.
+// quede un estado con 2 colores distintos según dónde se mire. Se mantiene
+// así (no se revierte a amarillo) aunque el doc de "Estados visuales" pida
+// amarillo para Reservada — discrepancia reportada, no aplicada, para no
+// reintroducir esa inconsistencia ya resuelta.
+// ocupada: 'red' -> 'accent' (encargo explícito: "ocupada es un estado
+// normal de flujo, no requiere atención urgente — el rojo se reserva para
+// estados que sí, ej. Bloqueada") — mismo criterio de reflejarse en TODO
+// EstadoCamaBadge existente, no solo en el modal de detalle. No se tocó el
+// color de ningún otro estado (Bloqueada sigue 'gray'): el encargo solo
+// pedía este cambio puntual, no una reasignación general del sistema de
+// color.
 export const ESTADO_COLOR = {
   libre: 'green',
-  ocupada: 'red',
+  ocupada: 'accent',
   reservada: 'cyan',
   limpieza: 'blue',
   mantenimiento: 'orange',
   bloqueada: 'gray',
+  aislamiento: 'purple',
+  inactiva: 'slate',
 };
 
 // ---------- Máquina de estados ----------
@@ -106,12 +283,19 @@ export const ESTADO_COLOR = {
 // este prototipo se permite desde cualquier estado; bloqueada→libre al
 // desbloquear es un SUPUESTO propio de este prototipo, no una regla de
 // negocio confirmada (el doc no especifica a qué estado vuelve una cama
-// bloqueada). Esta tabla es el stand-in local de "el frontend le pregunta al
-// backend qué transiciones están permitidas desde el estado actual" (sec.
-// 12) — el día que exista ese endpoint, reemplaza esta tabla, no la lógica
-// que la consume.
+// bloqueada). `libre→limpieza` (encargo: acción "Limpieza" en el menú "⋯")
+// es otro SUPUESTO propio, mismo criterio que "Cualquier estado→bloqueada":
+// el doc solo confirma limpieza llegando desde Ocupada/Mantenimiento, pero
+// permitir marcar una cama libre para limpieza preventiva (sin pasar por
+// Mantenimiento) es una operación administrativa razonable — no se extendió
+// a Reservada/Bloqueada porque esos 2 estados ya resuelven sus transiciones
+// secundarias solo vía "Cambiar estado" genérico, sin atajos directos (ver
+// MENU_ACCIONES). Esta tabla es el stand-in local de "el frontend le
+// pregunta al backend qué transiciones están permitidas desde el estado
+// actual" (sec. 12) — el día que exista ese endpoint, reemplaza esta tabla,
+// no la lógica que la consume.
 export const TRANSICIONES_PERMITIDAS = {
-  libre: ['reservada', 'ocupada', 'mantenimiento', 'bloqueada'],
+  libre: ['reservada', 'ocupada', 'limpieza', 'mantenimiento', 'bloqueada'],
   reservada: ['ocupada', 'libre', 'bloqueada'],
   ocupada: ['limpieza', 'bloqueada'],
   limpieza: ['libre', 'bloqueada'],
@@ -128,18 +312,23 @@ export const TRANSICIONES_PERMITIDAS = {
 // negocio, no una regla ya validada.
 export const ESTADOS_CRITICOS = ['bloqueada', 'mantenimiento'];
 
-// Aislamiento/Inactiva NO se modelan en ESTADO_COLOR/TRANSICIONES_PERMITIDAS
-// a propósito: es la forma más simple de garantizar que nunca aparezcan como
-// opción funcional del selector "Cambiar estado" (encargo explícito) — el
-// doc fuente los deja como gaps sin resolver (relación de Aislamiento con
-// Ocupada sin confirmar; Inactiva probablemente es un flag ACTIVA=0 aparte,
-// no un estado operativo, ver máquina de estados). "Aislamiento" SÍ se
-// modela como atributo booleano aparte (`aislamiento`, ver generateCamas más
-// abajo) — el propio doc plantea que podría coexistir con Ocupada en vez de
-// ser un estado exclusivo, así que como flag independiente del `estado`
-// respeta esa ambigüedad en vez de resolverla a la fuerza (usado solo por el
-// filtro avanzado "Aislamiento" del Bed Board, nunca por la máquina de
-// estados).
+// Aislamiento/Inactiva SÍ tienen color/label/ícono ahora (Estados visuales,
+// encargo sección 6: "los colores son únicamente representación visual, los
+// códigos reales vienen del backend") pero siguen deliberadamente FUERA de
+// TRANSICIONES_PERMITIDAS/CTA_PRINCIPAL/MENU_ACCIONES/ESTADOS_CRITICOS —
+// eso no cambió: el doc fuente sigue sin confirmar las reglas de negocio de
+// estos 2 (relación de Aislamiento con Ocupada sin confirmar; Inactiva
+// probablemente es un flag ACTIVA=0 aparte, no un estado operativo, ver
+// máquina de estados). Mantenerlos fuera de esas 4 tablas es lo que impide
+// que aparezcan como opción del selector "Cambiar estado" (BedActionsMenu
+// hace fallback a `[]` cuando MENU_ACCIONES no trae el estado, ver
+// BedActionsMenu.jsx) — solo se pintan si una cama ya trae ese `estado`
+// (mock o, más adelante, backend), nunca se llega ahí manualmente desde la
+// UI. "Aislamiento" SIGUE existiendo también como atributo booleano aparte
+// (`aislamiento`, ver generateCamas más abajo) para el caso "coexiste con
+// Ocupada" que el doc no resuelve — el nuevo `estado: 'aislamiento'` cubre
+// el otro caso (cama en sí reservada/preparada para aislamiento, sin
+// paciente), son 2 conceptos independientes a propósito, no un duplicado.
 
 // ---------- Acción principal por estado (CTA contextual de cada tarjeta) ----------
 // Reemplaza "Cambiar estado" como CTA universal (encargo explícito) — cada
@@ -157,23 +346,32 @@ export const CTA_PRINCIPAL = {
 
 // ---------- Menú secundario "⋯" por estado ----------
 // Solo acciones válidas para el estado actual (encargo explícito: "no
-// mostrar acciones incompatibles con el estado") — "Cambiar estado" y
-// "Historial" se repiten en los 6 porque siempre aplican; el resto varía.
-// "Ver detalle"/"Ver paciente"/"Historial" no tienen pantalla propia todavía
-// (fuera del alcance de este cambio) — disparan el mismo aviso "en
-// desarrollo" que el resto del proyecto (ver CamasEnfermeria.jsx).
+// mostrar acciones incompatibles con el estado") — "Editar"/"Cambiar
+// estado"/"Historial" se repiten en los 6 porque siempre aplican (Editar es
+// dato maestro de la cama, no depende del estado operativo); el resto
+// varía. "Ver detalle"/"Ver paciente"/"Editar"/"Historial" no tienen
+// pantalla propia todavía (fuera del alcance de este cambio) — disparan el
+// mismo aviso "en desarrollo" que el resto del proyecto (ver
+// CamasEnfermeria.jsx). "Limpieza" solo se agrega en Libre (encargo, ver
+// TRANSICIONES_PERMITIDAS más arriba) — en Ocupada/Mantenimiento esa misma
+// transición ya tiene su propio atajo más específico ("Liberar"/"Finalizar
+// mantenimiento"), así que un "Limpieza" genérico ahí sería un botón
+// duplicado con el mismo efecto.
 export const MENU_ACCIONES = {
   libre: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'reservar', label: 'Reservar' },
     { action: 'asignar-paciente', label: 'Asignar paciente' },
     { action: 'mantenimiento', label: 'Mantenimiento' },
+    { action: 'limpieza', label: 'Limpieza' },
     { action: 'bloquear', label: 'Bloquear' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
   ],
   ocupada: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'ver-paciente', label: 'Ver paciente' },
     { action: 'trasladar', label: 'Trasladar' },
     { action: 'liberar', label: 'Liberar' },
@@ -182,6 +380,7 @@ export const MENU_ACCIONES = {
   ],
   reservada: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'utilizar-reserva', label: 'Utilizar reserva' },
     { action: 'cancelar-reserva', label: 'Cancelar reserva' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
@@ -189,12 +388,14 @@ export const MENU_ACCIONES = {
   ],
   limpieza: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'finalizar-limpieza', label: 'Finalizar limpieza' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
   ],
   mantenimiento: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'ver-mantenimiento', label: 'Ver mantenimiento' },
     { action: 'finalizar-mantenimiento', label: 'Finalizar mantenimiento' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
@@ -202,6 +403,7 @@ export const MENU_ACCIONES = {
   ],
   bloqueada: [
     { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
     { action: 'desbloquear', label: 'Desbloquear' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
@@ -229,10 +431,12 @@ const TIPOS_VALUES = TIPOS.slice(1).map((t) => t.value);
 const TOTAL_CAMAS = 199;
 const CAMAS_POR_COMBINACION = 3;
 
-// Camas curadas con un estado distinto de "libre" (195→194 libre, 4 ocupada,
-// 1 limpieza, 0 en el resto — mismos números de ejemplo del encargo) — se
-// ubican por criterio sede/área/piso/sector en vez de por índice fijo del
-// array, para que sigan encontrándose aunque cambie el orden de generación
+// Camas curadas con un estado distinto de "libre" (199→189 libre, 4 ocupada,
+// 1 limpieza, 1 reservada, 1 bloqueada, 1 mantenimiento, 1 aislamiento, 1
+// inactiva — los 4 ocupada/1 limpieza son los números de ejemplo originales
+// del encargo, el resto se sumó después para tener al menos 1 ejemplo real
+// de cada estado visual) — se ubican por criterio sede/área/piso/sector en
+// vez de por índice fijo del array, para que sigan encontrándose aunque cambie el orden de generación
 // de arriba. `hc` seguí el mismo formato "HC-#####" que PatientsTable.jsx
 // (mockPanelGeneralData.js) para no introducir una convención de
 // identificador distinta dentro del mismo módulo de Enfermería.
@@ -282,6 +486,26 @@ const CAMAS_CURADAS = [
   {
     sede: 'central', area: 'hosp-piso4-t2', piso: 'piso1', sector: 'A', estado: 'bloqueada',
     motivo: 'Fuera de servicio',
+  },
+  // Aislamiento/Inactiva (Estados visuales, encargo sección 6): mismo motivo
+  // que el bloque de arriba — sin al menos 1 ejemplo real, el badge/chip
+  // nuevo nunca se ve pintado en la app, solo en el conteo (0). Áreas sin
+  // otra cama curada (hosp-piso4-t1/hosp-piso5-t2) para no pisar los combos
+  // ya usados arriba. BedCard (tarjeta 2 paneles) los pinta con el hue
+  // "unknown" ya existente — fuera de alcance de este cambio, ver
+  // cardHue/bedContextFormat.js.
+  {
+    sede: 'central', area: 'hosp-piso4-t1', piso: 'piso1', sector: 'A', estado: 'aislamiento',
+  },
+  {
+    sede: 'central', area: 'hosp-piso5-t2', piso: 'piso1', sector: 'A', estado: 'inactiva',
+  },
+  // Mantenimiento: el inventario original no traía ninguna (0, mismo motivo
+  // que Reservada/Bloqueada más arriba) — sector B de la misma área que
+  // Aislamiento (hosp-piso4-t1), libre todavía.
+  {
+    sede: 'central', area: 'hosp-piso4-t1', piso: 'piso1', sector: 'B', estado: 'mantenimiento',
+    mantenimientoTipo: 'Mantenimiento preventivo programado',
   },
 ];
 
@@ -441,9 +665,10 @@ export const PROXIMOS_INGRESOS = [
 // 5 eventos de ejemplo del encargo — `haceMs` es un offset relativo (nunca un
 // timestamp absoluto horneado acá): GestionCamas.jsx lo convierte a
 // `timestamp` real recién al montar (`Date.now() - haceMs`), para que "hace 2
-// min" sea correcto sin importar cuándo se cargó este módulo. Íconos por
-// `tipo` viven en ActivityPanel.jsx (mismo criterio que ESTADO_ICONO en
-// EstadoCamaBadge.jsx: la data no importa react-icons).
+// min" sea correcto sin importar cuándo se cargó este módulo. `tipo` ya no
+// mapea a un ícono por tipo de evento (BedDetailModal usa un único ícono
+// neutro para todo el historial, ver GestionCamas.css) — se conserva por si
+// un futuro filtro por tipo de evento lo necesita.
 export const ACTIVIDAD_INICIAL = [
   {
     id: 'EV-1', tipo: 'cama-liberada', titulo: 'Cama 102-A liberada', detalle: 'La cama está disponible para asignación', haceMs: 2 * 60000,

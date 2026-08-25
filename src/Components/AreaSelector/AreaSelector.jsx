@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import './AreaSelector.css';
 import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 
@@ -17,6 +17,14 @@ import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 // comportamiento original); con él antepone "<label>: " (ej. Turnos, encargo
 // explícito "Área operativa: Todas") — las opciones del listbox nunca
 // repiten ese prefijo, solo el trigger.
+//
+// `group` (opcional, por-opción, ej. ESTADOS en mockCamasData.js) — cuando
+// una opción trae `group` distinto de la anterior, se antepone un divider +
+// label de sección (encargo: "Estado" del Bed Board, separar clínicos de
+// administrativos). Sin `group` en ninguna opción (el resto de consumidores
+// de este componente) el listbox se renderiza exactamente igual que antes,
+// plano — es un opt-in por dato, no un prop nuevo que haya que tocar en
+// cada call site existente.
 export default function AreaSelector({ options, value, onChange, label }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
@@ -60,19 +68,27 @@ export default function AreaSelector({ options, value, onChange, label }) {
 
       {open && (
         <ul className="pg-area-select-dropdown" role="listbox" aria-label={label ?? 'Área operativa'}>
-          {options.map((o) => (
-            <li key={o.value} role="presentation">
-              <button
-                type="button"
-                role="option"
-                aria-selected={o.value === value}
-                className={`pg-area-select-option${o.value === value ? ' active' : ''}`}
-                onClick={() => handleSelect(o.value)}
-              >
-                {o.label}
-                {o.value === value && <LuCheck className="icon" aria-hidden="true" />}
-              </button>
-            </li>
+          {options.map((o, i) => (
+            <Fragment key={o.value}>
+              {o.group && o.group !== options[i - 1]?.group && (
+                <>
+                  {i > 0 && <li role="separator" className="pg-area-select-divider" />}
+                  <li role="presentation" className="pg-area-select-group-label">{o.group}</li>
+                </>
+              )}
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={o.value === value}
+                  className={`pg-area-select-option${o.value === value ? ' active' : ''}`}
+                  onClick={() => handleSelect(o.value)}
+                >
+                  {o.label}
+                  {o.value === value && <LuCheck className="icon" aria-hidden="true" />}
+                </button>
+              </li>
+            </Fragment>
           ))}
         </ul>
       )}

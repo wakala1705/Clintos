@@ -6,8 +6,12 @@ import { LuFilter } from 'react-icons/lu';
 
 // Filtros avanzados agrupados por categoría conceptual, no por campo
 // (encargo) — 2 columnas: "Ubicación" (Piso/Sector/Habitación) y Clasificación
-// (Tipo) + Atributos. Edición en BORRADOR: los clics acá (chips/checkbox/
-// select) solo tocan `draft`, nunca los props reales — recién se aplican a
+// (Tipo). "Atributos"/"Operativo de soporte" (Temporal/Con reserva/
+// Aislamiento/Bloqueada/Limpieza/Mantenimiento) se quitaron de acá — salvo
+// Temporal/Con reserva, todos duplicaban valores que ya vive el filtro
+// "Estado" del filter-bar (GestionCamas.jsx). Edición en BORRADOR: los clics
+// acá (chips/select) solo tocan `draft`, nunca los props reales — recién
+// se aplican a
 // GestionCamas.jsx (piso/sector/tipo/filtrosAvanzados) al confirmar
 // "Aplicar filtros" (encargo: footer con Limpiar todo/Aplicar filtros). Esto
 // evita que la grilla se re-filtre en cada click mientras el usuario todavía
@@ -76,9 +80,7 @@ export default function MasFiltrosPopover({
   // Badge del botón cerrado: refleja lo REALMENTE aplicado (props), no el
   // borrador en curso — es lo que hoy filtra la grilla.
   const activos = (piso !== 'todos' ? 1 : 0) + (sector !== 'todos' ? 1 : 0) + (tipo !== 'todos' ? 1 : 0)
-    + (filtros.habitacion.trim() !== '' ? 1 : 0)
-    + (filtros.temporal ? 1 : 0) + (filtros.reserva ? 1 : 0) + (filtros.aislamiento ? 1 : 0)
-    + (filtros.limpieza ? 1 : 0) + (filtros.mantenimiento ? 1 : 0) + (filtros.bloqueada ? 1 : 0);
+    + (filtros.habitacion.trim() !== '' ? 1 : 0);
 
   return (
     <div className="filter-popover-wrap" ref={rootRef}>
@@ -168,38 +170,6 @@ export default function MasFiltrosPopover({
                   </select>
                   <div className="cb-mf-hint">Códigos en definición con backend</div>
                 </div>
-              </div>
-
-              <span className="cb-mf-column-title">Atributos</span>
-              <div className="fp-section">
-                <label className="cb-mf-check">
-                  <input type="checkbox" checked={draft.filtros.temporal} onChange={(e) => setDraftFiltro('temporal', e.target.checked)} />
-                  Temporal
-                </label>
-                <label className="cb-mf-check">
-                  <input type="checkbox" checked={draft.filtros.reserva} onChange={(e) => setDraftFiltro('reserva', e.target.checked)} />
-                  Con reserva
-                </label>
-                <label className="cb-mf-check">
-                  <input type="checkbox" checked={draft.filtros.aislamiento} onChange={(e) => setDraftFiltro('aislamiento', e.target.checked)} />
-                  Aislamiento
-                </label>
-                <label className="cb-mf-check">
-                  <input type="checkbox" checked={draft.filtros.bloqueada} onChange={(e) => setDraftFiltro('bloqueada', e.target.checked)} />
-                  Bloqueada
-                </label>
-              </div>
-
-              <span className="cb-mf-subgroup-title">Operativo de soporte</span>
-              <div className="fp-section">
-                <label className="cb-mf-check cb-mf-check-secondary">
-                  <input type="checkbox" checked={draft.filtros.limpieza} onChange={(e) => setDraftFiltro('limpieza', e.target.checked)} />
-                  Limpieza
-                </label>
-                <label className="cb-mf-check cb-mf-check-secondary">
-                  <input type="checkbox" checked={draft.filtros.mantenimiento} onChange={(e) => setDraftFiltro('mantenimiento', e.target.checked)} />
-                  Mantenimiento
-                </label>
               </div>
             </div>
           </div>

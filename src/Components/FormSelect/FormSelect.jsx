@@ -17,8 +17,16 @@ import { LuCheck, LuChevronDown } from 'react-icons/lu';
 // position:absolute dentro de .form-select) porque este componente se usa
 // dentro de .modal-body (overflow-y:auto) — si quedara absoluto ahí, su alto
 // suma al scrollHeight del modal y genera un scroll que no debería existir.
+// `required` (opcional): agrega el mismo resaltado ámbar "obligatorio y
+// vacío" que .form-field input/textarea:required:placeholder-shown ya tiene
+// en otras features (PlantillaCrecimt2.css, NuevaCitaFlow.css) — un
+// <button> no tiene estado :required/:placeholder-shown nativo, así que acá
+// se simula con un data-attribute que la CSS del feature dueño del formulario
+// lee (gateado por el mismo data-required-highlight en <html>, ver
+// ConfigModal.jsx). Opt-in: sin este prop no cambia nada para los demás
+// consumidores de FormSelect.
 export default function FormSelect({
-  id, value, onChange, options, placeholder, disabled = false,
+  id, value, onChange, options, placeholder, disabled = false, required = false,
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState(null);
@@ -76,6 +84,7 @@ export default function FormSelect({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        data-required-empty={required && !value ? 'true' : undefined}
         disabled={disabled}
       >
         <span className={selected ? 'form-select-value' : 'form-select-placeholder'}>

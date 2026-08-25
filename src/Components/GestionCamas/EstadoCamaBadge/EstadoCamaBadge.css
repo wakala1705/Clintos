@@ -1,6 +1,7 @@
 /* Mismo patrón "píldora ícono+texto" que .pg-med-badge (PatientsTable.css) —
-   6 estados confirmados del Bed Board, cada uno leyendo únicamente tokens de
-   ../../shared/shared.css (nunca hex hardcodeado acá). */
+   8 estados del Bed Board (Estados visuales, encargo sección 6), cada uno
+   leyendo únicamente tokens de ../../shared/shared.css (nunca hex
+   hardcodeado acá). */
 .cb-estado-badge{
   display:inline-flex;align-items:center;gap:6px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
@@ -13,5 +14,8 @@
 .cb-estado-blue{background:var(--blue-bg);color:var(--blue-fg);}
 .cb-estado-orange{background:var(--orange-bg);color:var(--orange-fg);}
 .cb-estado-gray{background:var(--gray-bg);color:var(--gray-fg);}
+.cb-estado-purple{background:var(--purple-bg);color:var(--purple-fg);}
+.cb-estado-slate{background:var(--slate-bg);color:var(--slate-fg);}
+.cb-estado-accent{background:var(--accent-bg);color:var(--accent-fg);}
 
 html[data-theme="dark"] .cb-estado-green{color:var(--green);}

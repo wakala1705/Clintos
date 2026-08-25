@@ -6,7 +6,41 @@ import {
 import { createPortal } from 'react-dom';
 import './BedActionsMenu.css';
 import { MENU_ACCIONES } from '@/hooks/GestionCamas/mockCamasData';
-import { LuEllipsis } from 'react-icons/lu';
+import {
+  LuArrowRightLeft, LuBedDouble, LuCalendarX, LuCircleCheck, LuClock, LuEllipsis, LuEye,
+  LuHistory, LuLock, LuLockOpen, LuLogOut, LuPencil, LuSprayCan, LuUser, LuUserPlus, LuWrench,
+} from 'react-icons/lu';
+
+// Un ícono por acción, reusando el mismo vocabulario visual ya establecido
+// en el resto del módulo en vez de inventar uno nuevo por acción — mismo
+// criterio en los 3 casos: ver-paciente/trasladar (BedDetailModal.jsx,
+// "Paciente actual"), reservar/asignar-paciente (ícono del ModalHeader de
+// ReservarCamaModal/AsignarPacienteModal) y mantenimiento/limpieza/bloquear
+// (ícono de EstadoCamaBadge para ese mismo estado). "Finalizar..."/
+// "Utilizar reserva" comparten LuCircleCheck (completan/resuelven un estado
+// pendiente) — nunca aparecen juntos en el mismo dropdown (cada uno vive en
+// el menú de un solo estado, ver MENU_ACCIONES), así que no hay ambigüedad
+// visual dentro de una misma lista.
+const ACCION_ICONO = {
+  'ver-detalle': LuEye,
+  editar: LuPencil,
+  reservar: LuClock,
+  'asignar-paciente': LuUserPlus,
+  mantenimiento: LuWrench,
+  'ver-mantenimiento': LuWrench,
+  'finalizar-mantenimiento': LuCircleCheck,
+  limpieza: LuSprayCan,
+  'finalizar-limpieza': LuCircleCheck,
+  bloquear: LuLock,
+  desbloquear: LuLockOpen,
+  'cambiar-estado': LuBedDouble,
+  historial: LuHistory,
+  'ver-paciente': LuUser,
+  trasladar: LuArrowRightLeft,
+  liberar: LuLogOut,
+  'utilizar-reserva': LuCircleCheck,
+  'cancelar-reserva': LuCalendarX,
+};
 
 // Menú "⋯" — mismo patrón autocontenido que RowActionsMenu.jsx (estado
 // local de apertura + cierre por click-afuera/Escape). Las opciones vienen
@@ -22,6 +56,11 @@ import { LuEllipsis } from 'react-icons/lu';
 // calculadas desde el botón (`getBoundingClientRect`), recalculadas en
 // scroll (capture:true)/resize para que seguir siguiendo al botón dentro
 // del contenedor con scroll (`.cb-body-wrap`/`.bb-modal-body`).
+//
+// `MENU_ACCIONES[estado] || []`: Aislamiento/Inactiva tienen color/label
+// (ESTADO_COLOR, mockCamasData.js) pero a propósito no tienen entrada acá
+// todavía (reglas de negocio sin confirmar) — sin el fallback, una cama con
+// alguno de esos 2 estados rompería este menú.
 export default function BedActionsMenu({ estado, numero, onAction }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
@@ -102,17 +141,23 @@ export default function BedActionsMenu({ estado, numero, onAction }) {
           role="menu"
           style={{ top: pos.top, bottom: pos.bottom, right: pos.right }}
         >
-          {MENU_ACCIONES[estado].map((item) => (
-            <button
-              type="button"
-              key={item.action}
-              className="cb-actions-menu-item"
-              role="menuitem"
-              onClick={() => handleItem(item.action)}
-            >
-              {item.label}
-            </button>
-          ))}
+          {(MENU_ACCIONES[estado] || []).length === 0 ? (
+            <span className="cb-actions-menu-empty">Sin acciones disponibles</span>
+          ) : MENU_ACCIONES[estado].map((item) => {
+            const Icon = ACCION_ICONO[item.action];
+            return (
+              <button
+                type="button"
+                key={item.action}
+                className="cb-actions-menu-item"
+                role="menuitem"
+                onClick={() => handleItem(item.action)}
+              >
+                {Icon && <Icon className="icon" aria-hidden="true" />}
+                {item.label}
+              </button>
+            );
+          })}
         </div>,
         document.body,
       )}

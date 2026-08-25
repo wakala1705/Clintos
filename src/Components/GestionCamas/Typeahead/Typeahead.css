@@ -1,0 +1,32 @@
+/* Trigger dimensionado igual que .form-field input (mismo --input-md/
+   border/radius/font-size) — ver comentario de FormSelect.css, mismo
+   criterio. Ícono a la derecha (a propósito, distinto de .search-field en
+   GestionCamas.css que lo trae a la izquierda): encargo explícito de este
+   formulario puntual. */
+.cbta-field{position:relative;}
+.cbta-field input{
+  width:100%;height:var(--input-md);padding:0 32px 0 10px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.cbta-field input::placeholder{color:var(--ink-400);}
+.cbta-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.cbta-field input:disabled{background:var(--bg);color:var(--ink-700);cursor:not-allowed;}
+.cbta-field input[aria-invalid="true"]{border-color:var(--red);}
+.cbta-icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;pointer-events:none;}
+.cbta-field input:disabled ~ .cbta-icon{display:none;}
+
+/* position:fixed + portal a document.body (ver Typeahead.jsx) — mismo
+   criterio de z-index que .form-select-dropdown (FormSelect.css). */
+.cbta-dropdown{
+  position:fixed;max-height:240px;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
+}
+.cbta-status{padding:8px 10px;font-size:var(--fs-sm);color:var(--ink-500);}
+.cbta-option{
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);cursor:pointer;text-align:left;
+}
+.cbta-option-sub{font-size:var(--fs-sm);color:var(--ink-500);font-weight:var(--fw-regular);}
+.cbta-option:hover,.cbta-option.active{background:var(--bg);}

@@ -15,10 +15,10 @@
 .modal-header-icon.tone-danger{background:var(--red-bg);color:var(--red);}
 .modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);min-width:0;}
 .modal-header-sub{margin-top:2px;font-size:var(--fs-sm);color:var(--ink-500);}
-.modal-close-btn{
+.modal-close-btn, .modal-back-btn{
   flex-shrink:0;width:30px;height:30px;border-radius:8px;border:none;background:transparent;
   color:var(--ink-500);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;
 }
-.modal-close-btn:hover{background:var(--gray-bg);}
-.modal-close-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.modal-close-btn .icon{width:18px;height:18px;}
+.modal-close-btn:hover, .modal-back-btn:hover{background:var(--gray-bg);}
+.modal-close-btn:focus-visible, .modal-back-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.modal-close-btn .icon, .modal-back-btn .icon{width:18px;height:18px;}

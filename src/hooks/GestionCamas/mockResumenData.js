@@ -1,7 +1,8 @@
 // Datos de ejemplo para "Resumen de Gestión de Camas" (ver
 // src/Components/GestionCamas/GestionCamasResumen/) — la vista administrativa
 // de supervisión del módulo, distinta del Bed Board operativo
-// (GestionCamas.jsx, ahora montado en /gestion-camas/camas). Cifras fijas
+// (GestionCamas.jsx, montado en /gestion-camas/tablero, sección "Camas" del
+// sidebar). Cifras fijas
 // tal como las entregó el encargo (512 camas totales, etc.) — un dataset de
 // reporte administrativo aparte de las 199 camas de mockCamasData.js (Bed
 // Board), no derivado de él: representan alcances distintos (todas las

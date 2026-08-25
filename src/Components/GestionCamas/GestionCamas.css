@@ -46,6 +46,28 @@
   --cyan:#0e7490;
   --cyan-bg:#e0fbfc;
   --cyan-fg:#0e7490;
+  /* Aislamiento/Inactiva (Estados visuales, encargo sección 6) — 2 estados
+     nuevos del modelo OPERATIVO (mockCamasData.js) que no tenían color
+     asignado todavía. Mismo trío -bg/-fg que el resto, consumido por
+     EstadoCamaBadge (ESTADO_COLOR.aislamiento/.inactiva). "Slate" en vez de
+     reusar --gray: Bloqueada ya es gris claro, Inactiva pide un gris más
+     oscuro/distinto para no leerse como el mismo estado. */
+  --purple:#7c3aed;
+  --purple-bg:#f3e8ff;
+  --purple-fg:#6d28d9;
+  --slate:#475569;
+  --slate-bg:#e2e8f0;
+  --slate-fg:#334155;
+  /* Ocupada (encargo explícito: "de rojo/coral a azul accent, el rojo se
+     reserva para estados que requieren atención urgente") — mismo trío
+     -bg/-fg que el resto, NO reusa --blue/--blue-bg (ya ocupado por
+     Limpieza — reusarlo dejaría 2 estados distintos con el mismo color) ni
+     --primary directamente (--primary no tiene una variante clareada para
+     modo oscuro como sí tiene este trío, ver bloque dark más abajo — badges
+     necesitan esa 2da versión para contraste). */
+  --accent:#0065CD;
+  --accent-bg:#eef4ff;
+  --accent-fg:#0052a6;
   /* ---- Sistema de color "clinical-status" de BedCard (encargo explícito,
      rediseño 2 paneles v2 — "Ocupada" ya no es un solo color, se separa por
      población: masculino/femenino/pediátrico) ----
@@ -135,6 +157,17 @@
   --z-sticky:10;
   --z-popover:20;
   --z-modal:50;
+  /* Motion (encargo explícito del drill-in de BedDetailModal: "revisa qué
+     token de duración/easing corresponde") — no existían tokens --dur- /
+     --ease- en el proyecto todavía; el valor ya usado de facto en toda esta
+     hoja (.modal-overlay/.modal-card/chevrons de dropdown, sueltos como
+     .15s ease) se nombra acá por primera vez para que el track del
+     drill-in use el mismo lenguaje de movimiento que el resto del modal en
+     vez de inventar una duración/easing nueva. Los usos sueltos existentes
+     quedan pendientes de migrar a este token en un cambio aparte (fuera de
+     alcance acá — no se tocan por consistencia mínima con lo pedido). */
+  --dur-base:.15s;
+  --ease-base:ease;
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);
@@ -165,6 +198,15 @@ html[data-theme="dark"]{
   --cyan:#22d3ee;
   --cyan-bg:rgba(14,116,144,.22);
   --cyan-fg:#67e8f9;
+  --purple:#a78bfa;
+  --purple-bg:rgba(124,58,237,.22);
+  --purple-fg:#c4b5fd;
+  --slate:#94a3b8;
+  --slate-bg:rgba(71,85,105,.30);
+  --slate-fg:#cbd5e1;
+  --accent:#5b9df2;
+  --accent-bg:rgba(0,101,205,.22);
+  --accent-fg:#93c5fd;
   /* clinical-status en oscuro: -bg pasa a rgba(<mismo panel>,.20) — misma
      fórmula de opacidad que el resto de tokens -bg de este bloque (ver
      --red-bg/--blue-bg/--orange-bg arriba, todos .18-.22) sobre el fondo
@@ -350,6 +392,14 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
   border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
 }
+/* Botón "Limpiar filtros" persistente (ver GestionCamas.jsx) — mismo
+   .badge-count pill que .filters-more-btn arriba, redeclarado acotado a
+   este botón en vez de generalizar esa regla (mismo criterio que
+   .cba-limpiar-filtros-btn en GestionCamasCamas.css). */
+.cb-limpiar-filtros-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
 
 .filter-popover{
   position:absolute;top:calc(100% + 8px);left:0;z-index:var(--z-popover);min-width:260px;
@@ -382,6 +432,19 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 }
 .modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;}
 .task-mini-modal-card{width:400px;}
+/* Modales que envuelven ModalHeader+.modal-body+.modal-footer en un <form>
+   (CamaFormModal, NuevaCamaModal, CambiarEstadoModal...) necesitan que ese
+   <form> también participe del layout en columna de .modal-card — si no,
+   el <form> es una simple caja de bloque con la altura de su contenido
+   (sin límite propio), y .modal-body nunca llega a encogerse/scrollear: el
+   footer termina empujado fuera del viewport en cualquier formulario lo
+   bastante largo (bug real, encontrado con NuevaCamaModal — 3 secciones lo
+   expuso, los formularios más cortos de antes nunca llegaban a desbordar
+   100vh). `min-height:0` es necesario además de `overflow:hidden`: el
+   <form> es a la vez ítem flex de .modal-card, y sin esto su tamaño mínimo
+   automático seguiría siendo el de su contenido, bloqueando el encogimiento
+   igual que si no tuviera overflow. */
+.modal-card > form{display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 .modal-body{padding:20px 24px;overflow-y:auto;}
 .modal-footer{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
@@ -399,6 +462,24 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   outline:2px solid var(--primary);outline-offset:1px;
 }
 .form-field textarea{resize:vertical;min-height:64px;}
+/* Resaltado ámbar "obligatorio y vacío" (encargo, toggle "Resaltado de
+   campos obligatorios" en Configuración > Apariencia, ver ConfigModal.jsx)
+   — mismo selector/colores que PlantillaCrecimt2.css/NuevaCitaFlow.css
+   (cada feature de nivel superior duplica esta regla, mismo criterio que
+   los tokens de color). Vía :required/:placeholder-shown nativos, sin JS
+   por campo — input[type="date"] no soporta :placeholder-shown en Chromium
+   (usaría :invalid en su lugar), pero este feature no tiene ese caso hoy.
+   Gateado por data-required-highlight en <html>; "off" apaga el resaltado
+   en toda la app. Para un FormSelect (botón, sin :required nativo) ver la
+   regla equivalente basada en `data-required-empty` en FormSelect.css. */
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
 
 .field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
 .field-label-row label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);margin-bottom:0;}
@@ -427,45 +508,28 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
    preparación) lo reutilicen sin una clase nueva por estado. */
 .cb-card-status-text{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);margin:2px 0;}
 
-/* ---------- ACTIVIDAD RECIENTE (ítem reusado por ActivityPanel + ActivityDrawer) ---------- */
+/* ---------- HISTORIAL / ACTIVIDAD (ítem reusado 2 veces dentro de
+   BedDetailModal.jsx — "Historial reciente" en la vista detalle y la lista
+   completa de la vista historial, mismo componente <HistorialList>, mismo
+   estilo que CamaDetailModal/CamaHistorialModal admin: círculo gris neutro
+   + ícono único, sin puntos de color por tipo de evento — a diferencia del
+   viejo feed de ActivityPanel/ActivityDrawer, ya eliminado. El historial
+   completo ya no abre un modal/drawer aparte: es un drill-in dentro del
+   mismo modal, ver .cb-detail-track en BedDetailModal.css). ---------- */
 .cb-activity-empty{padding:24px 12px;text-align:center;color:var(--ink-500);font-size:var(--fs-sm);}
-.cb-activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-radius:var(--radius);}
-.cb-activity-item + .cb-activity-item{border-top:1px solid #eef0f4;}
-.cb-activity-dot{
-  flex-shrink:0;width:30px;height:30px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;margin-top:1px;
+.cb-detail-historial{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:2px;}
+.cb-detail-historial-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;}
+.cb-detail-historial-item + .cb-detail-historial-item{border-top:1px solid var(--border);}
+.cb-detail-historial-icon{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;margin-top:1px;
+  background:var(--gray-bg);color:var(--gray-fg);
+  display:flex;align-items:center;justify-content:center;
 }
-.cb-activity-dot .icon{width:15px;height:15px;}
-.cb-activity-dot.dot-green{background:var(--green-bg);color:#0d7a3d;}
-.cb-activity-dot.dot-blue{background:var(--blue-bg);color:var(--blue-fg);}
-.cb-activity-dot.dot-amber{background:var(--amber-bg);color:var(--amber-fg);}
-.cb-activity-dot.dot-gray{background:var(--gray-bg);color:var(--gray-fg);}
-.cb-activity-dot.dot-orange{background:var(--orange-bg);color:var(--orange-fg);}
-.cb-activity-body{min-width:0;flex:1;}
-.cb-activity-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.3;}
-.cb-activity-desc{font-size:var(--fs-sm);color:var(--ink-700);margin-top:2px;line-height:1.35;}
-.cb-activity-time{font-size:var(--fs-xs);color:var(--ink-500);margin-top:4px;}
-
-/* ---------- DRAWER lateral (Actividad completa / Próximos ingresos) ----------
-   Variante lateral de .modal-overlay/.modal-card (mismo overlay/backdrop,
-   mismo ModalHeader) — 2 consumidores dentro de este feature (ActivityDrawer/
-   UpcomingAdmissionsDrawer), por eso vive acá y no en cada componente. */
-.cb-drawer-overlay{
-  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
-  display:none;opacity:0;transition:opacity .15s ease;
-}
-.cb-drawer-overlay.open{display:block;opacity:1;}
-.cb-drawer-panel{
-  position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100%;
-  background:var(--surface-modal);box-shadow:-24px 0 64px rgba(16,24,39,.25);
-  display:flex;flex-direction:column;
-  transform:translateX(16px);opacity:0;transition:transform .15s ease,opacity .15s ease;
-}
-.cb-drawer-overlay.open .cb-drawer-panel{transform:translateX(0);opacity:1;}
-.cb-drawer-body{padding:12px 14px;overflow-y:auto;flex:1;min-height:0;}
-.cb-drawer-count{
-  font-size:var(--fs-sm);color:var(--ink-500);padding:12px 20px 0;flex-shrink:0;
-}
+.cb-detail-historial-icon .icon{width:14px;height:14px;}
+.cb-detail-historial-body{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.cb-detail-historial-item-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-detail-historial-meta{font-size:var(--fs-xs);color:var(--ink-500);}
+.cb-detail-historial-motivo{font-size:var(--fs-sm);color:var(--ink-700);margin-top:2px;}
 
 /* ---------- DATA TABLE genérica (BedTable) ---------- */
 .data-table-wrap{
@@ -507,30 +571,16 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
   padding:16px;overflow-y:hidden;
 }
 
-.cb-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;}
+.cb-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;}
 .cb-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cb-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
-.cb-header-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.cb-header-actions .btn .icon{width:15px;height:15px;}
-/* El trigger de Actividad solo existe para el layout de 1 columna (ver
-   .cb-activity-panel en ActivityPanel.css) — en desktop la columna derecha
-   ya está siempre visible, así que este botón sobraría ahí. */
-.cb-activity-mobile-trigger{display:none;}
+.cb-header .btn .icon{width:18px;height:18px;}
 
-/* Bed Board (izquierda, flexible) + Actividad reciente (derecha, ancho fijo
-   — ver .cb-activity-panel en ActivityPanel.css) — encargo: "layout en dos
-   columnas", panel siempre visible en desktop. */
-.cb-layout{display:grid;grid-template-columns:1fr 320px;gap:16px;flex:1;min-height:0;}
+/* Bed Board a ancho completo — la columna derecha de Actividad reciente se
+   quitó de esta página (sigue viva como drawer aparte, ver ActivityDrawer,
+   abierto solo desde "Ver toda la actividad" en BedDetailModal). */
+.cb-layout{display:flex;flex-direction:column;flex:1;min-height:0;}
 .cb-main{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0;}
-
-/* Debajo de --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints")
-   la columna derecha se oculta (.cb-activity-panel) y el trigger de arriba
-   la reemplaza por un drawer — la grilla vuelve a 1 sola columna para que
-   ese espacio no quede reservado en blanco. */
-@media (max-width:1024px){
-  .cb-layout{grid-template-columns:1fr;}
-  .cb-activity-mobile-trigger{display:inline-flex;}
-}
 
 /* Capacidad — único grupo de KPIs que queda (Estados operativos pasó a
    chips dentro del filter-bar, ver más abajo). */
@@ -549,15 +599,6 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 }
 
 .cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
-
-/* Footer de la tarjeta del tablero (encargo: "Última actualización" pasa acá
-   en vez de vivir como fila propia arriba) — mismo lenguaje que .legend-bar
-   en GestionEnfermeria/shared/shared.css (padding/borde superior), con su
-   propio nombre porque vive en otro feature-folder, sin import cruzado. */
-.cb-board-footer{
-  display:flex;align-items:center;padding:10px 20px;
-  border-top:1px solid var(--border);flex-shrink:0;
-}
 
 @media (max-width:1280px){
   .cb-kpi-group-primary .cb-kpi-group-cards{grid-template-columns:repeat(2,1fr);}

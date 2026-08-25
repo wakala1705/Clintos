@@ -4,4 +4,8 @@
 .cb-table-wrap{flex:1;}
 .cb-table{width:100%;}
 .cb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+/* El botón "Ver detalle" reusa .cb-actions-menu-btn (definida en
+   ../BedActionsMenu/BedActionsMenu.css, mismo criterio de solo-un-ícono/28px
+   que el botón "⋯" que tiene al lado) — sin clase propia, ya se carga en
+   esta página porque BedTable ya importa BedActionsMenu. */
 .cb-table-actions{display:inline-flex;align-items:center;gap:4px;}

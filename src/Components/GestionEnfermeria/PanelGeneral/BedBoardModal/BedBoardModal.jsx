@@ -68,9 +68,12 @@ function BedListView({ camas, onAction }) {
                   </td>
                   <td className="col-acciones">
                     <div className="bb-table-actions">
-                      <button type="button" className="btn btn-secondary btn-sm" onClick={() => onAction(cta.action, c.id)}>
-                        {cta.label}
-                      </button>
+                      {/* Aislamiento/Inactiva no tienen CTA_PRINCIPAL (mockCamasData.js) */}
+                      {cta && (
+                        <button type="button" className="btn btn-secondary btn-sm" onClick={() => onAction(cta.action, c.id)}>
+                          {cta.label}
+                        </button>
+                      )}
                       <BedActionsMenu estado={c.estado} numero={c.numero} onAction={(action) => onAction(action, c.id)} />
                     </div>
                   </td>

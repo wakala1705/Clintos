@@ -9,7 +9,7 @@
 
 .cb-mf-columns{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;}
 
-/* Encabezado de columna/categoría (Ubicación/Clasificación/Atributos) — un
+/* Encabezado de columna/categoría (Ubicación/Clasificación) — un
    escalón más marcado que .fp-section-title (encargo: "dos niveles de
    jerarquía tipográfica, no uno plano"): fs-sm/fw-bold/ink-900 acá vs.
    fs-xs/fw-semibold/ink-500 en el label de cada campo individual. */
@@ -39,18 +39,3 @@
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);
 }
 .cb-mf-input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
-
-.cb-mf-check{
-  display:flex;align-items:center;gap:8px;padding:6px 0;
-  font-size:var(--fs-base);color:var(--ink-700);cursor:pointer;
-}
-.cb-mf-check input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
-
-/* Subgrupo "Operativo de soporte" (encargo: filtros secundarios dentro de
-   Clasificación — un escalón MÁS chico que .cb-mf-column-title, para leerse
-   como accesorio de Atributos y no como una tercera columna al mismo nivel). */
-.cb-mf-subgroup-title{
-  display:block;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.04em;margin:12px 0 8px;padding-top:12px;border-top:1px solid var(--border);
-}
-.cb-mf-check-secondary{font-size:var(--fs-sm);color:var(--ink-500);}
