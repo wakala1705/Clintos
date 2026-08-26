@@ -75,7 +75,10 @@ export default function MantenimientoDetailModal({ mantenimiento, onClose, onFin
               {eventos.map((ev) => (
                 <li key={ev.id} className="cbm-historial-item">
                   <span className="cbm-historial-fecha">{formatFechaCorta(ev.fecha)}</span>
-                  <span className="cbm-historial-titulo">{ev.titulo}</span>
+                  <div className="cbm-historial-body">
+                    <span className="cbm-historial-titulo">{ev.titulo}</span>
+                    {ev.motivo && <span className="cbm-historial-motivo">{ev.motivo}</span>}
+                  </div>
                 </li>
               ))}
             </ul>
