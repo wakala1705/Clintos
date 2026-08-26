@@ -34,6 +34,7 @@
    interferir con el dropdown. */
 .cbm-row-clickable{cursor:pointer;}
 .cbm-row-clickable:hover td{background:var(--gray-bg);}
+.cbm-row-clickable:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 
 @media (max-width:1440px){
   .cbm-kpi-row{grid-template-columns:repeat(2,1fr);}

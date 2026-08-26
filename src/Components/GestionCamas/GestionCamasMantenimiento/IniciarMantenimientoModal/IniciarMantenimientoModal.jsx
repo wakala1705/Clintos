@@ -26,7 +26,7 @@ export default function IniciarMantenimientoModal({ mantenimiento, onClose, onCo
               {`${mantenimiento.cama} — ${SEDE_LABEL[mantenimiento.sede]} · ${AREA_LABEL[mantenimiento.area]} · ${mantenimiento.ubicacion}`}
             </div>
           </div>
-          <p className="cbm-modal-msg">
+          <p className="cbm-iniciar-msg">
             Al iniciar el mantenimiento la cama pasará a estado &quot;En proceso&quot;.
           </p>
         </div>

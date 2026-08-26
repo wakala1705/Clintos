@@ -28,7 +28,7 @@ export default function FinalizarMantenimientoModal({ mantenimiento, onClose, on
             onClose={onClose}
           />
           <div className="modal-body">
-            <p className="cbm-modal-msg">{`¿Deseas finalizar el mantenimiento de la cama ${mantenimiento.cama}?`}</p>
+            <p className="cbm-finalizar-msg">{`¿Deseas finalizar el mantenimiento de la cama ${mantenimiento.cama}?`}</p>
             <div className="form-field">
               <label htmlFor="cbm-finalizar-obs">Observación (opcional)</label>
               <textarea

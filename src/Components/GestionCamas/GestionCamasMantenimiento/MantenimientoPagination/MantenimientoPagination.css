@@ -12,7 +12,7 @@
   border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
 }
 .cbm-pagination-nav-btn .icon{width:15px;height:15px;}
-.cbm-pagination-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.cbm-pagination-nav-btn:hover{background:var(--gray-bg);border-color:var(--border);}
 .cbm-pagination-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cbm-pagination-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
 

@@ -206,6 +206,7 @@ export default function GestionCamasMantenimiento() {
       },
       ...prev,
     ]);
+    setPage(1);
     setModal(null);
     window.ncToast?.(`Mantenimiento de cama ${datos.cama} programado.`);
   }
@@ -366,7 +367,17 @@ export default function GestionCamasMantenimiento() {
                     </thead>
                     <tbody>
                       {mantenimientosPagina.map((m) => (
-                        <tr key={m.id} className="cbm-row-clickable" onClick={() => abrirModal('detalle', m.id)}>
+                        <tr
+                          key={m.id}
+                          className="cbm-row-clickable"
+                          tabIndex={0}
+                          onClick={() => abrirModal('detalle', m.id)}
+                          onKeyDown={(ev) => {
+                            if (ev.key !== 'Enter' && ev.key !== ' ') return;
+                            ev.preventDefault();
+                            abrirModal('detalle', m.id);
+                          }}
+                        >
                           <td>
                             <span className="cell-primary">{m.cama}</span>
                             <span className="cell-sub">{m.ubicacion}</span>
