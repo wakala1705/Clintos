@@ -7,7 +7,8 @@ import { usePathname } from 'next/navigation';
 import './GestionCamasSidebar.css';
 import { INCONSISTENCIAS_INICIALES } from '@/hooks/GestionCamas/mockIntegridadData';
 import {
-  LuBedDouble, LuChartColumn, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen, LuSettings, LuShieldCheck,
+  LuBedDouble, LuCalendarClock, LuChartColumn, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen,
+  LuSettings, LuShieldCheck, LuSprayCan,
 } from 'react-icons/lu';
 
 // Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
@@ -47,33 +48,64 @@ const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 // resto del proyecto (ver mockPanelGeneralData.js).
 const INCONSISTENCIAS_ACTIVAS = INCONSISTENCIAS_INICIALES.filter((i) => i.estado === 'activa').length;
 
-const ITEMS = [
+// Agrupado en 3 secciones (encargo: "las tres grandes experiencias del
+// módulo" — Operación/Planificación/Administración, ver comentario en
+// GestionCamasReservas.jsx sección "Concepto central"). Los títulos de grupo
+// son kickers no-clickeables (ver .cbs-nav-section-label), nunca botones —
+// solo separan visualmente, la navegación real sigue viviendo únicamente en
+// los ítems de cada grupo.
+const SECCIONES = [
   {
-    id: 'resumen', label: 'Resumen', href: '/gestion-camas', icon: LuLayoutGrid,
+    id: 'operacion',
+    label: 'Operación',
+    items: [
+      {
+        id: 'resumen', label: 'Resumen', href: '/gestion-camas', icon: LuLayoutGrid,
+      },
+      // Tablero operativo (Estados visuales, encargo sección 6) — vista de
+      // tarjetas/tabla en tiempo real (Libre/Ocupada/Reservada/Limpieza/
+      // Mantenimiento/Bloqueada/Aislamiento/Inactiva, ver mockCamasData.js).
+      // "Camas" (antes "Mapa de camas") absorbió a la vieja pantalla de
+      // inventario administrativo que vivía en /gestion-camas/camas
+      // (GestionCamasCamas.jsx, eliminada) — mismo ícono que tenía ese ítem
+      // (LuBedDouble), reutilizado acá.
+      {
+        id: 'tablero', label: 'Camas', href: '/gestion-camas/tablero', icon: LuBedDouble,
+      },
+      {
+        id: 'limpieza', label: 'Limpieza', href: '/gestion-camas/limpieza', icon: LuSprayCan,
+      },
+    ],
   },
-  // Tablero operativo (Estados visuales, encargo sección 6) — vista de
-  // tarjetas/tabla en tiempo real (Libre/Ocupada/Reservada/Limpieza/
-  // Mantenimiento/Bloqueada/Aislamiento/Inactiva, ver mockCamasData.js).
-  // Ruta (/gestion-camas/tablero) y componente (GestionCamas.jsx) quedan
-  // igual que antes — solo cambia label/ícono de este ítem, ver comentario
-  // arriba.
   {
-    id: 'tablero', label: 'Camas', href: '/gestion-camas/tablero', icon: LuBedDouble,
+    id: 'planificacion',
+    label: 'Planificación',
+    items: [
+      // Disponibilidad FUTURA de camas (encargo) — distinta de "Camas"
+      // (estado actual); mismo criterio de sección propia que separa
+      // Operación de Administración.
+      {
+        id: 'reservas', label: 'Reservas', href: '/gestion-camas/reservas', icon: LuCalendarClock,
+      },
+    ],
   },
   {
-    id: 'integridad', label: 'Integridad', href: '/gestion-camas/integridad', icon: LuShieldCheck, badge: INCONSISTENCIAS_ACTIVAS,
-  },
-  {
-    id: 'indicadores', label: 'Indicadores', href: '/gestion-camas/indicadores', icon: LuChartColumn,
-  },
-  {
-    id: 'auditoria', label: 'Auditoría / Historial', href: '/gestion-camas/auditoria', icon: LuHistory,
-  },
-  // Configuración pasa al final (después de Auditoría/Historial, encargo
-  // previo) y ya tiene ruta propia (ver GestionCamasConfiguracion.jsx) — deja
-  // de ser el único ítem sin pantalla que disparaba el aviso "en desarrollo".
-  {
-    id: 'configuracion', label: 'Configuración', href: '/gestion-camas/configuracion', icon: LuSettings,
+    id: 'administracion',
+    label: 'Administración',
+    items: [
+      {
+        id: 'integridad', label: 'Integridad', href: '/gestion-camas/integridad', icon: LuShieldCheck, badge: INCONSISTENCIAS_ACTIVAS,
+      },
+      {
+        id: 'indicadores', label: 'Indicadores', href: '/gestion-camas/indicadores', icon: LuChartColumn,
+      },
+      {
+        id: 'auditoria', label: 'Auditoría / Historial', href: '/gestion-camas/auditoria', icon: LuHistory,
+      },
+      {
+        id: 'configuracion', label: 'Configuración', href: '/gestion-camas/configuracion', icon: LuSettings,
+      },
+    ],
   },
 ];
 
@@ -106,6 +138,43 @@ export default function GestionCamasSidebar() {
     setTooltip(null);
   }
 
+  function renderItem(item) {
+    const active = item.href ? pathname === item.href : false;
+    const className = `cbs-nav-item${active ? ' active' : ''}`;
+    const inner = (
+      <>
+        <item.icon className="icon cbs-nav-icon" aria-hidden="true" />
+        <span className="cbs-nav-label">{item.label}</span>
+        {!!item.badge && <span className="cbs-nav-badge">{item.badge}</span>}
+      </>
+    );
+    const hoverHandlers = {
+      onMouseEnter: (e) => showTooltip(e, item.label),
+      onMouseLeave: hideTooltip,
+      onFocus: (e) => showTooltip(e, item.label),
+      onBlur: hideTooltip,
+    };
+
+    if (!item.href) {
+      return (
+        <button
+          key={item.id}
+          type="button"
+          className={className}
+          onClick={() => window.ncToast?.(`${item.label} (en desarrollo).`)}
+          {...hoverHandlers}
+        >
+          {inner}
+        </button>
+      );
+    }
+    return (
+      <Link key={item.id} href={item.href} className={className} aria-current={active ? 'page' : undefined} {...hoverHandlers}>
+        {inner}
+      </Link>
+    );
+  }
+
   return (
     <aside className={`cbs-sidebar${collapsed ? ' collapsed' : ''}`}>
       <nav className="cbs-nav" aria-label="Secciones de Gestión de Camas">
@@ -123,42 +192,12 @@ export default function GestionCamasSidebar() {
               : <LuPanelLeftClose className="icon" aria-hidden="true" />}
           </button>
         </div>
-        {ITEMS.map((item) => {
-          const active = item.href ? pathname === item.href : false;
-          const className = `cbs-nav-item${active ? ' active' : ''}`;
-          const inner = (
-            <>
-              <item.icon className="icon cbs-nav-icon" aria-hidden="true" />
-              <span className="cbs-nav-label">{item.label}</span>
-              {!!item.badge && <span className="cbs-nav-badge">{item.badge}</span>}
-            </>
-          );
-          const hoverHandlers = {
-            onMouseEnter: (e) => showTooltip(e, item.label),
-            onMouseLeave: hideTooltip,
-            onFocus: (e) => showTooltip(e, item.label),
-            onBlur: hideTooltip,
-          };
-
-          if (!item.href) {
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={className}
-                onClick={() => window.ncToast?.(`${item.label} (en desarrollo).`)}
-                {...hoverHandlers}
-              >
-                {inner}
-              </button>
-            );
-          }
-          return (
-            <Link key={item.id} href={item.href} className={className} aria-current={active ? 'page' : undefined} {...hoverHandlers}>
-              {inner}
-            </Link>
-          );
-        })}
+        {SECCIONES.map((seccion) => (
+          <div key={seccion.id} className="cbs-nav-group">
+            <div className="cbs-nav-section-label" aria-hidden="true">{seccion.label}</div>
+            {seccion.items.map(renderItem)}
+          </div>
+        ))}
       </nav>
 
       {tooltip && createPortal(

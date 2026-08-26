@@ -316,6 +316,12 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .btn-primary:hover{background:var(--primary-dark);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
 .btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+/* Faltaba en esta feature (ya existe en HistoriaClinica/GestionEnfermeria,
+   ver AGENTS.md) — primer consumidor acá es el CTA "Iniciar limpieza" de
+   GestionCamasLimpieza.jsx, que necesita un botón contorneado sin el peso
+   visual de .btn-primary. */
+.btn-outline{background:transparent;color:var(--primary);border-color:var(--primary);}
+.btn-outline:hover{background:var(--primary-50);}
 .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
 .btn-sm{padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);gap:6px;}

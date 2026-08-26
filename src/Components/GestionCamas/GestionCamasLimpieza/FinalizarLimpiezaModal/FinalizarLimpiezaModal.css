@@ -1,0 +1,9 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/.modal-footer/
+   .btn: definidas en ../../GestionCamas.css — acá solo el mensaje y el
+   resumen del proceso, exclusivos de este modal. */
+.cbl-modal-msg{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
+.cbl-modal-resumen{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:12px;padding:10px 12px;border-radius:var(--radius);background:var(--bg);
+  font-size:var(--fs-sm);color:var(--ink-500);
+}

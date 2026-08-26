@@ -1,0 +1,12 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field/.btn:
+   definidas en ../../GestionCamas.css — acá solo el layout de 2 columnas y
+   las marcas de campo obligatorio/error, exclusivas de este formulario
+   (mismo criterio de duplicación por componente que .cb-required-mark/
+   .cb-form-error en NuevaCamaModal.css). */
+.cbr-form-modal-card{width:520px;}
+.cbr-form-body{display:flex;flex-direction:column;gap:14px;}
+.cbr-form-row{display:flex;gap:12px;}
+.cbr-form-row .form-field{flex:1;min-width:0;}
+.cbr-form-body > .cbr-form-error{margin-top:-8px;}
+.cbr-required-mark{color:var(--red);margin-left:2px;}
+.cbr-form-error{font-size:var(--fs-sm);color:var(--red);}

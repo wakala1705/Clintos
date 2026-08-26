@@ -1,0 +1,24 @@
+/* Mismo lenguaje visual que LimpiezaRowActionsMenu.css/BedActionsMenu.css —
+   redeclarado con su propio prefijo (ver AGENTS.md "Component organization"). */
+.cbr-actions-menu{flex-shrink:0;}
+.cbr-actions-menu-btn{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.cbr-actions-menu-btn .icon{width:17px;height:17px;}
+.cbr-actions-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cbr-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cbr-actions-menu-dropdown{
+  position:fixed;min-width:160px;z-index:calc(var(--z-modal, 50) + 1);
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+}
+.cbr-actions-menu-item{
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.cbr-actions-menu-item .icon{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
+.cbr-actions-menu-item:hover{background:var(--bg);}
+.cbr-actions-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}

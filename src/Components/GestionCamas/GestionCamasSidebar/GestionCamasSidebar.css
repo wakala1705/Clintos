@@ -17,6 +17,24 @@
 
 .cbs-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
 
+/* 3 grupos (Operación/Planificación/Administración, encargo) — cada uno un
+   sub-flex propio (gap:2px, igual que .cbs-nav) para no separar de más los
+   ítems DENTRO de un grupo; el espacio ENTRE grupos lo da el margin-top del
+   kicker de abajo, no un gap del contenedor padre. */
+.cbs-nav-group{display:flex;flex-direction:column;gap:2px;}
+
+/* Kicker de sección (mismo patrón visual que .cbs-nav-label-group: fs-xs +
+   uppercase + letter-spacing, sin fondo) — a diferencia de ese label único de
+   arriba ("Secciones"), este se repite una vez por grupo y sí participa del
+   flujo (no vive en el header fijo), por eso necesita su propio margin-top
+   para separarse del grupo anterior. */
+.cbs-nav-section-label{
+  padding:0 0 0 12px;margin:14px 0 4px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.cbs-nav-group:first-of-type .cbs-nav-section-label{margin-top:0;}
+
 /* Fila del label de sección + botón de colapso manual (mismo icono/estado
    que el auto-colapso por breakpoint de abajo, ver .cbs-sidebar.collapsed). */
 .cbs-nav-header{
@@ -107,6 +125,7 @@
 .cbs-sidebar.collapsed{width:64px;}
 .cbs-sidebar.collapsed .cbs-nav-header{justify-content:center;padding:4px 0 8px;}
 .cbs-sidebar.collapsed .cbs-nav-label-group{display:none;}
+.cbs-sidebar.collapsed .cbs-nav-section-label{display:none;margin:0;}
 .cbs-sidebar.collapsed .cbs-nav-item{justify-content:center;padding:10px 0;}
 .cbs-sidebar.collapsed .cbs-nav-label,
 .cbs-sidebar.collapsed .cbs-nav-badge{display:none;}
@@ -120,6 +139,7 @@
   .cbs-sidebar{width:64px;}
   .cbs-nav-header{justify-content:center;padding:4px 0 8px;}
   .cbs-nav-label-group{display:none;}
+  .cbs-nav-section-label{display:none;margin:0;}
   .cbs-collapse-btn{display:none;}
   .cbs-nav-item{justify-content:center;padding:10px 0;}
   .cbs-nav-label,

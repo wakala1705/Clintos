@@ -1,0 +1,30 @@
+/* Mismo lenguaje visual que BedActionsMenu.css — redeclarado con su propio
+   nombre de clase porque vive en otro sub-componente (ver AGENTS.md
+   "Component organization"). */
+.cbl-actions-menu{flex-shrink:0;}
+.cbl-actions-menu-btn{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.cbl-actions-menu-btn .icon{width:17px;height:17px;}
+.cbl-actions-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cbl-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+/* position:fixed + portal a document.body (ver BedActionsMenu.css) — z-index
+   +1 sobre --z-modal por si algún día se abre sobre un modal. */
+.cbl-actions-menu-dropdown{
+  position:fixed;min-width:190px;z-index:calc(var(--z-modal, 50) + 1);
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+}
+.cbl-actions-menu-item{
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.cbl-actions-menu-item .icon{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
+.cbl-actions-menu-item:hover{background:var(--bg);}
+.cbl-actions-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.cbl-actions-menu-empty{
+  display:block;padding:8px 10px;font-size:var(--fs-base);color:var(--ink-500);white-space:nowrap;
+}

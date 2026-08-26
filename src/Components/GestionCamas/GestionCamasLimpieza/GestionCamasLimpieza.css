@@ -1,0 +1,48 @@
+/* Selector compuesto (.content.cbl-content), no solo .cbl-content: pisa a
+   .content (definida en ../GestionCamas.css, otro archivo) y su prioridad no
+   puede depender del orden de import entre rutas — mismo bug real ya
+   documentado en GestionCamasAuditoria.css/GestionCamasIntegridad.css. */
+.content.cbl-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.cbl-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:16px;overflow-y:auto;
+}
+
+.cbl-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+.cbl-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cbl-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+.cbl-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex-shrink:0;}
+
+.cbl-table-card{flex:1;min-height:0;}
+
+.cbl-limpiar-filtros-btn .badge-count{
+  background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+/* Sin esto la columna de Acción queda con ancho "auto" sobrado (tabla ancha,
+   sidebar interno colapsado) y el botón + "⋯" quedan pegados a la izquierda
+   de la celda, dejando un vacío visible antes del borde derecho de la tabla
+   — mismo fix que .cb-table .col-acciones en BedTable.css. */
+.cbl-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+.cbl-table-actions{display:inline-flex;align-items:center;gap:4px;}
+
+/* Tiempo transcurrido en rojo cuando la cama superó el SLA (encargo: "hacer
+   evidente que requiere atención") — mismo tono que .cbl-tono-red de
+   LimpiezaBadges.css, nunca un hex nuevo. */
+.cbl-tiempo-alerta{color:var(--red);}
+
+/* Fila más prioritaria (fuera de SLA): fondo apenas teñido de rojo, sin
+   saturar el resto de la tabla (encargo explícito: "tratamiento rojo muy
+   sutil"). El hover de .data-table sigue funcionando igual encima. */
+.cbl-row-alerta td{background:var(--red-bg);}
+.cbl-row-alerta:hover td{background:#fbe0de;}
+
+@media (max-width:1440px){
+  .cbl-kpi-row{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:1024px){
+  .cbl-header{width:100%;}
+}

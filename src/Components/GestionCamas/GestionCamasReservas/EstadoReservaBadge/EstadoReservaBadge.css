@@ -1,0 +1,15 @@
+/* Mismo patrón "píldora ícono+texto" que .cb-estado-badge/.cbl-badge — cada
+   badge-component del proyecto duplica esta forma con su propio prefijo (ver
+   AGENTS.md "Component organization"). */
+.cbr-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.cbr-badge .icon{width:13px;height:13px;}
+.cbr-tono-amber{background:var(--amber-bg);color:var(--amber-fg);}
+.cbr-tono-green{background:var(--green-bg);color:#0d7a3d;}
+.cbr-tono-violet{background:var(--purple-bg);color:var(--purple-fg);}
+.cbr-tono-orange{background:var(--orange-bg);color:var(--orange-fg);}
+.cbr-tono-gray{background:var(--gray-bg);color:var(--gray-fg);}
+
+html[data-theme="dark"] .cbr-tono-green{color:var(--green);}

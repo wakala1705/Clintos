@@ -12,6 +12,12 @@
 .pg-kpi-warning .pg-kpi-icon{background:var(--amber-bg);color:var(--amber-fg);}
 .pg-kpi-danger .pg-kpi-icon{background:var(--red-bg);color:var(--red);}
 .pg-kpi-info .pg-kpi-icon{background:var(--blue-bg);color:var(--blue-fg);}
+/* `success`/`violet` — faltaban de esta escala (solo 4 variantes hasta acá);
+   primer consumidor es GestionCamasReservas.jsx, que necesita distinguir
+   "Confirmadas" (verde) y "Utilizadas" (violeta) de warning/danger/info sin
+   forzar un color que ya signifique otra cosa en el resto del proyecto. */
+.pg-kpi-success .pg-kpi-icon{background:var(--green-bg);color:var(--green);}
+.pg-kpi-violet .pg-kpi-icon{background:var(--purple-bg);color:var(--purple-fg);}
 
 .pg-kpi-label{
   font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;
