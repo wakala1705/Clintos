@@ -1,0 +1,4 @@
+.cbm-reprogramar-row{display:flex;gap:12px;margin-top:12px;}
+.cbm-reprogramar-row .form-field{flex:1;min-width:0;}
+.cbm-required-mark{color:var(--red);margin-left:2px;}
+.cbm-form-error{font-size:var(--fs-sm);color:var(--red);}
