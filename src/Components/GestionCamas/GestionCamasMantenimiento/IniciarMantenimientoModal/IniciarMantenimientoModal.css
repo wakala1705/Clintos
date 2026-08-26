@@ -1,0 +1,4 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/.modal-footer/
+   .form-field/.tf-readonly-value/.btn: definidas en ../../GestionCamas.css —
+   acá solo el mensaje de confirmación, exclusivo de este modal. */
+.cbm-modal-msg{margin:12px 0 0;font-size:var(--fs-base);color:var(--ink-700);}
