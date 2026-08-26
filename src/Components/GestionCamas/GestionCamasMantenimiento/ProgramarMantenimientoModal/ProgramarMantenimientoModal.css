@@ -1,0 +1,6 @@
+.cbm-form-modal-card{width:560px;}
+.cbm-form-row{display:flex;gap:12px;}
+.cbm-form-row .form-field{flex:1;min-width:0;}
+.cbm-form-body > .cbm-form-error{margin-top:-8px;}
+.cbm-required-mark{color:var(--red);margin-left:2px;}
+.cbm-form-error{font-size:var(--fs-sm);color:var(--red);}
