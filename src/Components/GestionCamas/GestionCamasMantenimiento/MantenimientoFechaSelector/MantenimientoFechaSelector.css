@@ -1,0 +1,8 @@
+/* .filter-popover-wrap/.date-picker-btn/.filter-popover/.fp-section/
+   .fp-section-title/.fp-actions/.btn: definidas en ../../GestionCamas.css —
+   acá solo el input de fecha, exclusivo de este selector. */
+.cbm-fecha-input{
+  width:100%;height:var(--input-md);padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);
+}
+.cbm-fecha-input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
