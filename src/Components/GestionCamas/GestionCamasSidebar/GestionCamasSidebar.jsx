@@ -8,7 +8,7 @@ import './GestionCamasSidebar.css';
 import { INCONSISTENCIAS_INICIALES } from '@/hooks/GestionCamas/mockIntegridadData';
 import {
   LuBedDouble, LuCalendarClock, LuChartColumn, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen,
-  LuSettings, LuShieldCheck, LuSprayCan,
+  LuSettings, LuShieldCheck, LuSprayCan, LuWrench,
 } from 'react-icons/lu';
 
 // Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
@@ -74,6 +74,9 @@ const SECCIONES = [
       },
       {
         id: 'limpieza', label: 'Limpieza', href: '/gestion-camas/limpieza', icon: LuSprayCan,
+      },
+      {
+        id: 'mantenimiento', label: 'Mantenimiento', href: '/gestion-camas/mantenimiento', icon: LuWrench,
       },
     ],
   },
