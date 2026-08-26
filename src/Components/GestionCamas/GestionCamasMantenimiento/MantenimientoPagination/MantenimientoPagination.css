@@ -1,0 +1,41 @@
+.cbm-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.cbm-pagination-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.cbm-pagination-label b{font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.cbm-pagination-controls{display:flex;align-items:center;gap:4px;}
+.cbm-pagination-nav-btn{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
+}
+.cbm-pagination-nav-btn .icon{width:15px;height:15px;}
+.cbm-pagination-nav-btn:hover{background:#f3f5f9;border-color:#d7dce6;}
+.cbm-pagination-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cbm-pagination-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.cbm-pagination-page{
+  min-width:28px;height:28px;padding:0 6px;border-radius:var(--radius);border:1px solid transparent;
+  background:none;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.cbm-pagination-page:hover{background:var(--gray-bg);}
+.cbm-pagination-page:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cbm-pagination-page.active{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.cbm-pagination-ellipsis{color:var(--ink-400);padding:0 4px;font-size:var(--fs-sm);}
+
+/* appearance:none + chevron propio en vez de FormSelect (AGENTS.md, "Selects
+   de formulario" — los selects de paginación quedan afuera de esa regla). */
+.cbm-pagination-size select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:var(--input-sm);border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);background:var(--surface);padding:0 28px 0 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+.cbm-pagination-size select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+@media (max-width:768px){
+  .cbm-pagination{justify-content:center;text-align:center;}
+}
