@@ -105,4 +105,6 @@ html[data-theme="dark"] .vac-esquema-badge.esquema-gestante{color:var(--accent-t
 .vac-card-meta{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-base);color:var(--ink-700);}
 .vac-card-meta .vac-muted{color:var(--ink-400);}
 .vac-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.vac-card-actions .btn{flex:1;justify-content:center;}
+/* Antes ".vac-card-actions .btn" — ahora es @/Components/Button/Button
+   (CSS Modules, no lleva la clase global .btn, ver AGENTS.md "Botones"). */
+.vac-card-actions .vac-detalle-btn{flex:1;justify-content:center;}

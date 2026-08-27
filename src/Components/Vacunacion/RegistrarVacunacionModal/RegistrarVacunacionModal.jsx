@@ -10,6 +10,7 @@ import VacunaStep from './VacunaStep/VacunaStep';
 import AplicacionStep from './AplicacionStep/AplicacionStep';
 import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import ExitoStep from './ExitoStep/ExitoStep';
+import Button from '@/Components/Button/Button';
 
 const STEPS = [
   { key: 'paciente', label: 'Paciente' },
@@ -162,38 +163,36 @@ export default function RegistrarVacunacionModal({ pacienteInicial, onClose, onV
 
         {step === 'vacuna' && (
           <div className="rv-footer">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep('paciente')}>← Atrás</button>
+            <Button variant="secondary" onClick={() => setStep('paciente')}>← Atrás</Button>
             <div className="rv-footer-end">
-              <button
-                type="button"
-                className="btn btn-primary"
+              <Button
                 disabled={!isVacunaSelValida(vacunaSel)}
                 onClick={handleContinuarVacuna}
               >
                 Continuar
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
         {step === 'aplicacion' && (
           <div className="rv-footer">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep('vacuna')}>← Atrás</button>
+            <Button variant="secondary" onClick={() => setStep('vacuna')}>← Atrás</Button>
             <div className="rv-footer-end">
-              <button type="button" className="btn btn-primary" onClick={handleRegistrarAplicacionClick}>
+              <Button onClick={handleRegistrarAplicacionClick}>
                 Registrar aplicación
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
         {step === 'confirmacion' && (
           <div className="rv-footer">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep('aplicacion')}>Volver a editar</button>
+            <Button variant="secondary" onClick={() => setStep('aplicacion')}>Volver a editar</Button>
             <div className="rv-footer-end">
-              <button type="button" className="btn btn-primary" onClick={handleConfirmarRegistro}>
+              <Button onClick={handleConfirmarRegistro}>
                 Registrar aplicación
-              </button>
+              </Button>
             </div>
           </div>
         )}

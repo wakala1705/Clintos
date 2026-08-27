@@ -92,6 +92,24 @@ export const PRIORIDADES_RESERVA = [
   { value: 'urgente', label: 'Urgente' },
 ];
 
+// Motivo de un bloqueo de cama (formulario "Bloquear cama", ver
+// BloquearCamaModal.jsx) — mismo criterio que PRIORIDADES_RESERVA: campo de
+// formulario con default (el primero de la lista), no un filtro, por eso sin
+// "todos" al frente. Única fuente de verdad de este catálogo — también la
+// reusa mockHistorialCamaData.js para no mantener 2 listas divergentes.
+// `value === label` a propósito (a diferencia de PRIORIDADES_RESERVA, que sí
+// tiene código propio): `cama.motivo` siempre fue texto plano legible, mismo
+// criterio que MOTIVOS_LIMPIEZA/MOTIVOS_MANTENIMIENTO/MOTIVOS_RESERVA en
+// mockHistorialCamaData.js — un value codificado obligaría a traducirlo de
+// vuelta en cada lugar que hoy muestra `cama.motivo` tal cual.
+export const MOTIVOS_BLOQUEO = [
+  { value: 'Infraestructura', label: 'Infraestructura' },
+  { value: 'Falla eléctrica', label: 'Falla eléctrica' },
+  { value: 'Reparación de mobiliario', label: 'Reparación de mobiliario' },
+  { value: 'Fuera de servicio', label: 'Fuera de servicio' },
+  { value: 'Otro', label: 'Otro' },
+];
+
 // ---------- Directorio buscable para "Reservar cama" ----------
 // Pool ficticio de pacientes/admisiones para alimentar el typeahead de
 // Paciente/Admisión (ver ReservarCamaModal.jsx/Typeahead.jsx) — el
@@ -312,23 +330,30 @@ export const TRANSICIONES_PERMITIDAS = {
 // negocio, no una regla ya validada.
 export const ESTADOS_CRITICOS = ['bloqueada', 'mantenimiento'];
 
-// Aislamiento/Inactiva SÍ tienen color/label/ícono ahora (Estados visuales,
-// encargo sección 6: "los colores son únicamente representación visual, los
-// códigos reales vienen del backend") pero siguen deliberadamente FUERA de
-// TRANSICIONES_PERMITIDAS/CTA_PRINCIPAL/MENU_ACCIONES/ESTADOS_CRITICOS —
-// eso no cambió: el doc fuente sigue sin confirmar las reglas de negocio de
-// estos 2 (relación de Aislamiento con Ocupada sin confirmar; Inactiva
-// probablemente es un flag ACTIVA=0 aparte, no un estado operativo, ver
-// máquina de estados). Mantenerlos fuera de esas 4 tablas es lo que impide
-// que aparezcan como opción del selector "Cambiar estado" (BedActionsMenu
-// hace fallback a `[]` cuando MENU_ACCIONES no trae el estado, ver
-// BedActionsMenu.jsx) — solo se pintan si una cama ya trae ese `estado`
-// (mock o, más adelante, backend), nunca se llega ahí manualmente desde la
-// UI. "Aislamiento" SIGUE existiendo también como atributo booleano aparte
-// (`aislamiento`, ver generateCamas más abajo) para el caso "coexiste con
-// Ocupada" que el doc no resuelve — el nuevo `estado: 'aislamiento'` cubre
-// el otro caso (cama en sí reservada/preparada para aislamiento, sin
-// paciente), son 2 conceptos independientes a propósito, no un duplicado.
+// Aislamiento sigue FUERA de TRANSICIONES_PERMITIDAS/CTA_PRINCIPAL/
+// MENU_ACCIONES/ESTADOS_CRITICOS — el doc fuente sigue sin confirmar sus
+// reglas de negocio (relación con Ocupada sin confirmar). Mantenerlo fuera
+// de esas 4 tablas es lo que impide que aparezca como opción del selector
+// "Cambiar estado" (BedActionsMenu hace fallback a `[]` cuando
+// MENU_ACCIONES no trae el estado, ver BedActionsMenu.jsx) — solo se pinta
+// si una cama ya trae `estado: 'aislamiento'` (mock o, más adelante,
+// backend), nunca se llega ahí manualmente desde la UI. Además sigue
+// existiendo como atributo booleano aparte (`aislamiento`, ver
+// generateCamas más abajo) para el caso "coexiste con Ocupada" que el doc
+// no resuelve — el `estado: 'aislamiento'` cubre el otro caso (cama en sí
+// reservada/preparada para aislamiento, sin paciente), son 2 conceptos
+// independientes a propósito, no un duplicado.
+//
+// Inactiva (Activar/desactivar cama, encargo #30) SÍ tiene entrada en
+// CTA_PRINCIPAL/MENU_ACCIONES ahora — "ACTIVA = 0" del encargo se resuelve
+// reusando este mismo `estado` en vez de sumar un campo booleano aparte
+// (mismo mecanismo de soft-delete que Bloqueada, "el mecanismo equivalente
+// que se defina" del encargo). Sigue FUERA de TRANSICIONES_PERMITIDAS/
+// ESTADOS_CRITICOS a propósito: esa transición vive solo en el flujo
+// dedicado Desactivar/Activar (DesactivarCamaModal.jsx + acción directa
+// 'activar', ver GestionCamas.jsx), nunca en el selector genérico "Cambiar
+// estado" — así el motivo obligatorio de la desactivación no se puede
+// saltear pasando por ese modal genérico.
 
 // ---------- Acción principal por estado (CTA contextual de cada tarjeta) ----------
 // Reemplaza "Cambiar estado" como CTA universal (encargo explícito) — cada
@@ -342,6 +367,7 @@ export const CTA_PRINCIPAL = {
   limpieza: { action: 'finalizar-limpieza', label: 'Finalizar limpieza' },
   mantenimiento: { action: 'ver-mantenimiento', label: 'Ver mantenimiento' },
   bloqueada: { action: 'desbloquear', label: 'Desbloquear' },
+  inactiva: { action: 'activar', label: 'Activar cama' },
 };
 
 // ---------- Menú secundario "⋯" por estado ----------
@@ -357,6 +383,17 @@ export const CTA_PRINCIPAL = {
 // transición ya tiene su propio atajo más específico ("Liberar"/"Finalizar
 // mantenimiento"), así que un "Limpieza" genérico ahí sería un botón
 // duplicado con el mismo efecto.
+// 'desactivar' (Activar/desactivar cama, encargo #30) solo se suma a los 4
+// estados sin paciente/reserva activa (Libre/Limpieza/Mantenimiento/
+// Bloqueada) — retirar una cama del inventario mientras tiene paciente
+// asignado o reserva vigente no debería ser posible sin resolver eso
+// primero (encargo explícito). Nunca elimina la cama (no hay acción
+// 'eliminar' en ningún estado): pasa a `estado: 'inactiva'` con motivo, el
+// mismo mecanismo de "soft delete" que ya usa Bloqueada — ver
+// DesactivarCamaModal.jsx/TRANSICIONES_PERMITIDAS más abajo (a propósito
+// SIN entrada 'inactiva' ahí: esta transición vive solo en el flujo
+// dedicado de Activar/Desactivar, nunca en el selector genérico "Cambiar
+// estado", así el motivo obligatorio de ese modal no se puede saltear).
 export const MENU_ACCIONES = {
   libre: [
     { action: 'ver-detalle', label: 'Ver detalle' },
@@ -366,6 +403,7 @@ export const MENU_ACCIONES = {
     { action: 'mantenimiento', label: 'Mantenimiento' },
     { action: 'limpieza', label: 'Limpieza' },
     { action: 'bloquear', label: 'Bloquear' },
+    { action: 'desactivar', label: 'Desactivar cama' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
   ],
@@ -390,6 +428,7 @@ export const MENU_ACCIONES = {
     { action: 'ver-detalle', label: 'Ver detalle' },
     { action: 'editar', label: 'Editar' },
     { action: 'finalizar-limpieza', label: 'Finalizar limpieza' },
+    { action: 'desactivar', label: 'Desactivar cama' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
   ],
@@ -398,6 +437,7 @@ export const MENU_ACCIONES = {
     { action: 'editar', label: 'Editar' },
     { action: 'ver-mantenimiento', label: 'Ver mantenimiento' },
     { action: 'finalizar-mantenimiento', label: 'Finalizar mantenimiento' },
+    { action: 'desactivar', label: 'Desactivar cama' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
     { action: 'historial', label: 'Historial' },
   ],
@@ -405,7 +445,18 @@ export const MENU_ACCIONES = {
     { action: 'ver-detalle', label: 'Ver detalle' },
     { action: 'editar', label: 'Editar' },
     { action: 'desbloquear', label: 'Desbloquear' },
+    { action: 'desactivar', label: 'Desactivar cama' },
     { action: 'cambiar-estado', label: 'Cambiar estado' },
+    { action: 'historial', label: 'Historial' },
+  ],
+  // Inactiva ahora SÍ tiene entrada acá (a diferencia de Aislamiento, que
+  // sigue sin reglas de negocio confirmadas) — 'activar' es la única
+  // transición de salida, mismo criterio 1-acción-directa que 'desbloquear'
+  // (sin modal de confirmación, ver GestionCamas.jsx).
+  inactiva: [
+    { action: 'ver-detalle', label: 'Ver detalle' },
+    { action: 'editar', label: 'Editar' },
+    { action: 'activar', label: 'Activar cama' },
     { action: 'historial', label: 'Historial' },
   ],
 };
@@ -486,6 +537,7 @@ const CAMAS_CURADAS = [
   {
     sede: 'central', area: 'hosp-piso4-t2', piso: 'piso1', sector: 'A', estado: 'bloqueada',
     motivo: 'Fuera de servicio',
+    bloqueo: { fechaInicio: '2026-08-18', fechaFin: '2026-08-25' },
   },
   // Aislamiento/Inactiva (Estados visuales, encargo sección 6): mismo motivo
   // que el bloque de arriba — sin al menos 1 ejemplo real, el badge/chip
@@ -582,6 +634,7 @@ function generateCamas() {
         paciente: null,
         reserva: null,
         motivo: undefined,
+        bloqueo: undefined,
         limpiezaDesde: undefined,
         mantenimientoTipo: undefined,
         ultimaLimpieza: TIEMPOS_ULTIMA_LIMPIEZA[contador % TIEMPOS_ULTIMA_LIMPIEZA.length],
@@ -609,6 +662,7 @@ function generateCamas() {
     if (cur.mantenimientoTipo) cama.mantenimientoTipo = cur.mantenimientoTipo;
     if (cur.reserva) cama.reserva = cur.reserva;
     if (cur.motivo) cama.motivo = cur.motivo;
+    if (cur.bloqueo) cama.bloqueo = cur.bloqueo;
   });
 
   return camas;

@@ -1,8 +1,50 @@
 /* .modal-overlay/.modal-card/.task-mini-modal-card/.form-field/
-   .tf-readonly-value: definidas en ../../shared/shared.css — acá solo el
-   ancho propio del modal. */
-.ap-modal-card{width:440px;}
+   .tf-readonly-value: definidas en ../GestionCamas.css — acá solo el ancho
+   propio del modal. */
+.ap-modal-card{width:640px;}
 
 /* Formulario corto, sin campos con dropdown propio — no necesita el fix de
    overflow-y:visible que sí requieren CambiarEstadoModal/ReasignarTurnoModal
    (no hay ningún FormSelect acá). */
+
+/* Respiro entre campos (encargo explícito) — .modal-body no trae gap propio
+   (GestionCamas.css), cada .form-field solo separa su propio label/input
+   (gap:4px interno). Acá se convierte .modal-body en columna flex para que
+   los campos queden separados 16px entre sí, sin tocar la definición
+   compartida de .modal-body (mismo patrón que ReservarCamaModal.css). */
+.ap-modal-card .modal-body{display:flex;flex-direction:column;gap:16px;}
+
+/* Trigger tipo-select que abre BuscarPacienteModal (ver
+   AsignarPacienteModal.jsx) — mismo border/radius/alto que un <input> de
+   .form-field, pero es un <button> (no hay texto editable acá, todo el
+   valor viene del buscador). */
+.ap-patient-trigger{
+  display:flex;align-items:center;gap:8px;width:100%;height:var(--input-md);
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;
+  background:var(--surface);color:var(--ink-500);font-family:inherit;font-size:var(--fs-base);
+  cursor:pointer;text-align:left;
+}
+.ap-patient-trigger:hover{border-color:var(--ink-400);}
+.ap-patient-trigger .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+
+/* Paciente ya elegido (una admisión, ver BuscarPacienteModal.jsx) — mismo
+   criterio visual que .pi-patient-banner (PreIngresoModal.css:
+   avatar+nombre+meta), acá más compacto (card de 440px) y con el botón "x"
+   para volver a abrir el buscador. */
+.ap-patient-card{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+}
+.ap-avatar{width:40px;height:40px;font-size:var(--fs-base);font-weight:var(--fw-semibold);flex-shrink:0;}
+.ap-patient-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.ap-patient-name{
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.ap-patient-meta{font-size:var(--fs-base);color:var(--ink-500);}
+.ap-patient-clear{
+  width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);background:transparent;border:none;cursor:pointer;flex-shrink:0;
+}
+.ap-patient-clear:hover{background:var(--gray-bg);color:var(--ink-700);}
+.ap-patient-clear .icon{width:15px;height:15px;}

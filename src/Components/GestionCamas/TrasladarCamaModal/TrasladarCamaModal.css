@@ -1,0 +1,11 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.form-field/
+   .tf-readonly-value/.fp-section-title: definidas en ../GestionCamas.css —
+   acá solo el ancho propio del modal, el gap entre campos y el grid de 2
+   columnas de los selects de destino. */
+.tc-modal-card{width:520px;}
+
+/* Respiro entre campos (mismo patrón que AsignarPacienteModal.css/
+   ReservarCamaModal.css) — .modal-body no trae gap propio. */
+.tc-modal-card .modal-body{display:flex;flex-direction:column;gap:16px;}
+
+.tc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}

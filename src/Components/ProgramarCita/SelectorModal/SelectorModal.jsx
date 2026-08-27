@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import './SelectorModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuSearch } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Quita tildes para que la búsqueda encuentre "cardiologia" al escribir
 // "cardiología" o viceversa (compara por rango de código en vez de una
@@ -100,8 +101,8 @@ export default function SelectorModal({
         </div>
 
         <div className="pc-modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={handleConfirm} disabled={!pendingId}>Seleccionar</button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button onClick={handleConfirm} disabled={!pendingId}>Seleccionar</Button>
         </div>
       </div>
     </div>

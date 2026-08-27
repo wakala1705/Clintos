@@ -86,7 +86,6 @@
   --clinical-status-cleaning:#c98a12;
   --clinical-status-cleaning-bg:#faecd2;
   --clinical-status-cleaning-fg:#3a2600;
-  --clinical-status-cleaning-panel-text:#3a2600;
   /* Fallback "Ocupada sin datos de población" — ver GestionCamas.css. */
   --clinical-status-unknown:#475569;
   --clinical-status-unknown-bg:#e2e8f0;
@@ -416,14 +415,14 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
 /* ---------- BUTTONS ---------- */
 .btn{
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:var(--btn-gap);
   font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
-  padding:8px 16px;border-radius:var(--radius);
-  border:1px solid transparent;cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  padding:var(--btn-padding);border-radius:var(--btn-radius);
+  border:var(--btn-border-width) solid transparent;cursor:pointer;
+  transition:var(--btn-transition);
   white-space:nowrap;
 }
-.btn .icon{width:18px;height:18px;}
+.btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
 .btn-primary{background:var(--primary);color:#fff;}
 .btn-primary:hover{background:var(--primary-dark);}
 .btn-outline{background:transparent;color:var(--primary);border-color:var(--primary);}
@@ -436,10 +435,10 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .btn-warning-outline:hover{background:var(--amber-bg);}
 .btn-danger{background:var(--red);color:#fff;}
 .btn-danger:hover{background:#a82323;}
-.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
-.btn-sm{padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);gap:6px;}
-.btn-sm .icon{width:15px;height:15px;}
+.btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.btn[disabled]{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
+.btn-sm{padding:var(--btn-padding-sm);font-size:var(--fs-sm);gap:var(--btn-gap-sm);}
+.btn-sm .icon{width:var(--btn-icon-size-sm);height:var(--btn-icon-size-sm);}
 
 /* ---------- FILTER BAR (chips, search, popovers) ---------- */
 .filter-bar{

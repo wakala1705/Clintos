@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import './FichaNotFound.css';
 import { LuCircleAlert, LuUserX } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Mismo patrón visual que PatientsEmptyState (Lista de Pacientes): icono +
 // título + subtítulo + acción primaria, dos variantes que no deben verse
@@ -16,7 +17,7 @@ export default function FichaNotFound({ variant, onRetry }) {
         <div className="fp-empty-icon"><LuCircleAlert className="icon" /></div>
         <div className="fp-empty-title">No pudimos cargar la ficha del paciente</div>
         <div className="fp-empty-sub">Ocurrió un error al consultar el servidor. Intenta de nuevo.</div>
-        <button type="button" className="btn btn-secondary" onClick={onRetry}>Reintentar</button>
+        <Button variant="secondary" onClick={onRetry}>Reintentar</Button>
       </div>
     );
   }
@@ -26,9 +27,9 @@ export default function FichaNotFound({ variant, onRetry }) {
       <div className="fp-empty-icon"><LuUserX className="icon" /></div>
       <div className="fp-empty-title">No encontramos este paciente</div>
       <div className="fp-empty-sub">El enlace puede estar roto o el paciente ya no existe en el sistema.</div>
-      <button type="button" className="btn btn-primary" onClick={() => router.push('/lista-pacientes')}>
+      <Button onClick={() => router.push('/lista-pacientes')}>
         Volver a la lista
-      </button>
+      </Button>
     </div>
   );
 }

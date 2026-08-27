@@ -6,6 +6,7 @@ import TriageBadge from './TriageBadge/TriageBadge';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import { ESTADO_LABEL } from '@/hooks/Admisiones/mockAdmisionesData';
 import { LuEye, LuPencil } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Tabla de escritorio/tablet + tarjetas de mobile del mismo dataset — se
 // renderizan ambas y la CSS decide cuál mostrar según el ancho bajo 768px
@@ -119,9 +120,9 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onReg
               <span>{a.tipoContrato} · {a.tipoAdmision}</span>
             </div>
             <div className="adm-card-actions" onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="btn btn-secondary" onClick={() => onDetalle(a)}>
-                <LuEye className="icon" />Detalles
-              </button>
+              <Button variant="secondary" icon={LuEye} className="adm-detalle-btn" onClick={() => onDetalle(a)}>
+                Detalles
+              </Button>
               <button type="button" className="adm-icon-btn" onClick={() => onEditar(a)} aria-label={`Editar admisión de ${a.nombreAfiliado}`} title="Editar">
                 <LuPencil className="icon" />
               </button>

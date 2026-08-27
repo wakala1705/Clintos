@@ -14,6 +14,7 @@ import { LuListChecks, LuSyringe } from 'react-icons/lu';
 import { ESTADO_URGENCIA, MOCK_PACIENTES, matchesProxima, normalize } from '@/hooks/Vacunacion/mockVacunacionData';
 import EsquemaVacunacion from '@/Components/EsquemaVacunacion/EsquemaVacunacion';
 import RegistrarVacunacionModal from './RegistrarVacunacionModal/RegistrarVacunacionModal';
+import Button from '@/Components/Button/Button';
 
 // Ruta /vacunacion — pantalla principal de PyMS (Promoción y Mantenimiento de
 // la Salud, ver Sidebar.jsx). Todo el filtrado/orden pasa sobre el mock en
@@ -142,14 +143,12 @@ export default function Vacunacion() {
               <p>Gestiona los esquemas y registros de vacunación de tus pacientes.</p>
             </div>
             <div className="vac-page-head-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => window.ncToast?.('Gestionar esquemas (en desarrollo).')}>
-                <LuListChecks className="icon" />
+              <Button variant="secondary" icon={LuListChecks} onClick={() => window.ncToast?.('Gestionar esquemas (en desarrollo).')}>
                 Gestionar esquemas
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => setRegistrarModal({})}>
-                <LuSyringe className="icon" />
+              </Button>
+              <Button icon={LuSyringe} onClick={() => setRegistrarModal({})}>
                 Registrar vacunación
-              </button>
+              </Button>
             </div>
           </div>
 

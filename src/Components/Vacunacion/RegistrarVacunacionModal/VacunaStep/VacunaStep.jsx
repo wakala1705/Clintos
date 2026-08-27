@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './VacunaStep.css';
 import { LuCircleCheck, LuClock, LuPlus, LuShieldAlert, LuTriangleAlert } from 'react-icons/lu';
 import { ESQUEMA_LABEL, MOTIVOS_FUERA_ESQUEMA, VACUNAS_CATALOGO } from '@/hooks/Vacunacion/mockVacunacionData';
+import Button from '@/Components/Button/Button';
 
 function DosisBadge({ estado, diasAtraso }) {
   if (estado === 'proxima') return <span className="rv-dosis-badge proxima"><LuClock className="icon" aria-hidden="true" />Próxima</span>;
@@ -52,12 +53,12 @@ export default function VacunaStep({ paciente, value, onChange }) {
           <LuShieldAlert className="icon" aria-hidden="true" />
           <h4>Este paciente no tiene un esquema de vacunación activo.</h4>
           <div className="rv-empty-state-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => window.ncToast?.('Seleccionar esquema (en desarrollo).')}>
+            <Button variant="secondary" onClick={() => window.ncToast?.('Seleccionar esquema (en desarrollo).')}>
               Seleccionar esquema
-            </button>
-            <button type="button" className="btn btn-primary" onClick={() => setSubview('fuera-esquema')}>
+            </Button>
+            <Button onClick={() => setSubview('fuera-esquema')}>
               Registrar vacuna fuera del esquema
-            </button>
+            </Button>
           </div>
         </div>
       ) : subview === 'fuera-esquema' ? (
@@ -94,10 +95,9 @@ export default function VacunaStep({ paciente, value, onChange }) {
           <h4>Esquema completo</h4>
           <p>Este paciente no tiene dosis pendientes en su esquema.</p>
           <div className="rv-empty-state-actions">
-            <button type="button" className="btn btn-primary" onClick={() => setSubview('fuera-esquema')}>
-              <LuPlus className="icon" aria-hidden="true" />
+            <Button icon={LuPlus} onClick={() => setSubview('fuera-esquema')}>
               Registrar vacuna fuera del esquema
-            </button>
+            </Button>
           </div>
         </div>
       ) : (

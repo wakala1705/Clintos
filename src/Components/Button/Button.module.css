@@ -1,0 +1,110 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--btn-gap);
+  font-family: inherit;
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-base);
+  padding: var(--btn-padding);
+  border-radius: var(--btn-radius);
+  border: var(--btn-border-width) solid transparent;
+  cursor: pointer;
+  transition: var(--btn-transition);
+  white-space: nowrap;
+}
+
+.icon {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+}
+
+.btn:focus-visible {
+  outline: var(--btn-focus-outline) solid var(--primary);
+  outline-offset: var(--btn-focus-offset);
+}
+
+.btn[disabled] {
+  opacity: var(--btn-disabled-opacity);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.sm {
+  padding: var(--btn-padding-sm);
+  font-size: var(--fs-sm);
+  gap: var(--btn-gap-sm);
+}
+
+.sm .icon {
+  width: var(--btn-icon-size-sm);
+  height: var(--btn-icon-size-sm);
+}
+
+.primary {
+  background: var(--primary);
+  color: #fff;
+}
+.primary:hover {
+  background: var(--primary-dark);
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--ink-700);
+  border-color: var(--border);
+}
+.secondary:hover {
+  background: var(--bg);
+  border-color: var(--ink-400);
+}
+
+.outline {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.outline:hover {
+  background: var(--primary-50);
+}
+
+.tinted {
+  background: var(--primary-50);
+  color: var(--primary-dark);
+  border-color: var(--primary-100);
+}
+.tinted:hover {
+  background: var(--primary-100);
+}
+
+/* border-color sin token equivalente todavía (ninguna feature define un
+   tinte ámbar de borde aparte de --amber-bg/--amber-fg) — valor fijo hasta
+   que exista. */
+.warningOutline {
+  background: var(--surface);
+  color: var(--amber-fg);
+  border-color: #f4dfae;
+}
+.warningOutline:hover {
+  background: var(--amber-bg);
+}
+
+/* Hover sin token equivalente todavía (ninguna feature define un
+   --red-dark) — valor fijo hasta que exista. */
+.danger {
+  background: var(--red);
+  color: #fff;
+}
+.danger:hover {
+  background: #a82323;
+}
+
+/* border-color sin token equivalente todavía — valor fijo hasta que
+   exista. El resto (color/hover) sí usa --red/--red-bg. */
+.dangerOutline {
+  background: var(--surface);
+  color: var(--red);
+  border-color: #f0d3d3;
+}
+.dangerOutline:hover {
+  background: var(--red-bg);
+}

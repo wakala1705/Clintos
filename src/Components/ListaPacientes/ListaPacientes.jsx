@@ -25,6 +25,7 @@ import PatientsTableSkeleton from '@/Components/ListaPacientes/PatientsTableSkel
 import PatientsEmptyState from '@/Components/ListaPacientes/PatientsEmptyState/PatientsEmptyState';
 import Pagination from '@/Components/ListaPacientes/Pagination/Pagination';
 import { LuDownload, LuUserPlus } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const PAGE_SIZE = 10;
 const EMPTY_FILTERS = { estado: '', eps: '', sexo: '', rangoEdad: '', sede: '' };
@@ -240,14 +241,12 @@ export default function ListaPacientes() {
               <p>Consulta, filtra y gestiona la información de tus pacientes.</p>
             </div>
             <div className="lp-page-header-actions">
-              <button type="button" className="btn btn-secondary" onClick={handleExport}>
-                <LuDownload className="icon" />
+              <Button variant="secondary" icon={LuDownload} onClick={handleExport}>
                 Exportar
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => window.apOpen()}>
-                <LuUserPlus className="icon" />
+              </Button>
+              <Button icon={LuUserPlus} onClick={() => window.apOpen()}>
                 Agregar paciente
-              </button>
+              </Button>
             </div>
           </div>
 

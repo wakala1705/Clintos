@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './FiltersRow.css';
 import { EPS_OPTIONS, RANGO_EDAD_OPTIONS, SEDE_OPTIONS } from '@/hooks/ListaPacientes/mockPatientsData';
 import { LuChevronDown, LuFilter } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const FILTER_KEYS = ['estado', 'eps', 'sexo', 'rangoEdad', 'sede'];
 
@@ -102,8 +103,8 @@ export default function FiltersRow({ filters, onChangeFilter, showSede, sortBy, 
             )}
 
             <div className="fp-actions">
-              <button type="button" className="btn btn-secondary" onClick={handleClear} disabled={activeCount === 0}>Limpiar</button>
-              <button type="button" className="btn btn-primary" onClick={() => setOpen(false)}>Aplicar</button>
+              <Button variant="secondary" onClick={handleClear} disabled={activeCount === 0}>Limpiar</Button>
+              <Button onClick={() => setOpen(false)}>Aplicar</Button>
             </div>
           </div>
         )}

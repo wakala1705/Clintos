@@ -71,4 +71,8 @@ html[data-theme="dark"] .adm-atendido-si{color:var(--green);}
 .adm-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .adm-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);color:var(--ink-700);}
 .adm-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.adm-card-actions .btn{flex:1;justify-content:center;}
+/* Antes ".adm-card-actions .btn" — el botón "Detalles" ahora es
+   @/Components/Button/Button (CSS Modules, no lleva la clase global .btn,
+   ver AGENTS.md "Botones"), así que este layout se engancha por una clase
+   explícita pasada vía className en vez de depender de .btn. */
+.adm-card-actions .adm-detalle-btn{flex:1;justify-content:center;}

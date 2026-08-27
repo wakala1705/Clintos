@@ -38,6 +38,26 @@
   --bp-tablet: 768px;
   --bp-desktop: 1024px;
   --bp-wide: 1440px;
+
+  /* Escala de botones global (ver AGENTS.md "Botones") — building blocks
+     para un futuro componente Button; no reemplaza los tokens de color por
+     feature (--primary, --red, --border...) que cada :root ya declara.
+     Mismo criterio de no-duplicación por feature que --fs-* / --fw-*: no
+     tiene variante de tema oscuro/alto contraste. --btn-radius es
+     independiente de --radius (el genérico que usan cards/inputs/chips por
+     feature) para que un cambio en uno no arrastre al otro sin querer. */
+  --btn-radius: 8px;
+  --btn-border-width: 1px;
+  --btn-gap: 8px;
+  --btn-gap-sm: 6px;
+  --btn-padding: 8px 16px;
+  --btn-padding-sm: 8px 12px;
+  --btn-icon-size: 18px;
+  --btn-icon-size-sm: 15px;
+  --btn-disabled-opacity: .45;
+  --btn-focus-outline: 2px;
+  --btn-focus-offset: 2px;
+  --btn-transition: background .15s, border-color .15s, color .15s, opacity .15s;
 }
 
 @media (prefers-color-scheme: dark) {

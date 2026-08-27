@@ -8,39 +8,10 @@
    medium/large (encargo original): el ancho default de .modal-card (780px)
    ya cubre eso, sin necesidad de una variante nueva.
 
-   ---------- Drill-in detalle↔historial (encargo explícito) ----------
-   .modal-body pasa a ser el "viewport" (overflow-x:hidden recorta el track,
-   overflow-y:auto sigue paginando verticalmente igual que antes) — se le
-   agrega la clase .cb-detail-viewport además de .modal-body (selector
-   compuesto para ganarle en especificidad al padding:20px 24px de
-   GestionCamas.css sin importar el orden de imports; el padding se mueve a
-   cada .cb-detail-view individual). .cb-detail-track es un flex row de 2
-   hijos, cada uno flex:0 0 100% (100% del content-box del propio track, ver
-   comentario en BedDetailModal.jsx) — así translateX(-100%) mueve el track
-   exactamente un "viewport" completo, sin animar left/width (GPU-friendly,
-   sin reflow). Alto fijo entre vistas "gratis": con align-items:stretch por
-   default y los 2 hijos SIEMPRE montados (nunca display:none), el track
-   mide su alto como el máximo de ambos — la vista más corta simplemente
-   queda con espacio vacío abajo en vez de encoger el modal. */
+   El drill-in interno detalle↔historial que este modal tenía se quitó:
+   "Ver historial completo" ahora abre HistorialCamaModal (ver
+   BedDetailModal.jsx) en vez de una 2da vista dentro del mismo modal. */
 .cb-detail-body{display:flex;flex-direction:column;gap:0;}
-
-/* El ícono de cabecera (34px) desaparece en la vista historial y el botón
-   "←" que lo reemplaza es más chico (30px, mismo tamaño que el botón
-   cerrar) — sin esto, la fila del header se encoge ~4px al entrar a
-   historial (el ícono era el elemento más alto de esa fila) y el modal
-   "respira" entre vistas, justo lo que el encargo pide evitar. Se fija acá
-   (scoped a este modal vía .cb-detail-modal-card) en vez de en
-   ModalHeader.css: los otros 20+ consumidores de ModalHeader no tienen este
-   problema (no alternan ícono/atrás) y no deben ganar un min-height que no
-   necesitan. */
-.cb-detail-modal-card .modal-header-titles{min-height:34px;}
-
-.modal-body.cb-detail-viewport{padding:0;overflow-x:hidden;overflow-y:auto;}
-.cb-detail-track{
-  display:flex;align-items:flex-start;
-  transition:transform var(--dur-base) var(--ease-base);
-}
-.cb-detail-view{flex:0 0 100%;width:100%;min-width:0;padding:20px 24px;}
 
 .cb-detail-estado-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0 8px;}
 

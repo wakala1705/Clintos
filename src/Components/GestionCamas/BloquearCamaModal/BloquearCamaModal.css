@@ -1,0 +1,19 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/
+   .modal-footer/.form-field/.tf-readonly-value: definidas en
+   ../GestionCamas.css — acá solo el ancho propio del modal, el layout de 2
+   columnas de las fechas y el error inline del rango. */
+.bc-modal-card{width:440px;}
+
+/* Mismo fix que CambiarEstadoModal.css: formulario corto, sin scroll propio
+   — sin esto el listbox absoluto de FormSelect queda recortado por el
+   overflow-y:auto genérico de .modal-body. */
+.bc-modal-card .modal-body{overflow-y:visible;}
+
+/* Respiro entre campos (mismo criterio que .rc-modal-card .modal-body en
+   ReservarCamaModal.css) — .modal-body no trae gap propio (GestionCamas.css),
+   cada .form-field solo separa su propio label/input (gap:4px interno). */
+.bc-modal-card .modal-body{display:flex;flex-direction:column;gap:12px;}
+
+.bc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.bc-error{display:block;margin-top:-8px;font-size:var(--fs-sm);color:var(--red);}

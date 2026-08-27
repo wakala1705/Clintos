@@ -42,7 +42,11 @@
 }
 .fp-section select:focus{outline:2px solid var(--primary);outline-offset:1px;}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
-.fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
+/* Antes ".fp-actions .btn" — los dos botones son @/Components/Button/Button
+   (CSS Modules, no llevan la clase global .btn, ver AGENTS.md "Botones");
+   .fp-actions no tiene otro hijo, por eso el selector por elemento es
+   seguro acá. */
+.fp-actions button{padding:7px 14px;font-size:var(--fs-base);}
 
 .lp-filters-spacer{flex:1;min-width:12px;}
 .lp-select-field{display:flex;flex-direction:column;gap:4px;min-width:150px;max-width:190px;}

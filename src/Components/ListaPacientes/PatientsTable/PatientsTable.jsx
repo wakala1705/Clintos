@@ -3,6 +3,7 @@ import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { calcularEdad } from '@/hooks/ListaPacientes/mockPatientsData';
 import { LuCalendarPlus, LuEye, LuFileText } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo' };
 
@@ -101,13 +102,13 @@ export default function PatientsTable({
               <span>{p.eps}</span>
             </div>
             <div className="lp-card-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => onVerFicha(p)}>
-                <LuEye className="icon" />Ver ficha
-              </button>
+              <Button variant="secondary" icon={LuEye} className="lp-card-action-btn" onClick={() => onVerFicha(p)}>
+                Ver ficha
+              </Button>
               {canScheduleAppointment && (
-                <button type="button" className="btn btn-primary" onClick={() => onAgendarCita(p)}>
-                  <LuCalendarPlus className="icon" />Agendar
-                </button>
+                <Button icon={LuCalendarPlus} className="lp-card-action-btn" onClick={() => onAgendarCita(p)}>
+                  Agendar
+                </Button>
               )}
               <RowActionsMenu
                 canEdit={canEdit}

@@ -138,15 +138,15 @@ html[data-theme="dark"][data-contrast="high"]{
    AtencionPaciente.jsx (botón "Volver a la agenda" del estado no encontrado) —
    2+ consumidores, por eso vive acá y no en HistoriaClinica.css. */
 .btn{
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:var(--btn-gap);
   font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
-  padding:8px 16px;border-radius:var(--radius);
-  border:1px solid transparent;cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  padding:var(--btn-padding);border-radius:var(--btn-radius);
+  border:var(--btn-border-width) solid transparent;cursor:pointer;
+  transition:var(--btn-transition);
   white-space:nowrap;
 }
-.btn .icon{width:18px;height:18px;}
-.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
 .btn-primary{background:var(--primary);color:#fff;}
 .btn-primary:hover{background:var(--primary-dark);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
@@ -158,7 +158,7 @@ html[data-theme="dark"][data-contrast="high"]{
    estaban cubiertos arriba. Cubre también el guardado en curso del wizard
    (.pf-footer-actions .btn, ver PlantillaCrecimt2.css) marcando el botón
    como no interactivo mientras la acción está en vuelo. */
-.btn[disabled],.btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.btn[disabled],.btn:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
 
 /* ---------- DATA TABLE (base) ----------
    Usado por AgendaTable (que además agrega su cabecera agrupada de 2 filas,

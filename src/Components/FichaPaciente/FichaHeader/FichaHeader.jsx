@@ -4,6 +4,7 @@ import Link from 'next/link';
 import './FichaHeader.css';
 import RowActionsMenu from '@/Components/ListaPacientes/PatientsTable/RowActionsMenu/RowActionsMenu';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
+import Button from '@/Components/Button/Button';
 import { LuArrowLeft, LuCalendarPlus, LuFileText, LuTriangleAlert } from 'react-icons/lu';
 
 const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo' };
@@ -55,14 +56,14 @@ export default function FichaHeader({
 
         <div className="fp-header-actions">
           {canViewHistoria && (
-            <button type="button" className="btn btn-secondary" onClick={onHistoriaClinica}>
-              <LuFileText className="icon" />Historia clínica
-            </button>
+            <Button variant="secondary" icon={LuFileText} onClick={onHistoriaClinica}>
+              Historia clínica
+            </Button>
           )}
           {canScheduleAppointment && (
-            <button type="button" className="btn btn-primary" onClick={onAgendarCita}>
-              <LuCalendarPlus className="icon" />Agendar cita
-            </button>
+            <Button icon={LuCalendarPlus} onClick={onAgendarCita}>
+              Agendar cita
+            </Button>
           )}
           <RowActionsMenu
             canEdit={canEdit}

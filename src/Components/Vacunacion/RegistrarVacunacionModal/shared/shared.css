@@ -3,10 +3,12 @@
    sola vez desde RegistrarVacunacionModal.jsx, ver AGENTS.md (mismo criterio
    que PlantillaCrecimt2/shared). Reglas usadas por un solo paso viven en el
    .css propio de ese paso. .modal-overlay/.modal-card/.modal-body,
-   .search-field, .btn, .icon, .sr-only, .vac-esquema-badge NO se repiten
-   acá: ya están definidas en ../../Vacunacion.css (dueño de tokens de esta
-   ruta), este wizard vive dentro de esa misma página. El header usa
-   @/Components/ModalHeader/ModalHeader (homologado en todo el proyecto). */
+   .search-field, .icon, .sr-only, .vac-esquema-badge NO se repiten acá: ya
+   están definidas en ../../Vacunacion.css (dueño de tokens de esta ruta),
+   este wizard vive dentro de esa misma página. Los botones son
+   @/Components/Button/Button (homologado, ver AGENTS.md "Botones") y el
+   header usa @/Components/ModalHeader/ModalHeader (homologado en todo el
+   proyecto). */
 
 /* ---------- SECCIÓN / CAMPO ---------- */
 .rv-section{margin-bottom:20px;}

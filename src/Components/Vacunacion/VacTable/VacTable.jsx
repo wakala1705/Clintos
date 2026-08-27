@@ -3,6 +3,7 @@ import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import VacRowMenu from '../VacRowMenu/VacRowMenu';
 import { ESQUEMA_LABEL, ESTADO_LABEL } from '@/hooks/Vacunacion/mockVacunacionData';
 import { LuArrowDown, LuArrowUp, LuCircleCheck, LuEye, LuTriangleAlert } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const SORTABLE_COLUMNS = [
   { key: 'nombre', label: 'Paciente' },
@@ -136,9 +137,9 @@ export default function VacTable({ pacientes, sortBy, sortDir, onSort, onVerDeta
                 {p.ultimaAplicacionLabel && <span>Última aplicación: {p.ultimaAplicacionLabel}</span>}
               </div>
               <div className="vac-card-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => onVerDetalle(p)}>
-                  <LuEye className="icon" />Ver detalle
-                </button>
+                <Button variant="secondary" icon={LuEye} className="vac-detalle-btn" onClick={() => onVerDetalle(p)}>
+                  Ver detalle
+                </Button>
                 <VacRowMenu
                   onRegistrarAplicacion={() => onRegistrarAplicacion(p)}
                   onVerEsquema={() => onVerEsquema(p)}

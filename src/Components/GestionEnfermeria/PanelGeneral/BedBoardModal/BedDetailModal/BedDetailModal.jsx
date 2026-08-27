@@ -176,7 +176,7 @@ export default function BedDetailModal({
               <button
                 type="button"
                 key={action}
-                className={`btn ${primary ? 'btn-primary' : 'btn-outline'} bdm-action-btn`}
+                className={`btn ${primary ? 'btn-primary' : 'btn-secondary'} bdm-action-btn`}
                 onClick={() => handleActionClick(action)}
               >
                 <Icon className="icon" aria-hidden="true" />

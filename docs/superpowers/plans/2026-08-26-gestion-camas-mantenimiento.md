@@ -2471,7 +2471,7 @@ export default function GestionCamasMantenimiento() {
   padding:16px;overflow-y:auto;
 }
 
-.cbm-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+.cbm-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;flex-wrap:wrap;}
 .cbm-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cbm-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 

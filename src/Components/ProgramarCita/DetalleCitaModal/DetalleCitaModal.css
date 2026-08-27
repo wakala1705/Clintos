@@ -47,7 +47,11 @@
 .pc-detail-field .v{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);word-break:break-word;}
 
 .pc-detail-actions{flex-wrap:nowrap;justify-content:flex-start !important;gap:8px;}
-.pc-detail-actions .btn{flex:1;padding-left:10px;padding-right:10px;justify-content:center;}
+/* Antes ".pc-detail-actions .btn" — los 5 botones son
+   @/Components/Button/Button (CSS Modules, no llevan la clase global .btn,
+   ver AGENTS.md "Botones"); .pc-detail-actions no tiene otro hijo, por eso
+   el selector por elemento es seguro acá. */
+.pc-detail-actions button{flex:1;padding-left:10px;padding-right:10px;justify-content:center;}
 
 /* ---------- Confirmación "¿Cancelar esta cita?" ----------
    Antes "Cancelar cita" cerraba el modal igual que cualquier otro botón del

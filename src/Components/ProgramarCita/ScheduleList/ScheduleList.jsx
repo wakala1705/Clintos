@@ -1,6 +1,7 @@
 import './ScheduleList.css';
 import { STATE_LABEL, TIPO_LABEL } from '@/hooks/ProgramarCita/agendaMockData';
 import { LuCalendarPlus, LuClock } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Vista alternativa de ScheduleGrid para el rango tablet (<=1024px,
 // --bp-desktop, ver AGENTS.md "Responsive / Breakpoints") — mismos
@@ -35,9 +36,9 @@ export default function ScheduleList({
                 <div className="pc-list-col-top">{c.headerTop}</div>
                 <div className="pc-list-col-bottom">{c.headerBottom}</div>
               </div>
-              <button type="button" className="btn btn-secondary" onClick={() => onEmptyCellClick(c.id)}>
-                <LuCalendarPlus className="icon" />Nueva cita
-              </button>
+              <Button variant="secondary" icon={LuCalendarPlus} onClick={() => onEmptyCellClick(c.id)}>
+                Nueva cita
+              </Button>
             </div>
             {items.length === 0 ? (
               <div className="pc-list-empty">Sin citas agendadas.</div>

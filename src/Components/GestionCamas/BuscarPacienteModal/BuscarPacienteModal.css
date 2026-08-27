@@ -1,0 +1,45 @@
+/* .modal-overlay/.modal-card/.modal-footer: ../GestionCamas.css — acá el
+   ancho propio y todo lo específico de la tabla de admisiones (no hay
+   equivalente reutilizable en el resto de la feature). */
+.bp-modal-card{width:760px;}
+
+.bp-search-row{padding:16px 24px 0;flex-shrink:0;}
+.bp-search-field{position:relative;}
+.bp-search-field .icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-500);
+}
+.bp-search-field input{
+  width:100%;height:var(--input-md);padding:0 12px 0 34px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.bp-search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.bp-search-field input::placeholder{color:var(--ink-400);}
+
+/* flex:1 + min-height:0 (no solo overflow-y:auto) para que esta lista
+   encoja y scrollee dentro de .modal-card en vez de empujar el footer fuera
+   del viewport — mismo motivo que documenta .modal-card > form en
+   GestionCamas.css, acá aplicado directo a un hijo flex de .modal-card (este
+   modal no tiene <form> envolviendo el contenido). */
+.bp-table-wrap{
+  flex:1;min-height:0;overflow-y:auto;margin:16px 24px 24px;
+  border:1px solid var(--border);border-radius:var(--radius);
+}
+.bp-table-wrap table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.bp-table-wrap thead th{
+  position:sticky;top:0;text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.02em;padding:10px 14px;background:#f7f9fd;border-bottom:1px solid var(--border);
+}
+html[data-theme="dark"] .bp-table-wrap thead th{background:#1c2333;}
+.bp-table-wrap tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.bp-table-wrap tbody tr{cursor:pointer;transition:background .1s;}
+.bp-table-wrap tbody tr:hover{background:#f7f9fd;}
+.bp-table-wrap tbody tr.selected{background:var(--primary-50);}
+.bp-table-wrap tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+.bp-table-wrap tbody tr:last-child td{border-bottom:none;}
+.bp-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.bp-row-empty td{text-align:center;color:var(--ink-500);padding:24px;cursor:default;}
+.bp-row-empty:hover{background:transparent;}
+
+.bp-patient-cell{display:flex;align-items:center;gap:10px;}
+.bp-avatar{width:28px;height:28px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);flex-shrink:0;}
+.bp-pname{font-weight:var(--fw-medium);}

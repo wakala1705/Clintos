@@ -20,9 +20,9 @@
 /* Respiro entre campos (encargo explícito) — .modal-body no trae gap propio
    (GestionCamas.css), cada .form-field solo separa su propio label/input
    (gap:4px interno). Acá se convierte .modal-body en columna flex para que
-   los campos (y el banner de error de envío) queden separados 8px entre
+   los campos (y el banner de error de envío) queden separados 16px entre
    sí, sin tocar la definición compartida de .modal-body. */
-.rc-modal-card .modal-body{display:flex;flex-direction:column;gap:8px;}
+.rc-modal-card .modal-body{display:flex;flex-direction:column;gap:16px;}
 
 .rc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 

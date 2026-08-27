@@ -1,16 +1,15 @@
-/* Referencia de estilo (encargo: rediseño "room board" de 2 paneles) — la
-   tarjeta se parte en panel izquierdo sólido (identidad de la cama, texto
-   blanco) + panel derecho con tinte suave del mismo hue (estado/contenido).
-   El color (hue) NO es 1:1 con `cama.estado`: para Ocupada depende de la
-   población del paciente — ver `cardHue`, hooks/GestionCamas/bedContextFormat.js.
-   Por eso las reglas de color de acá están en `.cb-card-hue-<hue>`, no en
+/* Referencia de estilo (encargo: rediseño "tenue") — sin panel sólido: toda
+   la tarjeta lleva el tinte suave del hue como fondo único (mismos tokens
+   --clinical-status-*-bg/-fg que antes pintaban el panel derecho). El color
+   (hue) NO es 1:1 con `cama.estado`: para Ocupada depende de la población
+   del paciente — ver `cardHue`, hooks/GestionCamas/bedContextFormat.js. Por
+   eso las reglas de color de acá están en `.cb-card-hue-<hue>`, no en
    `.cb-card-<estado>` (esa clase sigue en el JSX solo como hook semántico,
    sin estilos propios). */
 .cb-card{
-  display:flex;align-items:stretch;min-width:0;
+  display:flex;flex-direction:column;gap:6px;min-width:0;
   border:1px solid var(--border);border-radius:var(--radius-lg);
-  overflow:hidden;
-  min-height:150px;
+  padding:12px 14px;
   transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;
 }
 /* Hover discreto (encargo: "elevar ligeramente", "reforzar que es
@@ -20,33 +19,26 @@
   border-color:var(--primary-100);box-shadow:0 4px 14px rgba(16,24,39,.10);transform:translateY(-1px);
 }
 
-/* ---------- Panel izquierdo: identidad de la cama (sólido) ---------- */
-.cb-card-id{
-  flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  min-width:68px;padding:12px 10px;
+/* ---------- Fila superior: ícono de estado + número + menú ---------- */
+.cb-card-top{display:flex;align-items:center;gap:8px;}
+.cb-card-estado-icon{width:18px;height:18px;flex-shrink:0;}
+.cb-card-numero{
+  flex:1;min-width:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);
+  line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-/* Blanco por default (encargo: "texto blanco siempre" en el panel
-   izquierdo) — la única excepción es Limpieza, ver .cb-card-hue-cleaning
-   .cb-card-numero más abajo. Sin sub-label "Cama" (encargo explícito
-   posterior: "no incluir ninguna etiqueta de texto adicional"). */
-.cb-card-numero{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:#fff;line-height:1.15;white-space:nowrap;}
 
-/* ---------- Panel derecho: estado + contexto (tinte suave) ---------- */
-.cb-card-body{flex:1;min-width:0;padding:14px;display:flex;flex-direction:column;gap:6px;}
+/* ---------- Cuerpo: label de estado + contexto ---------- */
+.cb-card-body{display:flex;flex-direction:column;gap:6px;}
 
-.cb-card-top{display:flex;align-items:flex-start;gap:4px;}
 /* Sin nowrap/ellipsis a propósito: la grilla de Mapa de camas fija 6
    columnas (~192px de card, ver .cb-grid en BedBoardModal.css, "encargo
    explícito" — no es una columna angosta de sobra para ensanchar) y el
-   estado más largo ("Mantenimiento") no entra en una sola línea junto al
-   menú aunque se le recorte todo el espacio posible. 2 líneas uppercase se
-   lee bien; un "OC…" truncado no comunica nada. */
+   estado más largo ("Mantenimiento") no entra en una sola línea sin cortar
+   palabras. 2 líneas uppercase se lee bien; un "OC…" truncado no comunica
+   nada. */
 .cb-card-estado-label{
-  flex:1;min-width:0;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
-  text-transform:uppercase;line-height:1.2;padding-top:2px;
-  /* "Mantenimiento" es una sola palabra de 13 caracteres sin espacio para
-     partir — sin esto, en vez de bajar de línea, desborda su propia
-     columna flex y se monta visualmente sobre el menú del costado. */
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  text-transform:uppercase;line-height:1.2;
   overflow-wrap:anywhere;
 }
 
@@ -66,58 +58,64 @@
    porque BedDetailModal reusa el mismo bloque "Estado actual" que esta
    tarjeta. */
 
-/* ---------- Color por clinical-status (panel izquierdo sólido + panel derecho tinte) ----------
+/* ---------- Color por clinical-status (tinte único, sin panel sólido) ----------
    8 estados en 2 grupos (encargo explícito) — Ocupada se separa en 3 según
    población del paciente (`cardHue`, bedContextFormat.js resuelve cuál de
    los 3 aplica); los otros 5 estados llevan una clave fija 1:1. Todos leen
-   los tokens --clinical-status-* (GestionCamas.css/shared.css) — panel fijo
-   entre temas, -bg/-fg si varían (ver comentario completo de esos tokens). */
+   los tokens --clinical-status-*-bg/-fg (GestionCamas.css/shared.css): -bg
+   pinta toda la tarjeta, -fg pinta ícono+número+label — ya están pensados
+   para pasar contraste entre sí (antes -fg ya se usaba sobre -bg para el
+   label del panel derecho), así que no hace falta una excepción de
+   contraste por hue como antes (Limpieza incluida). */
 
 /* Grupo 1 — estados clínicos (cama↔paciente) */
-.cb-card-hue-occupied-male .cb-card-id{background:var(--clinical-status-occupied-male);}
-.cb-card-hue-occupied-male .cb-card-body{background:var(--clinical-status-occupied-male-bg);}
+.cb-card-hue-occupied-male{background:var(--clinical-status-occupied-male-bg);}
+.cb-card-hue-occupied-male .cb-card-estado-icon,
+.cb-card-hue-occupied-male .cb-card-numero,
 .cb-card-hue-occupied-male .cb-card-estado-label{color:var(--clinical-status-occupied-male-fg);}
 
-.cb-card-hue-occupied-female .cb-card-id{background:var(--clinical-status-occupied-female);}
-.cb-card-hue-occupied-female .cb-card-body{background:var(--clinical-status-occupied-female-bg);}
+.cb-card-hue-occupied-female{background:var(--clinical-status-occupied-female-bg);}
+.cb-card-hue-occupied-female .cb-card-estado-icon,
+.cb-card-hue-occupied-female .cb-card-numero,
 .cb-card-hue-occupied-female .cb-card-estado-label{color:var(--clinical-status-occupied-female-fg);}
 
-.cb-card-hue-occupied-pediatric .cb-card-id{background:var(--clinical-status-occupied-pediatric);}
-.cb-card-hue-occupied-pediatric .cb-card-body{background:var(--clinical-status-occupied-pediatric-bg);}
+.cb-card-hue-occupied-pediatric{background:var(--clinical-status-occupied-pediatric-bg);}
+.cb-card-hue-occupied-pediatric .cb-card-estado-icon,
+.cb-card-hue-occupied-pediatric .cb-card-numero,
 .cb-card-hue-occupied-pediatric .cb-card-estado-label{color:var(--clinical-status-occupied-pediatric-fg);}
 
-.cb-card-hue-available .cb-card-id{background:var(--clinical-status-available);}
-.cb-card-hue-available .cb-card-body{background:var(--clinical-status-available-bg);}
+.cb-card-hue-available{background:var(--clinical-status-available-bg);}
+.cb-card-hue-available .cb-card-estado-icon,
+.cb-card-hue-available .cb-card-numero,
 .cb-card-hue-available .cb-card-estado-label{color:var(--clinical-status-available-fg);}
 
-.cb-card-hue-reserved .cb-card-id{background:var(--clinical-status-reserved);}
-.cb-card-hue-reserved .cb-card-body{background:var(--clinical-status-reserved-bg);}
+.cb-card-hue-reserved{background:var(--clinical-status-reserved-bg);}
+.cb-card-hue-reserved .cb-card-estado-icon,
+.cb-card-hue-reserved .cb-card-numero,
 .cb-card-hue-reserved .cb-card-estado-label{color:var(--clinical-status-reserved-fg);}
 
 /* Grupo 2 — estados administrativos (cama como recurso físico, sin paciente) */
-.cb-card-hue-maintenance .cb-card-id{background:var(--clinical-status-maintenance);}
-.cb-card-hue-maintenance .cb-card-body{background:var(--clinical-status-maintenance-bg);}
+.cb-card-hue-maintenance{background:var(--clinical-status-maintenance-bg);}
+.cb-card-hue-maintenance .cb-card-estado-icon,
+.cb-card-hue-maintenance .cb-card-numero,
 .cb-card-hue-maintenance .cb-card-estado-label{color:var(--clinical-status-maintenance-fg);}
 
-.cb-card-hue-out-of-service .cb-card-id{background:var(--clinical-status-out-of-service);}
-.cb-card-hue-out-of-service .cb-card-body{background:var(--clinical-status-out-of-service-bg);}
+.cb-card-hue-out-of-service{background:var(--clinical-status-out-of-service-bg);}
+.cb-card-hue-out-of-service .cb-card-estado-icon,
+.cb-card-hue-out-of-service .cb-card-numero,
 .cb-card-hue-out-of-service .cb-card-estado-label{color:var(--clinical-status-out-of-service-fg);}
 
-/* Excepción de contraste (encargo explícito) — #c98a12 sobre blanco no pasa
-   WCAG AA (2.94:1), así que ACÁ el panel usa texto oscuro en vez del blanco
-   de todos los demás estados (única excepción, ver --clinical-status-
-   cleaning-panel-text). El label del panel derecho también usa -fg (no el
-   tono del panel) porque el ámbar tampoco pasa contra su propio tinte. */
-.cb-card-hue-cleaning .cb-card-id{background:var(--clinical-status-cleaning);}
-.cb-card-hue-cleaning .cb-card-numero{color:var(--clinical-status-cleaning-panel-text);}
-.cb-card-hue-cleaning .cb-card-body{background:var(--clinical-status-cleaning-bg);}
+.cb-card-hue-cleaning{background:var(--clinical-status-cleaning-bg);}
+.cb-card-hue-cleaning .cb-card-estado-icon,
+.cb-card-hue-cleaning .cb-card-numero,
 .cb-card-hue-cleaning .cb-card-estado-label{color:var(--clinical-status-cleaning-fg);}
 
 /* Fallback "Ocupada sin datos de población" (sin género ni edad
    registrados) — no forma parte de la tabla de 8 estados del encargo, ver
    --clinical-status-unknown. */
-.cb-card-hue-unknown .cb-card-id{background:var(--clinical-status-unknown);}
-.cb-card-hue-unknown .cb-card-body{background:var(--clinical-status-unknown-bg);}
+.cb-card-hue-unknown{background:var(--clinical-status-unknown-bg);}
+.cb-card-hue-unknown .cb-card-estado-icon,
+.cb-card-hue-unknown .cb-card-numero,
 .cb-card-hue-unknown .cb-card-estado-label{color:var(--clinical-status-unknown-fg);}
 
 /* Indicador de población pediátrica (encargo explícito) — el ÍCONO LuBaby se
@@ -146,17 +144,3 @@
 .cb-card-clickable{cursor:pointer;}
 .cb-card-clickable:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 
-/* Responsive (encargo explícito: "degradar correctamente en mobile/tablet")
-   — bajo el piso mínimo soportado (--bp-tablet, ver AGENTS.md "Responsive /
-   Breakpoints"; valor numérico repetido acá porque un custom property no es
-   válido dentro de la condición de un @media) los 2 paneles no caben lado a
-   lado sin apretar demasiado el panel derecho: se apilan, con el panel
-   izquierdo pasando a una fila horizontal compacta (solo el número, ya sin
-   sub-label que alinear) en vez de una columna que ocuparía media tarjeta
-   de alto. */
-@media (max-width:768px){
-  .cb-card{flex-direction:column;}
-  .cb-card-id{
-    flex-direction:row;justify-content:center;min-width:0;padding:8px 12px;
-  }
-}

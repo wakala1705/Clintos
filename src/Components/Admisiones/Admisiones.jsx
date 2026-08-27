@@ -15,6 +15,7 @@ import AdmisionesTableSkeleton from '@/Components/Admisiones/AdmisionesTableSkel
 import AdmisionesEmptyState from '@/Components/Admisiones/AdmisionesEmptyState/AdmisionesEmptyState';
 import AdmisionDetalleModal from '@/Components/Admisiones/AdmisionDetalleModal/AdmisionDetalleModal';
 import PreIngresoModal from '@/Components/Admisiones/PreIngresoModal/PreIngresoModal';
+import Button from '@/Components/Button/Button';
 import { LuPlus, LuUserPlus } from 'react-icons/lu';
 
 export default function Admisiones() {
@@ -150,12 +151,12 @@ export default function Admisiones() {
               <p>Registra y gestiona los ingresos hospitalarios{estado !== 'todos' ? ` · ${ESTADO_LABEL[estado] ?? 'Todos'}` : ''}.</p>
             </div>
             <div className="adm-page-header-actions">
-              <button type="button" className="btn btn-primary" onClick={handleNueva}>
-                <LuPlus className="icon" />Nueva admisión
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handlePreIngreso}>
-                <LuUserPlus className="icon" />Pre ingreso
-              </button>
+              <Button icon={LuPlus} onClick={handleNueva}>
+                Nueva admisión
+              </Button>
+              <Button icon={LuUserPlus} onClick={handlePreIngreso}>
+                Pre ingreso
+              </Button>
             </div>
           </div>
 

@@ -16,7 +16,11 @@ import BedTable from './BedTable/BedTable';
 import CambiarEstadoModal from './CambiarEstadoModal/CambiarEstadoModal';
 import AsignarPacienteModal from './AsignarPacienteModal/AsignarPacienteModal';
 import ReservarCamaModal from './ReservarCamaModal/ReservarCamaModal';
+import BloquearCamaModal from './BloquearCamaModal/BloquearCamaModal';
+import TrasladarCamaModal from './TrasladarCamaModal/TrasladarCamaModal';
 import BedDetailModal from './BedDetailModal/BedDetailModal';
+import HistorialCamaModal from './HistorialCamaModal/HistorialCamaModal';
+import DesactivarCamaModal from './DesactivarCamaModal/DesactivarCamaModal';
 import PacienteActualModal from './PacienteActualModal/PacienteActualModal';
 import NuevaCamaModal from './NuevaCamaModal/NuevaCamaModal';
 import GestionCamasSidebar from './GestionCamasSidebar/GestionCamasSidebar';
@@ -60,16 +64,9 @@ const EVENTO_POR_ESTADO = {
 // Acciones que hoy no tienen pantalla propia (fuera del alcance de este
 // cambio, ver MENU_ACCIONES en mockCamasData.js) — mismo aviso "en
 // desarrollo" que el resto del proyecto (window.ncToast, ver AGENTS.md).
+// 'historial' ya no vive acá — tiene pantalla propia (HistorialCamaModal).
 const ACCIONES_EN_DESARROLLO = {
-  historial: (cama) => `Historial de cama ${cama.numero} (en desarrollo).`,
   'ver-mantenimiento': (cama) => `Detalle de mantenimiento de cama ${cama.numero} (en desarrollo).`,
-  // Editar datos maestros de la cama (número/sede/área/piso/sector/tipo...,
-  // mismo alcance que NuevaCamaModal pero para modificar en vez de crear) —
-  // sin pantalla propia todavía: las 197 camas generadas por generateCamas
-  // no tienen código/habitación/clase/nivel poblados (solo las creadas desde
-  // "Nueva cama" sí), así que reusar ese formulario en modo edición hoy
-  // mostraría esos campos vacíos para casi todo el inventario existente.
-  editar: (cama) => `Editar cama ${cama.numero} (en desarrollo).`,
   // Acciones del modal "Paciente actual" (ver PacienteActualModal) — ninguna
   // tiene pantalla propia todavía: "Ver paciente" ahí es la ficha clínica
   // completa (más allá de este snapshot), distinta del "Ver paciente" que
@@ -77,9 +74,6 @@ const ACCIONES_EN_DESARROLLO = {
   'ver-ficha-paciente': (cama) => `Ficha clínica de ${cama.paciente?.nombre ?? 'paciente'} (en desarrollo).`,
   'ver-admision': (cama) => `Admisión ${cama.paciente?.admisionId ?? ''} (en desarrollo).`,
   'iniciar-alta': (cama) => `Alta de ${cama.paciente?.nombre ?? 'paciente'} (en desarrollo).`,
-  // Traslados quedan fuera del alcance v1 (ver Bed_Management_Define.md,
-  // recorte de MVP) — el CTA/menú existen, la pantalla todavía no.
-  trasladar: (cama) => `Traslado de cama ${cama.numero} (en desarrollo).`,
 };
 
 // Bed Board — MVP v1 (ver Bed_Management_Define.md) evolucionado hacia un
@@ -307,25 +301,38 @@ export default function GestionCamas() {
       case 'ver-detalle':
         setModal({ type: 'ver-detalle', camaId });
         return;
+      case 'historial':
+        setModal({ type: 'historial', camaId });
+        return;
+      case 'editar':
+        setModal({ type: 'editar-cama', camaId });
+        return;
       case 'ver-paciente':
         setModal({ type: 'ver-paciente', camaId });
         return;
       case 'asignar-paciente':
         setModal({ type: 'asignar-paciente', camaId });
         return;
+      case 'trasladar':
+        setModal({ type: 'trasladar', camaId });
+        return;
       case 'mantenimiento':
         setModal({ type: 'cambiar-estado', camaId, presetEstado: 'mantenimiento' });
         return;
       // Atajo directo a "Cambiar estado" preseleccionado en Limpieza (mismo
-      // patrón que 'mantenimiento'/'bloquear') — solo llega acá desde Libre
-      // (único estado con esta entrada en el menú, ver MENU_ACCIONES en
+      // patrón que 'mantenimiento') — solo llega acá desde Libre (único
+      // estado con esta entrada en el menú, ver MENU_ACCIONES en
       // mockCamasData.js); Ocupada/Mantenimiento ya resuelven esta misma
       // transición vía 'liberar'/'finalizar-mantenimiento'.
       case 'limpieza':
         setModal({ type: 'cambiar-estado', camaId, presetEstado: 'limpieza' });
         return;
+      // Modal dedicado (encargo sección 19), a diferencia de 'mantenimiento'/
+      // 'limpieza' arriba: Motivo es un catálogo cerrado + Fecha inicio/
+      // Fecha fin/Observación propios, no el genérico "Cambiar estado" (ver
+      // BloquearCamaModal.jsx).
       case 'bloquear':
-        setModal({ type: 'cambiar-estado', camaId, presetEstado: 'bloqueada' });
+        setModal({ type: 'bloquear', camaId });
         return;
       case 'cambiar-estado':
         setModal({ type: 'cambiar-estado', camaId, presetEstado: undefined });
@@ -383,12 +390,35 @@ export default function GestionCamas() {
         window.ncToast?.(`Mantenimiento de cama ${cama.numero} finalizado — pasa a limpieza.`);
         return;
       case 'desbloquear':
-        mutarCama(camaId, { estado: 'libre', motivo: undefined });
+        mutarCama(camaId, { estado: 'libre', motivo: undefined, bloqueo: undefined });
         pushActivity('cama-liberada', `Cama ${cama.numero} habilitada`, 'La cama vuelve a estar libre');
         window.ncToast?.(`Cama ${cama.numero} desbloqueada.`);
         return;
+      case 'desactivar':
+        setModal({ type: 'desactivar', camaId });
+        return;
+      // Sin modal de confirmación (mismo criterio que 'desbloquear' arriba)
+      // — la confirmación con motivo obligatorio ya se hizo al desactivar,
+      // reactivar no la repite (encargo #30 solo describe el diálogo para
+      // desactivar).
+      case 'activar':
+        mutarCama(camaId, { estado: 'libre', motivo: undefined });
+        pushActivity('cama-activada', `Cama ${cama.numero} activada`, 'La cama vuelve a estar disponible');
+        window.ncToast?.(`Cama ${cama.numero} activada.`);
+        return;
       default:
     }
+  }
+
+  // Activar/desactivar cama (encargo #30): nunca DELETE — pasa a
+  // `estado: 'inactiva'` con el motivo capturado en DesactivarCamaModal,
+  // mismo mecanismo de soft-delete que ya usa Bloqueada.
+  function handleConfirmDesactivar(camaId, motivo) {
+    const cama = camas.find((c) => c.id === camaId);
+    mutarCama(camaId, { estado: 'inactiva', motivo });
+    setModal(null);
+    pushActivity('cama-desactivada', `Cama ${cama.numero} desactivada`, motivo);
+    window.ncToast?.(`Cama ${cama.numero} desactivada.`);
   }
 
   function handleConfirmCambioEstado(camaId, nuevoEstado, motivo) {
@@ -435,6 +465,45 @@ export default function GestionCamas() {
     window.ncToast?.(`Cama ${cama.numero} reservada.`);
   }
 
+  // "Bloquear cama" (encargo sección 19) — `motivo` queda en el campo plano
+  // compartido con 'desactivar' (mismo criterio que ya usaba el atajo viejo
+  // vía CambiarEstadoModal, ver BedDetailModal.jsx/mockHistorialCamaData.js);
+  // fechaInicio/fechaFin/observacion van agrupados en `bloqueo` porque son
+  // exclusivos de este estado (mismo criterio que `reserva` arriba). Nunca
+  // queda con paciente asociado, mismo motivo que handleConfirmCambioEstado.
+  function handleConfirmBloqueo(camaId, {
+    motivo, fechaInicio, fechaFin, observacion,
+  }) {
+    const cama = camas.find((c) => c.id === camaId);
+    mutarCama(camaId, {
+      estado: 'bloqueada', motivo, bloqueo: { fechaInicio, fechaFin, observacion }, paciente: null,
+    });
+    setModal(null);
+    pushActivity(EVENTO_POR_ESTADO.bloqueada, `Cama ${cama.numero} bloqueada`, motivo);
+    window.ncToast?.(`Cama ${cama.numero} bloqueada.`);
+  }
+
+  // La cama de origen sigue el mismo criterio que "Liberar" (case 'liberar'
+  // más arriba): nunca queda Libre directo, pasa por Limpieza primero (vía
+  // iniciarLimpieza, que ya trae su propio limpiezaEta). La de destino
+  // hereda el `paciente` completo tal cual, sin recalcular horaIngreso — esa
+  // fecha sigue siendo la de ingreso al hospital, no la de este traslado
+  // puntual entre camas.
+  function handleConfirmTraslado(camaOrigenId, camaDestinoId, fecha) {
+    const camaOrigen = camas.find((c) => c.id === camaOrigenId);
+    const camaDestino = camas.find((c) => c.id === camaDestinoId);
+    if (!camaOrigen || !camaDestino) return;
+    const { paciente } = camaOrigen;
+    mutarCama(camaDestinoId, { estado: 'ocupada', reserva: null, paciente });
+    iniciarLimpieza(camaOrigenId, { paciente: null });
+    setModal(null);
+    const fechaTexto = new Date(fecha).toLocaleString('es-CO', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    });
+    pushActivity('traslado', `Paciente trasladado de cama ${camaOrigen.numero} a ${camaDestino.numero}`, `${paciente?.nombre ?? 'Paciente'} · ${fechaTexto}`);
+    window.ncToast?.(`${paciente?.nombre ?? 'Paciente'} trasladado a cama ${camaDestino.numero}.`);
+  }
+
   // Misma lógica que "Nueva cama" en GestionCamasCamas.jsx (encargo):
   // formulario validado en modal (NuevaCamaModal) → arma el registro
   // completo → lo antepone a `camas` (nunca muta CAMAS directamente, mismo
@@ -470,6 +539,17 @@ export default function GestionCamas() {
     pushActivity('cama-liberada', `Cama ${nueva.numero} registrada`, 'Nueva cama creada');
     window.ncToast?.(`Cama ${nueva.numero} creada.`);
     if (!keepOpen) setModal(null);
+  }
+
+  // Mismo NuevaCamaModal, en modo edición (prop `cama`) — el payload no
+  // trae `estadoInicial` (esa sección va oculta, ver NuevaCamaModal.jsx), así
+  // que acá solo se pisan los datos maestros y estado/paciente/reserva/etc.
+  // de la cama existente quedan intactos.
+  function handleSubmitEditarCama(camaId, datos) {
+    mutarCama(camaId, datos);
+    pushActivity('cama-liberada', `Cama ${datos.numero} actualizada`, 'Datos de la cama editados');
+    window.ncToast?.(`Cama ${datos.numero} actualizada.`);
+    setModal(null);
   }
 
   return (
@@ -627,6 +707,21 @@ export default function GestionCamas() {
           onReservar={handleReservar}
         />
       )}
+      {modal?.type === 'bloquear' && modalCama && (
+        <BloquearCamaModal
+          cama={modalCama}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmBloqueo}
+        />
+      )}
+      {modal?.type === 'trasladar' && modalCama && (
+        <TrasladarCamaModal
+          cama={modalCama}
+          camas={camas}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmTraslado}
+        />
+      )}
       {modal?.type === 'ver-detalle' && modalCama && (
         <BedDetailModal
           cama={modalCama}
@@ -635,6 +730,19 @@ export default function GestionCamas() {
           etaTimestamp={limpiezaEta[modalCama.id]}
           onClose={handleCloseModal}
           onAction={handleCardAction}
+        />
+      )}
+      {modal?.type === 'historial' && modalCama && (
+        <HistorialCamaModal
+          cama={modalCama}
+          onClose={handleCloseModal}
+        />
+      )}
+      {modal?.type === 'desactivar' && modalCama && (
+        <DesactivarCamaModal
+          cama={modalCama}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDesactivar}
         />
       )}
       {modal?.type === 'ver-paciente' && modalCama?.paciente && (
@@ -649,6 +757,14 @@ export default function GestionCamas() {
           camasExistentes={camas}
           onClose={handleCloseModal}
           onSubmit={handleSubmitNuevaCama}
+        />
+      )}
+      {modal?.type === 'editar-cama' && modalCama && (
+        <NuevaCamaModal
+          camasExistentes={camas}
+          cama={modalCama}
+          onClose={handleCloseModal}
+          onSubmit={(datos) => handleSubmitEditarCama(modalCama.id, datos)}
         />
       )}
     </div>

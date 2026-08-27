@@ -55,4 +55,9 @@ tbody tr:last-child td{border-bottom:none;}
 .lp-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .lp-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-base);color:var(--ink-700);}
 .lp-card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.lp-card-actions .btn{flex:1;justify-content:center;}
+/* Antes ".lp-card-actions .btn" — ahora son @/Components/Button/Button
+   (CSS Modules, no llevan la clase global .btn, ver AGENTS.md "Botones");
+   selector por clase explícita en vez de por elemento porque
+   RowActionsMenu también renderiza un <button> acá adentro que NO debe
+   llevar flex:1. */
+.lp-card-actions .lp-card-action-btn{flex:1;justify-content:center;}

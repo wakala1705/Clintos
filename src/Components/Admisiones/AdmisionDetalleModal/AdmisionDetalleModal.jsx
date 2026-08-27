@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import './AdmisionDetalleModal.css';
 import TriageBadge from '../AdmisionesTable/TriageBadge/TriageBadge';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { ESTADO_LABEL } from '@/hooks/Admisiones/mockAdmisionesData';
 
 // `admision` es la única fuente de verdad de si el modal está abierto —
@@ -47,7 +48,7 @@ export default function AdmisionDetalleModal({ admision, onClose }) {
           </div>
         </div>
         <div className="adm-modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

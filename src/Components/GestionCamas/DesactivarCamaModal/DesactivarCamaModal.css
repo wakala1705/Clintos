@@ -1,0 +1,32 @@
+/* Definidas en ../GestionCamas.css: .modal-overlay, .form-field,
+   .field-label-row, .required-pill. Este diálogo NO usa .modal-card/
+   ModalHeader (encargo: diálogo de confirmación centrado sin fila de
+   header, mismo tipo de elemento que .nc-discard-modal en
+   NuevaCitaFlow.css — ver AGENTS.md "Modales") — tokens propios de
+   GestionCamas (--radius-lg/--amber-bg/--amber-fg/--surface-modal), sin
+   duplicar los de esa otra feature. */
+.cb-desactivar-modal{
+  width:400px;max-width:100%;background:var(--surface-modal);
+  border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(6,25,42,.28);
+  padding:24px;text-align:center;
+}
+.cb-desactivar-icon{
+  width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
+  background:var(--amber-bg);color:var(--amber-fg);
+  display:flex;align-items:center;justify-content:center;
+}
+.cb-desactivar-icon .icon{width:22px;height:22px;}
+.cb-desactivar-modal h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cb-desactivar-modal p{margin:0 0 18px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.45;}
+
+/* Motivo — único campo del diálogo, texto alineado a la izquierda a
+   diferencia del resto (encargo/patrón .nc-discard-modal es centrado, pero
+   un textarea centrado se lee mal). */
+.cb-desactivar-motivo{text-align:left;margin-bottom:18px;}
+.cb-desactivar-motivo textarea{
+  width:100%;border:1px solid var(--border);border-radius:var(--radius);
+  padding:9px 10px;font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);resize:vertical;
+}
+.cb-desactivar-motivo textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cb-desactivar-actions{display:flex;justify-content:center;gap:10px;}

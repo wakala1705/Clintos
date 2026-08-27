@@ -68,29 +68,28 @@
   --accent:#0065CD;
   --accent-bg:#eef4ff;
   --accent-fg:#0052a6;
-  /* ---- Sistema de color "clinical-status" de BedCard (encargo explícito,
-     rediseño 2 paneles v2 — "Ocupada" ya no es un solo color, se separa por
-     población: masculino/femenino/pediátrico) ----
+  /* ---- Sistema de color "clinical-status" de BedCard/leyenda (encargo
+     explícito, rediseño 2 paneles v2 — "Ocupada" ya no es un solo color, se
+     separa por población: masculino/femenino/pediátrico) ----
      Nomenclatura y hex EXACTOS del encargo (tabla "Sistema de color — 8
      estados en 2 grupos"), sin el archivo bed-card-states.html de
      referencia (no llegó a adjuntarse — el usuario optó por seguir sin él).
      3 tokens por estado:
-       --clinical-status-<estado>     panel izquierdo sólido + texto del
-                                       label en el panel derecho (claro).
-                                       Fijo entre temas (igual criterio que
-                                       los "-solid" que reemplaza: fondo
-                                       sólido con texto blanco no puede
-                                       heredar la inversión a tono claro que
-                                       tienen los -fg en dark mode).
-       --clinical-status-<estado>-bg  tinte del panel derecho.
-       --clinical-status-<estado>-fg  color del label EN EL PANEL DERECHO —
-                                       en claro es el mismo tono que el
-                                       panel (ya validado), en oscuro es una
+       --clinical-status-<estado>     tono sólido — ya no pinta un panel en
+                                       BedCard (rediseño "tenue", ver
+                                       BedCard.css), solo lo usan los puntos
+                                       de la leyenda (.bb-legend-dot-<clave>,
+                                       BedBoardModal.css). Fijo entre temas.
+       --clinical-status-<estado>-bg  tinte de fondo de la tarjeta (BedCard).
+       --clinical-status-<estado>-fg  color de ícono/número/label sobre ese
+                                       tinte — en claro es el mismo tono
+                                       sólido (ya validado ≥4.5:1 contra
+                                       blanco, ver abajo), en oscuro es una
                                        versión clareada (mezcla ~55% con
-                                       blanco) porque el tinte oscuro es
-                                       case rgba(...,.20) sobre fondo casi
-                                       negro: el tono sólido oscuro leído
-                                       directo ahí perdería contraste.
+                                       blanco) porque el tinte oscuro es ese
+                                       mismo tono en rgba(...,.20) sobre
+                                       fondo casi negro: leído directo ahí
+                                       perdería contraste.
      Todos los 8 verificados ≥4.5:1 con blanco excepto cleaning (ver abajo):
      occupied-male 6.55:1, occupied-female 7.62:1, occupied-pediatric
      4.59:1 (el más ajustado, aun así pasa), available 5.36:1, reserved
@@ -117,19 +116,12 @@
   --clinical-status-out-of-service-bg:#f9dedd;
   --clinical-status-out-of-service-fg:#b3312c;
   /* Excepción de contraste (encargo explícito): #c98a12 sobre blanco da
-     2.94:1 — falla incluso el mínimo de texto grande (3:1). Texto oscuro
-     #3a2600 da 4.89:1 sobre el mismo panel y 12.35:1 sobre el tinte propio
-     — se usa en AMBOS lugares (panel Y label), única excepción a "texto
-     blanco siempre"/"el label usa el tono del estado" de las otras 7
-     filas. -panel-text es un token aparte porque el panel es fijo entre
-     temas (igual que el resto) pero el label SÍ necesita variar: en claro
-     usa el mismo oscuro (así no compite con el tinte clarísimo), en
-     oscuro necesita un ámbar claro (ver bloque dark más abajo) porque ahí
-     el tinte es oscuro, no claro. */
+     2.94:1 — falla incluso el mínimo de texto grande (3:1), por eso -fg usa
+     texto oscuro (#3a2600, 12.35:1 sobre el tinte propio) en vez del mismo
+     tono sólido que las otras 7 filas. */
   --clinical-status-cleaning:#c98a12;
   --clinical-status-cleaning-bg:#faecd2;
   --clinical-status-cleaning-fg:#3a2600;
-  --clinical-status-cleaning-panel-text:#3a2600;
   /* Fallback "Ocupada sin datos de población" (paciente sin género ni edad
      registrados) — NO forma parte de la tabla de 8 estados del encargo;
      nunca ocurre con el mock actual (los 14 pacientes ya tienen género),
@@ -304,14 +296,14 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
 /* ---------- BUTTONS ---------- */
 .btn{
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:var(--btn-gap);
   font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
-  padding:8px 16px;border-radius:var(--radius);
-  border:1px solid transparent;cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s,opacity .15s;
+  padding:var(--btn-padding);border-radius:var(--btn-radius);
+  border:var(--btn-border-width) solid transparent;cursor:pointer;
+  transition:var(--btn-transition);
   white-space:nowrap;
 }
-.btn .icon{width:18px;height:18px;}
+.btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
 .btn-primary{background:var(--primary);color:#fff;}
 .btn-primary:hover{background:var(--primary-dark);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
@@ -322,10 +314,10 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    visual de .btn-primary. */
 .btn-outline{background:transparent;color:var(--primary);border-color:var(--primary);}
 .btn-outline:hover{background:var(--primary-50);}
-.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
-.btn-sm{padding:var(--space-2) var(--space-3);font-size:var(--fs-sm);gap:6px;}
-.btn-sm .icon{width:15px;height:15px;}
+.btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.btn[disabled]{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
+.btn-sm{padding:var(--btn-padding-sm);font-size:var(--fs-sm);gap:var(--btn-gap-sm);}
+.btn-sm .icon{width:var(--btn-icon-size-sm);height:var(--btn-icon-size-sm);}
 html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#333e54;}
 
 /* ---------- FILTER BAR (chips, search, popovers) ---------- */
@@ -495,7 +487,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 }
 .tf-readonly-value{
   display:flex;align-items:center;height:var(--input-md);
-  font-size:var(--fs-base);color:var(--ink-900);padding:0 10px;background:var(--bg);border-radius:var(--radius);
+  font-size:var(--fs-lg);color:var(--ink-900);padding:0 10px;background:var(--bg);border-radius:var(--radius);font-weight:var(--fw-semibold);
 }
 
 /* ---------- Bloque contextual "Estado actual" (paciente/reserva/motivo) ----------
@@ -514,14 +506,13 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
    preparación) lo reutilicen sin una clase nueva por estado. */
 .cb-card-status-text{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);margin:2px 0;}
 
-/* ---------- HISTORIAL / ACTIVIDAD (ítem reusado 2 veces dentro de
-   BedDetailModal.jsx — "Historial reciente" en la vista detalle y la lista
-   completa de la vista historial, mismo componente <HistorialList>, mismo
-   estilo que CamaDetailModal/CamaHistorialModal admin: círculo gris neutro
-   + ícono único, sin puntos de color por tipo de evento — a diferencia del
-   viejo feed de ActivityPanel/ActivityDrawer, ya eliminado. El historial
-   completo ya no abre un modal/drawer aparte: es un drill-in dentro del
-   mismo modal, ver .cb-detail-track en BedDetailModal.css). ---------- */
+/* ---------- HISTORIAL / ACTIVIDAD ("Historial reciente" de
+   BedDetailModal.jsx, componente <HistorialList>, mismo estilo que
+   CamaDetailModal admin: círculo gris neutro + ícono único, sin puntos de
+   color por tipo de evento — a diferencia del viejo feed de ActivityPanel/
+   ActivityDrawer, ya eliminado. El historial COMPLETO abre su propio modal,
+   HistorialCamaModal (línea de tiempo con filtros), no una 2da vista acá
+   dentro. ---------- */
 .cb-activity-empty{padding:24px 12px;text-align:center;color:var(--ink-500);font-size:var(--fs-sm);}
 .cb-detail-historial{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:2px;}
 .cb-detail-historial-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;}

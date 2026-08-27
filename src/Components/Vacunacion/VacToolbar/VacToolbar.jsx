@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './VacToolbar.css';
 import { LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
 import { ESQUEMA_OPTIONS, ESTADO_OPTIONS, PROXIMA_OPTIONS, QUICK_FILTERS } from '@/hooks/Vacunacion/mockVacunacionData';
+import Button from '@/Components/Button/Button';
 
 // Barra de herramientas en una sola línea: búsqueda a la izquierda, el
 // segmented control de acceso rápido (Todos/Pendientes/Atrasados/Próximos) y
@@ -130,8 +131,8 @@ export default function VacToolbar({
               </div>
 
               <div className="fp-actions">
-                <button type="button" className="btn btn-secondary" onClick={handleClear} disabled={activeCount === 0}>Limpiar</button>
-                <button type="button" className="btn btn-primary" onClick={() => setOpen(false)}>Aplicar</button>
+                <Button variant="secondary" onClick={handleClear} disabled={activeCount === 0}>Limpiar</Button>
+                <Button onClick={() => setOpen(false)}>Aplicar</Button>
               </div>
             </div>
           )}

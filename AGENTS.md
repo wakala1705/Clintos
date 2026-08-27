@@ -228,6 +228,123 @@ paralela.
   destacados (KPIs, resultados numéricos) que necesitan distinguirse de los
   títulos que los rodean, no para headings en sí.
 
+# Botones
+
+Primer paso de un design system de botones — hoy son solo variables, no un
+componente `<Button>` (ver "Component organization" para cuándo llega ese
+paso). El proyecto tiene 55+ archivos con clases `.btn*` propias y ya
+divergen entre sí (`GestionEnfermeria/shared.css` define 6 variantes +
+tamaño `sm`; `GestionCamas.css` solo 2) — mismo tipo de deriva que ya pasó
+con los headers de modal antes de `ModalHeader` (ver sección "Modales").
+Estos tokens fijan los valores estructurales para que la migración
+incremental de esos `.btn*` converja a un único set, en vez de que cada
+feature seguir inventando los suyos.
+
+- **Escala de estructura de botón** (tokens `--btn-*`): mismo criterio de
+  no-duplicación por feature que `--fs-*`/`--fw-*`/`--bp-*` — vive una sola
+  vez en el `:root` de `src/app/globals.css`, porque no tiene variante de
+  tema oscuro/alto contraste.
+
+  | Token | Valor | Uso |
+  |---|---|---|
+  | `--btn-radius` | 8px | radio del botón. Independiente de `--radius` (el genérico de cards/inputs/chips por feature) para que no arrastren cambios entre sí. |
+  | `--btn-border-width` | 1px | grosor de borde (`.btn-outline`/`.btn-secondary` lo usan con color; `.btn-primary`/`.btn-danger` con `border-color:transparent`). |
+  | `--btn-gap` | 8px | separación ícono↔texto, tamaño base. |
+  | `--btn-gap-sm` | 6px | ídem, tamaño `sm`. |
+  | `--btn-padding` | 8px 16px | padding del botón, tamaño base. |
+  | `--btn-padding-sm` | 8px 12px | ídem, tamaño `sm`. |
+  | `--btn-icon-size` | 18px | tamaño del ícono dentro del botón, tamaño base. |
+  | `--btn-icon-size-sm` | 15px | ídem, tamaño `sm`. |
+  | `--btn-disabled-opacity` | .45 | opacity de `.btn[disabled]`. |
+  | `--btn-focus-outline` | 2px | grosor del outline en `:focus-visible`. |
+  | `--btn-focus-offset` | 2px | offset del outline en `:focus-visible`. |
+  | `--btn-transition` | `background .15s, border-color .15s, color .15s, opacity .15s` | transición estándar de todos los estados del botón. |
+
+- **Los colores de rol no están acá**: `--primary`/`--primary-dark`/
+  `--primary-50`/`--red`/`--amber-bg`/`--amber-fg`/`--surface`/`--border`/
+  `--ink-700` siguen siendo tokens de color por feature (ver "Component
+  organization") — `--btn-*` cubre solo estructura (tamaño, espaciado,
+  radio, estados), no color.
+- **Migración de CSS existente a estos tokens: hecha.** Los `.btn*` de
+  `GestionCamas.css`, `GestionCamasConfiguracion.css`,
+  `GestionEnfermeria/shared.css`, `HistoriaClinica/shared.css`,
+  `SolicitudConsumo/shared.css`, `Vacunacion.css`, `Admisiones.css`,
+  `FichaPaciente.css`, `ListaPacientes.css` y `ProgramarCita.css` ya
+  consumen `var(--btn-*)` en vez de sus valores hardcodeados.
+- **Divergencias reales encontradas al migrar (no forzadas a un solo
+  valor — eso cambiaría la apariencia actual, es decisión para cuando se
+  construya el componente)**: `outline-offset` en `:focus-visible` es
+  `1px` en `Vacunacion`/`Admisiones`/`FichaPaciente`/`ListaPacientes`/
+  `ProgramarCita` pero `2px` (= `--btn-focus-offset`) en
+  `HistoriaClinica`/`GestionEnfermeria`/`SolicitudConsumo`/`GestionCamas`;
+  el ícono de `SolicitudConsumo/shared.css` es `17px` en vez de `18px`;
+  `.fp-actions .btn`/`.sel-actions .btn` (`GestionEnfermeria`) y
+  `.fp-actions .btn` (`ListaPacientes/FiltersRow`) usan
+  `padding:7px 14px`, ni el tamaño base ni `sm`; `.btn-programar`
+  (`OrdenesMedicasPanel`) usa `padding:6px var(--space-3)`. Código nuevo
+  no debe copiar estos valores sueltos — son deuda pendiente, no el
+  estándar.
+- **Componente**: `@/Components/Button/Button` — úsalo para botones nuevos
+  en vez de escribir `<button className="btn btn-primary">` a mano.
+
+  ```jsx
+  <Button
+    variant="primary"    // primary (default) | secondary | outline | tinted | warning-outline | danger | danger-outline
+    size="base"           // base (default) | sm
+    type="button"         // button (default) | submit | reset
+    icon={LuPlus}          // opcional, componente de ícono (react-icons/lu o lucide-react)
+    disabled={false}
+    onClick={...}
+    className="cb-limpiar-filtros-btn" // opcional, one-off extra sobre las clases del componente
+  >
+    Texto del botón
+  </Button>
+  ```
+
+  - **Por qué CSS Modules y no una clase global `.btn` como el resto del
+    proyecto** (excepción deliberada a "Component organization" de
+    arriba): 9 features ya definen su propio `.btn`/`.btn-primary` global
+    — si `Button.jsx` también definiera esas clases global, colisionaría
+    con la del feature donde se monta según el orden de carga de cada
+    hoja (mismo bug ya documentado de `.content`). `Button.module.css`
+    evita esto por completo: sus clases quedan con hash único.
+  - **Resuelve las divergencias listadas arriba** con un valor canónico
+    fijo: `outline-offset` siempre `--btn-focus-offset` (2px), ícono
+    siempre `--btn-icon-size`, `.secondary:hover` siempre
+    `var(--bg)`/`var(--ink-400)` (nunca hex hardcodeado). `.warning-outline`/
+    `.danger`/`.danger-outline` sí llevan 2-3 valores hex fijos en
+    `Button.module.css` (comentados ahí) porque hoy ninguna feature define
+    un tinte de borde ámbar ni un `--red-dark` — son placeholders hasta que
+    ese token exista, no una excepción a "nunca hardcodear" sino la falta
+    de un token que crear en un esfuerzo aparte.
+  - **Migración incremental de `className="btn btn-primary"` a `<Button>`**
+    (no es requisito para código nuevo, que ya debe usar `<Button>` directo):
+    - **Hecha**: `Admisiones`, `FichaPaciente`, `Vacunacion` (incluye
+      `RegistrarVacunacionModal`), `ListaPacientes`, `ProgramarCita`. En
+      cada una, una vez migrados todos los call sites de la feature, se
+      borró el bloque `.btn`/`.btn-primary`/etc. muerto de su CSS — si una
+      de estas features vuelve a tener un `.btn` hardcodeado, es una
+      regresión, no una reintroducción válida.
+    - **Pendiente**: `GestionCamas` (~90 botones en ~55 archivos — mucho
+      más grande que las anteriores porque `GestionCamas.css` es el
+      `shared.css` de facto de 9 sub-rutas: dashboard, Reservas, Limpieza,
+      Mantenimiento, Auditoría, Configuración, Integridad, Indicadores,
+      Resumen — su bloque `.btn` base solo se puede borrar cuando las 9
+      queden en cero `className="btn`), y las 3 `shared.css` grandes:
+      `GestionEnfermeria/shared.css`, `HistoriaClinica/shared.css`,
+      `SolicitudConsumo/shared.css`. Plan acordado: delegar `GestionCamas`
+      a un subagente en background (mismo patrón ya usado para las
+      features chicas) dado su tamaño; las 3 `shared.css` quedan por
+      decidir cuando se retome.
+    - **Gotcha recurrente a repetir en cada migración pendiente**: un
+      selector contextual `.wrapper .btn{...}` (flex/width/padding) dejaba
+      de aplicar apenas el botón pasaba a `<Button>`, porque ya no lleva la
+      clase global `.btn` — hay que grepear `.btn` en el CSS de cada
+      archivo tocado *antes* de migrar y arreglar el selector (por
+      elemento si `.wrapper` no tiene otro `<button>` adentro, por clase
+      explícita si sí — ver ejemplos en `AdmisionesTable.css`,
+      `VacToolbar.css`, `PatientsTable.css`, `DetalleCitaModal.css`).
+
 # Responsive / Breakpoints
 
 El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada

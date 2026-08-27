@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './NuevaCitaDropdown.css';
 import { LuChevronDown, LuPlus } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Split button (ref. "Nuevo evento" de Outlook): el cuerpo principal dispara
 // directo el flujo normal (mismo wizard que el botón "Agendar cita" del
@@ -36,20 +37,18 @@ export default function NuevaCitaDropdown({ onNuevaCita }) {
   return (
     <div className="pc-nc-dropdown" ref={rootRef}>
       <div className="pc-nc-split">
-        <button type="button" className="btn btn-primary pc-nc-main" onClick={() => onNuevaCita?.()}>
-          <LuPlus className="icon" aria-hidden="true" />
+        <Button icon={LuPlus} className="pc-nc-main" onClick={() => onNuevaCita?.()}>
           Agendar cita
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary pc-nc-toggle"
+        </Button>
+        <Button
+          className="pc-nc-toggle"
           onClick={() => setOpen((v) => !v)}
           aria-haspopup="menu"
           aria-expanded={open}
           aria-label="Más opciones para agendar"
         >
           <LuChevronDown className="icon pc-nc-chev" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
 
       {open && (

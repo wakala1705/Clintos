@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './NuevaCamaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
@@ -34,8 +34,8 @@ const TIPO_HELP = 'Código interno del sistema origen (01–11). Su significado 
 const CLASE_HELP = 'Población o especialidad para la que está equipada la cama (ej. pediátrica, bariátrica, cuidados intensivos).';
 const NIVEL_HELP = 'Nivel de complejidad de cuidado que la cama puede prestar, según la clasificación I–III.';
 
-function tagsIniciales(seed) {
-  return seed.map((label) => ({ label, selected: false }));
+function tagsIniciales(seed, seleccionadas = []) {
+  return seed.map((label) => ({ label, selected: seleccionadas.includes(label) }));
 }
 
 const CAMPOS_INICIALES = {
@@ -58,6 +58,36 @@ const CAMPOS_INICIALES = {
   observaciones: '',
 };
 
+// Mapea una cama existente (BedActionsMenu → "Editar") al shape de `campos`
+// — a diferencia de CAMPOS_INICIALES, arrastra lo que la cama ya tenga
+// poblado. Las 197 camas generadas por generateCamas (mockCamasData.js) no
+// tienen codigo/descripcion/clase/nivel/habitacion/caracteristicas/
+// restricciones/observaciones (solo las creadas desde este mismo modal sí) —
+// esos campos quedan vacíos, no es un bug: es el mismo hueco de datos que ya
+// documentaba ACCIONES_EN_DESARROLLO.editar en GestionCamas.jsx antes de
+// este cambio.
+function camposDesdeCama(cama) {
+  return {
+    codigo: cama.codigo ?? '',
+    descripcion: cama.descripcion ?? '',
+    numero: cama.numero ?? '',
+    tipo: cama.tipo ?? '',
+    clase: cama.clase ?? '',
+    nivel: cama.nivel ?? '',
+    sede: cama.sede ?? '',
+    area: cama.area ?? '',
+    piso: cama.piso ?? '',
+    sector: cama.sector ?? '',
+    habitacion: cama.habitacion ?? '',
+    temporal: cama.temporal ?? false,
+    fechaExpiracion: cama.fechaExpiracion ?? '',
+    estadoInicial: cama.estado,
+    caracteristicas: tagsIniciales(CARACTERISTICAS_CAMA, cama.caracteristicas ?? []),
+    restricciones: tagsIniciales(RESTRICCIONES_CAMA, cama.restricciones ?? []),
+    observaciones: cama.observaciones ?? '',
+  };
+}
+
 // Formulario "Crear nueva cama" (encargo, spec sección 7) — 3 secciones
 // (Identificación/Ubicación/Configuración) + 3 acciones. Reemplaza la
 // versión anterior, más chica, de este mismo modal (que solo cubría
@@ -71,8 +101,19 @@ const CAMPOS_INICIALES = {
 // habitación — ver el porqué de la distinción en `validar()`). Piso/Sector
 // pasan a obligatorios junto con Habitación (rediseño, "5 problemas" —
 // antes eran opcionales con un hijo obligatorio, inconsistencia real).
-export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
-  const [campos, setCampos] = useState(CAMPOS_INICIALES);
+export default function NuevaCamaModal({
+  camasExistentes, cama, onClose, onSubmit,
+}) {
+  const editando = Boolean(cama);
+  const [campos, setCampos] = useState(() => (editando ? camposDesdeCama(cama) : CAMPOS_INICIALES));
+  // Comparar contra el resto del inventario, nunca contra sí misma — si no,
+  // las validaciones de "código duplicado"/"número duplicado en la
+  // habitación" (ver validar() más abajo) siempre chocarían contra la propia
+  // cama que se está editando.
+  const otrasCamas = useMemo(
+    () => (editando ? camasExistentes.filter((c) => c.id !== cama.id) : camasExistentes),
+    [camasExistentes, editando, cama],
+  );
   const [errores, setErrores] = useState({});
   const [mostrarMas, setMostrarMas] = useState(false);
   const [caracAdding, setCaracAdding] = useState(false);
@@ -106,7 +147,7 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
     // Código = identificador maestro del inventario (encargo: "No duplicar
     // identificador") — único en TODAS las camas, sin importar habitación.
     if (!codigoNormalizado) nuevos.codigo = 'El código de cama es obligatorio.';
-    else if (camasExistentes.some((c) => c.codigo && c.codigo.toLowerCase() === codigoNormalizado.toLowerCase())) {
+    else if (otrasCamas.some((c) => c.codigo && c.codigo.toLowerCase() === codigoNormalizado.toLowerCase())) {
       nuevos.codigo = 'Ya existe una cama con este código.';
     }
 
@@ -119,7 +160,7 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
 
     if (!numeroNormalizado) {
       nuevos.numero = 'El número/identificador visible es obligatorio.';
-    } else if (habitacionNormalizada && camasExistentes.some((c) => (
+    } else if (habitacionNormalizada && otrasCamas.some((c) => (
       (c.habitacion ?? '').toLowerCase() === habitacionNormalizada.toLowerCase()
         && c.numero.toLowerCase() === numeroNormalizado.toLowerCase()
     ))) {
@@ -135,8 +176,11 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
     // Estado inicial válido (encargo) — defensivo: el FormSelect solo deja
     // elegir entre ESTADO_INICIAL_OPTIONS, así que esto nunca debería
     // disparar desde la UI, pero cierra el caso igual que el resto de
-    // reglas de la spec.
-    if (!ESTADO_INICIAL_OPTIONS.some((e) => e.value === campos.estadoInicial)) {
+    // reglas de la spec. No aplica en modo edición: esa sección queda oculta
+    // (el estado se gestiona con Cambiar estado/Asignar paciente/etc.) y
+    // Ocupada/Reservada — válidos en una cama existente — ni siquiera están
+    // en ESTADO_INICIAL_OPTIONS.
+    if (!editando && !ESTADO_INICIAL_OPTIONS.some((e) => e.value === campos.estadoInicial)) {
       nuevos.estadoInicial = 'Estado inicial no válido.';
     }
 
@@ -164,7 +208,11 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
       // destildó el checkbox, no se arrastra una fecha "fantasma" de una
       // cama que ya no se está marcando como temporal.
       fechaExpiracion: (campos.temporal && campos.fechaExpiracion) || undefined,
-      estadoInicial: campos.estadoInicial,
+      // En edición no se toca el estado operativo (sección oculta, ver
+      // arriba) — el payload no lleva `estadoInicial` para que el handler de
+      // edición en GestionCamas.jsx nunca lo confunda con un cambio de
+      // estado real.
+      ...(editando ? {} : { estadoInicial: campos.estadoInicial }),
       caracteristicas: caracteristicasSeleccionadas.length ? caracteristicasSeleccionadas : undefined,
       restricciones: restriccionesSeleccionadas.length ? restriccionesSeleccionadas : undefined,
       observaciones: campos.observaciones.trim() || undefined,
@@ -201,7 +249,7 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
           <ModalHeader
             icon={LuBedDouble}
             tone="primary"
-            title="Nueva cama"
+            title={editando ? 'Editar cama' : 'Nueva cama'}
             titleId="cb-form-title"
             onClose={onClose}
           />
@@ -401,27 +449,34 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
                 )}
               </div>
 
-              <div className="form-field">
-                <label id="cb-estado-inicial-label">Estado inicial</label>
-                <div className="cb-estado-grid" role="radiogroup" aria-labelledby="cb-estado-inicial-label">
-                  {ESTADO_INICIAL_OPTIONS.map((opt) => (
-                    <label
-                      key={opt.value}
-                      className={`cb-estado-pill${campos.estadoInicial === opt.value ? ' selected' : ''}`}
-                    >
-                      <input
-                        type="radio"
-                        name="cb-form-estado-inicial"
-                        value={opt.value}
-                        checked={campos.estadoInicial === opt.value}
-                        onChange={() => setCampo('estadoInicial', opt.value)}
-                      />
-                      {opt.label}
-                    </label>
-                  ))}
+              {/* Oculta en modo edición: el estado operativo de una cama
+                  existente se gestiona con los flujos dedicados (Cambiar
+                  estado/Asignar paciente/Reservar/...), no desde acá — y
+                  Ocupada/Reservada, válidos en una cama existente, ni
+                  siquiera están en ESTADO_INICIAL_OPTIONS. */}
+              {!editando && (
+                <div className="form-field">
+                  <label id="cb-estado-inicial-label">Estado inicial</label>
+                  <div className="cb-estado-grid" role="radiogroup" aria-labelledby="cb-estado-inicial-label">
+                    {ESTADO_INICIAL_OPTIONS.map((opt) => (
+                      <label
+                        key={opt.value}
+                        className={`cb-estado-pill${campos.estadoInicial === opt.value ? ' selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="cb-form-estado-inicial"
+                          value={opt.value}
+                          checked={campos.estadoInicial === opt.value}
+                          onChange={() => setCampo('estadoInicial', opt.value)}
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                  {errores.estadoInicial && <span className="cb-form-error">{errores.estadoInicial}</span>}
                 </div>
-                {errores.estadoInicial && <span className="cb-form-error">{errores.estadoInicial}</span>}
-              </div>
+              )}
 
               <button
                 type="button"
@@ -489,8 +544,12 @@ export default function NuevaCamaModal({ camasExistentes, onClose, onSubmit }) {
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="button" className="btn btn-secondary" onClick={handleGuardarYCrearOtra}>Guardar y crear otra</button>
-            <button type="submit" className="btn btn-primary">Guardar</button>
+            {/* "Guardar y crear otra" no aplica editando una cama existente
+                — solo tiene sentido para carga en lote al crear. */}
+            {!editando && (
+              <button type="button" className="btn btn-secondary" onClick={handleGuardarYCrearOtra}>Guardar y crear otra</button>
+            )}
+            <button type="submit" className="btn btn-primary">{editando ? 'Guardar cambios' : 'Guardar'}</button>
           </div>
         </form>
       </div>

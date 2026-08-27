@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './PreIngresoModal.css';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 
 const TIPO_INGRESO_OPTIONS = [
   { value: 'espontaneo', label: 'Espontáneo' },
@@ -116,8 +117,8 @@ export default function PreIngresoModal({ patient, onClose, onSubmit }) {
         </div>
 
         <div className="adm-modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={handleSubmit}>Registrar pre-ingreso</button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button onClick={handleSubmit}>Registrar pre-ingreso</Button>
         </div>
       </div>
     </div>

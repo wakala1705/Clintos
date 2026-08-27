@@ -9,6 +9,7 @@ import {
 import {
   LuCheck, LuReceipt, LuCalendarClock, LuUserX, LuCalendarX, LuChevronDown, LuTriangleAlert,
 } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const SIN_DATO = '—';
 
@@ -95,10 +96,10 @@ function DetalleCitaModalContent({ appointment, onClose, onConfirmar }) {
               Esta acción no se puede deshacer.
             </p>
             <div className="pc-cancel-confirm-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => setConfirmandoCancelar(false)}>Volver al detalle</button>
-              <button type="button" className="btn btn-danger-outline" onClick={handleConfirmarCancelacion}>
-                <LuCalendarX className="icon" />Sí, cancelar cita
-              </button>
+              <Button variant="secondary" onClick={() => setConfirmandoCancelar(false)}>Volver al detalle</Button>
+              <Button variant="danger-outline" icon={LuCalendarX} onClick={handleConfirmarCancelacion}>
+                Sí, cancelar cita
+              </Button>
             </div>
           </div>
         ) : (
@@ -170,11 +171,11 @@ function DetalleCitaModalContent({ appointment, onClose, onConfirmar }) {
               </div>
             </div>
             <div className="pc-modal-footer pc-detail-actions">
-              <button type="button" className="btn btn-primary" onClick={handleConfirmar}><LuCheck className="icon" />Confirmar</button>
-              <button type="button" className="btn btn-secondary" onClick={() => handleAccion('Facturación en desarrollo.')}><LuReceipt className="icon" />Facturar</button>
-              <button type="button" className="btn btn-secondary" onClick={() => handleAccion('Reprogramación en desarrollo.')}><LuCalendarClock className="icon" />Reprogramar</button>
-              <button type="button" className="btn btn-secondary" onClick={() => handleAccion(`${appointment.patient} marcado como No asistió.`)}><LuUserX className="icon" />No asistió</button>
-              <button type="button" className="btn btn-danger-outline" onClick={() => setConfirmandoCancelar(true)}><LuCalendarX className="icon" />Cancelar cita</button>
+              <Button icon={LuCheck} onClick={handleConfirmar}>Confirmar</Button>
+              <Button variant="secondary" icon={LuReceipt} onClick={() => handleAccion('Facturación en desarrollo.')}>Facturar</Button>
+              <Button variant="secondary" icon={LuCalendarClock} onClick={() => handleAccion('Reprogramación en desarrollo.')}>Reprogramar</Button>
+              <Button variant="secondary" icon={LuUserX} onClick={() => handleAccion(`${appointment.patient} marcado como No asistió.`)}>No asistió</Button>
+              <Button variant="danger-outline" icon={LuCalendarX} onClick={() => setConfirmandoCancelar(true)}>Cancelar cita</Button>
             </div>
           </>
         )}

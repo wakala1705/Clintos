@@ -4,7 +4,9 @@ import InfoLine from '../InfoLine/InfoLine';
 import {
   cardHue, categoriaPaciente, formatEdadEstancia, formatVentanaReserva, infoLimpieza,
 } from '@/hooks/GestionCamas/bedContextFormat';
-import { LuBaby, LuUser } from 'react-icons/lu';
+import {
+  LuBaby, LuUser, LuCheck, LuSparkles, LuClock3, LuWrench, LuLock, LuBed,
+} from 'react-icons/lu';
 // Excepción documentada a "Lucide vía react-icons" (AGENTS.md "Icons") —
 // react-icons@5.7.0 (última versión publicada) todavía no sincronizó los
 // íconos mars/venus que sí existen en Lucide (lucide.dev/icons/mars,
@@ -30,6 +32,24 @@ const ESTADO_LABEL_CARD = {
   limpieza: 'En limpieza',
   mantenimiento: 'En mantenimiento',
   bloqueada: 'Fuera de servicio',
+};
+
+// Ícono de estado (rediseño "tenue" — reemplaza el panel izquierdo sólido):
+// Ocupada/Disponible comparten el check ("operación normal"); los demás
+// estados llevan un ícono propio que señala por qué la cama necesita
+// atención distinta (limpieza en curso, reserva a futuro, fuera de uso).
+// `aislamiento`/`inactiva` (ESTADOS, mockCamasData.js) no tienen copy propio
+// en esta tarjeta desde antes de este rediseño (ESTADO_LABEL_CARD tampoco
+// los cubre, mismo criterio que cardHue cayendo a "unknown" para ellos,
+// bedContextFormat.js) — LuBed como fallback evita romper el render de
+// <IconoEstado> para cualquier estado fuera de esta tabla.
+const ESTADO_ICONO_CARD = {
+  libre: LuCheck,
+  ocupada: LuCheck,
+  reservada: LuClock3,
+  limpieza: LuSparkles,
+  mantenimiento: LuWrench,
+  bloqueada: LuLock,
 };
 
 // Ícono de género (encargo explícito: "icono de género/sexo, SIEMPRE
@@ -172,16 +192,15 @@ function BloqueContextual(props) {
 // mockCamasData.js) o del flujo correspondiente — nunca repetidas en cada
 // tarjeta.
 //
-// Rediseño 2 paneles (encargo explícito): panel izquierdo sólido (color de
-// `cardHue`, ver bedContextFormat.js) con el código de cama en grande +
-// blanco; panel derecho con tinte suave del mismo hue, fila superior (label
-// de estado + menú "⋯" — sin ícono de cama decorativo, encargo explícito de
-// eliminarlo), y el bloque contextual de siempre debajo. El label de estado
-// NO reusa <EstadoCamaBadge> acá: ese
-// componente colorea por `estado` solamente (ESTADO_COLOR, mockCamasData.js)
-// y sigue así para sus otros consumidores (tabla, detalle, auditoría) — la
-// tarjeta necesita el color de POBLACIÓN para Ocupada, así que pinta su
-// propio label con `cardHue`, sin tocar el componente compartido.
+// Rediseño "tenue" (encargo explícito): sin panel sólido — toda la tarjeta
+// lleva el tinte suave del hue (`cardHue`, ver bedContextFormat.js) como
+// fondo único. Fila superior: ícono de estado (ESTADO_ICONO_CARD) + número
+// de cama + menú "⋯"; debajo, el label de estado y el bloque contextual de
+// siempre. El label de estado NO reusa <EstadoCamaBadge> acá: ese componente
+// colorea por `estado` solamente (ESTADO_COLOR, mockCamasData.js) y sigue
+// así para sus otros consumidores (tabla, detalle, auditoría) — la tarjeta
+// necesita el color de POBLACIÓN para Ocupada, así que pinta su propio label
+// con `cardHue`, sin tocar el componente compartido.
 export default function BedCard({
   cama, onAction, etaTimestamp, now, onOpenDetail,
 }) {
@@ -194,6 +213,7 @@ export default function BedCard({
   }
 
   const hue = cardHue(cama);
+  const IconoEstado = ESTADO_ICONO_CARD[cama.estado] || LuBed;
 
   return (
     <div
@@ -203,18 +223,16 @@ export default function BedCard({
       onClick={onOpenDetail ? () => onOpenDetail(cama.id) : undefined}
       onKeyDown={handleKeyDown}
     >
-      <div className="cb-card-id">
+      <div className="cb-card-top">
+        <IconoEstado className="icon cb-card-estado-icon" aria-hidden="true" />
         <span className="cb-card-numero">{cama.numero}</span>
+        <div className="cb-card-menu-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="presentation">
+          <BedActionsMenu estado={cama.estado} numero={cama.numero} onAction={(action) => onAction(action, cama.id)} />
+        </div>
       </div>
 
       <div className="cb-card-body">
-        <div className="cb-card-top">
-          <span className="cb-card-estado-label">{ESTADO_LABEL_CARD[cama.estado]}</span>
-          <div className="cb-card-menu-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="presentation">
-            <BedActionsMenu estado={cama.estado} numero={cama.numero} onAction={(action) => onAction(action, cama.id)} />
-          </div>
-        </div>
-
+        <span className="cb-card-estado-label">{ESTADO_LABEL_CARD[cama.estado]}</span>
         <BloqueContextual cama={cama} etaTimestamp={etaTimestamp} now={now} />
       </div>
     </div>

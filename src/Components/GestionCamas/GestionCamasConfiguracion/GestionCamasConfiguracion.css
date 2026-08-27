@@ -110,8 +110,8 @@
    (Camas): .btn-danger no vive en GestionCamas.css compartido. */
 .btn-danger{background:var(--red);color:#fff;}
 .btn-danger:hover{background:#a02222;}
-.btn-danger:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
-.btn-danger[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.btn-danger:focus-visible{outline:var(--btn-focus-outline) solid var(--red);outline-offset:var(--btn-focus-offset);}
+.btn-danger[disabled]{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
 
 .cbc-toast{
   position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);

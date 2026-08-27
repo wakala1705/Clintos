@@ -8,7 +8,7 @@ import './BedActionsMenu.css';
 import { MENU_ACCIONES } from '@/hooks/GestionCamas/mockCamasData';
 import {
   LuArrowRightLeft, LuBedDouble, LuCalendarX, LuCircleCheck, LuClock, LuEllipsis, LuEye,
-  LuHistory, LuLock, LuLockOpen, LuLogOut, LuPencil, LuSprayCan, LuUser, LuUserPlus, LuWrench,
+  LuHistory, LuLock, LuLockOpen, LuLogOut, LuPencil, LuPowerOff, LuSprayCan, LuUser, LuUserPlus, LuWrench,
 } from 'react-icons/lu';
 
 // Un ícono por acción, reusando el mismo vocabulario visual ya establecido
@@ -33,6 +33,8 @@ const ACCION_ICONO = {
   'finalizar-limpieza': LuCircleCheck,
   bloquear: LuLock,
   desbloquear: LuLockOpen,
+  desactivar: LuPowerOff,
+  activar: LuPowerOff,
   'cambiar-estado': LuBedDouble,
   historial: LuHistory,
   'ver-paciente': LuUser,
@@ -57,10 +59,11 @@ const ACCION_ICONO = {
 // scroll (capture:true)/resize para que seguir siguiendo al botón dentro
 // del contenedor con scroll (`.cb-body-wrap`/`.bb-modal-body`).
 //
-// `MENU_ACCIONES[estado] || []`: Aislamiento/Inactiva tienen color/label
-// (ESTADO_COLOR, mockCamasData.js) pero a propósito no tienen entrada acá
-// todavía (reglas de negocio sin confirmar) — sin el fallback, una cama con
-// alguno de esos 2 estados rompería este menú.
+// `MENU_ACCIONES[estado] || []`: Aislamiento tiene color/label (ESTADO_COLOR,
+// mockCamasData.js) pero a propósito no tiene entrada acá todavía (reglas de
+// negocio sin confirmar) — sin el fallback, una cama en ese estado rompería
+// este menú. Inactiva SÍ tiene entrada (Activar/desactivar cama, encargo
+// #30).
 export default function BedActionsMenu({ estado, numero, onAction }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);

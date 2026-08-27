@@ -3,6 +3,7 @@
 import './ExitoStep.css';
 import { LuCircleCheck } from 'react-icons/lu';
 import { resolveVacunaLabel } from '../AplicacionStep/AplicacionStep';
+import Button from '@/Components/Button/Button';
 
 // Próxima dosis pendiente del paciente, distinta a la que se acaba de
 // registrar — no muta `paciente.dosisPendientes` (este flujo es 100% mock,
@@ -39,9 +40,9 @@ export default function ExitoStep({ paciente, vacunaSel, onVerEsquema, onRegistr
       )}
 
       <div className="rv-exito-actions">
-        <button type="button" className="btn btn-secondary" onClick={onVerEsquema}>Ver esquema del paciente</button>
-        <button type="button" className="btn btn-secondary" onClick={onRegistrarOtra}>Registrar otra vacunación</button>
-        <button type="button" className="btn btn-primary" onClick={onCerrar}>Cerrar</button>
+        <Button variant="secondary" onClick={onVerEsquema}>Ver esquema del paciente</Button>
+        <Button variant="secondary" onClick={onRegistrarOtra}>Registrar otra vacunación</Button>
+        <Button onClick={onCerrar}>Cerrar</Button>
       </div>
     </div>
   );
