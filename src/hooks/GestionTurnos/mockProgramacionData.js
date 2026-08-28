@@ -149,3 +149,83 @@ export const SCHEDULE = {
     T('tarde'), T('tarde'), D, D,
   ],
 };
+
+// ---------- Modelo de "programación" (entidad con período/área/personal
+// propio) — ver docs/superpowers/specs/2026-08-28-programacion-turnos-flujo-design.md.
+// Reemplaza el criterio anterior de un único SCHEDULE/NURSES global fijo:
+// ProgramacionTurnos.jsx pasa a guardar un mapa de programaciones keyed por
+// período (`periodKeyDeSemana`/`periodKeyDeMes`), resuelto por
+// `resolverProgramacion` según la semana visible.
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+// "week:2026-08-18" — lunes ISO de la semana (weekStart YA es siempre lunes,
+// ver diasDeSemana/SEMANA_ANCLA arriba).
+export function periodKeyDeSemana(weekStart) {
+  return `week:${weekStart.getFullYear()}-${pad2(weekStart.getMonth() + 1)}-${pad2(weekStart.getDate())}`;
+}
+
+// "month:2026-09" — admite tanto un weekStart (para resolver a qué mes
+// pertenece la semana visible) como un monthStart de día 1 (para construir
+// la clave de una programación de tipo mes en el wizard): en ambos casos
+// solo importan año+mes.
+export function periodKeyDeMes(date) {
+  return `month:${date.getFullYear()}-${pad2(date.getMonth() + 1)}`;
+}
+
+// "Septiembre 2026" — paso 1 del wizard cuando tipo==='mes' (encargo,
+// ejemplo literal "[ Septiembre 2026 ]").
+export function mesLabel(date) {
+  const m = MESES_LARGO[date.getMonth()];
+  return `${m.charAt(0).toUpperCase()}${m.slice(1)} ${date.getFullYear()}`;
+}
+
+// Navegación prev/siguiente mes del paso 1 del wizard — siempre normaliza al
+// día 1 (monthStart nunca representa "un día" real, solo el mes).
+export function addMeses(date, n) {
+  return new Date(date.getFullYear(), date.getMonth() + n, 1);
+}
+
+// Lunes de la semana que contiene el día 1 del mes elegido (puede caer en el
+// mes anterior) — usado solo para decidir a qué `weekStart` saltar el
+// calendario principal al crear una programación de tipo mes, ya que la
+// grilla sigue siendo semanal (encargo sección 9: la vista mensual no es el
+// foco de edición de V1).
+export function primerLunesVisibleDelMes(monthStart) {
+  const dow = monthStart.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  return addDias(monthStart, diff);
+}
+
+// Resuelve qué programación aplica a la semana visible: match exacto de
+// semana primero; si no existe, cae a una programación de tipo mes que
+// contenga esa semana (mismo criterio de simplificación que ya tenía la
+// navegación de semana antes de este cambio: no se modelan 4-5 semanas de
+// datos reales distintos para un período mensual). Devuelve `null` si
+// ninguna de las dos existe — dispara el estado vacío en ProgramacionTurnos.jsx.
+export function resolverProgramacion(programaciones, weekStart) {
+  const weekKey = periodKeyDeSemana(weekStart);
+  if (programaciones[weekKey]) return { periodKey: weekKey, programacion: programaciones[weekKey] };
+  const monthKey = periodKeyDeMes(weekStart);
+  if (programaciones[monthKey]) return { periodKey: monthKey, programacion: programaciones[monthKey] };
+  return null;
+}
+
+// Semilla inicial: solo la semana 18–24 Ago 2026 (la que ya tenía datos
+// completos) viene precargada, ya publicada, con las 8 NURSES/SCHEDULE de
+// arriba — cualquier otro período arranca sin entrada (dispara el estado
+// vacío de la sección 1 del encargo).
+export const PROGRAMACIONES_SEED = {
+  [periodKeyDeSemana(SEMANA_ANCLA)]: {
+    id: 'prog-semana-ancla',
+    tipo: 'semana',
+    periodKey: periodKeyDeSemana(SEMANA_ANCLA),
+    periodLabel: rangoSemanaLabel(SEMANA_ANCLA),
+    area: 'todas',
+    nurseIds: NURSES.map((n) => n.id),
+    estado: 'publicada',
+    schedule: SCHEDULE,
+  },
+};
