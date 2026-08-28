@@ -6,20 +6,24 @@
 // la pantalla (encargo: "pasemos la pantalla de turnos a la ruta de
 // planificación/programación").
 
-// Área operativa propia de Programación de turnos (no reutiliza
-// AREAS_OPERATIVAS de mockPanelGeneralData: acá el recorte es por piso/ala,
-// no por sector norte/sur — encargo explícito, ver AreaSelector `label` en
-// ProgramacionTurnos.jsx).
+// Área o servicio propio de Programación de turnos (no reutiliza
+// AREAS_OPERATIVAS de mockPanelGeneralData: acá el recorte es por
+// servicio/unidad de internación real, no por sector norte/sur — encargo
+// explícito, ver AreaSelector `label` en ProgramacionTurnos.jsx).
 export const AREAS_TURNOS = [
   { value: 'todas', label: 'Todas las áreas' },
-  { value: 'piso1', label: 'Piso 1' },
-  { value: 'piso2', label: 'Piso 2' },
-  { value: 'alanorte', label: 'Ala Norte' },
-  { value: 'alasur', label: 'Ala Sur' },
+  { value: 'urgencias', label: 'Urgencias' },
+  { value: 'uci', label: 'UCI' },
+  { value: 'hosp-general-p4-t1', label: 'Hospitalización General P4 T1' },
+  { value: 'hosp-piso2-t1', label: 'Hospitalización Piso 2 T1' },
+  { value: 'hosp-piso3-t1', label: 'Hospitalización Piso 3 T1' },
+  { value: 'hosp-piso4-t1', label: 'Hospitalización Piso 4 T1' },
+  { value: 'hosp-piso4-t2', label: 'Hospitalización Piso 4 T2' },
+  { value: 'hosp-piso5-t2', label: 'Hospitalización Piso 5 T2' },
 ];
-// Lookup value->label (ej. mostrar "Área operativa: Ala Norte" a partir del
+// Lookup value->label (ej. mostrar "Área o servicio: UCI" a partir del
 // `area` de una enfermera) — se deriva de AREAS_TURNOS en vez de duplicar
-// los mismos 4 pares a mano.
+// los mismos pares a mano.
 export const AREA_TURNO_LABEL = Object.fromEntries(AREAS_TURNOS.map((a) => [a.value, a.label]));
 
 // Etiquetas de columna del calendario semanal. Son posicionales (día 1 de la
@@ -91,14 +95,14 @@ export function rangoSemanaLabel(weekStart) {
 }
 
 export const NURSES = [
-  { id: 'n1', nombre: 'María González', cargo: 'Enfermera profesional', iniciales: 'MG', area: 'piso1' },
-  { id: 'n2', nombre: 'Ana Martínez', cargo: 'Enfermera profesional', iniciales: 'AM', area: 'piso1' },
-  { id: 'n3', nombre: 'Carlos Pérez', cargo: 'Enfermero profesional', iniciales: 'CP', area: 'piso2' },
-  { id: 'n4', nombre: 'Laura Rodríguez', cargo: 'Enfermera profesional', iniciales: 'LR', area: 'alanorte' },
-  { id: 'n5', nombre: 'Sofía Torres', cargo: 'Enfermera profesional', iniciales: 'ST', area: 'alanorte' },
-  { id: 'n6', nombre: 'Daniel Ramírez', cargo: 'Enfermero profesional', iniciales: 'DR', area: 'alasur' },
-  { id: 'n7', nombre: 'Natalia Herrera', cargo: 'Enfermera profesional', iniciales: 'NH', area: 'piso2' },
-  { id: 'n8', nombre: 'Julián Castro', cargo: 'Enfermero profesional', iniciales: 'JC', area: 'alasur' },
+  { id: 'n1', nombre: 'María González', cargo: 'Enfermera profesional', iniciales: 'MG', area: 'hosp-piso4-t1' },
+  { id: 'n2', nombre: 'Ana Martínez', cargo: 'Enfermera profesional', iniciales: 'AM', area: 'hosp-piso4-t1' },
+  { id: 'n3', nombre: 'Carlos Pérez', cargo: 'Enfermero profesional', iniciales: 'CP', area: 'uci' },
+  { id: 'n4', nombre: 'Laura Rodríguez', cargo: 'Enfermera profesional', iniciales: 'LR', area: 'hosp-piso2-t1' },
+  { id: 'n5', nombre: 'Sofía Torres', cargo: 'Enfermera profesional', iniciales: 'ST', area: 'hosp-piso2-t1' },
+  { id: 'n6', nombre: 'Daniel Ramírez', cargo: 'Enfermero profesional', iniciales: 'DR', area: 'urgencias' },
+  { id: 'n7', nombre: 'Natalia Herrera', cargo: 'Enfermera profesional', iniciales: 'NH', area: 'uci' },
+  { id: 'n8', nombre: 'Julián Castro', cargo: 'Enfermero profesional', iniciales: 'JC', area: 'urgencias' },
 ];
 
 export const TIPO_TURNO_META = {
@@ -140,7 +144,7 @@ export const SCHEDULE = {
     T('manana', {
       conflicto: true,
       conflictoNota: 'Existe una superposición con otra asignación.',
-      conflictoOtro: { horario: '14:00 – 22:00', area: 'alanorte' },
+      conflictoOtro: { horario: '14:00 – 22:00', area: 'uci' },
     }),
     T('tarde'), T('tarde'), D, D,
   ],

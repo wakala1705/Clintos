@@ -1,0 +1,6 @@
+/* Scaffolding (.modal-overlay/.modal-card/.modal-body, .search-field,
+   .data-table*, .col-acciones, .ct-empty-cell) vive en ../../GestionTurnos.css
+   — acá solo lo propio de este modal. */
+.ae-modal-card{width:600px;}
+.ae-table-wrap{max-height:360px;border:1px solid var(--border);border-radius:var(--radius);}
+.ae-table-wrap .data-table thead th{position:sticky;top:0;}

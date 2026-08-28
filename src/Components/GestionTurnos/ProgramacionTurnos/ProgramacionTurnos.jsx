@@ -243,7 +243,7 @@ export default function ProgramacionTurnos() {
                 <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
               </div>
               <div className="tu-header-actions">
-                <AreaSelector label="Área operativa" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
+                <AreaSelector label="Área o servicio" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
                 <button type="button" className="date-picker-btn" onClick={() => window.ncToast?.('Vista mensual en desarrollo.')}>
                   <LuCalendarRange className="icon" />
                   Semana

@@ -143,7 +143,7 @@ export default function TurnoCellPopover({
             <div className="tc-popover-section">
               <div className="tc-popover-label">Otra asignación</div>
               <div className="tc-popover-line">{cell.conflictoOtro.horario}</div>
-              <div className="tc-popover-line">Área operativa: {AREA_TURNO_LABEL[cell.conflictoOtro.area]}</div>
+              <div className="tc-popover-line">Área o servicio: {AREA_TURNO_LABEL[cell.conflictoOtro.area]}</div>
             </div>
           )}
 

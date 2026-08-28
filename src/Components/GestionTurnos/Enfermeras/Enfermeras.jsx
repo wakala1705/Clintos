@@ -11,12 +11,13 @@ import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import ConfiguracionEnfermeraDrawer from '../ConfiguracionEnfermeraDrawer/ConfiguracionEnfermeraDrawer';
+import AgregarEnfermeraModal from './AgregarEnfermeraModal/AgregarEnfermeraModal';
 import { TurnoBadge, EstadoConfigBadge } from '../TurnoBadges/TurnoBadges';
 import { TIPOS_TURNO_INICIALES } from '@/hooks/GestionTurnos/mockTurnosData';
 import {
-  AREAS_ENFERMERA, ENFERMERAS_INICIALES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
+  AREAS_ENFERMERA, ENFERMERAS_INICIALES, ENFERMERAS_DISPONIBLES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
 } from '@/hooks/GestionTurnos/mockEnfermerasData';
-import { LuSearch } from 'react-icons/lu';
+import { LuPlus, LuSearch } from 'react-icons/lu';
 
 const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t.nombre]));
 
@@ -33,10 +34,12 @@ export default function Enfermeras() {
 
   const [tiposTurno] = useState(TIPOS_TURNO_INICIALES);
   const [enfermeras, setEnfermeras] = useState(ENFERMERAS_INICIALES);
+  const [disponibles, setDisponibles] = useState(ENFERMERAS_DISPONIBLES);
   const [area, setArea] = useState('todas');
   const [estado, setEstado] = useState('todas');
   const [query, setQuery] = useState('');
   const [enfermeraConfigId, setEnfermeraConfigId] = useState(null);
+  const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
 
   const opcionesEstado = useMemo(() => ESTADO_CONFIG_OPTIONS.map((f) => ({
     ...f,
@@ -75,6 +78,12 @@ export default function Enfermeras() {
     window.ncToast?.('Turnos permitidos actualizados.');
   }
 
+  function handleAgregarEnfermera(enfermera) {
+    setEnfermeras((prev) => [...prev, { ...enfermera, turnosPermitidos: [], estado: 'pendiente' }]);
+    setDisponibles((prev) => prev.filter((e) => e.id !== enfermera.id));
+    window.ncToast?.(`${enfermera.nombre} agregada a la configuración de turnos.`);
+  }
+
   return (
     <div className="app">
       <Sidebar />
@@ -95,6 +104,7 @@ export default function Enfermeras() {
                 <h1>Enfermeras</h1>
                 <p>Configura los turnos permitidos para cada enfermera.</p>
               </div>
+              <Button icon={LuPlus} onClick={() => setModalAgregarAbierto(true)}>Agregar enfermera</Button>
             </div>
 
             <div className="card">
@@ -180,6 +190,14 @@ export default function Enfermeras() {
           tiposTurno={tiposTurno}
           onClose={() => setEnfermeraConfigId(null)}
           onGuardar={handleGuardarConfiguracion}
+        />
+      )}
+
+      {modalAgregarAbierto && (
+        <AgregarEnfermeraModal
+          disponibles={disponibles}
+          onAgregar={handleAgregarEnfermera}
+          onClose={() => setModalAgregarAbierto(false)}
         />
       )}
     </div>

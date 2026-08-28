@@ -15,7 +15,7 @@ const TIPO_OPTIONS = Object.entries(TIPO_TURNO_META).map(([value, m]) => ({ valu
 // celda clickeada (encargo explícito) y permite moverlo de enfermera/día
 // además de ajustar tipo y horario custom. Mismo scaffolding .modal-overlay/
 // .modal-card + ModalHeader que el resto de GestionEnfermeria (NewTaskModal/
-// ReassignModal) — sin patrón visual nuevo. El Área operativa se muestra
+// ReassignModal) — sin patrón visual nuevo. El Área o servicio se muestra
 // solo-lectura porque es propiedad de la enfermera elegida, no del turno en
 // sí (mismo criterio que el campo "Área operativa" de NewTaskModal cuando
 // depende del paciente elegido).
@@ -90,7 +90,7 @@ export default function EditarTurnoModal({
                 <FormSelect id="et-tipo" value={form.tipo} onChange={handleTipoChange} options={TIPO_OPTIONS} />
               </div>
               <div className="form-field">
-                <label>Área operativa</label>
+                <label>Área o servicio</label>
                 <div className="tf-readonly-value">{AREA_TURNO_LABEL[formNurse?.area]}</div>
               </div>
 

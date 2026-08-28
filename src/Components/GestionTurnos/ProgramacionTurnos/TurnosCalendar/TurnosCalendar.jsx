@@ -207,7 +207,7 @@ export default function TurnosCalendar({
                           <div className="tc-hover-panel tc-hover-vacio" onClick={() => onOpenAsignar(n.id, dayIdx)}>
                             <div className="tc-hover-title">Sin asignar</div>
                             <div className="tc-hover-sub">{fecha}</div>
-                            <div className="tc-hover-sub">Área operativa: {AREA_TURNO_LABEL[n.area]}</div>
+                            <div className="tc-hover-sub">Área o servicio: {AREA_TURNO_LABEL[n.area]}</div>
                             <div className="tc-hover-actions">
                               <button type="button" onClick={(e) => { e.stopPropagation(); onOpenAsignar(n.id, dayIdx); }}>Asignar turno</button>
                             </div>

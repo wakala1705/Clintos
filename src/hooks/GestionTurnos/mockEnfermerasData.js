@@ -108,3 +108,26 @@ export const ENFERMERAS_INICIALES = [...NOMBRADAS, ...GENERADAS].map((e, i) => (
   turnosPermitidos: e.turnos,
   estado: estadoConfiguracion(e.turnos),
 }));
+
+// Personal que ya existe como registro de persona en el sistema pero todavía
+// no fue incorporado a la configuración de turnos de este módulo (encargo
+// "Agregar enfermera" — sección 2: seleccionar una enfermera EXISTENTE, sin
+// crear un nuevo registro de persona). Nunca se cruza con ENFERMERAS_INICIALES
+// (rango de id propio ENF-D0x) para que no haya IDs duplicados al agregar una
+// desde el modal.
+const DISPONIBLES = [
+  { nombre: 'Renata Ibarra', genero: 'f', area: 'uci' },
+  { nombre: 'Tomás Herrera', genero: 'm', area: 'urgencias' },
+  { nombre: 'Camila Restrepo', genero: 'f', area: 'pediatria' },
+  { nombre: 'Emilio Naranjo', genero: 'm', area: 'cirugia' },
+  { nombre: 'Valeria Quintero', genero: 'f', area: 'hospitalizacion' },
+  { nombre: 'Sebastián Duque', genero: 'm', area: 'uci' },
+];
+
+export const ENFERMERAS_DISPONIBLES = DISPONIBLES.map((e, i) => ({
+  id: `ENF-D${String(i + 1).padStart(2, '0')}`,
+  nombre: e.nombre,
+  cargo: CARGO_POR_GENERO[e.genero],
+  area: e.area,
+  areaLabel: AREA_LABEL[e.area],
+}));

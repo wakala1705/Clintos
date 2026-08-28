@@ -88,7 +88,7 @@ export default function AsignarTurnoModal({
                     <div className="tf-readonly-value">{diaLargoLabel(days[dayIdx], dayIdx)}</div>
                   </div>
                   <div className="form-field full">
-                    <label>Área operativa</label>
+                    <label>Área o servicio</label>
                     <div className="tf-readonly-value">{AREA_TURNO_LABEL[nurse?.area]}</div>
                   </div>
                 </>
@@ -115,7 +115,7 @@ export default function AsignarTurnoModal({
                     />
                   </div>
                   <div className="form-field full">
-                    <label>Área operativa</label>
+                    <label>Área o servicio</label>
                     <div className="tf-readonly-value">{nurse ? AREA_TURNO_LABEL[nurse.area] : 'Se completa al elegir enfermera'}</div>
                   </div>
                 </>
