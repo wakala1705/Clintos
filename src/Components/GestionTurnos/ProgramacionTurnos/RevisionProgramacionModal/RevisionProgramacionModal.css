@@ -1,0 +1,18 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.btn*: ver
+   ../../GestionTurnos.css. */
+.rpm-modal-card{width:440px;}
+.rpm-status{
+  font-size:var(--fs-lg);font-weight:var(--fw-semibold);
+  padding:10px 12px;border-radius:var(--radius);text-align:center;
+}
+.rpm-status.ready{background:var(--green-bg);color:#0d7a3d;}
+.rpm-status.pending{background:var(--amber-bg);color:var(--amber-fg);}
+.rpm-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.rpm-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  padding:8px 10px;border-radius:var(--radius);background:var(--bg);
+}
+.rpm-row .icon{width:18px;height:18px;flex-shrink:0;}
+.rpm-row.ok .icon{color:var(--green);}
+.rpm-row.warn .icon{color:var(--amber-fg);}
