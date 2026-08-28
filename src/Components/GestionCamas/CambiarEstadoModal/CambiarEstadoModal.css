@@ -8,3 +8,10 @@
    FormSelect.css) queda recortado por el overflow-y:auto genérico de
    .modal-body en modales bajos (mismo fix que ReasignarTurnoModal.css). */
 .cb-modal-card .modal-body{overflow-y:visible;}
+
+/* Respiro entre campos (mismo criterio que .bc-modal-card .modal-body en
+   BloquearCamaModal.css) — .modal-body no trae gap propio (GestionCamas.css),
+   cada .form-field solo separa su propio label/input (gap:4px interno). */
+.cb-modal-card .modal-body{display:flex;flex-direction:column;gap:12px;}
+
+.cb-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}

@@ -1,0 +1,7 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/.modal-footer/
+   .form-field/.chip-group.segmented/.chip-filter: definidas en
+   ../../../shared/shared.css. */
+.pam-chips{flex-wrap:wrap;}
+.pam-custom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;margin-top:14px;}
+.pam-preview{margin:14px 0 0;font-size:var(--fs-base);color:var(--ink-700);}
+.pam-preview b{color:var(--ink-900);font-weight:var(--fw-semibold);}

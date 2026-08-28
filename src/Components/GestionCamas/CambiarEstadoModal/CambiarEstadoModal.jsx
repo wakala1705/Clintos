@@ -4,11 +4,25 @@ import { useState } from 'react';
 import './CambiarEstadoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import Button from '@/Components/Button/Button';
 import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import {
   AREA_LABEL, ESTADOS_CRITICOS, ESTADO_LABEL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL, TRANSICIONES_PERMITIDAS,
 } from '@/hooks/GestionCamas/mockCamasData';
 import { LuBedDouble } from 'react-icons/lu';
+
+// Fecha/hora de inicio nace en "ahora" (mismo criterio por defecto que el
+// mock del encargo, que ya trae 20/08/2026 16:20 — un timestamp presente,
+// no un placeholder vacío) — el usuario puede correrla hacia atrás/adelante
+// si el cambio de estado se está registrando después del hecho.
+function fechaHoyISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function horaAhoraISO() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
 
 // "Cambiar estado" — el select de destino solo ofrece
 // TRANSICIONES_PERMITIDAS[cama.estado] (stand-in local de "el frontend le
@@ -25,6 +39,9 @@ export default function CambiarEstadoModal({
 }) {
   const [nuevoEstado, setNuevoEstado] = useState(presetEstado ?? '');
   const [motivo, setMotivo] = useState('');
+  const [observacion, setObservacion] = useState('');
+  const [fechaInicioFecha, setFechaInicioFecha] = useState(fechaHoyISO);
+  const [fechaInicioHora, setFechaInicioHora] = useState(horaAhoraISO);
 
   // `|| []`: Aislamiento/Inactiva no tienen entrada en TRANSICIONES_PERMITIDAS
   // (mockCamasData.js) — hoy ningún trigger real abre este modal desde esos 2
@@ -37,7 +54,14 @@ export default function CambiarEstadoModal({
   function handleSubmit(e) {
     e.preventDefault();
     if (!puedeConfirmar) return;
-    onConfirm(cama.id, nuevoEstado, motivoRequerido ? motivo.trim() : undefined);
+    const fechaInicio = fechaInicioFecha && fechaInicioHora
+      ? new Date(`${fechaInicioFecha}T${fechaInicioHora}`).getTime()
+      : undefined;
+    onConfirm(cama.id, nuevoEstado, {
+      motivo: motivoRequerido ? motivo.trim() : undefined,
+      observacion: observacion.trim() || undefined,
+      fechaInicio,
+    });
   }
 
   return (
@@ -90,10 +114,42 @@ export default function CambiarEstadoModal({
                 />
               </div>
             )}
+
+            <div className="form-field">
+              <label htmlFor="cb-observacion">Observación</label>
+              <textarea
+                id="cb-observacion"
+                rows="2"
+                placeholder="Detalle adicional del cambio (opcional)..."
+                value={observacion}
+                onChange={(e) => setObservacion(e.target.value)}
+              />
+            </div>
+
+            <div className="cb-row">
+              <div className="form-field">
+                <label htmlFor="cb-fecha-inicio">Fecha inicio</label>
+                <input
+                  id="cb-fecha-inicio"
+                  type="date"
+                  value={fechaInicioFecha}
+                  onChange={(e) => setFechaInicioFecha(e.target.value)}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="cb-hora-inicio">&nbsp;</label>
+                <input
+                  id="cb-hora-inicio"
+                  type="time"
+                  value={fechaInicioHora}
+                  onChange={(e) => setFechaInicioHora(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={!puedeConfirmar}>Cambiar estado</button>
+            <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button variant="primary" type="submit" disabled={!puedeConfirmar}>Confirmar</Button>
           </div>
         </form>
       </div>

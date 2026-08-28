@@ -17,43 +17,33 @@
   display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;
 }
 
-.pg-alerts-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:20px;}
+.pg-alerts-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px;}
 .pg-alerts-section-title{
   margin:0 0 10px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.04em;
 }
 
-/* "Medicaciones hoy" — tinte de fondo + ícono, mayor peso visual que
-   "Actividad reciente" abajo (encargo: "jerarquía clara según severidad").
-   Mismo criterio cromático que .pg-med-badge (PatientsTable.css): rojo para
-   lo ya vencido, ámbar para lo pendiente-pero-a-tiempo. */
+/* Fila = una alerta real del Centro de Alertas (ver AlertsPanel.jsx) —
+   tinte de fondo por PRIORIDAD, mismos 4 tonos que .alert-badge-*
+   (AlertBadges.css): rojo=crítica, ámbar=alta, amarillo=media, azul=baja. */
 .pg-alert-item{
   display:flex;align-items:flex-start;gap:10px;border-radius:var(--radius);
   padding:10px 12px;border:1px solid transparent;
 }
 .pg-alert-item + .pg-alert-item{margin-top:8px;}
-.pg-alert-item.pg-alert-critico{background:var(--red-bg);border-color:#f3c9c4;}
-.pg-alert-item.pg-alert-advertencia{background:var(--amber-bg);border-color:#f4dfae;}
+.pg-alert-item.pg-alert-critica{background:var(--red-bg);border-color:#f3c9c4;}
+.pg-alert-item.pg-alert-alta{background:var(--amber-bg);border-color:#f4dfae;}
+.pg-alert-item.pg-alert-media{background:var(--yellow-bg);border-color:#ecdca0;}
+.pg-alert-item.pg-alert-baja{background:var(--status-info-bg);border-color:var(--primary-100);}
 .pg-alert-icon{width:17px;height:17px;flex-shrink:0;margin-top:1px;}
-.pg-alert-critico .pg-alert-icon{color:var(--red);}
-.pg-alert-advertencia .pg-alert-icon{color:var(--amber-fg);}
-.pg-alert-text{min-width:0;}
+.pg-alert-critica .pg-alert-icon{color:var(--red);}
+.pg-alert-alta .pg-alert-icon{color:var(--amber-fg);}
+.pg-alert-media .pg-alert-icon{color:var(--yellow-fg);}
+.pg-alert-baja .pg-alert-icon{color:var(--status-info-fg);}
+.pg-alert-text{min-width:0;flex:1;}
 .pg-alert-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pg-alert-detail{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
-
-/* "Actividad reciente" — feed plano, sin tinte de fondo (menor prioridad
-   que las alertas de arriba): el punto de color es un acento, nunca el
-   único indicador (el texto ya nombra el evento). */
-.pg-activity-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
-.pg-activity-item{
-  display:flex;align-items:center;gap:10px;padding:8px 2px;
-  border-bottom:1px solid #eef0f4;font-size:var(--fs-base);
-}
-.pg-activity-item:last-child{border-bottom:none;}
-.pg-activity-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--ink-400);}
-.pg-activity-dot.pg-activity-advertencia{background:var(--amber-fg);}
-.pg-activity-text{flex:1;min-width:0;color:var(--ink-700);}
-.pg-activity-time{flex-shrink:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.pg-alert-time{flex-shrink:0;font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
 
 .pg-alerts-footer{padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;}
 .pg-alerts-footer-btn{width:100%;justify-content:center;}

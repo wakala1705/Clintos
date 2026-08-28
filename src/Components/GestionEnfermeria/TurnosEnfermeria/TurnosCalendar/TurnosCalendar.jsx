@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import './TurnosCalendar.css';
 import TurnoCellPopover from './TurnoCellPopover/TurnoCellPopover';
 import { AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel } from '@/hooks/GestionEnfermeria/mockTurnosData';
@@ -39,6 +40,12 @@ export default function TurnosCalendar({
   nurses, days, schedule, selectedCell,
   onOpenPopover, onClosePopover, onOpenAsignar, onEditar, onReasignar, onEliminar, onResolverConflicto, onEditarDescanso,
 }) {
+  // Ancla de TurnoCellPopover (ver ese componente para el porqué de
+  // position:fixed + portal a document.body en vez de position:absolute
+  // sobre .tc-cell) — .tc-cell siempre se renderiza haya o no popover
+  // abierto, así que su ref ya existe para cuando `isOpen` pasa a true.
+  const cellRefs = useRef({});
+
   return (
     <div className="tc-table-wrap">
       <table className="tc-table">
@@ -69,9 +76,11 @@ export default function TurnosCalendar({
                 const isOpen = selectedCell?.nurseId === n.id && selectedCell?.dayIdx === dayIdx;
                 const fecha = diaLargoLabel(days[dayIdx], dayIdx);
 
+                const cellKey = `${n.id}-${dayIdx}`;
+
                 return (
                   <td key={dayIdx} className={`tc-col-day${days[dayIdx].isToday ? ' today' : ''}`}>
-                    <div className="tc-cell">
+                    <div className="tc-cell" ref={(el) => { cellRefs.current[cellKey] = el; }}>
                       {cell.estado === 'turno' && (() => {
                         const meta = TIPO_TURNO_META[cell.tipo];
                         const Icon = cell.conflicto ? LuTriangleAlert : TIPO_ICONO[cell.tipo];
@@ -132,6 +141,7 @@ export default function TurnosCalendar({
                                 nurse={n}
                                 day={days[dayIdx]}
                                 dayIdx={dayIdx}
+                                getAnchorEl={() => cellRefs.current[cellKey]}
                                 onClose={onClosePopover}
                                 onEditar={() => onEditar(n.id, dayIdx)}
                                 onReasignar={() => onReasignar(n.id, dayIdx)}
@@ -179,6 +189,7 @@ export default function TurnosCalendar({
                               nurse={n}
                               day={days[dayIdx]}
                               dayIdx={dayIdx}
+                              getAnchorEl={() => cellRefs.current[cellKey]}
                               onClose={onClosePopover}
                               onEditarDescanso={() => onEditarDescanso(n.id, dayIdx)}
                               onAsignar={() => onOpenAsignar(n.id, dayIdx, { reemplazaDescanso: true })}

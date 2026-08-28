@@ -39,6 +39,13 @@
   --gray-bg:#eef0f4;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
+  /* Centro de Alertas: prioridad "Media" necesita distinguirse de "Alta"
+     (ámbar/naranja) — el sistema de tonos no tenía un amarillo propio hasta
+     ahora, se agrega acá con el mismo criterio de duplicación por feature
+     que el resto de este :root. */
+  --yellow:#b58900;
+  --yellow-bg:#fdf6e0;
+  --yellow-fg:#8a6a00;
   /* Camas (Bed Board): Limpieza/Mantenimiento — deliberadamente NO reusan
      --primary (ya significa "CTA primario/tab activo") ni --triage-orange
      de Admisiones.css (cross-import entre features rompe el criterio de
@@ -142,6 +149,9 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
+  --yellow:#e0c341;
+  --yellow-bg:rgba(181,137,0,.20);
+  --yellow-fg:#e0c341;
   --blue:#38bdf8;
   --blue-bg:rgba(2,132,199,.20);
   --blue-fg:#7dd3fc;

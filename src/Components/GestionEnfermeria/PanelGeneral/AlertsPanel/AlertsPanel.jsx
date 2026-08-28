@@ -1,17 +1,23 @@
 import './AlertsPanel.css';
-import {
-  ACTIVIDAD_RECIENTE, ALERTAS_MEDICACION, TOTAL_ALERTAS,
-} from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
-import { LuClock, LuOctagonAlert, LuTriangleAlert } from 'react-icons/lu';
+import Link from 'next/link';
+import { ICONOS_ALERTA } from '@/Components/GestionEnfermeria/AlertasEnfermeria/AlertBadges/AlertBadges';
+import { ALERTAS_ACTIVAS, TIPO_ALERTA_CONFIG, alertasUrgentes } from '@/hooks/GestionEnfermeria/mockAlertasData';
+import { LuTriangleAlert } from 'react-icons/lu';
 
-const SEVERIDAD_ICONO = { critico: LuOctagonAlert, advertencia: LuClock };
+const PREVIEW = alertasUrgentes(5);
 
-// Jerarquía de severidad en 2 niveles (encargo explícito): "Medicaciones
-// hoy" son alertas accionables ya (card con ícono + tinte, mismo peso visual
-// que .pf-note/.gcm-interpretation en HistoriaClinica), "Actividad reciente"
-// es un feed informativo de menor prioridad (fila plana con un punto de
-// color, sin tinte de fondo) — ambos grupos sumados son el badge rojo del
-// header (7, ver TOTAL_ALERTAS en mockPanelGeneralData.js).
+// Widget "Alertas críticas" del Panel general — relacionado 1:1 con el
+// Centro de Alertas (encargo explícito): antes usaba un mock aparte
+// (ALERTAS_MEDICACION/ACTIVIDAD_RECIENTE en mockPanelGeneralData.js) sin
+// ninguna relación real con las alertas de AlertasEnfermeria; ahora lee las
+// mismas 12 alertas activas (mockAlertasData.js) — el badge es el total real
+// (ALERTAS_ACTIVAS.length, igual que la pestaña "Todas" del Centro de
+// Alertas), no un número aparte. Un widget de dashboard es para un vistazo
+// rápido, no para gestionar: se listan solo las `alertasUrgentes` (top 5 por
+// prioridad/antigüedad, ver mockAlertasData.js), nunca las 12 completas —
+// "Ver todas las alertas" cubre el resto. Reutiliza ICONOS_ALERTA/
+// TIPO_ALERTA_CONFIG (AlertasEnfermeria/AlertBadges.jsx) para que el mismo
+// tipo de alerta se vea igual acá que en la tabla del Centro de Alertas.
 export default function AlertsPanel() {
   return (
     <section className="card pg-alerts-card">
@@ -20,48 +26,34 @@ export default function AlertsPanel() {
           <LuTriangleAlert className="icon" aria-hidden="true" />
           Alertas críticas
         </h2>
-        <span className="pg-alerts-count-badge" aria-label={`${TOTAL_ALERTAS} alertas activas`}>{TOTAL_ALERTAS}</span>
+        <span className="pg-alerts-count-badge" aria-label={`${ALERTAS_ACTIVAS.length} alertas activas`}>{ALERTAS_ACTIVAS.length}</span>
       </div>
 
       <div className="pg-alerts-body">
-        <div className="pg-alerts-section">
-          <h3 className="pg-alerts-section-title">Medicaciones hoy</h3>
-          {ALERTAS_MEDICACION.map((a) => {
-            const Icon = SEVERIDAD_ICONO[a.severidad];
-            return (
-              <div key={a.id} className={`pg-alert-item pg-alert-${a.severidad}`}>
-                <Icon className="icon pg-alert-icon" aria-hidden="true" />
-                <div className="pg-alert-text">
-                  <p className="pg-alert-title">{a.titulo}</p>
-                  <p className="pg-alert-detail">{a.detalle}</p>
-                </div>
+        <h3 className="pg-alerts-section-title">Más urgentes</h3>
+        {PREVIEW.map((a) => {
+          const tipoCfg = TIPO_ALERTA_CONFIG[a.tipo];
+          const Icon = ICONOS_ALERTA[tipoCfg.icon];
+          return (
+            <div key={a.id} className={`pg-alert-item pg-alert-${a.prioridad}`}>
+              <Icon className="icon pg-alert-icon" aria-hidden="true" />
+              <div className="pg-alert-text">
+                <p className="pg-alert-title">{a.titulo}</p>
+                <p className="pg-alert-detail">
+                  {a.detalle}
+                  {a.paciente ? ` · ${a.paciente}` : ''} · Cama {a.cama}
+                </p>
               </div>
-            );
-          })}
-        </div>
-
-        <div className="pg-alerts-section">
-          <h3 className="pg-alerts-section-title">Actividad reciente</h3>
-          <ul className="pg-activity-list">
-            {ACTIVIDAD_RECIENTE.map((ev) => (
-              <li key={ev.id} className="pg-activity-item">
-                <span className={`pg-activity-dot pg-activity-${ev.tipo}`} aria-hidden="true" />
-                <span className="pg-activity-text">{ev.texto}</span>
-                <span className="pg-activity-time">{ev.hace}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+              <span className="pg-alert-time">{a.hace}</span>
+            </div>
+          );
+        })}
       </div>
 
       <div className="pg-alerts-footer">
-        <button
-          type="button"
-          className="btn btn-secondary pg-alerts-footer-btn"
-          onClick={() => window.ncToast?.('Listado completo de alertas en desarrollo.')}
-        >
+        <Link href="/gestion-enfermeria/alertas" className="btn btn-secondary pg-alerts-footer-btn">
           Ver todas las alertas
-        </button>
+        </Link>
       </div>
     </section>
   );

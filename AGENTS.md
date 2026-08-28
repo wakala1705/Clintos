@@ -151,6 +151,32 @@ controles nuevos.
   seguir para código nuevo. Los selects de paginación ("X por página") no
   entran en esta regla: son un control de página, no un campo de formulario.
 
+# Barra de filtros de listado
+
+Toda card con tabla/listado principal (Panel General → pacientes, Tareas,
+Centro de Alertas...) usa **una sola fila** de toolbar — nunca 2 bloques
+separados (uno para tabs/chips rápidos, otro para el resto de los filtros).
+Encargo explícito tras encontrar que Centro de Alertas había divergido a 2
+filas (`.alert-list-tabs` arriba + `.filter-bar` abajo) mientras el resto del
+proyecto (`PatientsPanel.jsx`, referencia canónica) ya usaba 1 sola fila.
+
+- **Orden de izquierda a derecha, fijo**: buscador (`.search-field`) primero,
+  después `.filter-spacer` (empuja todo lo demás a la derecha), después los
+  chips rápidos de estado/categoría (`@/Components/SegmentedFilterBar/SegmentedFilterBar`,
+  no un `chip-group` armado a mano — ver `PatientsPanel.jsx`), después el
+  resto de los filtros (`FilterDropdown`/`AreaSelector`/selects propios,
+  agrupados en `.filter-cluster` si son varios), y al final, si corresponde,
+  el botón "Limpiar filtros" (solo cuando `hayFiltrosActivos`).
+- Todo esto vive en un único `<div className="filter-bar ...">` — la clase
+  del toolbar-por-feature (ej. `.alert-list-toolbar`, `.pg-patients-toolbar`)
+  solo overridea `.search-field{width:...}` y, si hace falta, el wrap de
+  `.filter-cluster`; nunca redefine `display:flex`/`gap` (ya vienen de
+  `.filter-bar` en `shared.css`, mismo criterio que el resto de tokens
+  compartidos por feature).
+- Con muchos controles (Centro de Alertas: tabs + 4 filtros + búsqueda) la
+  fila envuelve en `flex-wrap:wrap` en vez de forzar un segundo bloque fijo
+  — es una fila más densa, no una excepción al patrón de una sola fila.
+
 # Hooks / logic organization
 
 All non-visual logic (custom hooks, imperative init/controller modules like

@@ -106,6 +106,14 @@ export default function BedDetailModal({
   const ventanaReserva = cama.reserva
     ? formatVentanaReserva(cama.reserva.fechaInicio, cama.reserva.fechaVencimiento)
     : null;
+  // `cama.fechaInicio` (timestamp, no el string YYYY-MM-DD de
+  // reserva/bloqueo) viene de CambiarEstadoModal — a diferencia de esos 2,
+  // acá el usuario elige fecha+hora exacta, así que se formatea con hora.
+  const fechaInicioCambio = cama.fechaInicio
+    ? new Date(cama.fechaInicio).toLocaleString('es-CO', {
+      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    })
+    : null;
   const ventanaBloqueo = cama.bloqueo
     ? formatVentanaReserva(cama.bloqueo.fechaInicio, cama.bloqueo.fechaFin)
     : null;
@@ -206,6 +214,14 @@ export default function BedDetailModal({
                 {cama.estado === 'inactiva' && (
                   <DetailField label="Motivo de desactivación" value={cama.motivo ?? 'Sin motivo registrado'} />
                 )}
+
+                {/* Observación/Fecha inicio del último "Cambiar estado"
+                    (modal genérico) — a diferencia de los campos de arriba,
+                    no están atados a un `estado` puntual: se muestran para
+                    cualquier cama que los traiga, sin importar en qué estado
+                    esté ahora. */}
+                <DetailField label="Observación" value={cama.observacion} />
+                <DetailField label="Fecha inicio" value={fechaInicioCambio} />
               </div>
             </div>
 

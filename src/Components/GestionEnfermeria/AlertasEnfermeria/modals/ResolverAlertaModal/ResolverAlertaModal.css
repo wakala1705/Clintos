@@ -1,0 +1,8 @@
+/* .modal-overlay/.modal-card/.task-mini-modal-card/.modal-body/.modal-footer/
+   .form-field: definidas en ../../../shared/shared.css. */
+.ram-summary{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  background:var(--bg);border-radius:var(--radius);padding:10px 12px;margin-bottom:16px;
+}
+.ram-summary .k{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.ram-summary .v{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);text-align:right;}

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './GestionEnfermeriaSidebar.css';
 import {
-  LuCalendarClock, LuLayoutGrid, LuListChecks, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
+  LuBell, LuCalendarClock, LuLayoutGrid, LuListChecks, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
 } from 'react-icons/lu';
 
 // Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
@@ -17,11 +17,12 @@ const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 // Segundo nivel de navegación del módulo "Gestión de Enfermería" — mismo
 // patrón que GestionCamasSidebar.jsx (sidebar interno vertical, secundario
 // al sidebar global de íconos): reemplaza a GestionEnfermeriaNav (franja
-// horizontal de tabs). Compartido por las 4 rutas del feature (Panel
-// general/Pacientes/Turnos/Tareas, ver .ge-shell-content/.ge-page-body en
-// shared/shared.css) — vive en su propio componente en vez de duplicar el
-// nav por página, mismo criterio que Sidebar.jsx (AGENTS.md "App-wide
-// components"): el activo se deriva de usePathname(), no de un prop.
+// horizontal de tabs). Compartido por las 5 rutas del feature (Panel
+// general/Pacientes/Turnos/Tareas/Alertas, ver .ge-shell-content/
+// .ge-page-body en shared/shared.css) — vive en su propio componente en vez
+// de duplicar el nav por página, mismo criterio que Sidebar.jsx (AGENTS.md
+// "App-wide components"): el activo se deriva de usePathname(), no de un
+// prop.
 const ITEMS = [
   {
     id: 'panel-general', label: 'Panel general', href: '/gestion-enfermeria', icon: LuLayoutGrid,
@@ -34,6 +35,14 @@ const ITEMS = [
   },
   {
     id: 'tareas', label: 'Tareas', href: '/gestion-enfermeria/tareas', icon: LuListChecks,
+  },
+  // Un solo ítem "Centro de alertas" (encargo: los 5 accesos por estado que
+  // tenía antes — Pendientes/Críticas/Vencidas/Resueltas/Pospuestas — se
+  // sacaron del sidebar; esa misma navegación ya vive en los tabs
+  // `chip-group segmented` de AlertListPanel.jsx, mantenerla acá también era
+  // el mismo estado duplicado en 2 lugares).
+  {
+    id: 'alertas', label: 'Centro de alertas', href: '/gestion-enfermeria/alertas', icon: LuBell,
   },
 ];
 

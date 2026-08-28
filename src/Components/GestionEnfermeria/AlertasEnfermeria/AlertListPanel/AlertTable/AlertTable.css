@@ -1,0 +1,54 @@
+/* .data-table (base)/.cell-primary/.cell-muted/.cell-sub/.sr-only: definidas
+   en ../../../shared/shared.css (shared del feature) — acá solo lo
+   exclusivo de esta tabla. Mismo patrón que TaskTable.css (Tareas de
+   enfermería). */
+.alert-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;position:relative;}
+.alert-table{width:100%;}
+.alert-table tbody tr{cursor:pointer;}
+.alert-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.alert-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.alert-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
+
+.alert-col-alerta{min-width:220px;display:flex;align-items:flex-start;gap:10px;}
+.alert-col-alerta-text{display:flex;flex-direction:column;min-width:0;}
+.alert-col-ubicacion{min-width:150px;}
+.alert-col-creada{min-width:140px;}
+.col-acciones{width:1%;white-space:nowrap;text-align:right;}
+
+/* Ícono del tipo de alerta en círculo, tintado por PRIORIDAD (encargo:
+   "jerarquía visual" desde la primera columna, no solo en el badge) — mismo
+   criterio de círculo-ícono que .modal-header-icon (ModalHeader.css), pero
+   con los tonos de PRIORIDAD_CONFIG (AlertBadges.jsx) en vez de los 4 tonos
+   fijos de ese componente. */
+.alert-type-icon{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.alert-type-icon .icon{width:17px;height:17px;}
+.alert-type-icon-critica{background:var(--red-bg);color:var(--red);}
+.alert-type-icon-alta{background:var(--amber-bg);color:var(--amber-fg);}
+.alert-type-icon-media{background:var(--yellow-bg);color:var(--yellow-fg);}
+.alert-type-icon-baja{background:var(--status-info-bg);color:var(--status-info-fg);}
+
+.alert-hace{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-base);color:var(--ink-700);white-space:nowrap;}
+.alert-hace .icon{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
+
+.alert-table-empty{padding:48px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+/* ---------- TARJETAS MOBILE ----------
+   Mismo umbral/criterio que .task-cards (TaskTable.css) — colapsa por
+   debajo de 768px (--bp-tablet). */
+.alert-cards{display:none;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;}
+@media (max-width:768px){
+  .alert-table-wrap{display:none;}
+  .alert-cards{display:flex;}
+}
+.alert-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+  padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;
+}
+.alert-card.selected{background:var(--interactive-selected-bg);}
+.alert-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.alert-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.alert-card-meta{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-base);color:var(--ink-700);margin-top:2px;}
+.alert-row-actions{margin-top:4px;}

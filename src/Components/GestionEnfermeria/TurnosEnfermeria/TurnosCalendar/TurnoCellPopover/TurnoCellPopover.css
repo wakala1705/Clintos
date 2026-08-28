@@ -1,11 +1,14 @@
 /* Mismo lenguaje visual que .tc-card-menu-dropdown/.pg-row-menu-dropdown
    (blanco, radio, sombra) pero más ancho: acá hay detalle a mostrar, no
-   solo una lista de acciones. Ancla al padre .tc-cell (position:relative,
-   ver TurnosCalendar.css) — z-index alto porque tiene que quedar por
-   encima del thead sticky y de la columna "Enfermera" fija si el usuario
-   hace click cerca de esos bordes. */
+   solo una lista de acciones. position:fixed + top/left completados inline
+   en TurnoCellPopover.jsx (calculados desde `anchorEl` vía
+   getBoundingClientRect, mismo patrón que FormSelect.css) — el popover se
+   porta a document.body, por eso no puede depender de position:absolute
+   relativo a .tc-cell. z-index va por encima de --z-modal por el mismo
+   motivo que FormSelect: al portarse, queda hermano de .modal-overlay en el
+   DOM en vez de descendiente de la tabla. */
 .tc-popover{
-  position:absolute;top:calc(100% + 6px);left:0;z-index:30;width:240px;
+  position:fixed;z-index:calc(var(--z-modal, 50) + 1);width:240px;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 16px 40px rgba(16,24,39,.20);padding:14px;
   cursor:default;white-space:normal;

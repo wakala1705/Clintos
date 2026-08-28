@@ -152,25 +152,3 @@ export const ESTADO_MEDICACION_LABEL = {
   'no-aplica': 'No aplica',
 };
 
-// El badge rojo del panel de alertas (7) es la suma de estos 2 grupos —
-// nunca un número aparte, para que no se desincronice si se agrega/quita
-// una alerta más adelante.
-export const ALERTAS_MEDICACION = [
-  {
-    id: 'retrasados', severidad: 'critico', count: 2,
-    titulo: '2 medicamentos retrasados', detalle: 'Última actualización: hace 12 min',
-  },
-  {
-    id: 'pendiente-maria', severidad: 'advertencia', count: 1,
-    titulo: '1 dosis pendiente', detalle: 'Paciente: María González · Cama 101-A',
-  },
-];
-
-export const ACTIVIDAD_RECIENTE = [
-  { id: 1, texto: 'Nueva orden médica', hace: 'hace 8 min', tipo: 'info' },
-  { id: 2, texto: 'Signos vitales pendientes', hace: 'hace 15 min', tipo: 'advertencia' },
-  { id: 3, texto: 'Cambio de medicación', hace: 'hace 24 min', tipo: 'info' },
-  { id: 4, texto: 'Nota médica registrada', hace: 'hace 32 min', tipo: 'info' },
-];
-
-export const TOTAL_ALERTAS = ALERTAS_MEDICACION.reduce((sum, a) => sum + a.count, 0) + ACTIVIDAD_RECIENTE.length;

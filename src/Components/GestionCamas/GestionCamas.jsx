@@ -421,11 +421,13 @@ export default function GestionCamas() {
     window.ncToast?.(`Cama ${cama.numero} desactivada.`);
   }
 
-  function handleConfirmCambioEstado(camaId, nuevoEstado, motivo) {
+  function handleConfirmCambioEstado(camaId, nuevoEstado, { motivo, observacion, fechaInicio } = {}) {
     const cama = camas.find((c) => c.id === camaId);
     mutarCama(camaId, {
       estado: nuevoEstado,
       motivo,
+      observacion,
+      fechaInicio,
       // Al salir de ocupada/reservada ya no hay paciente asociado. La
       // transición directa libre→ocupada no recolecta un paciente nuevo acá
       // (usa "Asignar paciente" para eso, ver handleAssignPaciente).
@@ -442,7 +444,8 @@ export default function GestionCamas() {
         return next;
       });
     }
-    pushActivity(EVENTO_POR_ESTADO[nuevoEstado], `Cama ${cama.numero} actualizada a ${ESTADO_LABEL[nuevoEstado]}`, motivo || 'Cambio de estado manual');
+    const detalle = [motivo, observacion].filter(Boolean).join(' — ') || 'Cambio de estado manual';
+    pushActivity(EVENTO_POR_ESTADO[nuevoEstado], `Cama ${cama.numero} actualizada a ${ESTADO_LABEL[nuevoEstado]}`, detalle);
     setModal(null);
     window.ncToast?.(`Cama ${cama.numero} actualizada a ${ESTADO_LABEL[nuevoEstado]}.`);
   }
