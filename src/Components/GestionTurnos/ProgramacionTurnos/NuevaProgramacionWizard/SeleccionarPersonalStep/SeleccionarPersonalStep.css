@@ -1,0 +1,11 @@
+/* .form-field/.search-field/.ct-empty-cell: ver ../../../GestionTurnos.css.
+   .npw-nurse-row/.npw-step-title/.npw-step-hint: ver ../NuevaProgramacionWizard.css. */
+.sps-step{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.sps-count{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.sps-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sps-select-all{
+  margin-left:auto;background:none;border:none;padding:0;font-family:inherit;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);white-space:nowrap;
+}
+.sps-select-all:hover{text-decoration:underline;}
+.sps-list{display:flex;flex-direction:column;gap:2px;max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);padding:6px;}
