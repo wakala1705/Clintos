@@ -34,6 +34,14 @@
 .hmenu-item .chev{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}
 .hmenu-item.active .chev{color:var(--primary-dark);}
 
+/* Ítems sin pantalla propia (sin href ni flyout, ver HamburgerMenu.jsx) —
+   deshabilitados en vez de clickeables-sin-efecto: mismo criterio de
+   opacidad que .btn[disabled] (ver AGENTS.md "Botones"), sin hover/cursor. */
+.hmenu-item[disabled]{
+  opacity:var(--btn-disabled-opacity, .45);cursor:not-allowed;
+}
+.hmenu-item[disabled]:hover{background:none;}
+
 .hmenu-divider{height:1px;background:var(--border);margin:5px 4px;}
 
 .hmenu-submenu{

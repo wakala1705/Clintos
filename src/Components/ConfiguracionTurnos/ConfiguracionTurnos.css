@@ -1,6 +1,10 @@
-/* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
-   el resto de features de nivel superior (Home.css / FichaPaciente.css /
-   ProgramarCita.css...) — ver AGENTS.md. */
+/* Tokens + reset del shell + primitivas reutilizadas (botones, filter-bar,
+   modal, tabla) duplicados aquí siguiendo el mismo criterio que el resto de
+   features de nivel superior (GestionCamas.css/Admisiones.css...) — ver
+   AGENTS.md "Component organization". Importado por todas las páginas del
+   módulo (ConfiguracionTurnos.jsx/TiposTurno.jsx/Enfermeras.jsx/Auditoria.jsx),
+   mismo criterio que GestionCamas.css con sus sub-rutas. Solo se listan acá
+   los tokens/clases que este módulo realmente usa. */
 :root{
   --primary:#0065CD;
   --primary-dark:#004E9E;
@@ -23,12 +27,30 @@
   --red-bg:#fdeceb;
   --gray-fg:#6b7280;
   --gray-bg:#eef0f4;
+  --blue:#0284c7;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --radius:8px;
   --radius-lg:12px;
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --z-sticky:10;
+  --z-popover:20;
+  --z-modal:50;
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);
@@ -47,15 +69,14 @@ html[data-theme="dark"]{
   --red-bg:rgba(192,43,43,.20);
   --gray-fg:#9aa3b2;
   --gray-bg:#242c3d;
+  --blue:#38bdf8;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
 }
-
-/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
-   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
-   AGENTS.md). */
 html[data-contrast="high"]{
   --border:#cbd3dd;
   --ink-500:#4b5563;
@@ -84,6 +105,10 @@ body{
   flex-shrink:0;
   stroke:currentColor;
 }
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
 
 .app{
   display:flex;
@@ -92,18 +117,178 @@ body{
   overflow:hidden;
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
-.ct-content{
-  padding:20px 24px;
-  display:flex;flex-direction:column;gap:16px;
-  flex:1;min-height:0;
-  overflow:hidden;
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
 }
 
-/* ---------- HEADER DE PÁGINA (mismo patrón que .pc-page-header) ---------- */
-.ct-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
-.ct-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+/* ---------- BUTTONS (legacy .btn — código nuevo usa @/Components/Button/Button;
+   .btn/.btn-secondary quedan igual porque AreaSelector.jsx las consume
+   directo, ver AGENTS.md "Selects de formulario"/AreaSelector.jsx) ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--btn-gap);
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
+  padding:var(--btn-padding);border-radius:var(--btn-radius);
+  border:var(--btn-border-width) solid transparent;cursor:pointer;
+  transition:var(--btn-transition);
+  white-space:nowrap;
+}
+.btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
+.btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
+.btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.btn[disabled]{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
+html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#333e54;}
 
-/* ---------- EMPTY STATE (mismo patrón que AdmisionesEmptyState/FichaNotFound) ---------- */
+/* ---------- FILTER BAR ---------- */
+.filter-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.search-field{position:relative;width:280px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+.filter-spacer{flex:1;}
+
+/* Chips de selección rápida (@/Components/SegmentedFilterBar/SegmentedFilterBar,
+   ver AGENTS.md "Barra de filtros de listado") — mismas clases compartidas
+   por feature que el resto del proyecto (GestionCamas.css/PatientsPanel.css),
+   el componente no trae CSS propio. */
+.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
+.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
+.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;}
+
+/* ---------- MODAL scaffolding (header homologado: ver @/Components/ModalHeader/ModalHeader) ---------- */
+.modal-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .15s ease;
+  isolation:isolate;
+}
+.modal-overlay.open{display:flex;opacity:1;}
+.modal-card{
+  background:var(--surface-modal);border-radius:var(--radius-lg);width:520px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+  transform:translateY(8px) scale(.98);opacity:0;transition:transform .15s ease,opacity .15s ease;
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;}
+.modal-card > form{display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.modal-body{padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+.modal-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field input, .form-field select, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input, .form-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  outline:2px solid var(--primary);outline-offset:1px;
+}
+.field-label-row{display:flex;align-items:center;gap:var(--space-2);margin-bottom:6px;}
+.field-label-row label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);margin-bottom:0;}
+.required-pill{
+  display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--red);
+  background:var(--red-bg);padding:1px var(--space-2);border-radius:10px;letter-spacing:.02em;
+}
+
+/* ---------- DATA TABLE genérica ---------- */
+.data-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.data-table thead th{
+  position:sticky;top:0;z-index:var(--z-sticky);background:#f7f8fb;color:var(--ink-500);
+  font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+}
+.data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover{background:#fafbfd;}
+.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-medium);margin-top:2px;}
+.data-table .cell-muted{color:var(--ink-500);}
+.data-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+
+/* Celda de "Turnos permitidos" (varios TurnoBadge en fila) — reusada por el
+   bloque "Configuración del personal" del Resumen y por Enfermeras.jsx. */
+.ct-turnos-cell{display:flex;flex-wrap:wrap;gap:6px;}
+
+/* ---------- LAYOUT: sidebar interno + body (mismo criterio que
+   .content.cb-content en GestionCamas.css — selector compuesto para ganarle
+   a .content sin depender del orden de inyección de <style>) ---------- */
+.content.ct-content{padding:0;gap:0;flex-direction:row;overflow:hidden;}
+.ct-page-body{
+  flex:1;min-width:0;min-height:0;
+  display:flex;flex-direction:column;gap:16px;
+  padding:20px 24px;overflow-y:auto;
+}
+.ct-page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;}
+.ct-page-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.ct-page-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+.ct-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex-shrink:0;}
+@media (max-width:1280px){.ct-kpi-row{grid-template-columns:repeat(2,1fr);}}
+
+.ct-blocks-row{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;}
+
+.ct-block-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:16px 20px;flex-shrink:0;}
+.ct-block-header h2{margin:0 0 2px;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ct-block-header p{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.ct-block-header .btn .icon{width:18px;height:18px;}
+
+.ct-empty-cell{padding:32px 20px;text-align:center;color:var(--ink-500);font-size:var(--fs-sm);}
+
+.ct-preview-footer{padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;}
+.ct-preview-footer a{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);text-decoration:none;}
+.ct-preview-footer a:hover{text-decoration:underline;}
+
+/* ---------- EMPTY STATE (Auditoría placeholder — mismo patrón que
+   AdmisionesEmptyState/FichaNotFound) ---------- */
 .ct-empty-state{
   flex:1;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -118,3 +303,10 @@ body{
 .ct-empty-icon .icon{width:24px;height:24px;}
 .ct-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ct-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+}

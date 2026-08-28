@@ -1,0 +1,110 @@
+import { TURNO_ID } from './mockTurnosData';
+
+export const AREAS_ENFERMERA = [
+  { value: 'todas', label: 'Todas' },
+  { value: 'hospitalizacion', label: 'Hospitalización' },
+  { value: 'uci', label: 'UCI' },
+  { value: 'urgencias', label: 'Urgencias' },
+  { value: 'pediatria', label: 'Pediatría' },
+  { value: 'cirugia', label: 'Cirugía' },
+];
+
+// Único filtro de "estado" del listado: si la enfermera tiene turnos
+// permitidos configurados o no (columna "Estado" de la tabla) — el encargo
+// original nombra "Estado" y "Configuración" como dos filtros separados,
+// pero la única señal de estado que modela V1 es esta; se deja un solo
+// filtro para no inventar un segundo campo (ej. estado laboral) que no
+// existe en ningún otro lugar del encargo.
+export const ESTADO_CONFIG_OPTIONS = [
+  { value: 'todas', label: 'Todas' },
+  { value: 'configurada', label: 'Configurada' },
+  { value: 'pendiente', label: 'Pendiente' },
+];
+
+const AREA_LABEL = Object.fromEntries(
+  AREAS_ENFERMERA.filter((a) => a.value !== 'todas').map((a) => [a.value, a.label]),
+);
+
+// Cargo fijo por género (V1 no modela variedad de cargos, ver encargo
+// sección 4: solo "Enfermera profesional"/"Enfermero profesional").
+const CARGO_POR_GENERO = { f: 'Enfermera profesional', m: 'Enfermero profesional' };
+
+// Estado de configuración SIEMPRE derivado de turnosPermitidos (nunca un
+// campo independiente que pueda desincronizarse de la lista real) — mismo
+// criterio que el resto del proyecto (ver AGENTS.md / mockPanelGeneralData.js).
+export function estadoConfiguracion(turnosPermitidos) {
+  return turnosPermitidos.length > 0 ? 'configurada' : 'pendiente';
+}
+
+// Las 5 enfermeras nombradas explícitamente en el encargo, con el área y
+// los turnos permitidos tal cual se pidieron.
+const NOMBRADAS = [
+  {
+    nombre: 'María González', genero: 'f', area: 'hospitalizacion', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
+  },
+  {
+    nombre: 'Ana Martínez', genero: 'f', area: 'hospitalizacion', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
+  },
+  {
+    nombre: 'Carlos Pérez', genero: 'm', area: 'uci', turnos: [TURNO_ID.NOCHE],
+  },
+  {
+    nombre: 'Laura Rodríguez', genero: 'f', area: 'hospitalizacion', turnos: [],
+  },
+  {
+    nombre: 'Natalia Herrera', genero: 'f', area: 'hospitalizacion', turnos: [],
+  },
+];
+
+// Resto del listado hasta 42 (encargo: KPI "42 total / 38 configuradas / 4
+// pendientes") generado deterministicamente combinando nombre+apellido+área+
+// turnos por índice — nunca Math.random(), para que el dataset sea estable
+// entre cargas (mismo criterio de estabilidad que el resto de mocks del
+// proyecto). 35 configuradas + 2 pendientes acá, sumadas a las 3
+// configuradas/2 pendientes ya nombradas arriba = 38/4 exacto.
+const NOMBRES_F = [
+  'Sofía', 'Valentina', 'Camila', 'Daniela', 'Isabella', 'Mariana', 'Paula', 'Andrea', 'Juliana', 'Gabriela',
+  'Luisa', 'Carolina', 'Diana', 'Patricia', 'Adriana', 'Catalina', 'Alejandra', 'Verónica', 'Claudia', 'Silvia',
+];
+const NOMBRES_M = [
+  'Diego', 'Andrés', 'Santiago', 'Miguel', 'Felipe', 'Javier', 'Ricardo', 'Fernando', 'Alejandro', 'Sebastián',
+  'Julián', 'Nicolás', 'Esteban', 'David', 'Óscar', 'Jorge', 'Rodrigo',
+];
+const APELLIDOS = [
+  'López', 'Gómez', 'Ramírez', 'Torres', 'Díaz', 'Vargas', 'Castro', 'Rojas', 'Ortiz', 'Silva',
+  'Molina', 'Suárez', 'Reyes', 'Cárdenas', 'Salazar', 'Guerrero', 'Mendoza', 'Peña', 'Cruz', 'Aguilar',
+  'Flores', 'Navarro', 'Delgado', 'Campos', 'Vega', 'Rivas', 'Pardo', 'Cortés', 'Duarte', 'Bermúdez',
+  'Escobar', 'Chávez', 'Espinoza', 'Cabrera', 'Fuentes',
+];
+const AREAS_CICLO = ['hospitalizacion', 'uci', 'urgencias', 'pediatria', 'cirugia'];
+const COMBOS_CONFIGURADAS = [
+  [TURNO_ID.MANANA],
+  [TURNO_ID.TARDE],
+  [TURNO_ID.NOCHE],
+  [TURNO_ID.MANANA, TURNO_ID.TARDE],
+  [TURNO_ID.TARDE, TURNO_ID.NOCHE],
+  [TURNO_ID.MANANA, TURNO_ID.NOCHE],
+];
+
+const GENERADAS = [];
+for (let i = 0; i < 37; i += 1) {
+  const esFem = i % 2 === 0;
+  const nombrePool = esFem ? NOMBRES_F : NOMBRES_M;
+  const pendiente = i === 35 || i === 36;
+  GENERADAS.push({
+    nombre: `${nombrePool[i % nombrePool.length]} ${APELLIDOS[i % APELLIDOS.length]}`,
+    genero: esFem ? 'f' : 'm',
+    area: AREAS_CICLO[i % AREAS_CICLO.length],
+    turnos: pendiente ? [] : COMBOS_CONFIGURADAS[i % COMBOS_CONFIGURADAS.length],
+  });
+}
+
+export const ENFERMERAS_INICIALES = [...NOMBRADAS, ...GENERADAS].map((e, i) => ({
+  id: `ENF-${String(i + 1).padStart(3, '0')}`,
+  nombre: e.nombre,
+  cargo: CARGO_POR_GENERO[e.genero],
+  area: e.area,
+  areaLabel: AREA_LABEL[e.area],
+  turnosPermitidos: e.turnos,
+  estado: estadoConfiguracion(e.turnos),
+}));

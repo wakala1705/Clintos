@@ -1,0 +1,14 @@
+/* Mismo patrón pill+ícono que .alert-badge (AlertBadges.css) — tonos
+   semánticos consumidos por TurnoBadge/EstadoTurnoBadge/EstadoConfigBadge. */
+.ct-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.ct-badge .icon{width:13px;height:13px;}
+.ct-badge-blue{background:var(--blue-bg);color:var(--blue-fg);}
+.ct-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
+.ct-badge-green{background:var(--green-bg);color:#0d7a3d;}
+.ct-badge-amber{background:var(--amber-bg);color:var(--amber-fg);}
+.ct-badge-gray{background:var(--gray-bg);color:var(--gray-fg);}
+
+html[data-theme="dark"] .ct-badge-green{color:var(--green);}

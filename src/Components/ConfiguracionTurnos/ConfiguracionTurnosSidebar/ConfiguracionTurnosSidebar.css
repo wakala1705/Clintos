@@ -1,0 +1,86 @@
+/* Tokens: ver ../ConfiguracionTurnos.css (siempre cargado — todas las
+   páginas de este módulo lo importan). Mismo lenguaje visual/estructura que
+   GestionCamasSidebar.css (ver AGENTS.md): panel claro (--surface/--border)
+   dentro de .content, a la izquierda del contenido de la página. */
+.cts-sidebar{
+  width:232px;flex-shrink:0;height:100%;overflow-y:auto;overflow-x:hidden;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width .2s ease;
+}
+
+.cts-nav{display:flex;flex-direction:column;gap:2px;padding:12px;flex:1;min-height:0;}
+.cts-nav-group{display:flex;flex-direction:column;gap:2px;}
+
+.cts-nav-section-label{
+  padding:0 0 0 12px;margin:14px 0 4px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.cts-nav-group:first-of-type .cts-nav-section-label{margin-top:0;}
+
+.cts-nav-header{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:4px 4px 8px 8px;flex-shrink:0;
+}
+.cts-nav-label-group{
+  padding:0 0 0 4px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+
+.cts-collapse-btn{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:26px;height:26px;border-radius:var(--radius);border:none;background:none;
+  color:var(--ink-500);cursor:pointer;transition:background .15s,color .15s;
+}
+.cts-collapse-btn:hover{background:var(--bg);color:var(--ink-900);}
+.cts-collapse-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cts-collapse-btn .icon{width:17px;height:17px;}
+
+.cts-nav-item{
+  position:relative;
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:10px 12px;border-radius:var(--radius);
+  border:none;border-left:3px solid transparent;background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+  text-align:left;text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.cts-nav-icon{width:18px;height:18px;flex-shrink:0;}
+.cts-nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+
+.cts-nav-item:hover{background:var(--bg);color:var(--ink-900);}
+.cts-nav-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.cts-nav-item.active{
+  background:var(--interactive-selected-bg);
+  border-left-color:var(--primary);
+  color:var(--interactive-selected-text);
+  font-weight:var(--fw-semibold);
+}
+.cts-nav-item.active .cts-nav-icon{color:var(--primary);}
+
+.cts-tooltip-float{
+  position:fixed;transform:translateY(-50%);
+  background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap;
+  pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+}
+
+.cts-sidebar.collapsed{width:64px;}
+.cts-sidebar.collapsed .cts-nav-header{justify-content:center;padding:4px 0 8px;}
+.cts-sidebar.collapsed .cts-nav-label-group{display:none;}
+.cts-sidebar.collapsed .cts-nav-section-label{display:none;margin:0;}
+.cts-sidebar.collapsed .cts-nav-item{justify-content:center;padding:10px 0;}
+.cts-sidebar.collapsed .cts-nav-label{display:none;}
+
+@media (max-width:1024px){
+  .cts-sidebar{width:64px;}
+  .cts-nav-header{justify-content:center;padding:4px 0 8px;}
+  .cts-nav-label-group{display:none;}
+  .cts-nav-section-label{display:none;margin:0;}
+  .cts-collapse-btn{display:none;}
+  .cts-nav-item{justify-content:center;padding:10px 0;}
+  .cts-nav-label{display:none;}
+}

@@ -1,23 +1,75 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import './ConfiguracionTurnos.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import { LuCalendarClock } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
+import KpiCard from '@/Components/KpiCard/KpiCard';
+import ConfiguracionTurnosSidebar from './ConfiguracionTurnosSidebar/ConfiguracionTurnosSidebar';
+import NuevoTurnoModal from './NuevoTurnoModal/NuevoTurnoModal';
+import TurnoRowActionsMenu from './TurnoRowActionsMenu/TurnoRowActionsMenu';
+import { TurnoBadge, EstadoTurnoBadge, EstadoConfigBadge } from './TurnoBadges/TurnoBadges';
+import { TIPOS_TURNO_INICIALES, duracionHoras } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
+import { ENFERMERAS_INICIALES } from '@/hooks/ConfiguracionTurnos/mockEnfermerasData';
+import {
+  LuCalendarClock, LuCircleDashed, LuPlus, LuUserCheck, LuUsers,
+} from 'react-icons/lu';
 
-// Ruta /configuracion-turnos, colgada del ítem "Configuración de turnos"
-// dentro de Procesos en HamburgerMenu.jsx — pantalla nueva, todavía sin
-// funcionalidad propia (ver auditoría de mock de ese menú). Mismo patrón de
-// empty-state de página completa que FichaNotFound/AdmisionesEmptyState
-// (icono en círculo + título + subtítulo), sin CTA porque no hay ninguna
-// acción que ofrecer todavía.
+const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t.nombre]));
+
+// Cuántas enfermeras se muestran en la vista previa del bloque "Configuración
+// del personal" antes de derivar a la página completa (encargo: ejemplo con
+// 5 filas) — el resto se consulta en /configuracion-turnos/enfermeras.
+const PREVIEW_ENFERMERAS = 5;
+
+// Resumen de "Configuración de turnos" (encargo V1: solo tipos de turno +
+// turnos permitidos por enfermera, ver AGENTS.md). Mismo criterio de estado
+// 100% local que el resto del módulo — esta página no comparte su copia
+// mutable de `turnos` con la de Tipos de turno/Enfermeras, se remonta
+// fresca en cada navegación (ver GestionCamas.jsx/GestionCamasReservas.jsx).
 export default function ConfiguracionTurnos() {
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
     return cleanup;
   }, []);
+
+  const [turnos, setTurnos] = useState(TIPOS_TURNO_INICIALES);
+  const [enfermeras] = useState(ENFERMERAS_INICIALES);
+  const [modal, setModal] = useState(null);
+
+  const kpis = useMemo(() => ({
+    tiposActivos: turnos.filter((t) => t.estado === 'activo').length,
+    totalEnfermeras: enfermeras.length,
+    configuradas: enfermeras.filter((e) => e.estado === 'configurada').length,
+    pendientes: enfermeras.filter((e) => e.estado === 'pendiente').length,
+  }), [turnos, enfermeras]);
+
+  const enfermerasPreview = enfermeras.slice(0, PREVIEW_ENFERMERAS);
+
+  function handleCloseModal() {
+    setModal(null);
+  }
+
+  function handleSubmitNuevoTurno(datos) {
+    if (modal?.turno) {
+      setTurnos((prev) => prev.map((t) => (t.id === modal.turno.id ? { ...t, ...datos } : t)));
+      window.ncToast?.(`Turno ${datos.nombre} actualizado.`);
+    } else {
+      const nuevo = { id: `TUR-${Date.now()}`, ...datos };
+      setTurnos((prev) => [...prev, nuevo]);
+      window.ncToast?.(`Turno ${datos.nombre} creado.`);
+    }
+    setModal(null);
+  }
+
+  function handleToggleEstado(turno) {
+    const nuevoEstado = turno.estado === 'activo' ? 'inactivo' : 'activo';
+    setTurnos((prev) => prev.map((t) => (t.id === turno.id ? { ...t, estado: nuevoEstado } : t)));
+    window.ncToast?.(`Turno ${turno.nombre} ${nuevoEstado === 'activo' ? 'activado' : 'desactivado'}.`);
+  }
 
   return (
     <div className="app">
@@ -25,24 +77,125 @@ export default function ConfiguracionTurnos() {
 
       <div className="main">
         <Topbar
-          section="Consulta Externa"
-          page="Configuración de turnos"
+          section={['Procesos', { label: 'Configuración de turnos', href: '/configuracion-turnos' }]}
+          page="Resumen"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content ct-content">
-          <div className="ct-page-header">
-            <h1>Configuración de turnos</h1>
-            <p>Define los turnos de trabajo del personal asistencial.</p>
-          </div>
+          <ConfiguracionTurnosSidebar />
 
-          <div className="ct-empty-state">
-            <div className="ct-empty-icon"><LuCalendarClock className="icon" /></div>
-            <div className="ct-empty-title">Configuración de turnos en desarrollo</div>
-            <div className="ct-empty-sub">Estamos trabajando en esta funcionalidad. Vuelve pronto.</div>
+          <div className="ct-page-body">
+            <div className="ct-page-header">
+              <div>
+                <h1>Configuración de turnos</h1>
+                <p>Define los tipos de turno y los turnos permitidos para el personal de enfermería.</p>
+              </div>
+            </div>
+
+            <div className="ct-kpi-row">
+              <KpiCard icon={LuCalendarClock} label="Tipos de turno" value={kpis.tiposActivos} description="Activos" variant="neutral" />
+              <KpiCard icon={LuUsers} label="Enfermeras" value={kpis.totalEnfermeras} description="Total registradas" variant="neutral" />
+              <KpiCard icon={LuUserCheck} label="Configuradas" value={kpis.configuradas} description="Con turnos permitidos" variant="success" />
+              <KpiCard icon={LuCircleDashed} label="Pendientes" value={kpis.pendientes} description="Sin configuración" variant="warning" />
+            </div>
+
+            <div className="ct-blocks-row">
+              <div className="card">
+                <div className="ct-block-header">
+                  <div>
+                    <h2>Tipos de turno</h2>
+                    <p>Turnos disponibles para la programación.</p>
+                  </div>
+                  <Button icon={LuPlus} size="sm" onClick={() => setModal({ type: 'nuevo-turno' })}>Nuevo turno</Button>
+                </div>
+                <div className="data-table-wrap">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Turno</th>
+                        <th>Horario</th>
+                        <th>Duración</th>
+                        <th>Estado</th>
+                        <th aria-hidden="true" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {turnos.map((t) => (
+                        <tr key={t.id}>
+                          <td className="cell-primary">{t.nombre}</td>
+                          <td>{t.horaInicio} – {t.horaFin}</td>
+                          <td className="cell-muted">{duracionHoras(t.horaInicio, t.horaFin)} horas</td>
+                          <td><EstadoTurnoBadge estado={t.estado} /></td>
+                          <td className="col-acciones">
+                            <TurnoRowActionsMenu
+                              turno={t}
+                              onEditar={(turno) => setModal({ type: 'nuevo-turno', turno })}
+                              onToggleEstado={handleToggleEstado}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="ct-block-header">
+                  <div>
+                    <h2>Configuración del personal</h2>
+                    <p>Consulta y configura los turnos permitidos para cada enfermera.</p>
+                  </div>
+                </div>
+                <div className="data-table-wrap">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Enfermera</th>
+                        <th>Área</th>
+                        <th>Turnos permitidos</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {enfermerasPreview.map((e) => (
+                        <tr key={e.id}>
+                          <td className="cell-primary">{e.nombre}</td>
+                          <td>{e.areaLabel}</td>
+                          <td>
+                            {e.turnosPermitidos.length === 0 ? (
+                              <span className="cell-muted">—</span>
+                            ) : (
+                              <div className="ct-turnos-cell">
+                                {e.turnosPermitidos.map((tId) => (
+                                  <TurnoBadge key={tId} turnoId={tId} label={TURNO_LABEL[tId]} />
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td><EstadoConfigBadge estado={e.estado} /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="ct-preview-footer">
+                  <Link href="/configuracion-turnos/enfermeras">Ver todas las enfermeras ({kpis.totalEnfermeras})</Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {(modal?.type === 'nuevo-turno') && (
+        <NuevoTurnoModal
+          turno={modal.turno}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitNuevoTurno}
+        />
+      )}
     </div>
   );
 }

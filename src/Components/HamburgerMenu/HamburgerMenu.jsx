@@ -19,9 +19,11 @@ import {
 // Estructura de menú clásica de escritorio: lista vertical de secciones, con
 // "Procesos" y "Ayuda" abriendo un segundo panel (flyout) anclado siempre a
 // la esquina superior del panel principal, no a la fila que lo dispara — así
-// se ve en el mock. Los ítems marcados hasSubmenu (Correcciones, RIPS, 890)
-// muestran la flecha de un tercer nivel que no fue provisto todavía; hoy son
-// visuales, igual de "demo" que el resto de las acciones de este menú.
+// se ve en el mock. Encargo: los ítems sin pantalla propia (sin `href`) se
+// muestran deshabilitados en vez de clickeables-sin-efecto — ver
+// `disabledItem`/`disabledSubItem` más abajo. Los ítems marcados hasSubmenu
+// (Correcciones, RIPS, 890) muestran la flecha de un tercer nivel que no fue
+// provisto todavía, y entran en esa misma regla (deshabilitados).
 const MENU = [
   { id: 'archivo', label: 'Archivo', icon: LuFolder },
   { id: 'operacion', label: 'Operación', icon: LuSettings },
@@ -114,39 +116,52 @@ export default function HamburgerMenu() {
 
       {open && (
         <div className="hmenu-dropdown" role="menu">
-          {MENU.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`hmenu-item${openSubmenu === item.id ? ' active' : ''}`}
-              role="menuitem"
-              aria-haspopup={item.items ? 'menu' : undefined}
-              aria-expanded={item.items ? openSubmenu === item.id : undefined}
-              onMouseEnter={() => setOpenSubmenu(item.items ? item.id : null)}
-              onClick={() => (item.items ? setOpenSubmenu(item.id) : closeAll())}
-            >
-              <item.icon className="icon" aria-hidden="true" />
-              <span>{item.label}</span>
-              {item.items && <LuChevronRight className="icon chev" aria-hidden="true" />}
-            </button>
-          ))}
+          {MENU.map((item) => {
+            // Sin flyout propio (item.items) ni pantalla propia (item.href)
+            // no hay nada que este ítem pueda abrir — deshabilitado en vez
+            // de un botón que solo cierra el menú sin hacer nada.
+            const disabled = !item.items && !item.href;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`hmenu-item${openSubmenu === item.id ? ' active' : ''}`}
+                role="menuitem"
+                disabled={disabled}
+                aria-disabled={disabled || undefined}
+                aria-haspopup={item.items ? 'menu' : undefined}
+                aria-expanded={item.items ? openSubmenu === item.id : undefined}
+                onMouseEnter={() => { if (!disabled) setOpenSubmenu(item.items ? item.id : null); }}
+                onClick={() => { if (!disabled) (item.items ? setOpenSubmenu(item.id) : closeAll()); }}
+              >
+                <item.icon className="icon" aria-hidden="true" />
+                <span>{item.label}</span>
+                {item.items && <LuChevronRight className="icon chev" aria-hidden="true" />}
+              </button>
+            );
+          })}
 
           {activeItem && (
             <div className="hmenu-submenu" role="menu" onMouseEnter={() => setOpenSubmenu(activeItem.id)}>
-              {activeItem.items.map((sub, i) =>
-                sub.divider ? (
-                  <div key={`div-${i}`} className="hmenu-divider"></div>
-                ) : sub.href ? (
-                  <Link key={sub.id} href={sub.href} className="hmenu-item" role="menuitem" onClick={closeAll}>
-                    <span>{sub.label}</span>
-                  </Link>
-                ) : (
-                  <button key={sub.id} type="button" className="hmenu-item" role="menuitem" onClick={closeAll}>
+              {activeItem.items.map((sub, i) => {
+                if (sub.divider) return <div key={`div-${i}`} className="hmenu-divider"></div>;
+                if (sub.href) {
+                  return (
+                    <Link key={sub.id} href={sub.href} className="hmenu-item" role="menuitem" onClick={closeAll}>
+                      <span>{sub.label}</span>
+                    </Link>
+                  );
+                }
+                // Sin `href` = sin pantalla propia todavía (incluye los
+                // marcados hasSubmenu: su 3er nivel no fue provisto) —
+                // deshabilitado en vez de un botón que solo cierra el menú.
+                return (
+                  <button key={sub.id} type="button" className="hmenu-item" role="menuitem" disabled aria-disabled="true">
                     <span>{sub.label}</span>
                     {sub.hasSubmenu && <LuChevronRight className="icon chev" aria-hidden="true" />}
                   </button>
-                )
-              )}
+                );
+              })}
             </div>
           )}
         </div>

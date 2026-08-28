@@ -1,0 +1,42 @@
+/* .modal-footer: ver ../ConfiguracionTurnos.css. El header usa
+   @/Components/ModalHeader/ModalHeader (homologado) — acá solo el
+   overlay+panel propio de este drawer, mismo patrón que
+   AlertDetailDrawer.css (GestionEnfermeria). */
+.ced-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.32);
+  display:flex;justify-content:flex-end;
+  animation:ced-fade .15s ease;
+}
+.ced-panel{
+  width:400px;max-width:100%;height:100%;background:var(--surface-modal);
+  box-shadow:-16px 0 40px rgba(16,24,39,.20);
+  display:flex;flex-direction:column;
+  animation:ced-slide .18s ease;
+}
+@keyframes ced-fade{from{opacity:0;}to{opacity:1;}}
+@keyframes ced-slide{from{transform:translateX(24px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@media (prefers-reduced-motion: reduce){
+  .ced-overlay,.ced-panel{animation:none;}
+}
+
+.ced-body{padding:20px;overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:18px;}
+
+.ced-block{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--border);}
+.ced-block:first-of-type{border-top:none;padding-top:0;}
+.ced-block-title{
+  margin:0;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+
+.ced-turnos-list{display:flex;flex-direction:column;gap:8px;}
+.ced-turno-option{
+  display:flex;align-items:center;gap:10px;
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.ced-turno-option:hover{background:var(--bg);}
+.ced-turno-option.disabled{cursor:not-allowed;opacity:.55;}
+.ced-turno-option input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;accent-color:var(--primary);}
+.ced-turno-info{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.ced-turno-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ced-turno-horario{font-size:var(--fs-sm);color:var(--ink-500);}
