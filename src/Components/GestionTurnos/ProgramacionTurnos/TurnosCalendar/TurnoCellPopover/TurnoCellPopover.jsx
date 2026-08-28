@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import './TurnoCellPopover.css';
 import {
   AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel,
-} from '@/hooks/GestionEnfermeria/mockTurnosData';
+} from '@/hooks/GestionTurnos/mockProgramacionData';
 import {
   LuCalendarPlus, LuPencil, LuTrash2, LuTriangleAlert, LuUserRoundCog,
 } from 'react-icons/lu';

@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import '../ConfiguracionTurnos.css';
+import '../GestionTurnos.css';
 import './TiposTurno.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
-import ConfiguracionTurnosSidebar from '../ConfiguracionTurnosSidebar/ConfiguracionTurnosSidebar';
+import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import NuevoTurnoModal from '../NuevoTurnoModal/NuevoTurnoModal';
 import TurnoRowActionsMenu from '../TurnoRowActionsMenu/TurnoRowActionsMenu';
 import { EstadoTurnoBadge } from '../TurnoBadges/TurnoBadges';
-import { TIPOS_TURNO_INICIALES, duracionHoras } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
+import { TIPOS_TURNO_INICIALES, duracionHoras } from '@/hooks/GestionTurnos/mockTurnosData';
 import { LuPlus } from 'react-icons/lu';
 
 // Página dedicada "Tipos de turno" (encargo sección 3) — mismo estado local
-// mutable que TiposTurno usa en el bloque de Resumen (ConfiguracionTurnos.jsx),
+// mutable que TiposTurno usa en el bloque de Resumen (GestionTurnos.jsx),
 // pero cada página mantiene su propia copia (sin store global entre rutas,
 // mismo criterio que GestionCamas/GestionCamasReservas).
 export default function TiposTurno() {
@@ -55,13 +55,13 @@ export default function TiposTurno() {
 
       <div className="main">
         <Topbar
-          section={['Procesos', { label: 'Configuración de turnos', href: '/configuracion-turnos' }]}
+          section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
           page="Tipos de turno"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content ct-content">
-          <ConfiguracionTurnosSidebar />
+          <GestionTurnosSidebar />
 
           <div className="ct-page-body">
             <div className="ct-page-header">

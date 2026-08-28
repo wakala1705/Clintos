@@ -5,7 +5,7 @@ import './NuevoTurnoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
-import { ESTADO_TURNO_OPTIONS } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
+import { ESTADO_TURNO_OPTIONS } from '@/hooks/GestionTurnos/mockTurnosData';
 import { LuCalendarClock } from 'react-icons/lu';
 
 // Crear/editar tipo de turno (encargo sección 2/3) — mismo componente para

@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import './TurnosEnfermeria.css';
-import '@/Components/GestionEnfermeria/shared/shared.css';
+import '../GestionTurnos.css';
+import './ProgramacionTurnos.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfermeriaSidebar/GestionEnfermeriaSidebar';
+import Button from '@/Components/Button/Button';
+import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import TurnosCalendar from './TurnosCalendar/TurnosCalendar';
@@ -15,7 +16,7 @@ import ReasignarTurnoModal from './ReasignarTurnoModal/ReasignarTurnoModal';
 import AsignarTurnoModal from './AsignarTurnoModal/AsignarTurnoModal';
 import {
   AREAS_TURNOS, NURSES, SCHEDULE, SEMANA_ANCLA, addDias, diasDeSemana, rangoSemanaLabel,
-} from '@/hooks/GestionEnfermeria/mockTurnosData';
+} from '@/hooks/GestionTurnos/mockProgramacionData';
 import {
   LuCalendarRange, LuChevronLeft, LuChevronRight, LuClipboardCheck, LuPlus, LuSearch, LuTriangleAlert, LuUserRoundX, LuUsers,
 } from 'react-icons/lu';
@@ -33,14 +34,19 @@ const ESTADO_OPTIONS = [
   { value: 'con-conflicto', label: 'Con conflicto' },
 ];
 
-// Sección "Turnos" de la navegación interna de Gestión de Enfermería (ver
-// GestionEnfermeriaSidebar) — programación semanal enfermera x día (encargo
-// explícito, ver mockTurnosData.js). "Tipo de turno"/"Estado" filtran a
-// nivel de ENFERMERA (fila completa), no de celda individual: ocultar solo
-// algunas celdas de una fila rompería la lectura semanal de esa persona, así
-// que el criterio es "¿esta enfermera tiene ALGUNA celda que matchea?" —
-// misma pregunta que un coordinador se haría ("¿quién trabaja de noche esta
-// semana?", "¿quién tiene algo sin asignar?").
+// Sección "Planificación → Programación de turnos" de Gestión de turnos (ver
+// GestionTurnosSidebar) — programación semanal enfermera x día (encargo
+// explícito, ver mockProgramacionData.js). Vivía antes en Gestión de
+// Enfermería → Turnos (`/gestion-enfermeria/turnos`); se mudó acá completa
+// (encargo: "pasemos la pantalla de turnos a la ruta de planificación/
+// programación") — el ítem "Turnos" ya se quitó del sidebar de Gestión de
+// Enfermería (ver GestionEnfermeriaSidebar.jsx), esta es ahora su única
+// entrada. "Tipo de turno"/"Estado" filtran a nivel de ENFERMERA (fila
+// completa), no de celda individual: ocultar solo algunas celdas de una fila
+// rompería la lectura semanal de esa persona, así que el criterio es "¿esta
+// enfermera tiene ALGUNA celda que matchea?" — misma pregunta que un
+// coordinador se haría ("¿quién trabaja de noche esta semana?", "¿quién
+// tiene algo sin asignar?").
 //
 // Estado de interacción de celda (encargo explícito, ver TurnosCalendar.jsx
 // y su comentario de progressive disclosure):
@@ -49,7 +55,7 @@ const ESTADO_OPTIONS = [
 //  - `modal` controla el modal de formulario abierto (Editar/Reasignar/
 //    Asignar) — se reutilizan los 3 mismos componentes sin importar desde
 //    qué celda o botón se llegó.
-export default function TurnosEnfermeria() {
+export default function ProgramacionTurnos() {
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
     return cleanup;
@@ -222,15 +228,15 @@ export default function TurnosEnfermeria() {
 
       <div className="main">
         <Topbar
-          section={['Hospitalización', { label: 'Gestión de Enfermería', href: '/gestion-enfermeria' }]}
-          page="Turnos"
+          section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
+          page="Programación de turnos"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content ge-shell-content">
-          <GestionEnfermeriaSidebar />
+        <div className="content ct-content">
+          <GestionTurnosSidebar />
 
-          <div className="ge-page-body">
+          <div className="ct-page-body">
             <div className="tu-header">
               <div>
                 <h1>Programación de turnos</h1>
@@ -242,10 +248,7 @@ export default function TurnosEnfermeria() {
                   <LuCalendarRange className="icon" />
                   Semana
                 </button>
-                <button type="button" className="btn btn-primary" onClick={handleOpenAsignarHeader}>
-                  <LuPlus className="icon" />
-                  Asignar turno
-                </button>
+                <Button icon={LuPlus} onClick={handleOpenAsignarHeader}>Asignar turno</Button>
               </div>
             </div>
 

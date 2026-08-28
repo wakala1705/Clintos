@@ -1,8 +1,8 @@
 import './TurnoBadges.css';
 import { LuCheck, LuCircleCheck, LuCircleDashed, LuPause } from 'react-icons/lu';
-import { TURNO_BADGE_TONE } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
+import { TURNO_BADGE_TONE } from '@/hooks/GestionTurnos/mockTurnosData';
 
-// Badges de Configuración de turnos (mismo patrón pill+ícono que
+// Badges de Gestión de turnos (mismo patrón pill+ícono que
 // AlertBadges.jsx — un componente por feature, no un genérico compartido
 // entre features, ver AGENTS.md).
 export function TurnoBadge({ turnoId, label }) {

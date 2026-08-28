@@ -5,7 +5,7 @@ import './ConfiguracionEnfermeraDrawer.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { EstadoConfigBadge } from '../TurnoBadges/TurnoBadges';
-import { estadoConfiguracion } from '@/hooks/ConfiguracionTurnos/mockEnfermerasData';
+import { estadoConfiguracion } from '@/hooks/GestionTurnos/mockEnfermerasData';
 import { LuUserRoundCog } from 'react-icons/lu';
 
 // Drawer lateral derecho "Configuración de <enfermera>" (encargo sección 5)

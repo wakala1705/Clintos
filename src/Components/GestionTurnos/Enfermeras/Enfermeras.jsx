@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import '../ConfiguracionTurnos.css';
+import '../GestionTurnos.css';
 import './Enfermeras.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
@@ -9,13 +9,13 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
-import ConfiguracionTurnosSidebar from '../ConfiguracionTurnosSidebar/ConfiguracionTurnosSidebar';
+import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import ConfiguracionEnfermeraDrawer from '../ConfiguracionEnfermeraDrawer/ConfiguracionEnfermeraDrawer';
 import { TurnoBadge, EstadoConfigBadge } from '../TurnoBadges/TurnoBadges';
-import { TIPOS_TURNO_INICIALES } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
+import { TIPOS_TURNO_INICIALES } from '@/hooks/GestionTurnos/mockTurnosData';
 import {
   AREAS_ENFERMERA, ENFERMERAS_INICIALES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
-} from '@/hooks/ConfiguracionTurnos/mockEnfermerasData';
+} from '@/hooks/GestionTurnos/mockEnfermerasData';
 import { LuSearch } from 'react-icons/lu';
 
 const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t.nombre]));
@@ -81,13 +81,13 @@ export default function Enfermeras() {
 
       <div className="main">
         <Topbar
-          section={['Procesos', { label: 'Configuración de turnos', href: '/configuracion-turnos' }]}
+          section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
           page="Enfermeras"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content ct-content">
-          <ConfiguracionTurnosSidebar />
+          <GestionTurnosSidebar />
 
           <div className="ct-page-body">
             <div className="ct-page-header">

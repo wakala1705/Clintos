@@ -38,7 +38,7 @@ const MENU = [
       { id: 'gestion-camas', label: 'Gestión de camas', href: '/gestion-camas' },
       { id: 'cancelar-citas', label: 'Cancelar citas paciente' },
       { id: 'programacion-agendas', label: 'Programación Agendas' },
-      { id: 'configuracion-turnos', label: 'Configuración de turnos', href: '/configuracion-turnos' },
+      { id: 'gestion-turnos', label: 'Gestión de turnos', href: '/gestion-turnos' },
       { id: 'correcciones', label: 'Correcciones', hasSubmenu: true },
       { id: 'gestor-autorizaciones', label: 'Gestor de autorizaciones' },
       { id: 'cambio-medico', label: 'Cambio de médico' },

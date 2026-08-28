@@ -1,5 +1,5 @@
 /* Tokens + primitivas (incluye .ct-turnos-cell, reusado también por el
-   bloque "Configuración del personal" del Resumen): ver ../ConfiguracionTurnos.css. */
+   bloque "Configuración del personal" del Resumen): ver ../GestionTurnos.css. */
 
 /* Footer de la tabla con el resumen de lo que se está mostrando — mismo
    patrón visual que .cba-pagination-label (GestionCamas/CamasPagination.css):

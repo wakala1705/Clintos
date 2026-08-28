@@ -6,7 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   AREA_TURNO_LABEL, NURSES, TIPO_TURNO_META, diaLargoLabel,
-} from '@/hooks/GestionEnfermeria/mockTurnosData';
+} from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuTriangleAlert, LuUserRoundCog } from 'react-icons/lu';
 
 // "Reasignar turno" — a diferencia de Editar, fecha/horario/tipo/área quedan

@@ -1,6 +1,6 @@
 /* .app/.main/.content/.card/.btn (shell base) + .day-nav/.date-picker-btn/
    .filter-spacer/.search-field/.filters-more-btn/.filter-popover (controles
-   de barra) viven en ../shared/shared.css — acá solo el layout propio de
+   de barra) viven en ../GestionTurnos.css — acá solo el layout propio de
    esta página. */
 .tu-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;}
 .tu-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}

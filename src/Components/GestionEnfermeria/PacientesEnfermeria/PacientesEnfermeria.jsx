@@ -13,7 +13,7 @@ import { LuUsers } from 'react-icons/lu';
 // GestionEnfermeriaSidebar) — todavía sin listado propio; "Pacientes en piso"
 // sigue viviendo en Panel General (PatientsPanel) hasta que esta pantalla
 // tenga su propio diseño. Mismo patrón de empty-state de página completa
-// que ConfiguracionTurnos (icono en círculo + título + subtítulo, sin CTA).
+// que GestionTurnos (icono en círculo + título + subtítulo, sin CTA).
 export default function PacientesEnfermeria() {
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });

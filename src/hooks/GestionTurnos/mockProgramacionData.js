@@ -1,11 +1,15 @@
-// Datos de ejemplo para "Turnos" (ver
-// src/Components/GestionEnfermeria/TurnosEnfermeria/) — programación semanal
-// de turnos de enfermería. Ficticio, igual que el resto del módulo (ver
-// mockPanelGeneralData.js/mockTareasData.js).
+// Datos de ejemplo para "Programación de turnos" (ver
+// src/Components/GestionTurnos/ProgramacionTurnos/) — programación semanal
+// de turnos de enfermería. Ficticio, igual que el resto de los mocks del
+// proyecto (ver mockPanelGeneralData.js/mockTareasData.js, GestionEnfermeria).
+// Se mudó acá desde src/hooks/GestionEnfermeria/mockTurnosData.js junto con
+// la pantalla (encargo: "pasemos la pantalla de turnos a la ruta de
+// planificación/programación").
 
-// Área operativa propia de Turnos (ya no reutiliza AREAS_OPERATIVAS de
-// mockPanelGeneralData: acá el recorte es por piso/ala, no por sector norte/
-// sur — encargo explícito, ver AreaSelector `label` en TurnosEnfermeria.jsx).
+// Área operativa propia de Programación de turnos (no reutiliza
+// AREAS_OPERATIVAS de mockPanelGeneralData: acá el recorte es por piso/ala,
+// no por sector norte/sur — encargo explícito, ver AreaSelector `label` en
+// ProgramacionTurnos.jsx).
 export const AREAS_TURNOS = [
   { value: 'todas', label: 'Todas las áreas' },
   { value: 'piso1', label: 'Piso 1' },

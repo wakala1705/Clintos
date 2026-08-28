@@ -1,5 +1,5 @@
-import ConfiguracionTurnos from '@/Components/ConfiguracionTurnos/ConfiguracionTurnos';
+import GestionTurnos from '@/Components/GestionTurnos/GestionTurnos';
 
-export default function ConfiguracionTurnosPage() {
-  return <ConfiguracionTurnos />;
+export default function GestionTurnosPage() {
+  return <GestionTurnos />;
 }

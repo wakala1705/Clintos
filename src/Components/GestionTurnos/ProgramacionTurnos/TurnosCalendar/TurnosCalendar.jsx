@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import './TurnosCalendar.css';
 import TurnoCellPopover from './TurnoCellPopover/TurnoCellPopover';
-import { AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel } from '@/hooks/GestionEnfermeria/mockTurnosData';
+import { AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuMoon, LuSun, LuSunrise, LuTriangleAlert } from 'react-icons/lu';
 
 // Ícono propio por tipo de turno (mañana/tarde/noche) — el color de la

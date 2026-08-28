@@ -510,9 +510,10 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .filter-spacer{flex:1;}
 
 /* ---------- NAVEGACIÓN DE DÍA/SEMANA ----------
-   Antes exclusiva de MedicamentosPanel (navegación de día del cronograma de
-   medicación) — TurnosEnfermeria reutiliza el mismo patrón para su
-   navegación semanal (‹ rango ›+Hoy), 2 consumidores → vive acá (ver
+   Exclusiva de MedicamentosPanel (navegación de día del cronograma de
+   medicación) — Programación de turnos reutilizaba el mismo patrón para su
+   navegación semanal (‹ rango ›+Hoy) antes de mudarse a Gestión de turnos
+   (ver GestionTurnos.css), que trae su propia copia (ver
    AGENTS.md). */
 .day-nav{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .day-nav-btn{

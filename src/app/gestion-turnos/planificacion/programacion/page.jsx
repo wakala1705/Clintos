@@ -1,5 +1,5 @@
-import TurnosEnfermeria from '@/Components/GestionEnfermeria/TurnosEnfermeria/TurnosEnfermeria';
+import ProgramacionTurnos from '@/Components/GestionTurnos/ProgramacionTurnos/ProgramacionTurnos';
 
-export default function TurnosEnfermeriaPage() {
-  return <TurnosEnfermeria />;
+export default function ProgramacionTurnosPage() {
+  return <ProgramacionTurnos />;
 }

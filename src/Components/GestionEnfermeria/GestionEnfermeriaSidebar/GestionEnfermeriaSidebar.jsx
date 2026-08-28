@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './GestionEnfermeriaSidebar.css';
 import {
-  LuBell, LuCalendarClock, LuLayoutGrid, LuListChecks, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
+  LuBell, LuLayoutGrid, LuListChecks, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
 } from 'react-icons/lu';
 
 // Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
@@ -17,21 +17,23 @@ const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 // Segundo nivel de navegación del módulo "Gestión de Enfermería" — mismo
 // patrón que GestionCamasSidebar.jsx (sidebar interno vertical, secundario
 // al sidebar global de íconos): reemplaza a GestionEnfermeriaNav (franja
-// horizontal de tabs). Compartido por las 5 rutas del feature (Panel
-// general/Pacientes/Turnos/Tareas/Alertas, ver .ge-shell-content/
-// .ge-page-body en shared/shared.css) — vive en su propio componente en vez
-// de duplicar el nav por página, mismo criterio que Sidebar.jsx (AGENTS.md
-// "App-wide components"): el activo se deriva de usePathname(), no de un
-// prop.
+// horizontal de tabs). Compartido por las 4 rutas del feature (Panel
+// general/Pacientes/Tareas/Alertas, ver .ge-shell-content/.ge-page-body en
+// shared/shared.css) — vive en su propio componente en vez de duplicar el
+// nav por página, mismo criterio que Sidebar.jsx (AGENTS.md "App-wide
+// components"): el activo se deriva de usePathname(), no de un prop.
+//
+// "Turnos" (antes acá, `/gestion-enfermeria/turnos`) se mudó completo a
+// Gestión de turnos → Planificación → Programación de turnos (encargo:
+// "pasemos la pantalla de turnos a la ruta de planificación/programación",
+// ver ProgramacionTurnos.jsx) — no queda un atajo cruzado acá a propósito,
+// esa pantalla ya no es parte de este módulo.
 const ITEMS = [
   {
     id: 'panel-general', label: 'Panel general', href: '/gestion-enfermeria', icon: LuLayoutGrid,
   },
   {
     id: 'pacientes', label: 'Pacientes', href: '/gestion-enfermeria/pacientes', icon: LuUsers,
-  },
-  {
-    id: 'turnos', label: 'Turnos', href: '/gestion-enfermeria/turnos', icon: LuCalendarClock,
   },
   {
     id: 'tareas', label: 'Tareas', href: '/gestion-enfermeria/tareas', icon: LuListChecks,

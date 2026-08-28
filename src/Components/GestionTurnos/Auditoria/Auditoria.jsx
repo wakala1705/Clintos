@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import '../ConfiguracionTurnos.css';
+import '../GestionTurnos.css';
 import './Auditoria.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import ConfiguracionTurnosSidebar from '../ConfiguracionTurnosSidebar/ConfiguracionTurnosSidebar';
+import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import { LuHistory } from 'react-icons/lu';
 
 // Placeholder de "Auditoría / Historial" (encargo explícito: fuera de
@@ -25,13 +25,13 @@ export default function Auditoria() {
 
       <div className="main">
         <Topbar
-          section={['Procesos', { label: 'Configuración de turnos', href: '/configuracion-turnos' }]}
+          section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
           page="Auditoría / Historial"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content ct-content">
-          <ConfiguracionTurnosSidebar />
+          <GestionTurnosSidebar />
 
           <div className="ct-page-body">
             <div className="ct-page-header">

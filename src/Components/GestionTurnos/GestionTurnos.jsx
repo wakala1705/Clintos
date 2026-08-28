@@ -2,18 +2,18 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import './ConfiguracionTurnos.css';
+import './GestionTurnos.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import KpiCard from '@/Components/KpiCard/KpiCard';
-import ConfiguracionTurnosSidebar from './ConfiguracionTurnosSidebar/ConfiguracionTurnosSidebar';
+import GestionTurnosSidebar from './GestionTurnosSidebar/GestionTurnosSidebar';
 import NuevoTurnoModal from './NuevoTurnoModal/NuevoTurnoModal';
 import TurnoRowActionsMenu from './TurnoRowActionsMenu/TurnoRowActionsMenu';
 import { TurnoBadge, EstadoTurnoBadge, EstadoConfigBadge } from './TurnoBadges/TurnoBadges';
-import { TIPOS_TURNO_INICIALES, duracionHoras } from '@/hooks/ConfiguracionTurnos/mockTurnosData';
-import { ENFERMERAS_INICIALES } from '@/hooks/ConfiguracionTurnos/mockEnfermerasData';
+import { TIPOS_TURNO_INICIALES, duracionHoras } from '@/hooks/GestionTurnos/mockTurnosData';
+import { ENFERMERAS_INICIALES } from '@/hooks/GestionTurnos/mockEnfermerasData';
 import {
   LuCalendarClock, LuCircleDashed, LuPlus, LuUserCheck, LuUsers,
 } from 'react-icons/lu';
@@ -22,15 +22,17 @@ const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t
 
 // Cuántas enfermeras se muestran en la vista previa del bloque "Configuración
 // del personal" antes de derivar a la página completa (encargo: ejemplo con
-// 5 filas) — el resto se consulta en /configuracion-turnos/enfermeras.
+// 5 filas) — el resto se consulta en /gestion-turnos/enfermeras.
 const PREVIEW_ENFERMERAS = 5;
 
-// Resumen de "Configuración de turnos" (encargo V1: solo tipos de turno +
-// turnos permitidos por enfermera, ver AGENTS.md). Mismo criterio de estado
+// Resumen de "Gestión de turnos" (encargo V1: solo tipos de turno + turnos
+// permitidos por enfermera, ver AGENTS.md — el nombre del módulo pasó de
+// "Configuración de turnos" a "Gestión de turnos" al sumar la sección
+// PLANIFICACIÓN, ver GestionTurnosSidebar.jsx). Mismo criterio de estado
 // 100% local que el resto del módulo — esta página no comparte su copia
 // mutable de `turnos` con la de Tipos de turno/Enfermeras, se remonta
 // fresca en cada navegación (ver GestionCamas.jsx/GestionCamasReservas.jsx).
-export default function ConfiguracionTurnos() {
+export default function GestionTurnos() {
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
     return cleanup;
@@ -77,18 +79,18 @@ export default function ConfiguracionTurnos() {
 
       <div className="main">
         <Topbar
-          section={['Procesos', { label: 'Configuración de turnos', href: '/configuracion-turnos' }]}
+          section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
           page="Resumen"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content ct-content">
-          <ConfiguracionTurnosSidebar />
+          <GestionTurnosSidebar />
 
           <div className="ct-page-body">
             <div className="ct-page-header">
               <div>
-                <h1>Configuración de turnos</h1>
+                <h1>Gestión de turnos</h1>
                 <p>Define los tipos de turno y los turnos permitidos para el personal de enfermería.</p>
               </div>
             </div>
@@ -181,7 +183,7 @@ export default function ConfiguracionTurnos() {
                   </table>
                 </div>
                 <div className="ct-preview-footer">
-                  <Link href="/configuracion-turnos/enfermeras">Ver todas las enfermeras ({kpis.totalEnfermeras})</Link>
+                  <Link href="/gestion-turnos/enfermeras">Ver todas las enfermeras ({kpis.totalEnfermeras})</Link>
                 </div>
               </div>
             </div>

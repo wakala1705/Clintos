@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import './ConfiguracionTurnosSidebar.css';
+import './GestionTurnosSidebar.css';
 import {
-  LuCalendarClock, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
+  LuCalendarClock, LuCalendarDays, LuHistory, LuLayoutGrid, LuPanelLeftClose, LuPanelLeftOpen, LuUsers,
 } from 'react-icons/lu';
 
 // Ancho debajo del cual el sidebar colapsa a solo-ícono aunque el botón
@@ -14,24 +14,52 @@ import {
 // "Responsive / Breakpoints").
 const AUTO_COLLAPSE_BREAKPOINT = '(max-width:1024px)';
 
-// Segundo nivel de navegación del módulo "Configuración de turnos" — mismo
-// patrón exacto que GestionCamasSidebar (grupos "Operación"/"Administración",
-// activo derivado de usePathname(), colapso manual + auto-colapso por
-// breakpoint, tooltip portado en modo solo-ícono), sin inventar un sidebar
-// nuevo (ver AGENTS.md "No crear un sidebar diferente al patrón existente").
+// Segundo nivel de navegación del módulo "Gestión de turnos" — mismo patrón
+// exacto que GestionCamasSidebar (grupos con kicker, activo derivado de
+// usePathname(), colapso manual + auto-colapso por breakpoint, tooltip
+// portado en modo solo-ícono), sin inventar un sidebar nuevo (ver AGENTS.md
+// "No crear un sidebar diferente al patrón existente").
+//
+// Encargo: "Resumen" queda SUELTO arriba, sin kicker de grupo (mismo criterio
+// que GestionCamasSidebar da a sus 3 grupos, pero acá el primer nivel no
+// necesita repetir "Operación" para un solo ítem) — `label: null` en la
+// primera "sección" hace que el render se salte el div de kicker para ese
+// grupo (ver más abajo), sin CSS nuevo: el margin-top:0 que ya aplica al
+// primer grupo (`:first-of-type`) no depende de que ese grupo tenga label.
+//
+// "Programación de turnos" (PLANIFICACIÓN) vivía en Gestión de Enfermería
+// (`/gestion-enfermeria/turnos`) — se mudó acá completa (encargo: "pasemos
+// la pantalla de turnos a la ruta de planificación/programación", ver
+// ProgramacionTurnos.jsx) y su entrada en GestionEnfermeriaSidebar se quitó,
+// así que esta es ahora su único punto de acceso.
 const SECCIONES = [
   {
-    id: 'operacion',
-    label: 'Operación',
+    id: 'resumen-group',
+    label: null,
     items: [
       {
-        id: 'resumen', label: 'Resumen', href: '/configuracion-turnos', icon: LuLayoutGrid,
+        id: 'resumen', label: 'Resumen', href: '/gestion-turnos', icon: LuLayoutGrid,
+      },
+    ],
+  },
+  {
+    id: 'configuracion',
+    label: 'Configuración',
+    items: [
+      {
+        id: 'tipos-turno', label: 'Tipos de turno', href: '/gestion-turnos/tipos-turno', icon: LuCalendarClock,
       },
       {
-        id: 'tipos-turno', label: 'Tipos de turno', href: '/configuracion-turnos/tipos-turno', icon: LuCalendarClock,
+        id: 'enfermeras', label: 'Enfermeras', href: '/gestion-turnos/enfermeras', icon: LuUsers,
       },
+    ],
+  },
+  {
+    id: 'planificacion',
+    label: 'Planificación',
+    items: [
       {
-        id: 'enfermeras', label: 'Enfermeras', href: '/configuracion-turnos/enfermeras', icon: LuUsers,
+        id: 'programacion-turnos', label: 'Programación de turnos', href: '/gestion-turnos/planificacion/programacion', icon: LuCalendarDays,
       },
     ],
   },
@@ -40,13 +68,13 @@ const SECCIONES = [
     label: 'Administración',
     items: [
       {
-        id: 'auditoria', label: 'Auditoría / Historial', href: '/configuracion-turnos/auditoria', icon: LuHistory,
+        id: 'auditoria', label: 'Auditoría / Historial', href: '/gestion-turnos/auditoria', icon: LuHistory,
       },
     ],
   },
 ];
 
-export default function ConfiguracionTurnosSidebar() {
+export default function GestionTurnosSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [autoCollapsed, setAutoCollapsed] = useState(false);
@@ -90,7 +118,7 @@ export default function ConfiguracionTurnosSidebar() {
 
   return (
     <aside className={`cts-sidebar${collapsed ? ' collapsed' : ''}`}>
-      <nav className="cts-nav" aria-label="Secciones de Configuración de turnos">
+      <nav className="cts-nav" aria-label="Secciones de Gestión de turnos">
         <div className="cts-nav-header">
           <span className="cts-nav-label-group" aria-hidden="true">Secciones</span>
           <button
@@ -107,7 +135,7 @@ export default function ConfiguracionTurnosSidebar() {
         </div>
         {SECCIONES.map((seccion) => (
           <div key={seccion.id} className="cts-nav-group">
-            <div className="cts-nav-section-label" aria-hidden="true">{seccion.label}</div>
+            {seccion.label && <div className="cts-nav-section-label" aria-hidden="true">{seccion.label}</div>}
             {seccion.items.map(renderItem)}
           </div>
         ))}
