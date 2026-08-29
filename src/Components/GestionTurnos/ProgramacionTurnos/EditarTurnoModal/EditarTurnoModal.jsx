@@ -82,13 +82,26 @@ export default function EditarTurnoModal({
                 />
               </div>
 
-              <div className="form-field">
-                <label htmlFor="et-tipo">Tipo de turno</label>
-                <FormSelect id="et-tipo" value={form.tipo} onChange={handleTipoChange} options={TIPO_OPTIONS} />
-              </div>
-              <div className="form-field">
+              <div className="form-field full">
                 <label>Área o servicio</label>
                 <div className="tf-readonly-value">{AREA_TURNO_LABEL[formNurse?.area]}</div>
+              </div>
+
+              <div className="form-field full">
+                <label id="et-tipo-label">Tipo de turno</label>
+                <div className="et-tipo-group" role="radiogroup" aria-labelledby="et-tipo-label">
+                  {TIPO_OPTIONS.map((o) => (
+                    <label key={o.value} className={`et-tipo-option${form.tipo === o.value ? ' checked' : ''}`}>
+                      <input
+                        type="radio"
+                        name="et-tipo"
+                        checked={form.tipo === o.value}
+                        onChange={() => handleTipoChange(o.value)}
+                      />
+                      {o.label}
+                    </label>
+                  ))}
+                </div>
               </div>
 
               <div className="form-field">

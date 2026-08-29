@@ -1,9 +1,27 @@
 /* .modal-overlay/.modal-card/.form-field/.tf-readonly-value: definidas en
    ../../shared/shared.css — acá solo el ancho propio del modal y la grilla
    de 2 columnas del formulario (mismo patrón que .task-new-grid en
-   NewTaskModal.css). */
+   NewTaskModal.css). `.form-field.full` se agrega acá porque ese shared.css
+   no la define (a diferencia de GestionEnfermeria/shared/shared.css) y la
+   necesitan Área o servicio/Tipo de turno para ocupar la fila completa.*/
 .et-modal-card{width:520px;}
 .et-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-field.full{grid-column:1 / -1;}
+
+/* Mismo patrón que .at-tipo-group/.at-tipo-option en
+   AsignarTurnoModal.css (radio buttons visibles en vez de un FormSelect
+   que había que abrir para ver las 3 opciones) — encargo explícito de
+   aplicar el mismo cambio acá. */
+.et-tipo-group{display:flex;flex-wrap:wrap;gap:8px;}
+.et-tipo-option{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);border-radius:var(--radius);padding:7px 12px;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+  transition:background .15s,border-color .15s,color .15s;
+}
+.et-tipo-option:hover{background:var(--bg);}
+.et-tipo-option.checked{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);font-weight:var(--fw-semibold);}
+.et-tipo-option input[type="radio"]{width:16px;height:16px;accent-color:var(--primary);}
 
 /* El formulario nunca crece más de lo que el modal ya reserva — sin esto,
    el listbox absoluto de FormSelect (ver .form-select-dropdown en
