@@ -287,7 +287,6 @@ export default function ProgramacionTurnos() {
                 <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
               </div>
               <div className="tu-header-actions">
-                <AreaSelector label="Área o servicio" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
                 <button type="button" className="date-picker-btn" onClick={() => window.ncToast?.('Vista mensual en desarrollo.')}>
                   <LuCalendarRange className="icon" />
                   Semana
@@ -318,6 +317,7 @@ export default function ProgramacionTurnos() {
                 <div className="filter-spacer" />
 
                 <div className="tu-filters">
+                  <AreaSelector label="Área o servicio" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
                   <FilterDropdown label="Tipo de turno" options={TIPO_OPTIONS} value={tipoFiltro} onChange={setTipoFiltro} />
                   <FilterDropdown label="Estado" options={ESTADO_OPTIONS} value={estadoFiltro} onChange={setEstadoFiltro} />
                   <div className="search-field">
