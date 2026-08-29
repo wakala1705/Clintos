@@ -39,15 +39,27 @@ export default function ConfirmarStep({
       </div>
 
       <div className="cs-list">
-        {seleccionadas.map((n) => (
-          <div key={n.id} className="npw-nurse-row readonly">
-            <span className="npw-nurse-avatar" aria-hidden="true">{n.iniciales}</span>
-            <span className="npw-nurse-info">
-              <span className="npw-nurse-name">{n.nombre}</span>
-              <span className="npw-nurse-cargo">{n.cargo}</span>
-            </span>
-          </div>
-        ))}
+        <table className="npw-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cargo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {seleccionadas.map((n) => (
+              <tr key={n.id}>
+                <td>
+                  <span className="npw-nurse-name-cell">
+                    <span className="npw-nurse-avatar" aria-hidden="true">{n.iniciales}</span>
+                    <span className="npw-nurse-name">{n.nombre}</span>
+                  </span>
+                </td>
+                <td className="npw-nurse-cargo">{n.cargo}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="cs-note">

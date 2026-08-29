@@ -50,7 +50,7 @@ const SECCIONES = [
         id: 'tipos-turno', label: 'Tipos de turno', href: '/gestion-turnos/tipos-turno', icon: LuCalendarClock,
       },
       {
-        id: 'enfermeras', label: 'Enfermeras', href: '/gestion-turnos/enfermeras', icon: LuUsers,
+        id: 'enfermeras', label: 'Personal de enfermería', href: '/gestion-turnos/enfermeras', icon: LuUsers,
       },
     ],
   },

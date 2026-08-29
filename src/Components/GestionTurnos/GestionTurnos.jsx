@@ -97,7 +97,7 @@ export default function GestionTurnos() {
 
             <div className="ct-kpi-row">
               <KpiCard icon={LuCalendarClock} label="Tipos de turno" value={kpis.tiposActivos} description="Activos" variant="neutral" />
-              <KpiCard icon={LuUsers} label="Enfermeras" value={kpis.totalEnfermeras} description="Total registradas" variant="neutral" />
+              <KpiCard icon={LuUsers} label="Personal de enfermería" value={kpis.totalEnfermeras} description="Total registradas" variant="neutral" />
               <KpiCard icon={LuUserCheck} label="Configuradas" value={kpis.configuradas} description="Con turnos permitidos" variant="success" />
               <KpiCard icon={LuCircleDashed} label="Pendientes" value={kpis.pendientes} description="Sin configuración" variant="warning" />
             </div>

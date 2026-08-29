@@ -1,8 +1,15 @@
-/* .npw-nurse-row/.npw-step-title: ver ../NuevaProgramacionWizard.css. */
+/* .npw-table/.npw-nurse-avatar/.npw-nurse-name/.npw-nurse-name-cell/
+   .npw-step-title: ver ../NuevaProgramacionWizard.css. */
 .cs-step{display:flex;flex-direction:column;gap:16px;}
 .cs-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;padding:14px 16px;background:var(--bg);border-radius:var(--radius);}
 .cs-summary-row{display:flex;flex-direction:column;gap:2px;}
 .cs-summary-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .cs-summary-value{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cs-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);padding:6px;}
+
+/* Lista de personal, mismo tratamiento en tabla (Nombre/Cargo en columnas)
+   que SeleccionarPersonalStep — encargo: componente más compacto que el
+   bloque de texto apilado anterior. Solo lectura: sin cursor/hover/estado
+   seleccionado, a diferencia de `.sps-list`. */
+.cs-list{max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);}
+
 .cs-note{background:var(--bg);color:var(--ink-700);border-radius:var(--radius);padding:10px 12px;font-size:var(--fs-sm);line-height:1.4;}

@@ -8,6 +8,7 @@ import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
+import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
 import ConfiguracionEnfermeraDrawer from '../ConfiguracionEnfermeraDrawer/ConfiguracionEnfermeraDrawer';
@@ -15,13 +16,13 @@ import AgregarEnfermeraModal from './AgregarEnfermeraModal/AgregarEnfermeraModal
 import { TurnoBadge, EstadoConfigBadge } from '../TurnoBadges/TurnoBadges';
 import { TIPOS_TURNO_INICIALES } from '@/hooks/GestionTurnos/mockTurnosData';
 import {
-  AREAS_ENFERMERA, ENFERMERAS_INICIALES, ENFERMERAS_DISPONIBLES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
+  AREAS_ENFERMERA, CARGO_OPTIONS, ENFERMERAS_INICIALES, ENFERMERAS_DISPONIBLES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
 } from '@/hooks/GestionTurnos/mockEnfermerasData';
 import { LuPlus, LuSearch } from 'react-icons/lu';
 
 const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t.nombre]));
 
-// Página dedicada "Enfermeras" (encargo sección 4) — lista completa +
+// Página dedicada "Personal de enfermería" (encargo sección 4) — lista completa +
 // filtros + drawer de configuración individual. Estado 100% local (mismo
 // criterio que TiposTurno.jsx): esta pantalla no comparte su copia mutable
 // de `enfermeras`/`tiposTurno` con la de Resumen, se remonta fresca en cada
@@ -37,6 +38,7 @@ export default function Enfermeras() {
   const [disponibles, setDisponibles] = useState(ENFERMERAS_DISPONIBLES);
   const [area, setArea] = useState('todas');
   const [estado, setEstado] = useState('todas');
+  const [cargo, setCargo] = useState('todos');
   const [query, setQuery] = useState('');
   const [enfermeraConfigId, setEnfermeraConfigId] = useState(null);
   const [modalAgregarAbierto, setModalAgregarAbierto] = useState(false);
@@ -51,10 +53,11 @@ export default function Enfermeras() {
     return enfermeras.filter((e) => {
       if (area !== 'todas' && e.area !== area) return false;
       if (estado !== 'todas' && e.estado !== estado) return false;
+      if (cargo !== 'todos' && e.cargo !== cargo) return false;
       if (q && !e.nombre.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [enfermeras, area, estado, query]);
+  }, [enfermeras, area, estado, cargo, query]);
 
   // Footer de la tabla (encargo): cuenta sobre `enfermerasFiltradas`, no
   // sobre el total del módulo — a diferencia de los chips de Estado (que
@@ -91,7 +94,7 @@ export default function Enfermeras() {
       <div className="main">
         <Topbar
           section={['Procesos', { label: 'Gestión de turnos', href: '/gestion-turnos' }]}
-          page="Enfermeras"
+          page="Personal de enfermería"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
@@ -101,7 +104,7 @@ export default function Enfermeras() {
           <div className="ct-page-body">
             <div className="ct-page-header">
               <div>
-                <h1>Enfermeras</h1>
+                <h1>Personal de enfermería</h1>
                 <p>Configura los turnos permitidos para cada enfermera.</p>
               </div>
               <Button icon={LuPlus} onClick={() => setModalAgregarAbierto(true)}>Agregar enfermera</Button>
@@ -126,7 +129,10 @@ export default function Enfermeras() {
                   onChange={setEstado}
                   ariaLabel="Filtrar por estado de configuración"
                 />
-                <AreaSelector label="Área" options={AREAS_ENFERMERA} value={area} onChange={setArea} />
+                <div className="filter-cluster">
+                  <FilterDropdown label="Cargo" options={CARGO_OPTIONS} value={cargo} onChange={setCargo} />
+                  <AreaSelector label="Área" options={AREAS_ENFERMERA} value={area} onChange={setArea} />
+                </div>
               </div>
 
               <div className="data-table-wrap">

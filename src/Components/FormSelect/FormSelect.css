@@ -34,7 +34,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
    encima de --z-modal porque, al portarse, queda hermano de .modal-overlay
    en el DOM en vez de descendiente. */
 .form-select-dropdown{
-  position:fixed;max-height:240px;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
+  position:fixed;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
   background:var(--surface);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
 }

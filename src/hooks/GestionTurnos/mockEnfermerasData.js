@@ -22,9 +22,24 @@ const AREA_LABEL = Object.fromEntries(
   AREAS_ENFERMERA.filter((a) => a.value !== 'todas').map((a) => [a.value, a.label]),
 );
 
-// Cargo fijo por género (V1 no modela variedad de cargos, ver encargo
-// sección 4: solo "Enfermera profesional"/"Enfermero profesional").
+// Cargo por género + una porción de "Auxiliar de enfermería" (encargo: de
+// los 42 registrados, agregar un cargo más además de Enfermera/Enfermero
+// profesional). El cargo Auxiliar no varía por género (mismo criterio que
+// el resto del proyecto: solo se distingue lo que el encargo pide).
 const CARGO_POR_GENERO = { f: 'Enfermera profesional', m: 'Enfermero profesional' };
+const CARGO_AUXILIAR = 'Auxiliar de enfermería';
+
+// Única fuente de verdad de los 3 cargos del módulo — consumida tanto por el
+// filtro de la tabla de Personal de enfermería (Enfermeras.jsx) como por el
+// filtro de Cargo del wizard de Programación de turnos
+// (SeleccionarPersonalStep.jsx), para no mantener la misma lista hardcodeada
+// en dos lugares.
+export const CARGO_OPTIONS = [
+  { value: 'todos', label: 'Todos' },
+  { value: CARGO_POR_GENERO.f, label: CARGO_POR_GENERO.f },
+  { value: CARGO_POR_GENERO.m, label: CARGO_POR_GENERO.m },
+  { value: CARGO_AUXILIAR, label: CARGO_AUXILIAR },
+];
 
 // Estado de configuración SIEMPRE derivado de turnosPermitidos (nunca un
 // campo independiente que pueda desincronizarse de la lista real) — mismo
@@ -90,9 +105,15 @@ for (let i = 0; i < 37; i += 1) {
   const esFem = i % 2 === 0;
   const nombrePool = esFem ? NOMBRES_F : NOMBRES_M;
   const pendiente = i === 35 || i === 36;
+  // Cada 4to registro generado (nunca los 5 nombrados explícitamente arriba,
+  // cuyo perfil ya viene fijo del encargo original) es Auxiliar en vez de
+  // Enfermero/a profesional — determinístico, no Math.random(), para que el
+  // dataset sea estable entre cargas.
+  const esAuxiliar = i % 4 === 3;
   GENERADAS.push({
     nombre: `${nombrePool[i % nombrePool.length]} ${APELLIDOS[i % APELLIDOS.length]}`,
     genero: esFem ? 'f' : 'm',
+    cargo: esAuxiliar ? CARGO_AUXILIAR : CARGO_POR_GENERO[esFem ? 'f' : 'm'],
     area: AREAS_CICLO[i % AREAS_CICLO.length],
     turnos: pendiente ? [] : COMBOS_CONFIGURADAS[i % COMBOS_CONFIGURADAS.length],
   });
@@ -101,7 +122,7 @@ for (let i = 0; i < 37; i += 1) {
 export const ENFERMERAS_INICIALES = [...NOMBRADAS, ...GENERADAS].map((e, i) => ({
   id: `ENF-${String(i + 1).padStart(3, '0')}`,
   nombre: e.nombre,
-  cargo: CARGO_POR_GENERO[e.genero],
+  cargo: e.cargo ?? CARGO_POR_GENERO[e.genero],
   area: e.area,
   areaLabel: AREA_LABEL[e.area],
   turnosPermitidos: e.turnos,
