@@ -9,7 +9,15 @@ import {
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuCalendarPlus, LuTriangleAlert } from 'react-icons/lu';
 
-const TIPO_OPTIONS = Object.entries(TIPO_TURNO_META).map(([value, m]) => ({ value, label: m.label }));
+// "Descanso" no sale de TIPO_TURNO_META (esa tabla es solo para tipos de
+// turno CON horario, ver su comentario en mockProgramacionData.js) — se
+// agrega acá aparte porque una celda de descanso no lleva `tipo`/`horario`
+// en el modelo de datos (ver constante `D` en ese mismo archivo), a
+// diferencia de una celda de turno.
+const TIPO_OPTIONS = [
+  ...Object.entries(TIPO_TURNO_META).map(([value, m]) => ({ value, label: m.label })),
+  { value: 'descanso', label: 'Descanso' },
+];
 
 // "Asignar turno" — 2 puntos de entrada con distinta cantidad de campos a
 // completar (encargo explícito):
@@ -52,6 +60,10 @@ export default function AsignarTurnoModal({
   }
 
   function handleTipoChange(tipo) {
+    if (tipo === 'descanso') {
+      setForm((f) => ({ ...f, tipo, horaInicio: '', horaFin: '' }));
+      return;
+    }
     const [horaInicio, horaFin] = TIPO_TURNO_META[tipo].horario.split(' – ');
     setForm((f) => ({ ...f, tipo, horaInicio, horaFin }));
   }
@@ -63,7 +75,7 @@ export default function AsignarTurnoModal({
       nurseId: form.nurseId,
       dayIdxs: form.dayIdxs,
       tipo: form.tipo,
-      horario: `${form.horaInicio} – ${form.horaFin}`,
+      horario: form.tipo === 'descanso' ? undefined : `${form.horaInicio} – ${form.horaFin}`,
     });
   }
 
@@ -141,14 +153,18 @@ export default function AsignarTurnoModal({
                 <FormSelect id="at-tipo" value={form.tipo} onChange={handleTipoChange} options={TIPO_OPTIONS} />
               </div>
 
-              <div className="form-field">
-                <label htmlFor="at-hora-inicio">Hora de inicio</label>
-                <input id="at-hora-inicio" type="time" value={form.horaInicio} onChange={(e) => set('horaInicio', e.target.value)} required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="at-hora-fin">Hora de finalización</label>
-                <input id="at-hora-fin" type="time" value={form.horaFin} onChange={(e) => set('horaFin', e.target.value)} required />
-              </div>
+              {form.tipo !== 'descanso' && (
+                <>
+                  <div className="form-field">
+                    <label htmlFor="at-hora-inicio">Hora de inicio</label>
+                    <input id="at-hora-inicio" type="time" value={form.horaInicio} onChange={(e) => set('horaInicio', e.target.value)} required />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="at-hora-fin">Hora de finalización</label>
+                    <input id="at-hora-fin" type="time" value={form.horaFin} onChange={(e) => set('horaFin', e.target.value)} required />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className="modal-footer">

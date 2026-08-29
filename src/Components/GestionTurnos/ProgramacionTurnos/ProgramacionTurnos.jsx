@@ -228,10 +228,13 @@ export default function ProgramacionTurnos() {
   }) {
     updateActiveSchedule((sched) => ({
       ...sched,
-      [nurseId]: sched[nurseId].map((c, i) => (dayIdxs.includes(i) ? { estado: 'turno', tipo, horario } : c)),
+      [nurseId]: sched[nurseId].map((c, i) => {
+        if (!dayIdxs.includes(i)) return c;
+        return tipo === 'descanso' ? { estado: 'descanso' } : { estado: 'turno', tipo, horario };
+      }),
     }));
     setModal(null);
-    window.ncToast?.(`Turno asignado a ${nombreDe(nurseId)}.`);
+    window.ncToast?.(tipo === 'descanso' ? `Descanso asignado a ${nombreDe(nurseId)}.` : `Turno asignado a ${nombreDe(nurseId)}.`);
   }
 
   function handleAbrirWizard() {
