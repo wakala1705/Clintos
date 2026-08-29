@@ -14,11 +14,13 @@ import TurnosCalendar from './TurnosCalendar/TurnosCalendar';
 import EditarTurnoModal from './EditarTurnoModal/EditarTurnoModal';
 import ReasignarTurnoModal from './ReasignarTurnoModal/ReasignarTurnoModal';
 import AsignarTurnoModal from './AsignarTurnoModal/AsignarTurnoModal';
+import NuevaProgramacionWizard from './NuevaProgramacionWizard/NuevaProgramacionWizard';
+import RevisionProgramacionModal from './RevisionProgramacionModal/RevisionProgramacionModal';
 import {
-  AREAS_TURNOS, NURSES, SCHEDULE, SEMANA_ANCLA, addDias, diasDeSemana, rangoSemanaLabel,
+  AREAS_TURNOS, NURSES, PROGRAMACIONES_SEED, SEMANA_ANCLA, addDias, diasDeSemana, rangoSemanaLabel, resolverProgramacion,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import {
-  LuCalendarRange, LuChevronLeft, LuChevronRight, LuClipboardCheck, LuPlus, LuSearch, LuTriangleAlert, LuUserRoundX, LuUsers,
+  LuCalendarPlus, LuCalendarRange, LuChevronLeft, LuChevronRight, LuClipboardCheck, LuPlus, LuSearch, LuTriangleAlert, LuUserRoundX, LuUsers,
 } from 'react-icons/lu';
 
 const TIPO_OPTIONS = [
@@ -35,21 +37,14 @@ const ESTADO_OPTIONS = [
 ];
 
 // Sección "Planificación → Programación de turnos" de Gestión de turnos (ver
-// GestionTurnosSidebar) — programación semanal enfermera x día (encargo
-// explícito, ver mockProgramacionData.js). Vivía antes en Gestión de
-// Enfermería → Turnos (`/gestion-enfermeria/turnos`); se mudó acá completa
-// (encargo: "pasemos la pantalla de turnos a la ruta de planificación/
-// programación") — el ítem "Turnos" ya se quitó del sidebar de Gestión de
-// Enfermería (ver GestionEnfermeriaSidebar.jsx), esta es ahora su única
-// entrada. "Tipo de turno"/"Estado" filtran a nivel de ENFERMERA (fila
-// completa), no de celda individual: ocultar solo algunas celdas de una fila
-// rompería la lectura semanal de esa persona, así que el criterio es "¿esta
-// enfermera tiene ALGUNA celda que matchea?" — misma pregunta que un
-// coordinador se haría ("¿quién trabaja de noche esta semana?", "¿quién
-// tiene algo sin asignar?").
+// GestionTurnosSidebar). El calendario ya no lee de un `schedule`/`NURSES`
+// globales fijos: `programaciones` es un mapa keyed por período (ver
+// mockProgramacionData.js, resolverProgramacion) — cada semana/mes tiene su
+// propia programación (período/área/personal/estado/schedule) o ninguna,
+// disparando el estado vacío de la sección 1 del encargo (ver
+// docs/superpowers/specs/2026-08-28-programacion-turnos-flujo-design.md).
 //
-// Estado de interacción de celda (encargo explícito, ver TurnosCalendar.jsx
-// y su comentario de progressive disclosure):
+// Estado de interacción de celda (sin cambios respecto a antes):
 //  - `selectedCell` controla el popover de detalle abierto (turno/
 //    conflicto/descanso) — un solo popover a la vez, en toda la grilla.
 //  - `modal` controla el modal de formulario abierto (Editar/Reasignar/
@@ -66,30 +61,42 @@ export default function ProgramacionTurnos() {
   const [tipoFiltro, setTipoFiltro] = useState('todos');
   const [estadoFiltro, setEstadoFiltro] = useState('todos');
   const [query, setQuery] = useState('');
-  // Copia local mutable del mock (ver los handlers de mutación más abajo) —
-  // nunca se muta SCHEDULE directamente, o la próxima vez que se monte esta
-  // pantalla arrancaría con los cambios de la sesión anterior todavía
-  // aplicados.
-  const [schedule, setSchedule] = useState(SCHEDULE);
+  // Mapa de programaciones keyed por período — nunca se muta directamente,
+  // mismo criterio que el `schedule` local de siempre.
+  const [programaciones, setProgramaciones] = useState(PROGRAMACIONES_SEED);
   const [selectedCell, setSelectedCell] = useState(null);
   const [modal, setModal] = useState(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [revisionOpen, setRevisionOpen] = useState(false);
 
   const days = useMemo(() => diasDeSemana(weekStart), [weekStart]);
   const rangeLabel = useMemo(() => rangoSemanaLabel(weekStart), [weekStart]);
 
+  const resuelto = useMemo(() => resolverProgramacion(programaciones, weekStart), [programaciones, weekStart]);
+  const programacionActiva = resuelto?.programacion ?? null;
+  const activePeriodKey = resuelto?.periodKey ?? null;
+  const schedule = programacionActiva?.schedule ?? {};
+
+  // Personal de la programación activa (subconjunto de NURSES) — nada se
+  // pinta ni se filtra más abajo sin pasar primero por acá.
+  const nursesPrograma = useMemo(() => {
+    if (!programacionActiva) return [];
+    return NURSES.filter((n) => programacionActiva.nurseIds.includes(n.id));
+  }, [programacionActiva]);
+
   const nursesArea = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return NURSES.filter((n) => {
+    return nursesPrograma.filter((n) => {
       if (areaOperativa !== 'todas' && n.area !== areaOperativa) return false;
       if (q && !n.nombre.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [areaOperativa, query]);
+  }, [nursesPrograma, areaOperativa, query]);
 
   // Enfermeras que de verdad se pintan en la grilla — además de área/
   // búsqueda, aplica Tipo de turno/Estado (incluido el filtro que dispara el
   // footer al hacer click en "sin asignar"/"conflicto", ver
-  // handleFiltrarResumen).
+  // handleFiltrarResumen más abajo, ya existente).
   const nurses = useMemo(() => nursesArea.filter((n) => {
     const celdas = schedule[n.id];
     if (tipoFiltro !== 'todos' && !celdas.some((c) => c.estado === 'turno' && c.tipo === tipoFiltro)) return false;
@@ -99,13 +106,6 @@ export default function ProgramacionTurnos() {
     return true;
   }), [nursesArea, tipoFiltro, estadoFiltro, schedule]);
 
-  // Franja de métricas compactas (encargo: "sin convertirlas en grandes KPI
-  // cards") — se derivan de `nursesArea` (área + búsqueda), NUNCA de
-  // `nurses`: si dependieran del filtro Estado que el propio footer dispara,
-  // hacer click en "2 sin asignar" reduciría la grilla a esas enfermeras y
-  // el conteo de "sin asignar" del footer se recalcularía sobre ese
-  // subconjunto — perdiendo de vista el total apenas se usa el filtro que
-  // el mismo footer ofrece.
   const resumen = useMemo(() => {
     let turnos = 0; let sinAsignar = 0; let conflictos = 0;
     nursesArea.forEach((n) => {
@@ -120,6 +120,18 @@ export default function ProgramacionTurnos() {
 
   function nombreDe(nurseId) {
     return NURSES.find((n) => n.id === nurseId)?.nombre;
+  }
+
+  // Aplica `updater(scheduleActual)` sobre el schedule de la programación
+  // resuelta para la semana visible — punto único de mutación para todos
+  // los handlers de abajo, así ninguno necesita saber si `activePeriodKey`
+  // es una clave de semana o de mes.
+  function updateActiveSchedule(updater) {
+    if (!activePeriodKey) return;
+    setProgramaciones((prev) => ({
+      ...prev,
+      [activePeriodKey]: { ...prev[activePeriodKey], schedule: updater(prev[activePeriodKey].schedule) },
+    }));
   }
 
   function handleOpenPopover(nurseId, dayIdx) {
@@ -155,18 +167,18 @@ export default function ProgramacionTurnos() {
   }
 
   function handleEliminar(nurseId, dayIdx) {
-    setSchedule((prev) => ({
-      ...prev,
-      [nurseId]: prev[nurseId].map((c, i) => (i === dayIdx ? { estado: 'vacio' } : c)),
+    updateActiveSchedule((sched) => ({
+      ...sched,
+      [nurseId]: sched[nurseId].map((c, i) => (i === dayIdx ? { estado: 'vacio' } : c)),
     }));
     setSelectedCell(null);
     window.ncToast?.(`Turno de ${nombreDe(nurseId)} eliminado.`);
   }
 
   function handleResolverConflicto(nurseId, dayIdx) {
-    setSchedule((prev) => ({
-      ...prev,
-      [nurseId]: prev[nurseId].map((c, i) => {
+    updateActiveSchedule((sched) => ({
+      ...sched,
+      [nurseId]: sched[nurseId].map((c, i) => {
         if (i !== dayIdx) return c;
         const { conflicto, conflictoNota, conflictoOtro, ...resto } = c;
         return resto;
@@ -182,11 +194,11 @@ export default function ProgramacionTurnos() {
   }
 
   function handleSaveEditar(originalNurseId, originalDayIdx, updates) {
-    setSchedule((prev) => {
+    updateActiveSchedule((sched) => {
       const moviendo = updates.nurseId !== originalNurseId || updates.dayIdx !== originalDayIdx;
       const next = moviendo
-        ? { ...prev, [originalNurseId]: prev[originalNurseId].map((c, i) => (i === originalDayIdx ? { estado: 'vacio' } : c)) }
-        : { ...prev };
+        ? { ...sched, [originalNurseId]: sched[originalNurseId].map((c, i) => (i === originalDayIdx ? { estado: 'vacio' } : c)) }
+        : { ...sched };
       const destino = [...next[updates.nurseId]];
       destino[updates.dayIdx] = { estado: 'turno', tipo: updates.tipo, horario: updates.horario };
       next[updates.nurseId] = destino;
@@ -197,12 +209,12 @@ export default function ProgramacionTurnos() {
   }
 
   function handleConfirmReasignar(originalNurseId, dayIdx, nuevaEnfermeraId) {
-    setSchedule((prev) => {
-      const original = prev[originalNurseId][dayIdx];
+    updateActiveSchedule((sched) => {
+      const original = sched[originalNurseId][dayIdx];
       return {
-        ...prev,
-        [originalNurseId]: prev[originalNurseId].map((c, i) => (i === dayIdx ? { estado: 'vacio' } : c)),
-        [nuevaEnfermeraId]: prev[nuevaEnfermeraId].map((c, i) => (
+        ...sched,
+        [originalNurseId]: sched[originalNurseId].map((c, i) => (i === dayIdx ? { estado: 'vacio' } : c)),
+        [nuevaEnfermeraId]: sched[nuevaEnfermeraId].map((c, i) => (
           i === dayIdx ? { estado: 'turno', tipo: original.tipo, horario: original.horario } : c
         )),
       };
@@ -212,14 +224,40 @@ export default function ProgramacionTurnos() {
   }
 
   function handleAssign({
-    nurseId, dayIdx, tipo, horario,
+    nurseId, dayIdxs, tipo, horario,
   }) {
-    setSchedule((prev) => ({
-      ...prev,
-      [nurseId]: prev[nurseId].map((c, i) => (i === dayIdx ? { estado: 'turno', tipo, horario } : c)),
+    updateActiveSchedule((sched) => ({
+      ...sched,
+      [nurseId]: sched[nurseId].map((c, i) => (dayIdxs.includes(i) ? { estado: 'turno', tipo, horario } : c)),
     }));
     setModal(null);
     window.ncToast?.(`Turno asignado a ${nombreDe(nurseId)}.`);
+  }
+
+  function handleAbrirWizard() {
+    setWizardOpen(true);
+  }
+  function handleCerrarWizard() {
+    setWizardOpen(false);
+  }
+  function handleCrearProgramacion({
+    periodKey, programacion, weekStart: nuevoWeekStart, area,
+  }) {
+    setProgramaciones((prev) => ({ ...prev, [periodKey]: programacion }));
+    setWeekStart(nuevoWeekStart);
+    setAreaOperativa(area);
+    setWizardOpen(false);
+    window.ncToast?.('Programación creada.');
+  }
+
+  function handlePublicar() {
+    if (!activePeriodKey) return;
+    setProgramaciones((prev) => ({
+      ...prev,
+      [activePeriodKey]: { ...prev[activePeriodKey], estado: 'publicada' },
+    }));
+    setRevisionOpen(false);
+    window.ncToast?.('Programación publicada correctamente.');
   }
 
   return (
@@ -239,7 +277,10 @@ export default function ProgramacionTurnos() {
           <div className="ct-page-body">
             <div className="tu-header">
               <div>
-                <h1>Programación de turnos</h1>
+                <h1>
+                  Programación de turnos
+                  {programacionActiva?.estado === 'publicada' && <span className="tu-badge-publicada">Publicada</span>}
+                </h1>
                 <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
               </div>
               <div className="tu-header-actions">
@@ -248,7 +289,13 @@ export default function ProgramacionTurnos() {
                   <LuCalendarRange className="icon" />
                   Semana
                 </button>
-                <Button icon={LuPlus} onClick={handleOpenAsignarHeader}>Asignar turno</Button>
+                {programacionActiva?.estado === 'borrador' && (
+                  <Button variant="outline" icon={LuClipboardCheck} onClick={() => setRevisionOpen(true)}>Revisar programación</Button>
+                )}
+                {programacionActiva && (
+                  <Button icon={LuPlus} onClick={handleOpenAsignarHeader}>Asignar turno</Button>
+                )}
+                <Button icon={LuCalendarPlus} onClick={handleAbrirWizard}>Nueva programación</Button>
               </div>
             </div>
 
@@ -283,72 +330,83 @@ export default function ProgramacionTurnos() {
                 </div>
               </div>
 
-              <TurnosCalendar
-                nurses={nurses}
-                days={days}
-                schedule={schedule}
-                selectedCell={selectedCell}
-                onOpenPopover={handleOpenPopover}
-                onClosePopover={handleClosePopover}
-                onOpenAsignar={handleOpenAsignar}
-                onEditar={handleEditar}
-                onReasignar={handleReasignar}
-                onEliminar={handleEliminar}
-                onResolverConflicto={handleResolverConflicto}
-                onEditarDescanso={handleEditarDescanso}
-              />
-
-              <div className="tu-summary" aria-label="Resumen de la programación">
-                <div className="tu-summary-group">
-                  <span className="tu-summary-item">
-                    <LuUsers className="icon" aria-hidden="true" />
-                    {resumen.enfermeras} enfermeras
-                  </span>
-                  <span className="tu-summary-dot" aria-hidden="true">·</span>
-                  <span className="tu-summary-item">
-                    <LuClipboardCheck className="icon" aria-hidden="true" />
-                    {resumen.turnos} turnos programados
-                  </span>
+              {!programacionActiva ? (
+                <div className="ct-empty-state">
+                  <div className="ct-empty-icon"><LuCalendarRange className="icon" aria-hidden="true" /></div>
+                  <div className="ct-empty-title">No hay una programación para este período</div>
+                  <div className="ct-empty-sub">Selecciona el período, el área y el personal para comenzar a asignar turnos.</div>
+                  <Button icon={LuCalendarPlus} onClick={handleAbrirWizard} className="tu-empty-cta">Iniciar programación</Button>
                 </div>
+              ) : (
+                <>
+                  <TurnosCalendar
+                    nurses={nurses}
+                    days={days}
+                    schedule={schedule}
+                    selectedCell={selectedCell}
+                    onOpenPopover={handleOpenPopover}
+                    onClosePopover={handleClosePopover}
+                    onOpenAsignar={handleOpenAsignar}
+                    onEditar={handleEditar}
+                    onReasignar={handleReasignar}
+                    onEliminar={handleEliminar}
+                    onResolverConflicto={handleResolverConflicto}
+                    onEditarDescanso={handleEditarDescanso}
+                  />
 
-                {(resumen.sinAsignar > 0 || resumen.conflictos > 0) && (
-                  <>
-                    <span className="tu-summary-divider" aria-hidden="true" />
+                  <div className="tu-summary" aria-label="Resumen de la programación">
                     <div className="tu-summary-group">
-                      {resumen.sinAsignar > 0 && (
-                        <button
-                          type="button"
-                          className={`tu-summary-item warn tu-summary-clickable${estadoFiltro === 'sin-asignar' ? ' active' : ''}`}
-                          aria-pressed={estadoFiltro === 'sin-asignar'}
-                          onClick={() => setEstadoFiltro((f) => (f === 'sin-asignar' ? 'todos' : 'sin-asignar'))}
-                        >
-                          <LuUserRoundX className="icon" aria-hidden="true" />
-                          {resumen.sinAsignar} sin asignar
-                        </button>
-                      )}
-                      {resumen.sinAsignar > 0 && resumen.conflictos > 0 && (
-                        <span className="tu-summary-dot" aria-hidden="true">·</span>
-                      )}
-                      {resumen.conflictos > 0 && (
-                        <button
-                          type="button"
-                          className={`tu-summary-item danger tu-summary-clickable${estadoFiltro === 'con-conflicto' ? ' active' : ''}`}
-                          aria-pressed={estadoFiltro === 'con-conflicto'}
-                          onClick={() => setEstadoFiltro((f) => (f === 'con-conflicto' ? 'todos' : 'con-conflicto'))}
-                        >
-                          <LuTriangleAlert className="icon" aria-hidden="true" />
-                          {resumen.conflictos} {resumen.conflictos === 1 ? 'conflicto' : 'conflictos'}
-                        </button>
-                      )}
-                      {estadoFiltro === 'sin-asignar' || estadoFiltro === 'con-conflicto' ? (
-                        <button type="button" className="tu-summary-reset" onClick={() => setEstadoFiltro('todos')}>
-                          Ver todos
-                        </button>
-                      ) : null}
+                      <span className="tu-summary-item">
+                        <LuUsers className="icon" aria-hidden="true" />
+                        {resumen.enfermeras} enfermeras
+                      </span>
+                      <span className="tu-summary-dot" aria-hidden="true">·</span>
+                      <span className="tu-summary-item">
+                        <LuClipboardCheck className="icon" aria-hidden="true" />
+                        {resumen.turnos} turnos programados
+                      </span>
                     </div>
-                  </>
-                )}
-              </div>
+
+                    {(resumen.sinAsignar > 0 || resumen.conflictos > 0) && (
+                      <>
+                        <span className="tu-summary-divider" aria-hidden="true" />
+                        <div className="tu-summary-group">
+                          {resumen.sinAsignar > 0 && (
+                            <button
+                              type="button"
+                              className={`tu-summary-item warn tu-summary-clickable${estadoFiltro === 'sin-asignar' ? ' active' : ''}`}
+                              aria-pressed={estadoFiltro === 'sin-asignar'}
+                              onClick={() => setEstadoFiltro((f) => (f === 'sin-asignar' ? 'todos' : 'sin-asignar'))}
+                            >
+                              <LuUserRoundX className="icon" aria-hidden="true" />
+                              {resumen.sinAsignar} sin asignar
+                            </button>
+                          )}
+                          {resumen.sinAsignar > 0 && resumen.conflictos > 0 && (
+                            <span className="tu-summary-dot" aria-hidden="true">·</span>
+                          )}
+                          {resumen.conflictos > 0 && (
+                            <button
+                              type="button"
+                              className={`tu-summary-item danger tu-summary-clickable${estadoFiltro === 'con-conflicto' ? ' active' : ''}`}
+                              aria-pressed={estadoFiltro === 'con-conflicto'}
+                              onClick={() => setEstadoFiltro((f) => (f === 'con-conflicto' ? 'todos' : 'con-conflicto'))}
+                            >
+                              <LuTriangleAlert className="icon" aria-hidden="true" />
+                              {resumen.conflictos} {resumen.conflictos === 1 ? 'conflicto' : 'conflictos'}
+                            </button>
+                          )}
+                          {estadoFiltro === 'sin-asignar' || estadoFiltro === 'con-conflicto' ? (
+                            <button type="button" className="tu-summary-reset" onClick={() => setEstadoFiltro('todos')}>
+                              Ver todos
+                            </button>
+                          ) : null}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -360,6 +418,7 @@ export default function ProgramacionTurnos() {
           dayIdx={modal.dayIdx}
           cell={schedule[modal.nurseId][modal.dayIdx]}
           days={days}
+          nurses={nursesPrograma}
           onClose={handleCloseModal}
           onSave={handleSaveEditar}
         />
@@ -371,6 +430,7 @@ export default function ProgramacionTurnos() {
           cell={schedule[modal.nurseId][modal.dayIdx]}
           schedule={schedule}
           days={days}
+          nurses={nursesPrograma}
           onClose={handleCloseModal}
           onConfirm={handleConfirmReasignar}
         />
@@ -380,10 +440,26 @@ export default function ProgramacionTurnos() {
           nurseId={modal.nurseId}
           dayIdx={modal.dayIdx}
           days={days}
+          nurses={nursesPrograma}
           locked={modal.locked}
           reemplazaDescanso={modal.reemplazaDescanso}
           onClose={handleCloseModal}
           onAssign={handleAssign}
+        />
+      )}
+      {wizardOpen && (
+        <NuevaProgramacionWizard
+          initialWeekStart={weekStart}
+          initialArea={areaOperativa}
+          onClose={handleCerrarWizard}
+          onCreate={handleCrearProgramacion}
+        />
+      )}
+      {revisionOpen && (
+        <RevisionProgramacionModal
+          resumen={resumen}
+          onClose={() => setRevisionOpen(false)}
+          onPublicar={handlePublicar}
         />
       )}
     </div>

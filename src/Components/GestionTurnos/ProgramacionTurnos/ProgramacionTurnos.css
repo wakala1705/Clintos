@@ -64,3 +64,17 @@
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
 }
 .tu-summary-reset:hover{text-decoration:underline;}
+
+/* Badge "Publicada" junto al <h1> (encargo sección 8: "la interfaz debe
+   diferenciar visualmente que está publicada") — mismo tono verde que
+   .tc-turno-noche en TurnosCalendar.css, reutilizado acá para no inventar
+   un color de estado nuevo. */
+.tu-badge-publicada{
+  display:inline-flex;align-items:center;margin-left:10px;vertical-align:middle;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:#0d7a3d;
+  background:var(--green-bg);padding:3px 10px;border-radius:20px;letter-spacing:.02em;
+}
+/* CTA del estado vacío (.ct-empty-state, ver ../GestionTurnos.css) —
+   separación extra sobre el texto de ayuda, ya que Button.jsx usa CSS
+   Modules (sin clase global .btn que targetear desde acá). */
+.tu-empty-cta{margin-top:4px;}
