@@ -26,7 +26,7 @@ export default function AgregarEnfermeraModal({ disponibles, onAgregar, onClose 
         <ModalHeader
           icon={LuUserRoundPlus}
           tone="primary"
-          title="Agregar enfermera a programación"
+          title="Agregar personal a programación"
           titleId="agregar-enfermera-title"
           onClose={onClose}
         />
@@ -35,10 +35,10 @@ export default function AgregarEnfermeraModal({ disponibles, onAgregar, onClose 
             <LuSearch className="icon" />
             <input
               type="text"
-              placeholder="Buscar enfermera..."
+              placeholder="Buscar personal..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar enfermera"
+              aria-label="Buscar personal"
               autoFocus
             />
           </div>

@@ -11,7 +11,7 @@ import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import GestionTurnosSidebar from '../GestionTurnosSidebar/GestionTurnosSidebar';
-import ConfiguracionEnfermeraDrawer from '../ConfiguracionEnfermeraDrawer/ConfiguracionEnfermeraDrawer';
+import ConfiguracionEnfermeraModal from '../ConfiguracionEnfermeraModal/ConfiguracionEnfermeraModal';
 import AgregarEnfermeraModal from './AgregarEnfermeraModal/AgregarEnfermeraModal';
 import { TurnoBadge, EstadoConfigBadge } from '../TurnoBadges/TurnoBadges';
 import { TIPOS_TURNO_INICIALES } from '@/hooks/GestionTurnos/mockTurnosData';
@@ -107,7 +107,7 @@ export default function Enfermeras() {
                 <h1>Personal de enfermería</h1>
                 <p>Configura los turnos permitidos para cada enfermera.</p>
               </div>
-              <Button icon={LuPlus} onClick={() => setModalAgregarAbierto(true)}>Agregar enfermera</Button>
+              <Button icon={LuPlus} onClick={() => setModalAgregarAbierto(true)}>Agregar personal</Button>
             </div>
 
             <div className="card">
@@ -116,10 +116,10 @@ export default function Enfermeras() {
                   <LuSearch className="icon" />
                   <input
                     type="text"
-                    placeholder="Buscar enfermera..."
+                    placeholder="Buscar personal..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar enfermera"
+                    aria-label="Buscar personal"
                   />
                 </div>
                 <div className="filter-spacer" />
@@ -191,7 +191,7 @@ export default function Enfermeras() {
       </div>
 
       {enfermeraConfig && (
-        <ConfiguracionEnfermeraDrawer
+        <ConfiguracionEnfermeraModal
           enfermera={enfermeraConfig}
           tiposTurno={tiposTurno}
           onClose={() => setEnfermeraConfigId(null)}

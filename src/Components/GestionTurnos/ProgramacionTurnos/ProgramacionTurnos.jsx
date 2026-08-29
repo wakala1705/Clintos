@@ -304,6 +304,17 @@ export default function ProgramacionTurnos() {
 
             <div className="card tu-calendar-card">
               <div className="tu-calendar-header">
+                <div className="search-field">
+                  <LuSearch className="icon" />
+                  <input
+                    type="text"
+                    placeholder="Buscar personal..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    aria-label="Buscar personal"
+                  />
+                </div>
+
                 <div className="day-nav">
                   <button type="button" className="day-nav-btn" aria-label="Semana anterior" onClick={() => setWeekStart((w) => addDias(w, -7))}>
                     <LuChevronLeft className="icon" />
@@ -321,16 +332,6 @@ export default function ProgramacionTurnos() {
                   <AreaSelector label="Área o servicio" options={AREAS_TURNOS} value={areaOperativa} onChange={setAreaOperativa} />
                   <FilterDropdown label="Tipo de turno" options={TIPO_OPTIONS} value={tipoFiltro} onChange={setTipoFiltro} />
                   <FilterDropdown label="Estado" options={ESTADO_OPTIONS} value={estadoFiltro} onChange={setEstadoFiltro} />
-                  <div className="search-field">
-                    <LuSearch className="icon" />
-                    <input
-                      type="text"
-                      placeholder="Buscar enfermera..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      aria-label="Buscar enfermera"
-                    />
-                  </div>
                 </div>
               </div>
 

@@ -10,6 +10,6 @@
    que SeleccionarPersonalStep — encargo: componente más compacto que el
    bloque de texto apilado anterior. Solo lectura: sin cursor/hover/estado
    seleccionado, a diferencia de `.sps-list`. */
-.cs-list{max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);}
+.cs-list{overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);}
 
 .cs-note{background:var(--bg);color:var(--ink-700);border-radius:var(--radius);padding:10px 12px;font-size:var(--fs-sm);line-height:1.4;}

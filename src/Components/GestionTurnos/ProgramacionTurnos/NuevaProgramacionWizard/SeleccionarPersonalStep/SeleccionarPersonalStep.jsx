@@ -64,10 +64,10 @@ export default function SeleccionarPersonalStep({
             <LuSearch className="icon" />
             <input
               type="text"
-              placeholder="Buscar enfermera..."
+              placeholder="Buscar personal..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar enfermera"
+              aria-label="Buscar personal"
             />
           </div>
           <div className="sps-cargo-select">
