@@ -5,7 +5,7 @@ import './EditarTurnoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
-  AREA_TURNO_LABEL, NURSES, TIPO_TURNO_META, diaLargoLabel,
+  AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuPencil } from 'react-icons/lu';
 
@@ -13,16 +13,13 @@ const TIPO_OPTIONS = Object.entries(TIPO_TURNO_META).map(([value, m]) => ({ valu
 
 // "Editar turno" — prellena enfermera/fecha/tipo/horario/área a partir de la
 // celda clickeada (encargo explícito) y permite moverlo de enfermera/día
-// además de ajustar tipo y horario custom. Mismo scaffolding .modal-overlay/
-// .modal-card + ModalHeader que el resto de GestionEnfermeria (NewTaskModal/
-// ReassignModal) — sin patrón visual nuevo. El Área o servicio se muestra
-// solo-lectura porque es propiedad de la enfermera elegida, no del turno en
-// sí (mismo criterio que el campo "Área operativa" de NewTaskModal cuando
-// depende del paciente elegido).
+// además de ajustar tipo y horario custom. `nurses` viene acotado por el
+// padre al personal de la programación activa (nunca el roster completo) —
+// mismo criterio que AsignarTurnoModal, ver ese componente.
 export default function EditarTurnoModal({
-  nurseId, dayIdx, cell, days, onClose, onSave,
+  nurseId, dayIdx, cell, days, nurses, onClose, onSave,
 }) {
-  const nurse = NURSES.find((n) => n.id === nurseId);
+  const nurse = nurses.find((n) => n.id === nurseId);
   const [form, setForm] = useState({
     nurseId,
     dayIdx,
@@ -50,7 +47,7 @@ export default function EditarTurnoModal({
     });
   }
 
-  const formNurse = NURSES.find((n) => n.id === form.nurseId);
+  const formNurse = nurses.find((n) => n.id === form.nurseId);
 
   return (
     <div className="modal-overlay open">
@@ -72,7 +69,7 @@ export default function EditarTurnoModal({
                   id="et-enfermera"
                   value={form.nurseId}
                   onChange={(v) => set('nurseId', v)}
-                  options={NURSES.map((n) => ({ value: n.id, label: n.nombre }))}
+                  options={nurses.map((n) => ({ value: n.id, label: n.nombre }))}
                 />
               </div>
               <div className="form-field">

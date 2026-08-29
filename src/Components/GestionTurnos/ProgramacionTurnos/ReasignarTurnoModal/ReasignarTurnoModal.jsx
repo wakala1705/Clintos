@@ -5,27 +5,25 @@ import './ReasignarTurnoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
-  AREA_TURNO_LABEL, NURSES, TIPO_TURNO_META, diaLargoLabel,
+  AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuTriangleAlert, LuUserRoundCog } from 'react-icons/lu';
 
 // "Reasignar turno" — a diferencia de Editar, fecha/horario/tipo/área quedan
 // fijos (encargo explícito): lo único que cambia es QUIÉN cubre ese turno.
-// "Disponible" = otra enfermera cuya celda ese mismo día está en Descanso o
-// Sin asignar (no ya trabajando otro turno) — evita ofrecer un reemplazo que
-// de entrada generaría un conflicto nuevo. Si la disponible elegida está en
-// Descanso ese día, se avisa la consecuencia antes de confirmar (encargo
-// explícito: "mostrar las posibles consecuencias... si existe conflicto").
+// "Disponible" se calcula sobre `nurses` (el personal de la programación
+// activa, no el roster completo — mismo criterio que AsignarTurnoModal/
+// EditarTurnoModal) cuya celda ese mismo día está en Descanso o Sin asignar.
 export default function ReasignarTurnoModal({
-  nurseId, dayIdx, cell, schedule, days, onClose, onConfirm,
+  nurseId, dayIdx, cell, schedule, days, nurses, onClose, onConfirm,
 }) {
-  const nurse = NURSES.find((n) => n.id === nurseId);
-  const disponibles = NURSES.filter((n) => (
+  const nurse = nurses.find((n) => n.id === nurseId);
+  const disponibles = nurses.filter((n) => (
     n.id !== nurseId && ['vacio', 'descanso'].includes(schedule[n.id][dayIdx].estado)
   ));
   const [nuevaEnfermeraId, setNuevaEnfermeraId] = useState('');
 
-  const nuevaEnfermera = NURSES.find((n) => n.id === nuevaEnfermeraId);
+  const nuevaEnfermera = nurses.find((n) => n.id === nuevaEnfermeraId);
   const reemplazaDescanso = nuevaEnfermeraId && schedule[nuevaEnfermeraId][dayIdx].estado === 'descanso';
 
   function handleSubmit(e) {
