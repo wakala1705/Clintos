@@ -1,9 +1,23 @@
 /* .modal-overlay/.modal-card/.form-field/.tf-readonly-value/.tf-warning-note:
-   definidas en ../../shared/shared.css — acá solo el ancho propio del modal
-   y la grilla de 2 columnas del formulario. */
+   ver ../../GestionTurnos.css. `.form-field.full` se agrega acá porque
+   GestionTurnos.css no la define (a diferencia de
+   GestionEnfermeria/shared/shared.css) y este modal la necesita para el
+   grupo de checkboxes de día + Enfermera en modo sin celda de origen. */
 .at-modal-card{width:480px;}
 .at-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-field.full{grid-column:1 / -1;}
 .at-warning{margin-bottom:16px;}
+
+.at-dias-group{display:flex;flex-wrap:wrap;gap:8px;}
+.at-dia-option{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+  transition:background .15s,border-color .15s,color .15s;
+}
+.at-dia-option:hover{background:var(--bg);}
+.at-dia-option.checked{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);font-weight:var(--fw-semibold);}
+.at-dia-option input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);}
 
 /* El formulario nunca crece más de lo que el modal ya reserva — sin esto,
    el listbox absoluto de FormSelect (ver .form-select-dropdown en

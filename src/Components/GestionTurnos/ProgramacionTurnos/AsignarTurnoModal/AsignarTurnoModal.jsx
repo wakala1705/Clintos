@@ -5,7 +5,7 @@ import './AsignarTurnoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
-  AREA_TURNO_LABEL, NURSES, TIPO_TURNO_META, diaLargoLabel,
+  AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuCalendarPlus, LuTriangleAlert } from 'react-icons/lu';
 
@@ -16,18 +16,25 @@ const TIPO_OPTIONS = Object.entries(TIPO_TURNO_META).map(([value, m]) => ({ valu
 //  · Desde una celda puntual ("Sin asignar" o "Asignar turno" dentro del
 //    popover de Descanso): enfermera/fecha/área ya están decididas por la
 //    celda clickeada, `locked` las muestra de solo lectura y el usuario solo
-//    completa tipo + horario.
+//    completa tipo + horario. `form.dayIdxs` queda fijo en `[dayIdx]`.
 //  · Desde el botón "+ Asignar turno" del header (sin celda de origen):
-//    `locked=false`, enfermera y fecha se eligen acá mismo.
+//    `locked=false`, enfermera se elige entre `nurses` y los días se tildan
+//    por checkbox — el mismo tipo/horario se aplica a todos los días
+//    marcados en una sola confirmación (encargo sección 5, "asignación
+//    múltiple").
+// `nurses` siempre viene acotado por el padre a la programación activa
+// (ProgramacionTurnos.jsx) — este componente ya no importa NURSES directo,
+// así nunca ofrece asignar a alguien fuera de esa programación (`schedule`
+// solo tiene entradas para su `nurseIds`).
 // `reemplazaDescanso` viene en true cuando se llega desde el popover de
 // Descanso — encargo explícito: advertir que se reemplaza el descanso
 // existente antes de confirmar.
 export default function AsignarTurnoModal({
-  nurseId, dayIdx, days, locked, reemplazaDescanso, onClose, onAssign,
+  nurseId, dayIdx, days, nurses, locked, reemplazaDescanso, onClose, onAssign,
 }) {
   const [form, setForm] = useState({
     nurseId: nurseId ?? '',
-    dayIdx: dayIdx ?? '',
+    dayIdxs: locked ? [dayIdx] : [],
     tipo: 'manana',
     horaInicio: TIPO_TURNO_META.manana.horario.split(' – ')[0],
     horaFin: TIPO_TURNO_META.manana.horario.split(' – ')[1],
@@ -37,6 +44,13 @@ export default function AsignarTurnoModal({
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function toggleDia(i) {
+    setForm((f) => ({
+      ...f,
+      dayIdxs: f.dayIdxs.includes(i) ? f.dayIdxs.filter((x) => x !== i) : [...f.dayIdxs, i],
+    }));
+  }
+
   function handleTipoChange(tipo) {
     const [horaInicio, horaFin] = TIPO_TURNO_META[tipo].horario.split(' – ');
     setForm((f) => ({ ...f, tipo, horaInicio, horaFin }));
@@ -44,17 +58,17 @@ export default function AsignarTurnoModal({
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (form.nurseId === '' || form.dayIdx === '') return;
+    if (form.nurseId === '' || form.dayIdxs.length === 0) return;
     onAssign({
       nurseId: form.nurseId,
-      dayIdx: Number(form.dayIdx),
+      dayIdxs: form.dayIdxs,
       tipo: form.tipo,
       horario: `${form.horaInicio} – ${form.horaFin}`,
     });
   }
 
-  const nurse = NURSES.find((n) => n.id === form.nurseId);
-  const puedeEnviar = form.nurseId !== '' && form.dayIdx !== '';
+  const nurse = nurses.find((n) => n.id === form.nurseId);
+  const puedeEnviar = form.nurseId !== '' && form.dayIdxs.length > 0;
 
   return (
     <div className="modal-overlay open">
@@ -94,25 +108,26 @@ export default function AsignarTurnoModal({
                 </>
               ) : (
                 <>
-                  <div className="form-field">
+                  <div className="form-field full">
                     <label htmlFor="at-enfermera">Enfermera</label>
                     <FormSelect
                       id="at-enfermera"
                       value={form.nurseId}
                       onChange={(v) => set('nurseId', v)}
                       placeholder="Selecciona una enfermera"
-                      options={NURSES.map((n) => ({ value: n.id, label: n.nombre }))}
+                      options={nurses.map((n) => ({ value: n.id, label: n.nombre }))}
                     />
                   </div>
-                  <div className="form-field">
-                    <label htmlFor="at-fecha">Fecha</label>
-                    <FormSelect
-                      id="at-fecha"
-                      value={String(form.dayIdx)}
-                      onChange={(v) => set('dayIdx', v)}
-                      placeholder="Selecciona un día"
-                      options={days.map((d, i) => ({ value: String(i), label: diaLargoLabel(d, i) }))}
-                    />
+                  <div className="form-field full">
+                    <label id="at-dias-label">Días</label>
+                    <div className="at-dias-group" role="group" aria-labelledby="at-dias-label">
+                      {days.map((d, i) => (
+                        <label key={i} className={`at-dia-option${form.dayIdxs.includes(i) ? ' checked' : ''}`}>
+                          <input type="checkbox" checked={form.dayIdxs.includes(i)} onChange={() => toggleDia(i)} />
+                          {d.label}
+                        </label>
+                      ))}
+                    </div>
                   </div>
                   <div className="form-field full">
                     <label>Área o servicio</label>
