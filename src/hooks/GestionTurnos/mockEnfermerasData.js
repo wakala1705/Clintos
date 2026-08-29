@@ -1,13 +1,10 @@
-import { TURNO_ID } from './mockTurnosData';
+import { TURNO_ID, AREAS_SERVICIO } from './mockTurnosData';
 
-export const AREAS_ENFERMERA = [
-  { value: 'todas', label: 'Todas' },
-  { value: 'hospitalizacion', label: 'Hospitalización' },
-  { value: 'uci', label: 'UCI' },
-  { value: 'urgencias', label: 'Urgencias' },
-  { value: 'pediatria', label: 'Pediatría' },
-  { value: 'cirugia', label: 'Cirugía' },
-];
+// Reutiliza el área/servicio canónica de Gestión de turnos (ver
+// mockTurnosData.js) en vez de una lista propia — encargo: "Programación de
+// turnos esté 1:1 con las enfermeras registradas" implica que ambas pantallas
+// recorten por exactamente las mismas 8 áreas, no dos taxonomías distintas.
+export const AREAS_ENFERMERA = AREAS_SERVICIO;
 
 // Único filtro de "estado" del listado: si la enfermera tiene turnos
 // permitidos configurados o no (columna "Estado" de la tabla) — el encargo
@@ -40,19 +37,19 @@ export function estadoConfiguracion(turnosPermitidos) {
 // los turnos permitidos tal cual se pidieron.
 const NOMBRADAS = [
   {
-    nombre: 'María González', genero: 'f', area: 'hospitalizacion', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
+    nombre: 'María González', genero: 'f', area: 'hosp-piso4-t1', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
   },
   {
-    nombre: 'Ana Martínez', genero: 'f', area: 'hospitalizacion', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
+    nombre: 'Ana Martínez', genero: 'f', area: 'hosp-piso4-t1', turnos: [TURNO_ID.MANANA, TURNO_ID.TARDE],
   },
   {
     nombre: 'Carlos Pérez', genero: 'm', area: 'uci', turnos: [TURNO_ID.NOCHE],
   },
   {
-    nombre: 'Laura Rodríguez', genero: 'f', area: 'hospitalizacion', turnos: [],
+    nombre: 'Laura Rodríguez', genero: 'f', area: 'hosp-piso2-t1', turnos: [],
   },
   {
-    nombre: 'Natalia Herrera', genero: 'f', area: 'hospitalizacion', turnos: [],
+    nombre: 'Natalia Herrera', genero: 'f', area: 'uci', turnos: [],
   },
 ];
 
@@ -76,7 +73,9 @@ const APELLIDOS = [
   'Flores', 'Navarro', 'Delgado', 'Campos', 'Vega', 'Rivas', 'Pardo', 'Cortés', 'Duarte', 'Bermúdez',
   'Escobar', 'Chávez', 'Espinoza', 'Cabrera', 'Fuentes',
 ];
-const AREAS_CICLO = ['hospitalizacion', 'uci', 'urgencias', 'pediatria', 'cirugia'];
+const AREAS_CICLO = [
+  'urgencias', 'uci', 'hosp-general-p4-t1', 'hosp-piso2-t1', 'hosp-piso3-t1', 'hosp-piso4-t1', 'hosp-piso4-t2', 'hosp-piso5-t2',
+];
 const COMBOS_CONFIGURADAS = [
   [TURNO_ID.MANANA],
   [TURNO_ID.TARDE],
@@ -118,9 +117,9 @@ export const ENFERMERAS_INICIALES = [...NOMBRADAS, ...GENERADAS].map((e, i) => (
 const DISPONIBLES = [
   { nombre: 'Renata Ibarra', genero: 'f', area: 'uci' },
   { nombre: 'Tomás Herrera', genero: 'm', area: 'urgencias' },
-  { nombre: 'Camila Restrepo', genero: 'f', area: 'pediatria' },
-  { nombre: 'Emilio Naranjo', genero: 'm', area: 'cirugia' },
-  { nombre: 'Valeria Quintero', genero: 'f', area: 'hospitalizacion' },
+  { nombre: 'Camila Restrepo', genero: 'f', area: 'hosp-piso3-t1' },
+  { nombre: 'Emilio Naranjo', genero: 'm', area: 'hosp-piso5-t2' },
+  { nombre: 'Valeria Quintero', genero: 'f', area: 'hosp-general-p4-t1' },
   { nombre: 'Sebastián Duque', genero: 'm', area: 'uci' },
 ];
 

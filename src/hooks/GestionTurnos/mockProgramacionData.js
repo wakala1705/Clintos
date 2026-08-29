@@ -6,25 +6,26 @@
 // la pantalla (encargo: "pasemos la pantalla de turnos a la ruta de
 // planificación/programación").
 
-// Área o servicio propio de Programación de turnos (no reutiliza
-// AREAS_OPERATIVAS de mockPanelGeneralData: acá el recorte es por
-// servicio/unidad de internación real, no por sector norte/sur — encargo
-// explícito, ver AreaSelector `label` en ProgramacionTurnos.jsx).
-export const AREAS_TURNOS = [
-  { value: 'todas', label: 'Todas las áreas' },
-  { value: 'urgencias', label: 'Urgencias' },
-  { value: 'uci', label: 'UCI' },
-  { value: 'hosp-general-p4-t1', label: 'Hospitalización General P4 T1' },
-  { value: 'hosp-piso2-t1', label: 'Hospitalización Piso 2 T1' },
-  { value: 'hosp-piso3-t1', label: 'Hospitalización Piso 3 T1' },
-  { value: 'hosp-piso4-t1', label: 'Hospitalización Piso 4 T1' },
-  { value: 'hosp-piso4-t2', label: 'Hospitalización Piso 4 T2' },
-  { value: 'hosp-piso5-t2', label: 'Hospitalización Piso 5 T2' },
-];
+import { AREAS_SERVICIO, AREA_SERVICIO_LABEL, AREAS_SERVICIO_PROGRAMABLES } from './mockTurnosData';
+import { ENFERMERAS_INICIALES } from './mockEnfermerasData';
+
+// Área o servicio de Programación de turnos: la misma taxonomía que
+// Enfermeras (ver mockTurnosData.js AREAS_SERVICIO) — encargo "Programación
+// de turnos esté 1:1 con las enfermeras registradas" implica que el filtro
+// de área acá tiene que ofrecer exactamente las mismas áreas en las que esas
+// enfermeras están registradas, no una lista propia divergente.
+export const AREAS_TURNOS = AREAS_SERVICIO;
 // Lookup value->label (ej. mostrar "Área o servicio: UCI" a partir del
 // `area` de una enfermera) — se deriva de AREAS_TURNOS en vez de duplicar
 // los mismos pares a mano.
-export const AREA_TURNO_LABEL = Object.fromEntries(AREAS_TURNOS.map((a) => [a.value, a.label]));
+export const AREA_TURNO_LABEL = AREA_SERVICIO_LABEL;
+
+// Subconjunto sin "Todas las áreas" — usado donde el área es un dato
+// obligatorio de una entidad nueva (crear una programación, encargo sección
+// 2: "No utilizar 'Todas las áreas' como valor para crear una
+// programación"), a diferencia del filtro de header/calendario donde
+// "Todas las áreas" sí es un valor válido.
+export const AREAS_TURNOS_PROGRAMABLES = AREAS_SERVICIO_PROGRAMABLES;
 
 // Etiquetas de columna del calendario semanal. Son posicionales (día 1 de la
 // semana visible = "LUN", sin importar a qué día calendario real caiga esa
@@ -106,16 +107,21 @@ export function rangoSemanaLabel(weekStart) {
   return `${inicio} – ${fin.getDate()} ${mesFin} ${fin.getFullYear()}`;
 }
 
-export const NURSES = [
-  { id: 'n1', nombre: 'María González', cargo: 'Enfermera profesional', iniciales: 'MG', area: 'hosp-piso4-t1' },
-  { id: 'n2', nombre: 'Ana Martínez', cargo: 'Enfermera profesional', iniciales: 'AM', area: 'hosp-piso4-t1' },
-  { id: 'n3', nombre: 'Carlos Pérez', cargo: 'Enfermero profesional', iniciales: 'CP', area: 'uci' },
-  { id: 'n4', nombre: 'Laura Rodríguez', cargo: 'Enfermera profesional', iniciales: 'LR', area: 'hosp-piso2-t1' },
-  { id: 'n5', nombre: 'Sofía Torres', cargo: 'Enfermera profesional', iniciales: 'ST', area: 'hosp-piso2-t1' },
-  { id: 'n6', nombre: 'Daniel Ramírez', cargo: 'Enfermero profesional', iniciales: 'DR', area: 'urgencias' },
-  { id: 'n7', nombre: 'Natalia Herrera', cargo: 'Enfermera profesional', iniciales: 'NH', area: 'uci' },
-  { id: 'n8', nombre: 'Julián Castro', cargo: 'Enfermero profesional', iniciales: 'JC', area: 'urgencias' },
-];
+// "María González" -> "MG" (primera letra de nombre + primera letra de
+// apellido) — mismo criterio de avatar que ya usaban las 8 enfermeras a
+// mano de acá, ahora derivado para poder cubrir a las 42 sin transcribirlas.
+function inicialesDe(nombre) {
+  const partes = nombre.trim().split(/\s+/);
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+}
+
+// 1:1 con el personal registrado en Enfermeras (ver mockEnfermerasData.js,
+// encargo "Programación de turnos esté 1:1 con las enfermeras registradas")
+// — antes esta pantalla tenía sus propias 8 enfermeras hardcodeadas, sin
+// relación con las 42 de la tabla de Enfermeras.
+export const NURSES = ENFERMERAS_INICIALES.map((e) => ({
+  id: e.id, nombre: e.nombre, cargo: e.cargo, iniciales: inicialesDe(e.nombre), area: e.area,
+}));
 
 export const TIPO_TURNO_META = {
   manana: { label: 'Mañana', horario: '06:00 – 14:00' },
@@ -134,33 +140,62 @@ const T = (tipo, extra) => ({
 const D = { estado: 'descanso' };
 const V = { estado: 'vacio' };
 
-// Matriz enfermera x día (7 columnas, ver DIAS_SEMANA) — 2 días de descanso
-// por enfermera (patrón 5x2 realista), 2 celdas sin asignar (Laura miércoles,
-// Natalia martes) y 1 conflicto (Julián miércoles: doble asignación de
-// mañana que se solapa con otra franja) para poder ejercitar los 4 estados
-// de celda que pide el diseño (turno/descanso/vacío/conflicto) sin tener que
-// inventar una semana completa distinta por caso. `conflictoOtro` describe
-// la OTRA asignación con la que se solapa (mostrada en el popover de
-// conflicto, ver TurnoCellPopover.jsx) — Julián también quedó de tarde ese
-// mismo miércoles en otra área, de ahí el solapamiento.
-export const SCHEDULE = {
-  n1: [T('manana'), T('manana'), T('manana'), T('manana'), T('manana'), D, D],
-  n2: [T('tarde'), T('tarde'), T('tarde'), T('tarde'), D, D, T('manana')],
-  n3: [T('noche'), T('noche'), T('noche'), D, D, T('noche'), T('noche')],
-  n4: [T('manana'), T('tarde'), V, T('manana'), T('tarde'), D, D],
-  n5: [D, T('manana'), T('manana'), T('manana'), T('manana'), T('manana'), D],
-  n6: [T('tarde'), T('tarde'), T('tarde'), T('tarde'), T('tarde'), D, D],
-  n7: [T('noche'), V, T('noche'), T('noche'), D, D, T('noche')],
-  n8: [
-    T('manana'), T('manana'),
-    T('manana', {
+// Matriz enfermera x día (7 columnas, ver DIAS_SEMANA), generada para las 42
+// enfermeras de NURSES (ver arriba) — patrón 5x2 realista (2 días de
+// descanso consecutivos por enfermera) derivado del índice de cada una
+// (nunca Math.random(), mismo criterio de estabilidad que
+// mockEnfermerasData.js): el tipo de turno base rota entre
+// mañana/tarde/noche cada 3 enfermeras y el par de días de descanso rota
+// entre las 7 columnas, para que la grilla se vea variada sin tener que
+// transcribir 42 semanas a mano.
+function patronSemana(i) {
+  const tipo = ['manana', 'tarde', 'noche'][i % 3];
+  const descansoIni = i % 7;
+  return DIAS_SEMANA.map((_, d) => {
+    const enDescanso = d === descansoIni || d === (descansoIni + 1) % 7;
+    return enDescanso ? D : T(tipo);
+  });
+}
+
+export const SCHEDULE = Object.fromEntries(NURSES.map((n, i) => [n.id, patronSemana(i)]));
+
+// Encima del patrón base, se fuerzan a mano 2 celdas "sin asignar" y 1
+// "conflicto" (doble asignación que se solapa) para poder ejercitar los 4
+// estados de celda que pide el diseño (turno/descanso/vacío/conflicto) sin
+// depender de que el patrón generado los produzca por casualidad —
+// `conflictoOtro` describe la OTRA asignación con la que se solapa
+// (mostrada en el popover de conflicto, ver TurnoCellPopover.jsx). Busca el
+// primer día "turno" desde `dayIdxPreferido` (en vez de un índice de día
+// fijo) porque el día de descanso de cada enfermera rota con su índice —
+// un día fijo puede caer justo en su descanso y no tener nada que sobrescribir.
+function primerDiaTurno(nurseId, dayIdxPreferido) {
+  const celdas = SCHEDULE[nurseId];
+  for (let offset = 0; offset < 7; offset += 1) {
+    const d = (dayIdxPreferido + offset) % 7;
+    if (celdas[d].estado === 'turno') return d;
+  }
+  return null;
+}
+
+[[9, 2], [24, 1]].forEach(([nurseIdx, dayIdxPreferido]) => {
+  const nurseId = NURSES[nurseIdx]?.id;
+  if (!nurseId) return;
+  const d = primerDiaTurno(nurseId, dayIdxPreferido);
+  if (d !== null) SCHEDULE[nurseId][d] = V;
+});
+
+const conflictoNurseId = NURSES[7]?.id;
+if (conflictoNurseId) {
+  const d = primerDiaTurno(conflictoNurseId, 2);
+  if (d !== null) {
+    SCHEDULE[conflictoNurseId][d] = {
+      ...SCHEDULE[conflictoNurseId][d],
       conflicto: true,
       conflictoNota: 'Existe una superposición con otra asignación.',
       conflictoOtro: { horario: '14:00 – 22:00', area: 'uci' },
-    }),
-    T('tarde'), T('tarde'), D, D,
-  ],
-};
+    };
+  }
+}
 
 // ---------- Modelo de "programación" (entidad con período/área/personal
 // propio) — ver docs/superpowers/specs/2026-08-28-programacion-turnos-flujo-design.md.
@@ -226,10 +261,10 @@ export function resolverProgramacion(programaciones, weekStart) {
   return null;
 }
 
-// Semilla inicial: solo la semana 18–24 Ago 2026 (la que ya tenía datos
-// completos) viene precargada, ya publicada, con las 8 NURSES/SCHEDULE de
-// arriba — cualquier otro período arranca sin entrada (dispara el estado
-// vacío de la sección 1 del encargo).
+// Semilla inicial: solo la semana ancla (la que ya tenía datos completos)
+// viene precargada, ya publicada, con las 42 NURSES/SCHEDULE de arriba —
+// cualquier otro período arranca sin entrada (dispara el estado vacío de la
+// sección 1 del encargo).
 export const PROGRAMACIONES_SEED = {
   [periodKeyDeSemana(SEMANA_ANCLA)]: {
     id: 'prog-semana-ancla',

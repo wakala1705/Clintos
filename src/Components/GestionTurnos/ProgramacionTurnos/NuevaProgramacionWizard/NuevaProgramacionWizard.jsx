@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './NuevaProgramacionWizard.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import PeriodoAreaStep from './PeriodoAreaStep/PeriodoAreaStep';
@@ -20,10 +20,10 @@ const PASOS = [
 // Wizard de 3 pasos "Nueva programación de turnos" (encargo sección 2).
 // Estado del formulario vive acá y se pasa controlado a cada paso — mismo
 // patrón que el resto de modales de formulario del proyecto (form/setForm
-// local, sin librería de formularios). `nurseIds` arranca con TODO el
-// personal ya tildado (encargo, ejemplo del paso 2: la mayoría ya viene
-// marcada) — el usuario destilda a quien no participa, en vez de partir de
-// cero y tener que tildar uno por uno.
+// local, sin librería de formularios). "Todas las áreas" no es un valor
+// válido para crear una programación (encargo sección 2) — si el wizard se
+// abre desde el filtro de header en 'todas' (o desde el botón del estado
+// vacío, sin filtro previo), `area` arranca vacío y obliga a elegir una.
 export default function NuevaProgramacionWizard({
   initialWeekStart, initialArea, onClose, onCreate,
 }) {
@@ -33,8 +33,22 @@ export default function NuevaProgramacionWizard({
   const [monthStart, setMonthStart] = useState(
     () => new Date(initialWeekStart.getFullYear(), initialWeekStart.getMonth(), 1),
   );
-  const [area, setArea] = useState(initialArea);
-  const [nurseIds, setNurseIds] = useState(() => NURSES.map((n) => n.id));
+  const [area, setArea] = useState(initialArea && initialArea !== 'todas' ? initialArea : '');
+  // Arranca con todo el personal elegible del área ya tildado (encargo, paso
+  // 2: la mayoría ya viene marcada) — "elegible" = pertenece a esa área, ver
+  // SeleccionarPersonalStep. Se re-siembra cada vez que cambia el área
+  // (abajo) para no dejar tildado a alguien fuera del área recién elegida;
+  // el `useRef` evita que el primer render (mismo valor que el estado
+  // inicial) dispare un segundo reseteo redundante.
+  const [nurseIds, setNurseIds] = useState(
+    () => NURSES.filter((n) => n.area === area).map((n) => n.id),
+  );
+  const areaAnterior = useRef(area);
+  useEffect(() => {
+    if (areaAnterior.current === area) return;
+    areaAnterior.current = area;
+    setNurseIds(NURSES.filter((n) => n.area === area).map((n) => n.id));
+  }, [area]);
 
   function toggleNurse(id) {
     setNurseIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -45,6 +59,9 @@ export default function NuevaProgramacionWizard({
       nurseList.forEach((n) => { if (marcar) next.add(n.id); else next.delete(n.id); });
       return [...next];
     });
+  }
+  function clearAllNurses() {
+    setNurseIds([]);
   }
 
   function handleConfirmar() {
@@ -108,9 +125,11 @@ export default function NuevaProgramacionWizard({
           )}
           {paso === 2 && (
             <SeleccionarPersonalStep
+              area={area}
               selectedIds={nurseIds}
               onToggle={toggleNurse}
               onToggleAll={toggleTodos}
+              onClearAll={clearAllNurses}
             />
           )}
           {paso === 3 && (
@@ -131,7 +150,7 @@ export default function NuevaProgramacionWizard({
             <button
               type="button"
               className="btn btn-primary"
-              disabled={paso === 2 && nurseIds.length === 0}
+              disabled={(paso === 1 && !area) || (paso === 2 && nurseIds.length === 0)}
               onClick={() => setPaso((p) => p + 1)}
             >
               Continuar

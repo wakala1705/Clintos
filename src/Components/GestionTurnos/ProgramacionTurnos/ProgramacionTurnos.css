@@ -74,6 +74,15 @@
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:#0d7a3d;
   background:var(--green-bg);padding:3px 10px;border-radius:20px;letter-spacing:.02em;
 }
+/* Badge "Borrador" — mismo tratamiento que la de "Publicada" arriba pero en
+   tono ámbar (encargo sección 6: "la cabecera debe mostrar claramente...
+   Borrador", para que el usuario entienda de inmediato que la programación
+   todavía se está armando y no fue publicada). */
+.tu-badge-borrador{
+  display:inline-flex;align-items:center;margin-left:10px;vertical-align:middle;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--amber-fg);
+  background:var(--amber-bg);padding:3px 10px;border-radius:20px;letter-spacing:.02em;
+}
 /* CTA del estado vacío (.ct-empty-state, ver ../GestionTurnos.css) —
    separación extra sobre el texto de ayuda, ya que Button.jsx usa CSS
    Modules (sin clase global .btn que targetear desde acá). */

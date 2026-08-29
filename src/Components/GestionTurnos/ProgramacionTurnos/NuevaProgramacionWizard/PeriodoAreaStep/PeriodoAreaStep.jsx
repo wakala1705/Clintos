@@ -1,9 +1,9 @@
 'use client';
 
 import './PeriodoAreaStep.css';
-import AreaSelector from '@/Components/AreaSelector/AreaSelector';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
-  AREAS_TURNOS, addDias, addMeses, mesLabel, rangoSemanaLabel,
+  AREAS_TURNOS_PROGRAMABLES, addDias, addMeses, mesLabel, rangoSemanaLabel,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
@@ -72,8 +72,15 @@ export default function PeriodoAreaStep({
       )}
 
       <div className="form-field">
-        <label>Área o servicio</label>
-        <AreaSelector options={AREAS_TURNOS} value={area} onChange={onAreaChange} />
+        <label htmlFor="pas-area">Área o servicio</label>
+        <FormSelect
+          id="pas-area"
+          value={area}
+          onChange={onAreaChange}
+          options={AREAS_TURNOS_PROGRAMABLES}
+          placeholder="Selecciona un área o servicio"
+        />
+        {!area && <span className="pas-form-error">Selecciona un área o servicio para continuar.</span>}
       </div>
     </div>
   );

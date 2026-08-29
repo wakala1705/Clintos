@@ -51,7 +51,7 @@ export default function ConfirmarStep({
       </div>
 
       <div className="cs-note">
-        Podrás asignar y modificar los turnos desde el calendario después de crear la programación.
+        La programación se creará como borrador. Podrás asignar y modificar los turnos desde el calendario antes de publicarla.
       </div>
     </div>
   );

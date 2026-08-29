@@ -9,3 +9,8 @@
    regla sin tocar la clase compartida .chip-group.segmented (la usan otros
    headers en fila donde el problema no existe). */
 .pas-step .chip-group.segmented{align-self:flex-start;}
+
+/* Validación de "Área o servicio" obligatoria (encargo: no se puede crear
+   una programación sin área explícita) — mismo criterio que .cb-form-error
+   en GestionCamas/NuevaCamaModal.css. */
+.pas-form-error{font-size:var(--fs-sm);color:var(--red);}

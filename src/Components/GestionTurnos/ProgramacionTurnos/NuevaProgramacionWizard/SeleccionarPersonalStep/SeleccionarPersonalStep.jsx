@@ -3,50 +3,48 @@
 import { useState } from 'react';
 import './SeleccionarPersonalStep.css';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
-import { AREAS_TURNOS, NURSES } from '@/hooks/GestionTurnos/mockProgramacionData';
+import { AREA_TURNO_LABEL, NURSES } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { LuSearch } from 'react-icons/lu';
 
-// FilterDropdown espera 'todos' como valor "sin filtro" (hardcoded ahí para
-// Tipo de turno/Estado, ver ProgramacionTurnos.jsx) — AREAS_TURNOS usa
-// 'todas' para ese mismo rol ("todas las áreas"), así que acá se arma una
-// lista propia con el mismo primer valor pero sentinel 'todos', para que el
-// estado "activo" del filtro se calcule bien sin tocar FilterDropdown.jsx.
-const AREA_OPTIONS = [
-  { value: 'todos', label: 'Todas las áreas' },
-  ...AREAS_TURNOS.filter((a) => a.value !== 'todas'),
-];
 const CARGO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
   { value: 'Enfermera profesional', label: 'Enfermera profesional' },
   { value: 'Enfermero profesional', label: 'Enfermero profesional' },
 ];
 
-// Paso 2 del wizard — lista de personal seleccionable con checkbox, filtros
-// locales de Área/Cargo + búsqueda (solo acotan qué fila se ve, no
+// Paso 2 del wizard — lista de personal seleccionable con checkbox. Solo se
+// ofrece personal elegible para el área elegida en el paso 1 (encargo
+// sección 3: "mostrar únicamente personal elegible para el área
+// seleccionada") — por eso ya no hay un filtro de Área acá (sería
+// contradictorio dejar ver/tildar personal de otra área): el área ya quedó
+// fijada un paso atrás y esta lista es su universo completo. Cargo +
+// búsqueda siguen siendo filtros locales (solo acotan qué fila se ve, no
 // persisten en el form del wizard). Lo que sí persiste es `selectedIds`,
-// controlado por el padre (NuevaProgramacionWizard). Fila avatar+nombre+
-// cargo reutiliza `.npw-nurse-row` (definida en NuevaProgramacionWizard.css,
-// ver ese archivo para el porqué de vivir ahí en vez de acá — la reusa
-// también ConfirmarStep).
-export default function SeleccionarPersonalStep({ selectedIds, onToggle, onToggleAll }) {
+// controlado por el padre (NuevaProgramacionWizard) — cambiar de filtro o
+// volver de este paso nunca pierde la selección ya hecha. Fila
+// avatar+nombre+cargo reutiliza `.npw-nurse-row` (definida en
+// NuevaProgramacionWizard.css, ver ese archivo para el porqué de vivir ahí
+// en vez de acá — la reusa también ConfirmarStep).
+export default function SeleccionarPersonalStep({
+  area, selectedIds, onToggle, onToggleAll, onClearAll,
+}) {
   const [query, setQuery] = useState('');
-  const [areaFiltro, setAreaFiltro] = useState('todos');
   const [cargoFiltro, setCargoFiltro] = useState('todos');
 
   const q = query.trim().toLowerCase();
-  const visibles = NURSES.filter((n) => {
-    if (areaFiltro !== 'todos' && n.area !== areaFiltro) return false;
+  const elegibles = NURSES.filter((n) => n.area === area);
+  const visibles = elegibles.filter((n) => {
     if (cargoFiltro !== 'todos' && n.cargo !== cargoFiltro) return false;
     if (q && !n.nombre.toLowerCase().includes(q)) return false;
     return true;
   });
 
-  const todasVisiblesSeleccionadas = visibles.length > 0 && visibles.every((n) => selectedIds.includes(n.id));
-
   return (
     <div className="sps-step">
       <h4 className="npw-step-title">Selecciona el personal</h4>
-      <p className="npw-step-hint">Selecciona las enfermeras que participarán en esta programación.</p>
+      <p className="npw-step-hint">
+        Personal elegible de <strong>{AREA_TURNO_LABEL[area]}</strong> para esta programación.
+      </p>
 
       <div className="sps-count">{selectedIds.length} enfermeras seleccionadas</div>
 
@@ -61,11 +59,11 @@ export default function SeleccionarPersonalStep({ selectedIds, onToggle, onToggl
             aria-label="Buscar enfermera"
           />
         </div>
-        <FilterDropdown label="Área" options={AREA_OPTIONS} value={areaFiltro} onChange={setAreaFiltro} />
         <FilterDropdown label="Cargo" options={CARGO_OPTIONS} value={cargoFiltro} onChange={setCargoFiltro} />
-        <button type="button" className="sps-select-all" onClick={() => onToggleAll(visibles, !todasVisiblesSeleccionadas)}>
-          {todasVisiblesSeleccionadas ? 'Quitar todos' : 'Seleccionar todos'}
-        </button>
+        <div className="sps-actions">
+          <button type="button" className="sps-action-link" onClick={() => onToggleAll(visibles, true)}>Seleccionar todas</button>
+          <button type="button" className="sps-action-link" onClick={onClearAll}>Limpiar selección</button>
+        </div>
       </div>
 
       <div className="sps-list">

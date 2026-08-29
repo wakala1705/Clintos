@@ -9,6 +9,28 @@ export const TURNO_ID = {
   NOCHE: 'noche',
 };
 
+// Área o servicio canónica de Gestión de turnos — única fuente para las dos
+// pantallas que necesitan el mismo recorte por servicio/unidad de
+// internación (Enfermeras y Programación de turnos, ver mockEnfermerasData.js/
+// mockProgramacionData.js): antes cada una tenía su propia lista de áreas
+// (una genérica de 5, otra real de 8) y una enfermera podía quedar en un área
+// que Programación de turnos ni siquiera ofrecía como filtro. Vive acá (en
+// vez de en cualquiera de esos dos archivos) para que ambos puedan
+// importarla sin depender uno del otro.
+export const AREAS_SERVICIO = [
+  { value: 'todas', label: 'Todas las áreas' },
+  { value: 'urgencias', label: 'Urgencias' },
+  { value: 'uci', label: 'UCI' },
+  { value: 'hosp-general-p4-t1', label: 'Hospitalización General P4 T1' },
+  { value: 'hosp-piso2-t1', label: 'Hospitalización Piso 2 T1' },
+  { value: 'hosp-piso3-t1', label: 'Hospitalización Piso 3 T1' },
+  { value: 'hosp-piso4-t1', label: 'Hospitalización Piso 4 T1' },
+  { value: 'hosp-piso4-t2', label: 'Hospitalización Piso 4 T2' },
+  { value: 'hosp-piso5-t2', label: 'Hospitalización Piso 5 T2' },
+];
+export const AREA_SERVICIO_LABEL = Object.fromEntries(AREAS_SERVICIO.map((a) => [a.value, a.label]));
+export const AREAS_SERVICIO_PROGRAMABLES = AREAS_SERVICIO.filter((a) => a.value !== 'todas');
+
 export const ESTADO_TURNO_OPTIONS = [
   { value: 'activo', label: 'Activo' },
   { value: 'inactivo', label: 'Inactivo' },

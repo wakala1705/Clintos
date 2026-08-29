@@ -9,10 +9,19 @@
 .rpm-status.pending{background:var(--amber-bg);color:var(--amber-fg);}
 .rpm-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
 .rpm-row{
-  display:flex;align-items:center;gap:8px;
+  display:flex;align-items:center;gap:8px;width:100%;
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
   padding:8px 10px;border-radius:var(--radius);background:var(--bg);
+  border:none;font-family:inherit;text-align:left;
 }
 .rpm-row .icon{width:18px;height:18px;flex-shrink:0;}
 .rpm-row.ok .icon{color:var(--green);}
 .rpm-row.warn .icon{color:var(--amber-fg);}
+/* Filas de problema son accionables (encargo: "permitir volver directamente
+   al calendario para corregirlos") — cursor + hover las distingue de las
+   filas ok, que quedan sin puntero (disabled). */
+.rpm-row.clickable{cursor:pointer;}
+.rpm-row.clickable:hover{background:var(--gray-bg);}
+.rpm-row:disabled{cursor:default;}
+
+.rpm-confirm-text{margin:0;font-size:var(--fs-base);color:var(--ink-700);}

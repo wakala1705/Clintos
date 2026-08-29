@@ -283,6 +283,7 @@ export default function ProgramacionTurnos() {
                 <h1>
                   Programación de turnos
                   {programacionActiva?.estado === 'publicada' && <span className="tu-badge-publicada">Publicada</span>}
+                  {programacionActiva?.estado === 'borrador' && <span className="tu-badge-borrador">Borrador</span>}
                 </h1>
                 <p>Gestiona la asignación y cobertura del personal de enfermería.</p>
               </div>
@@ -463,6 +464,10 @@ export default function ProgramacionTurnos() {
           resumen={resumen}
           onClose={() => setRevisionOpen(false)}
           onPublicar={handlePublicar}
+          onVerEnCalendario={(filtro) => {
+            setRevisionOpen(false);
+            setEstadoFiltro(filtro);
+          }}
         />
       )}
     </div>

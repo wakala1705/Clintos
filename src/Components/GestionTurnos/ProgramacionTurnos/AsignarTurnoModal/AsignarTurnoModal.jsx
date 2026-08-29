@@ -168,12 +168,12 @@ export default function AsignarTurnoModal({
               {form.tipo !== 'descanso' && (
                 <>
                   <div className="form-field">
-                    <label htmlFor="at-hora-inicio">Hora de inicio</label>
-                    <input id="at-hora-inicio" type="time" value={form.horaInicio} onChange={(e) => set('horaInicio', e.target.value)} required />
+                    <label>Hora de inicio</label>
+                    <div className="tf-readonly-value">{form.horaInicio}</div>
                   </div>
                   <div className="form-field">
-                    <label htmlFor="at-hora-fin">Hora de finalización</label>
-                    <input id="at-hora-fin" type="time" value={form.horaFin} onChange={(e) => set('horaFin', e.target.value)} required />
+                    <label>Hora de finalización</label>
+                    <div className="tf-readonly-value">{form.horaFin}</div>
                   </div>
                 </>
               )}
