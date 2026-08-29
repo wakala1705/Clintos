@@ -51,10 +51,22 @@ export function diaLargoLabel(day, dayIdx) {
   return `${DIAS_SEMANA_LARGO[dayIdx]} ${day.dayNum} de ${MESES_LARGO[day.monthIdx]}`;
 }
 
-// Semana por defecto al entrar a la pantalla: Lun 18 – Dom 24 Ago 2026 (fija,
-// no depende de la fecha real del sistema) — mismo criterio que HOY en
-// mockPanelGeneralData.js.
-export const SEMANA_ANCLA = new Date(2026, 7, 18);
+// Semana por defecto al entrar a la pantalla: el lunes de la semana que
+// contiene la fecha real del sistema (encargo explícito: "ajustar los
+// calendarios a las fechas reales actuales" — antes era una fecha fija,
+// 18 Ago 2026, mismo criterio que tenían HOY en mockPanelGeneralData.js y
+// viewDate en asignacion-citas/page.jsx, también actualizados). Reutiliza
+// primerLunesVisibleDelMes (definida más abajo, misma cuenta lunes-de-la-
+// semana-que-contiene-esta-fecha sin importar si la fecha es un día 1 de
+// mes o cualquier otro día) en vez de duplicar esa aritmética acá. El
+// horario se descarta (solo importa año/mes/día) para no arrastrar la hora
+// exacta de carga de la página a comparaciones de fecha (periodKeyDeSemana,
+// rangoSemanaLabel, etc.).
+const HOY_SIN_HORA = (() => {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+})();
+export const SEMANA_ANCLA = primerLunesVisibleDelMes(HOY_SIN_HORA);
 
 export function addDias(date, dias) {
   const d = new Date(date);
@@ -188,11 +200,12 @@ export function addMeses(date, n) {
   return new Date(date.getFullYear(), date.getMonth() + n, 1);
 }
 
-// Lunes de la semana que contiene el día 1 del mes elegido (puede caer en el
-// mes anterior) — usado solo para decidir a qué `weekStart` saltar el
-// calendario principal al crear una programación de tipo mes, ya que la
-// grilla sigue siendo semanal (encargo sección 9: la vista mensual no es el
-// foco de edición de V1).
+// Lunes de la semana que contiene la fecha dada (puede caer en el mes/año
+// anterior) — pese al nombre (pensada originalmente solo para decidir a qué
+// `weekStart` saltar el calendario al crear una programación de tipo mes,
+// ya que la grilla sigue siendo semanal, encargo sección 9), la cuenta es
+// genérica para cualquier fecha: también la reutiliza SEMANA_ANCLA arriba
+// para anclar la semana por defecto a la fecha real del sistema.
 export function primerLunesVisibleDelMes(monthStart) {
   const dow = monthStart.getDay();
   const diff = dow === 0 ? -6 : 1 - dow;

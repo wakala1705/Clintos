@@ -2,10 +2,17 @@
 // src/Components/GestionEnfermeria/PanelGeneral/) — dashboard operativo del
 // piso de hospitalización, distinto de AtencionEnfermeria.jsx (atención a UN
 // paciente). Todo el módulo es ficticio (nombres, diagnósticos, horas de
-// actividad); "hoy" se fija al 14 Ago para que `diasEstancia` (día de "hoy"
-// menos admisión) tenga sentido sin depender de la fecha real del sistema.
-
-const HOY = new Date(2026, 7, 14); // 14 Ago 2026 (mes 0-indexado)
+// actividad); "hoy" usa la fecha real del sistema (encargo explícito:
+// "ajustar los calendarios a las fechas reales actuales" — antes era una
+// fecha fija, 14 Ago 2026, mismo criterio que tenían SEMANA_ANCLA en
+// mockProgramacionData.js y viewDate en asignacion-citas/page.jsx, también
+// actualizados). Las fechas de admisión (`diaAdmision`/`mesAdmisionIdx`, ver
+// PACIENTES_PISO) siguen ancladas a 2026 sin cambios — `diasEstancia` va a
+// crecer con el correr de los años reales; el campo `prolongada` que
+// alimenta el KPI "Estancias prolongadas" es un booleano curado por
+// paciente (no se recalcula desde `diasEstancia`), así que ese KPI no se ve
+// afectado por este cambio.
+const HOY = new Date();
 
 function diasEstancia(diaAdmision, mesAdmisionIdx) {
   const admision = new Date(2026, mesAdmisionIdx, diaAdmision);

@@ -49,8 +49,13 @@ export default function AsignacionCitasPage() {
   // ProgramarCita/AgendaToolbar.jsx) — a diferencia de especialidad/médico
   // (ver useEffect de abajo), todavía no recalcula la tabla "Agenda del
   // día": la agenda generada es de "hoy" para el médico elegido, cambiar de
-  // día no tiene una fuente de datos distinta que mostrar todavía.
-  const [viewDate, setViewDate] = useState(() => new Date(2026, 6, 18));
+  // día no tiene una fuente de datos distinta que mostrar todavía. Arranca
+  // en la fecha real del sistema (encargo explícito: "ajustar los
+  // calendarios a las fechas reales actuales" — antes era una fecha fija,
+  // 18 Jul 2026, mismo criterio que tenían SEMANA_ANCLA en
+  // mockProgramacionData.js y HOY en mockPanelGeneralData.js, también
+  // actualizados).
+  const [viewDate, setViewDate] = useState(() => new Date());
   function handlePrevDate() {
     setViewDate((d) => { const next = new Date(d); next.setDate(next.getDate() - 1); return next; });
   }
