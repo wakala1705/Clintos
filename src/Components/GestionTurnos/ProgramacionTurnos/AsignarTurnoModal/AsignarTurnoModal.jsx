@@ -149,8 +149,20 @@ export default function AsignarTurnoModal({
               )}
 
               <div className="form-field full">
-                <label htmlFor="at-tipo">Tipo de turno</label>
-                <FormSelect id="at-tipo" value={form.tipo} onChange={handleTipoChange} options={TIPO_OPTIONS} />
+                <label id="at-tipo-label">Tipo de turno</label>
+                <div className="at-tipo-group" role="radiogroup" aria-labelledby="at-tipo-label">
+                  {TIPO_OPTIONS.map((o) => (
+                    <label key={o.value} className={`at-tipo-option${form.tipo === o.value ? ' checked' : ''}`}>
+                      <input
+                        type="radio"
+                        name="at-tipo"
+                        checked={form.tipo === o.value}
+                        onChange={() => handleTipoChange(o.value)}
+                      />
+                      {o.label}
+                    </label>
+                  ))}
+                </div>
               </div>
 
               {form.tipo !== 'descanso' && (
