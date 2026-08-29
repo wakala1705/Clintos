@@ -1,3 +1,11 @@
 /* .form-field/.chip-group.segmented/.chip-filter/.day-nav*: ver
    ../../../GestionTurnos.css. .npw-step-title: ver ../NuevaProgramacionWizard.css. */
 .pas-step{display:flex;flex-direction:column;gap:20px;}
+
+/* .chip-group.segmented es inline-flex (se dimensiona a su contenido en su
+   uso original, una fila horizontal) pero acá vive dentro de un
+   .form-field (flex-direction:column) — el align-items:stretch por default
+   de ese padre igual lo estira a todo el ancho. align-self lo saca de esa
+   regla sin tocar la clase compartida .chip-group.segmented (la usan otros
+   headers en fila donde el problema no existe). */
+.pas-step .chip-group.segmented{align-self:flex-start;}

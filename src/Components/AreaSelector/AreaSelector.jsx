@@ -1,6 +1,9 @@
 'use client';
 
-import { Fragment, useEffect, useRef, useState } from 'react';
+import {
+  Fragment, useEffect, useLayoutEffect, useRef, useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 import './AreaSelector.css';
 import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 
@@ -27,12 +30,46 @@ import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 // cada call site existente.
 export default function AreaSelector({ options, value, onChange, label }) {
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState(null);
   const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  // Portado a document.body con position:fixed (mismo motivo que
+  // FormSelect.jsx, ver ese componente): si el dropdown quedara
+  // position:absolute dentro de .pg-area-select, su alto suma al
+  // scrollHeight de cualquier .modal-body (overflow-y:auto) que lo
+  // contenga y genera un scroll que desplaza el resto del formulario —
+  // bug real encontrado al usar este selector dentro de
+  // NuevaProgramacionWizard. `right` (no `left`) porque el trigger vive
+  // históricamente pegado al borde derecho de una fila de acciones de
+  // header — alinear por la derecha reproduce el `right:0` original que
+  // tenía como position:absolute, sin importar el ancho final del listbox.
+  useLayoutEffect(() => {
+    if (!open) return;
+    function updateCoords() {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+        minWidth: Math.max(180, rect.width),
+      });
+    }
+    updateCoords();
+    window.addEventListener('resize', updateCoords);
+    window.addEventListener('scroll', updateCoords, true);
+    return () => {
+      window.removeEventListener('resize', updateCoords);
+      window.removeEventListener('scroll', updateCoords, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
-      if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
+      const insideTrigger = rootRef.current && rootRef.current.contains(e.target);
+      const insideDropdown = dropdownRef.current && dropdownRef.current.contains(e.target);
+      if (!insideTrigger && !insideDropdown) setOpen(false);
     }
     function handleKeyDown(e) {
       if (e.key === 'Escape') setOpen(false);
@@ -56,6 +93,7 @@ export default function AreaSelector({ options, value, onChange, label }) {
     <div className="pg-area-select" ref={rootRef}>
       <button
         type="button"
+        ref={triggerRef}
         className="btn btn-secondary pg-area-select-trigger"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
@@ -66,8 +104,14 @@ export default function AreaSelector({ options, value, onChange, label }) {
         <LuChevronDown className={`icon pg-area-select-chev${open ? ' open' : ''}`} aria-hidden="true" />
       </button>
 
-      {open && (
-        <ul className="pg-area-select-dropdown" role="listbox" aria-label={label ?? 'Área operativa'}>
+      {open && coords && createPortal(
+        <ul
+          ref={dropdownRef}
+          className="pg-area-select-dropdown"
+          role="listbox"
+          aria-label={label ?? 'Área operativa'}
+          style={{ top: coords.top, right: coords.right, minWidth: coords.minWidth }}
+        >
           {options.map((o, i) => (
             <Fragment key={o.value}>
               {o.group && o.group !== options[i - 1]?.group && (
@@ -90,7 +134,8 @@ export default function AreaSelector({ options, value, onChange, label }) {
               </li>
             </Fragment>
           ))}
-        </ul>
+        </ul>,
+        document.body,
       )}
     </div>
   );
