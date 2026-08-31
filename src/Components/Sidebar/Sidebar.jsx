@@ -22,6 +22,7 @@ import {
   LuLandmark,
   LuMoon,
   LuPackage,
+  LuScissors,
   LuSettings,
   LuShieldPlus,
   LuSiren,
@@ -53,7 +54,8 @@ export default function Sidebar() {
   const isPyms = isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones;
+  const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -126,6 +128,7 @@ export default function Sidebar() {
               <div className="nav-body">
                 <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
                 <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
+                <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
               </div>
             </div>
 
