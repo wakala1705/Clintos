@@ -1,62 +1,60 @@
 'use client';
 
+import { useState } from 'react';
 import './FiltrosBar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import {
-  ESTADO_FILTRO_OPTIONS, SALAS, SEDES, addDias, fechaISO, fechaLabel,
-} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import CatalogoSalasModal from '../modals/CatalogoSalasModal/CatalogoSalasModal';
+import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { LuChevronDown } from 'react-icons/lu';
 
-// Vista Día/Mes: solo Semana está implementada en V1 (spec, sección
-// "Alcance") — los otros 2 botones quedan visibles y clickeables pero
-// jamás quedan "active": onVistaNoDisponible (pasado por el orquestador)
-// dispara un toast en vez de cambiar de vista. Conectar una vista real acá
-// implica agregar un tercer estado a este control y pasarlo hacia arriba
-// como prop adicional, sin tocar el resto del feature.
+// Vive embebido en .as-week-nav (ver AgendaSemana.jsx), junto a la
+// navegación de semana propia de la agenda — por eso no tiene campo "Fecha"
+// propio: sería un segundo prev/next que hace exactamente lo mismo que el ya
+// presente en .as-week-center. Sin filtro de Sede (encargo explícito): la
+// página opera fija sobre '02' (ver sedeId en ProgramacionSalaCirugias.jsx),
+// `sedeId` acá solo sirve para acotar `salasDeSede`. Sin labels visibles
+// (encargo explícito): cada control lleva su nombre accesible por
+// aria-label/ariaLabel en vez de un <label> en pantalla — mismo valor
+// semántico, menos ruido visual en la fila. El switch Día/Semana/Mes vive en
+// el header de la página (ver .psc-page-header-actions en
+// ProgramacionSalaCirugias.jsx, mismo lugar que .pc-page-header-actions en
+// Programar cita) y no acá, a diferencia de una versión anterior de este
+// componente.
 export default function FiltrosBar({
-  sedeId, onSedeChange, salaId, onSalaChange, weekStart, onWeekStartChange, estado, onEstadoChange, onVistaNoDisponible,
+  sedeId, salaId, onSalaChange, estado, onEstadoChange,
 }) {
+  const [catalogoOpen, setCatalogoOpen] = useState(false);
   const salasDeSede = SALAS.filter((s) => s.sedeId === sedeId);
+  const salaActual = salasDeSede.find((s) => s.value === salaId);
 
   return (
     <div className="fb-bar">
-      <div className="form-field">
-        <label htmlFor="fb-sede">Sede</label>
-        <FormSelect id="fb-sede" value={sedeId} onChange={onSedeChange} options={SEDES} />
-      </div>
-      <div className="form-field">
-        <label htmlFor="fb-sala">Sala / Quirófano</label>
-        <FormSelect
+      <div className="form-select">
+        <button
+          type="button"
           id="fb-sala"
+          className={`form-select-trigger${catalogoOpen ? ' open' : ''}`}
+          onClick={() => setCatalogoOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={catalogoOpen}
+          aria-label="Sala / Quirófano"
+        >
+          <span className={salaActual ? 'form-select-value' : 'form-select-placeholder'}>
+            {salaActual ? salaActual.label : 'Selecciona una opción'}
+          </span>
+          <LuChevronDown className="icon form-select-chev" aria-hidden="true" />
+        </button>
+      </div>
+      <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
+
+      {catalogoOpen && (
+        <CatalogoSalasModal
+          salas={salasDeSede}
           value={salaId}
-          onChange={onSalaChange}
-          options={salasDeSede.map((s) => ({ value: s.value, label: s.label }))}
+          onSelect={onSalaChange}
+          onClose={() => setCatalogoOpen(false)}
         />
-      </div>
-      <div className="form-field">
-        <label id="fb-fecha-label">Fecha</label>
-        <div className="fb-fecha-nav" role="group" aria-labelledby="fb-fecha-label">
-          <button type="button" className="fb-fecha-btn" aria-label="Semana anterior" onClick={() => onWeekStartChange(addDias(weekStart, -7))}>
-            <LuChevronLeft className="icon" />
-          </button>
-          <span className="fb-fecha-value">{fechaLabel(fechaISO(weekStart))}</span>
-          <button type="button" className="fb-fecha-btn" aria-label="Semana siguiente" onClick={() => onWeekStartChange(addDias(weekStart, 7))}>
-            <LuChevronRight className="icon" />
-          </button>
-        </div>
-      </div>
-      <div className="form-field">
-        <label id="fb-vista-label">Vista</label>
-        <div className="chip-group segmented" role="group" aria-labelledby="fb-vista-label">
-          <button type="button" className="chip-filter" onClick={onVistaNoDisponible}>Día</button>
-          <button type="button" className="chip-filter active" aria-pressed="true">Semana</button>
-          <button type="button" className="chip-filter" onClick={onVistaNoDisponible}>Mes</button>
-        </div>
-      </div>
-      <div className="form-field">
-        <label htmlFor="fb-estado">Estado</label>
-        <FormSelect id="fb-estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
-      </div>
+      )}
     </div>
   );
 }

@@ -3,10 +3,11 @@
 import './AgendaSemana.css';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
+import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
-const HORA_INICIO = 6;
-const HORA_FIN = 20;
+const HORA_INICIO = 0;
+const HORA_FIN = 24;
 const SLOTS_POR_HORA = 2;
 const SLOTS = (HORA_FIN - HORA_INICIO) * SLOTS_POR_HORA;
 const HORAS = Array.from({ length: HORA_FIN - HORA_INICIO }, (_, i) => HORA_INICIO + i);
@@ -18,22 +19,40 @@ function horaASlot(hora) {
 }
 
 export default function AgendaSemana({
-  weekLabel, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
+  label, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
+  navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
+  sedeId, salaId, onSalaChange, estado, onEstadoChange,
 }) {
   return (
     <div className="as-wrap">
-      <div className="as-week-nav">
-        <button type="button" className="as-nav-btn" aria-label="Semana anterior" onClick={onPrevWeek}>
-          <LuChevronLeft className="icon" />
-        </button>
-        <span className="as-week-label">{weekLabel}</span>
-        <button type="button" className="as-nav-btn" aria-label="Semana siguiente" onClick={onNextWeek}>
-          <LuChevronRight className="icon" />
-        </button>
+      <div className="psc-agenda-nav">
+        <div className="psc-agenda-nav-date">
+          <button type="button" className="psc-agenda-nav-btn" aria-label={navPrevLabel} onClick={onPrevWeek}>
+            <LuChevronLeft className="icon" />
+          </button>
+          <span className="psc-agenda-nav-label">{label}</span>
+          <button type="button" className="psc-agenda-nav-btn" aria-label={navNextLabel} onClick={onNextWeek}>
+            <LuChevronRight className="icon" />
+          </button>
+        </div>
+
+        <FiltrosBar
+          sedeId={sedeId}
+          salaId={salaId}
+          onSalaChange={onSalaChange}
+          estado={estado}
+          onEstadoChange={onEstadoChange}
+        />
       </div>
 
       <div className="as-scroll">
-        <div className="as-grid">
+        <div
+          className="as-grid"
+          style={{
+            gridTemplateColumns: `64px repeat(${days.length}, minmax(130px, 1fr))`,
+            gridTemplateRows: `56px repeat(${SLOTS}, 30px)`,
+          }}
+        >
           <div className="as-corner" />
 
           {days.map((d, i) => (
@@ -78,8 +97,8 @@ export default function AgendaSemana({
         </div>
       </div>
 
-      <div className="as-legend">
-        <span className="as-legend-title">Estados:</span>
+      <div className="psc-agenda-legend">
+        <span className="psc-agenda-legend-title">Estados:</span>
         {ESTADOS_LEYENDA.map((estado) => (
           <EstadoCirugiaBadge key={estado} estado={estado} size="sm" />
         ))}

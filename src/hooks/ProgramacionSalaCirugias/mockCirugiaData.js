@@ -9,11 +9,37 @@ export const SEDES = [
   { value: '01', label: '01 - Sede Central' },
 ];
 
+// `idSala`/`descripcion`/`estado`/`complejidad` alimentan CatalogoSalasModal
+// (ver FiltrosBar.jsx) — el `label` completo ("Sala 1 - Quirófano #1") se
+// deriva de los dos primeros en vez de hardcodearse aparte, para que el
+// trigger del filtro y el catálogo nunca queden desincronizados. Las 6 salas
+// de sede '02' replican 1:1 el catálogo de referencia del encargo (mismos
+// id/descripción/estado); 'qx-1-central' es la única sala de sede '01' y
+// queda fuera del catálogo visible hoy porque la página fija sedeId a '02'
+// (ver comentario en FiltrosBar.jsx).
 export const SALAS = [
-  { value: 'qx-1', label: 'Quirófano #1', sedeId: '02' },
-  { value: 'qx-2', label: 'Quirófano #2', sedeId: '02' },
-  { value: 'qx-3', label: 'Quirófano #1', sedeId: '01' },
-];
+  {
+    value: 'qx-1', idSala: '01', descripcion: 'Quirófano #1', estado: 'Mantenimiento', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'qx-2', idSala: '02', descripcion: 'Quirófano #2', estado: 'Activo', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'qx-3', idSala: '03', descripcion: 'Quirófano #3', estado: 'Activo', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'gastroenterologia', idSala: '04', descripcion: 'Gastroenterología', estado: 'Activo', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'hemodinamia', idSala: '05', descripcion: 'Hemodinamia', estado: 'Activo', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'proc-menores', idSala: '06', descripcion: 'Proc. Menores', estado: 'Activo', complejidad: 'M', sedeId: '02',
+  },
+  {
+    value: 'qx-1-central', idSala: '01', descripcion: 'Quirófano #1', estado: 'Activo', complejidad: 'M', sedeId: '01',
+  },
+].map((s) => ({ ...s, label: `Sala ${Number(s.idSala)} - ${s.descripcion}` }));
 
 export const ESTADO_FILTRO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
@@ -40,6 +66,77 @@ export const CIRUJANOS_CATALOGO = ['Dr. Juan García', 'Dr. Carlos Martínez', '
 export const ANESTESIOLOGOS_CATALOGO = ['Dra. Ana López', 'Dr. Pedro Sánchez'];
 export const INSTRUMENTADORAS_CATALOGO = ['María Fernández', 'Laura Gómez'];
 export const CIRCULANTES_CATALOGO = ['Luis Ramírez', 'Andrés Molina'];
+
+// Catálogos del paso "Información general" del wizard "Nueva cirugía" (ver
+// NuevaCirugiaWizard/InformacionGeneralStep) -- valores calcados de los
+// listbox del formulario de referencia (encargo explícito), no inventados.
+// "Asa" es la única transcripción con un vacío real: la 1ª opción del
+// listbox de referencia venía cortada en la captura ("PACIENTE SANO LISTO
+// PARA CIRUGIA PR...", mientras que la 2ª/3ª sí se veían completas como
+// "CLASE 2"/"CLASE 3") -- avisar si el texto completo no es este.
+export const CLASE_CIRUGIA_CATALOGO = ['CE', 'Quirófano'];
+export const TIPOS_ANESTESIA_CATALOGO = ['Local', 'General', 'Raquídea', 'Peridural', 'General IV', 'Local asistida', 'Bloqueo', 'No aplica'];
+export const COMPLEJIDAD_CATALOGO = ['Alta', 'Baja', 'Media'];
+export const ASA_CATALOGO = ['Paciente sano listo para cirugía programada', 'Clase 2', 'Clase 3'];
+
+// Duraciones preestablecidas para Dur. estimada/postquirúrgica/recuperación
+// (encargo explícito): reemplaza el input numérico libre por un FormSelect
+// de valores comunes, más rápido de elegir que tipear minutos a mano.
+export const DURACIONES_CIRUGIA_CATALOGO = [15, 30, 45, 60, 90, 120, 150, 180, 210, 240, 300, 360];
+
+// Catálogo de diagnósticos (CIE-10) que alimenta CatalogoDiagnosticosModal
+// (búsqueda de "Dx. ingreso", encargo explícito). Recorte representativo
+// (~40 códigos reales) en vez de los "12423 registros" de la captura de
+// referencia -- la paginación/contador de este modal reflejan el total real
+// de este array, no un número inventado que no tendría datos detrás. `sexo`
+// alimenta el filtro "Todos los sexos"/Femenino/Masculino del modal; la
+// mayoría son 'Ambos', con un puñado de códigos genuinamente restringidos
+// por sexo (próstata, mama, ginecológicos/obstétricos) para que ese filtro
+// tenga un efecto real y no sea decorativo.
+export const DIAGNOSTICOS_CATALOGO = [
+  { codigo: 'A001', descripcion: 'COLERA DEBIDO A VIBRIO CHOLERAE 01, BIOTIPO EL TOR', sexo: 'Ambos' },
+  { codigo: 'A009', descripcion: 'COLERA NO ESPECIFICADO', sexo: 'Ambos' },
+  { codigo: 'A010', descripcion: 'FIEBRE TIFOIDEA', sexo: 'Ambos' },
+  { codigo: 'A011', descripcion: 'FIEBRE PARATIFOIDEA A', sexo: 'Ambos' },
+  { codigo: 'A012', descripcion: 'FIEBRE PARATIFOIDEA B', sexo: 'Ambos' },
+  { codigo: 'A013', descripcion: 'FIEBRE PARATIFOIDEA C', sexo: 'Ambos' },
+  { codigo: 'A014', descripcion: 'FIEBRE PARATIFOIDEA, NO ESPECIFICADA', sexo: 'Ambos' },
+  { codigo: 'A020', descripcion: 'ENTERITIS DEBIDA A SALMONELLA', sexo: 'Ambos' },
+  { codigo: 'A040', descripcion: 'INFECCION DEBIDA A ESCHERICHIA COLI ENTEROPATOGENA', sexo: 'Ambos' },
+  { codigo: 'A090', descripcion: 'DIARREA Y GASTROENTERITIS DE PRESUNTO ORIGEN INFECCIOSO', sexo: 'Ambos' },
+  { codigo: 'J039', descripcion: 'AMIGDALITIS AGUDA, NO ESPECIFICADA', sexo: 'Ambos' },
+  { codigo: 'J189', descripcion: 'NEUMONIA, NO ESPECIFICADA', sexo: 'Ambos' },
+  { codigo: 'J450', descripcion: 'ASMA PREDOMINANTEMENTE ALERGICA', sexo: 'Ambos' },
+  { codigo: 'K358', descripcion: 'OTRAS APENDICITIS AGUDAS Y LAS NO ESPECIFICADAS', sexo: 'Ambos' },
+  { codigo: 'K802', descripcion: 'CALCULOS DE LA VESICULA BILIAR SIN COLECISTITIS', sexo: 'Ambos' },
+  { codigo: 'K810', descripcion: 'COLECISTITIS AGUDA', sexo: 'Ambos' },
+  { codigo: 'K269', descripcion: 'ULCERA DUODENAL, NO ESPECIFICADA COMO AGUDA O CRONICA, SIN HEMORRAGIA NI PERFORACION', sexo: 'Ambos' },
+  { codigo: 'K449', descripcion: 'HERNIA DIAFRAGMATICA SIN OBSTRUCCION NI GANGRENA', sexo: 'Ambos' },
+  { codigo: 'N40X', descripcion: 'HIPERPLASIA DE LA PROSTATA', sexo: 'Masculino' },
+  { codigo: 'N411', descripcion: 'PROSTATITIS CRONICA', sexo: 'Masculino' },
+  { codigo: 'C61X', descripcion: 'TUMOR MALIGNO DE LA PROSTATA', sexo: 'Masculino' },
+  { codigo: 'N832', descripcion: 'OTROS QUISTES DEL OVARIO Y LOS NO ESPECIFICADOS', sexo: 'Femenino' },
+  { codigo: 'N800', descripcion: 'ENDOMETRIOSIS DEL UTERO', sexo: 'Femenino' },
+  { codigo: 'D250', descripcion: 'LEIOMIOMA SUBMUCOSO DEL UTERO', sexo: 'Femenino' },
+  { codigo: 'O82X', descripcion: 'PARTO POR CESAREA, NO ESPECIFICADO', sexo: 'Femenino' },
+  { codigo: 'N979', descripcion: 'INFERTILIDAD FEMENINA, NO ESPECIFICADA', sexo: 'Femenino' },
+  { codigo: 'C500', descripcion: 'TUMOR MALIGNO DE LA MAMA, PARTE NO ESPECIFICADA', sexo: 'Femenino' },
+  { codigo: 'S066', descripcion: 'HEMORRAGIA SUBARACNOIDEA TRAUMATICA', sexo: 'Ambos' },
+  { codigo: 'S720', descripcion: 'FRACTURA DEL CUELLO DEL FEMUR', sexo: 'Ambos' },
+  { codigo: 'S824', descripcion: 'FRACTURA DE OTRAS PARTES DE LA PIERNA', sexo: 'Ambos' },
+  { codigo: 'M170', descripcion: 'GONARTROSIS PRIMARIA, BILATERAL', sexo: 'Ambos' },
+  { codigo: 'M160', descripcion: 'COXARTROSIS PRIMARIA BILATERAL', sexo: 'Ambos' },
+  { codigo: 'I209', descripcion: 'ANGINA DE PECHO, NO ESPECIFICADA', sexo: 'Ambos' },
+  { codigo: 'I500', descripcion: 'INSUFICIENCIA CARDIACA CONGESTIVA', sexo: 'Ambos' },
+  { codigo: 'E119', descripcion: 'DIABETES MELLITUS NO INSULINODEPENDIENTE, SIN MENCION DE COMPLICACION', sexo: 'Ambos' },
+  { codigo: 'E039', descripcion: 'HIPOTIROIDISMO, NO ESPECIFICADO', sexo: 'Ambos' },
+  { codigo: 'Q211', descripcion: 'COMUNICACION INTERAURICULAR', sexo: 'Ambos' },
+  { codigo: 'H269', descripcion: 'CATARATA, NO ESPECIFICADA', sexo: 'Ambos' },
+  { codigo: 'H040', descripcion: 'DACRIOADENITIS AGUDA', sexo: 'Ambos' },
+  { codigo: 'L029', descripcion: 'ABSCESO CUTANEO, FURUNCULO Y ANTRAX DE SITIO NO ESPECIFICADO', sexo: 'Ambos' },
+  { codigo: 'T810', descripcion: 'HEMORRAGIA Y HEMATOMA COMPLICANDO UN PROCEDIMIENTO, NO CLASIFICADOS EN OTRA PARTE', sexo: 'Ambos' },
+  { codigo: 'Z017', descripcion: 'EXAMEN DE LABORATORIO', sexo: 'Ambos' },
+];
 
 export const EQUIPOS_CATALOGO = [
   'Torre de laparoscopia',
@@ -117,6 +214,14 @@ export function fechaISO(date) {
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
+// Formato que espera <input type="datetime-local"> ("YYYY-MM-DDTHH:mm") --
+// usado para precargar Fecha inicio con la fecha/hora del sistema al abrir
+// el wizard "Nueva cirugía" (encargo explícito, ver datosIniciales en
+// NuevaCirugiaWizard.jsx).
+export function fechaHoraLocalISO(date) {
+  return `${fechaISO(date)}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+}
+
 export function addDias(date, n) {
   const d = new Date(date);
   d.setDate(d.getDate() + n);
@@ -130,6 +235,7 @@ export function lunesDeSemana(date) {
 }
 
 const DIA_LABEL = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const DIA_LARGO = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const MES_CORTO = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 const MES_LARGO = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -144,6 +250,22 @@ export function diasDeSemana(weekStart) {
       isToday: fechaISO(d) === hoyISO,
     };
   });
+}
+
+// Mismo shape que las entradas de diasDeSemana -- así AgendaSemana.jsx puede
+// renderizar la vista Día pasándole un array de un solo elemento sin
+// necesitar ninguna rama especial en su grilla.
+export function diaUnico(date) {
+  return {
+    fecha: fechaISO(date),
+    label: DIA_LABEL[date.getDay()],
+    dayNum: `${date.getDate()} ${MES_CORTO[date.getMonth()]}`,
+    isToday: fechaISO(date) === fechaISO(new Date()),
+  };
+}
+
+export function diaLabel(date) {
+  return `${DIA_LARGO[date.getDay()]} ${date.getDate()} de ${MES_LARGO[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 // Algoritmo ISO 8601 estándar de número de semana (no se hardcodea a un
@@ -161,6 +283,50 @@ export function rangoSemanaLabel(weekStart) {
   const mismoMes = weekStart.getMonth() === fin.getMonth();
   const mesFin = mismoMes ? '' : ` - ${MES_LARGO[fin.getMonth()]}`;
   return `Semana ${numeroSemanaISO(weekStart)} - ${MES_LARGO[weekStart.getMonth()]}${mesFin} ${fin.getFullYear()}`;
+}
+
+// ---------- Mini-calendario (mes actual) ----------
+// Mismo algoritmo que generateMonthGrid en hooks/ProgramarCita/agendaMockData.js
+// (semanas completas, incluye días del mes anterior/siguiente para llenar la
+// grilla de 7 columnas) — no se importa desde ahí porque cada feature es
+// dueña de sus propios helpers de fecha (ver AGENTS.md "Component
+// organization"), y acá las semanas arrancan en lunes igual que
+// diasDeSemana/lunesDeSemana arriba.
+const DOW_LABELS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+
+export function addMeses(date, n) {
+  return new Date(date.getFullYear(), date.getMonth() + n, 1);
+}
+
+export function mesLabel(date = new Date()) {
+  return `${MES_LARGO[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+export function grillaMes(date = new Date()) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const hoy = new Date();
+  const esMesActual = hoy.getFullYear() === year && hoy.getMonth() === month;
+
+  const primerDia = new Date(year, month, 1);
+  const primerDow = (primerDia.getDay() + 6) % 7; // 0=Lunes
+  const diasDelMes = new Date(year, month + 1, 0).getDate();
+  const diasMesAnterior = new Date(year, month, 0).getDate();
+
+  const days = [];
+  for (let i = primerDow - 1; i >= 0; i--) {
+    const n = diasMesAnterior - i;
+    days.push({ n, date: new Date(year, month - 1, n), muted: true, today: false });
+  }
+  for (let d = 1; d <= diasDelMes; d++) {
+    days.push({ n: d, date: new Date(year, month, d), muted: false, today: esMesActual && d === hoy.getDate() });
+  }
+  let trailing = 1;
+  while (days.length % 7 !== 0) {
+    days.push({ n: trailing, date: new Date(year, month + 1, trailing), muted: true, today: false });
+    trailing += 1;
+  }
+  return { dowLabels: DOW_LABELS, days };
 }
 
 export function fechaLabel(fechaISOStr) {
@@ -470,13 +636,15 @@ let CIRUGIAS = [
 
 let nextIdSeq = 12353;
 
-export function fetchAgendaSemana({
-  sedeId, salaId, weekStart, estado = 'todos',
+// Reemplaza a fetchAgendaSemana: mismo filtro, pero `inicio`/`fin` (ISO
+// yyyy-mm-dd) los calcula el orquestador según la vista activa (Día/Semana/
+// Mes) en vez de asumir siempre una semana completa -- ver
+// ProgramacionSalaCirugias.jsx.
+export function fetchAgendaRango({
+  sedeId, salaId, inicio, fin, estado = 'todos',
 }) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const inicio = fechaISO(weekStart);
-      const fin = fechaISO(addDias(weekStart, 6));
       const items = CIRUGIAS.filter((c) => {
         if (c.sedeId !== sedeId || c.salaId !== salaId) return false;
         if (c.fecha < inicio || c.fecha > fin) return false;

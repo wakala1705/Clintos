@@ -1,0 +1,56 @@
+/* Homologado al look de FiltroPickerModal (AsignacionCitas): buscador +
+   tabla con borde + fila-botón seleccionable — ver comentario en el .jsx.
+   Clases propias (.csm-*) en vez de reusar .acp-*: ese CSS no se carga en
+   esta feature (mismo criterio ya documentado en FiltroPickerModal.css). */
+.csm-modal-card{width:520px;}
+.csm-modal-card > .modal-body{overflow:hidden;}
+.csm-body{padding:16px 24px 20px;gap:12px;flex:1;min-height:0;}
+
+.csm-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.csm-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.csm-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.csm-search input::placeholder{color:var(--ink-400);}
+
+.csm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.csm-row{
+  display:grid;grid-template-columns:64px 1fr 120px 100px;align-items:center;gap:12px;
+  padding:10px 14px;
+}
+.csm-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .csm-row-head{background:#1c2333;}
+.csm-complejidad-head{text-align:right;}
+
+.csm-list{flex:1;min-height:0;overflow-y:auto;}
+.csm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.csm-option:last-child{border-bottom:none;}
+.csm-option:hover{background:var(--bg);}
+.csm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.csm-option.active{background:var(--primary-50);}
+.csm-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;}
+.csm-option-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.csm-complejidad{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);text-align:right;}
+.csm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+.csm-badge{
+  display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  padding:3px 9px;border-radius:12px;white-space:nowrap;width:fit-content;
+}
+.csm-badge-activo{background:var(--green-bg);color:#0d7a3d;}
+html[data-theme="dark"] .csm-badge-activo{color:var(--green);}
+.csm-badge-mantenimiento{background:var(--amber-bg);color:var(--amber-fg);}

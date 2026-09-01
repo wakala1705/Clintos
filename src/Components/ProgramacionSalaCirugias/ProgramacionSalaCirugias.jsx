@@ -6,35 +6,70 @@ import {
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import FiltrosBar from './FiltrosBar/FiltrosBar';
-import AccionesBar from './AccionesBar/AccionesBar';
+import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
+import MiniCalendarCirugias from './MiniCalendarCirugias/MiniCalendarCirugias';
 import AgendaSemana from './AgendaSemana/AgendaSemana';
+import AgendaMes from './AgendaMes/AgendaMes';
+import VistaDropdown from './VistaDropdown/VistaDropdown';
 import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
-import NuevaCirugiaModal from './modals/NuevaCirugiaModal/NuevaCirugiaModal';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
+import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import {
   SALAS,
   SEMANA_ANCLA,
-  actualizarCirugia,
   actualizarEstadoCirugia,
   addDias,
+  addMeses,
   cancelarCirugia,
-  crearCirugia,
+  diaLabel,
+  diaUnico,
   diasDeSemana,
   fechaISO,
-  fetchAgendaSemana,
+  fetchAgendaRango,
+  grillaMes,
+  lunesDeSemana,
+  mesLabel,
   rangoSemanaLabel,
   reprogramarCirugia,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
-  const [sedeId, setSedeId] = useState('02');
+  // Sin filtro de Sede en la UI (encargo explícito): fija a '02' (Sede
+  // Norte), la única con datos completos en el mock (ver SEMANA_ANCLA en
+  // mockCirugiaData.js) — deja de ser estado porque nada la cambia.
+  const sedeId = '02';
   const [salaId, setSalaId] = useState('qx-1');
-  const [weekStart, setWeekStart] = useState(SEMANA_ANCLA);
+  // Fecha foco de la agenda -- su significado depende de `vista`: el día
+  // mostrado (dia), la semana que lo contiene (semana, vía lunesDeSemana) o
+  // el mes que lo contiene (mes, vía grillaMes). Reemplaza al `weekStart`
+  // de V1 (solo semana) para que las 3 vistas compartan un único ancla.
+  const [fechaAncla, setFechaAncla] = useState(SEMANA_ANCLA);
   const [estado, setEstado] = useState('todos');
+  const [vista, setVista] = useState('semana');
+  const [mostrarFinesDeSemana, setMostrarFinesDeSemana] = useState(true);
+
+  const inicioSemana = lunesDeSemana(fechaAncla);
+  const grillaMesActual = vista === 'mes' ? grillaMes(fechaAncla) : null;
+
+  // Rango de fechas (ISO) que la vista activa necesita cargar -- en `mes`
+  // cubre toda la grilla visible (incluye días mudos del mes ant./sig.) para
+  // que el conteo por celda de AgendaMes sea exacto.
+  let rangoInicio;
+  let rangoFin;
+  if (vista === 'dia') {
+    rangoInicio = fechaISO(fechaAncla);
+    rangoFin = rangoInicio;
+  } else if (vista === 'mes') {
+    rangoInicio = fechaISO(grillaMesActual.days[0].date);
+    rangoFin = fechaISO(grillaMesActual.days[grillaMesActual.days.length - 1].date);
+  } else {
+    rangoInicio = fechaISO(inicioSemana);
+    rangoFin = fechaISO(addDias(inicioSemana, 6));
+  }
 
   const [cirugias, setCirugias] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -48,21 +83,48 @@ export default function ProgramacionSalaCirugias() {
     toastTimerRef.current = window.setTimeout(() => setToast(null), 2600);
   }
 
+  // Mismo flujo compartido de búsqueda/alta de pacientes que Asignación de
+  // citas/Programar cita/Admisiones (.ps-overlay/.ap-overlay, ver
+  // NuevaCitaFlow.jsx y AGENTS.md) -- "+ Programar cirugía"/"Nueva urgencia"
+  // arrancan acá en vez de un formulario propio (ver ProgramarCirugiaDropdown
+  // más abajo). `onPatientConfirmed` es lo que separa este uso del de citas:
+  // normalmente elegir/crear un paciente encadena directo al wizard de
+  // agendamiento (ncOpen) -- acá en cambio abre NuevaCirugiaWizard (mismo
+  // criterio que handlePatientConfirmed en Admisiones.jsx, adaptado a un
+  // wizard propio en vez de continuar un formulario de una sola pantalla).
+  const nuevaCirugiaPatientRef = useRef(null);
+  const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
+  function handlePatientConfirmedParaCirugia(patient) {
+    setNuevaCirugiaWizardPatient(patient);
+  }
+
   useEffect(() => {
-    const cleanup = initShellChrome({ startCollapsed: true });
-    return cleanup;
+    const cleanupChrome = initShellChrome({ startCollapsed: true });
+    const cleanupNuevaCita = initNuevaCita({
+      getPatient: () => nuevaCirugiaPatientRef.current,
+      setPatient: (patient) => { nuevaCirugiaPatientRef.current = patient; },
+      onPatientConfirmed: handlePatientConfirmedParaCirugia,
+      clearPatientAfterConfirm: true,
+    });
+    return () => {
+      cleanupChrome?.();
+      cleanupNuevaCita?.();
+    };
+    // Se inicializa una sola vez al montar (mismo criterio que
+    // initShellChrome arriba): handlePatientConfirmedParaCirugia solo llama
+    // a un setState (identidad estable entre renders).
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-    fetchAgendaSemana({
-      sedeId, salaId, weekStart, estado,
+    fetchAgendaRango({
+      sedeId, salaId, inicio: rangoInicio, fin: rangoFin, estado,
     }).then((items) => {
       if (cancelled) return;
       setCirugias(items);
     });
     return () => { cancelled = true; };
-  }, [sedeId, salaId, weekStart, estado]);
+  }, [sedeId, salaId, estado, rangoInicio, rangoFin]);
 
   // Decide si una cirugía (recién creada/mutada) pertenece a la vista
   // actualmente visible -- evita un re-fetch completo después de cada
@@ -70,9 +132,7 @@ export default function ProgramacionSalaCirugias() {
   // el registro completo, solo hace falta decidir si mostrarlo.
   function perteneceAVistaActual(c) {
     if (c.sedeId !== sedeId || c.salaId !== salaId) return false;
-    const inicio = fechaISO(weekStart);
-    const fin = fechaISO(addDias(weekStart, 6));
-    if (c.fecha < inicio || c.fecha > fin) return false;
+    if (c.fecha < rangoInicio || c.fecha > rangoFin) return false;
     if (estado !== 'todos' && c.estado !== estado) return false;
     return true;
   }
@@ -85,50 +145,56 @@ export default function ProgramacionSalaCirugias() {
     });
   }
 
-  function handleSedeChange(v) {
-    setSedeId(v);
-    setSalaId(SALAS.find((s) => s.sedeId === v)?.value ?? '');
-    setSelectedId(null);
-  }
   function handleSalaChange(v) {
     setSalaId(v);
     setSelectedId(null);
   }
-  function handleWeekStartChange(d) {
-    setWeekStart(d);
+  function handleFechaAnclaChange(d) {
+    setFechaAncla(d);
     setSelectedId(null);
   }
   function handleEstadoChange(v) {
     setEstado(v);
     setSelectedId(null);
   }
-  function handleVistaNoDisponible() {
-    showToast('Esta vista está en desarrollo.');
+  function handleChangeVista(id) {
+    setVista(id);
+    setSelectedId(null);
+  }
+  // Prev/next del header de la agenda: la unidad que avanza/retrocede
+  // depende de la vista activa (1 día, 1 semana o 1 mes).
+  function handlePrev() {
+    if (vista === 'dia') handleFechaAnclaChange(addDias(fechaAncla, -1));
+    else if (vista === 'mes') handleFechaAnclaChange(addMeses(fechaAncla, -1));
+    else handleFechaAnclaChange(addDias(fechaAncla, -7));
+  }
+  function handleNext() {
+    if (vista === 'dia') handleFechaAnclaChange(addDias(fechaAncla, 1));
+    else if (vista === 'mes') handleFechaAnclaChange(addMeses(fechaAncla, 1));
+    else handleFechaAnclaChange(addDias(fechaAncla, 7));
+  }
+  // Clickear un día en el mini-calendario lateral: en vista Semana navega a
+  // la semana que lo contiene (comportamiento de V1, ver
+  // handleSelectMiniCalDate en ProgramarCita.jsx); en Día/Mes salta directo
+  // a esa fecha.
+  function handleSelectMiniCalDate(date) {
+    handleFechaAnclaChange(vista === 'semana' ? lunesDeSemana(date) : date);
+  }
+  // Clic en un día de la grilla mensual (AgendaMes): navega a la vista Día
+  // de esa fecha -- decisión confirmada con el encargo.
+  function handleSelectDiaDesdeMes(date) {
+    setVista('dia');
+    handleFechaAnclaChange(date);
   }
 
   const selectedCirugia = cirugias.find((c) => c.id === selectedId) ?? null;
   const salaLabelActual = SALAS.find((s) => s.value === salaId)?.label ?? '';
-
-  function handleSubmitCirugiaForm(datos) {
-    // `datos` siempre trae la key `urgencia` (NuevaCirugiaModal la agrega
-    // sin importar el modo, ver Task 10) -- crearCirugia la consume para
-    // decidir el estado inicial, pero Cirugia no tiene un campo `urgencia`
-    // propio, así que en modo edición se descarta explícitamente para no
-    // dejarla pegada al registro vía el merge de actualizarCirugia.
-    const { urgencia, ...datosCirugia } = datos;
-    if (modal?.type === 'editar') {
-      const actualizada = actualizarCirugia(modal?.cirugia?.id, datosCirugia);
-      applyUpdated(actualizada);
-      setSelectedId(actualizada.id);
-      showToast('Cirugía actualizada correctamente.');
-    } else {
-      const nueva = crearCirugia({ ...datosCirugia, urgencia: modal?.type === 'urgencia' });
-      applyUpdated(nueva);
-      setSelectedId(nueva.id);
-      showToast(modal?.type === 'urgencia' ? 'Cirugía de urgencia registrada.' : 'Cirugía creada correctamente.');
-    }
-    setModal(null);
-  }
+  // Sáb/Dom se ocultan por defecto vía el toggle del header (encargo
+  // explícito) filtrando por `label` en vez de recalcular el día de semana
+  // -- diasDeSemana ya lo trae calculado (ver mockCirugiaData.js).
+  const diasVisibles = mostrarFinesDeSemana
+    ? diasDeSemana(inicioSemana)
+    : diasDeSemana(inicioSemana).filter((d) => d.label !== 'Sáb' && d.label !== 'Dom');
 
   function handleSubmitReprogramar(datos) {
     const actualizada = reprogramarCirugia(modal?.cirugia?.id, datos);
@@ -160,6 +226,23 @@ export default function ProgramacionSalaCirugias() {
   // que no hay ninguna acción adicional que ejecutar en V1 (no existe un
   // historial de auditoría real en el mock, ver spec).
   function handleVerInfo() {}
+  // NuevaCirugiaModal se eliminó junto con "+ Programar cirugía" (encargo
+  // explícito, ver handlePatientConfirmedParaCirugia arriba) -- "Editar"
+  // queda sin flujo propio todavía, mismo criterio de toast "(en desarrollo)"
+  // que el resto de acciones stub del proyecto (ver handleEditar en
+  // Admisiones.jsx).
+  function handleEditarCirugia() {
+    if (!selectedCirugia) return;
+    showToast('Editar cirugía (en desarrollo).');
+  }
+  // Botones de búsqueda de Dx. ingreso/Id. aseguradora en el paso 1 del
+  // wizard (ver InformacionGeneralStep) -- la ventana de búsqueda de cada
+  // catálogo todavía no está definida (encargo pendiente), así que por ahora
+  // solo avisan por toast, mismo criterio que el resto de acciones stub.
+  function handleBuscarCatalogoCirugia(campo) {
+    const label = campo === 'dxIngreso' ? 'Búsqueda de diagnóstico de ingreso' : 'Búsqueda de aseguradora';
+    showToast(`${label} (en desarrollo).`);
+  }
 
   return (
     <div className="app">
@@ -178,62 +261,96 @@ export default function ProgramacionSalaCirugias() {
               <h1>Programación sala de cirugías</h1>
               <p>Agenda y gestiona la ocupación de las salas de cirugía.</p>
             </div>
+            <div className="psc-page-header-actions">
+              {vista === 'semana' && (
+                <label className="psc-finde-toggle">
+                  <input
+                    type="checkbox"
+                    checked={mostrarFinesDeSemana}
+                    onChange={(e) => setMostrarFinesDeSemana(e.target.checked)}
+                  />
+                  Mostrar fines de semana
+                </label>
+              )}
+              <VistaDropdown value={vista} onChange={handleChangeVista} />
+            </div>
           </div>
 
-          <FiltrosBar
-            sedeId={sedeId}
-            onSedeChange={handleSedeChange}
-            salaId={salaId}
-            onSalaChange={handleSalaChange}
-            weekStart={weekStart}
-            onWeekStartChange={handleWeekStartChange}
-            estado={estado}
-            onEstadoChange={handleEstadoChange}
-            onVistaNoDisponible={handleVistaNoDisponible}
-          />
+          <div className="psc-workspace">
+            <div className="psc-side-col">
+              <MiniCalendarCirugias
+                selectedDate={fechaAncla}
+                onSelectDate={handleSelectMiniCalDate}
+                onNuevaCirugia={() => window.openPatientSearch()}
+                onNuevaUrgencia={() => window.openPatientSearch()}
+                selected={selectedCirugia}
+                onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
+                onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
+                onMarcarProgramada={handleMarcarProgramada}
+                onMarcarIncumplida={handleMarcarIncumplida}
+                onVerInfo={handleVerInfo}
+              />
+            </div>
 
-          <AccionesBar
-            selected={selectedCirugia}
-            onNuevaCirugia={() => setModal({ type: 'nueva' })}
-            onNuevaUrgencia={() => setModal({ type: 'urgencia' })}
-            onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
-            onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
-            onMarcarProgramada={handleMarcarProgramada}
-            onMarcarIncumplida={handleMarcarIncumplida}
-            onVerInfo={handleVerInfo}
-          />
-
-          <div className="psc-main-row">
-            <AgendaSemana
-              weekLabel={rangoSemanaLabel(weekStart)}
-              days={diasDeSemana(weekStart)}
-              cirugias={cirugias}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              onPrevWeek={() => handleWeekStartChange(addDias(weekStart, -7))}
-              onNextWeek={() => handleWeekStartChange(addDias(weekStart, 7))}
-            />
-            <DetalleCirugiaPanel
-              cirugia={selectedCirugia}
-              salaLabel={salaLabelActual}
-              onClose={() => setSelectedId(null)}
-              onEditar={() => selectedCirugia && setModal({ type: 'editar', cirugia: selectedCirugia })}
-              onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
-              onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
-            />
+            <div className="psc-main-col">
+              {vista === 'mes' ? (
+                <AgendaMes
+                  monthLabel={mesLabel(fechaAncla)}
+                  dowLabels={grillaMesActual.dowLabels}
+                  days={grillaMesActual.days}
+                  cirugias={cirugias}
+                  onSelectDia={handleSelectDiaDesdeMes}
+                  onPrevMonth={handlePrev}
+                  onNextMonth={handleNext}
+                  sedeId={sedeId}
+                  salaId={salaId}
+                  onSalaChange={handleSalaChange}
+                  estado={estado}
+                  onEstadoChange={handleEstadoChange}
+                />
+              ) : (
+                <AgendaSemana
+                  label={vista === 'dia' ? diaLabel(fechaAncla) : rangoSemanaLabel(inicioSemana)}
+                  days={vista === 'dia' ? [diaUnico(fechaAncla)] : diasVisibles}
+                  cirugias={cirugias}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  onPrevWeek={handlePrev}
+                  onNextWeek={handleNext}
+                  navPrevLabel={vista === 'dia' ? 'Día anterior' : 'Semana anterior'}
+                  navNextLabel={vista === 'dia' ? 'Día siguiente' : 'Semana siguiente'}
+                  sedeId={sedeId}
+                  salaId={salaId}
+                  onSalaChange={handleSalaChange}
+                  estado={estado}
+                  onEstadoChange={handleEstadoChange}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {(modal?.type === 'nueva' || modal?.type === 'urgencia' || modal?.type === 'editar') && (
-        <NuevaCirugiaModal
-          sedeId={sedeId}
-          urgencia={modal?.type === 'urgencia'}
-          cirugiaExistente={modal?.type === 'editar' ? modal?.cirugia : null}
-          onClose={() => setModal(null)}
-          onSubmit={handleSubmitCirugiaForm}
+      <DetalleCirugiaPanel
+        cirugia={selectedCirugia}
+        salaLabel={salaLabelActual}
+        onClose={() => setSelectedId(null)}
+        onEditar={handleEditarCirugia}
+        onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
+        onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
+      />
+
+      <NuevaCitaFlow />
+
+      {nuevaCirugiaWizardPatient && (
+        <NuevaCirugiaWizard
+          patient={nuevaCirugiaWizardPatient}
+          salaId={salaId}
+          onClose={() => setNuevaCirugiaWizardPatient(null)}
+          onBuscar={handleBuscarCatalogoCirugia}
         />
       )}
+
       {modal?.type === 'reprogramar' && (
         <ReprogramarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitReprogramar} />
       )}

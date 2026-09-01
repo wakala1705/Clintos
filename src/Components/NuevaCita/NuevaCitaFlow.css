@@ -58,13 +58,23 @@
   .context-menu-divider{height:1px;background:var(--border);margin:4px 4px;}
 
 
-  /* ================= WIZARD: NUEVO AGENDAMIENTO ================= */
-  .modal-overlay{
+  /* ================= WIZARD: NUEVO AGENDAMIENTO =================
+     Escopeado a los ids propios de este flujo (antes era `.modal-overlay` a
+     secas): esa clase es la convención compartida de modal de todo el
+     proyecto (ver shared.css de cada feature, z-index:var(--z-modal)) -- acá
+     hacía falta un z-index más alto que el contenido del wizard necesita
+     (riel+stepper), pero al aplicarlo con la clase genérica se lo pisaba a
+     CUALQUIER OTRO `.modal-overlay` de la página que montara este flujo
+     (ej. NuevaCirugiaWizard/ReprogramarCirugiaModal en Programación Sala de
+     Cirugía), dejando su `<FormSelect>` (z-index:var(--z-modal)+1) por
+     detrás. Bug real encontrado al montar este flujo junto a un modal con
+     FormSelect por primera vez. */
+  #ps-overlay, #ap-overlay, #nc-overlay, #nc-discard-overlay{
     position:fixed;inset:0;background:rgba(16,24,39,.5);
     display:none;align-items:center;justify-content:center;z-index:100;
     padding:24px;
   }
-  .modal-overlay.open{display:flex;}
+  #ps-overlay.open, #ap-overlay.open, #nc-overlay.open, #nc-discard-overlay.open{display:flex;}
   .wizard-modal{
     width:1020px;max-width:100%;height:88vh;max-height:840px;
     background:var(--surface-modal);border-radius:var(--radius-lg);
@@ -399,10 +409,13 @@
   .nc-toast .icon{width:17px;height:17px;color:var(--green);flex-shrink:0;}
 
   /* ---- Confirmación: descartar cita (cerrar el wizard con progreso) ----
-     Se apila sobre .modal-overlay#nc-overlay (mismo z-index:100) así que
-     necesita el suyo propio más alto para quedar encima — ver ncClose() en
-     legacy-nueva-cita.js. */
-  .nc-discard-overlay{z-index:160;}
+     Se apila sobre #nc-overlay (mismo z-index:100) así que necesita el suyo
+     propio más alto para quedar encima — ver ncClose() en
+     legacy-nueva-cita.js. Selector por id (no por clase): la regla base de
+     arriba ahora también es por id (#ps-overlay, #ap-overlay...), y un
+     selector de clase pierde contra uno de id sin importar el orden en la
+     hoja de estilos. */
+  #nc-discard-overlay{z-index:160;}
   .nc-discard-modal{
     width:400px;max-width:100%;background:var(--surface-modal);
     border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(6,25,42,.28);

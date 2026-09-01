@@ -14,7 +14,6 @@ import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { duracionLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuBan, LuCalendarClock, LuPencil } from 'react-icons/lu';
 
-const NARROW_QUERY = '(max-width:1024px)';
 const ESTADOS_TERMINALES = ['cancelada', 'incumplida'];
 
 const TABS = [
@@ -26,15 +25,13 @@ const TABS = [
   { id: 'farmacia', label: 'Farmacia' },
 ];
 
-// Docked por defecto (parte del flex row de la página, ver .psc-main-row en
-// ProgramacionSalaCirugias.css) -- por debajo de 1024px pasa a overlay
-// lateral (mismo patrón que TaskDetailPanel/AlertDetailDrawer de Gestión de
-// Enfermería, ver spec). `onClose` siempre deselecciona: en modo docked eso
-// vuelve al estado vacío, en modo drawer además cierra el overlay.
+// Siempre se muestra como drawer superpuesto (nunca docked en el layout) —
+// mismo patrón que DetalleCitaModal en Programar cita: la agenda ocupa todo
+// el ancho y seleccionar una cirugía abre el detalle encima, sin empujar el
+// grid. `onClose` deselecciona y cierra el drawer.
 export default function DetalleCirugiaPanel({
   cirugia, salaLabel, onClose, onEditar, onReprogramar, onCancelar,
 }) {
-  const [narrow, setNarrow] = useState(false);
   const [activeTab, setActiveTab] = useState('resumen');
   // Resetear a "resumen" al cambiar de cirugía sin un useEffect (evita el
   // cascading-render que marca react-hooks/set-state-in-effect): mismo
@@ -48,21 +45,13 @@ export default function DetalleCirugiaPanel({
   }
 
   useEffect(() => {
-    const mql = window.matchMedia(NARROW_QUERY);
-    const update = () => setNarrow(mql.matches);
-    update();
-    mql.addEventListener('change', update);
-    return () => mql.removeEventListener('change', update);
-  }, []);
-
-  useEffect(() => {
-    if (!narrow || !cirugia) return undefined;
+    if (!cirugia) return undefined;
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [narrow, cirugia, onClose]);
+  }, [cirugia, onClose]);
 
   function handleTabsKeyDown(e) {
     const idx = TABS.findIndex((t) => t.id === activeTab);
@@ -74,17 +63,7 @@ export default function DetalleCirugiaPanel({
     setActiveTab(TABS[next].id);
   }
 
-  if (!cirugia) {
-    if (narrow) return null;
-    return (
-      <aside className="dcp-panel dcp-docked">
-        <div className="dcp-empty-state">
-          <div className="dcp-empty-title">Selecciona una cirugía</div>
-          <div className="dcp-empty-sub">Elige una cirugía de la agenda para ver su detalle.</div>
-        </div>
-      </aside>
-    );
-  }
+  if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES.includes(cirugia.estado);
 
@@ -160,15 +139,11 @@ export default function DetalleCirugiaPanel({
     </>
   );
 
-  if (narrow) {
-    return (
-      <div className="dcp-drawer-overlay" onClick={onClose}>
-        <aside className="dcp-panel dcp-drawer-panel" onClick={(e) => e.stopPropagation()} aria-label="Detalle de la cirugía">
-          {body}
-        </aside>
-      </div>
-    );
-  }
-
-  return <aside className="dcp-panel dcp-docked">{body}</aside>;
+  return (
+    <div className="dcp-drawer-overlay" onClick={onClose}>
+      <aside className="dcp-panel dcp-drawer-panel" onClick={(e) => e.stopPropagation()} aria-label="Detalle de la cirugía">
+        {body}
+      </aside>
+    </div>
+  );
 }

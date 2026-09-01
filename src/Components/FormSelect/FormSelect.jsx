@@ -25,8 +25,12 @@ import { LuCheck, LuChevronDown } from 'react-icons/lu';
 // lee (gateado por el mismo data-required-highlight en <html>, ver
 // ConfigModal.jsx). Opt-in: sin este prop no cambia nada para los demás
 // consumidores de FormSelect.
+// `ariaLabel` (opcional): nombre accesible del trigger para el caso sin
+// <label htmlFor> visible en pantalla (ver FiltrosBar.jsx en Programación
+// sala de cirugías) — sin esto el botón solo se anuncia por su valor
+// seleccionado ("Quirófano #1"), sin contexto de qué campo es.
 export default function FormSelect({
-  id, value, onChange, options, placeholder, disabled = false, required = false,
+  id, value, onChange, options, placeholder, disabled = false, required = false, ariaLabel,
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState(null);
@@ -84,6 +88,7 @@ export default function FormSelect({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={ariaLabel}
         data-required-empty={required && !value ? 'true' : undefined}
         disabled={disabled}
       >

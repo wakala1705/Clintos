@@ -2,7 +2,6 @@
   background:var(--surface-modal);border-radius:var(--radius-lg);
   display:flex;flex-direction:column;min-height:0;overflow:hidden;
 }
-.dcp-docked{flex:3;border:1px solid var(--border);}
 
 .dcp-drawer-overlay{
   position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.32);
@@ -55,13 +54,6 @@
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
   padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
-
-.dcp-empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:6px;padding:56px 24px;text-align:center;flex:1;
-}
-.dcp-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);max-width:280px;}
-.dcp-empty-sub{font-size:var(--fs-sm);color:var(--ink-500);max-width:280px;line-height:1.5;}
 
 @media (max-width:480px){
   .dcp-drawer-panel{width:100%;}

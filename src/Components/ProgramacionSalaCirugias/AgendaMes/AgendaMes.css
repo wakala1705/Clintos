@@ -1,0 +1,44 @@
+.am-wrap{
+  display:flex;flex-direction:column;flex:1;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+
+/* Fila de navegación (mes + prev/next) + filtros: .psc-agenda-nav vive en
+   shared.css, la comparte con AgendaSemana (ver AGENTS.md "Component
+   organization"). */
+
+.am-dow-row{
+  display:grid;grid-template-columns:repeat(7,1fr);flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.am-dow{padding:10px 0;text-align:center;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+
+.am-days-grid{
+  flex:1;min-height:0;overflow:auto;
+  display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(96px,1fr);
+}
+
+.am-day{
+  position:relative;padding:8px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  border-left:1px solid var(--border);border-top:1px solid var(--border);
+  background:var(--surface);color:var(--ink-900);
+  font-family:inherit;cursor:pointer;text-align:left;
+}
+.am-day:nth-child(7n+1){border-left:none;}
+.am-day:hover{background:var(--bg);}
+.am-day:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.am-day.muted{color:var(--ink-400);background:var(--bg);}
+.am-day.muted:hover{background:var(--gray-bg);}
+
+.am-day-num{font-size:var(--fs-base);font-weight:var(--fw-semibold);}
+.am-day.today .am-day-num{
+  display:flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;
+}
+
+.am-day-count{
+  margin-top:auto;align-self:flex-end;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary-dark);
+  background:var(--primary-50);border-radius:999px;padding:2px 8px;
+}

@@ -1,35 +1,33 @@
 .as-wrap{
-  display:flex;flex-direction:column;flex:7;min-height:0;
+  display:flex;flex-direction:column;flex:1;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
 
-.as-week-nav{
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.as-nav-btn{
-  width:28px;height:28px;border-radius:7px;border:none;background:none;
-  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
-}
-.as-nav-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
-.as-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.as-nav-btn .icon{width:18px;height:18px;}
-.as-week-label{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);min-width:220px;text-align:center;}
+/* Fila de navegación (label + prev/next) + leyenda de estados: reglas
+   compartidas con AgendaMes, viven en shared.css como .psc-agenda-nav* y
+   .psc-agenda-legend* (ver AGENTS.md "Component organization"). */
 
 .as-scroll{flex:1;min-height:0;overflow:auto;}
 
 .as-grid{
   display:grid;
-  grid-template-columns:64px repeat(7, minmax(130px, 1fr));
-  grid-template-rows:56px repeat(28, 30px);
+  /* grid-template-columns/rows: inline en AgendaSemana.jsx -- dependen de
+     `days.length` (toggle "mostrar fines de semana") y de SLOTS (rango de
+     horas 00-23), no son un valor fijo que se pueda hardcodear acá. */
   position:relative;
   min-width:960px;
 }
 
-.as-corner{position:sticky;top:0;left:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--border);border-right:1px solid var(--border);grid-column:1;grid-row:1;}
+/* z-index de corner/day-head por encima de .cc-card (CirugiaCard.css:
+   z-index:1, seleccionada:2) -- antes ambos empataban en 1/2 y, a igual
+   z-index, el navegador desempata por orden en el DOM: como las cirugías se
+   pintan después que la cabecera en el JSX, tapaban los encabezados
+   pegajosos (position:sticky) al hacer scroll. Bug real reportado en el
+   encargo. */
+.as-corner{position:sticky;top:0;left:0;z-index:4;background:var(--surface);border-bottom:1px solid var(--border);border-right:1px solid var(--border);grid-column:1;grid-row:1;}
 
 .as-day-head{
-  position:sticky;top:0;z-index:1;background:var(--surface);
+  position:sticky;top:0;z-index:3;background:var(--surface);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   border-bottom:1px solid var(--border);border-left:1px solid var(--border);
   grid-row:1;
@@ -49,9 +47,3 @@
 .as-slot{border-left:1px solid var(--border);border-top:1px solid var(--bg);}
 .as-slot.hour-start{border-top:1px solid var(--border);}
 .as-slot.today{background:rgba(0,101,205,.04);}
-
-.as-legend{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;
-}
-.as-legend-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}

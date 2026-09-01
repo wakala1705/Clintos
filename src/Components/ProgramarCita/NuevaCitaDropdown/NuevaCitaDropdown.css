@@ -6,14 +6,24 @@
 
 /* Split button: dos <button> pegados que se leen como uno solo (radio
    compartido en las esquinas externas, divisor entre ambos) — el cuerpo
-   dispara el flujo directo, el chevron es un trigger aparte para el menú. */
+   dispara el flujo directo, el chevron es un trigger aparte para el menú.
+   Los overrides de esquina/borde van calificados con el padre (.pc-nc-split
+   .pc-nc-main, no .pc-nc-main a secas): Button.module.css define ".btn" con
+   border-radius/border en shorthand (afecta las 4 esquinas/lados de una)
+   sobre la misma clase CSS-Modules que ya trae el <button> — con la misma
+   especificidad (0,1,0) que un ".pc-nc-main" suelto, el orden de carga
+   decide el empate y en la práctica gana ".btn", dejando cada mitad como
+   una píldora completa (se ve como 2 botones con hueco en vez de 1 solo,
+   mismo bug encontrado y corregido en ProgramarCirugiaDropdown.css). Un
+   nivel extra de anidamiento (0,2,0) gana ese empate sin depender del orden
+   de imports ni pisar nada con !important. */
 .pc-nc-split{display:flex;width:100%;}
-.pc-nc-main{
-  flex:1;justify-content:center;
+.pc-nc-main{flex:1;justify-content:center;}
+.pc-nc-split .pc-nc-main{
   border-top-right-radius:0;border-bottom-right-radius:0;
 }
-.pc-nc-toggle{
-  flex:0 0 auto;width:38px;padding:8px 0;justify-content:center;
+.pc-nc-toggle{flex:0 0 auto;width:38px;padding:8px 0;justify-content:center;}
+.pc-nc-split .pc-nc-toggle{
   border-top-left-radius:0;border-bottom-left-radius:0;
   border-left:1px solid rgba(255,255,255,.3);
 }

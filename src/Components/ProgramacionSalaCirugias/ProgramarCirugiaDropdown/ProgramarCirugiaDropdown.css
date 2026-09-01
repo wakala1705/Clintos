@@ -1,0 +1,43 @@
+/* Ancho completo: vive dentro de .mcc-panel (bloque lateral de 300px, ver
+   MiniCalendarCirugias.jsx), un botón primario a tamaño de contenido
+   quedaría descentrado. Mismo patrón que .pc-nc-dropdown en
+   ProgramarCita/NuevaCitaDropdown/NuevaCitaDropdown.css. */
+.pcd-dropdown{position:relative;width:100%;}
+
+/* Split button: dos <button> pegados que se leen como uno solo (radio
+   compartido en las esquinas externas, divisor entre ambos) — el cuerpo
+   dispara el flujo directo, el chevron es un trigger aparte para el menú.
+   Los overrides de esquina/borde van calificados con el padre (.pcd-split
+   .pcd-main, no .pcd-main a secas): Button.module.css define ".btn" con
+   border-radius/border en shorthand (afecta las 4 esquinas/lados de una)
+   sobre la misma clase CSS-Modules que ya trae el <button> — con la misma
+   especificidad (0,1,0) que un ".pcd-main" suelto, el orden de carga decide
+   el empate y en la práctica gana ".btn", dejando cada mitad como una
+   píldora completa (se ve como 2 botones con hueco en vez de 1 solo). Un
+   nivel extra de anidamiento (0,2,0) gana ese empate sin depender del orden
+   de imports ni pisar nada con !important. */
+.pcd-split{display:flex;width:100%;}
+.pcd-main{flex:1;justify-content:center;}
+.pcd-split .pcd-main{
+  border-top-right-radius:0;border-bottom-right-radius:0;
+}
+.pcd-toggle{flex:0 0 auto;width:38px;padding:8px 0;justify-content:center;}
+.pcd-split .pcd-toggle{
+  border-top-left-radius:0;border-bottom-left-radius:0;
+  border-left:1px solid rgba(255,255,255,.3);
+}
+.pcd-chev{transition:transform .15s ease;}
+.pcd-toggle[aria-expanded="true"] .pcd-chev{transform:rotate(180deg);}
+
+.pcd-menu{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:var(--z-popover);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
+  display:flex;flex-direction:column;gap:1px;
+}
+.pcd-option{
+  padding:9px 10px;border-radius:8px;text-align:left;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+  background:none;border:none;font-family:inherit;width:100%;
+}
+.pcd-option:hover{background:var(--bg);}

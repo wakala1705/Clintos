@@ -1,0 +1,95 @@
+/* .modal-overlay/.form-field/.tf-readonly-value: ver ../../shared/shared.css.
+   Estructura riel+contenido calcada de NuevaProgramacionWizard.css
+   (GestionTurnos) con clases `ncw-*` propias -- cada wizard React de este
+   proyecto es dueño de su propia copia de estas reglas en vez de compartir
+   un componente de wizard genérico (mismo criterio de "cada pieza
+   reutilizable es dueña de su copia de los tokens/reglas que necesita" que
+   el resto del proyecto, ver AGENTS.md). Distinto del flujo legacy-imperativo
+   de NuevaCitaFlow.css (.wizard-rail/.wizard-main): ese es "Nueva cita",
+   compartido entre rutas; este es "Nueva cirugía", propio de esta feature. */
+
+.ncw-modal{
+  width:1000px;max-width:100%;height:88vh;max-height:780px;
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.ncw-body{flex:1;display:flex;min-height:0;}
+
+/* ---------- Riel izquierdo ---------- */
+.ncw-rail{
+  width:272px;flex-shrink:0;background:var(--bg);color:var(--ink-900);
+  border-right:1px solid var(--border);
+  padding:24px 16px;overflow-y:auto;display:flex;flex-direction:column;
+}
+.ncw-rail-header{margin-bottom:20px;flex-shrink:0;}
+.ncw-rail-eyebrow{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;
+}
+.ncw-rail-title{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.25;}
+.ncw-rail-desc{margin:4px 0 0;font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;}
+.ncw-rail-checkbox{
+  display:flex;align-items:center;gap:8px;margin-top:12px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);cursor:pointer;
+}
+.ncw-rail-checkbox input{width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+
+.ncw-rail-divider{height:1px;background:var(--border);margin:16px 0;}
+
+.ncw-rail-meta{display:flex;flex-direction:column;gap:10px;}
+.ncw-rail-meta-item{display:flex;flex-direction:column;gap:2px;}
+.ncw-rail-meta-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.ncw-rail-meta-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+.ncw-rail-nav{display:flex;flex-direction:column;gap:2px;}
+.ncw-rail-step{
+  display:flex;align-items:flex-start;gap:12px;text-align:left;
+  padding:10px 8px;border-radius:10px;cursor:pointer;
+  border:none;background:none;font-family:inherit;width:100%;
+}
+.ncw-rail-step:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.ncw-rail-step.locked{cursor:not-allowed;opacity:.5;}
+.ncw-rail-step:not(.locked):hover{background:var(--gray-bg);}
+.ncw-rail-step.active{background:var(--primary-50);}
+.ncw-rail-circle{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  background:var(--gray-bg);color:var(--ink-500);
+}
+.ncw-rail-step.active .ncw-rail-circle{background:var(--primary);color:#fff;}
+.ncw-rail-step-title{display:block;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.ncw-rail-step.active .ncw-rail-step-title{color:var(--primary-dark);font-weight:var(--fw-semibold);}
+.ncw-rail-step.locked .ncw-rail-step-title{color:var(--ink-500);}
+.ncw-rail-step-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;line-height:1.35;}
+
+/* ---------- Panel derecho: header + contenido dinámico + footer ---------- */
+.ncw-main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+.ncw-main-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.ncw-main-progress{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+.ncw-close{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;
+}
+.ncw-close:hover{background:var(--gray-bg);color:var(--ink-900);}
+.ncw-close .icon{width:18px;height:18px;}
+
+.ncw-content{flex:1;min-width:0;overflow-y:auto;padding:24px 32px;}
+
+.ncw-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+@media (max-width:768px){
+  .ncw-modal{width:100%;height:100%;max-height:100%;border-radius:0;}
+  .ncw-rail{width:220px;}
+}

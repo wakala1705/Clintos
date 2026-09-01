@@ -1,0 +1,38 @@
+.igs-step{display:flex;flex-direction:column;gap:4px;}
+
+.igs-section-title{
+  margin:20px 0 4px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.igs-step > .igs-section-title:first-child{margin-top:0;}
+
+.igs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;margin-top:12px;}
+/* Duraciones (Dur. estimada/postquirúrgica/recuperación, encargo explícito):
+   única grilla de 3 columnas del paso, resto del formulario es 2 columnas --
+   selector compuesto (no solo `.igs-grid-3`) para pesar más que `.igs-grid`
+   sin importar el orden en la hoja. */
+.igs-grid.igs-grid-3{grid-template-columns:repeat(3,1fr);}
+
+.igs-checkbox{
+  display:flex;align-items:center;gap:8px;height:var(--input-md);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);cursor:pointer;
+}
+.igs-checkbox input{width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+
+/* Dx. ingreso/Id. aseguradora: input + botón de búsqueda (ver onBuscar en
+   InformacionGeneralStep.jsx) -- la ventana que abre cada botón todavía no
+   está definida. */
+.igs-field-with-search{display:flex;gap:8px;align-items:center;}
+.igs-field-with-search input{flex:1;min-width:0;}
+.igs-search-btn{
+  width:var(--input-md);height:var(--input-md);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--primary-100);border-radius:var(--radius);
+  background:var(--primary-50);color:var(--primary);cursor:pointer;
+}
+.igs-search-btn:hover{background:var(--primary-100);color:var(--primary-dark);}
+.igs-search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.igs-search-btn .icon{width:16px;height:16px;}
+
+@media (max-width:768px){
+  .igs-grid, .igs-grid.igs-grid-3{grid-template-columns:1fr;}
+}

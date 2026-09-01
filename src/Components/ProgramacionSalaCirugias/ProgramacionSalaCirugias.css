@@ -89,6 +89,21 @@ body{
 }
 html[data-theme="dark"] body{background:var(--bg);}
 
+/* ---------- SCROLLBARS ----------
+   Mismo patrón que GestionEnfermeria/shared/shared.css y
+   ProgramarCita/ProgramarCita.css: delgado y casi imperceptible en toda la
+   página (pantalla principal — mini-calendario, agenda — y el cuerpo/riel
+   del modal NuevaCirugiaWizard, que cae bajo esta misma hoja al no tener
+   scrollbar propio). */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
 .app{
   display:flex;
   height:100vh;
@@ -109,5 +124,27 @@ html[data-theme="dark"] body{background:var(--bg);}
 }
 .psc-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
 .psc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+.psc-page-header-actions{display:flex;align-items:center;gap:14px;}
+.psc-finde-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+  cursor:pointer;user-select:none;white-space:nowrap;
+}
+.psc-finde-toggle input{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
 
-.psc-main-row{display:flex;gap:16px;flex:1;min-height:0;}
+/* Workspace de 2 columnas (mismo patrón que .pc-workspace en Programar
+   cita/ProgramarCita.css): mini-calendario a la izquierda, agenda a la
+   derecha. */
+.psc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
+.psc-side-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.psc-main-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0;}
+
+/* Rango tablet (<=1024px, --bp-desktop, ver AGENTS.md "Responsive /
+   Breakpoints"): mismo criterio que .pc-workspace — la columna del
+   mini-calendario deja de caber al lado de la agenda sin aplastarla, así
+   que se apila arriba en vez de al costado. */
+@media (max-width:1024px){
+  .psc-workspace{flex-direction:column;overflow-y:auto;}
+  .psc-side-col{width:100%;overflow-y:visible;}
+  .psc-main-col{min-height:480px;}
+}

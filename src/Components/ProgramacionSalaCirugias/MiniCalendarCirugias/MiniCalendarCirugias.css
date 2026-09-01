@@ -1,0 +1,50 @@
+/* Un solo bloque para todo el panel lateral (acción principal + calendario
+   + divider + otras acciones, ver MiniCalendarCirugias.jsx) — flex-column
+   con gap espacia las 4 secciones sin margins manuales por sección; al
+   colapsar el calendario (.mcc-grid deja de montarse) el gap se ajusta
+   solo, sin dejar un hueco vacío. */
+.mcc-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:14px;
+}
+
+.mcc-divider{height:1px;background:var(--border);flex-shrink:0;}
+
+.mcc-head{display:flex;align-items:center;justify-content:space-between;}
+.mcc-month{font-weight:var(--fw-semibold);font-size:var(--fs-base);color:var(--ink-900);}
+.mcc-nav{display:flex;align-items:center;gap:4px;}
+.mcc-nav-btn{
+  width:24px;height:24px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;flex-shrink:0;
+}
+.mcc-nav-btn:hover{background:var(--bg);}
+.mcc-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.mcc-nav-btn .icon{width:14px;height:14px;}
+.mcc-nav-divider{width:1px;height:16px;background:var(--border);margin:0 2px;}
+
+.mcc-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  text-align:center;font-size:var(--fs-xs);
+}
+.mcc-dow{color:var(--ink-500);font-weight:var(--fw-semibold);padding-bottom:4px;}
+/* .today (fecha real de hoy) y .selected (semana que se está viendo en la
+   agenda, ver ProgramacionSalaCirugias.jsx: weekStart) son conceptos
+   distintos y pueden no coincidir — mismo criterio que .pc-mini-cal-day en
+   ProgramarCita/MiniCalendar/MiniCalendar.css. */
+.mcc-day{
+  padding:6px 0;border-radius:6px;color:var(--ink-900);
+  border:1.5px solid transparent;background:transparent;
+  font-family:inherit;font-size:inherit;cursor:pointer;width:100%;
+}
+.mcc-day:hover{background:var(--bg);}
+.mcc-day:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.mcc-day.muted{color:var(--ink-400);}
+.mcc-day.selected:not(.today){
+  border-color:var(--interactive-selected-border);
+  background:var(--interactive-selected-bg);
+  color:var(--interactive-selected-text);font-weight:var(--fw-bold);
+}
+.mcc-day.today{background:var(--primary);color:#fff;font-weight:var(--fw-bold);}
+.mcc-day.today:hover{background:var(--primary-dark);}

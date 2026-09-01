@@ -1,18 +1,15 @@
-.ab-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;}
-.ab-split{position:relative;display:inline-flex;align-items:center;gap:4px;}
-.ab-split-toggle{
-  width:var(--input-md);height:var(--input-md);flex-shrink:0;
-  display:inline-flex;align-items:center;justify-content:center;
-  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
-  background:var(--surface);color:var(--ink-700);cursor:pointer;
-  transition:var(--btn-transition);
-}
-.ab-split-toggle:hover{background:var(--bg);}
-.ab-split-toggle:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
-.ab-split-toggle .icon{width:var(--btn-icon-size-sm);height:var(--btn-icon-size-sm);}
+/* Pila vertical (antes fila horizontal): vive dentro de .mcc-panel, un
+   bloque de 300px, ver MiniCalendarCirugias.jsx/css — mismo criterio de
+   ancho completo que .pcd-dropdown (ProgramarCirugiaDropdown.css). */
+.ab-panel{display:flex;flex-direction:column;gap:8px;}
+.ab-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;}
+
+.ab-block-btn{width:100%;justify-content:center;}
+
+.ab-split{position:relative;width:100%;}
 
 .ab-dropdown{
-  position:absolute;top:calc(100% + 6px);left:0;min-width:220px;z-index:var(--z-popover);
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:var(--z-popover);
   background:var(--surface);border-radius:var(--radius);box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
 .ab-dropdown-item{

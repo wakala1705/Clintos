@@ -1,6 +1,6 @@
 import './NuevaCitaFlow.css';
+import Button from '@/Components/Button/Button';
 import {
-  LuArrowRight,
   LuCheck,
   LuChevronLeft,
   LuHistory,
@@ -25,6 +25,20 @@ import {
 // página inicializa en su propio useEffect. Los botones de disparo ("Nueva
 // cita", "Agendar cita", "+ Agendar") solo necesitan llamar
 // window.ncOpen() — este componente no expone props porque no las necesita.
+//
+// Los botones propios de este flujo (Aceptar/Agregar paciente/Atrás/
+// Continuar/Descartar) usan `@/Components/Button/Button` en vez de
+// `className="btn btn-primary"` -- a diferencia del resto del contenido
+// (inyectado vía innerHTML por legacy-nueva-cita.js), estos SÍ son JSX
+// normal, así que sufrían la misma deuda documentada en AGENTS.md
+// "Botones": dependían de que la página anfitriona todavía definiera
+// `.btn`/`.btn-primary` global, y esas clases ya se borraron en las
+// features migradas a `<Button>` (ProgramarCita, Admisiones...) — el modal
+// quedaba con estilo nativo del navegador en cualquier página migrada.
+// `<Button>` no tiene ese problema (CSS Modules, hash único), y sigue
+// funcionando igual con los `id` que legacy-nueva-cita.js necesita para
+// mutar `.disabled`/`.onclick`/`.innerHTML` de forma imperativa (Button solo
+// controla el render inicial; ver AGENTS.md "Modales legacy-imperativos").
 export default function NuevaCitaFlow() {
   return (
     <>
@@ -73,10 +87,9 @@ export default function NuevaCitaFlow() {
           </div>
 
           <div className="wizard-footer">
-            <button className="btn btn-secondary" onClick={() => window.apOpen()}>
-              <LuUserPlus className="icon" />
+            <Button variant="secondary" icon={LuUserPlus} onClick={() => window.apOpen()}>
               Agregar paciente
-            </button>
+            </Button>
             <div className="wizard-footer-actions">
               {/* Sin `disabled` literal acá a propósito: openPatientSearch()/
                   setPsSelected() (legacy-nueva-cita.js) ya manejan
@@ -93,10 +106,9 @@ export default function NuevaCitaFlow() {
                   sí funciona: llama confirmPatientSelection() directo,
                   sin pasar por el sistema sintético de React) mientras un
                   solo clic + "Aceptar" no hacía nada. */}
-              <button className="btn btn-primary" id="ps-accept-btn" onClick={() => window.confirmPatientSelection()}>
-                <LuCheck className="icon" />
+              <Button variant="primary" id="ps-accept-btn" icon={LuCheck} onClick={() => window.confirmPatientSelection()}>
                 Aceptar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -132,13 +144,11 @@ export default function NuevaCitaFlow() {
               </form>
 
               <div className="wizard-footer">
-                <button type="button" className="btn btn-secondary" id="ap-back-btn" onClick={() => window.apBack()}>
-                  <LuChevronLeft className="icon" />Atrás
-                </button>
+                <Button variant="secondary" id="ap-back-btn" icon={LuChevronLeft} onClick={() => window.apBack()}>
+                  Atrás
+                </Button>
                 <div className="wizard-footer-actions">
-                  <button type="button" className="btn btn-primary" id="ap-continue-btn">Siguiente
-                    <LuArrowRight className="icon" />
-                  </button>
+                  <Button variant="primary" id="ap-continue-btn">Siguiente</Button>
                 </div>
               </div>
             </div>
@@ -180,11 +190,11 @@ export default function NuevaCitaFlow() {
               <div className="wizard-content" id="nc-content"></div>
 
               <div className="wizard-footer">
-                <button className="btn btn-secondary" id="nc-back-btn" onClick={() => window.ncBack()}>
-                  <LuChevronLeft className="icon" />Atrás
-                </button>
+                <Button variant="secondary" id="nc-back-btn" icon={LuChevronLeft} onClick={() => window.ncBack()}>
+                  Atrás
+                </Button>
                 <div className="wizard-footer-actions">
-                  <button className="btn btn-primary" id="nc-continue-btn" disabled>Continuar</button>
+                  <Button variant="primary" id="nc-continue-btn" disabled>Continuar</Button>
                 </div>
               </div>
             </div>
@@ -204,10 +214,10 @@ export default function NuevaCitaFlow() {
           <h3 id="nc-discard-title">¿Descartar esta cita?</h3>
           <p id="nc-discard-desc">Perderás la información ingresada en este agendamiento. Esta acción no se puede deshacer.</p>
           <div className="nc-discard-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => window.ncCancelDiscard()}>Seguir editando</button>
-            <button type="button" className="btn btn-danger-outline" onClick={() => window.ncConfirmDiscard()}>
-              <LuTrash2 className="icon" />Sí, descartar
-            </button>
+            <Button variant="secondary" onClick={() => window.ncCancelDiscard()}>Seguir editando</Button>
+            <Button variant="danger-outline" icon={LuTrash2} onClick={() => window.ncConfirmDiscard()}>
+              Sí, descartar
+            </Button>
           </div>
         </div>
       </div>

@@ -37,6 +37,20 @@
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
   outline:2px solid var(--primary);outline-offset:1px;
 }
+/* Resaltado ámbar "obligatorio y vacío" -- mismo selector/colores que en
+   GestionCamas.css/PlantillaCrecimt2.css/NuevaCitaFlow.css, gateado por
+   data-required-highlight en <html> (Configuración > Apariencia). Para un
+   FormSelect (botón, sin :required nativo) ver la regla equivalente basada
+   en data-required-empty en FormSelect.css -- ya cubre cualquier
+   <FormSelect required> montado en este feature sin cambios acá. */
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
 
 .tf-readonly-value{
   display:flex;align-items:center;height:var(--input-md);
@@ -74,6 +88,29 @@
 html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
 html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
 html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;}
+
+/* Fila de navegación (label + prev/next) y leyenda de estados, compartidas
+   por AgendaSemana (vistas Día/Semana) y AgendaMes (vista Mes) -- mismo
+   header/footer para las 3 vistas del calendario. */
+.psc-agenda-nav{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.psc-agenda-nav-date{display:flex;align-items:center;gap:12px;}
+.psc-agenda-nav-btn{
+  width:28px;height:28px;border-radius:7px;border:none;background:none;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
+}
+.psc-agenda-nav-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.psc-agenda-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.psc-agenda-nav-btn .icon{width:18px;height:18px;}
+.psc-agenda-nav-label{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);min-width:220px;text-align:center;}
+
+.psc-agenda-legend{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.psc-agenda-legend-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
 
 .psc-toast{
   position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
