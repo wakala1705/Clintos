@@ -1,0 +1,98 @@
+/* Homologado al look de CatalogoAseguradorasModal.css (varios buscadores +
+   tabla con borde + fila-botón seleccionable + paginación real) -- clases
+   propias (.cpm-*). Ancho "grande" (encargo explícito, 960px) -- más ancho
+   que CatalogoDiagnosticosModal (700px) para dar espacio a la columna de
+   descripción, que en este catálogo suele ser larga. */
+.cpm-modal-card{width:960px;}
+.cpm-modal-card > .modal-body{overflow:hidden;}
+.cpm-body{padding:16px 24px 20px;gap:10px;flex:1;min-height:0;}
+
+.cpm-search-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+
+.cpm-search{
+  display:flex;align-items:center;gap:8px;flex:1;min-width:160px;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.cpm-search-wide{flex:2;min-width:220px;}
+.cpm-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.cpm-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.cpm-search input::placeholder{color:var(--ink-400);}
+
+.cpm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.cpm-row{
+  display:grid;grid-template-columns:90px 130px 1fr;align-items:center;gap:10px;
+  padding:9px 12px;
+}
+.cpm-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .cpm-row-head{background:#1c2333;}
+
+.cpm-list{flex:1;min-height:0;overflow-y:auto;max-height:400px;}
+.cpm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.cpm-option:last-child{border-bottom:none;}
+.cpm-option:hover{background:var(--bg);}
+.cpm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cpm-option.active{background:var(--primary-50);}
+.cpm-prefijo{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;}
+.cpm-id{font-size:var(--fs-sm);color:var(--ink-700);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cpm-descripcion{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cpm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* ---------- Paginación ----------
+   Mismo patrón numerado que CatalogoAseguradorasModal -- no importado de ahí
+   (feature/modal distinto, ver AGENTS.md "Component organization"), clases
+   propias .cpm-pagination-*. */
+.cpm-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;
+}
+.cpm-pagination-label{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.cpm-pagination-controls{display:flex;align-items:center;gap:4px;}
+.cpm-pagination-nav-btn{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
+}
+.cpm-pagination-nav-btn .icon{width:15px;height:15px;}
+.cpm-pagination-nav-btn:hover{background:var(--gray-bg);border-color:var(--border);}
+.cpm-pagination-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cpm-pagination-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.cpm-pagination-page{
+  min-width:28px;height:28px;padding:0 6px;border-radius:var(--radius);border:1px solid transparent;
+  background:none;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.cpm-pagination-page:hover{background:var(--gray-bg);}
+.cpm-pagination-page:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cpm-pagination-page.active{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.cpm-pagination-ellipsis{color:var(--ink-400);padding:0 4px;font-size:var(--fs-sm);}
+
+/* appearance:none + chevron propio en vez de FormSelect (AGENTS.md, "Selects
+   de formulario" -- los selects de paginación quedan afuera de esa regla),
+   mismo criterio que .caam-pagination-size select. */
+.cpm-pagination-size select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:var(--input-sm);border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);background:var(--surface);padding:0 26px 0 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 6px center;
+}
+.cpm-pagination-size select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+@media (max-width:768px){
+  .cpm-modal-card{width:100%;}
+  .cpm-row{grid-template-columns:60px 100px 1fr;}
+  .cpm-pagination{justify-content:center;text-align:center;}
+}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './InformacionGeneralStep.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CatalogoDiagnosticosModal from '../../CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
+import CatalogoAseguradorasModal from '../../CatalogoAseguradorasModal/CatalogoAseguradorasModal';
 import {
   ASA_CATALOGO,
   CLASE_CIRUGIA_CATALOGO,
@@ -27,10 +28,21 @@ const DURACION_OPTIONS = DURACIONES_CIRUGIA_CATALOGO.map((min) => ({ value: Stri
 // referencia "Programación de Cirugías" del sistema legacy (encargo
 // explícito), reagrupados en dos bloques (datos de la cirugía / datos de
 // admisión-contratación) igual que esa referencia separa ambos con un
-// subtítulo. Teléfonos Aviso/Id. Aseguradora llegan precargados desde el
-// paciente elegido en la Lista de Pacientes (ver datosIniciales en
-// NuevaCirugiaWizard.jsx) -- acá quedan editables por si el dato del
-// paciente está desactualizado.
+// subtítulo. Teléfonos aviso llega precargado desde el paciente elegido en
+// la Lista de Pacientes (ver datosIniciales en NuevaCirugiaWizard.jsx) --
+// acá queda editable por si el dato del paciente está desactualizado. Id.
+// aseguradora en cambio arranca vacío a propósito (encargo explícito): a
+// diferencia de un input libre, este campo solo se llena eligiendo del
+// catálogo (CatalogoAseguradorasModal) -- precargar el EPS del paciente ahí
+// invitaría a dejarlo así sin pasar por esa selección explícita.
+//
+// Clase/Tipo anestesia/Complejidad/Asa viven en "Datos de la cirugía"
+// (encargo explícito), en su propia grilla 2x2 aparte de la de Fecha
+// inicio/Teléfonos aviso/etc. -- no son datos de admisión/contratación, así
+// que se sacaron de ese segundo bloque. Ahí, Dx. ingreso e Id. aseguradora
+// quedaron cada uno en su propia fila completa (ya no comparten fila con
+// Clase/Tipo anestesia), y No. autorización/Quién autoriza pasaron a
+// compartir una fila de 2 (antes Quién autoriza era `full`).
 //
 // Sala/No. cirugía ya no viven en este paso (encargo explícito): se
 // muestran como texto plano en el riel izquierdo, debajo del divider bajo
@@ -42,15 +54,12 @@ const DURACION_OPTIONS = DURACIONES_CIRUGIA_CATALOGO.map((min) => ({ value: Stri
 // checkbox está destildado, en vez de mostrarse deshabilitados -- evita
 // exponer controles sin sentido hasta que el usuario optó por necesitarlos.
 //
-// Dx. ingreso/Id. aseguradora llevan un botón de búsqueda (encargo
-// explícito). Dx. ingreso ya abre CatalogoDiagnosticosModal (encargo
-// explícito, captura de referencia) -- estado local propio de este step
-// (no en NuevaCirugiaWizard/onBuscar) porque el resultado solo necesita
-// escribir en `datos.dxIngreso` vía el `onChange` que este step ya recibe,
-// sin tener que hacer viajar la selección hacia arriba y de vuelta. Id.
-// aseguradora sigue en `onBuscar` (solo toast) -- su ventana real todavía
-// no está definida (encargo: "más adelante te muestro cuales son las
-// ventanas").
+// Dx. ingreso/Id. aseguradora llevan un botón de búsqueda que abre su
+// propio catálogo (CatalogoDiagnosticosModal/CatalogoAseguradorasModal,
+// encargo explícito) -- estado local propio de este step para cada uno (ya
+// no viaja por un `onBuscar` recibido como prop) porque el resultado solo
+// necesita escribir en `datos.dxIngreso`/`datos.idAseguradora` vía el
+// `onChange` que este step ya recibe.
 //
 // Todos los campos son obligatorios (encargo explícito) salvo Observaciones
 // -- `required` en cada input/textarea/FormSelect activa el resaltado ámbar
@@ -67,9 +76,10 @@ const DURACION_OPTIONS = DURACIONES_CIRUGIA_CATALOGO.map((min) => ({ value: Stri
 // ConsultaStep.jsx, required sin resaltado ámbar), así que esos 4 campos
 // quedan solo con `required` semántico, sin ámbar visible.
 export default function InformacionGeneralStep({
-  datos, onChange, onBuscar,
+  datos, onChange,
 }) {
   const [catalogoDxAbierto, setCatalogoDxAbierto] = useState(false);
+  const [catalogoAseguradoraAbierto, setCatalogoAseguradoraAbierto] = useState(false);
 
   return (
     <div className="igs-step">
@@ -153,58 +163,11 @@ export default function InformacionGeneralStep({
         </div>
       </div>
 
-      <h4 className="igs-section-title">Datos de admisión y contratación</h4>
       <div className="igs-grid">
-        <div className="form-field full">
-          <label htmlFor="igs-dx-ingreso">Dx. ingreso</label>
-          <div className="igs-field-with-search">
-            <input
-              id="igs-dx-ingreso"
-              type="text"
-              required
-              placeholder="Ej. Apendicitis aguda"
-              value={datos.dxIngreso}
-              onChange={(e) => onChange('dxIngreso', e.target.value)}
-            />
-            <button
-              type="button"
-              className="igs-search-btn"
-              onClick={() => setCatalogoDxAbierto(true)}
-              aria-label="Buscar diagnóstico de ingreso"
-              title="Buscar diagnóstico de ingreso"
-            >
-              <LuSearch className="icon" />
-            </button>
-          </div>
-        </div>
-
         <div className="form-field">
           <label htmlFor="igs-clase">Clase</label>
           <FormSelect id="igs-clase" value={datos.clase} onChange={(v) => onChange('clase', v)} options={CLASE_OPTIONS} required />
         </div>
-        <div className="form-field">
-          <label htmlFor="igs-id-aseguradora">Id. aseguradora</label>
-          <div className="igs-field-with-search">
-            <input
-              id="igs-id-aseguradora"
-              type="text"
-              required
-              placeholder="Ej. Sura"
-              value={datos.idAseguradora}
-              onChange={(e) => onChange('idAseguradora', e.target.value)}
-            />
-            <button
-              type="button"
-              className="igs-search-btn"
-              onClick={() => onBuscar('idAseguradora')}
-              aria-label="Buscar aseguradora"
-              title="Buscar aseguradora"
-            >
-              <LuSearch className="icon" />
-            </button>
-          </div>
-        </div>
-
         <div className="form-field">
           <label htmlFor="igs-tipo-anestesia">Tipo anestesia</label>
           <FormSelect
@@ -215,6 +178,7 @@ export default function InformacionGeneralStep({
             required
           />
         </div>
+
         <div className="form-field">
           <label htmlFor="igs-complejidad">Complejidad</label>
           <FormSelect
@@ -224,6 +188,61 @@ export default function InformacionGeneralStep({
             options={COMPLEJIDAD_OPTIONS}
             required
           />
+        </div>
+        <div className="form-field">
+          <label htmlFor="igs-asa">Asa</label>
+          <FormSelect id="igs-asa" value={datos.asa} onChange={(v) => onChange('asa', v)} options={ASA_OPTIONS} required />
+        </div>
+      </div>
+
+      <div className="igs-divider" />
+
+      <h4 className="igs-section-title">Datos de admisión y contratación</h4>
+      <div className="igs-grid">
+        <div className="form-field full">
+          <label htmlFor="igs-dx-ingreso">Dx. ingreso</label>
+          <div className="field-with-search">
+            <input
+              id="igs-dx-ingreso"
+              type="text"
+              required
+              placeholder="Ej. Apendicitis aguda"
+              value={datos.dxIngreso}
+              onChange={(e) => onChange('dxIngreso', e.target.value)}
+            />
+            <button
+              type="button"
+              className="search-btn"
+              onClick={() => setCatalogoDxAbierto(true)}
+              aria-label="Buscar diagnóstico de ingreso"
+              title="Buscar diagnóstico de ingreso"
+            >
+              <LuSearch className="icon" />
+            </button>
+          </div>
+        </div>
+
+        <div className="form-field full">
+          <label htmlFor="igs-id-aseguradora">Id. aseguradora</label>
+          <div className="field-with-search">
+            <input
+              id="igs-id-aseguradora"
+              type="text"
+              required
+              placeholder="Ej. Sura"
+              value={datos.idAseguradora}
+              onChange={(e) => onChange('idAseguradora', e.target.value)}
+            />
+            <button
+              type="button"
+              className="search-btn"
+              onClick={() => setCatalogoAseguradoraAbierto(true)}
+              aria-label="Buscar aseguradora"
+              title="Buscar aseguradora"
+            >
+              <LuSearch className="icon" />
+            </button>
+          </div>
         </div>
 
         <div className="form-field">
@@ -238,11 +257,6 @@ export default function InformacionGeneralStep({
           />
         </div>
         <div className="form-field">
-          <label htmlFor="igs-asa">Asa</label>
-          <FormSelect id="igs-asa" value={datos.asa} onChange={(v) => onChange('asa', v)} options={ASA_OPTIONS} required />
-        </div>
-
-        <div className="form-field full">
           <label htmlFor="igs-quien-autoriza">Quién autoriza</label>
           <input
             id="igs-quien-autoriza"
@@ -328,6 +342,12 @@ export default function InformacionGeneralStep({
         <CatalogoDiagnosticosModal
           onSelect={(v) => onChange('dxIngreso', v)}
           onClose={() => setCatalogoDxAbierto(false)}
+        />
+      )}
+      {catalogoAseguradoraAbierto && (
+        <CatalogoAseguradorasModal
+          onSelect={(v) => onChange('idAseguradora', v)}
+          onClose={() => setCatalogoAseguradoraAbierto(false)}
         />
       )}
     </div>

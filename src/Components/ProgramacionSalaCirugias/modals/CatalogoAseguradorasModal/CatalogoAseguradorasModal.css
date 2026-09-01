@@ -1,0 +1,98 @@
+/* Homologado al look de CatalogoDiagnosticosModal.css (2 buscadores + tabla
+   con borde + fila-botón seleccionable + paginación) -- clases propias
+   (.caam-*), mismo criterio de anidado dentro de NuevaCirugiaWizard que ese
+   modal (ver comentario ahí sobre por qué no hace falta tocar z-index).
+   Ancho "medium" (encargo explícito) -- más angosto que los 700px de
+   CatalogoDiagnosticosModal pero con margen para 4 columnas en vez de 2. */
+.caam-modal-card{width:960px;}
+.caam-modal-card > .modal-body{overflow:hidden;}
+.caam-body{padding:16px 24px 20px;gap:10px;flex:1;min-height:0;}
+
+.caam-search-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+
+.caam-search{
+  display:flex;align-items:center;gap:8px;flex:1;min-width:180px;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.caam-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.caam-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.caam-search input::placeholder{color:var(--ink-400);}
+
+.caam-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.caam-row{
+  display:grid;grid-template-columns:100px 1fr 84px 130px;align-items:center;gap:10px;
+  padding:9px 12px;
+}
+.caam-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .caam-row-head{background:#1c2333;}
+
+.caam-list{flex:1;min-height:0;overflow-y:auto;max-height:360px;}
+.caam-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.caam-option:last-child{border-bottom:none;}
+.caam-option:hover{background:var(--bg);}
+.caam-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.caam-option.active{background:var(--primary-50);}
+.caam-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.caam-razon-social{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.caam-ciudad{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.caam-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* ---------- Paginación ----------
+   Mismo patrón numerado que CatalogoDiagnosticosModal/CamasPagination -- no
+   importado de ahí (feature/modal distinto, ver AGENTS.md "Component
+   organization"), clases propias .caam-pagination-*. */
+.caam-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;
+}
+.caam-pagination-label{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.caam-pagination-controls{display:flex;align-items:center;gap:4px;}
+.caam-pagination-nav-btn{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
+}
+.caam-pagination-nav-btn .icon{width:15px;height:15px;}
+.caam-pagination-nav-btn:hover{background:var(--gray-bg);border-color:var(--border);}
+.caam-pagination-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.caam-pagination-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.caam-pagination-page{
+  min-width:28px;height:28px;padding:0 6px;border-radius:var(--radius);border:1px solid transparent;
+  background:none;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.caam-pagination-page:hover{background:var(--gray-bg);}
+.caam-pagination-page:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.caam-pagination-page.active{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.caam-pagination-ellipsis{color:var(--ink-400);padding:0 4px;font-size:var(--fs-sm);}
+
+/* appearance:none + chevron propio en vez de FormSelect (AGENTS.md, "Selects
+   de formulario" -- los selects de paginación quedan afuera de esa regla),
+   mismo criterio que .cdm-pagination-size select. */
+.caam-pagination-size select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:var(--input-sm);border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);background:var(--surface);padding:0 26px 0 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 6px center;
+}
+.caam-pagination-size select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+@media (max-width:768px){
+  .caam-modal-card{width:100%;}
+  .caam-row{grid-template-columns:90px 1fr 70px 110px;}
+  .caam-pagination{justify-content:center;text-align:center;}
+}

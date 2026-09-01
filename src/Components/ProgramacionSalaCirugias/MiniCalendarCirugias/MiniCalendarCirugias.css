@@ -1,11 +1,13 @@
-/* Un solo bloque para todo el panel lateral (acción principal + calendario
-   + divider + otras acciones, ver MiniCalendarCirugias.jsx) — flex-column
-   con gap espacia las 4 secciones sin margins manuales por sección; al
-   colapsar el calendario (.mcc-grid deja de montarse) el gap se ajusta
-   solo, sin dejar un hueco vacío. */
+/* Un solo bloque para todo el panel lateral (acción principal + calendario,
+   ver MiniCalendarCirugias.jsx) — flex-column con gap espacia las secciones
+   sin margins manuales; al colapsar el calendario (.mcc-grid deja de
+   montarse) el gap se ajusta solo, sin dejar un hueco vacío. `flex:1`
+   (en vez de `flex-shrink:0`) estira el panel hasta el fondo de
+   `.psc-side-col` (encargo explícito) -- único hijo de esa columna, que ya
+   ocupa el alto completo de `.psc-workspace` (ver ProgramacionSalaCirugias.css). */
 .mcc-panel{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:16px;flex-shrink:0;
+  padding:16px;flex:1;min-height:0;
   display:flex;flex-direction:column;gap:14px;
 }
 

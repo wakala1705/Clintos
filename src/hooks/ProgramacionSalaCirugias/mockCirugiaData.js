@@ -50,20 +50,143 @@ export const ESTADO_FILTRO_OPTIONS = [
   { value: 'incumplida', label: 'Incumplida' },
 ];
 
-export const PROCEDIMIENTOS_CATALOGO = [
-  'Colecistectomía laparoscópica',
-  'Apendicectomía',
-  'Hernia inguinal',
-  'Histerectomía',
-  'Laparoscopia diagnóstica',
-  'Hernia umbilical',
-  'Artroscopia de rodilla',
+// Catálogo de procedimientos QX (CUPS) que alimenta CatalogoProcedimientosModal
+// ("Listado de Procedimientos contratados para el Tercero (KCNT)", encargo
+// explícito -- ver captura adjunta) para "Id. Cirugía" en
+// AgregarProcedimientoModal. Transcripción literal de los códigos/
+// descripciones visibles en esa captura (mismo criterio que
+// DIAGNOSTICOS_CATALOGO: recorte representativo, no inventado) -- todos con
+// `prefijo` '01' porque es el único prefijo que la captura muestra, no se
+// inventan otros. Reemplaza al PROCEDIMIENTOS_CATALOGO plano (array de
+// strings) que tenía antes: sin otro consumidor en el proyecto, no hace
+// falta mantener las dos formas.
+export const PROCEDIMIENTOS_QX_CATALOGO = [
+  { prefijo: '01', idServicio: '010101C', descripcion: 'PUNCIÓN CISTERNAL VÍA LATERAL' },
+  { prefijo: '01', idServicio: '010102C', descripcion: 'PUNCIÓN CISTERNAL VÍA MEDIAL' },
+  { prefijo: '01', idServicio: '010103C', descripcion: 'PUNCIÓN CISTERNAL' },
+  {
+    prefijo: '01', idServicio: '010201C', descripcion: 'PUNCIÓN (ASPIRACIÓN DE LÍQUIDO) VENTRICULAR A TRAVÉS DE CATÉTER PREVIAMENTE IMPLANTADO',
+  },
+  {
+    prefijo: '01', idServicio: '010202C', descripcion: 'PUNCIÓN (ASPIRACIÓN DE LÍQUIDO) VENTRICULAR POR TREPANACIÓN (SIN CATÉTER)',
+  },
+  {
+    prefijo: '01', idServicio: '010203C', descripcion: 'PUNCIÓN (ASPIRACIÓN DE LÍQUIDO) VENTRICULAR A TRAVÉS DE UN RESERVORIO',
+  },
+  {
+    prefijo: '01', idServicio: '010204C', descripcion: 'PUNCIÓN (ASPIRACIÓN DE LÍQUIDO) VENTRICULAR VÍA TRANSFONTANELAR',
+  },
+  { prefijo: '01', idServicio: '010205C', descripcion: 'PUNCIÓN (ASPIRACIÓN DE LÍQUIDO) VENTRICULAR' },
+  { prefijo: '01', idServicio: '010901C', descripcion: 'PUNCIÓN SUBDURAL' },
+  { prefijo: '01', idServicio: '011101C', descripcion: 'BIOPSIA ÓSEA EN CRÁNEO POR CRANEOTOMÍA' },
+  { prefijo: '01', idServicio: '011102C', descripcion: 'BIOPSIA ÓSEA EN CRÁNEO POR CRANIECTOMÍA' },
+  { prefijo: '01', idServicio: '011201C', descripcion: 'BIOPSIA DE MENINGE POR CRANEOTOMÍA' },
+  { prefijo: '01', idServicio: '011202C', descripcion: 'BIOPSIA DE MENINGE CEREBRAL' },
+  { prefijo: '01', idServicio: '011302C', descripcion: 'BIOPSIA ABIERTA (CRANEOTOMÍA) DE CEREBRO' },
+  { prefijo: '01', idServicio: '011306C', descripcion: 'BIOPSIA DE CEREBRO SUPERFICIAL POR ESTEREOTAXIA' },
+  { prefijo: '01', idServicio: '011307C', descripcion: 'BIOPSIA DE CEREBRO PROFUNDO POR ESTEREOTAXIA' },
+  { prefijo: '01', idServicio: '012101C', descripcion: 'CRANEALIZACIÓN DE SENO FRONTAL' },
+  { prefijo: '01', idServicio: '012102C', descripcion: 'INCISIÓN Y DRENAJE DE SENO FRONTAL' },
+  { prefijo: '01', idServicio: '012103C', descripcion: 'DESFUNCIONALIZACIÓN DE SENO FRONTAL' },
+];
+
+// "Tipo Cirugía" del formulario "Adicionar procedimientos QX" (encargo
+// explícito, ver captura adjunta) -- catálogo de clasificación de cobro del
+// procedimiento (bilateral/mismo-diferente cirujano/paquete/única), NO el
+// mismo concepto que TIPOS_CIRUGIA_CATALOGO de abajo (ese es el tipo general
+// de la cirugía completa -- Programada/Ambulatoria/Urgencia, ya usado por
+// `tipoCirugia` en los registros de CIRUGIAS). Aunque ambos campos se llamen
+// "Tipo Cirugía" en sus respectivas pantallas de referencia, son catálogos
+// distintos -- no reusar uno por el otro.
+export const TIPOS_PROCEDIMIENTO_CATALOGO = [
+  'BILATERAL',
+  'DIFERENTE VIA DIFERENTE CIRUJANO',
+  'DIFERENTE VIA IGUAL CIRUJANO',
+  'PROCEDIMIENTOS INCRUENTOS',
+  'IGUAL VIA DIFERENTE CIRUJANO',
+  'MISMA VIA IGUAL CIRUJANO',
+  'PAQUETE 50',
+  'PAQUETE 30',
+  'PAQUETE 65',
+  'UNICA',
+];
+
+// Catálogo de médicos ("Listado de médicos por tipo de Recurso Humano",
+// encargo explícito -- ver capturas adjuntas) que alimenta
+// CatalogoMedicosModal para Id. Cirujano/Id. Anestesiólogo en
+// AgregarProcedimientoModal: mismo modal para ambos campos, filtrado por
+// `tipo` -- la referencia es literalmente la misma pantalla abierta dos
+// veces con un filtro de rol distinto, no dos pantallas separadas.
+// Transcripción literal de las filas visibles en esas capturas (mismo
+// criterio que PROCEDIMIENTOS_QX_CATALOGO/DIAGNOSTICOS_CATALOGO). Reemplaza
+// a CIRUJANOS_CATALOGO/ANESTESIOLOGOS_CATALOGO (arrays de strings planos)
+// que tenía antes: sin otro consumidor en el proyecto, no hace falta
+// mantener las dos formas.
+export const MEDICOS_CATALOGO = [
+  {
+    idMedico: '02757/98', nombre: 'ABRAHAM GANEM BECHARA', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '6874047', nombre: 'AMAURY RAFAEL GARCIA BURGOS', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '78714413', nombre: 'ANGEL MARIA PARRA LIÑAN', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '94512888', nombre: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '78036459', nombre: 'ANTONIO CARLOS MIRANDA HOYOS', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1102812780', nombre: 'CARLOS ALBERTO VALLEJO BERTEL', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '73133878', nombre: 'CARLOS MANUEL PEREIRA BETANCOURT', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '2757886', nombre: 'CARLOS MAURICIO BURGOS DURANGO', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '80092293', nombre: 'CESAR ALONSO RIOS NIETO', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1128270914', nombre: 'JOSE DARIO MERCADO GONZALEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '15047319', nombre: 'ELIAS MANUEL ANAYA GONZALEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '73147368', nombre: 'ARMANDO DE JESUS MARQUEZ ARIAS', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '50901284', nombre: 'LINA MARIA LOBATON RAMIREZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '78674025', nombre: 'JORGE CARLOS GONZALEZ NUÑEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '10774651', nombre: 'JUAN CARLOS ACOSTA DIAZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '16274903', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1020761845', nombre: 'NATALIA ANDREA CABRERA OVIEDO', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '50910879', nombre: 'INDIRA GUARDO MARTINEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1067901228', nombre: 'ANA ISABEL TABOADA HOYOS', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '15050969', nombre: 'ELIAS MIGUEL NADER HOYOS', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
+  },
 ];
 
 export const SERVICIOS_CATALOGO = ['Cirugía general', 'Ginecología', 'Ortopedia', 'Urología'];
 export const TIPOS_CIRUGIA_CATALOGO = ['Programada', 'Ambulatoria', 'Urgencia'];
-export const CIRUJANOS_CATALOGO = ['Dr. Juan García', 'Dr. Carlos Martínez', 'Dra. Ana López', 'Dr. Andrés López'];
-export const ANESTESIOLOGOS_CATALOGO = ['Dra. Ana López', 'Dr. Pedro Sánchez'];
 export const INSTRUMENTADORAS_CATALOGO = ['María Fernández', 'Laura Gómez'];
 export const CIRCULANTES_CATALOGO = ['Luis Ramírez', 'Andrés Molina'];
 
@@ -136,6 +259,124 @@ export const DIAGNOSTICOS_CATALOGO = [
   { codigo: 'L029', descripcion: 'ABSCESO CUTANEO, FURUNCULO Y ANTRAX DE SITIO NO ESPECIFICADO', sexo: 'Ambos' },
   { codigo: 'T810', descripcion: 'HEMORRAGIA Y HEMATOMA COMPLICANDO UN PROCEDIMIENTO, NO CLASIFICADOS EN OTRA PARTE', sexo: 'Ambos' },
   { codigo: 'Z017', descripcion: 'EXAMEN DE LABORATORIO', sexo: 'Ambos' },
+];
+
+// Catálogo de aseguradoras que alimenta CatalogoAseguradorasModal (búsqueda
+// de "Id. aseguradora", encargo explícito). La captura de referencia
+// ("Elegir Tercero") es un catálogo genérico de terceros (clínicas,
+// personas naturales, entidades públicas...) -- acá se recorta a las
+// entidades que genuinamente son aseguradoras/EPS/cajas de compensación
+// (varias tomadas literalmente de esa captura, con su mismo idTercero/
+// ciudad), que es lo único relevante para este campo. `estado` queda sin
+// consumir en el modal (el checkbox "Sólo activos" que lo usaba se quitó,
+// encargo explícito) -- se conserva en el dato por si un futuro ajuste lo
+// vuelve a necesitar, no es dead data intencional a limpiar ahora.
+export const ASEGURADORAS_CATALOGO = [
+  {
+    idTercero: '890918468', razonSocial: 'A&S ASESORES DE SEGUROS LTDA', idCiudad: '05001', ciudad: 'MEDELLIN', estado: 'Activo',
+  },
+  {
+    idTercero: '830113831', razonSocial: 'ALIANSALUD ENTIDAD PROMOTORA DE SALUD S.A', idCiudad: '23001', ciudad: 'MONTERIA', estado: 'Activo',
+  },
+  {
+    idTercero: '900604350', razonSocial: 'ALIANZA MEDELLIN ANTIOQUIA EPS SAS', idCiudad: '05001', ciudad: 'MEDELLIN', estado: 'Activo',
+  },
+  {
+    idTercero: '860027404', razonSocial: 'ALLIANZ SEGUROS DE VIDA S A', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '806008394', razonSocial: 'ASOCIACION MUTUAL SER', idCiudad: '23001', ciudad: 'MONTERIA', estado: 'Activo',
+  },
+  {
+    idTercero: '900640334', razonSocial: 'AXA COLPATRIA MEDICINA PREPAGADA S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '860002183', razonSocial: 'AXA COLPATRIA SEGUROS DE VIDA S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '860002184', razonSocial: 'AXA COLPATRIA SEGUROS S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Inactivo',
+  },
+  {
+    idTercero: '900814916', razonSocial: 'BERKLEY INTERNATIONAL SEGUROS COLOMBIA SA', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '901061386', razonSocial: 'BMI COLOMBIA COMPAÑIA DE SEGUROS DE VIDA S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '860066942', razonSocial: 'CAJA DE COMPENSACION FAMILIAR COMPENSAR', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '890102044', razonSocial: 'CAJA DE COMPENSACION FAMILIAR DEL ATLANTICO', idCiudad: '08001', ciudad: 'BARRANQUILLA', estado: 'Activo',
+  },
+  {
+    idTercero: '892200015', razonSocial: 'CAJA DE COMPENSACIÓN FAMILIAR DE SUCRE', idCiudad: '70001', ciudad: 'SINCELEJO', estado: 'Activo',
+  },
+  {
+    idTercero: '901543211', razonSocial: 'CAJACOPI EPS S.A.S.', idCiudad: '08001', ciudad: 'BARRANQUILLA', estado: 'Activo',
+  },
+  {
+    idTercero: '900298372', razonSocial: 'CAPITAL SALUD ENTIDAD PROMOTORA DE SALUD DEL REGIMEN SUBSIDIADO S.A.S', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '800106339', razonSocial: 'COLMEDICA MEDICINA PREPAGADA S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '890101994', razonSocial: 'COMFAMILIAR ATLANTICO', idCiudad: '08001', ciudad: 'BARRANQUILLA', estado: 'Activo',
+  },
+  {
+    idTercero: '890303093', razonSocial: 'COMFENALCO VALLE EPS', idCiudad: '76001', ciudad: 'CALI', estado: 'Activo',
+  },
+  {
+    idTercero: '860078828', razonSocial: 'COMPAÑIA DE MEDICINA PREPAGADA COLSANITAS S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '860002503', razonSocial: 'COMPAÑIA DE SEGUROS BOLIVAR S.A.', idCiudad: '23001', ciudad: 'MONTERIA', estado: 'Activo',
+  },
+  {
+    idTercero: '800226175', razonSocial: 'COMPAÑIA DE SEGUROS DE VIDA COLMENA S.A', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Inactivo',
+  },
+  {
+    idTercero: '860037013', razonSocial: 'COMPAÑIA MUNDIAL DE SEGUROS S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '805000427', razonSocial: 'COOMEVA ENTIDAD PROMOTORA DE SALUD S.A.', idCiudad: '76001', ciudad: 'CALI', estado: 'Activo',
+  },
+  {
+    idTercero: '805009741', razonSocial: 'COOMEVA MEDICINA PREPAGADA', idCiudad: '76001', ciudad: 'CALI', estado: 'Activo',
+  },
+  {
+    idTercero: '900226715', razonSocial: 'COOSALUD ENTIDAD PROMOTORA DE SALUD S.A.', idCiudad: '13001', ciudad: 'CARTAGENA', estado: 'Activo',
+  },
+  {
+    idTercero: '901021565', razonSocial: 'EMSSANAR ENTIDAD PROMOTORA DE SALUD SAS', idCiudad: '52001', ciudad: 'PASTO', estado: 'Activo',
+  },
+  {
+    idTercero: '830003564', razonSocial: 'ENTIDAD PROMOTORA DE SALUD FAMISANAR SAS', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '837000084', razonSocial: 'ENTIDAD PROMOTORA DE SALUD MALLAMAS INDIGENA', idCiudad: '52001', ciudad: 'PASTO', estado: 'Activo',
+  },
+  {
+    idTercero: '800251440', razonSocial: 'ENTIDAD PROMOTORA DE SALUD SANITAS S A S', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '805001157', razonSocial: 'ENTIDAD PROMOTORA DE SALUD SERVICIO OCCIDENTAL DE SALUD S.A. S.O.S.', idCiudad: '76001', ciudad: 'CALI', estado: 'Activo',
+  },
+  {
+    idTercero: '901543761', razonSocial: 'EPS FAMILIAR DE COLOMBIA S.A', idCiudad: '70001', ciudad: 'SINCELEJO', estado: 'Inactivo',
+  },
+  {
+    idTercero: '900088702', razonSocial: 'EPS Y MEDICINA PREPAGADA SURAMERICANA S.A.', idCiudad: '05001', ciudad: 'MEDELLIN', estado: 'Activo',
+  },
+  {
+    idTercero: '890903407', razonSocial: 'SEGUROS DE VIDA SURAMERICANA S.A.', idCiudad: '05001', ciudad: 'MEDELLIN', estado: 'Activo',
+  },
+  {
+    idTercero: '800088702', razonSocial: 'NUEVA EPS S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
+  {
+    idTercero: '800130907', razonSocial: 'SALUD TOTAL ENTIDAD PROMOTORA DE SALUD S.A.', idCiudad: '11001', ciudad: 'BOGOTA DC', estado: 'Activo',
+  },
 ];
 
 export const EQUIPOS_CATALOGO = [
@@ -635,6 +876,20 @@ let CIRUGIAS = [
 ];
 
 let nextIdSeq = 12353;
+
+// Consecutivo de "No. Programación" de AgregarProcedimientoModal (encargo
+// explícito: "debe ser un consecutivo... pon un número real" -- ya no un
+// texto de ejemplo). Semilla 42766 = el número que traía la captura de
+// referencia, ahora usado como punto de partida real del consecutivo en vez
+// de ilustrativo. Mismo patrón que nextIdSeq/crearCirugia: contador
+// module-level que se resetea al recargar la página.
+let nextProgramacionSeq = 42766;
+
+export function siguienteNumeroProgramacion() {
+  const n = nextProgramacionSeq;
+  nextProgramacionSeq += 1;
+  return n;
+}
 
 // Reemplaza a fetchAgendaSemana: mismo filtro, pero `inicio`/`fin` (ISO
 // yyyy-mm-dd) los calcula el orquestador según la vista activa (Día/Semana/

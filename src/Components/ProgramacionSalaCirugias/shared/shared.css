@@ -56,6 +56,25 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
   display:flex;align-items:center;height:var(--input-md);
   font-size:var(--fs-base);color:var(--ink-900);padding:0 10px;background:var(--bg);border-radius:var(--radius);
 }
+
+/* Input con lupa integrada adentro -- usado por Dx. ingreso/Id. aseguradora
+   (InformacionGeneralStep) e Id. Cirugía/Id. Cirujano/Id. Anestesiólogo
+   (AgregarProcedimientoModal): 2+ componentes reusando la misma regla, por
+   eso vive acá en vez de duplicada en cada CSS (ver AGENTS.md "Component
+   organization"). Wrapper relative + botón absolute encima del input; el
+   input gana padding-right para que el texto nunca quede debajo del ícono.*/
+.field-with-search{position:relative;}
+.field-with-search input{padding-right:38px;}
+.search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn .icon{width:16px;height:16px;}
 .tf-warning-note{
   display:flex;align-items:flex-start;gap:8px;
   background:var(--amber-bg);color:var(--amber-fg);

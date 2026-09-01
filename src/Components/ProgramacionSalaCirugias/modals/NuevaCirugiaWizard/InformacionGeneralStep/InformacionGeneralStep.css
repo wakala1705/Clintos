@@ -12,26 +12,23 @@
    sin importar el orden en la hoja. */
 .igs-grid.igs-grid-3{grid-template-columns:repeat(3,1fr);}
 
+/* Separador entre "Datos de la cirugía" y "Datos de admisión y
+   contratación" (encargo explícito) -- el `+` resetea el margin-top del
+   heading que sigue para no duplicar espacio con el propio margin-bottom
+   del divider. */
+.igs-divider{height:1px;background:var(--border);margin:20px 0;}
+.igs-divider + .igs-section-title{margin-top:0;}
+
 .igs-checkbox{
   display:flex;align-items:center;gap:8px;height:var(--input-md);
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);cursor:pointer;
 }
 .igs-checkbox input{width:16px;height:16px;flex-shrink:0;cursor:pointer;}
 
-/* Dx. ingreso/Id. aseguradora: input + botón de búsqueda (ver onBuscar en
-   InformacionGeneralStep.jsx) -- la ventana que abre cada botón todavía no
-   está definida. */
-.igs-field-with-search{display:flex;gap:8px;align-items:center;}
-.igs-field-with-search input{flex:1;min-width:0;}
-.igs-search-btn{
-  width:var(--input-md);height:var(--input-md);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--primary-100);border-radius:var(--radius);
-  background:var(--primary-50);color:var(--primary);cursor:pointer;
-}
-.igs-search-btn:hover{background:var(--primary-100);color:var(--primary-dark);}
-.igs-search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.igs-search-btn .icon{width:16px;height:16px;}
+/* Dx. ingreso/Id. aseguradora: input con la lupa integrada adentro que abre
+   CatalogoDiagnosticosModal/CatalogoAseguradorasModal -- .field-with-search/
+   .search-btn viven en shared/shared.css (los reusa también
+   AgregarProcedimientoModal, ver AGENTS.md "Component organization"). */
 
 @media (max-width:768px){
   .igs-grid, .igs-grid.igs-grid-3{grid-template-columns:1fr;}

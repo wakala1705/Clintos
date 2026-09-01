@@ -5,18 +5,20 @@ import './MiniCalendarCirugias.css';
 import { addMeses, grillaMes, mesLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from 'react-icons/lu';
 import ProgramarCirugiaDropdown from '../ProgramarCirugiaDropdown/ProgramarCirugiaDropdown';
-import AccionesBar from '../AccionesBar/AccionesBar';
 
 // Bloque único de la columna lateral (mismo lugar que MiniCalendar en
-// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 3
+// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 2
 // secciones separadas por .mcc-divider — acción principal "Programar
-// cirugía", mini-calendario, "Otras acciones" (depende de una cirugía
-// seleccionada) al final. Sin leyenda de estados propia: ya vive al pie de
+// cirugía" y mini-calendario. Las acciones sobre una cirugía seleccionada
+// ("Reprogramar"/"Cancelar"/"Más acciones") viven en el drawer de detalle
+// (ver DetalleCirugiaPanel.jsx), no acá -- encargo explícito: este panel se
+// estira hasta el fondo de la pantalla (ver .mcc-panel en
+// MiniCalendarCirugias.css) y ya no depende de si hay una cirugía
+// seleccionada. Sin leyenda de estados propia: ya vive al pie de
 // AgendaSemana (.as-legend), duplicarla acá solo agregaría una segunda
 // fuente para lo mismo.
 export default function MiniCalendarCirugias({
   selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia,
-  selected, onReprogramar, onCancelar, onMarcarProgramada, onMarcarIncumplida, onVerInfo,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [monthDate, setMonthDate] = useState(() => new Date());
@@ -85,17 +87,6 @@ export default function MiniCalendarCirugias({
           })}
         </div>
       )}
-
-      <div className="mcc-divider" />
-
-      <AccionesBar
-        selected={selected}
-        onReprogramar={onReprogramar}
-        onCancelar={onCancelar}
-        onMarcarProgramada={onMarcarProgramada}
-        onMarcarIncumplida={onMarcarIncumplida}
-        onVerInfo={onVerInfo}
-      />
     </div>
   );
 }

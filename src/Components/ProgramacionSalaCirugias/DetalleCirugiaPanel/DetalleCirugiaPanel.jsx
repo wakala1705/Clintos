@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -12,7 +12,9 @@ import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { duracionLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuBan, LuCalendarClock, LuPencil } from 'react-icons/lu';
+import {
+  LuBan, LuCalendarClock, LuChevronUp, LuCircleCheck, LuInfo, LuPencil,
+} from 'react-icons/lu';
 
 const ESTADOS_TERMINALES = ['cancelada', 'incumplida'];
 
@@ -31,8 +33,27 @@ const TABS = [
 // grid. `onClose` deselecciona y cierra el drawer.
 export default function DetalleCirugiaPanel({
   cirugia, salaLabel, onClose, onEditar, onReprogramar, onCancelar,
+  onMarcarProgramada, onMarcarIncumplida, onVerInfo,
 }) {
   const [activeTab, setActiveTab] = useState('resumen');
+  // Menú "Más acciones" (Marcar como programada/incumplida, Ver
+  // información/historial) -- vivía en el panel lateral (AccionesBar, ver
+  // MiniCalendarCirugias.jsx antes de este encargo) y se movió acá porque
+  // ya depende de una cirugía seleccionada igual que el resto de este
+  // drawer. Abre hacia arriba (`.dcp-more-dropdown`) por estar pegado al
+  // borde inferior de la pantalla -- mismo patrón autocontenido de
+  // click-afuera/Escape que tenía AccionesBar.
+  const [masOpen, setMasOpen] = useState(false);
+  const masRef = useRef(null);
+
+  useEffect(() => {
+    if (!masOpen) return undefined;
+    function handleClickOutside(e) {
+      if (masRef.current && !masRef.current.contains(e.target)) setMasOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [masOpen]);
   // Resetear a "resumen" al cambiar de cirugía sin un useEffect (evita el
   // cascading-render que marca react-hooks/set-state-in-effect): mismo
   // patrón "ajustar estado durante el render" que recomienda React para
@@ -47,11 +68,13 @@ export default function DetalleCirugiaPanel({
   useEffect(() => {
     if (!cirugia) return undefined;
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key !== 'Escape') return;
+      if (masOpen) setMasOpen(false);
+      else onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cirugia, onClose]);
+  }, [cirugia, masOpen, onClose]);
 
   function handleTabsKeyDown(e) {
     const idx = TABS.findIndex((t) => t.id === activeTab);
@@ -66,6 +89,8 @@ export default function DetalleCirugiaPanel({
   if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES.includes(cirugia.estado);
+  const puedeMarcarProgramada = ['borrador', 'urgencia'].includes(cirugia.estado);
+  const puedeMarcarIncumplida = cirugia.estado === 'programada';
 
   const body = (
     <>
@@ -132,9 +157,50 @@ export default function DetalleCirugiaPanel({
       </div>
 
       <div className="dcp-actions">
-        <Button variant="secondary" icon={LuPencil} disabled={!puedeAccionar} onClick={onEditar}>Editar</Button>
-        <Button variant="secondary" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={onReprogramar}>Reprogramar</Button>
-        <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={onCancelar}>Cancelar</Button>
+        <div className="dcp-more-wrap" ref={masRef}>
+          <Button variant="secondary" icon={LuChevronUp} onClick={() => setMasOpen((v) => !v)}>
+            Más acciones
+          </Button>
+          {masOpen && (
+            <div className="dcp-more-dropdown" role="menu">
+              <button
+                type="button"
+                className="dcp-more-item"
+                role="menuitem"
+                disabled={!puedeMarcarProgramada}
+                onClick={() => { setMasOpen(false); onMarcarProgramada(); }}
+              >
+                <LuCircleCheck className="icon" aria-hidden="true" />
+                Marcar como programada
+              </button>
+              <button
+                type="button"
+                className="dcp-more-item"
+                role="menuitem"
+                disabled={!puedeMarcarIncumplida}
+                onClick={() => { setMasOpen(false); onMarcarIncumplida(); }}
+              >
+                <LuCalendarClock className="icon" aria-hidden="true" />
+                Marcar como incumplida
+              </button>
+              <button
+                type="button"
+                className="dcp-more-item"
+                role="menuitem"
+                onClick={() => { setMasOpen(false); onVerInfo(); }}
+              >
+                <LuInfo className="icon" aria-hidden="true" />
+                Ver información/historial
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="dcp-actions-main">
+          <Button variant="secondary" icon={LuPencil} disabled={!puedeAccionar} onClick={onEditar}>Editar</Button>
+          <Button variant="secondary" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={onReprogramar}>Reprogramar</Button>
+          <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={onCancelar}>Cancelar</Button>
+        </div>
       </div>
     </>
   );

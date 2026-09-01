@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './NuevaCirugiaWizard.css';
 import InformacionGeneralStep from './InformacionGeneralStep/InformacionGeneralStep';
+import ProcedimientosStep from './ProcedimientosStep/ProcedimientosStep';
 import Button from '@/Components/Button/Button';
 import { fechaISO, fechaHoraLocalISO, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuX } from 'react-icons/lu';
@@ -30,7 +31,7 @@ function datosIniciales(patient, salaId) {
     duracionRecuperacion: '',
     dxIngreso: '',
     clase: '',
-    idAseguradora: patient?.eps ?? '',
+    idAseguradora: '',
     tipoAnestesia: '',
     complejidad: '',
     noAutorizacion: '',
@@ -42,6 +43,7 @@ function datosIniciales(patient, salaId) {
     fechaVence: '',
     horaVence: '',
     observaciones: '',
+    procedimientos: [],
   };
 }
 
@@ -51,10 +53,12 @@ function datosIniciales(patient, salaId) {
 // NuevaProgramacionWizard (GestionTurnos): React puro con clases `ncw-*`
 // propias en vez de reusar el flujo legacy-imperativo de NuevaCitaFlow (ese
 // es "Nueva cita", este es un dominio distinto -- ver AGENTS.md "Modales").
-// Solo el paso 1 (Información general) tiene formulario por ahora (encargo
-// explícito) -- Procedimientos/Insumos quedan listados en el riel pero
-// bloqueados (`locked`), y "Continuar" queda deshabilitado sin importar el
-// estado del formulario hasta que esos pasos existan.
+// Pasos 1 (Información general) y 2 (Procedimientos) tienen formulario
+// (encargo explícito, paso 2 activado después) -- Insumos queda listado en
+// el riel pero bloqueado (`locked`), y "Continuar" del paso 2 queda
+// deshabilitado sin importar el estado del formulario hasta que ese paso
+// exista. `paso` es estado (no una constante como antes) para poder navegar
+// entre 1 y 2 vía el riel o los botones Continuar/Atrás del footer.
 //
 // "Es afiliado" vive en el header del riel (no en InformacionGeneralStep,
 // encargo explícito) porque acompaña al nombre/documento del paciente que ya
@@ -66,9 +70,9 @@ function datosIniciales(patient, salaId) {
 // porque este wizard solo crea cirugías nuevas (el número se asigna al
 // guardar, nunca existe en este paso).
 export default function NuevaCirugiaWizard({
-  patient, salaId, onClose, onBuscar,
+  patient, salaId, onClose,
 }) {
-  const paso = 1;
+  const [paso, setPaso] = useState(1);
   const [datos, setDatos] = useState(() => datosIniciales(patient, salaId));
   const salaLabel = SALAS.find((s) => s.value === salaId)?.label ?? '—';
 
@@ -111,13 +115,14 @@ export default function NuevaCirugiaWizard({
             <div className="ncw-rail-nav">
               {PASOS.map((p) => {
                 const active = p.n === paso;
-                const locked = p.n !== 1;
+                const locked = p.n > 2;
                 return (
                   <button
                     key={p.n}
                     type="button"
                     className={`ncw-rail-step${active ? ' active' : ''}${locked ? ' locked' : ''}`}
                     disabled={locked}
+                    onClick={() => setPaso(p.n)}
                   >
                     <span className="ncw-rail-circle">{p.n}</span>
                     <span className="ncw-rail-step-text">
@@ -148,13 +153,25 @@ export default function NuevaCirugiaWizard({
 
             <div className="ncw-content">
               {paso === 1 && (
-                <InformacionGeneralStep datos={datos} onChange={set} onBuscar={onBuscar} />
+                <InformacionGeneralStep datos={datos} onChange={set} />
+              )}
+              {paso === 2 && (
+                <ProcedimientosStep datos={datos} onChange={set} patient={patient} />
               )}
             </div>
 
             <div className="ncw-footer">
-              <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-              <Button variant="primary" disabled>Continuar</Button>
+              {paso === 1 ? (
+                <>
+                  <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+                  <Button variant="primary" onClick={() => setPaso(2)}>Continuar</Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
+                  <Button variant="primary" disabled>Continuar</Button>
+                </>
+              )}
             </div>
           </div>
         </div>

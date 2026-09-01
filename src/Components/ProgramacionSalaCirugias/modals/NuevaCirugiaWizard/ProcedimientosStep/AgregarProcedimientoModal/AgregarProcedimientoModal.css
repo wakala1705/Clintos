@@ -1,0 +1,32 @@
+/* .modal-overlay/.modal-card/.modal-footer/.form-field/.field-with-search/
+   .search-btn: ver ../../../../shared/shared.css. Ancho "narrow" (encargo
+   explícito) -- columna única, calca la referencia legacy en vez de la
+   grilla 2 columnas de InformacionGeneralStep.css. */
+.apm-modal-card{width:880px;}
+.apm-body{gap:16px;}
+
+.apm-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+
+/* No. Programación: consecutivo real (encargo explícito, ver
+   siguienteNumeroProgramacion en mockCirugiaData.js), texto plano sin caja
+   -- a diferencia de .tf-readonly-value no es un campo editable, así que no
+   necesita look de input. */
+.apm-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+.apm-divider{height:1px;background:var(--border);margin:4px 0;}
+
+.apm-section-title{
+  margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+
+/* Datos del paciente (encargo explícito): línea de contenido al inicio del
+   body, antes de No. Programación -- ya no vive en el subtítulo del
+   ModalHeader (ver comentario en AgregarProcedimientoModal.jsx). */
+.apm-patient{
+  margin-bottom:4px;padding-bottom:12px;border-bottom:1px solid var(--border);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--primary-dark);
+}
+
+@media (max-width:768px){
+  .apm-modal-card{width:100%;}
+}

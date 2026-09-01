@@ -221,8 +221,7 @@ export default function ProgramacionSalaCirugias() {
     showToast('Cirugía marcada como incumplida.');
   }
   // "Ver información/historial" solo tiene sentido con una cirugía
-  // seleccionada (AccionesBar ya deshabilita el ítem del menú sin
-  // selección) -- el panel de detalle ya está visible en ese momento, así
+  // seleccionada -- el panel de detalle ya está visible en ese momento, así
   // que no hay ninguna acción adicional que ejecutar en V1 (no existe un
   // historial de auditoría real en el mock, ver spec).
   function handleVerInfo() {}
@@ -235,15 +234,6 @@ export default function ProgramacionSalaCirugias() {
     if (!selectedCirugia) return;
     showToast('Editar cirugía (en desarrollo).');
   }
-  // Botones de búsqueda de Dx. ingreso/Id. aseguradora en el paso 1 del
-  // wizard (ver InformacionGeneralStep) -- la ventana de búsqueda de cada
-  // catálogo todavía no está definida (encargo pendiente), así que por ahora
-  // solo avisan por toast, mismo criterio que el resto de acciones stub.
-  function handleBuscarCatalogoCirugia(campo) {
-    const label = campo === 'dxIngreso' ? 'Búsqueda de diagnóstico de ingreso' : 'Búsqueda de aseguradora';
-    showToast(`${label} (en desarrollo).`);
-  }
-
   return (
     <div className="app">
       <Sidebar />
@@ -283,12 +273,6 @@ export default function ProgramacionSalaCirugias() {
                 onSelectDate={handleSelectMiniCalDate}
                 onNuevaCirugia={() => window.openPatientSearch()}
                 onNuevaUrgencia={() => window.openPatientSearch()}
-                selected={selectedCirugia}
-                onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
-                onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
-                onMarcarProgramada={handleMarcarProgramada}
-                onMarcarIncumplida={handleMarcarIncumplida}
-                onVerInfo={handleVerInfo}
               />
             </div>
 
@@ -338,6 +322,9 @@ export default function ProgramacionSalaCirugias() {
         onEditar={handleEditarCirugia}
         onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
         onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
+        onMarcarProgramada={handleMarcarProgramada}
+        onMarcarIncumplida={handleMarcarIncumplida}
+        onVerInfo={handleVerInfo}
       />
 
       <NuevaCitaFlow />
@@ -347,7 +334,6 @@ export default function ProgramacionSalaCirugias() {
           patient={nuevaCirugiaWizardPatient}
           salaId={salaId}
           onClose={() => setNuevaCirugiaWizardPatient(null)}
-          onBuscar={handleBuscarCatalogoCirugia}
         />
       )}
 

@@ -1,0 +1,95 @@
+/* Homologado al look de CatalogoAseguradorasModal.css (buscador + tabla con
+   borde + fila-botón seleccionable + paginación real) -- clases propias
+   (.cmm-*). Ancho 960px (mismas 4 columnas que CatalogoAseguradorasModal:
+   Id./Nombre/Descripción/Sede ~ Id. Tercero/Razón social/Id. Ciudad/Ciudad). */
+.cmm-modal-card{width:960px;}
+.cmm-modal-card > .modal-body{overflow:hidden;}
+.cmm-body{padding:16px 24px 20px;gap:10px;flex:1;min-height:0;}
+
+.cmm-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.cmm-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.cmm-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.cmm-search input::placeholder{color:var(--ink-400);}
+
+.cmm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.cmm-row{
+  display:grid;grid-template-columns:120px 1fr 130px 130px;align-items:center;gap:10px;
+  padding:9px 12px;
+}
+.cmm-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .cmm-row-head{background:#1c2333;}
+
+.cmm-list{flex:1;min-height:0;overflow-y:auto;max-height:400px;}
+.cmm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.cmm-option:last-child{border-bottom:none;}
+.cmm-option:hover{background:var(--bg);}
+.cmm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cmm-option.active{background:var(--primary-50);}
+.cmm-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cmm-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cmm-descripcion{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cmm-sede{font-size:var(--fs-sm);color:var(--ink-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cmm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* ---------- Paginación ----------
+   Mismo patrón numerado que CatalogoAseguradorasModal -- no importado de ahí
+   (feature/modal distinto, ver AGENTS.md "Component organization"), clases
+   propias .cmm-pagination-*. */
+.cmm-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;
+}
+.cmm-pagination-label{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.cmm-pagination-controls{display:flex;align-items:center;gap:4px;}
+.cmm-pagination-nav-btn{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
+}
+.cmm-pagination-nav-btn .icon{width:15px;height:15px;}
+.cmm-pagination-nav-btn:hover{background:var(--gray-bg);border-color:var(--border);}
+.cmm-pagination-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cmm-pagination-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.cmm-pagination-page{
+  min-width:28px;height:28px;padding:0 6px;border-radius:var(--radius);border:1px solid transparent;
+  background:none;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.cmm-pagination-page:hover{background:var(--gray-bg);}
+.cmm-pagination-page:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cmm-pagination-page.active{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.cmm-pagination-ellipsis{color:var(--ink-400);padding:0 4px;font-size:var(--fs-sm);}
+
+/* appearance:none + chevron propio en vez de FormSelect (AGENTS.md, "Selects
+   de formulario" -- los selects de paginación quedan afuera de esa regla),
+   mismo criterio que .caam-pagination-size select. */
+.cmm-pagination-size select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:var(--input-sm);border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);background:var(--surface);padding:0 26px 0 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 6px center;
+}
+.cmm-pagination-size select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+@media (max-width:768px){
+  .cmm-modal-card{width:100%;}
+  .cmm-row{grid-template-columns:90px 1fr 100px 100px;}
+  .cmm-pagination{justify-content:center;text-align:center;}
+}
