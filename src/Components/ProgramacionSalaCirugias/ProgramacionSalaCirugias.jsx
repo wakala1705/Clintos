@@ -116,29 +116,29 @@ export default function ProgramacionSalaCirugias() {
     // propio, así que en modo edición se descarta explícitamente para no
     // dejarla pegada al registro vía el merge de actualizarCirugia.
     const { urgencia, ...datosCirugia } = datos;
-    if (modal.type === 'editar') {
-      const actualizada = actualizarCirugia(modal.cirugia.id, datosCirugia);
+    if (modal?.type === 'editar') {
+      const actualizada = actualizarCirugia(modal?.cirugia?.id, datosCirugia);
       applyUpdated(actualizada);
       setSelectedId(actualizada.id);
       showToast('Cirugía actualizada correctamente.');
     } else {
-      const nueva = crearCirugia({ ...datosCirugia, urgencia: modal.type === 'urgencia' });
+      const nueva = crearCirugia({ ...datosCirugia, urgencia: modal?.type === 'urgencia' });
       applyUpdated(nueva);
       setSelectedId(nueva.id);
-      showToast(modal.type === 'urgencia' ? 'Cirugía de urgencia registrada.' : 'Cirugía creada correctamente.');
+      showToast(modal?.type === 'urgencia' ? 'Cirugía de urgencia registrada.' : 'Cirugía creada correctamente.');
     }
     setModal(null);
   }
 
   function handleSubmitReprogramar(datos) {
-    const actualizada = reprogramarCirugia(modal.cirugia.id, datos);
+    const actualizada = reprogramarCirugia(modal?.cirugia?.id, datos);
     applyUpdated(actualizada);
     setModal(null);
     showToast('Cirugía reprogramada correctamente.');
   }
 
   function handleSubmitCancelar(motivo) {
-    const actualizada = cancelarCirugia(modal.cirugia.id, motivo);
+    const actualizada = cancelarCirugia(modal?.cirugia?.id, motivo);
     applyUpdated(actualizada);
     setModal(null);
     showToast('Cirugía cancelada correctamente.');
@@ -228,17 +228,17 @@ export default function ProgramacionSalaCirugias() {
       {(modal?.type === 'nueva' || modal?.type === 'urgencia' || modal?.type === 'editar') && (
         <NuevaCirugiaModal
           sedeId={sedeId}
-          urgencia={modal.type === 'urgencia'}
-          cirugiaExistente={modal.type === 'editar' ? modal.cirugia : null}
+          urgencia={modal?.type === 'urgencia'}
+          cirugiaExistente={modal?.type === 'editar' ? modal?.cirugia : null}
           onClose={() => setModal(null)}
           onSubmit={handleSubmitCirugiaForm}
         />
       )}
       {modal?.type === 'reprogramar' && (
-        <ReprogramarCirugiaModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitReprogramar} />
+        <ReprogramarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitReprogramar} />
       )}
       {modal?.type === 'cancelar' && (
-        <CancelarCirugiaModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
+        <CancelarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
       )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`}>
