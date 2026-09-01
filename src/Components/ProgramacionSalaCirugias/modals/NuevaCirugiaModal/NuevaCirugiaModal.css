@@ -1,0 +1,19 @@
+.ncm-modal-card{width:680px;}
+.ncm-modal-card .modal-body{overflow-y:auto;}
+.ncm-section-title{margin:4px 0 0;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.ncm-section-title:first-child{margin-top:0;}
+.ncm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
+
+.ncm-checklist{display:flex;flex-wrap:wrap;gap:8px;}
+.ncm-check-option{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+}
+.ncm-check-option:hover{background:var(--bg);}
+.ncm-check-option input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);}
+
+@media (max-width:720px){
+  .ncm-modal-card{width:100%;}
+  .ncm-grid{grid-template-columns:1fr;}
+}
