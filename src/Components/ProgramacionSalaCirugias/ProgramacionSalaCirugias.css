@@ -22,6 +22,27 @@
   --radius:8px;
   --radius-lg:12px;
 
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+
+  --space-2:8px;
+  --space-3:12px;
+  --z-sticky:10;
+  --z-popover:20;
+  --z-modal:50;
+
   --input-sm:32px;
   --input-md:36px;
   --input-lg:44px;
@@ -39,6 +60,16 @@ html[data-theme="dark"]{
   --bg:#0c0f17;
   --gray-fg:#9aa3b2;
   --gray-bg:#242c3d;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
 }
 html[data-contrast="high"]{
   --border:#cbd3dd;
@@ -79,16 +110,4 @@ html[data-theme="dark"] body{background:var(--bg);}
 .psc-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
 .psc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
 
-.psc-empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;padding:56px 24px;text-align:center;flex:1;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-}
-.psc-empty-icon{
-  width:52px;height:52px;border-radius:50%;
-  background:var(--gray-bg);color:var(--ink-500);
-  display:flex;align-items:center;justify-content:center;margin-bottom:4px;
-}
-.psc-empty-icon .icon{width:24px;height:24px;}
-.psc-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);max-width:360px;}
-.psc-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:380px;line-height:1.5;}
+.psc-main-row{display:flex;gap:16px;flex:1;min-height:0;}

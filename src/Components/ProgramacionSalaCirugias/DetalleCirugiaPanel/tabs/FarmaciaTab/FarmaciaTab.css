@@ -1,0 +1,14 @@
+.ft-tab{display:flex;flex-direction:column;gap:10px;}
+.ft-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ft-head-info{display:flex;flex-direction:column;gap:2px;}
+.ft-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.ft-value{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ft-solicitud{font-size:var(--fs-sm);color:var(--ink-500);}
+.ft-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
+.ft-table th{text-align:left;color:var(--ink-500);font-weight:var(--fw-semibold);padding:6px 8px;border-bottom:1px solid var(--border);}
+.ft-table td{padding:7px 8px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.ft-tag{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:12px;white-space:nowrap;}
+.ft-tag-en-preparacion{background:var(--amber-bg);color:var(--amber-fg);}
+.ft-tag-listo{background:var(--blue-bg);color:var(--blue-fg);}
+.ft-tag-entregado{background:var(--green-bg);color:#0d7a3d;}
+html[data-theme="dark"] .ft-tag-entregado{color:var(--green);}

@@ -1,0 +1,13 @@
+.pt-tab{display:flex;flex-direction:column;gap:14px;}
+.pt-meta{display:flex;gap:24px;}
+.pt-meta-item{display:flex;flex-direction:column;gap:2px;}
+.pt-meta-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.pt-meta-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.pt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.pt-item{background:var(--bg);border-radius:var(--radius);padding:10px 12px;}
+.pt-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pt-item-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pt-item-meta{margin-top:4px;font-size:var(--fs-sm);color:var(--ink-500);}
+.pt-badge{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:2px 8px;border-radius:12px;white-space:nowrap;}
+.pt-badge-principal{background:var(--blue-bg);color:var(--blue-fg);}
+.pt-badge-secundario{background:var(--gray-bg);color:var(--gray-fg);}

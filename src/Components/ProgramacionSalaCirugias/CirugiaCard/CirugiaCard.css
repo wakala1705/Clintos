@@ -1,0 +1,20 @@
+.cc-card{
+  display:flex;flex-direction:column;gap:2px;text-align:left;
+  border-radius:6px;border:1px solid var(--border);border-left-width:3px;
+  padding:5px 7px;margin:1px 2px;cursor:pointer;overflow:hidden;
+  font-family:inherit;background:var(--surface);min-width:0;z-index:1;position:relative;
+}
+.cc-card:hover{box-shadow:0 2px 6px rgba(16,24,39,.12);}
+.cc-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cc-card.selected{outline:2px solid var(--primary);outline-offset:1px;z-index:2;}
+
+.cc-horario{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.cc-paciente{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-procedimiento{font-size:var(--fs-xs);color:var(--ink-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-cirujano{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.cc-programada{background:var(--green-bg);border-left-color:var(--green);}
+.cc-borrador{background:var(--blue-bg);border-left-color:var(--blue-fg);}
+.cc-urgencia{background:var(--violet-bg);border-left-color:var(--violet-fg);}
+.cc-cancelada{background:var(--red-bg);border-left-color:var(--red);}
+.cc-incumplida{background:var(--gray-bg);border-left-color:var(--gray-fg);}

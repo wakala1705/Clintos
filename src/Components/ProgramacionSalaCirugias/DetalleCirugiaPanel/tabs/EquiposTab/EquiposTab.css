@@ -1,0 +1,8 @@
+.eqt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.eqt-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:var(--radius);padding:9px 12px;}
+.eqt-name{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.eqt-tag{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:12px;white-space:nowrap;}
+.eqt-tag-disponible{background:var(--green-bg);color:#0d7a3d;}
+html[data-theme="dark"] .eqt-tag-disponible{color:var(--green);}
+.eqt-tag-en-uso{background:var(--blue-bg);color:var(--blue-fg);}
+.eqt-tag-mantenimiento{background:var(--amber-bg);color:var(--amber-fg);}
