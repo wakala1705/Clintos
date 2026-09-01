@@ -151,7 +151,7 @@ export default function NuevaCirugiaModal({
         nombre: form.canastaNombre,
         items: (canastaCatalogo?.items ?? []).map((i) => ({ ...i })),
       },
-      farmacia: esEdicion ? cirugiaExistente.farmacia : {
+      farmacia: esEdicion ? cirugiaExistente?.farmacia : {
         numeroPedido: 'Pendiente', estado: 'en-preparacion', fechaSolicitud: `${fechaISO(new Date())}T00:00`, medicamentos: [],
       },
       urgencia,

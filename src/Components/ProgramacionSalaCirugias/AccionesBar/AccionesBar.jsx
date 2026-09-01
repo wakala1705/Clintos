@@ -41,9 +41,9 @@ export default function AccionesBar({
     };
   }, []);
 
-  const puedeAccionar = Boolean(selected) && !ESTADOS_TERMINALES.includes(selected.estado);
-  const puedeMarcarProgramada = Boolean(selected) && ['borrador', 'urgencia'].includes(selected.estado);
-  const puedeMarcarIncumplida = Boolean(selected) && selected.estado === 'programada';
+  const puedeAccionar = Boolean(selected) && !ESTADOS_TERMINALES.includes(selected?.estado);
+  const puedeMarcarProgramada = Boolean(selected) && ['borrador', 'urgencia'].includes(selected?.estado);
+  const puedeMarcarIncumplida = Boolean(selected) && selected?.estado === 'programada';
 
   return (
     <div className="ab-bar">
