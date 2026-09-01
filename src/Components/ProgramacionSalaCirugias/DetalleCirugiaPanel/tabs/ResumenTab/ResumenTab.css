@@ -1,0 +1,29 @@
+.rt-tab{display:flex;flex-direction:column;gap:14px;}
+.rt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rt-card{
+  background:var(--bg);border-radius:var(--radius);padding:12px 14px;
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.rt-card-title{margin:0;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.rt-card-value{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.rt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+.rt-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:var(--fs-sm);}
+.rt-list-label{color:var(--ink-500);}
+.rt-list-value{color:var(--ink-900);font-weight:var(--fw-medium);text-align:right;}
+.rt-link{
+  align-self:flex-start;background:none;border:none;padding:0;font-family:inherit;cursor:pointer;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);
+}
+.rt-link:hover{text-decoration:underline;}
+.rt-insumos-meta{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--ink-500);}
+.rt-farmacia-estado{font-size:var(--fs-sm);color:var(--ink-700);}
+.rt-tag{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:2px 8px;border-radius:12px;white-space:nowrap;}
+.rt-tag-disponible{background:var(--green-bg);color:#0d7a3d;}
+html[data-theme="dark"] .rt-tag-disponible{color:var(--green);}
+.rt-tag-en-uso{background:var(--blue-bg);color:var(--blue-fg);}
+.rt-tag-mantenimiento{background:var(--amber-bg);color:var(--amber-fg);}
+.rt-tag-faltante{background:var(--red-bg);color:var(--red);}
+
+@media (max-width:1200px){
+  .rt-grid-2{grid-template-columns:1fr;}
+}
