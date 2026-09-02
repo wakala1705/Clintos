@@ -23,7 +23,7 @@ const VIEW_OPTIONS = [
 // que ese dato exista.
 const patientProfile = {};
 
-export default function SignosVitalesTab() {
+export default function SignosVitalesTab({ isAbnormal = isVitalAbnormal }) {
   const [view, setView] = useState('tabla');
   // dateRange queda cableado a UI/estado pero no recorta `readings` — mismo
   // criterio y misma razón que el filtro "Rango" de HojaMedicamentosTab.jsx
@@ -73,7 +73,7 @@ export default function SignosVitalesTab() {
                   <td>{r.fecha}</td>
                   <td>{r.hora}</td>
                   {VITAL_PARAMS.map((p) => (
-                    <td key={p.key} className={isVitalAbnormal(p.key, r[p.key], patientProfile) ? 'svt-cell-alert' : undefined}>
+                    <td key={p.key} className={isAbnormal(p.key, r[p.key], patientProfile) ? 'svt-cell-alert' : undefined}>
                       {r[p.key]}
                     </td>
                   ))}
@@ -89,7 +89,7 @@ export default function SignosVitalesTab() {
 
       {view === 'grafica' && (
         <>
-          <div className="chip-group svt-param-chips">
+          <div className="svt-param-chip-row">
             {VITAL_PARAMS.map((p) => (
               <button
                 key={p.key}
