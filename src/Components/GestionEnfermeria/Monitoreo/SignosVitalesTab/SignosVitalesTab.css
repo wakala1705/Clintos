@@ -1,0 +1,26 @@
+.svt-cell-alert {
+  background: var(--red-bg);
+  color: var(--red);
+  border-radius: 4px;
+}
+/* No usa la clase compartida .chip-group: legacy-app.js instala un
+   handler de single-select sobre todo `.chip-group` presente en el DOM al
+   montar (querySelectorAll('.chip-group:not(#turno-chip-group):not(#via-chip-group)'))
+   que le pelearía al multi-select de React acá si esta fila alguna vez
+   quedara montada sin condicionar a `view === 'grafica'`. Replica solo el
+   layout que tomaba de .chip-group (shared.css) — nada de color/estado, eso
+   sigue viniendo de .chip-filter/.chip-filter.active. */
+.svt-param-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.svt-chip-swatch {
+  width: 10px;
+  height: 3px;
+  display: inline-block;
+  border-radius: 2px;
+  margin-right: 6px;
+}

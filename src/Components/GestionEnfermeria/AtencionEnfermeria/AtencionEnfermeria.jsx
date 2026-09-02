@@ -8,6 +8,7 @@ import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import MedicamentosPanel from '@/Components/GestionEnfermeria/MedicamentosPanel/MedicamentosPanel';
 import OrdenesMedicasPanel from '@/Components/GestionEnfermeria/OrdenesMedicasPanel/OrdenesMedicasPanel';
 import PedidosPanel from '@/Components/GestionEnfermeria/PedidosPanel/PedidosPanel';
+import Monitoreo from '@/Components/GestionEnfermeria/Monitoreo/Monitoreo';
 import Toast from '@/Components/GestionEnfermeria/modals/Toast/Toast';
 import DosePopover from '@/Components/GestionEnfermeria/modals/DosePopover/DosePopover';
 import AdminModal from '@/Components/GestionEnfermeria/modals/AdminModal/AdminModal';
@@ -107,7 +108,7 @@ export default function AtencionEnfermeria({ id }) {
             <LuBox className="icon" aria-hidden="true" />
             Pedidos
           </button>
-          <button type="button" className="card-tab" role="tab" id="tab-monitoreo" aria-selected="false" tabIndex="-1" disabled aria-disabled="true" title="Próximamente">
+          <button type="button" className="card-tab" role="tab" id="tab-monitoreo" aria-selected="false" aria-controls="panel-monitoreo" tabIndex="-1">
             <LuActivity className="icon" aria-hidden="true" />
             Monitoreo
           </button>
@@ -120,6 +121,7 @@ export default function AtencionEnfermeria({ id }) {
         <MedicamentosPanel />
         <PedidosPanel />
         <OrdenesMedicasPanel />
+        <Monitoreo />
       </div>
 
     </div>
