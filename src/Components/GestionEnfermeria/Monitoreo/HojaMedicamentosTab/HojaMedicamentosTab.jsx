@@ -54,9 +54,9 @@ export default function HojaMedicamentosTab() {
   return (
     <div role="tabpanel" id="subpanel-hoja-medicamentos" aria-labelledby="subtab-hoja-medicamentos" tabIndex="0" className="sub-panel active">
       <div className="filter-bar">
-        <FormSelect id="hm-rango" value={rango} onChange={setRango} options={RANGO_OPTIONS} />
-        <FormSelect id="hm-turno" value={turno} onChange={setTurno} options={TURNO_OPTIONS} placeholder="Turno" />
-        <FormSelect id="hm-estado" value={estado} onChange={setEstado} options={ESTADO_OPTIONS} placeholder="Estado" />
+        <FormSelect id="hm-rango" value={rango} onChange={setRango} options={RANGO_OPTIONS} ariaLabel="Rango" />
+        <FormSelect id="hm-turno" value={turno} onChange={setTurno} options={TURNO_OPTIONS} ariaLabel="Turno" />
+        <FormSelect id="hm-estado" value={estado} onChange={setEstado} options={ESTADO_OPTIONS} ariaLabel="Estado" />
         <div className="filter-spacer" />
         <Button
           variant="outline"
