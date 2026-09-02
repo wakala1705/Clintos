@@ -1,0 +1,5 @@
+.vch-wrap {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
