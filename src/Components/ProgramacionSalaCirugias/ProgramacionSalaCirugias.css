@@ -125,12 +125,6 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .psc-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
 .psc-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
 .psc-page-header-actions{display:flex;align-items:center;gap:14px;}
-.psc-finde-toggle{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
-  cursor:pointer;user-select:none;white-space:nowrap;
-}
-.psc-finde-toggle input{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
 
 /* Workspace de 2 columnas (mismo patrón que .pc-workspace en Programar
    cita/ProgramarCita.css): mini-calendario a la izquierda, agenda a la

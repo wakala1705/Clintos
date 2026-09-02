@@ -3,6 +3,7 @@
 import {
   useEffect, useRef, useState,
 } from 'react';
+import { LuSearch } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -252,17 +253,20 @@ export default function ProgramacionSalaCirugias() {
               <p>Agenda y gestiona la ocupación de las salas de cirugía.</p>
             </div>
             <div className="psc-page-header-actions">
-              {vista === 'semana' && (
-                <label className="psc-finde-toggle">
-                  <input
-                    type="checkbox"
-                    checked={mostrarFinesDeSemana}
-                    onChange={(e) => setMostrarFinesDeSemana(e.target.checked)}
-                  />
-                  Mostrar fines de semana
-                </label>
-              )}
-              <VistaDropdown value={vista} onChange={handleChangeVista} />
+              <button
+                type="button"
+                className="icon-btn-circle"
+                aria-label="Buscar"
+                onClick={() => window.ncToast?.('Búsqueda de cirugías en desarrollo.')}
+              >
+                <LuSearch className="icon" />
+              </button>
+              <VistaDropdown
+                value={vista}
+                onChange={handleChangeVista}
+                mostrarFinesDeSemana={mostrarFinesDeSemana}
+                onToggleFinesDeSemana={setMostrarFinesDeSemana}
+              />
             </div>
           </div>
 

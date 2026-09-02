@@ -13,7 +13,7 @@
 .psc-vista-trigger[aria-expanded="true"] .chev{transform:rotate(180deg);}
 
 .psc-vista-menu{
-  position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:150px;
+  position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:216px;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
   display:flex;flex-direction:column;gap:1px;
@@ -27,3 +27,9 @@
 .psc-vista-option:hover{background:var(--bg);}
 .psc-vista-option.active{color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .psc-vista-option .icon{width:16px;height:16px;color:var(--primary);flex-shrink:0;}
+.psc-vista-shortcut{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-400);
+  border:1px solid var(--border);border-radius:5px;
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.psc-vista-divider{height:1px;background:var(--border);margin:5px 2px;}
