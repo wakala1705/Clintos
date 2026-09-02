@@ -1,0 +1,4 @@
+/* Sin reglas propias: .chip-group/.chip-filter/.filter-popover-wrap/
+   .date-picker-btn/.filter-popover/.fp-date-row/.fp-actions ya viven en
+   GestionEnfermeria/shared/shared.css. Este archivo existe solo para
+   cumplir la convención de un .css por componente. */
