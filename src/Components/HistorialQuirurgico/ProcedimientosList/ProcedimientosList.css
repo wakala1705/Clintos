@@ -1,12 +1,3 @@
-.hq-proc-list{display:flex;flex-direction:column;gap:8px;}
-.hq-proc-item{
-  display:flex;flex-direction:column;gap:2px;text-align:left;
-  border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;
-  background:var(--surface);font-family:inherit;cursor:pointer;
-}
-.hq-proc-item:hover{background:var(--bg);}
-.hq-proc-item.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);}
-.hq-proc-item:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.hq-proc-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.hq-proc-item.active .hq-proc-nombre{color:var(--primary-dark);}
-.hq-proc-codigo{font-size:var(--fs-sm);color:var(--ink-500);}
+/* .hq-table-wrap/.data-table/.cell-primary/.cell-muted se resuelven en
+   HistorialQuirurgico/shared/shared.css -- sin reglas propias a este
+   componente. */

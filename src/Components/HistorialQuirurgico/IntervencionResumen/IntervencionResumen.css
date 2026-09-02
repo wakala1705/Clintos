@@ -1,7 +1,4 @@
-.hq-resumen{display:flex;flex-direction:column;gap:10px;}
-.hq-resumen-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.hq-resumen-fecha{font-size:var(--fs-base);color:var(--ink-500);}
-.hq-resumen-meta{display:flex;flex-wrap:wrap;gap:24px;margin-top:4px;}
+.hq-resumen{display:flex;flex-wrap:wrap;align-items:flex-start;gap:28px;}
 .hq-resumen-item{display:flex;flex-direction:column;gap:3px;}
 .hq-resumen-item .lbl{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .hq-resumen-item .val{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

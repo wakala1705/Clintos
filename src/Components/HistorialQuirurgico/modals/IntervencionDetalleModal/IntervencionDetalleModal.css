@@ -1,0 +1,67 @@
+/* Variante "extra grande" de .modal-card (520px por defecto, ver
+   shared/shared.css) -- mismo criterio que .bb-modal-card en
+   GestionEnfermeria/PanelGeneral/BedBoardModal.css: una clase extra encima
+   de .modal-card en vez de un enum de tamaños global. 90vw x 90vh fijo
+   (encargo explícito: "modal extra grande") en vez de un ancho fijo en px +
+   max-width, para que los 3 bloques trasladados desde la página (Detalle de
+   la intervención/Procedimientos realizados/Detalle del procedimiento)
+   tengan tanto espacio como tenían ahí.
+
+   Selector compuesto (.modal-card.hqd-modal-card), no solo .hqd-modal-card:
+   mismo criterio que .modal-body.hqd-modal-body de abajo -- esta regla pisa
+   a .modal-card (definida en shared.css, otro archivo) y su prioridad no
+   puede depender del orden de import/inyección de <style>. */
+.modal-card.hqd-modal-card{width:90vw;height:90vh;max-width:90vw;max-height:90vh;}
+
+/* .modal-body ya trae padding:20px 24px + flex column + gap:16px (ver
+   shared.css) -- acá solo se agrega flex:1/min-height:0 para que ocupe todo
+   el alto sobrante del modal (90vh fijo, ver .hqd-modal-card) en vez de
+   quedar con el alto libre por defecto que .modal-body asume para
+   formularios cortos. Doble clase para ganar por especificidad sin
+   depender del orden de import entre shared.css y este archivo. */
+.modal-body.hqd-modal-body{flex:1;min-height:0;}
+
+/* Los 2 bloques de este modal vivían los dos del padding genérico de
+   `.hq-card` (20px 24px, shared.css) -- acá se independiza cada uno con su
+   propio valor (selector compuesto, mismo criterio que `.modal-card.hqd-modal-card`
+   de arriba) en vez de que ambos seteos queden acoplados al mismo número:
+   la card de resumen es una sola fila de datos y no necesita tanto aire
+   vertical como la card del split (que carga tabla + tabs + su contenido). */
+.hq-card.hqd-resumen-card{padding:14px 24px;}
+.hq-card.hqd-split-card{padding:20px 24px;}
+
+/* Split de 2 columnas para Procedimientos (izquierda) + Detalle del
+   procedimiento (derecha) -- encargo explícito con referencia visual (ver
+   comentario en IntervencionDetalleModal.jsx). Columna izquierda a ancho
+   fijo (320px, igual que .bb-modal-card usa una medida fija para su grilla)
+   -- la derecha, que es la que más varía en contenido según el tab activo
+   (Insumos/Farmacia/Personal/Equipos), se lleva el resto con 1fr. El
+   `border-right` en `.hqd-split-left` se estira solo al alto de la fila del
+   grid (comportamiento por defecto de CSS Grid, align-items:stretch), así
+   que dibuja el divisor vertical completo sin alto fijo a mano, incluso
+   cuando la derecha termina siendo más alta (ej. Insumos con varias filas). */
+.hqd-split{display:grid;grid-template-columns:320px 1fr;gap:24px;}
+.hqd-split-left{
+  display:flex;flex-direction:column;gap:14px;min-width:0;
+  border-right:1px solid var(--border);padding-right:24px;
+}
+.hqd-split-right{min-width:0;}
+/* .data-table td trae white-space:nowrap por defecto (shared.css, pensado
+   para IntervencionesTable: tabla ancha con scroll horizontal) -- acá la
+   columna "Procedimiento" corre en una tabla angosta de 320px de ancho
+   fijo, así que un nombre largo se cortaba sin ninguna pista visual de que
+   seguía (sin scrollbar visible). Se permite el wrap normal en su lugar. */
+.hqd-split-left .data-table td{white-space:normal;}
+/* El label "Procedimientos" reusa .hq-tab/.hq-tabs-bar (ver
+   ProcedimientoDetalle.css) para alinear su altura con la barra de tabs
+   real de la derecha -- no es un botón (no cambia nada al clickearlo), así
+   que se le quita el cursor:pointer que trae .hq-tab por defecto. */
+.hqd-split-left .hq-tab{cursor:default;}
+/* .data-table trae padding pensado para IntervencionesTable (tabla ancha,
+   pantalla completa) -- acá, angosta (320px la izquierda) y con 4 tablas más
+   apiladas en tabs a la derecha, ese mismo padding dejaba las filas con
+   demasiado aire. Se acota vertical y horizontal solo dentro de .hqd-split
+   en vez de tocar la regla global de shared.css (que sí debe mantener su
+   padding en IntervencionesTable). */
+.hqd-split .data-table thead th{padding:8px 12px;}
+.hqd-split .data-table td{padding:7px 12px;}

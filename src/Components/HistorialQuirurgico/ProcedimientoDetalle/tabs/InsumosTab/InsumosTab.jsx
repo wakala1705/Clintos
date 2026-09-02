@@ -14,6 +14,7 @@ export default function InsumosTab({ procedimiento }) {
       <table className="data-table">
         <thead>
           <tr>
+            <th>Id. Servicio</th>
             <th>Insumo</th>
             <th>Cantidad</th>
           </tr>
@@ -21,11 +22,9 @@ export default function InsumosTab({ procedimiento }) {
         <tbody>
           {insumos.map((item) => (
             <tr key={item.codigo}>
-              <td className="cell-primary">
-                {item.nombre}
-                <span className="hq-item-codigo">{item.codigo}</span>
-              </td>
-              <td className="cell-muted">{item.cantidad} {item.unidad}</td>
+              <td className="cell-muted">{item.codigo}</td>
+              <td className="cell-primary">{item.nombre}</td>
+              <td className="cell-muted">{item.cantidad}</td>
             </tr>
           ))}
         </tbody>

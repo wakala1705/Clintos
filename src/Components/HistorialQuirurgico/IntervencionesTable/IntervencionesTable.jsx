@@ -3,18 +3,23 @@
 import './IntervencionesTable.css';
 import EstadoIntervencionBadge from '../EstadoIntervencionBadge/EstadoIntervencionBadge';
 import { fechaHoraCortaLabel } from '@/hooks/HistorialQuirurgico/mockHistorialQuirurgico';
+import { LuEye } from 'react-icons/lu';
 
 // Tabla de escritorio/tablet + tarjetas de mobile del mismo dataset -- CSS
 // decide cuál mostrar bajo 768px (--bp-tablet), mismo patrón que
-// AdmisionesTable/PatientsTable. Selección controlada por el padre
-// (selectedId/onSelect), no estado propio -- el padre también necesita
-// saber qué intervención está activa para derivar Resumen/Procedimientos.
+// AdmisionesTable/PatientsTable. `onSelect` abre IntervencionDetalleModal
+// para esa intervención (ver HistorialQuirurgico.jsx) -- tanto clickear la
+// fila como el botón "Ver detalle" de Acciones llaman al mismo handler, sin
+// dos caminos con resultados distintos (mismo criterio que BedCard/
+// BedActionsMenu en BedBoardModal.jsx). `selectedId` resalta la fila cuyo
+// modal está abierto (null mientras no hay ninguno).
 // Columnas ampliadas a las de un registro de programación completo (encargo
 // explícito) -- sin ID afiliado/Afiliado: esta pantalla ya está en el
 // contexto de un único paciente (PatientBanner arriba), repetirlo por fila
-// era redundante. Con 11 columnas la tabla no entra en el ancho de la
-// card: se apoya en el scroll horizontal que ya trae `.hq-table-wrap`
-// (overflow-x:auto, ver shared.css) en vez de forzar el wrap del texto.
+// era redundante. Con 12 columnas (11 + Acciones) la tabla no entra en el
+// ancho de la card: se apoya en el scroll horizontal que ya trae
+// `.hq-table-wrap` (overflow-x:auto, ver shared.css) en vez de forzar el
+// wrap del texto.
 export default function IntervencionesTable({ intervenciones, selectedId, onSelect }) {
   function handleRowKeyDown(e, id) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -39,6 +44,7 @@ export default function IntervencionesTable({ intervenciones, selectedId, onSele
               <th>Días</th>
               <th>Reservó</th>
               <th>Estado</th>
+              <th className="col-acciones"><span className="sr-only">Acciones</span></th>
             </tr>
           </thead>
           <tbody>
@@ -62,6 +68,17 @@ export default function IntervencionesTable({ intervenciones, selectedId, onSele
                 <td className="cell-muted">{i.dias}</td>
                 <td className="cell-muted">{i.reservo}</td>
                 <td><EstadoIntervencionBadge estado={i.estado} /></td>
+                <td className="col-acciones">
+                  <button
+                    type="button"
+                    className="hq-icon-btn"
+                    onClick={(e) => { e.stopPropagation(); onSelect(i.id); }}
+                    aria-label={`Ver detalle de la cirugía ${i.codigoCirugia}`}
+                    title="Ver detalle"
+                  >
+                    <LuEye className="icon" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

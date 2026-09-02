@@ -3,7 +3,26 @@
    .hq-card: una sección de la pantalla (Intervenciones/Resumen/
    Procedimientos/Detalle del procedimiento). .data-table/.hq-table-wrap:
    tabla de solo lectura reusada por IntervencionesTable y los 4 tabs de
-   ProcedimientoDetalle. */
+   ProcedimientoDetalle. .modal-overlay/.modal-card/.modal-body: base de
+   modal (mismo criterio de duplicación por feature que el resto de tokens,
+   ver AGENTS.md "Modales") -- primer modal de esta feature
+   (IntervencionDetalleModal, ver modals/). */
+.modal-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .15s ease;
+  isolation:isolate;
+}
+.modal-overlay.open{display:flex;opacity:1;}
+.modal-card{
+  background:var(--surface-modal);border-radius:var(--radius-lg);width:520px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+  transform:translateY(8px) scale(.98);opacity:0;transition:transform .15s ease,opacity .15s ease;
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1);opacity:1;}
+.modal-body{padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+
 .hq-card{
   border:1px solid var(--border);border-radius:var(--radius-lg);
   background:var(--surface);padding:20px 24px;
@@ -31,8 +50,7 @@
    así la fila de tabs de "Detalle del procedimiento" de su contenido). */
 .hq-card-header{
   display:flex;align-items:center;gap:10px;
-  padding-bottom:14px;margin-bottom:14px;
-  border-bottom:1px solid var(--border);
+  padding-bottom:14px;
 }
 .hq-card-header h2{margin-bottom:0;}
 .hq-count-badge{
@@ -55,7 +73,7 @@
    (IntervencionesTable); los 4 tabs de solo lectura de ProcedimientoDetalle
    NO son hijos directos (van dentro de .hq-tab-body) y su card no lleva el
    modificador, así que siguen con el inset normal. */
-.hq-card--flush > .hq-table-wrap{margin:0 -24px;}
+.hq-card--flush > .hq-table-wrap{margin:0 -24px;border-top:1px solid var(--border)}
 .hq-table-wrap{overflow-x:auto;}
 .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .data-table thead th{
@@ -68,7 +86,23 @@
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .data-table .cell-muted{color:var(--ink-500);}
-.hq-item-codigo{display:block;font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--ink-400);margin-top:2px;}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Columna de acciones -- hoy solo "Ver detalle" en IntervencionesTable
+   (mismo criterio que .col-acciones/.adm-icon-btn en AdmisionesTable.css).
+   `e.stopPropagation()` en el botón evita que también dispare el onClick de
+   la fila (misma fila ya es clickable, ver .hq-table-wrap.selectable). */
+.col-acciones{width:1%;text-align:center;}
+.hq-icon-btn{
+  width:30px;height:30px;border-radius:7px;border:none;background:transparent;color:var(--ink-500);
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;
+}
+.hq-icon-btn .icon{width:17px;height:17px;}
+.hq-icon-btn:hover{background:var(--gray-bg);color:var(--primary);}
+.hq-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
 /* Filas interactivas -- solo IntervencionesTable envuelve su tabla con
    .hq-table-wrap.selectable; las 4 tablas de solo lectura de

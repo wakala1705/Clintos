@@ -79,6 +79,37 @@ export const INTERVENCIONES = [
           { nombre: 'Monitor multiparámetro', tipo: 'Monitoreo', identificacion: 'EQ-0231' },
         ],
       },
+      // Segundo procedimiento de ejemplo -- encargo explícito para ejercitar
+      // el selector de la izquierda de IntervencionDetalleModal (ProcedimientosList)
+      // con más de una fila, algo que las otras 2 intervenciones no cubren.
+      {
+        id: 'proc-0200018616-2',
+        nombre: 'Colonoscopia total',
+        codigo: '0231302',
+        insumos: [
+          { nombre: 'Cánula nasal adulto', cantidad: 1, unidad: 'unidad', codigo: 'DM000120' },
+          { nombre: 'Catéter heparinizado', cantidad: 1, unidad: 'unidad', codigo: 'DM000152' },
+          { nombre: 'Catéter intravenoso 22G', cantidad: 1, unidad: 'unidad', codigo: 'DM000157' },
+          { nombre: 'Catéter intravenoso 24G', cantidad: 1, unidad: 'unidad', codigo: 'DM000158' },
+          { nombre: 'Compresa estéril 45 x 45', cantidad: 1, unidad: 'unidad', codigo: 'DM000195' },
+          { nombre: 'Electrodos adultos', cantidad: 5, unidad: 'unidades', codigo: 'DM000252' },
+          { nombre: 'Gasa estéril precortada 10x10cm', cantidad: 2, unidad: 'unidades', codigo: 'DM000306' },
+          { nombre: 'Humidificador de oxígeno', cantidad: 1, unidad: 'unidad', codigo: 'DM000345' },
+          { nombre: 'Jeringa 10 ml', cantidad: 5, unidad: 'unidades', codigo: 'DM000362' },
+          { nombre: 'Jeringa 20 ml', cantidad: 1, unidad: 'unidad', codigo: 'DM000363' },
+          { nombre: 'Jeringa 5 ml', cantidad: 3, unidad: 'unidades', codigo: 'DM000364' },
+          { nombre: 'Jeringa 50 ml', cantidad: 1, unidad: 'unidad', codigo: 'DM000365' },
+        ],
+        // Vacío a propósito -- ejercita el empty state de FarmaciaTab (ver spec).
+        farmacia: [],
+        personal: [
+          { nombre: 'Lorena Cecilia Arrieta Yanez', rol: 'Gastroenterólogo', tipoProfesional: 'Médico especialista' },
+          { nombre: 'Jhon Édison Pabón Rico', rol: 'Circulante', tipoProfesional: 'Enfermería' },
+        ],
+        equipos: [
+          { nombre: 'Videocolonoscopio', tipo: 'Video/Imagen', identificacion: 'EQ-0501' },
+        ],
+      },
     ],
   },
   {
