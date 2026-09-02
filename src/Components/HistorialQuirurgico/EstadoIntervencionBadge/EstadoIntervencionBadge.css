@@ -1,0 +1,8 @@
+.hq-estado-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:999px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);
+  color:var(--green);background:var(--green-bg);
+  white-space:nowrap;
+}
+.hq-estado-badge .icon{width:14px;height:14px;}

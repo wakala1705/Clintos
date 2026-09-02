@@ -1,0 +1,40 @@
+/* Estilos cross-cutting de Historial Quirúrgico -- importado una sola vez
+   desde HistorialQuirurgico.jsx (ver AGENTS.md "Component organization").
+   .hq-card: una sección de la pantalla (Intervenciones/Resumen/
+   Procedimientos/Detalle del procedimiento). .data-table/.hq-table-wrap:
+   tabla de solo lectura reusada por IntervencionesTable y los 4 tabs de
+   ProcedimientoDetalle. */
+.hq-card{
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  background:var(--surface);padding:20px 24px;
+}
+.hq-card h2{
+  font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);
+  margin-bottom:14px;
+}
+
+.hq-table-wrap{overflow-x:auto;}
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.data-table thead th{
+  text-align:left;padding:8px 14px;background:var(--bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+}
+.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink-900);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-muted{color:var(--ink-500);}
+.hq-item-codigo{display:block;font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--ink-400);margin-top:2px;}
+
+/* Filas interactivas -- solo IntervencionesTable envuelve su tabla con
+   .hq-table-wrap.selectable; las 4 tablas de solo lectura de
+   ProcedimientoDetalle/tabs no lo usan, sus filas no reaccionan al click. */
+.hq-table-wrap.selectable .data-table tbody tr{cursor:pointer;}
+.hq-table-wrap.selectable .data-table tbody tr:hover{background:var(--bg);}
+.hq-table-wrap.selectable .data-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.hq-table-wrap.selectable .data-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
+.hq-table-wrap.selectable .data-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+@media (max-width:768px){
+  .hq-card{padding:16px;}
+}

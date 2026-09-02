@@ -1,0 +1,11 @@
+.hq-empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:32px 24px;text-align:center;
+}
+.hq-empty-icon{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--gray-bg);color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;margin-bottom:2px;
+}
+.hq-empty-icon .icon{width:20px;height:20px;}
+.hq-empty-title{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);max-width:340px;}
