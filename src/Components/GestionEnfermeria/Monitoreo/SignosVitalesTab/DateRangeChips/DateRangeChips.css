@@ -1,4 +1,13 @@
-/* Sin reglas propias: .chip-group/.chip-filter/.filter-popover-wrap/
-   .date-picker-btn/.filter-popover/.fp-date-row/.fp-actions ya viven en
-   GestionEnfermeria/shared/shared.css. Este archivo existe solo para
-   cumplir la convención de un .css por componente. */
+/* Sin reglas propias para .chip-group/.chip-filter/.filter-popover-wrap/
+   .date-picker-btn/.filter-popover/.fp-date-row/.fp-actions — ya viven en
+   GestionEnfermeria/shared/shared.css.
+
+   .drc-popover sí es propia: legacy-app.js instala un listener
+   `document.addEventListener('click', closeAllPopovers)` que le saca la
+   clase `.open` a todo `.filter-popover.open` de la página en cada click
+   (ver legacy-app.js, closeAllPopovers). Este popover es React puro, no
+   imperativo — depender de `.open` para su visibilidad hacía que legacy lo
+   cerrara apenas se abría (o mid-interacción). Por eso NO usa `.open`;
+   controla su propia visibilidad vía render condicional de React y solo
+   necesita overridear el `display:none` base de `.filter-popover`. */
+.drc-popover { display: block; }

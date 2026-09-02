@@ -55,7 +55,7 @@ export default function DateRangeChips({ value, onChange }) {
         <button
           type="button"
           className="date-picker-btn"
-          onClick={() => setOpen((v) => !v)}
+          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
           aria-haspopup="dialog"
           aria-expanded={open}
         >
@@ -65,7 +65,12 @@ export default function DateRangeChips({ value, onChange }) {
         </button>
 
         {open && (
-          <div className="filter-popover open" role="dialog" aria-label="Seleccionar rango de fechas">
+          <div
+            className="filter-popover drc-popover"
+            role="dialog"
+            aria-label="Seleccionar rango de fechas"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="fp-title">Seleccionar rango de fechas</div>
             <div className="fp-date-row">
               <div className="fp-date-field">
@@ -78,6 +83,10 @@ export default function DateRangeChips({ value, onChange }) {
               </div>
             </div>
             <div className="fp-actions">
+              {/* raw <button className="btn ..."> here, not <Button>: .fp-actions .btn has a
+                  padding override (shared.css) that a CSS-Modules Button component can't be
+                  targeted by without a browser check — see AGENTS.md Botones section on
+                  documented divergences */}
               <button
                 type="button"
                 className="btn btn-secondary"
