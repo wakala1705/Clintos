@@ -21,7 +21,7 @@ export default function EquiposTab({ procedimiento }) {
         </thead>
         <tbody>
           {equipos.map((e) => (
-            <tr key={e.nombre}>
+            <tr key={e.identificacion}>
               <td className="cell-primary">{e.nombre}</td>
               <td className="cell-muted">{e.tipo}</td>
               <td className="cell-muted">{e.identificacion}</td>

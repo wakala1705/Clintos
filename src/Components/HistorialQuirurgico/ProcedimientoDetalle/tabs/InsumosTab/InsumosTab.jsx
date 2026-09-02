@@ -20,7 +20,7 @@ export default function InsumosTab({ procedimiento }) {
         </thead>
         <tbody>
           {insumos.map((item) => (
-            <tr key={item.nombre}>
+            <tr key={item.codigo}>
               <td className="cell-primary">
                 {item.nombre}
                 <span className="hq-item-codigo">{item.codigo}</span>
