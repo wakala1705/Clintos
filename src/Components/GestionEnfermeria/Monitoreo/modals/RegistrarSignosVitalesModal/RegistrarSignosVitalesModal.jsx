@@ -11,6 +11,16 @@ function horaActual() {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+// Fecha en horario LOCAL, no UTC — new Date().toISOString() calcula en UTC
+// y puede correrse al día calendario equivocado para un registro clínico
+// tomado cerca de la medianoche local en cualquier huso horario detrás de
+// UTC (todo el continente americano incluido). Mismo criterio que
+// horaActual() de arriba (getHours()/getMinutes(), no métodos UTC).
+function fechaActual() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export default function RegistrarSignosVitalesModal({ onClose, onConfirm, registradoPor }) {
   const [form, setForm] = useState({
     hora: horaActual(), tas: '', tad: '', fr: '', pulso: '', temp: '', satO2: '', observacion: '',
@@ -29,7 +39,7 @@ export default function RegistrarSignosVitalesModal({ onClose, onConfirm, regist
   function handleSubmit(e) {
     e.preventDefault();
     onConfirm({
-      fecha: new Date().toISOString().slice(0, 10),
+      fecha: fechaActual(),
       hora: form.hora,
       tas: tasNum,
       tad: tadNum,
@@ -66,8 +76,8 @@ export default function RegistrarSignosVitalesModal({ onClose, onConfirm, regist
                 <input id="rsv-tad" type="number" min="0" required value={form.tad} onChange={(e) => set('tad', e.target.value)} />
               </div>
               <div className="form-field">
-                <label htmlFor="rsv-tam">T.A.M. (calculada)</label>
-                <div id="rsv-tam" className="tf-readonly-value">{tam ?? '—'}</div>
+                <label id="rsv-tam-label">T.A.M. (calculada)</label>
+                <div className="tf-readonly-value" aria-labelledby="rsv-tam-label">{tam ?? '—'}</div>
               </div>
               <div className="form-field">
                 <label htmlFor="rsv-fr">F.R.</label>
@@ -90,8 +100,8 @@ export default function RegistrarSignosVitalesModal({ onClose, onConfirm, regist
                 <input id="rsv-hora" type="time" required value={form.hora} onChange={(e) => set('hora', e.target.value)} />
               </div>
               <div className="form-field">
-                <label htmlFor="rsv-registrado-por">Registrado por</label>
-                <div id="rsv-registrado-por" className="tf-readonly-value">{registradoPor}</div>
+                <label id="rsv-registrado-por-label">Registrado por</label>
+                <div className="tf-readonly-value" aria-labelledby="rsv-registrado-por-label">{registradoPor}</div>
               </div>
               <div className="form-field full">
                 <label htmlFor="rsv-observacion">Observación</label>
