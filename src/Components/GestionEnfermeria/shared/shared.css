@@ -556,6 +556,26 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
   isolation:isolate;
 }
 .filter-popover.open{display:block;}
+
+/* ---------- Segmented control (toggle de 2+ opciones) ----------
+   Consumido por el toggle Timeline/Lista de MedicamentosPanel.jsx y por
+   GestionEnfermeria/shared/ViewToggle/ViewToggle.jsx (Monitoreo → Signos
+   vitales, Tabla/Gráfica) — un solo origen para que ambos no diverjan. */
+.segmented-control{
+  display:flex;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;width:max-content;
+}
+.segmented-btn{
+  border:none;background:var(--surface);color:var(--ink-700);
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  padding:8px 12px;cursor:pointer;white-space:nowrap;
+}
+.segmented-btn:not(:last-child){border-right:1px solid var(--border);}
+.segmented-btn:hover{background:#f3f5f9;}
+.segmented-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);font-weight:var(--fw-bold);}
+html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .filter-popover-wide{min-width:300px;}
 .filter-popover-right{left:auto;right:0;}
 .fp-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:12px;}
