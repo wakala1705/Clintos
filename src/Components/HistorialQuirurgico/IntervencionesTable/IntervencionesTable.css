@@ -1,0 +1,20 @@
+/* .hq-table-wrap/.data-table se resuelven en HistorialQuirurgico/shared/
+   shared.css. */
+.hq-interv-cards{display:none;flex-direction:column;gap:10px;}
+
+.hq-interv-card{
+  border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;
+  display:flex;flex-direction:column;gap:6px;cursor:pointer;background:var(--surface);
+}
+.hq-interv-card:hover{background:var(--bg);}
+.hq-interv-card.selected{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);}
+.hq-interv-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.hq-interv-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hq-interv-card-fecha{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);}
+.hq-interv-card-codigo{font-size:var(--fs-sm);color:var(--ink-500);}
+.hq-interv-card-medico{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+@media (max-width:768px){
+  .hq-table-wrap{display:none;}
+  .hq-interv-cards{display:flex;}
+}
