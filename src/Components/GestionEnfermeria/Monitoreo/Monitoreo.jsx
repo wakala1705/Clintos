@@ -1,4 +1,5 @@
 import './Monitoreo.css';
+import HojaMedicamentosTab from './HojaMedicamentosTab/HojaMedicamentosTab';
 
 // Shell del tab "Monitoreo": subnav Hoja de medicamentos/Signos vitales,
 // mismo mecanismo genérico que ya usa PedidosPanel (legacy-app.js:882-910
@@ -17,9 +18,7 @@ export default function Monitoreo() {
         </button>
       </div>
 
-      <div role="tabpanel" id="subpanel-hoja-medicamentos" aria-labelledby="subtab-hoja-medicamentos" tabIndex="0" className="sub-panel active">
-        Hoja de medicamentos (en construcción)
-      </div>
+      <HojaMedicamentosTab />
       <div role="tabpanel" id="subpanel-signos-vitales" aria-labelledby="subtab-signos-vitales" tabIndex="0" className="sub-panel">
         Signos vitales (en construcción)
       </div>
