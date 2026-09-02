@@ -1,0 +1,118 @@
+/* Tokens + reset del shell duplicados aquí siguiendo el mismo criterio que
+   ProgramacionSalaCirugias.css/Admisiones.css (cada feature de nivel
+   superior es dueña de su propia copia) -- ver AGENTS.md. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --radius:8px;
+  --radius-lg:12px;
+
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+
+  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+
+  --space-2:8px;
+  --space-3:12px;
+  --z-sticky:10;
+  --z-popover:20;
+  --z-modal:50;
+
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+}
+html[data-contrast="high"]{
+  --border:#cbd3dd;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#9aa5b8;
+}
+
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{
+  padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+  flex:1;min-height:0;
+  overflow:hidden;
+}
+
+/* La cabecera (PacienteHeader) queda fija -- solo .hq-body scrollea, mismo
+   criterio que .fp-sections en FichaPaciente.css (contexto permanente
+   arriba, contenido largo scrolleable debajo). */
+.hq-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding-right:2px;}
