@@ -1,0 +1,85 @@
+// Datos mock de la pantalla Monitoreo (Atención de Enfermería) — sin
+// persistencia real, ver docs/superpowers/specs/2026-09-02-monitoreo-atencion-enfermeria-design.md.
+
+export const HOJA_MEDICAMENTOS = [
+  {
+    id: 'hm-1',
+    medicamento: { nombre: 'Paracetamol', dosis: '500 mg', via: 'VO', frecuencia: 'c/8h' },
+    programado: '08:00',
+    real: '08:05',
+    administradoPor: 'Marcela Ríos',
+    estado: 'administered',
+    nota: null,
+    turno: 'manana',
+  },
+  {
+    id: 'hm-2',
+    medicamento: { nombre: 'Ondansetrón', dosis: '4 mg', via: 'IV', frecuencia: 'c/8h' },
+    programado: '10:00',
+    real: null,
+    administradoPor: null,
+    estado: 'incident',
+    nota: 'Paciente presentó náuseas antes de la administración.',
+    turno: 'manana',
+  },
+  {
+    id: 'hm-3',
+    medicamento: { nombre: 'Dexametasona', dosis: '4 mg', via: 'IV', frecuencia: 'c/12h' },
+    programado: '06:00',
+    real: '06:10',
+    administradoPor: 'Marcela Ríos',
+    estado: 'administered',
+    nota: null,
+    turno: 'manana',
+  },
+  {
+    id: 'hm-4',
+    medicamento: { nombre: 'Morfina', dosis: '2 mg', via: 'IV', frecuencia: 'c/6h' },
+    programado: '12:00',
+    real: null,
+    administradoPor: null,
+    estado: 'suspended',
+    nota: 'Suspendido por orden médica — dolor controlado.',
+    turno: 'tarde',
+  },
+  {
+    id: 'hm-5',
+    medicamento: { nombre: 'Enoxaparina', dosis: '40 mg', via: 'SC', frecuencia: 'c/24h' },
+    programado: '20:00',
+    real: '20:05',
+    administradoPor: 'Julián Pardo',
+    estado: 'administered',
+    nota: null,
+    turno: 'noche',
+  },
+];
+
+export const VITALES_READINGS = [
+  {
+    id: 'vt-1',
+    fecha: '2026-09-02',
+    hora: '08:00',
+    tas: 120, tad: 80, tam: 93, fr: 16, pulso: 78, temp: 36.8, satO2: 98,
+    tomadoPor: 'Marcela Ríos',
+    observacion: null,
+    areaFuncional: 'Hospitalización',
+  },
+  {
+    id: 'vt-2',
+    fecha: '2026-09-02',
+    hora: '12:00',
+    tas: 150, tad: 95, tam: 113, fr: 18, pulso: 92, temp: 37.1, satO2: 96,
+    tomadoPor: 'Marcela Ríos',
+    observacion: 'Paciente refiere cefalea leve.',
+    areaFuncional: 'Hospitalización',
+  },
+  {
+    id: 'vt-3',
+    fecha: '2026-09-02',
+    hora: '16:00',
+    tas: 118, tad: 76, tam: 90, fr: 15, pulso: 74, temp: 36.6, satO2: 91,
+    tomadoPor: 'Julián Pardo',
+    observacion: null,
+    areaFuncional: 'Hospitalización',
+  },
+];
