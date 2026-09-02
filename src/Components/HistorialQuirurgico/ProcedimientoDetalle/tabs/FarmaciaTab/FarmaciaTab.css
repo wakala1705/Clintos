@@ -1,0 +1,7 @@
+/* .hq-table-wrap/.data-table se resuelven en HistorialQuirurgico/shared/
+   shared.css. */
+.hq-farmacia-estado{
+  display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);background:var(--gray-bg);
+  white-space:nowrap;
+}
