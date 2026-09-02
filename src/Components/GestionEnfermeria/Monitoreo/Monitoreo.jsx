@@ -1,11 +1,13 @@
 import './Monitoreo.css';
 import HojaMedicamentosTab from './HojaMedicamentosTab/HojaMedicamentosTab';
+import SignosVitalesTab from './SignosVitalesTab/SignosVitalesTab';
 
 // Shell del tab "Monitoreo": subnav Hoja de medicamentos/Signos vitales,
 // mismo mecanismo genérico que ya usa PedidosPanel (legacy-app.js:882-910
 // resuelve el show/hide de cualquier .subnav-bar/.sub-panel encontrado al
-// montar — no hace falta tocar legacy-app.js). Contenido real de cada
-// subtab llega en tareas siguientes de este plan.
+// montar — no hace falta tocar legacy-app.js). Ambos subtabs ya montan su
+// contenido real (HojaMedicamentosTab y SignosVitalesTab); este shell solo
+// resuelve el subnav y mantiene ambos montados.
 export default function Monitoreo() {
   return (
     <div role="tabpanel" id="panel-monitoreo" aria-labelledby="tab-monitoreo" tabIndex="0" className="tab-panel">
@@ -19,9 +21,7 @@ export default function Monitoreo() {
       </div>
 
       <HojaMedicamentosTab />
-      <div role="tabpanel" id="subpanel-signos-vitales" aria-labelledby="subtab-signos-vitales" tabIndex="0" className="sub-panel">
-        Signos vitales (en construcción)
-      </div>
+      <SignosVitalesTab />
     </div>
   );
 }

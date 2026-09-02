@@ -1,0 +1,15 @@
+.svt-cell-alert {
+  background: var(--red-bg);
+  color: var(--red);
+  border-radius: 4px;
+}
+.svt-param-chips {
+  margin-bottom: 12px;
+}
+.svt-chip-swatch {
+  width: 10px;
+  height: 3px;
+  display: inline-block;
+  border-radius: 2px;
+  margin-right: 6px;
+}
