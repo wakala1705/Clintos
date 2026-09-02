@@ -1,0 +1,4 @@
+/* Sin reglas propias: .dp-status-badge/.st-*/.dot ya viven en
+   GestionEnfermeria/shared/shared.css (importado una vez desde
+   AtencionEnfermeria.jsx) — este archivo existe solo para cumplir la
+   convención de un .css por componente. */
