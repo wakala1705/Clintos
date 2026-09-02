@@ -34,8 +34,9 @@ export default function BuscarPacienteModal({ onSelect, onClose }) {
 
   const qTrim = query.trim();
   const qNorm = normalizar(qTrim);
+  const qDigits = qTrim.replace(/\D/g, '');
   const filtered = PATIENTS.filter((p) => (
-    !qNorm || normalizar(p.nombre).includes(qNorm) || p.documento.includes(qTrim)
+    !qNorm || normalizar(p.nombre).includes(qNorm) || (qDigits && p.documento.replace(/\D/g, '').includes(qDigits))
   ));
 
   function handleConfirm() {

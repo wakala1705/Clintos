@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './HistorialQuirurgico.css';
 import './shared/shared.css';
+import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import PacienteHeader from './PacienteHeader/PacienteHeader';
@@ -19,6 +20,11 @@ import { PACIENTE_DEMO, INTERVENCIONES } from '@/hooks/HistorialQuirurgico/mockH
 // (encargo explícito -- no existe historial real por cada uno de los ~46
 // pacientes mock de ListaPacientes).
 export default function HistorialQuirurgico() {
+  useEffect(() => {
+    const cleanupChrome = initShellChrome({ startCollapsed: true });
+    return () => cleanupChrome?.();
+  }, []);
+
   const [selectedIntervencionId, setSelectedIntervencionId] = useState(INTERVENCIONES[0]?.id ?? null);
   const [selectedProcedimientoId, setSelectedProcedimientoId] = useState(
     INTERVENCIONES[0]?.procedimientos[0]?.id ?? null,
@@ -44,7 +50,7 @@ export default function HistorialQuirurgico() {
 
       <div className="main">
         <Topbar
-          section="Hospitalización"
+          section={['Hospitalización', { label: 'Programación sala de cirugías', href: '/programacion-sala-cirugias' }]}
           page="Historial quirúrgico"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
