@@ -1,0 +1,13 @@
+.hq-detalle{display:flex;flex-direction:column;gap:14px;}
+
+.hq-tabs-bar{display:flex;gap:4px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.hq-tab{
+  padding:9px 14px;border:none;background:none;cursor:pointer;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.hq-tab:hover{color:var(--ink-900);}
+.hq-tab.active{color:var(--primary-dark);font-weight:var(--fw-semibold);border-bottom-color:var(--primary);}
+.hq-tab:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.hq-tab-body{min-height:0;}
