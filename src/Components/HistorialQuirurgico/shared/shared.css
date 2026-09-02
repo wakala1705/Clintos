@@ -8,19 +8,63 @@
   border:1px solid var(--border);border-radius:var(--radius-lg);
   background:var(--surface);padding:20px 24px;
 }
+/* Modificador para la card cuya última pieza es una tabla al ras (ver
+   .hq-card > .hq-table-wrap más abajo) -- sin padding-bottom para que la
+   tabla llegue al borde inferior de la card. NO usar aquí el truco de
+   margin negativo + overflow:hidden en `.hq-card`: con overflow:hidden un
+   margin-bottom negativo en el último hijo encoge el auto-height de la card
+   (el margin negativo resta del cálculo de alto aunque el contenido real
+   sea más alto) y termina recortando filas de la tabla -- bug real
+   encontrado al implementar esto la primera vez. Quitar el padding en vez
+   de "restarlo" con margin evita ese problema por completo. */
+.hq-card--flush{padding-bottom:0;}
 .hq-card h2{
   font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);
   margin-bottom:14px;
 }
+/* Fila de título + badge de conteo -- hoy solo la usa el título de
+   "Intervenciones quirúrgicas" (ver HistorialQuirurgico.jsx), en
+   .hq-card-header para no forzar el margin-bottom de `.hq-card h2` a las
+   secciones que solo llevan un `<h2>` suelto. Lleva su propio borde inferior
+   para separar visualmente el título de la tabla dentro de la misma card
+   (mismo criterio que .hq-tabs-bar en ProcedimientoDetalle.css, que separa
+   así la fila de tabs de "Detalle del procedimiento" de su contenido). */
+.hq-card-header{
+  display:flex;align-items:center;gap:10px;
+  padding-bottom:14px;margin-bottom:14px;
+  border-bottom:1px solid var(--border);
+}
+.hq-card-header h2{margin-bottom:0;}
+.hq-count-badge{
+  background:var(--gray-bg);color:var(--gray-fg);border-radius:20px;padding:2px 10px;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);white-space:nowrap;
+}
 
+/* Mismo lenguaje visual que las tablas de referencia del proyecto
+   (Admisiones/AdmisionesTable.css, GestionEnfermeria/PatientsTable.css) --
+   header uppercase gris + fila con borde claro (--gray-bg, no --border: ese
+   queda para el borde del header, más oscuro) + celda de énfasis en
+   --fw-semibold (confirmado contra esas dos referencias reales; --fw-medium
+   fue una lectura literal equivocada de la tabla de AGENTS.md "Tipografía",
+   revertida acá). */
+/* Rompe el padding lateral de `.hq-card--flush` para que la tabla llegue a
+   los bordes izquierdo/derecho/inferior de la card (mismas referencias de
+   arriba: ahí la tabla es todo el ancho de su contenedor, sin gutter
+   propio) en vez de quedar como una isla flotando dentro del padding --
+   solo aplica cuando `.hq-table-wrap` es hijo directo de una `.hq-card--flush`
+   (IntervencionesTable); los 4 tabs de solo lectura de ProcedimientoDetalle
+   NO son hijos directos (van dentro de .hq-tab-body) y su card no lleva el
+   modificador, así que siguen con el inset normal. */
+.hq-card--flush > .hq-table-wrap{margin:0 -24px;}
 .hq-table-wrap{overflow-x:auto;}
 .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .data-table thead th{
-  text-align:left;padding:8px 14px;background:var(--bg);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  text-align:left;padding:12px 16px;background:var(--bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+  white-space:nowrap;
 }
-.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink-900);}
+.data-table td{padding:10px 16px;border-bottom:1px solid var(--gray-bg);vertical-align:middle;color:var(--ink-700);white-space:nowrap;}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .data-table .cell-muted{color:var(--ink-500);}
@@ -37,4 +81,9 @@
 
 @media (max-width:768px){
   .hq-card{padding:16px;}
+  /* Bajo --bp-tablet, IntervencionesTable esconde la tabla y muestra
+     .hq-interv-cards en su lugar (ver IntervencionesTable.css) -- el
+     modificador "flush" ya no aplica, esa lista de tarjetas necesita el
+     padding normal de la card como cualquier otra sección. */
+  .hq-card--flush{padding-bottom:16px;}
 }

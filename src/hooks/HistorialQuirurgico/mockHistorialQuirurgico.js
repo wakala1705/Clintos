@@ -4,9 +4,23 @@
 // intervenciones ya realizadas, sin funciones de mutación (nada se puede
 // crear/editar/eliminar acá, ver spec).
 
+// Forma completa de PatientBanner (ver PatientBanner.jsx) -- encargo
+// explícito: el header propio (PacienteHeader, nombre+ID de afiliado) se
+// reemplazó por el banner de identidad global que ya usan Asignación de
+// Citas/Gestión de Enfermería/Historia Clínica, así que este paciente de
+// demo necesita los mismos campos que esos mocks (documento/edad/sexo/eps),
+// no solo nombre+idAfiliado.
 export const PACIENTE_DEMO = {
+  iniciales: 'BP',
   nombre: 'Berrocal Payares Yuri del Carmen',
-  idAfiliado: '55222523',
+  documento: '55.222.523',
+  edad: '41 años',
+  sexo: 'Femenino',
+  eps: 'Nueva EPS',
+  ciudad: 'Cartagena de Indias',
+  direccion: 'Carrera 8 # 24-15',
+  telefono: '300 812 4567',
+  email: 'yuri.berrocal@example.com',
 };
 
 const MESES_ABREV = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -23,11 +37,17 @@ export function fechaHoraCortaLabel(fechaISO, hora) {
 export const INTERVENCIONES = [
   {
     id: 'cirugia-0200018616',
+    numeroProgramacion: '0300012458',
     codigoCirugia: '0200018616',
     fecha: '2023-10-25',
     horaInicio: '14:15',
     procedimientoPrincipal: 'Colecistectomía laparoscópica',
+    idMedico: 'MED-1042',
     medico: 'Lorena Cecilia Arrieta Yanez',
+    idServicio: '0231301',
+    habitacion: '304-A',
+    dias: 2,
+    reservo: 'Camila Andrea Ríos Peña',
     sala: '01',
     quirofano: '#1',
     estado: 'realizada',
@@ -63,11 +83,17 @@ export const INTERVENCIONES = [
   },
   {
     id: 'cirugia-0200019747',
+    numeroProgramacion: '0300012604',
     codigoCirugia: '0200019747',
     fecha: '2023-11-21',
     horaInicio: '11:05',
     procedimientoPrincipal: 'Exploración y descompresión del canal raquídeo',
+    idMedico: 'MED-1078',
     medico: 'Humberto Alfonso Aragón González',
+    idServicio: '030208C',
+    habitacion: '212-B',
+    dias: 4,
+    reservo: 'Daniel Esteban Coronado Ruiz',
     sala: '01',
     quirofano: '#1',
     estado: 'realizada',
@@ -104,11 +130,17 @@ export const INTERVENCIONES = [
   },
   {
     id: 'cirugia-0200019776',
+    numeroProgramacion: '0300012605',
     codigoCirugia: '0200019776',
     fecha: '2023-11-21',
     horaInicio: '02:00',
     procedimientoPrincipal: 'Artroplastia total de cadera',
+    idMedico: 'MED-1103',
     medico: 'Diego Alejandro Quintero Rueda',
+    idServicio: '815200',
+    habitacion: '108-A',
+    dias: 5,
+    reservo: 'Valentina Ospina Salgado',
     sala: '02',
     quirofano: '#1',
     estado: 'realizada',

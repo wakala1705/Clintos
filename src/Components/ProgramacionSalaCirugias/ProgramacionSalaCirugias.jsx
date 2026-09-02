@@ -20,7 +20,6 @@ import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
-import BuscarPacienteModal from './modals/BuscarPacienteModal/BuscarPacienteModal';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -89,16 +88,36 @@ export default function ProgramacionSalaCirugias() {
 
   // Mismo flujo compartido de búsqueda/alta de pacientes que Asignación de
   // citas/Programar cita/Admisiones (.ps-overlay/.ap-overlay, ver
-  // NuevaCitaFlow.jsx y AGENTS.md) -- "+ Programar cirugía"/"Nueva urgencia"
-  // arrancan acá en vez de un formulario propio (ver ProgramarCirugiaDropdown
-  // más abajo). `onPatientConfirmed` es lo que separa este uso del de citas:
-  // normalmente elegir/crear un paciente encadena directo al wizard de
-  // agendamiento (ncOpen) -- acá en cambio abre NuevaCirugiaWizard (mismo
+  // NuevaCitaFlow.jsx y AGENTS.md) -- "+ Programar cirugía"/"Nueva urgencia" Y
+  // el ícono "Buscar" del header (acceso a Historial Quirúrgico) arrancan
+  // acá en vez de cada uno con su propio modal (encargo explícito: antes el
+  // ícono de búsqueda abría un BuscarPacienteModal propio con otro look,
+  // divergente del buscador que ya usa "Programar cirugía" -- ver
+  // ProgramarCirugiaDropdown más abajo). `onPatientConfirmed` es lo que
+  // separa este uso del de citas: normalmente elegir/crear un paciente
+  // encadena directo al wizard de agendamiento (ncOpen) -- acá en cambio
+  // bifurca según qué botón abrió el buscador (patientSearchIntentRef):
+  // NuevaCirugiaWizard para "+ Programar cirugía"/"Nueva urgencia" (mismo
   // criterio que handlePatientConfirmed en Admisiones.jsx, adaptado a un
-  // wizard propio en vez de continuar un formulario de una sola pantalla).
+  // wizard propio en vez de continuar un formulario de una sola pantalla),
+  // o navegar a Historial Quirúrgico para el ícono "Buscar".
   const nuevaCirugiaPatientRef = useRef(null);
   const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
+  const patientSearchIntentRef = useRef('cirugia');
+  // `paciente` viene del buscador legacy (.ps-overlay) -- ese registro no
+  // trae `id`, solo `documento` (ver PATIENTS en legacy-nueva-cita.js), así
+  // que la ruta usa el documento. El `[id]` de la ruta se ignora igual
+  // dentro de HistorialQuirurgico.jsx (contenido clínico siempre fijo, ver
+  // ese componente), así que cualquier identificador único sirve acá.
+  function handleSeleccionarPacienteHistorial(paciente) {
+    router.push(`/historial-quirurgico/${encodeURIComponent(paciente.documento)}`);
+  }
   function handlePatientConfirmedParaCirugia(patient) {
+    if (patientSearchIntentRef.current === 'historial') {
+      patientSearchIntentRef.current = 'cirugia';
+      handleSeleccionarPacienteHistorial(patient);
+      return;
+    }
     setNuevaCirugiaWizardPatient(patient);
   }
 
@@ -116,7 +135,10 @@ export default function ProgramacionSalaCirugias() {
     };
     // Se inicializa una sola vez al montar (mismo criterio que
     // initShellChrome arriba): handlePatientConfirmedParaCirugia solo llama
-    // a un setState (identidad estable entre renders).
+    // a un setState o a router.push (identidad estable entre renders, ver
+    // useRouter() de Next.js) y lee el ref de intención en el momento de la
+    // confirmación, no al montar.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -238,10 +260,6 @@ export default function ProgramacionSalaCirugias() {
     if (!selectedCirugia) return;
     showToast('Editar cirugía (en desarrollo).');
   }
-  function handleSeleccionarPacienteHistorial(paciente) {
-    setModal(null);
-    router.push(`/historial-quirurgico/${paciente.id}`);
-  }
   return (
     <div className="app">
       <Sidebar />
@@ -264,7 +282,10 @@ export default function ProgramacionSalaCirugias() {
                 type="button"
                 className="icon-btn-circle"
                 aria-label="Buscar"
-                onClick={() => setModal({ type: 'buscarPaciente' })}
+                onClick={() => {
+                  patientSearchIntentRef.current = 'historial';
+                  window.openPatientSearch();
+                }}
               >
                 <LuSearch className="icon" />
               </button>
@@ -353,9 +374,6 @@ export default function ProgramacionSalaCirugias() {
       )}
       {modal?.type === 'cancelar' && (
         <CancelarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
-      )}
-      {modal?.type === 'buscarPaciente' && (
-        <BuscarPacienteModal onClose={() => setModal(null)} onSelect={handleSeleccionarPacienteHistorial} />
       )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`}>

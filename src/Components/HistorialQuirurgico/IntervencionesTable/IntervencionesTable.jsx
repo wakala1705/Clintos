@@ -9,6 +9,12 @@ import { fechaHoraCortaLabel } from '@/hooks/HistorialQuirurgico/mockHistorialQu
 // AdmisionesTable/PatientsTable. Selección controlada por el padre
 // (selectedId/onSelect), no estado propio -- el padre también necesita
 // saber qué intervención está activa para derivar Resumen/Procedimientos.
+// Columnas ampliadas a las de un registro de programación completo (encargo
+// explícito) -- sin ID afiliado/Afiliado: esta pantalla ya está en el
+// contexto de un único paciente (PatientBanner arriba), repetirlo por fila
+// era redundante. Con 11 columnas la tabla no entra en el ancho de la
+// card: se apoya en el scroll horizontal que ya trae `.hq-table-wrap`
+// (overflow-x:auto, ver shared.css) en vez de forzar el wrap del texto.
 export default function IntervencionesTable({ intervenciones, selectedId, onSelect }) {
   function handleRowKeyDown(e, id) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -22,9 +28,16 @@ export default function IntervencionesTable({ intervenciones, selectedId, onSele
         <table className="data-table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Cirugía</th>
+              <th>N° Programación</th>
+              <th>ID Cirugía</th>
+              <th>Fecha y hora</th>
+              <th>ID Médico</th>
               <th>Médico</th>
+              <th>ID Servicio</th>
+              <th>Descripción de Servicio</th>
+              <th>Habitación</th>
+              <th>Días</th>
+              <th>Reservó</th>
               <th>Estado</th>
             </tr>
           </thead>
@@ -38,9 +51,16 @@ export default function IntervencionesTable({ intervenciones, selectedId, onSele
                 onClick={() => onSelect(i.id)}
                 onKeyDown={(e) => handleRowKeyDown(e, i.id)}
               >
+                <td className="cell-muted">{i.numeroProgramacion}</td>
+                <td className="cell-muted">{i.codigoCirugia}</td>
                 <td className="cell-primary">{fechaHoraCortaLabel(i.fecha, i.horaInicio)}</td>
-                <td className="cell-muted">Cirugía {i.codigoCirugia}</td>
+                <td className="cell-muted">{i.idMedico}</td>
                 <td className="cell-muted">{i.medico}</td>
+                <td className="cell-muted">{i.idServicio}</td>
+                <td className="cell-muted">{i.procedimientoPrincipal}</td>
+                <td className="cell-muted">{i.habitacion}</td>
+                <td className="cell-muted">{i.dias}</td>
+                <td className="cell-muted">{i.reservo}</td>
                 <td><EstadoIntervencionBadge estado={i.estado} /></td>
               </tr>
             ))}

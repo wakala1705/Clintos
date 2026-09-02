@@ -6,15 +6,17 @@ import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import PacienteHeader from './PacienteHeader/PacienteHeader';
+import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import IntervencionesTable from './IntervencionesTable/IntervencionesTable';
 import IntervencionResumen from './IntervencionResumen/IntervencionResumen';
 import ProcedimientosList from './ProcedimientosList/ProcedimientosList';
 import ProcedimientoDetalle from './ProcedimientoDetalle/ProcedimientoDetalle';
 import { PACIENTE_DEMO, INTERVENCIONES } from '@/hooks/HistorialQuirurgico/mockHistorialQuirurgico';
 
-// Pantalla de solo consulta -- sin mutaciones, sin modales de detalle, todo
-// apilado en una sola página con scroll (ver spec). El `id` de la ruta
+// Pantalla de solo consulta -- sin mutaciones, todo apilado en una sola
+// página con scroll (ver spec). El único modal es "Ver más" de PatientBanner
+// (PatientDetailModal, propio de ese componente global) -- ninguna sección
+// de esta pantalla abre uno propio. El `id` de la ruta
 // (src/app/historial-quirurgico/[id]/page.jsx) no llega hasta acá a
 // propósito: el contenido clínico es siempre el mismo dataset de demo fijo
 // (encargo explícito -- no existe historial real por cada uno de los ~46
@@ -56,11 +58,16 @@ export default function HistorialQuirurgico() {
         />
 
         <div className="content">
-          <PacienteHeader paciente={PACIENTE_DEMO} totalIntervenciones={INTERVENCIONES.length} />
+          <PatientBanner patient={PACIENTE_DEMO} />
 
           <div className="hq-body">
-            <section className="hq-card">
-              <h2>Intervenciones quirúrgicas</h2>
+            <section className="hq-card hq-card--flush">
+              <div className="hq-card-header">
+                <h2>Intervenciones quirúrgicas</h2>
+                <span className="hq-count-badge">
+                  {INTERVENCIONES.length} {INTERVENCIONES.length === 1 ? 'intervención' : 'intervenciones'}
+                </span>
+              </div>
               <IntervencionesTable
                 intervenciones={INTERVENCIONES}
                 selectedId={selectedIntervencionId}

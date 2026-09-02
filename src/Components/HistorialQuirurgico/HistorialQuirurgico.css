@@ -112,7 +112,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   overflow:hidden;
 }
 
-/* La cabecera (PacienteHeader) queda fija -- solo .hq-body scrollea, mismo
+/* La cabecera (PatientBanner) queda fija -- solo .hq-body scrollea, mismo
    criterio que .fp-sections en FichaPaciente.css (contexto permanente
    arriba, contenido largo scrolleable debajo). */
 .hq-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding-right:2px;}

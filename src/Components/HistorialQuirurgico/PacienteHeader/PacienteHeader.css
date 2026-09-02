@@ -1,5 +1,0 @@
-.hq-header{flex-shrink:0;padding-bottom:4px;}
-.hq-header-patient{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.hq-header-affiliate{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-.hq-header h1{font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;margin-top:14px;}
-.hq-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
