@@ -3,6 +3,7 @@
 import {
   useEffect, useRef, useState,
 } from 'react';
+import { useRouter } from 'next/navigation';
 import { LuSearch } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
@@ -19,6 +20,7 @@ import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
+import BuscarPacienteModal from './modals/BuscarPacienteModal/BuscarPacienteModal';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -39,6 +41,7 @@ import {
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
+  const router = useRouter();
   // Sin filtro de Sede en la UI (encargo explícito): fija a '02' (Sede
   // Norte), la única con datos completos en el mock (ver SEMANA_ANCLA en
   // mockCirugiaData.js) — deja de ser estado porque nada la cambia.
@@ -235,6 +238,10 @@ export default function ProgramacionSalaCirugias() {
     if (!selectedCirugia) return;
     showToast('Editar cirugía (en desarrollo).');
   }
+  function handleSeleccionarPacienteHistorial(paciente) {
+    setModal(null);
+    router.push(`/historial-quirurgico/${paciente.id}`);
+  }
   return (
     <div className="app">
       <Sidebar />
@@ -257,7 +264,7 @@ export default function ProgramacionSalaCirugias() {
                 type="button"
                 className="icon-btn-circle"
                 aria-label="Buscar"
-                onClick={() => window.ncToast?.('Búsqueda de cirugías en desarrollo.')}
+                onClick={() => setModal({ type: 'buscarPaciente' })}
               >
                 <LuSearch className="icon" />
               </button>
@@ -346,6 +353,9 @@ export default function ProgramacionSalaCirugias() {
       )}
       {modal?.type === 'cancelar' && (
         <CancelarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
+      )}
+      {modal?.type === 'buscarPaciente' && (
+        <BuscarPacienteModal onClose={() => setModal(null)} onSelect={handleSeleccionarPacienteHistorial} />
       )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`}>
