@@ -10,15 +10,15 @@ export default function ProcedimientosList({ procedimientos, selectedId, onSelec
   }
 
   return (
-    <div className="hq-proc-list" role="list">
+    <div className="hq-proc-list" role="listbox">
       {procedimientos.map((p) => {
         const active = p.id === selectedId;
         return (
           <button
             type="button"
             key={p.id}
-            role="listitem"
-            aria-pressed={active}
+            role="option"
+            aria-selected={active}
             className={`hq-proc-item${active ? ' active' : ''}`}
             onClick={() => onSelect(p.id)}
           >
