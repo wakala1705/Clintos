@@ -25,7 +25,7 @@
 
 .hq-card{
   border:1px solid var(--border);border-radius:var(--radius-lg);
-  background:var(--surface);padding:20px 24px;
+  background:var(--surface);
 }
 /* Modificador para la card cuya última pieza es una tabla al ras (ver
    .hq-card > .hq-table-wrap más abajo) -- sin padding-bottom para que la
@@ -36,7 +36,7 @@
    sea más alto) y termina recortando filas de la tabla -- bug real
    encontrado al implementar esto la primera vez. Quitar el padding en vez
    de "restarlo" con margin evita ese problema por completo. */
-.hq-card--flush{padding-bottom:0;}
+.hq-card--flush{padding:16px 24px 0px 24px;}
 .hq-card h2{
   font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);
   margin-bottom:14px;

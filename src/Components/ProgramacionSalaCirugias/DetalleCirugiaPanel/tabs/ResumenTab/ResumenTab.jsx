@@ -2,7 +2,7 @@
 
 import './ResumenTab.css';
 
-export default function ResumenTab({ cirugia, onNavigateTab }) {
+export default function ResumenTab({ cirugia, onNavigateTab, salaLabel }) {
   const {
     procedimientoPrincipal, personal, equipos, canasta, farmacia,
   } = cirugia;
@@ -13,6 +13,13 @@ export default function ResumenTab({ cirugia, onNavigateTab }) {
       <section className="rt-card">
         <h4 className="rt-card-title">Procedimiento</h4>
         <div className="rt-card-value">{procedimientoPrincipal}</div>
+        {/* Antes vivía como campo propio en .dcp-info-grid -- se movió acá al
+            reestructurar ese bloque para calzar 1:1 con los campos del
+            formulario legacy de referencia (ver DetalleCirugiaPanel.jsx),
+            que no incluye Sala. */}
+        <ul className="rt-list">
+          <li><span className="rt-list-label">Sala</span><span className="rt-list-value">{salaLabel}</span></li>
+        </ul>
       </section>
 
       <section className="rt-card">

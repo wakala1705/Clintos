@@ -1,0 +1,22 @@
+.fact-row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  width:100%;padding:12px 20px;border:none;border-bottom:1px solid var(--border);
+  background:none;font-family:inherit;text-align:left;cursor:pointer;
+}
+.fact-row:hover{background:var(--bg);}
+.fact-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.fact-row.selected{background:var(--primary-50);border-left:3px solid var(--primary);padding-left:17px;}
+
+.fact-row-main{min-width:0;flex:1;}
+.fact-row-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.fact-row-sub{
+  font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+.fact-row-end{flex-shrink:0;text-align:right;}
+.fact-row-date{font-size:var(--fs-xs);color:var(--ink-500);}
+.fact-row-value{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-top:2px;}

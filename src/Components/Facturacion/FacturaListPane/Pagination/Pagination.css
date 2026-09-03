@@ -1,0 +1,8 @@
+.fact-pagination{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.fact-pagination-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.fact-pagination-label b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+.fact-pagination-controls{display:flex;align-items:center;gap:12px;}
+.fact-pagination-page{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);white-space:nowrap;}

@@ -589,6 +589,14 @@ export function duracionLabel(horaInicio, horaFin) {
   return m === 0 ? `${h}h` : `${h}h ${m}min`;
 }
 
+// "Edad: 71 años 03 meses 02 días" -- mismo nivel de detalle que trae el
+// campo "Edad" del formulario legacy de referencia (Información del
+// Procedimiento Quirúrgico, ver DetalleCirugiaPanel.jsx), en vez del "45
+// años" plano que bastaba antes de ese encargo.
+export function edadDetalleLabel({ edad, edadMeses = 0, edadDias = 0 }) {
+  return `${edad} años ${pad2(edadMeses)} meses ${pad2(edadDias)} días`;
+}
+
 export function periodKeyDeSemana(weekStart, salaId) {
   return `week:${fechaISO(weekStart)}:${salaId}`;
 }
@@ -605,7 +613,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'María Pérez', documento: 'CC 52.123.456', edad: 45, sexo: 'Femenino', aseguradora: 'Salud Total EPS',
+      nombre: 'María Pérez', documento: 'CC 52.123.456', edad: 45, edadMeses: 2, edadDias: 15, sexo: 'Femenino', aseguradora: 'Salud Total EPS',
+      nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Cra 45 # 12-30, Bogotá', telAviso: '300 654 1122',
     },
     procedimientoPrincipal: 'Colecistectomía laparoscópica',
     servicio: 'Cirugía general',
@@ -640,7 +649,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Juan Rodríguez', documento: 'CC 79.456.123', edad: 38, sexo: 'Masculino', aseguradora: 'Nueva EPS',
+      nombre: 'Juan Rodríguez', documento: 'CC 79.456.123', edad: 38, edadMeses: 7, edadDias: 3, sexo: 'Masculino', aseguradora: 'Nueva EPS',
+      nivel: '2', tipoAfiliado: 'Beneficiario', direccion: 'Calle 80 # 34-12, Bogotá', telAviso: '301 789 4455',
     },
     procedimientoPrincipal: 'Hernia inguinal',
     servicio: 'Cirugía general',
@@ -674,7 +684,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Ana Torres', documento: 'CC 41.789.456', edad: 52, sexo: 'Femenino', aseguradora: 'Sura EPS',
+      nombre: 'Ana Torres', documento: 'CC 41.789.456', edad: 52, edadMeses: 1, edadDias: 20, sexo: 'Femenino', aseguradora: 'Sura EPS',
+      nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Av. Caracas # 55-20, Bogotá', telAviso: '310 456 7788',
     },
     procedimientoPrincipal: 'Artroscopia de rodilla',
     servicio: 'Ortopedia',
@@ -708,7 +719,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Carlos Gómez', documento: 'CC 11.222.333', edad: 60, sexo: 'Masculino', aseguradora: 'Coomeva EPS',
+      nombre: 'Carlos Gómez', documento: 'CC 11.222.333', edad: 60, edadMeses: 5, edadDias: 9, sexo: 'Masculino', aseguradora: 'Coomeva EPS',
+      nivel: '3', tipoAfiliado: 'Beneficiario', direccion: 'Cra 15 # 100-45, Bogotá', telAviso: '320 998 1122',
     },
     procedimientoPrincipal: 'Apendicectomía',
     servicio: 'Cirugía general',
@@ -742,7 +754,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Laura Sánchez', documento: 'CC 98.765.432', edad: 29, sexo: 'Femenino', aseguradora: 'Sanitas EPS',
+      nombre: 'Laura Sánchez', documento: 'CC 98.765.432', edad: 29, edadMeses: 9, edadDias: 27, sexo: 'Femenino', aseguradora: 'Sanitas EPS',
+      nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Calle 26 # 68-12, Bogotá', telAviso: '315 223 6690',
     },
     procedimientoPrincipal: 'Laparoscopia diagnóstica',
     servicio: 'Ginecología',
@@ -776,7 +789,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Pedro Ramírez', documento: 'CC 33.444.555', edad: 47, sexo: 'Masculino', aseguradora: 'Salud Total EPS',
+      nombre: 'Pedro Ramírez', documento: 'CC 33.444.555', edad: 47, edadMeses: 4, edadDias: 2, sexo: 'Masculino', aseguradora: 'Salud Total EPS',
+      nivel: '2', tipoAfiliado: 'Cotizante', direccion: 'Cra 7 # 45-67, Bogotá', telAviso: '318 654 3321',
     },
     procedimientoPrincipal: 'Colecistectomía laparoscópica',
     servicio: 'Cirugía general',
@@ -810,7 +824,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Marta Ruiz', documento: 'CC 22.333.444', edad: 41, sexo: 'Femenino', aseguradora: 'Nueva EPS',
+      nombre: 'Marta Ruiz', documento: 'CC 22.333.444', edad: 41, edadMeses: 11, edadDias: 18, sexo: 'Femenino', aseguradora: 'Nueva EPS',
+      nivel: '1', tipoAfiliado: 'Beneficiario', direccion: 'Calle 100 # 15-30, Bogotá', telAviso: '300 112 8899',
     },
     procedimientoPrincipal: 'Histerectomía',
     servicio: 'Ginecología',
@@ -844,7 +859,8 @@ let CIRUGIAS = [
     sedeId: '02',
     salaId: 'qx-1',
     paciente: {
-      nombre: 'Andrés Molina', documento: 'CC 55.666.777', edad: 34, sexo: 'Masculino', aseguradora: 'Sura EPS',
+      nombre: 'Andrés Molina', documento: 'CC 55.666.777', edad: 34, edadMeses: 0, edadDias: 6, sexo: 'Masculino', aseguradora: 'Sura EPS',
+      nivel: '2', tipoAfiliado: 'Cotizante', direccion: 'Cra 30 # 22-14, Bogotá', telAviso: '311 445 2200',
     },
     procedimientoPrincipal: 'Hernia umbilical',
     servicio: 'Cirugía general',

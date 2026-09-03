@@ -1,0 +1,13 @@
+/* .fvc-grid/.fvc-strong/.fvc-num/.fvc-ellipsis: definidas en
+   ../../shared/shared.css (reusadas también por FacturaDetalleClasico) --
+   acá solo lo propio de esta grilla. */
+.fvc-grid-scroll{
+  flex:1;min-height:0;overflow:auto;border-bottom:1px solid var(--border);
+}
+
+.fvc-flag-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:5px;background:var(--primary);color:#fff;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);
+}
+.fvc-grid tbody tr.selected .fvc-flag-badge{background:#fff;color:var(--primary);}

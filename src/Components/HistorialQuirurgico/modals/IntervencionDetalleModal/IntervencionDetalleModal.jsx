@@ -71,28 +71,26 @@ export default function IntervencionDetalleModal({ intervencion, onClose }) {
             <IntervencionResumen intervencion={intervencion} />
           </section>
 
-          <section className="hq-card hqd-split-card">
-            <div className="hqd-split">
-              <div className="hqd-split-left">
-                <div className="hq-tabs-bar">
-                  <span className="hq-tab active">Procedimientos</span>
-                </div>
-                <ProcedimientosList
-                  procedimientos={intervencion.procedimientos}
-                  selectedId={selectedProcedimientoId}
-                  onSelect={setSelectedProcedimientoId}
-                />
+          <div className="hqd-split">
+            <section className="hq-card hqd-split-left">
+              <div className="hq-tabs-bar">
+                <span className="hq-tab active">Procedimientos</span>
               </div>
+              <ProcedimientosList
+                procedimientos={intervencion.procedimientos}
+                selectedId={selectedProcedimientoId}
+                onSelect={setSelectedProcedimientoId}
+              />
+            </section>
 
-              <div className="hqd-split-right">
-                {procedimientoSeleccionado ? (
-                  <ProcedimientoDetalle procedimiento={procedimientoSeleccionado} />
-                ) : (
-                  <EmptyState icon={LuListX} title="Selecciona un procedimiento para ver su detalle." />
-                )}
-              </div>
-            </div>
-          </section>
+            <section className="hq-card hqd-split-right">
+              {procedimientoSeleccionado ? (
+                <ProcedimientoDetalle procedimiento={procedimientoSeleccionado} />
+              ) : (
+                <EmptyState icon={LuListX} title="Selecciona un procedimiento para ver su detalle." />
+              )}
+            </section>
+          </div>
         </div>
       </div>
     </div>

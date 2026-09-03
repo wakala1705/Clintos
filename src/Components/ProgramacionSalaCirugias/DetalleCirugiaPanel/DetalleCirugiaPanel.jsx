@@ -11,7 +11,7 @@ import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
-import { duracionLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { duracionLabel, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuChevronUp, LuCircleCheck, LuInfo, LuPencil,
 } from 'react-icons/lu';
@@ -27,10 +27,11 @@ const TABS = [
   { id: 'farmacia', label: 'Farmacia' },
 ];
 
-// Siempre se muestra como drawer superpuesto (nunca docked en el layout) —
-// mismo patrón que DetalleCitaModal en Programar cita: la agenda ocupa todo
-// el ancho y seleccionar una cirugía abre el detalle encima, sin empujar el
-// grid. `onClose` deselecciona y cierra el drawer.
+// Modal centrado superpuesto (nunca docked en el layout) -- mismo patrón
+// que el resto de modales de esta feature (.modal-overlay/.modal-card, ver
+// shared/shared.css). Antes era un drawer deslizante de 420px: se angostaba
+// demasiado para 6 tabs + el bloque de datos del paciente (encargo
+// explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
   cirugia, salaLabel, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarProgramada, onMarcarIncumplida, onVerInfo,
@@ -40,8 +41,8 @@ export default function DetalleCirugiaPanel({
   // información/historial) -- vivía en el panel lateral (AccionesBar, ver
   // MiniCalendarCirugias.jsx antes de este encargo) y se movió acá porque
   // ya depende de una cirugía seleccionada igual que el resto de este
-  // drawer. Abre hacia arriba (`.dcp-more-dropdown`) por estar pegado al
-  // borde inferior de la pantalla -- mismo patrón autocontenido de
+  // modal. Abre hacia arriba (`.dcp-more-dropdown`) por estar pegado al
+  // borde inferior de `.dcp-actions` -- mismo patrón autocontenido de
   // click-afuera/Escape que tenía AccionesBar.
   const [masOpen, setMasOpen] = useState(false);
   const masRef = useRef(null);
@@ -97,7 +98,7 @@ export default function DetalleCirugiaPanel({
       <ModalHeader
         title="Detalle de la cirugía"
         titleId="dcp-title"
-        trailing={<span className="dcp-id">ID {cirugia.id}</span>}
+        subtitle={cirugia.paciente.nombre}
         onClose={onClose}
         closeLabel="Cerrar detalle"
       />
@@ -105,28 +106,64 @@ export default function DetalleCirugiaPanel({
         <EstadoCirugiaBadge estado={cirugia.estado} />
       </div>
 
+      {/* Mismos campos y orden que "Información del Procedimiento
+          Quirúrgico" (formulario legacy de referencia, encargo explícito):
+          No. Prog, Fecha, Tel. Aviso, Doc. Id, Nombre, Sexo, Edad, Nivel,
+          Tipo Afiliado, Dirección, Aseguradora, Cirujano -- 12 campos que
+          calzan exacto en una grilla de 3 columnas x 4 filas (antes 1 sola
+          columna apilada porque el drawer de 420px no daba para más; el
+          modal centrado sí tiene el ancho para repartirlos). */}
       <div className="dcp-info-grid">
-        <div className="dcp-info-col">
-          <div className="dcp-info-label">Paciente</div>
-          <div className="dcp-info-value">{cirugia.paciente.nombre}</div>
-          <div className="dcp-info-label">Documento</div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">No. Prog</div>
+          <div className="dcp-info-value">{cirugia.id}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Fecha</div>
+          <div className="dcp-info-value">{fechaLabel(cirugia.fecha)} {cirugia.horaInicio}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Tel. Aviso</div>
+          <div className="dcp-info-value">{cirugia.paciente.telAviso || '—'}</div>
+        </div>
+
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Doc. Id</div>
           <div className="dcp-info-value">{cirugia.paciente.documento}</div>
-          <div className="dcp-info-label">Edad / Sexo</div>
-          <div className="dcp-info-value">{cirugia.paciente.edad} años / {cirugia.paciente.sexo}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Nombre</div>
+          <div className="dcp-info-value">{cirugia.paciente.nombre}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Sexo</div>
+          <div className="dcp-info-value">{cirugia.paciente.sexo}</div>
+        </div>
+
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Edad</div>
+          <div className="dcp-info-value">{edadDetalleLabel(cirugia.paciente)}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Nivel</div>
+          <div className="dcp-info-value">{cirugia.paciente.nivel || '—'}</div>
+        </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Tipo Afiliado</div>
+          <div className="dcp-info-value">{cirugia.paciente.tipoAfiliado || '—'}</div>
+        </div>
+
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Dirección</div>
+          <div className="dcp-info-value">{cirugia.paciente.direccion || '—'}</div>
+        </div>
+        <div className="dcp-info-item">
           <div className="dcp-info-label">Aseguradora</div>
           <div className="dcp-info-value">{cirugia.paciente.aseguradora}</div>
         </div>
-        <div className="dcp-info-col">
-          <div className="dcp-info-label">Procedimiento</div>
-          <div className="dcp-info-value">{cirugia.procedimientoPrincipal}</div>
+        <div className="dcp-info-item">
           <div className="dcp-info-label">Cirujano</div>
-          <div className="dcp-info-value">{cirugia.cirujano}</div>
-          <div className="dcp-info-label">Sala</div>
-          <div className="dcp-info-value">{salaLabel}</div>
-          <div className="dcp-info-label">Fecha y hora</div>
-          <div className="dcp-info-value">
-            {fechaLabel(cirugia.fecha)} {cirugia.horaInicio} - {cirugia.horaFin} ({duracionLabel(cirugia.horaInicio, cirugia.horaFin)})
-          </div>
+          <div className="dcp-info-value">{cirugia.cirujano || '—'}</div>
         </div>
       </div>
 
@@ -148,7 +185,7 @@ export default function DetalleCirugiaPanel({
       </div>
 
       <div className="dcp-tab-body" role="tabpanel" id={`dcp-panel-${activeTab}`}>
-        {activeTab === 'resumen' && <ResumenTab cirugia={cirugia} onNavigateTab={setActiveTab} />}
+        {activeTab === 'resumen' && <ResumenTab cirugia={cirugia} onNavigateTab={setActiveTab} salaLabel={salaLabel} />}
         {activeTab === 'procedimientos' && <ProcedimientosTab cirugia={cirugia} />}
         {activeTab === 'personal' && <PersonalTab cirugia={cirugia} />}
         {activeTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
@@ -206,10 +243,16 @@ export default function DetalleCirugiaPanel({
   );
 
   return (
-    <div className="dcp-drawer-overlay" onClick={onClose}>
-      <aside className="dcp-panel dcp-drawer-panel" onClick={(e) => e.stopPropagation()} aria-label="Detalle de la cirugía">
+    <div className="modal-overlay open" role="presentation" onClick={onClose}>
+      <div
+        className="modal-card dcp-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dcp-title"
+        onClick={(e) => e.stopPropagation()}
+      >
         {body}
-      </aside>
+      </div>
     </div>
   );
 }

@@ -1,35 +1,28 @@
-.dcp-panel{
-  background:var(--surface-modal);border-radius:var(--radius-lg);
-  display:flex;flex-direction:column;min-height:0;overflow:hidden;
-}
-
-.dcp-drawer-overlay{
-  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.32);
-  display:flex;justify-content:flex-end;
-  animation:dcp-fade .15s ease;
-}
-.dcp-drawer-panel{
-  width:420px;max-width:100%;height:100%;border-radius:0;
-  box-shadow:-16px 0 40px rgba(16,24,39,.20);
-  animation:dcp-slide .18s ease;
-}
-@keyframes dcp-fade{from{opacity:0;}to{opacity:1;}}
-@keyframes dcp-slide{from{transform:translateX(24px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-@media (prefers-reduced-motion: reduce){
-  .dcp-drawer-overlay,.dcp-drawer-panel{animation:none;}
-}
-
-.dcp-id{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);}
+/* Modal centrado (.modal-overlay/.modal-card, ver shared/shared.css) en vez
+   del drawer deslizante de 420px que tenía antes -- encargo explícito: ese
+   ancho no daba para 6 tabs + el bloque de datos del paciente. 800px, un
+   punto más ancho que el precedente de 720px (PlantillaModal.pm-card) por
+   la grilla de 3 columnas de abajo + las tablas de los tabs. Selector
+   compuesto (.modal-card.dcp-modal-card), mismo criterio que el resto de
+   overrides de tamaño de modal del proyecto (ver AGENTS.md "Modales"). */
+.modal-card.dcp-modal-card{width:800px;}
 
 .dcp-status-row{padding:0 24px 12px;flex-shrink:0;}
 
+/* Grilla de 3 columnas x 4 filas -- mismos 12 campos y mismo orden que
+   "Información del Procedimiento Quirúrgico" (formulario legacy de
+   referencia, encargo explícito): No. Prog/Fecha/Tel. Aviso, Doc. Id/
+   Nombre/Sexo, Edad/Nivel/Tipo Afiliado, Dirección/Aseguradora/Cirujano.
+   Antes era una sola columna apilada (el drawer de 420px no daba para más);
+   el modal centrado sí tiene el ancho para repartirlos sin necesitar los
+   divs `.dcp-info-row`/`.dcp-info-row-inline` que agrupaban manualmente las
+   filas que iban lado a lado -- acá el grid ya los reparte solo. */
 .dcp-info-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;
+  display:grid;grid-template-columns:repeat(3, 1fr);gap:14px 24px;
   padding:0 24px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.dcp-info-col{display:flex;flex-direction:column;}
-.dcp-info-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;margin-top:8px;}
-.dcp-info-col .dcp-info-label:first-child{margin-top:0;}
+.dcp-info-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.dcp-info-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .dcp-info-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 
 .dcp-tabs-bar{
@@ -59,7 +52,7 @@
 /* Menú "Más acciones" (Marcar como programada/incumplida, Ver
    información/historial) -- movido acá desde AccionesBar.css (ver
    MiniCalendarCirugias.jsx). Abre hacia arriba (`bottom`, no `top`) porque
-   .dcp-actions vive pegado al borde inferior del drawer. */
+   .dcp-actions vive pegado al borde inferior del modal. */
 .dcp-more-wrap{position:relative;}
 .dcp-more-dropdown{
   position:absolute;bottom:calc(100% + 6px);left:0;z-index:var(--z-popover);
@@ -74,7 +67,3 @@
 .dcp-more-item:hover{background:var(--bg);}
 .dcp-more-item:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
 .dcp-more-item .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
-
-@media (max-width:480px){
-  .dcp-drawer-panel{width:100%;}
-}

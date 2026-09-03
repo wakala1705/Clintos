@@ -1,4 +1,4 @@
-.hq-detalle{display:flex;flex-direction:column;gap:14px;}
+.hq-detalle{display:flex;flex-direction:column;}
 
 .hq-tabs-bar{display:flex;gap:4px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .hq-tab{

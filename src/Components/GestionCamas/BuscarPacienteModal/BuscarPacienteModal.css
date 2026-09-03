@@ -1,7 +1,7 @@
 /* .modal-overlay/.modal-card/.modal-footer: ../GestionCamas.css — acá el
    ancho propio y todo lo específico de la tabla de admisiones (no hay
    equivalente reutilizable en el resto de la feature). */
-.bp-modal-card{width:760px;}
+.bp-modal-card{width:1200px;}
 
 .bp-search-row{padding:16px 24px 0;flex-shrink:0;}
 .bp-search-field{position:relative;}

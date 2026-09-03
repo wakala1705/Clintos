@@ -1,0 +1,42 @@
+.fvc-detail{
+  display:flex;flex-direction:column;flex:1;min-height:0;border-top:1px solid var(--border);
+}
+.fvc-detail-empty{
+  align-items:center;justify-content:center;display:flex;
+  padding:24px;color:var(--ink-500);font-size:var(--fs-base);text-align:center;
+}
+
+.fvc-info-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px;
+  padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;
+}
+.fvc-info-item{display:flex;align-items:baseline;gap:6px;font-size:var(--fs-sm);}
+.fvc-info-label{color:var(--ink-500);}
+.fvc-info-value{color:var(--ink-900);font-weight:var(--fw-semibold);}
+.fvc-info-name{color:var(--primary-dark);}
+.fvc-info-total{color:var(--red);}
+.fvc-info-spacer{flex:1;}
+
+/* .fvc-grid/.fvc-num/.fvc-ellipsis (usadas por la grilla de ítems abajo):
+   definidas en ../../shared/shared.css. Los botones de esta vista usan
+   @/Components/Button/Button, no una clase propia. */
+
+.fvc-acciones-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;
+}
+
+.fvc-items-scroll{flex:1;min-height:0;overflow:auto;}
+.fvc-items-grid{font-size:var(--fs-xs);}
+
+.fvc-footer-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;
+}
+.fvc-footer-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fvc-footer-right{display:flex;align-items:center;gap:10px;}
+.fvc-footer-total-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.fvc-footer-total-value{
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;background:var(--bg);
+}

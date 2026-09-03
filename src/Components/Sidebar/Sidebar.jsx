@@ -22,6 +22,7 @@ import {
   LuLandmark,
   LuMoon,
   LuPackage,
+  LuReceipt,
   LuScissors,
   LuSettings,
   LuShieldPlus,
@@ -56,6 +57,7 @@ export default function Sidebar() {
   const isAdmisiones = pathname === '/admisiones';
   const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
+  const isFacturas = pathname === '/facturas';
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -82,7 +84,7 @@ export default function Sidebar() {
           <span className="label">Inicio</span>
         </Link>
 
-        <div className={`nav-group${isConsultaExterna || isHospitalizacion ? ' open' : ''}`}>
+        <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas ? ' open' : ''}`}>
           <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
             <LuStethoscope className="icon nav-icon" />
             <span className="label">Módulo Asistencial</span>
@@ -129,6 +131,17 @@ export default function Sidebar() {
                 <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
                 <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
                 <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
+              </div>
+            </div>
+
+            <div className={`nav-group sub${isFacturas ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuReceipt className="icon nav-icon" />
+                <span className="label">Facturación</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
               </div>
             </div>
 

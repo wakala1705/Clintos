@@ -58,6 +58,26 @@
   border-color: var(--ink-400);
 }
 
+/* Mismo tratamiento que .secondary, pero con el ícono en --primary en vez de
+   heredar el color del texto -- pedido explícito para los botones de acción
+   de la vista clásica de Facturas (réplica de un formulario legacy cuyos
+   íconos van en azul mientras el texto queda en gris). Variant aparte en vez
+   de tocar .secondary: ese variant ya se usa en 46+ archivos del proyecto y
+   este acento de color es una decisión puntual de esta pantalla, no un
+   cambio al sistema de botones general. */
+.secondaryAccent {
+  background: var(--surface);
+  color: var(--ink-700);
+  border-color: var(--border);
+}
+.secondaryAccent:hover {
+  background: var(--bg);
+  border-color: var(--ink-400);
+}
+.secondaryAccent .icon {
+  color: var(--primary);
+}
+
 .outline {
   background: transparent;
   color: var(--primary);

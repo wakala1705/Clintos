@@ -33,4 +33,5 @@
   background:var(--surface);flex-shrink:0;
 }
 .icon-btn-circle:hover{background:#f3f5f9;color:var(--ink-900);}
+.icon-btn-circle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .icon-btn-circle .icon{width:19px;height:19px;}
