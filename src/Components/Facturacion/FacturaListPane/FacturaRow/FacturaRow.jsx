@@ -1,6 +1,7 @@
 'use client';
 
 import './FacturaRow.css';
+import Badge from '@/Components/Badge/Badge';
 import { formatCOP, formatFecha } from '@/hooks/Facturacion/mockFacturasData';
 
 const ESTADO_LABEL = {
@@ -23,9 +24,9 @@ export default function FacturaRow({ factura, selected, onSelect }) {
         <div className="fact-row-title">
           {factura.numero}
           {factura.estado && (
-            <span className={`badge ${factura.estado === 'anulada' ? 'danger' : 'warn'}`}>
+            <Badge tone={factura.estado === 'anulada' ? 'danger' : 'warn'}>
               {ESTADO_LABEL[factura.estado]}
-            </span>
+            </Badge>
           )}
         </div>
         <div className="fact-row-sub">{factura.terceroRazonSocial} · {factura.sede}</div>

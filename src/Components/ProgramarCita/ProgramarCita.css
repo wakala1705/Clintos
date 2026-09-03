@@ -17,6 +17,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
   --green:#12a150;
   --green-bg:#e6f8ee;
   --red:#c02b2b;
@@ -27,6 +28,7 @@
   --violet-fg:#6d3fd6;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
+  --amber:#e08a00;
   --radius:8px;
   --radius-lg:12px;
 
@@ -67,6 +69,7 @@ html[data-theme="dark"]{
   --violet-fg:#b79bf7;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
+  --amber:#f5b942;
 }
 
 /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo

@@ -28,7 +28,7 @@
 .recep-med-detail{border-top:1px solid var(--border);}
 .recep-med-detail.collapsed{display:none;}
 .recep-med-detail .detail-table{font-size:var(--fs-base);table-layout:fixed;}
-.recep-med-detail .detail-table thead th{background:var(--primary-50);}
+.recep-med-detail .detail-table thead th{background:var(--table-header-bg);}
 /* Columnas en % (no px): así la tabla nunca puede pedir más ancho que el que
    tiene disponible — con px fijos, sumaban más que el panel en pantallas
    angostas y la tabla se recortaba en vez de encogerse. La primera columna

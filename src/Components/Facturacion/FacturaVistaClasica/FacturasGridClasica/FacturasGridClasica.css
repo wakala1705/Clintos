@@ -2,7 +2,7 @@
    ../../shared/shared.css (reusadas también por FacturaDetalleClasico) --
    acá solo lo propio de esta grilla. */
 .fvc-grid-scroll{
-  flex:1;min-height:0;overflow:auto;border-bottom:1px solid var(--border);
+  flex:1;min-height:0;overflow:auto;
 }
 
 .fvc-flag-badge{
@@ -11,3 +11,15 @@
   font-size:var(--fs-xs);font-weight:var(--fw-bold);
 }
 .fvc-grid tbody tr.selected .fvc-flag-badge{background:#fff;color:var(--primary);}
+
+.fvc-actions-cell{text-align:center;}
+.fvc-row-actions{display:flex;align-items:center;justify-content:center;gap:2px;}
+.fvc-row-action-btn{
+  width:28px;height:28px;border-radius:7px;border:none;background:transparent;color:var(--primary);
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;
+}
+.fvc-row-action-btn .icon{width:17px;height:17px;}
+.fvc-row-action-btn:hover{background:var(--primary-50);}
+.fvc-row-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.fvc-grid tbody tr.selected .fvc-row-action-btn{color:#fff;}
+.fvc-grid tbody tr.selected .fvc-row-action-btn:hover{background:rgba(255,255,255,.16);}

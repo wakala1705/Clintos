@@ -12,7 +12,7 @@
 .tc-col-day{width:160px;min-width:160px;}
 
 .tc-table thead th{
-  position:sticky;top:0;z-index:2;background:#f7f8fb;color:var(--ink-500);
+  position:sticky;top:0;z-index:2;background:var(--table-header-bg);color:var(--ink-500);
   font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
   text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);
 }
@@ -158,6 +158,5 @@
 
 .tc-table-empty{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 
-html[data-theme="dark"] .tc-table thead th{background:#1a2130;}
 html[data-theme="dark"] .tc-table td.tc-col-nurse, html[data-theme="dark"] .tc-table th.tc-col-nurse{background:var(--surface);}
 html[data-theme="dark"] .tc-turno-noche{color:#34d399;}

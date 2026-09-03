@@ -17,6 +17,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
   --gray-fg:#6b7280;
   --gray-bg:#eef0f4;
   --radius:8px;

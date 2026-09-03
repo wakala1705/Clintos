@@ -21,6 +21,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
   --green:#12a150;
   --green-bg:#e6f8ee;
   --red:#c02b2b;
@@ -314,7 +315,7 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .data-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
 .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .data-table thead th{
-  position:sticky;top:0;z-index:var(--z-sticky);background:#f7f8fb;color:var(--ink-500);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-500);
   font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
   padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
 }

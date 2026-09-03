@@ -117,6 +117,8 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
   const fecha = buildFecha(rand);
   const roll = rand();
   const estado = roll > 0.92 ? 'anulada' : (roll > 0.85 ? 'pendiente-electronica' : null);
+  const peRoll = rand();
+  const estadoPE = peRoll > 0.9 ? 'fe-pendiente' : (peRoll > 0.7 ? 'pendiente' : 'enviada');
   const cantidadItems = 1 + Math.floor(rand() * 16);
   const items = buildItems(rand, cantidadItems);
   const valorTotal = items.reduce((sum, it) => sum + it.valor, 0);
@@ -151,7 +153,7 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
     tipoContrato: 'Evento',
     fechaVencimiento: fechaISO(vencimiento),
     flagFE: rand() > 0.88 ? 1 : 0,
-    flagPE: estado === 'anulada' ? 'A' : 'P',
+    estadoPE,
     sedeCodigo: SEDE_CODIGOS[sede],
     impreso: 0,
   };

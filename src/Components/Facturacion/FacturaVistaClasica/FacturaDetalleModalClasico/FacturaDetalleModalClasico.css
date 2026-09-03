@@ -1,0 +1,80 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css (reusable por futuros modales de
+   Facturación). Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá -- acá solo lo
+   exclusivo de este modal. */
+/* Extragrande (encargo explícito) para poder incluir la grilla de ítems
+   (FacturaItemsTable, misma tabla de 14 columnas que el panel inferior de
+   FacturaDetalleClasico) sin que quede apretada -- ver .modal-xl de
+   SolicitudConsumo/shared/shared.css, mismo criterio de tamaño. */
+.fvcd-modal{width:95vw;max-width:1400px;}
+
+.fvcd-identity-row{display:flex;align-items:center;gap:12px;}
+/* Ícono de la factura (número + tercero), bajado acá desde ModalHeader
+   (encargo explícito: header genérico "Detalle de factura", sin ícono) --
+   mismo círculo 34px/tono primary que .modal-header-icon.tone-primary
+   (ModalHeader.css), reimplementado porque esos tokens están scopeados por
+   feature (ver AGENTS.md "Modales"). */
+.fvcd-factura-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.fvcd-factura-icon .icon{width:19px;height:19px;}
+.fvcd-identity-text{flex:1;min-width:0;}
+.fvcd-identity-name{font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
+.fvcd-identity-id{
+  margin-left:8px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);
+}
+.fvcd-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.fvcd-identity-total{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.fvcd-total-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--primary);}
+
+/* La tabla de ítems es lo importante del modal (encargo explícito) -- va en
+   su propia tarjeta con borde (en vez del simple separador border-top de
+   .fvcd-compact-fields de abajo), dividida en 3 bloques: el header (título +
+   fondo tenue), el body (la tabla) y el footer (Imprimir anexo/Anexo por
+   prefijo/Capitados, trasladados acá desde FacturaDetalleClasico -- encargo
+   explícito). overflow:hidden recorta las esquinas rectas de
+   FacturaItemsTable a los bordes redondeados de la tarjeta. */
+.fvcd-items-card{
+  margin-top:16px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.fvcd-items-header{
+  padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg);
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.fvcd-items-footer{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);
+}
+/* FacturaItemsTable (.fvc-grid) pone border-right/border-bottom en cada
+   celda (pensado para sus otros 2 usos sin tarjeta propia, ver
+   shared/shared.css) -- acá esos bordes de la última columna/fila quedan
+   pegados al border de .fvcd-items-card y se ven como doble línea. Se
+   suprimen solo en este contenedor, sin tocar .fvc-grid (compartida). */
+.fvcd-items-body .fvc-grid th:last-child,
+.fvcd-items-body .fvc-grid td:last-child{
+  border-right:none;
+}
+.fvcd-items-body .fvc-grid tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* El resto de los campos de la ficha en una sola franja compacta (encargo
+   explícito: "más compacto, puede ser en una fila") en vez de los 5 bloques
+   con título propio + grid de 3 columnas que tenía antes -- separadores
+   verticales finos agrupan por tema (Datos de factura/Fechas/Estado y
+   control/Gestión) sin el peso visual de un título + borde por grupo.
+   No. Admisión/Id. Afiliado ya no van acá, ver .fvcd-identity-id/-sub. */
+.fvcd-compact-fields{
+  display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px 24px;
+  padding-top:16px;border-top:1px solid var(--border);
+}
+/* Reusada también en .fvcd-identity-row (separador factura/afiliado) --
+   mismo separador visual, no hace falta una clase aparte. */
+.fvcd-compact-divider{width:1px;align-self:stretch;background:var(--border);}
+.fvcd-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.fvcd-badge{align-self:flex-start;}
+.fvcd-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+.fvcd-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}

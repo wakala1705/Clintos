@@ -19,10 +19,12 @@ const PAGE_SIZE = 15;
 const FILTROS_INICIALES = { clase: 'todas', tipo: 'todas', desde: '', hasta: '' };
 
 export default function Facturacion() {
-  // Toggle "Vista nueva / Vista clásica" (encargo explícito) -- FacturaVistaClasica
-  // es una réplica visual del formulario legacy de referencia, con su propio
-  // estado interno (no comparte query/filtros/selección con esta vista).
-  const [vista, setVista] = useState('nueva');
+  // Selector "Vista nueva / Vista clásica" oculto (encargo explícito) -- la
+  // pantalla queda fija en clásica. FacturaVistaClasica es una réplica visual
+  // del formulario legacy de referencia, con su propio estado interno (no
+  // comparte query/filtros/selección con la vista nueva, cuyo código queda
+  // intacto abajo por si el toggle vuelve a mostrarse más adelante).
+  const [vista] = useState('clasica');
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
@@ -124,14 +126,6 @@ export default function Facturacion() {
               <p>Consulta, filtra y gestiona las facturas emitidas.</p>
             </div>
             <div className="fact-page-header-actions">
-              <div className="segmented-control" role="tablist" aria-label="Vista de la pantalla de facturas">
-                <button type="button" role="tab" aria-selected={vista === 'nueva'} className={`segmented-btn${vista === 'nueva' ? ' active' : ''}`} onClick={() => setVista('nueva')}>
-                  Vista nueva
-                </button>
-                <button type="button" role="tab" aria-selected={vista === 'clasica'} className={`segmented-btn${vista === 'clasica' ? ' active' : ''}`} onClick={() => setVista('clasica')}>
-                  Vista clásica
-                </button>
-              </div>
               <Button icon={LuPlus} onClick={() => {}}>Nueva factura</Button>
             </div>
           </div>

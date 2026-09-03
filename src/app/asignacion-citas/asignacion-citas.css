@@ -14,8 +14,10 @@
     --surface:#ffffff;
     --surface-modal:#ffffff;
     --bg:#f4f6fb;
+    --table-header-bg:var(--bg);
     --amber-bg:#fff4e0;
     --amber-fg:#a45a05;
+    --amber:#e08a00;
     --green:#12a150;
     --green-bg:#e6f8ee;
     --red:#c02b2b;
@@ -73,6 +75,7 @@
     --bg:#0c0f17;
     --amber-bg:rgba(224,138,0,.18);
     --amber-fg:#f5b942;
+    --amber:#f5b942;
     --green:#34d399;
     --green-bg:rgba(52,211,153,.16);
     --red:#ff8a8a;
@@ -83,9 +86,7 @@
     --violet-fg:#b79bf7;
   }
   html[data-theme="dark"] body{background:var(--bg);}
-  html[data-theme="dark"] thead th{background:#1c2333;}
   html[data-theme="dark"] tbody tr:hover{background:#1a2130;}
-  html[data-theme="dark"] .badge.neutral{background:#242c3d;color:var(--ink-700);}
   html[data-theme="dark"] .estado-badge.disponible,
   html[data-theme="dark"] .estado-badge.activo{color:var(--green);}
   html[data-theme="dark"] .estado-badge.disponible .dot,
@@ -366,7 +367,7 @@
   table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
   thead th{
     position:sticky;top:0;z-index:1;
-    background:#f7f8fb;text-align:left;
+    background:var(--table-header-bg);text-align:left;
     font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
     text-transform:uppercase;letter-spacing:.03em;
     padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
@@ -407,7 +408,7 @@
     white-space:nowrap;display:inline-block;
   }
   .badge.eps{background:var(--status-info-bg);color:var(--status-info-fg);}
-  .badge.neutral{background:#eef0f4;color:var(--ink-700);}
+  .badge.neutral{background:var(--gray-bg);color:var(--ink-700);}
 
   /* Píldora + punto, homologada con .pc-estado-badge (ProgramarCita) y
      .dp-status-badge (GestionEnfermeria) — mismo tamaño, padding y radio. */
@@ -423,13 +424,13 @@
   .estado-badge.expirado{background:var(--gray-bg);color:var(--gray-fg);}
   .estado-badge.expirado .dot{background:var(--ink-400);}
   .estado-badge.bloqueado{background:var(--amber-bg);color:var(--amber-fg);}
-  .estado-badge.bloqueado .dot{background:#e08a00;}
+  .estado-badge.bloqueado .dot{background:var(--amber);}
   .estado-badge.activo{background:var(--green-bg);color:#0d7a3d;}
   .estado-badge.activo .dot{background:#0d7a3d;}
   .estado-badge.inactivo{background:var(--gray-bg);color:var(--gray-fg);}
   .estado-badge.inactivo .dot{background:var(--ink-400);}
   .estado-badge.suspendido{background:var(--amber-bg);color:var(--amber-fg);}
-  .estado-badge.suspendido .dot{background:#e08a00;}
+  .estado-badge.suspendido .dot{background:var(--amber);}
 
   .row-menu-btn{
     width:26px;height:26px;border-radius:7px;flex-shrink:0;

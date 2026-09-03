@@ -371,6 +371,102 @@ feature seguir inventando los suyos.
       explícita si sí — ver ejemplos en `AdmisionesTable.css`,
       `VacToolbar.css`, `PatientsTable.css`, `DetalleCitaModal.css`).
 
+# Badges
+
+Antes de este componente, el proyecto tenía el mismo tipo de deriva ya
+documentada para Botones/Modales: 5 definiciones distintas de una clase
+`.badge` genérica (Facturación, asignación de citas, NuevaCita,
+PatientBanner, SolicitudConsumo) con padding/font-size propios y nombres de
+tono distintos para el mismo concepto (`danger/warn/success/neutral` vs
+`status-active/inactive/suspendido` vs `amber/green/neutral` vs
+`eps/neutral`), más ~30 componentes `*Badge`/`-badge` de un solo uso
+(`EstadoCamaBadge`, `TriageBadge`, `EstadoCirugiaBadge`...) que sí ya
+convergían en los mismos colores mediante tokens (auditoría completa: los
+hex sueltos que duplicaban un token existente ya se homologaron a
+`var(--red-bg)`/`var(--green-bg)`/`var(--gray-bg)`/`var(--amber)` antes de
+construir el componente).
+
+- **Componente**: `@/Components/Badge/Badge` — úsalo para badges nuevos en
+  vez de escribir `<span className="badge tono">` a mano.
+
+  ```jsx
+  <Badge
+    tone="neutral"   // neutral (default) | danger | warn | success | info
+    dot              // opcional — punto de color antes del texto, reemplaza .estado-badge
+    className="..."  // opcional, one-off extra sobre las clases del componente
+  >
+    Texto
+  </Badge>
+  ```
+
+- **Estructura fija**: `padding:4px 10px`, `font-size:var(--fs-xs)`,
+  `font-weight:var(--fw-semibold)`, `border-radius:20px` — el valor que ya
+  dominaba en más features (asignación de citas, NuevaCita, PatientBanner,
+  GestionEnfermeria/`.estado-badge`, ProgramarCita/`.pc-estado-badge`), no
+  el de Facturación (`2px 8px`, la definición más chica).
+- **`success` usa `#0d7a3d` para el texto, no `var(--green)`**: es la
+  convención ya establecida en 30+ archivos del proyecto para texto/ícono
+  sobre `--green-bg` (contraste sobre un fondo claro) — Facturación hoy usa
+  `var(--green)` en su `.badge.success` y se oscurecerá un poco el día que
+  migre a este componente.
+- **El punto (`dot`) no es `currentColor`**: replica la convención ya
+  existente en `.estado-badge`, donde el punto usa un color más saturado
+  que el texto en `warn` (`var(--amber)`, no el `--amber-fg` mate del
+  texto) y en `neutral` (`var(--ink-400)`, no el `--gray-fg` del texto).
+  `danger`/`success` sí coinciden texto=punto porque ya eran iguales en el
+  código migrado.
+- **CSS Modules y no clases globales** (mismo motivo que `Button`, ver
+  "Botones" arriba): ya hay 5 `.badge` globales definidos por distintas
+  features — una clase global de este componente colisionaría con ellas.
+- **Dependencia de tokens a vigilar** (mismo contrato que `ModalHeader`):
+  el componente asume `--status-info-bg`/`--status-info-fg` (tone="info")
+  y `--amber` (color del punto en `dot` + tone="warn") ya declarados en el
+  `:root` de la feature donde se monta. Hoy `--status-info-bg`/`fg` solo
+  existe en 6 de las 15 features y `--amber` en 4 de 15 — si `tone="info"`
+  o `dot` no se ve en una feature nueva, el fix es agregar el token
+  faltante ahí (mismo bug que ya pasó una vez con `ModalHeader`/`--gray-bg`
+  en SolicitudConsumo), no tocar `Badge.module.css`.
+- **Migración de `className="badge tono"`/`.estado-badge` a `<Badge>`:
+  - **Hecha**: `Facturacion` (`FacturaRow`, `FacturasGridClasica`,
+    `FacturaDetalleModalClasico`) — primera migrada, piloto del
+    componente. Gotcha encontrado (mismo tipo que ya documentado para
+    `Button`): el selector contextual
+    `.fvcd-field .badge{align-self:flex-start;}` dejaba de aplicar al
+    perder `.badge` como clase global — se resolvió pasando
+    `className="fvcd-badge"` explícito al `<Badge>`.
+    `PatientBanner` (único consumo: `statusBadge` en
+    `asignacion-citas/page.jsx`) — de paso se simplificó `ESTADO_TONE` para
+    emitir directamente los nombres de tono de `<Badge>`
+    (`success`/`neutral`/`warn`) en vez de traducirlos con un
+    `status-${tone}` intermedio. `SolicitudConsumo`
+    (`ReposicionesCard`, `DetalleModal`) — `rep.estado.cls` no es solo
+    estilo: `DetalleModal.jsx` también lo usa como flag de negocio
+    (`rep.estado.cls === 'amber'` decidía si mostrar "Cancelar Pedido");
+    se renombró el valor a `'warn'` en el mock (`solicitud-consumo.jsx`) y
+    se actualizó ese check junto con el render. En los 3, se borró el
+    bloque `.badge`/tonos muerto de su CSS tras migrar todos sus call
+    sites.
+  - **Bloqueada (no es un `<Badge>` de React)**: `asignación de citas` y
+    `NuevaCita` arman su `.badge`/`.estado-badge` dentro de
+    `renderAgenda()`/equivalente en módulos imperativos
+    (`hooks/AsignacionCitas/legacy-app.js`, `hooks/NuevaCita/
+    legacy-nueva-cita.js`, ver "Hooks / logic organization"), que
+    construyen la **fila completa de la tabla como string** (`onclick`
+    inline llamando funciones colgadas de `window`, ej.
+    `seleccionarCita`/`toggleRowMenu`) e insertan con
+    `tbody.innerHTML = ...` — no hay árbol de React en ningún punto de esa
+    fila donde insertar `<Badge>` sin convertir antes la tabla entera a
+    React (selección, menú contextual y todo). Sus valores de color ya se
+    homologaron a los tokens correctos en la auditoría previa; migrar de
+    verdad a `<Badge>` es un refactor de arquitectura de esa pantalla
+    (innerHTML imperativo → React), decisión aparte y más grande, no
+    parte de esta migración de badges — evaluado y pospuesto
+    explícitamente (2026-09-03).
+  - Los ~30 componentes `*Badge` de un solo uso (con sus propios estados
+    de dominio: camas, cirugías, triage...) tampoco son parte de esta
+    migración — son otro sistema, con más de 4-5 tonos cada uno, y no
+    deben forzarse a la API de `<Badge>` genérico.
+
 # Responsive / Breakpoints
 
 El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import './DetalleModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Badge from '@/Components/Badge/Badge';
 import { LuCircleX, LuReceiptText } from 'react-icons/lu';
 
 // Detalle de una reposición: datos de cabecera + tabla de artículos. La
@@ -29,7 +30,7 @@ export default function DetalleModal({ open, rep, onClose, onCancelarPedido }) {
           titleId="detalle-modal-title"
           onClose={onClose}
           closeLabel="Cerrar detalle"
-          trailing={<span className={`badge ${rep.estado.cls}`}>{rep.estado.text}</span>}
+          trailing={<Badge tone={rep.estado.cls}>{rep.estado.text}</Badge>}
         />
 
         <div className="modal-body">
@@ -70,7 +71,7 @@ export default function DetalleModal({ open, rep, onClose, onCancelarPedido }) {
 
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
-          {rep.estado.cls === 'amber' && (
+          {rep.estado.cls === 'warn' && (
             <button type="button" className="btn btn-danger-outline" onClick={() => onCancelarPedido(rep.id)}>
               <LuCircleX className="icon" aria-hidden="true" />
               Cancelar Pedido

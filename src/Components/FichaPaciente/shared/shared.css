@@ -6,7 +6,7 @@
 .fp-table-wrap thead th{
   text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
-  padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap;
+  padding:10px 14px;border-bottom:1px solid var(--border);background:var(--table-header-bg);white-space:nowrap;
 }
 .fp-table-wrap tbody td{
   padding:10px 14px;border-bottom:1px solid var(--border);

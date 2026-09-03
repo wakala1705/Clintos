@@ -17,6 +17,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
   --gray-fg:#6b7280;
   --gray-bg:#eef0f4;
   --radius:8px;
@@ -148,6 +149,28 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .chip-filter .chip-remove{width:13px;height:13px;color:var(--ink-400);}
 .chip-filter:hover .chip-remove{color:var(--ink-700);}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
+.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+/* Chips rápidos de estado (SegmentedFilterBar) como pastilla: opción activa
+   "elevada" en vez del relleno azul sólido de arriba -- mismo criterio que
+   GestionEnfermeria/shared/shared.css (ver AGENTS.md, cada feature es dueña
+   de su propia copia). */
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
 
 .filter-popover-wrap{position:relative;flex-shrink:0;}
 .filters-more-btn{
@@ -187,15 +210,8 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
 .fp-actions button{padding:var(--btn-padding-sm);font-size:var(--fs-base);}
 
-/* ---------- Badges de estado ----------
-   El texto siempre acompaña al color (nunca solo un punto) — ver AGENTS.md
-   accesibilidad del encargo. */
-.badge{
-  display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
-  padding:2px 8px;border-radius:20px;white-space:nowrap;
-}
-.badge.danger{background:var(--red-bg);color:var(--red);}
-.badge.warn{background:var(--amber-bg);color:var(--amber-fg);}
+/* Badges de estado: ver @/Components/Badge/Badge (ya migrado, no se
+   redefine acá). */
 
 /* .icon-btn-circle (paginación) ya vive en Topbar.css, cargado siempre vía
    <Topbar> en el shell — no se redefine acá (ver AGENTS.md). */
@@ -224,7 +240,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fvc-grid{border-collapse:collapse;width:100%;font-size:var(--fs-sm);white-space:nowrap;}
 .fvc-grid thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
-  background:var(--primary-50);color:var(--ink-900);font-weight:var(--fw-semibold);
+  background:var(--table-header-bg);color:var(--ink-900);font-weight:var(--fw-semibold);
   text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
 }
 .fvc-grid tbody td{
@@ -245,3 +261,28 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    @/Components/Button/Button con variant="secondary-accent" (ícono en
    --primary, ver Button.module.css) en vez de una clase propia — ver
    AGENTS.md "Botones". */
+
+/* ---------- Scaffolding de modal (FacturaDetalleModalClasico y futuros
+   modales de Facturación) -- header usa @/Components/ModalHeader/ModalHeader,
+   no se redefine acá. Mismo criterio que .adm-modal-overlay (Admisiones). */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;z-index:var(--z-modal);padding:24px;
+}
+.modal{
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  width:100%;max-height:90vh;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+/* overflow-y:auto (en vez de heredar el overflow:auto del .modal de antes)
+   -- junto con .modal ahora flex column, deja el header/footer siempre
+   visibles y solo el body scrollea cuando el contenido supera max-height
+   (mismo patrón que SolicitudConsumo/shared/shared.css .modal/.modal-body),
+   necesario para el modal "extragrande" de FacturaDetalleModalClasico
+   (ítems de la factura, tabla larga) sin perder el header al hacer scroll. */
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;min-height:0;}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}

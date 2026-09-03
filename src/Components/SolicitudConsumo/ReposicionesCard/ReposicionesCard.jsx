@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import './ReposicionesCard.css';
+import Badge from '@/Components/Badge/Badge';
 import { LuEllipsis, LuEye, LuPencil, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
 
 // Card maestra de reposiciones: buscador (por consecutivo) + tabla + footer
@@ -80,7 +81,7 @@ export default function ReposicionesCard({ repos, selectedId, onSelect, onNuevo,
                   <td>{rep.procedencia}</td>
                   <td>{rep.usuario}</td>
                   <td>{rep.fecha}</td>
-                  <td className="center"><span className={`badge ${rep.estado.cls}`}>{rep.estado.text}</span></td>
+                  <td className="center"><Badge tone={rep.estado.cls}>{rep.estado.text}</Badge></td>
                   <td className="center">
                     <div className="row-actions">
                       <span
@@ -133,7 +134,7 @@ export default function ReposicionesCard({ repos, selectedId, onSelect, onNuevo,
       </div>
 
       <div className="card-footer">
-        <span className="badge neutral">{repos.length} registro{repos.length === 1 ? '' : 's'}</span>
+        <Badge tone="neutral">{repos.length} registro{repos.length === 1 ? '' : 's'}</Badge>
         <span className="footer-note" style={{ marginLeft: 'auto' }}>
           Reposición seleccionada: <b>{selected ? selected.id : '—'}</b>
         </span>

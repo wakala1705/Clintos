@@ -20,6 +20,7 @@
   --surface:#ffffff;
   --surface-modal:#ffffff;
   --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
   --green:#12a150;
   --green-bg:#e6f8ee;
   --red:#c02b2b;

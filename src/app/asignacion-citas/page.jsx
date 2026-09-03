@@ -15,7 +15,7 @@ import { LuCalendarClock, LuCalendarX, LuChevronDown, LuChevronLeft, LuChevronRi
 // legacy-app.js; se traducen a los tonos que soporta PatientBanner
 // (status-active/status-inactive/status-suspendido en PatientBanner.css).
 const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo', suspendido: 'Suspendido' };
-const ESTADO_TONE = { activo: 'active', inactivo: 'inactive', suspendido: 'suspendido' };
+const ESTADO_TONE = { activo: 'success', inactivo: 'neutral', suspendido: 'warn' };
 
 const REGIMEN_OPTIONS = [
   { value: 'todos', label: 'Todos' },

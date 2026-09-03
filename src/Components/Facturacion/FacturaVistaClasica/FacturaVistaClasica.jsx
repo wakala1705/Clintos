@@ -4,14 +4,29 @@ import { useMemo, useState } from 'react';
 import './FacturaVistaClasica.css';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
 } from '@/hooks/Facturacion/mockFacturasData';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
+import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
 
-const FILTROS_INICIALES = { clase: 'todas', tipo: 'todas', desde: '', hasta: '' };
+const FILTROS_INICIALES = {
+  clase: 'todas', tipo: 'todas', desde: '', hasta: '', pe: 'todos',
+};
+
+// Opciones del chip rápido "PE" (encargo explícito) -- mismas keys que
+// ESTADO_PE en FacturasGridClasica.jsx (pendiente/fe-pendiente/enviada), acá
+// con etiquetas cortas para el chip en vez de la etiqueta completa del badge
+// ("Factura electrónica pendiente").
+const PE_FILTROS = [
+  { value: 'todos', label: 'Todo' },
+  { value: 'pendiente', label: 'Pendiente' },
+  { value: 'fe-pendiente', label: 'F.E. Pendiente' },
+  { value: 'enviada', label: 'Enviada' },
+];
 
 // Réplica del formulario legacy de Facturas (encargo explícito, ver imagen
 // de referencia) -- toolbar de una sola fila con label+control inline (no
@@ -23,14 +38,27 @@ export default function FacturaVistaClasica() {
   const [query, setQuery] = useState('');
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
+  const [detalleFactura, setDetalleFactura] = useState(null);
 
-  const facturas = useMemo(() => FACTURAS.filter((f) => {
+  // Sin el filtro "pe" -- se reusa tanto para el conteo de cada chip (cuántas
+  // facturas tendría cada opción de PE con el resto de filtros ya aplicados)
+  // como para la lista final de abajo.
+  const facturasSinPe = useMemo(() => FACTURAS.filter((f) => {
     if (filtros.clase !== 'todas' && f.clase !== filtros.clase) return false;
     if (filtros.tipo !== 'todas' && f.tipo !== filtros.tipo) return false;
     if (filtros.desde && f.fecha < filtros.desde) return false;
     if (filtros.hasta && f.fecha > filtros.hasta) return false;
     return matchesQuery(f, query.trim());
-  }), [query, filtros]);
+  }), [query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
+
+  const peOpciones = useMemo(() => PE_FILTROS.map((o) => ({
+    ...o,
+    count: o.value === 'todos' ? facturasSinPe.length : facturasSinPe.filter((f) => f.estadoPE === o.value).length,
+  })), [facturasSinPe]);
+
+  const facturas = useMemo(() => (
+    filtros.pe === 'todos' ? facturasSinPe : facturasSinPe.filter((f) => f.estadoPE === filtros.pe)
+  ), [facturasSinPe, filtros.pe]);
 
   // Sin useState/useEffect: si la selección actual ya no está en la lista
   // filtrada (o todavía no hay ninguna), cae a la primera fila visible --
@@ -53,6 +81,13 @@ export default function FacturaVistaClasica() {
           />
         </div>
 
+        <SegmentedFilterBar
+          options={peOpciones}
+          value={filtros.pe}
+          onChange={(v) => setFiltros((f) => ({ ...f, pe: v }))}
+          ariaLabel="Filtrar por PE"
+        />
+
         <div className="fvc-filter-field">
           <label htmlFor="fvc-clase">Clase:</label>
           <FormSelect id="fvc-clase" value={filtros.clase} onChange={(v) => setFiltros((f) => ({ ...f, clase: v }))} options={CLASE_OPTIONS} />
@@ -73,9 +108,16 @@ export default function FacturaVistaClasica() {
         <Button variant="secondary-accent" size="sm" icon={LuRefreshCw} className="fvc-refresh-btn">Refrescar</Button>
       </div>
 
-      <FacturasGridClasica facturas={facturas} selectedId={effectiveSelectedId} onSelect={setSelectedId} />
+      <FacturasGridClasica
+        facturas={facturas}
+        selectedId={effectiveSelectedId}
+        onSelect={setSelectedId}
+        onVerDetalle={setDetalleFactura}
+      />
 
       <FacturaDetalleClasico factura={selectedFactura} />
+
+      <FacturaDetalleModalClasico factura={detalleFactura} onClose={() => setDetalleFactura(null)} />
     </div>
   );
 }

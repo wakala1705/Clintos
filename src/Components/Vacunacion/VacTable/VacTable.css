@@ -1,12 +1,11 @@
 .vac-table-wrap{flex:1;min-height:0;overflow:auto;}
 .vac-table{width:100%;border-collapse:collapse;}
 .vac-table thead th{
-  position:sticky;top:0;z-index:1;background:#f7f8fb;
+  position:sticky;top:0;z-index:1;background:var(--table-header-bg);
   text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;
   padding:0;border-bottom:1px solid var(--border);white-space:nowrap;
 }
-html[data-theme="dark"] .vac-table thead th{background:#161c2b;}
 .vac-th-sort-btn{
   display:inline-flex;align-items:center;gap:4px;width:100%;
   font-family:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:inherit;text-transform:inherit;letter-spacing:inherit;

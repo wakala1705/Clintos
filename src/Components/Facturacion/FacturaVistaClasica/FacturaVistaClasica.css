@@ -10,7 +10,7 @@
 .fvc-search-field{flex:1;min-width:220px;}
 
 .fvc-filter-field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.fvc-filter-field label{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
+.fvc-filter-field label{font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}
 .fvc-filter-field .form-select{min-width:120px;}
 .fvc-filter-field input[type="date"]{
   height:var(--input-md);border:1px solid var(--border);border-radius:var(--radius);

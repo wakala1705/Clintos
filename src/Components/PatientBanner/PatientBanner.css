@@ -35,15 +35,8 @@
 .patient-banner-compact{padding:8px 20px;gap:12px;flex-wrap:nowrap;}
 .patient-banner-compact .patient-avatar{width:30px;height:30px;font-size:var(--fs-sm);}
 .patient-banner-compact .patient-name-block .pname{font-size:var(--fs-base);}
-.badge{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;display:inline-block;}
-.badge.status-active{background:var(--green-bg);color:var(--green);}
-.badge.status-active .dot{background:var(--green);}
-.badge.status-inactive{background:var(--gray-bg);color:var(--gray-fg);}
-.badge.status-inactive .dot{background:var(--gray-fg);}
-.badge.status-suspendido{background:var(--amber-bg);color:var(--amber-fg);}
-.badge.status-suspendido .dot{background:var(--amber-fg);}
-.badge-dot-inline{display:inline-flex;align-items:center;gap:6px;}
-.badge-dot-inline .dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+/* Badge de estado: ver @/Components/Badge/Badge (ya migrado, no se
+   redefine acá). */
 .close-x{
   width:30px;height:30px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;

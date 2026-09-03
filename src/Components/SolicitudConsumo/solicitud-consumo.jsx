@@ -88,7 +88,7 @@ export default function SolicitudConsumo() {
         procedencia: 'Manual',
         usuario: 'M. Hernández',
         fecha,
-        estado: { text: 'Pendiente por confirmar', cls: 'amber' },
+        estado: { text: 'Pendiente por confirmar', cls: 'warn' },
         tipoArticulo: payload.tipoArticulo,
         articulos: payload.items,
       };

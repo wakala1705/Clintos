@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './PatientBanner.css';
+import Badge from '@/Components/Badge/Badge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
 import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
@@ -125,9 +126,7 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
           </div>
         )}
         {statusBadge && (
-          <span className={`badge status-${statusBadge.tone} badge-dot-inline`}>
-            <span className="dot"></span>{statusBadge.label}
-          </span>
+          <Badge tone={statusBadge.tone} dot>{statusBadge.label}</Badge>
         )}
         {onClose && (
           <button type="button" className="close-x" onClick={onClose} aria-label="Quitar paciente" title="Quitar paciente">
