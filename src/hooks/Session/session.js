@@ -38,3 +38,15 @@ function getServerSnapshot() {
 export function useActiveModule() {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 }
+
+const MODULE_LABELS = {
+  administrador: 'Administrador',
+  asistencial: 'Asistencial',
+  contable: 'Contable',
+  nomina: 'Nómina',
+};
+
+export function useActiveModuleLabel() {
+  const activeModule = useActiveModule();
+  return MODULE_LABELS[activeModule] ?? MODULE_LABELS.asistencial;
+}

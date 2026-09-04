@@ -58,6 +58,7 @@ const MENU = [
   { id: 'seguridad', label: 'Seguridad', icon: LuGlobe },
   { id: 'consulta', label: 'Consulta', icon: LuFileSearch },
   { id: 'reportes', label: 'Reportes', icon: LuFileText },
+  { id: 'configuracion', label: 'Configuración del sistema', icon: LuSettings },
   {
     id: 'ayuda',
     label: 'Ayuda',

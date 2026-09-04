@@ -17,7 +17,6 @@ import {
   LuHeart,
   LuHeartPulse,
   LuScissors,
-  LuShieldPlus,
   LuSiren,
   LuStethoscope,
   LuSyringe,
@@ -75,12 +74,6 @@ const MODULE_GROUPS = [
         icon: LuSiren,
         enabled: false,
       },
-    ],
-  },
-  {
-    title: 'PyMS',
-    icon: LuShieldPlus,
-    items: [
       {
         title: 'Vacunación',
         description: 'Registro y seguimiento del esquema de vacunación de pacientes.',

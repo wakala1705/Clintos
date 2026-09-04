@@ -6,11 +6,9 @@ import { useActiveModule } from '@/hooks/Session/session';
 import './Sidebar.css';
 import {
   LuBed,
-  LuBox,
   LuCalendarClock,
   LuCalendarDays,
   LuCalendarPlus,
-  LuChartColumn,
   LuChevronDown,
   LuChevronLeft,
   LuClipboardCheck,
@@ -22,19 +20,17 @@ import {
   LuHouse,
   LuLandmark,
   LuMoon,
-  LuPackage,
   LuReceipt,
   LuScissors,
   LuSettings,
-  LuShieldPlus,
   LuSiren,
   LuSquarePlus,
   LuStethoscope,
   LuSun,
   LuSyringe,
+  LuUserCog,
   LuUsers,
   LuUsersRound,
-  LuWallet,
   LuWrench,
 } from 'react-icons/lu';
 
@@ -52,15 +48,98 @@ export default function Sidebar() {
   const isProgramarCita = pathname === '/programar-cita';
   const isListaPacientes = pathname === '/lista-pacientes';
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
-  const isSolicitudConsumo = pathname === '/solicitud-consumo';
-  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isSolicitudConsumo;
   const isVacunacion = pathname === '/vacunacion';
-  const isPyms = isVacunacion;
+  const isConsultaExternaAdministracion = pathname === '/consulta-externa/administracion';
+  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isVacunacion || isConsultaExternaAdministracion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
   const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
+  const isHospitalizacionAdministracion = pathname === '/hospitalizacion/administracion';
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHospitalizacionAdministracion;
   const isFacturas = pathname === '/facturas';
+  const isFacturacionAdministracion = pathname === '/facturacion/administracion';
+  const isAyudasDxAdministracion = pathname === '/ayudas-dx/administracion';
+  const isUtilitarios = pathname === '/utilitarios';
+  const isConfiguracion = pathname === '/configuracion';
+
+  // Admin ve estos 5 anidados bajo "Módulo Asistencial" (junto a Contable/Nómina);
+  // un usuario de solo-Asistencial ya sabe en qué módulo está, así que se suben
+  // a nivel superior (mismo contenido, sin el nivel extra de navegación redundante).
+  const subGroupClass = isAdmin ? 'nav-group sub' : 'nav-group';
+
+  const asistencialSubGroups = (
+    <>
+      <div className={`${subGroupClass}${isConsultaExterna ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuSquarePlus className="icon nav-icon" />
+          <span className="label">Consulta Externa</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/asignacion-citas" className={`nav-subitem${isAsignacionCitas ? ' active' : ''}`}><LuCalendarDays className="icon" />Asignación de citas</Link>
+          <Link href="/programar-cita" className={`nav-subitem${isProgramarCita ? ' active' : ''}`}><LuCalendarPlus className="icon" />Programar cita</Link>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuCalendarClock className="icon" />Reasignación de Citas</div>
+          <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historias Clínicas</Link>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuSiren className="icon" />Accidentes de Tránsito</div>
+          <Link href="/lista-pacientes" className={`nav-subitem${isListaPacientes ? ' active' : ''}`}><LuUsers className="icon" />Pacientes</Link>
+          <Link href="/vacunacion" className={`nav-subitem${isVacunacion ? ' active' : ''}`}><LuSyringe className="icon" />Vacunación</Link>
+          <Link href="/consulta-externa/administracion" className={`nav-subitem${isConsultaExternaAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
+        </div>
+      </div>
+
+      <div className={`${subGroupClass}${isHospitalizacion ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuBed className="icon nav-icon" />
+          <span className="label">Hospitalización</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
+          <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
+          <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
+          <Link href="/hospitalizacion/administracion" className={`nav-subitem${isHospitalizacionAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
+        </div>
+      </div>
+
+      <div className={`${subGroupClass}${isFacturas || isFacturacionAdministracion ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuReceipt className="icon nav-icon" />
+          <span className="label">Facturación</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
+          <Link href="/facturacion/administracion" className={`nav-subitem${isFacturacionAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
+        </div>
+      </div>
+
+      <div className={`${subGroupClass}${isAyudasDxAdministracion ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuFlaskConical className="icon nav-icon" />
+          <span className="label">Ayudas DX</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/ayudas-dx/administracion" className={`nav-subitem${isAyudasDxAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
+        </div>
+      </div>
+
+      <div className={subGroupClass}>
+        <Link href="/utilitarios" className={`nav-head nav-link${isUtilitarios ? ' active' : ''}`}>
+          <LuWrench className="icon nav-icon" />
+          <span className="label">Utilitarios</span>
+        </Link>
+      </div>
+
+      <div className={subGroupClass}>
+        <Link href="/configuracion" className={`nav-head nav-link${isConfiguracion ? ' active' : ''}`}>
+          <LuSettings className="icon nav-icon" />
+          <span className="label">Configuración</span>
+        </Link>
+      </div>
+    </>
+  );
 
   return (
     <aside className="sidebar" id="sidebar">
@@ -87,127 +166,18 @@ export default function Sidebar() {
           <span className="label">Inicio</span>
         </Link>
 
-        <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas ? ' open' : ''}`}>
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuStethoscope className="icon nav-icon" />
-            <span className="label">Módulo Asistencial</span>
-            <LuChevronDown className="icon chev" />
+        {isAdmin ? (
+          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas || isFacturacionAdministracion || isAyudasDxAdministracion || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
+            <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+              <LuStethoscope className="icon nav-icon" />
+              <span className="label">Módulo Asistencial</span>
+              <LuChevronDown className="icon chev" />
+            </div>
+            <div className="nav-body">
+              {asistencialSubGroups}
+            </div>
           </div>
-          <div className="nav-body">
-
-            <div className={`nav-group sub${isConsultaExterna ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuSquarePlus className="icon nav-icon" />
-                <span className="label">Consulta Externa</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                <Link href="/asignacion-citas" className={`nav-subitem${isAsignacionCitas ? ' active' : ''}`}><LuCalendarDays className="icon" />Asignación de citas</Link>
-                <Link href="/programar-cita" className={`nav-subitem${isProgramarCita ? ' active' : ''}`}><LuCalendarPlus className="icon" />Programar cita</Link>
-                <div className="nav-subitem" tabIndex="0" role="button"><LuCalendarClock className="icon" />Reasignación de Citas</div>
-                <Link href="/historia-clinica" className={`nav-subitem${isHistoriaClinica ? ' active' : ''}`}><LuFileText className="icon" />Historias Clínicas</Link>
-                <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>
-                <div className="nav-subitem" tabIndex="0" role="button"><LuSiren className="icon" />Accidentes de Tránsito</div>
-                <Link href="/lista-pacientes" className={`nav-subitem${isListaPacientes ? ' active' : ''}`}><LuUsers className="icon" />Pacientes</Link>
-                <Link href="/solicitud-consumo" className={`nav-subitem${isSolicitudConsumo ? ' active' : ''}`}><LuPackage className="icon" />Solicitud de consumo</Link>
-              </div>
-            </div>
-
-            <div className={`nav-group sub${isPyms ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuShieldPlus className="icon nav-icon" />
-                <span className="label">PyMS</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                <Link href="/vacunacion" className={`nav-subitem${isVacunacion ? ' active' : ''}`}><LuSyringe className="icon" />Vacunación</Link>
-              </div>
-            </div>
-
-            <div className={`nav-group sub${isHospitalizacion ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuBed className="icon nav-icon" />
-                <span className="label">Hospitalización</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
-                <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
-                <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
-              </div>
-            </div>
-
-            <div className={`nav-group sub${isFacturas ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuReceipt className="icon nav-icon" />
-                <span className="label">Facturación</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
-              </div>
-            </div>
-
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuFlaskConical className="icon nav-icon" />
-                <span className="label">Ayudas DX</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
-
-            {isAdmin && (
-              <>
-                <div className="nav-group sub">
-                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                    <LuBox className="icon nav-icon" />
-                    <span className="label">Consolidados</span>
-                    <LuChevronDown className="icon chev" />
-                  </div>
-                  <div className="nav-body"></div>
-                </div>
-
-                <div className="nav-group sub">
-                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                    <LuWallet className="icon nav-icon" />
-                    <span className="label">Finanzas</span>
-                    <LuChevronDown className="icon chev" />
-                  </div>
-                  <div className="nav-body"></div>
-                </div>
-
-                <div className="nav-group sub">
-                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                    <LuWrench className="icon nav-icon" />
-                    <span className="label">Utilitarios</span>
-                    <LuChevronDown className="icon chev" />
-                  </div>
-                  <div className="nav-body"></div>
-                </div>
-
-                <div className="nav-group sub">
-                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                    <LuChartColumn className="icon nav-icon" />
-                    <span className="label">Reportes (CR)</span>
-                    <LuChevronDown className="icon chev" />
-                  </div>
-                  <div className="nav-body"></div>
-                </div>
-
-                <div className="nav-group sub">
-                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                    <LuSettings className="icon nav-icon" />
-                    <span className="label">Configuración</span>
-                    <LuChevronDown className="icon chev" />
-                  </div>
-                  <div className="nav-body"></div>
-                </div>
-              </>
-            )}
-
-          </div>
-        </div>
+        ) : asistencialSubGroups}
 
         {isAdmin && (
           <>

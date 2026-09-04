@@ -5,6 +5,7 @@ import Link from 'next/link';
 import './Topbar.css';
 import HamburgerMenu from '@/Components/HamburgerMenu/HamburgerMenu';
 import UserMenu from '@/Components/UserMenu/UserMenu';
+import { useActiveModuleLabel } from '@/hooks/Session/session';
 
 // Topbar global, compartida por /asignacion-citas, /programar-cita y
 // /gestion-enfermeria (antes duplicada inline en cada page.jsx, con CSS
@@ -14,6 +15,12 @@ import UserMenu from '@/Components/UserMenu/UserMenu';
 // meta-items de especialidad/área...) se pasa como children porque varía por
 // página y no todas lo necesitan.
 export default function Topbar({ section, page, user, children }) {
+  // El rol mostrado se deriva del módulo con el que se entró a sesión (ver
+  // Sidebar, mismo patrón), no del `user.role` que cada página venía
+  // hardcodeando -- así los dos quedan sincronizados sin tocar los 36 call
+  // sites que todavía pasan ese campo (queda sin usar, no rompe nada).
+  const roleLabel = useActiveModuleLabel();
+
   // `section` acepta un string plano (caso más común, 1 nivel, sin link — la
   // mayoría de "secciones" hoy no son rutas navegables), o un array donde
   // cada ítem es un string o un { label, href } cuando ese nivel SÍ debe ser
@@ -39,7 +46,7 @@ export default function Topbar({ section, page, user, children }) {
       <div className="topbar-right">
         {children}
         <div className="divider-v"></div>
-        <UserMenu name={user.name} role={user.role} initials={user.initials} />
+        <UserMenu name={user.name} role={roleLabel} initials={user.initials} />
       </div>
     </header>
   );
