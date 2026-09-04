@@ -103,6 +103,10 @@ export default function GestionTurnos() {
             </div>
 
             <div className="ct-blocks-row">
+
+
+
+              
               <div className="card">
                 <div className="ct-block-header">
                   <div>

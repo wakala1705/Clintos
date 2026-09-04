@@ -347,9 +347,9 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .ct-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex-shrink:0;}
 @media (max-width:1280px){.ct-kpi-row{grid-template-columns:repeat(2,1fr);}}
 
-.ct-blocks-row{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;}
+.ct-blocks-row{display:flex;flex-direction:row;gap:16px;flex:1;min-height:0;}
 
-.ct-block-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:16px 20px;flex-shrink:0;}
+.ct-block-header{border-bottom:solid 1px var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:16px 20px;flex-shrink:0;}
 .ct-block-header h2{margin:0 0 2px;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ct-block-header p{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
 .ct-block-header .btn .icon{width:18px;height:18px;}

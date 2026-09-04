@@ -1,0 +1,105 @@
+.card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+.card:hover {
+    border-color: #b7c3d6;
+    box-shadow: 0 2px 8px rgba(1, 81, 155, 0.08);
+}
+
+.card:focus-visible {
+    outline: none;
+    border-color: #0065CD;
+    box-shadow: 0 0 0 2px rgba(0, 101, 205, 0.2);
+}
+
+.card.disabled {
+    cursor: not-allowed;
+    background: #FAFBFF;
+}
+
+.card.disabled:hover {
+    border-color: #E2E8F0;
+    box-shadow: none;
+}
+
+.icon {
+    display: flex;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.iconGlyph {
+    width: 18px;
+    height: 18px;
+}
+
+.card.disabled .icon {
+    opacity: .6;
+}
+
+.blue .icon {
+    background: #E3EFFD;
+    color: #0065CD;
+}
+
+.green .icon {
+    background: #E1F6EA;
+    color: #0d7a3d;
+}
+
+.orange .icon {
+    background: #FDEBDD;
+    color: #C05F1E;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.title {
+    color: #06192A;
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    line-height: 20px;
+}
+
+.description {
+    color: #6f7c94;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-regular);
+    line-height: 18px;
+}
+
+.chevron {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: #a7aebd;
+    margin-top: 2px;
+}

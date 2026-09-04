@@ -36,7 +36,7 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
 .form-select-dropdown{
   position:fixed;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
   background:var(--surface);border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;border:solid 1px var(--border)
 }
 .form-select-option{
   display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;

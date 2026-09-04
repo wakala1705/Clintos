@@ -115,35 +115,35 @@ export default function DetalleCirugiaPanel({
           modal centrado sí tiene el ancho para repartirlos). */}
       <div className="dcp-info-grid">
         <div className="dcp-info-item">
-          <div className="dcp-info-label">No. Prog</div>
-          <div className="dcp-info-value">{cirugia.id}</div>
-        </div>
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Fecha</div>
-          <div className="dcp-info-value">{fechaLabel(cirugia.fecha)} {cirugia.horaInicio}</div>
-        </div>
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Tel. Aviso</div>
-          <div className="dcp-info-value">{cirugia.paciente.telAviso || '—'}</div>
+          <div className="dcp-info-label">Nombre</div>
+          <div className="dcp-info-value">{cirugia.paciente.nombre}</div>
         </div>
 
         <div className="dcp-info-item">
           <div className="dcp-info-label">Doc. Id</div>
           <div className="dcp-info-value">{cirugia.paciente.documento}</div>
         </div>
+
         <div className="dcp-info-item">
-          <div className="dcp-info-label">Nombre</div>
-          <div className="dcp-info-value">{cirugia.paciente.nombre}</div>
+          <div className="dcp-info-label">Edad</div>
+          <div className="dcp-info-value">{edadDetalleLabel(cirugia.paciente)}</div>
         </div>
+
         <div className="dcp-info-item">
           <div className="dcp-info-label">Sexo</div>
           <div className="dcp-info-value">{cirugia.paciente.sexo}</div>
         </div>
 
         <div className="dcp-info-item">
-          <div className="dcp-info-label">Edad</div>
-          <div className="dcp-info-value">{edadDetalleLabel(cirugia.paciente)}</div>
+          <div className="dcp-info-label">Aseguradora</div>
+          <div className="dcp-info-value">{cirugia.paciente.aseguradora}</div>
         </div>
+
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Tel. Aviso</div>
+          <div className="dcp-info-value">{cirugia.paciente.telAviso || '—'}</div>
+        </div>
+
         <div className="dcp-info-item">
           <div className="dcp-info-label">Nivel</div>
           <div className="dcp-info-value">{cirugia.paciente.nivel || '—'}</div>
@@ -157,10 +157,17 @@ export default function DetalleCirugiaPanel({
           <div className="dcp-info-label">Dirección</div>
           <div className="dcp-info-value">{cirugia.paciente.direccion || '—'}</div>
         </div>
+
         <div className="dcp-info-item">
-          <div className="dcp-info-label">Aseguradora</div>
-          <div className="dcp-info-value">{cirugia.paciente.aseguradora}</div>
+          <div className="dcp-info-label">No. Prog</div>
+          <div className="dcp-info-value">{cirugia.id}</div>
         </div>
+        <div className="dcp-info-item">
+          <div className="dcp-info-label">Fecha</div>
+          <div className="dcp-info-value">{fechaLabel(cirugia.fecha)} {cirugia.horaInicio}</div>
+        </div>
+        
+                          
         <div className="dcp-info-item">
           <div className="dcp-info-label">Cirujano</div>
           <div className="dcp-info-value">{cirugia.cirujano || '—'}</div>

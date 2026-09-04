@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useActiveModule } from '@/hooks/Session/session';
 import './Sidebar.css';
 import {
   LuBed,
@@ -44,6 +45,8 @@ import {
 // nuevo, no una copia completa del árbol de navegación.
 export default function Sidebar() {
   const pathname = usePathname();
+  const activeModule = useActiveModule();
+  const isAdmin = activeModule === 'administrador';
   const isHome = pathname === '/home';
   const isAsignacionCitas = pathname === '/asignacion-citas';
   const isProgramarCita = pathname === '/programar-cita';
@@ -154,86 +157,94 @@ export default function Sidebar() {
               <div className="nav-body"></div>
             </div>
 
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuBox className="icon nav-icon" />
-                <span className="label">Consolidados</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
+            {isAdmin && (
+              <>
+                <div className="nav-group sub">
+                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                    <LuBox className="icon nav-icon" />
+                    <span className="label">Consolidados</span>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="nav-body"></div>
+                </div>
 
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuWallet className="icon nav-icon" />
-                <span className="label">Finanzas</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
+                <div className="nav-group sub">
+                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                    <LuWallet className="icon nav-icon" />
+                    <span className="label">Finanzas</span>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="nav-body"></div>
+                </div>
 
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuWrench className="icon nav-icon" />
-                <span className="label">Utilitarios</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
+                <div className="nav-group sub">
+                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                    <LuWrench className="icon nav-icon" />
+                    <span className="label">Utilitarios</span>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="nav-body"></div>
+                </div>
 
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuChartColumn className="icon nav-icon" />
-                <span className="label">Reportes (CR)</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
+                <div className="nav-group sub">
+                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                    <LuChartColumn className="icon nav-icon" />
+                    <span className="label">Reportes (CR)</span>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="nav-body"></div>
+                </div>
 
-            <div className="nav-group sub">
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuSettings className="icon nav-icon" />
-                <span className="label">Configuración</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body"></div>
-            </div>
+                <div className="nav-group sub">
+                  <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                    <LuSettings className="icon nav-icon" />
+                    <span className="label">Configuración</span>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="nav-body"></div>
+                </div>
+              </>
+            )}
 
           </div>
         </div>
 
-        <div className="sidebar-divider"></div>
+        {isAdmin && (
+          <>
+            <div className="sidebar-divider"></div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuLandmark className="icon nav-icon" />
-            <span className="label">Módulo Contable</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuLandmark className="icon nav-icon" />
+                <span className="label">Módulo Contable</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="sidebar-divider"></div>
+            <div className="sidebar-divider"></div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuUsersRound className="icon nav-icon" />
-            <span className="label">Módulo Nómina</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuUsersRound className="icon nav-icon" />
+                <span className="label">Módulo Nómina</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
 
-        <div className="sidebar-divider"></div>
+            <div className="sidebar-divider"></div>
 
-        <div className="nav-group">
-          <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-            <LuFolder className="icon nav-icon" />
-            <span className="label">Otros soportes</span>
-            <LuChevronDown className="icon chev" />
-          </div>
-          <div className="nav-body"></div>
-        </div>
+            <div className="nav-group">
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuFolder className="icon nav-icon" />
+                <span className="label">Otros soportes</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body"></div>
+            </div>
+          </>
+        )}
 
       </nav>
 

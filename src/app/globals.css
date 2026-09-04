@@ -10,7 +10,7 @@
      abajo). Cualquier font-size nuevo debe tomar uno de estos 8 valores en
      vez de un px suelto. */
   --fs-xs: 11px;
-  --fs-sm: 12px;
+  --fs-sm: 13px;
   --fs-base: 14px;
   --fs-lg: 16px;
   --fs-xl: 18px;
