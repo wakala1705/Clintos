@@ -4,79 +4,81 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import './HamburgerMenu.css';
 import {
+  LuBed,
   LuChevronRight,
-  LuCircleHelp,
   LuFileSearch,
   LuFileText,
+  LuFlaskConical,
   LuFolder,
   LuGlobe,
   LuLayoutGrid,
   LuMenu,
+  LuReceipt,
   LuSettings,
+  LuSquarePlus,
 } from 'react-icons/lu';
 
-// Menú del ícono de hamburguesa en el Topbar (app-wide, ver Topbar.jsx).
-// Estructura de menú clásica de escritorio: lista vertical de secciones, con
-// "Procesos" y "Ayuda" abriendo un segundo panel (flyout) anclado siempre a
-// la esquina superior del panel principal, no a la fila que lo dispara — así
-// se ve en el mock. Encargo: los ítems sin pantalla propia (sin `href`) se
-// muestran deshabilitados en vez de clickeables-sin-efecto — ver
-// `disabledItem`/`disabledSubItem` más abajo. Los ítems marcados hasSubmenu
-// (Correcciones, RIPS, 890) muestran la flecha de un tercer nivel que no fue
-// provisto todavía, y entran en esa misma regla (deshabilitados).
-const MENU = [
-  { id: 'archivo', label: 'Archivo', icon: LuFolder },
-  { id: 'operacion', label: 'Operación', icon: LuSettings },
+// Megamenú del ícono de hamburguesa en el Topbar (app-wide, ver Topbar.jsx).
+// Primer nivel = los módulos asistenciales (Consulta Externa, Hospitalización,
+// Ayudas Diagnósticas, Facturación); al pasar el mouse sobre uno con
+// contenido (`columns.length`) se abre un panel ancho multi-columna anclado
+// siempre a la esquina superior del panel principal (top:0; left:100%), no a
+// la fila que lo dispara. Cada columna es una categoría (Archivo, Procesos,
+// Ayuda...) con sus propios ítems debajo. Hospitalización/Ayudas
+// Diagnósticas/Facturación arrancan sin columnas (contenido pendiente) —
+// deshabilitados en vez de clickeables-sin-efecto, mismo criterio que las
+// columnas sin ítems propios (Archivo/Operación/Seguridad/Consulta/Reportes/
+// Configuración del sistema) o los ítems marcados hasSubmenu (Correcciones,
+// RIPS, 890, tercer nivel no provisto todavía).
+const MEGA_MENU = [
   {
-    id: 'procesos',
-    label: 'Procesos',
-    icon: LuLayoutGrid,
-    items: [
-      { id: 'multas', label: 'Multas' },
-      { divider: true },
-      { id: 'gestion-consultorios', label: 'Gestión de consultorios' },
-      { id: 'gestion-camas', label: 'Gestión de camas', href: '/gestion-camas' },
-      { id: 'cancelar-citas', label: 'Cancelar citas paciente' },
-      { id: 'programacion-agendas', label: 'Programación Agendas' },
-      { id: 'gestion-turnos', label: 'Gestión de turnos', href: '/gestion-turnos' },
-      { id: 'correcciones', label: 'Correcciones', hasSubmenu: true },
-      { id: 'gestor-autorizaciones', label: 'Gestor de autorizaciones' },
-      { id: 'cambio-medico', label: 'Cambio de médico' },
-      { id: 'solicitud-consumo', label: 'Solicitud de consumo', href: '/solicitud-consumo' },
-      { divider: true },
-      { id: 'cambio-medico-familiar', label: 'Cambio de médico familiar' },
-      { divider: true },
-      { id: 'facturas', label: 'Facturas' },
-      { id: 'facturacion-masiva', label: 'Facturación masiva' },
-      { divider: true },
-      { id: 'rips', label: 'RIPS', hasSubmenu: true },
-      { id: '890', label: '890', hasSubmenu: true },
-      { divider: true },
-      { id: 'auditoria', label: 'Auditoría' },
+    id: 'consulta-externa',
+    label: 'Consulta Externa',
+    icon: LuSquarePlus,
+    columns: [
+      { id: 'archivo', label: 'Archivo', icon: LuFolder, items: [] },
+      { id: 'operacion', label: 'Operación', icon: LuSettings, items: [] },
+      {
+        id: 'procesos',
+        label: 'Procesos',
+        icon: LuLayoutGrid,
+        items: [
+          { id: 'multas', label: 'Multas' },
+          { divider: true },
+          { id: 'gestion-consultorios', label: 'Gestión de consultorios' },
+          { id: 'gestion-camas', label: 'Gestión de camas', href: '/gestion-camas' },
+          { id: 'cancelar-citas', label: 'Cancelar citas paciente' },
+          { id: 'programacion-agendas', label: 'Programación Agendas' },
+          { id: 'gestion-turnos', label: 'Gestión de turnos', href: '/gestion-turnos' },
+          { id: 'correcciones', label: 'Correcciones', hasSubmenu: true },
+          { id: 'gestor-autorizaciones', label: 'Gestor de autorizaciones' },
+          { id: 'cambio-medico', label: 'Cambio de médico' },
+          { id: 'solicitud-consumo', label: 'Solicitud de consumo', href: '/solicitud-consumo' },
+          { divider: true },
+          { id: 'cambio-medico-familiar', label: 'Cambio de médico familiar' },
+          { divider: true },
+          { id: 'facturas', label: 'Facturas' },
+          { id: 'facturacion-masiva', label: 'Facturación masiva' },
+          { divider: true },
+          { id: 'rips', label: 'RIPS', hasSubmenu: true },
+          { id: '890', label: '890', hasSubmenu: true },
+          { divider: true },
+          { id: 'auditoria', label: 'Auditoría' },
+        ],
+      },
+      { id: 'seguridad', label: 'Seguridad', icon: LuGlobe, items: [] },
+      { id: 'consulta', label: 'Consulta', icon: LuFileSearch, items: [] },
+      { id: 'reportes', label: 'Reportes', icon: LuFileText, items: [] },
     ],
   },
-  { id: 'seguridad', label: 'Seguridad', icon: LuGlobe },
-  { id: 'consulta', label: 'Consulta', icon: LuFileSearch },
-  { id: 'reportes', label: 'Reportes', icon: LuFileText },
-  { id: 'configuracion', label: 'Configuración del sistema', icon: LuSettings },
-  {
-    id: 'ayuda',
-    label: 'Ayuda',
-    icon: LuCircleHelp,
-    items: [
-      { id: 'temas-ayuda', label: 'Temas de ayuda' },
-      { id: 'buscar-ayuda', label: 'Buscar ayuda sobre' },
-      { id: 'como-usar-ayuda', label: 'Como usar la ayuda' },
-      { divider: true },
-      { id: 'acerca-de', label: 'Acerca de...' },
-      { id: 'registro', label: 'Registro' },
-    ],
-  },
+  { id: 'hospitalizacion', label: 'Hospitalización', icon: LuBed, columns: [] },
+  { id: 'ayudas-diagnosticas', label: 'Ayudas Diagnósticas', icon: LuFlaskConical, columns: [] },
+  { id: 'facturacion', label: 'Facturación', icon: LuReceipt, columns: [] },
 ];
 
 export default function HamburgerMenu() {
   const [open, setOpen] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [openModule, setOpenModule] = useState(null);
   const rootRef = useRef(null);
 
   useEffect(() => {
@@ -97,10 +99,10 @@ export default function HamburgerMenu() {
 
   function closeAll() {
     setOpen(false);
-    setOpenSubmenu(null);
+    setOpenModule(null);
   }
 
-  const activeItem = MENU.find((item) => item.id === openSubmenu);
+  const activeModule = MEGA_MENU.find((item) => item.id === openModule);
 
   return (
     <div className="hmenu" ref={rootRef}>
@@ -117,50 +119,63 @@ export default function HamburgerMenu() {
 
       {open && (
         <div className="hmenu-dropdown" role="menu">
-          {MENU.map((item) => {
-            // Sin flyout propio (item.items) ni pantalla propia (item.href)
-            // no hay nada que este ítem pueda abrir — deshabilitado en vez
-            // de un botón que solo cierra el menú sin hacer nada.
-            const disabled = !item.items && !item.href;
+          {MEGA_MENU.map((item) => {
+            const disabled = item.columns.length === 0;
             return (
               <button
                 key={item.id}
                 type="button"
-                className={`hmenu-item${openSubmenu === item.id ? ' active' : ''}`}
+                className={`hmenu-item${openModule === item.id ? ' active' : ''}`}
                 role="menuitem"
                 disabled={disabled}
                 aria-disabled={disabled || undefined}
-                aria-haspopup={item.items ? 'menu' : undefined}
-                aria-expanded={item.items ? openSubmenu === item.id : undefined}
-                onMouseEnter={() => { if (!disabled) setOpenSubmenu(item.items ? item.id : null); }}
-                onClick={() => { if (!disabled) (item.items ? setOpenSubmenu(item.id) : closeAll()); }}
+                aria-haspopup="menu"
+                aria-expanded={disabled ? undefined : openModule === item.id}
+                onMouseEnter={() => { if (!disabled) setOpenModule(item.id); }}
+                onClick={() => { if (!disabled) setOpenModule(item.id); }}
               >
                 <item.icon className="icon" aria-hidden="true" />
                 <span>{item.label}</span>
-                {item.items && <LuChevronRight className="icon chev" aria-hidden="true" />}
+                {!disabled && <LuChevronRight className="icon chev" aria-hidden="true" />}
               </button>
             );
           })}
 
-          {activeItem && (
-            <div className="hmenu-submenu" role="menu" onMouseEnter={() => setOpenSubmenu(activeItem.id)}>
-              {activeItem.items.map((sub, i) => {
-                if (sub.divider) return <div key={`div-${i}`} className="hmenu-divider"></div>;
-                if (sub.href) {
-                  return (
-                    <Link key={sub.id} href={sub.href} className="hmenu-item" role="menuitem" onClick={closeAll}>
-                      <span>{sub.label}</span>
-                    </Link>
-                  );
-                }
-                // Sin `href` = sin pantalla propia todavía (incluye los
-                // marcados hasSubmenu: su 3er nivel no fue provisto) —
-                // deshabilitado en vez de un botón que solo cierra el menú.
+          {activeModule && (
+            <div className="hmenu-megapanel" role="menu" onMouseEnter={() => setOpenModule(activeModule.id)}>
+              {activeModule.columns.map((column) => {
+                const columnDisabled = column.items.length === 0;
                 return (
-                  <button key={sub.id} type="button" className="hmenu-item" role="menuitem" disabled aria-disabled="true">
-                    <span>{sub.label}</span>
-                    {sub.hasSubmenu && <LuChevronRight className="icon chev" aria-hidden="true" />}
-                  </button>
+                  <div key={column.id} className="hmenu-megacolumn">
+                    <div className={`hmenu-megacolumn-header${columnDisabled ? ' disabled' : ''}`}>
+                      <column.icon className="icon" aria-hidden="true" />
+                      <span>{column.label}</span>
+                    </div>
+                    {!columnDisabled && (
+                      <div className="hmenu-megacolumn-items">
+                        {column.items.map((sub, i) => {
+                          if (sub.divider) return <div key={`div-${i}`} className="hmenu-divider"></div>;
+                          if (sub.href) {
+                            return (
+                              <Link key={sub.id} href={sub.href} className="hmenu-item" role="menuitem" onClick={closeAll}>
+                                <span>{sub.label}</span>
+                              </Link>
+                            );
+                          }
+                          // Sin `href` = sin pantalla propia todavía (incluye
+                          // los marcados hasSubmenu: su 3er nivel no fue
+                          // provisto) — deshabilitado en vez de un botón que
+                          // solo cierra el menú.
+                          return (
+                            <button key={sub.id} type="button" className="hmenu-item" role="menuitem" disabled aria-disabled="true">
+                              <span>{sub.label}</span>
+                              {sub.hasSubmenu && <LuChevronRight className="icon chev" aria-hidden="true" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
