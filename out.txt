@@ -1,0 +1,257 @@
+===== src\Components\Admisiones\AdmisionesTable\RowActionsMenu\RowActionsMenu.css
+SEL: .adm-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:200px;z-index:20; background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14); padding:6px;
+
+===== src\Components\Admisiones\AdmisionesToolbar\SearchFieldSelect\SearchFieldSelect.css
+SEL: .adm-search-select-dropdown
+BODY: position:absolute;top:calc(100% + 10px);left:-38px;min-width:190px;z-index:20; background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.14);padding:4px;display:flex;flex-direction:column;gap:2px;
+
+===== src\Components\AreaSelector\AreaSelector.css
+SEL: /* position:fixed + top/right/minWidth se completan inline en
+   AreaSelector.jsx (calculados desde el trigger vía getBoundingClientRect)
+   — el listado se porta a document.body, así que no puede d
+BODY: position:fixed;min-width:180px;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px; list-style:none;margin:0;
+
+===== src\Components\Facturacion\FacturaVistaClasica\FacturasGridClasica\RowActionsMenu\RowActionsMenu.css
+SEL: .fvc-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:200px;z-index:20; background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14); padding:6px;
+
+===== src\Components\Facturacion\shared\shared.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);min-width:300px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
+
+===== src\Components\FormSelect\FormSelect.css
+SEL: /* position:fixed + top/left/width se completan inline en FormSelect.jsx
+   (calculados desde el trigger vía getBoundingClientRect) — el listado se
+   porta a document.body, por eso no puede depende
+BODY: position:fixed;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;border:solid 1px var(--border)
+
+===== src\Components\GestionCamas\BedActionsMenu\BedActionsMenu.css
+SEL: /* position:fixed + portal a document.body (ver BedActionsMenu.jsx) — top/
+   bottom/right vienen inline desde JS (getBoundingClientRect del botón),
+   nunca calc(100%) relativo a un ancestro: BedCa
+BODY: position:fixed;min-width:190px;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamas.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:var(--z-popover);min-width:260px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;display:none; isolation:isolate;
+
+===== src\Components\GestionCamas\GestionCamasAuditoria\ExportarAuditoriaMenu\ExportarAuditoriaMenu.css
+SEL: .cbau-export-dropdown
+BODY: position:absolute;top:calc(100% + 6px);right:0;min-width:200px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasAuditoria\GestionCamasAuditoria.css
+SEL: .cbau-toast
+BODY: position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px); display:flex;align-items:center;gap:8px; background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium); padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28); opacity:0;pointer-events:none;transition:opacity .2s ease,transform 
+
+===== src\Components\GestionCamas\GestionCamasConfiguracion\CatalogoDetailModal\CatalogoDetailModal.css
+SEL: .cbc-det-toggle::after
+BODY: content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%; background:#fff;box-shadow:0 1px 2px rgba(16,24,39,.3);transition:transform .15s;
+
+===== src\Components\GestionCamas\GestionCamasConfiguracion\GestionCamasConfiguracion.css
+SEL: .cbc-toast
+BODY: position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px); display:flex;align-items:center;gap:8px; background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium); padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28); opacity:0;pointer-events:none;transition:opacity .2s ease,transform 
+
+===== src\Components\GestionCamas\GestionCamasIndicadores\ExportarMenu\ExportarMenu.css
+SEL: .cbin-export-dropdown
+BODY: position:absolute;top:calc(100% + 6px);right:0;min-width:200px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasIndicadores\GestionCamasIndicadores.css
+SEL: .cbin-toast
+BODY: position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px); display:flex;align-items:center;gap:8px; background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium); padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28); opacity:0;pointer-events:none;transition:opacity .2s ease,transform 
+
+===== src\Components\GestionCamas\GestionCamasIndicadores\InfoTooltip\InfoTooltip.css
+SEL: .cbin-tooltip-bubble
+BODY: display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%); width:220px;background:var(--ink-900);color:#fff;border-radius:8px;padding:8px 10px; font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.4;white-space:normal; pointer-events:none;z-index:var(--z-popover);box-shadow:0 4px 14px rgba(16,24,39,.20)
+
+===== src\Components\GestionCamas\GestionCamasIntegridad\GestionCamasIntegridad.css
+SEL: .cbi-toast
+BODY: position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px); display:flex;align-items:center;gap:8px; background:var(--ink-900);color:#fff;font-size:var(--fs-base);font-weight:var(--fw-medium); padding:10px 18px;border-radius:999px;box-shadow:0 12px 32px rgba(16,24,39,.28); opacity:0;pointer-events:none;transition:opacity .2s ease,transform 
+
+===== src\Components\GestionCamas\GestionCamasIntegridad\InconsistenciaRowActionsMenu\InconsistenciaRowActionsMenu.css
+SEL: .cbi-actions-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:170px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasLimpieza\LimpiezaRowActionsMenu\LimpiezaRowActionsMenu.css
+SEL: /* position:fixed + portal a document.body (ver BedActionsMenu.css) — z-index
+   +1 sobre --z-modal por si algún día se abre sobre un modal. */
+.cbl-actions-menu-dropdown
+BODY: position:fixed;min-width:190px;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasMantenimiento\MantenimientoRowActionsMenu\MantenimientoRowActionsMenu.css
+SEL: .cbm-actions-menu-dropdown
+BODY: position:fixed;min-width:200px;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasReservas\ReservaRowActionsMenu\ReservaRowActionsMenu.css
+SEL: .cbr-actions-menu-dropdown
+BODY: position:fixed;min-width:160px;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionCamas\GestionCamasSidebar\GestionCamasSidebar.css
+SEL: /* Tooltip (solo visible colapsado — mostrado por JS vía hover/focus, ver
+   GestionCamasSidebar.jsx): portado a document.body con position:fixed en
+   vez de position:absolute dentro de .cbs-nav-it
+BODY: position:fixed;transform:translateY(-50%); background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px; font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap; pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+
+===== src\Components\GestionCamas\InfoTooltip\InfoTooltip.css
+SEL: /* position:fixed + left/bottom se completan inline (InfoTooltip.jsx, desde
+   getBoundingClientRect del ícono) — la burbuja se porta a document.body,
+   por eso no depende de position:absolute rela
+BODY: position:fixed;background:var(--ink-900);color:#fff;border-radius:8px;padding:8px 10px; font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.4;white-space:normal; pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+
+===== src\Components\GestionCamas\Typeahead\Typeahead.css
+SEL: /* position:fixed + portal a document.body (ver Typeahead.jsx) — mismo
+   criterio de z-index que .form-select-dropdown (FormSelect.css). */
+.cbta-dropdown
+BODY: position:fixed;max-height:240px;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
+
+===== src\Components\GestionEnfermeria\GestionEnfermeriaSidebar\GestionEnfermeriaSidebar.css
+SEL: /* Tooltip (solo visible colapsado — mostrado por JS vía hover/focus, ver
+   GestionEnfermeriaSidebar.jsx): portado a document.body con position:fixed
+   en vez de position:absolute dentro de .ges-n
+BODY: position:fixed;transform:translateY(-50%); background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px; font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap; pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+
+===== src\Components\GestionEnfermeria\modals\DosePopover\DosePopover.css
+SEL: /* Estilos exclusivos de DosePopover. El patrón "info list" (.dp-info,
+   .dp-info-row, .k, .v) también lo usa PatientBanner (popover de alergias) —
+   ver shared/shared.css. */
+.dose-popover
+BODY: position:fixed;z-index:var(--z-dose-popover);width:250px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:16px; opacity:0;pointer-events:none;transform:translateY(4px); transition:opacity .12s ease,transform .12s ease; isolation:isolate;
+
+===== src\Components\GestionEnfermeria\modals\Toast\Toast.css
+SEL: /* Estilos exclusivos de Toast. */
+.toast
+BODY: position:fixed;bottom:24px;right:24px;z-index:var(--z-toast); background:var(--ink-900);color:#fff;padding:12px 18px;border-radius:10px; font-size:var(--fs-base);font-weight:var(--fw-medium);box-shadow:0 16px 36px rgba(16,24,39,.28); display:flex;align-items:center;gap:10px;max-width:340px; opacity:0;transform:translateY(10px);pointer-events:none; 
+
+===== src\Components\GestionEnfermeria\PanelGeneral\PatientsPanel\PatientsTable\RowActionsMenu\RowActionsMenu.css
+SEL: .pg-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:224px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionEnfermeria\shared\shared.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:var(--z-popover);min-width:260px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;display:none; isolation:isolate;
+
+===== src\Components\GestionEnfermeria\TareasEnfermeria\TaskListPanel\TaskTable\QuickAssignMenu\QuickAssignMenu.css
+SEL: .task-quick-assign-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:190px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px; list-style:none;margin:0;
+
+===== src\Components\GestionEnfermeria\TareasEnfermeria\TaskListPanel\TaskTable\TaskRowMenu\TaskRowMenu.css
+SEL: .task-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:220px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\GestionTurnos\GestionTurnos.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:var(--z-popover);min-width:260px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;display:none; isolation:isolate;
+
+===== src\Components\GestionTurnos\GestionTurnosSidebar\GestionTurnosSidebar.css
+SEL: .cts-tooltip-float
+BODY: position:fixed;transform:translateY(-50%); background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 10px; font-size:var(--fs-sm);font-weight:var(--fw-semibold);white-space:nowrap; pointer-events:none;z-index:calc(var(--z-modal, 50) + 1);box-shadow:0 4px 14px rgba(16,24,39,.20);
+
+===== src\Components\GestionTurnos\ProgramacionTurnos\TurnosCalendar\TurnoCellPopover\TurnoCellPopover.css
+SEL: /* Mismo lenguaje visual que .tc-card-menu-dropdown/.pg-row-menu-dropdown
+   (blanco, radio, sombra) pero más ancho: acá hay detalle a mostrar, no
+   solo una lista de acciones. position:fixed + top
+BODY: position:fixed;z-index:calc(var(--z-modal, 50) + 1);width:240px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:14px; cursor:default;white-space:normal;
+
+===== src\Components\GestionTurnos\ProgramacionTurnos\TurnosCalendar\TurnosCalendar.css
+SEL: /* ---------- PANEL DE HOVER (capa 2 del progressive disclosure) ----------
+   `position:absolute` sobre el mismo footprint de la tarjeta en reposo
+   (top/left/right:0, ver .tc-cell) — al no estar 
+BODY: position:absolute;top:0;left:0;right:0;z-index:5;cursor:pointer; border-radius:var(--radius);box-shadow:0 8px 20px rgba(16,24,39,.16); padding:7px 8px;display:flex;flex-direction:column;gap:2px; opacity:0;visibility:hidden;pointer-events:none; transition:opacity .18s ease,visibility .18s ease;
+
+===== src\Components\GestionTurnos\TurnoRowActionsMenu\TurnoRowActionsMenu.css
+SEL: .ct-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:180px;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius); box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+
+===== src\Components\HamburgerMenu\HamburgerMenu.css
+SEL: .hmenu-dropdown
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:400;width:240px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\HamburgerMenu\HamburgerMenu.css
+SEL: .hmenu-megapanel
+BODY: position:absolute;top:0;left:calc(100% + 8px);width:220px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\HamburgerMenu\HamburgerMenu.css
+SEL: /* Tercer nivel: ítems de la categoría con hover activo en el megapanel,
+   mismo anclaje (top:0; left:100%) que el megapanel respecto al panel
+   principal, para que la cascada crezca siempre hacia
+BODY: position:absolute;top:0;left:calc(100% + 8px);width:240px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\HistoriaClinica\AtencionPaciente\PlantillaCrecimt2\ProximasCitasStep\DiagnosticoField\DiagnosticoField.css
+SEL: .pcs-diag-listbox
+BODY: position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:var(--z-sticky); background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius); box-shadow:0 12px 28px rgba(16,24,39,.16);max-height:260px;overflow-y:auto; padding:4px;margin:0;list-style:none;
+
+===== src\Components\HistoriaClinica\AtencionPaciente\PlantillaCrecimt2\ProximasCitasStep\SearchableSelect\SearchableSelect.css
+SEL: /* Listbox flotante — mismo z-index de overlays de la app (--z-dropdown si
+   existiera; se reutiliza --z-sticky, ya por encima del contenido normal
+   del panel, ver .data-table thead th en shared.
+BODY: position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:var(--z-sticky); background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius); box-shadow:0 12px 28px rgba(16,24,39,.16);max-height:240px;overflow-y:auto; padding:4px;margin:0;list-style:none;
+
+===== src\Components\HistoriaClinica\AtencionPaciente\PlantillaCrecimt2\ViewSettingsMenu\ViewSettingsMenu.css
+SEL: .vsm-dropdown
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:260px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ListaPacientes\FiltersRow\FiltersRow.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:20;min-width:260px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
+
+===== src\Components\ListaPacientes\PatientsTable\RowActionsMenu\RowActionsMenu.css
+SEL: .lp-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:180px;z-index:20; background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14); padding:6px;
+
+===== src\Components\NuevaCita\NuevaCitaFlow.css
+SEL: .context-menu
+BODY: position:fixed;min-width:190px; background:var(--surface); border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14); padding:8px;z-index:150;display:none;
+
+===== src\Components\NuevaCita\NuevaCitaFlow.css
+SEL: .nc-toast
+BODY: position:fixed;top:20px;right:20px; background:var(--ink-900);color:#fff; padding:12px 16px;border-radius:10px; font-size:var(--fs-base);font-weight:var(--fw-semibold); box-shadow:0 8px 20px rgba(0,0,0,.22); opacity:0;transform:translateY(-8px); transition:opacity .2s,transform .2s; z-index:200;pointer-events:none; display:flex;align-items:center;g
+
+===== src\Components\PatientBanner\PatientBanner.css
+SEL: .pb-popover
+BODY: position:absolute;top:calc(100% + 8px);right:0;min-width:260px;z-index:20; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
+
+===== src\Components\ProgramacionSalaCirugias\DetalleCirugiaPanel\DetalleCirugiaPanel.css
+SEL: .dcp-more-dropdown
+BODY: position:absolute;bottom:calc(100% + 6px);left:0;z-index:var(--z-popover); background:var(--surface);border-radius:var(--radius);box-shadow:0 -8px 24px rgba(16,24,39,.16);padding:6px; width:240px;
+
+===== src\Components\ProgramacionSalaCirugias\ProgramarCirugiaDropdown\ProgramarCirugiaDropdown.css
+SEL: .pcd-menu
+BODY: position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:var(--z-popover); background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ProgramacionSalaCirugias\VistaDropdown\VistaDropdown.css
+SEL: .psc-vista-menu
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:216px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ProgramarCita\NuevaCitaDropdown\NuevaCitaDropdown.css
+SEL: .pc-nc-menu
+BODY: position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:400; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ProgramarCita\RangoDropdown\RangoDropdown.css
+SEL: .pc-rango-menu
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:160px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ProgramarCita\RowHeightDropdown\RowHeightDropdown.css
+SEL: .pc-rowh-menu
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:160px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\ProgramarCita\ScheduleGrid\ScheduleGrid.css
+SEL: .pc-now-pill
+BODY: position:absolute;left:6px;transform:translateY(-50%); background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold); padding:3px 9px;border-radius:999px;z-index:6; box-shadow:0 1px 3px rgba(0,0,0,.2);
+
+===== src\Components\SolicitudConsumo\shared\shared.css
+SEL: .row-menu
+BODY: position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border); border-radius:9px;box-shadow:0 10px 24px rgba(16,24,39,.14);padding:8px;min-width:150px;z-index:20;
+
+===== src\Components\UserMenu\UserMenu.css
+SEL: .user-menu-dropdown
+BODY: position:absolute;top:calc(100% + 8px);right:0;z-index:400;width:220px; background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg); box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px; display:flex;flex-direction:column;gap:1px;
+
+===== src\Components\Vacunacion\VacRowMenu\VacRowMenu.css
+SEL: .vac-row-menu-dropdown
+BODY: position:absolute;top:calc(100% + 4px);right:0;min-width:200px;z-index:20; background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14); padding:6px;
+
+===== src\Components\Vacunacion\VacToolbar\VacToolbar.css
+SEL: .filter-popover
+BODY: position:absolute;top:calc(100% + 8px);left:0;z-index:20;min-width:260px; background:var(--surface);border-radius:var(--radius-lg); box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
+
+TOTAL: 57

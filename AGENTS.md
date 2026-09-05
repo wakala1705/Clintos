@@ -445,7 +445,24 @@ construir el componente).
     se renombró el valor a `'warn'` en el mock (`solicitud-consumo.jsx`) y
     se actualizó ese check junto con el render. En los 3, se borró el
     bloque `.badge`/tonos muerto de su CSS tras migrar todos sus call
-    sites.
+    sites. `Admisiones` (`PreIngresoModal`), `FichaPaciente` (`FichaHeader`),
+    `ListaPacientes` (`PatientsTable`, tabla + tarjetas mobile) y
+    `GestionEnfermeria` (`AtencionEnfermeria`, único consumo de
+    `.badge.status-active` — no tenía regla base en light mode, solo un
+    override de dark mode ya muerto que se borró de `shared.css` al migrar).
+    Los primeros tres consumían `.estado-badge` de `NuevaCitaFlow.css`
+    (activo/inactivo/suspendido → success/neutral/warn); a
+    `Admisiones.css` le faltaba el token `--amber` (solo tenía
+    `--amber-bg`/`--amber-fg`) para el punto de `tone="warn"` — mismo bug ya
+    documentado para `ModalHeader`/`--gray-bg`, se agregó ahí. `NuevaCitaFlow.css`
+    no se tocó: `FichaPaciente`/`ListaPacientes` siguen montando
+    `<NuevaCitaFlow/>` para sus flujos de "Agendar/Agregar paciente", que
+    siguen usando `.estado-badge` desde el módulo imperativo (ver bloqueada
+    abajo).
+    El contador estático `#servicios-count` de `asignacion-citas/page.jsx`
+    (fuera de `renderAgenda()`, solo su texto lo actualiza el módulo
+    imperativo vía `id`) también se migró a `<Badge tone="neutral" id=.../>` —
+    no así las filas de agenda en sí, ver bloqueada abajo.
   - **Bloqueada (no es un `<Badge>` de React)**: `asignación de citas` y
     `NuevaCita` arman su `.badge`/`.estado-badge` dentro de
     `renderAgenda()`/equivalente en módulos imperativos

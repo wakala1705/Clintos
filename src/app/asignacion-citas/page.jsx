@@ -6,6 +6,7 @@ import { initAsignacionCitas } from '@/hooks/AsignacionCitas/legacy-app';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
+import Badge from '@/Components/Badge/Badge';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import FiltroPickerModal from '@/Components/AsignacionCitas/FiltroPickerModal/FiltroPickerModal';
 import { ESPECIALIDADES, MEDICOS } from '@/hooks/AsignacionCitas/filtrosData';
@@ -182,7 +183,7 @@ export default function AsignacionCitasPage() {
             </div>
             <div className="panel-card-title" style={{marginBottom:'8px'}}>
               <span className="lbl" style={{textTransform:'none', fontSize:'11.5px'}}>Servicios contratados</span>
-              <span className="badge neutral" id="servicios-count">0</span>
+              <Badge tone="neutral" id="servicios-count">0</Badge>
             </div>
             <div className="services-list" id="services-list"></div>
           </div>

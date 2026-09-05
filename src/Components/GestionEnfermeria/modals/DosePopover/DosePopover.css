@@ -3,7 +3,7 @@
    ver shared/shared.css. */
 .dose-popover{
   position:fixed;z-index:var(--z-dose-popover);width:250px;
-  background:var(--surface);border-radius:var(--radius-lg);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 16px 40px rgba(16,24,39,.20);padding:16px;
   opacity:0;pointer-events:none;transform:translateY(4px);
   transition:opacity .12s ease,transform .12s ease;

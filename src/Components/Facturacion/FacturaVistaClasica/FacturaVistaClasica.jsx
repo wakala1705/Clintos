@@ -8,6 +8,7 @@ import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterB
 import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
 } from '@/hooks/Facturacion/mockFacturasData';
+import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
@@ -96,14 +97,11 @@ export default function FacturaVistaClasica() {
           <label htmlFor="fvc-tipo">Tipo:</label>
           <FormSelect id="fvc-tipo" value={filtros.tipo} onChange={(v) => setFiltros((f) => ({ ...f, tipo: v }))} options={TIPO_OPTIONS} />
         </div>
-        <div className="fvc-filter-field">
-          <label htmlFor="fvc-desde">Desde:</label>
-          <input id="fvc-desde" type="date" value={filtros.desde} onChange={(e) => setFiltros((f) => ({ ...f, desde: e.target.value }))} />
-        </div>
-        <div className="fvc-filter-field">
-          <label htmlFor="fvc-hasta">Hasta:</label>
-          <input id="fvc-hasta" type="date" value={filtros.hasta} onChange={(e) => setFiltros((f) => ({ ...f, hasta: e.target.value }))} />
-        </div>
+        <DateRangeFilter
+          desde={filtros.desde}
+          hasta={filtros.hasta}
+          onChange={({ desde, hasta }) => setFiltros((f) => ({ ...f, desde, hasta }))}
+        />
 
         <Button variant="secondary-accent" size="sm" icon={LuRefreshCw} className="fvc-refresh-btn">Refrescar</Button>
       </div>

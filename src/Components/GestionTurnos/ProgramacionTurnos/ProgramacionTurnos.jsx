@@ -28,6 +28,7 @@ const TIPO_OPTIONS = [
   { value: 'manana', label: 'Mañana' },
   { value: 'tarde', label: 'Tarde' },
   { value: 'noche', label: 'Noche' },
+  { value: 'madrugada', label: 'Madrugada' },
 ];
 const ESTADO_OPTIONS = [
   { value: 'todos', label: 'Todos' },

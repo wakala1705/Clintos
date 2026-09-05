@@ -463,6 +463,14 @@ export function fechaHoraLocalISO(date) {
   return `${fechaISO(date)}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
 }
 
+// Formato que espera <input type="time"> ("HH:mm") -- usado para precargar
+// Hora solicitud con la hora del sistema al abrir el wizard "Nueva cirugía"
+// (mismo encargo que fechaHoraLocalISO arriba, ver datosIniciales en
+// NuevaCirugiaWizard.jsx).
+export function horaLocal(date) {
+  return `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+}
+
 export function addDias(date, n) {
   const d = new Date(date);
   d.setDate(d.getDate() + n);

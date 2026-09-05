@@ -4,8 +4,10 @@ import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { calcularEdad } from '@/hooks/ListaPacientes/mockPatientsData';
 import { LuCalendarPlus, LuEye, LuFileText } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import Badge from '@/Components/Badge/Badge';
 
 const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo' };
+const ESTADO_TONE = { activo: 'success', inactivo: 'neutral' };
 
 // Tabla de escritorio/tablet + tarjetas de mobile del mismo dataset — se
 // renderizan ambas y la CSS decide cuál mostrar según el ancho (ver
@@ -54,7 +56,7 @@ export default function PatientsTable({
                 <td>{calcularEdad(p.fechaNacimiento)} años</td>
                 <td>{p.sexo}</td>
                 <td>{p.eps}</td>
-                <td><span className={`estado-badge ${p.estado}`}><span className="dot"></span>{ESTADO_LABEL[p.estado]}</span></td>
+                <td><Badge tone={ESTADO_TONE[p.estado]} dot>{ESTADO_LABEL[p.estado]}</Badge></td>
                 <td>{p.celular}</td>
                 {showSede && <td>{p.sede}</td>}
                 <td onDoubleClick={(e) => e.stopPropagation()}>
@@ -95,7 +97,7 @@ export default function PatientsTable({
                 <div className="lp-pname">{p.nombre}</div>
                 <div className="lp-card-doc">{p.tipoDocumento} {p.documento}</div>
               </div>
-              <span className={`estado-badge ${p.estado}`}><span className="dot"></span>{ESTADO_LABEL[p.estado]}</span>
+              <Badge tone={ESTADO_TONE[p.estado]} dot>{ESTADO_LABEL[p.estado]}</Badge>
             </div>
             <div className="lp-card-meta">
               <span>{calcularEdad(p.fechaNacimiento)} años · {p.sexo}</span>

@@ -98,7 +98,6 @@ export default function DetalleCirugiaPanel({
       <ModalHeader
         title="Detalle de la cirugía"
         titleId="dcp-title"
-        subtitle={cirugia.paciente.nombre}
         onClose={onClose}
         closeLabel="Cerrar detalle"
       />

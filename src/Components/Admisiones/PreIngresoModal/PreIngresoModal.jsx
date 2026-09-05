@@ -5,6 +5,7 @@ import './PreIngresoModal.css';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import Badge from '@/Components/Badge/Badge';
 
 const TIPO_INGRESO_OPTIONS = [
   { value: 'espontaneo', label: 'Espontáneo' },
@@ -26,14 +27,12 @@ const INFO_RELEVANTE_OPTIONS = [
 // Admisiones.jsx vía onPatientConfirmed (ver ese archivo), así que trae la
 // misma forma (activo/inactivo/suspendido), no el estado de una admisión.
 const PATIENT_ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo', suspendido: 'Suspendido' };
+const PATIENT_ESTADO_TONE = { activo: 'success', inactivo: 'neutral', suspendido: 'warn' };
 
 const OBSERVACION_MAX = 150;
 
 // Paso siguiente a elegir/registrar el paciente en el buscador compartido
-// (ver Admisiones.jsx: handlePatientConfirmed abre este modal). `.estado-badge`
-// del pill de estado del paciente no se redefine acá — ya lo trae cargado
-// NuevaCitaFlow.css (montado en Admisiones.jsx), mismas clases que usa ese
-// mismo buscador para la columna "Estado".
+// (ver Admisiones.jsx: handlePatientConfirmed abre este modal).
 export default function PreIngresoModal({ patient, onClose, onSubmit }) {
   const [tipoIngreso, setTipoIngreso] = useState('espontaneo');
   const [infoRelevante, setInfoRelevante] = useState([]);
@@ -61,9 +60,9 @@ export default function PreIngresoModal({ patient, onClose, onSubmit }) {
               <div className="pi-patient-meta">{patient.edad} años · {patient.sexo}</div>
               <div className="pi-patient-meta">{patient.eps}</div>
             </div>
-            <span className={`estado-badge ${patient.estado}`}>
-              <span className="dot"></span>{PATIENT_ESTADO_LABEL[patient.estado] ?? patient.estado}
-            </span>
+            <Badge tone={PATIENT_ESTADO_TONE[patient.estado]} dot>
+              {PATIENT_ESTADO_LABEL[patient.estado] ?? patient.estado}
+            </Badge>
           </div>
 
           <fieldset className="pi-field">

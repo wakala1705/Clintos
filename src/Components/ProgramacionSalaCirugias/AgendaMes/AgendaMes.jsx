@@ -1,12 +1,9 @@
 'use client';
 
 import './AgendaMes.css';
-import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { fechaISO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-
-const ESTADOS_LEYENDA = ['programada', 'borrador', 'urgencia', 'cancelada', 'incumplida'];
 
 // Vista Mes: grilla de calendario (dowLabels/days ya calculados por
 // grillaMes en el orquestador, mismo criterio que diasVisibles para
@@ -65,13 +62,6 @@ export default function AgendaMes({
             </button>
           );
         })}
-      </div>
-
-      <div className="psc-agenda-legend">
-        <span className="psc-agenda-legend-title">Estados:</span>
-        {ESTADOS_LEYENDA.map((estado) => (
-          <EstadoCirugiaBadge key={estado} estado={estado} size="sm" />
-        ))}
       </div>
     </div>
   );

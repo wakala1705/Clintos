@@ -5,7 +5,9 @@ import './NuevaCirugiaWizard.css';
 import InformacionGeneralStep from './InformacionGeneralStep/InformacionGeneralStep';
 import ProcedimientosStep from './ProcedimientosStep/ProcedimientosStep';
 import Button from '@/Components/Button/Button';
-import { fechaISO, fechaHoraLocalISO, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import {
+  fechaISO, fechaHoraLocalISO, horaLocal, SALAS,
+} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuX } from 'react-icons/lu';
 
 const PASOS = [
@@ -14,18 +16,24 @@ const PASOS = [
   { n: 3, titulo: 'Insumos', sub: 'Canasta e insumos requeridos.' },
 ];
 
-// Fecha inicio precarga la fecha/hora del sistema al abrir el wizard
-// (encargo explícito) en vez de arrancar vacía -- igual que Fecha solicitud
-// (fechaISO(new Date())), pero con hora incluida porque datetime-local la
-// necesita. Sigue siendo editable: es un punto de partida, no un valor fijo.
-function datosIniciales(patient, salaId) {
+// Fecha de programación (campo `fechaInicio`, label "Fecha de
+// programación" en InformacionGeneralStep.jsx) precarga la fecha/hora del
+// sistema al abrir el wizard (encargo explícito) en vez de arrancar vacía --
+// igual que Fecha/Hora solicitud, pero con hora incluida porque
+// datetime-local la necesita. Sigue siendo editable: es un punto de partida,
+// no un valor fijo. Cuando viene de clickear un slot de la grilla
+// (initialFechaHora, ver onSlotClick en ProgramacionSalaCirugias.jsx) toma
+// esa fecha/hora en vez de la del sistema -- Fecha/Hora solicitud no se ven
+// afectadas por eso: son la fecha/hora en que se está *pidiendo* la cirugía
+// (ahora), no la fecha/hora *programada* para operarla.
+function datosIniciales(patient, salaId, initialFechaHora) {
   return {
     salaId,
     esAfiliado: true,
-    fechaInicio: fechaHoraLocalISO(new Date()),
+    fechaInicio: initialFechaHora ?? fechaHoraLocalISO(new Date()),
     telefonosAviso: patient?.telefono ?? '',
     fechaSolicitud: fechaISO(new Date()),
-    horaSolicitud: '',
+    horaSolicitud: horaLocal(new Date()),
     duracionEstimada: '',
     duracionPostquirurgica: '',
     duracionRecuperacion: '',
@@ -70,10 +78,10 @@ function datosIniciales(patient, salaId) {
 // porque este wizard solo crea cirugías nuevas (el número se asigna al
 // guardar, nunca existe en este paso).
 export default function NuevaCirugiaWizard({
-  patient, salaId, onClose,
+  patient, salaId, onClose, initialFechaHora,
 }) {
   const [paso, setPaso] = useState(1);
-  const [datos, setDatos] = useState(() => datosIniciales(patient, salaId));
+  const [datos, setDatos] = useState(() => datosIniciales(patient, salaId, initialFechaHora));
   const salaLabel = SALAS.find((s) => s.value === salaId)?.label ?? '—';
 
   function set(campo, valor) {

@@ -42,7 +42,7 @@ export default function FormSelect({
     if (!open) return;
     function updateCoords() {
       const rect = triggerRef.current.getBoundingClientRect();
-      setCoords({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+      setCoords({ top: rect.bottom + 4, left: rect.left, minWidth: rect.width });
     }
     updateCoords();
     window.addEventListener('resize', updateCoords);
@@ -52,6 +52,20 @@ export default function FormSelect({
       window.removeEventListener('scroll', updateCoords, true);
     };
   }, [open]);
+
+  // El ancho real del listado depende del label más largo (ej. "Administrado"
+  // vs el trigger angosto "Todos"), no del trigger — por eso arriba solo se
+  // fija minWidth. Acá, una vez montado con su ancho de contenido, se
+  // corrige `left` si se pasa del borde derecho del viewport (filtros cerca
+  // del borde, ej. columna "Estado" en Monitoreo de Atención de enfermería).
+  useLayoutEffect(() => {
+    if (!open || !coords || !dropdownRef.current) return;
+    const dropdownRect = dropdownRef.current.getBoundingClientRect();
+    const overflowRight = dropdownRect.right - (window.innerWidth - 8);
+    if (overflowRight > 0.5) {
+      setCoords((c) => (c ? { ...c, left: Math.max(8, c.left - overflowRight) } : c));
+    }
+  }, [open, coords]);
 
   useEffect(() => {
     if (!open) return;
@@ -104,7 +118,7 @@ export default function FormSelect({
           className="form-select-dropdown"
           role="listbox"
           aria-labelledby={id}
-          style={{ top: coords.top, left: coords.left, width: coords.width }}
+          style={{ top: coords.top, left: coords.left, minWidth: coords.minWidth }}
         >
           {options.map((o) => (
             <li key={o.value} role="presentation">

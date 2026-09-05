@@ -86,7 +86,7 @@ export default function InformacionGeneralStep({
       <h4 className="igs-section-title">Datos de la cirugía</h4>
       <div className="igs-grid">
         <div className="form-field">
-          <label htmlFor="igs-fecha-inicio">Fecha inicio</label>
+          <label htmlFor="igs-fecha-inicio">Fecha de programación</label>
           <input
             id="igs-fecha-inicio"
             type="datetime-local"

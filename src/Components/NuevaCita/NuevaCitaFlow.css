@@ -37,7 +37,7 @@
 
   .context-menu{
     position:fixed;min-width:190px;
-    background:var(--surface);
+    background:var(--surface);border:1px solid var(--border);
     border-radius:var(--radius);box-shadow:0 4px 12px rgba(16,24,39,.14);
     padding:8px;z-index:150;display:none;
   }

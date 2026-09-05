@@ -1,8 +1,8 @@
 .fvc-detail{
-  display:flex;flex-direction:column;flex:1;min-height:0;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;flex:0 0 auto;border-top:1px solid var(--border);
 }
 .fvc-detail-empty{
-  align-items:center;justify-content:center;display:flex;
+  align-items:center;justify-content:center;display:flex;flex:1;min-height:0;
   padding:24px;color:var(--ink-500);font-size:var(--fs-base);text-align:center;
 }
 
@@ -14,20 +14,19 @@
 .fvc-info-label{color:var(--ink-500);}
 .fvc-info-value{color:var(--ink-900);font-weight:var(--fw-semibold);}
 .fvc-info-name{color:var(--primary-dark);}
-.fvc-info-total{color:var(--red);}
 .fvc-info-spacer{flex:1;}
 
-/* .fvc-grid/.fvc-num/.fvc-ellipsis (usadas por la grilla de ítems abajo):
-   definidas en ../../shared/shared.css. Los botones de esta vista usan
-   @/Components/Button/Button, no una clase propia. */
+/* .fvc-grid/.fvc-num/.fvc-ellipsis (usadas por la grilla de ítems del modal
+   "Ver detalle"): definidas en ../../shared/shared.css. Los botones de esta
+   vista usan @/Components/Button/Button, no una clase propia. */
 
+/* .fvc-items-scroll/.fvc-items-grid: la grilla de ítems ya no vive en este
+   panel (ver comentario del .jsx), pero FacturaItemsTable las sigue
+   consumiendo desde el modal "Ver detalle" (FacturaDetalleModalClasico) --
+   este archivo se importa siempre en esta página, así que quedan acá. */
 .fvc-items-scroll{flex:1;min-height:0;overflow:auto;}
 .fvc-items-grid{font-size:var(--fs-sm);}
 
-.fvc-footer-bar{
-  display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;
-  padding:10px 16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;
-}
 .fvc-footer-right{display:flex;align-items:center;gap:10px;}
 .fvc-footer-total-label{font-size:var(--fs-sm);color:var(--ink-500);}
 .fvc-footer-total-value{

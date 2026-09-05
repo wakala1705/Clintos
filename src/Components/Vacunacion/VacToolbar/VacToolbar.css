@@ -46,7 +46,7 @@
 
 .filter-popover{
   position:absolute;top:calc(100% + 8px);left:0;z-index:20;min-width:260px;
-  background:var(--surface);border-radius:var(--radius-lg);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
 }
 /* El botón "Filtros" es el ítem más a la derecha de la barra (ver

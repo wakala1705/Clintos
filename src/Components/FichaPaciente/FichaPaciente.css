@@ -1,9 +1,9 @@
 /* Tokens + reset del shell (sidebar + topbar + content wrapper) duplicados
    aquí siguiendo el mismo criterio que el resto de features de nivel
    superior (Home.css / ListaPacientes.css / ProgramarCita.css...) — ver
-   AGENTS.md. Los badges de estado (.estado-badge) no se redefinen aquí:
-   se reutilizan los de NuevaCitaFlow.css, montado siempre en esta pantalla
-   (mismo criterio que ListaPacientes/PatientsTable.css). */
+   AGENTS.md. FichaHeader.jsx usa <Badge> para su pill de estado; el
+   `.estado-badge` de NuevaCitaFlow.css sigue cargado acá solo para el
+   buscador de "Agendar cita" (ver FichaPaciente.jsx), no para el header. */
 :root{
   --primary:#0065CD;
   --primary-dark:#004E9E;

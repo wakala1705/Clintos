@@ -1,0 +1,49 @@
+.svt-resumen {
+  margin-bottom: var(--space-4);
+}
+.svt-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  padding: 16px 16px 0px 20px;
+}
+.svt-resumen-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-3) var(--space-4);
+}
+.svt-resumen-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.svt-resumen-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.svt-resumen-value {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--ink-900);
+  line-height: 1.2;
+}
+.svt-resumen-unit {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--ink-500);
+  margin-left: 4px;
+}
+.svt-resumen-empty {
+  color: var(--ink-500);
+}
+.svt-resumen-time {
+  margin-top: 4px;
+  font-size: var(--fs-xs);
+  color: var(--ink-500);
+}

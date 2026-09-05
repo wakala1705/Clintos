@@ -9,7 +9,7 @@
 .cbi-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cbi-actions-menu-dropdown{
   position:absolute;top:calc(100% + 4px);right:0;min-width:170px;z-index:var(--z-popover);
-  background:var(--surface);border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
 .cbi-actions-menu-dropdown.menu-up{top:auto;bottom:calc(100% + 4px);}

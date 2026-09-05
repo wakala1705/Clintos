@@ -20,7 +20,7 @@
    modal — con var(--z-popover) a secas perdía contra el overlay del modal. */
 .cb-actions-menu-dropdown{
   position:fixed;min-width:190px;z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
 .cb-actions-menu-item{

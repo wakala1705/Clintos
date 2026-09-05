@@ -1,0 +1,8 @@
+.svt-status-tag {
+  white-space: nowrap;
+}
+.svt-status-tag .icon {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}

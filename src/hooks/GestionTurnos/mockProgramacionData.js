@@ -124,9 +124,10 @@ export const NURSES = ENFERMERAS_INICIALES.map((e) => ({
 }));
 
 export const TIPO_TURNO_META = {
-  manana: { label: 'Mañana', horario: '06:00 – 14:00' },
-  tarde: { label: 'Tarde', horario: '14:00 – 22:00' },
-  noche: { label: 'Noche', horario: '22:00 – 06:00' },
+  manana: { label: 'Mañana', horario: '06:00 – 12:00' },
+  tarde: { label: 'Tarde', horario: '12:00 – 18:00' },
+  noche: { label: 'Noche', horario: '18:00 – 00:00' },
+  madrugada: { label: 'Madrugada', horario: '00:00 – 06:00' },
 };
 
 // El horario queda "horneado" en cada celda (en vez de derivarse siempre de
@@ -145,11 +146,11 @@ const V = { estado: 'vacio' };
 // descanso consecutivos por enfermera) derivado del índice de cada una
 // (nunca Math.random(), mismo criterio de estabilidad que
 // mockEnfermerasData.js): el tipo de turno base rota entre
-// mañana/tarde/noche cada 3 enfermeras y el par de días de descanso rota
-// entre las 7 columnas, para que la grilla se vea variada sin tener que
-// transcribir 42 semanas a mano.
+// mañana/tarde/noche/madrugada cada 4 enfermeras y el par de días de
+// descanso rota entre las 7 columnas, para que la grilla se vea variada sin
+// tener que transcribir 42 semanas a mano.
 function patronSemana(i) {
-  const tipo = ['manana', 'tarde', 'noche'][i % 3];
+  const tipo = ['manana', 'tarde', 'noche', 'madrugada'][i % 4];
   const descansoIni = i % 7;
   return DIAS_SEMANA.map((_, d) => {
     const enDescanso = d === descansoIni || d === (descansoIni + 1) % 7;

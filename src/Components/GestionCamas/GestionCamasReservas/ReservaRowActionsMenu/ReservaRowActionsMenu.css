@@ -11,7 +11,7 @@
 .cbr-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cbr-actions-menu-dropdown{
   position:fixed;min-width:160px;z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
 .cbr-actions-menu-item{

@@ -3,9 +3,10 @@
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
 
-/* Fila de navegación (label + prev/next) + leyenda de estados: reglas
-   compartidas con AgendaMes, viven en shared.css como .psc-agenda-nav* y
-   .psc-agenda-legend* (ver AGENTS.md "Component organization"). */
+/* Fila de navegación (label + prev/next): reglas compartidas con AgendaMes,
+   viven en shared.css como .psc-agenda-nav* (ver AGENTS.md "Component
+   organization"). La leyenda de estados se trasladó a MiniCalendarCirugias
+   (ver AGENTS.md/comentario en MiniCalendarCirugias.jsx). */
 
 .as-scroll{flex:1;min-height:0;overflow:auto;}
 
@@ -43,7 +44,18 @@
   padding:0 8px;font-size:var(--fs-xs);color:var(--ink-500);
   border-right:1px solid var(--border);transform:translateY(-6px);
 }
+/* La fila 00:00 no tiene una celda anterior donde "asomar" su mitad
+   superior (a diferencia del resto de las horas, que sí la tienen) -- el
+   translateY(-6px) de arriba la empuja bajo la cabecera sticky (.as-corner/
+   .as-day-head, z-index más alto) y se veía cortada. Sin el translate queda
+   alineada al inicio de su propia fila en vez de montada sobre la línea. */
+.as-hour-label.first{transform:none;}
 
-.as-slot{border-left:1px solid var(--border);border-top:1px solid var(--bg);}
+.as-slot{
+  border:none;border-left:1px solid var(--border);border-top:1px solid var(--bg);
+  width:100%;height:100%;padding:0;margin:0;background:transparent;cursor:pointer;
+  font:inherit;display:block;
+}
 .as-slot.hour-start{border-top:1px solid var(--border);}
 .as-slot.today{background:rgba(0,101,205,.04);}
+.as-slot:hover{background:var(--primary-50);}

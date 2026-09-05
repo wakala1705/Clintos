@@ -28,6 +28,7 @@ import { LuDownload, LuUserPlus } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 
 const PAGE_SIZE = 10;
+const SORT_BY = 'apellido';
 const EMPTY_FILTERS = { estado: '', eps: '', sexo: '', rangoEdad: '', sede: '' };
 
 // TODO: reemplazar por la sede real del usuario logueado (ver permissions.js
@@ -43,7 +44,6 @@ export default function ListaPacientes() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [sortBy, setSortBy] = useState('apellido');
   const [page, setPage] = useState(1);
 
   const [status, setStatus] = useState('loading'); // loading | ready | error
@@ -78,7 +78,7 @@ export default function ListaPacientes() {
     fetchPatients({
       query: debouncedQuery,
       filters,
-      sortBy,
+      sortBy: SORT_BY,
       page,
       pageSize: PAGE_SIZE,
       sedeRestriction,
@@ -91,7 +91,7 @@ export default function ListaPacientes() {
       })
       .catch(() => { if (!cancelled) setStatus('error'); });
     return () => { cancelled = true; };
-  }, [debouncedQuery, filters, sortBy, page, sedeRestriction, reloadToken]);
+  }, [debouncedQuery, filters, page, sedeRestriction, reloadToken]);
 
   // Dispara una recarga manual (botón "Reintentar" del estado de error, o
   // después de inactivar un paciente) — se llama siempre desde manejadores
@@ -124,12 +124,6 @@ export default function ListaPacientes() {
     setStatus('loading');
     setPage(1);
     setFilters((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function handleChangeSortBy(value) {
-    setStatus('loading');
-    setPage(1);
-    setSortBy(value);
   }
 
   function handleChangePage(newPage) {
@@ -198,7 +192,7 @@ export default function ListaPacientes() {
     fetchPatients({
       query: debouncedQuery,
       filters,
-      sortBy,
+      sortBy: SORT_BY,
       page: 1,
       pageSize: total || PAGE_SIZE,
       sedeRestriction,
@@ -258,8 +252,6 @@ export default function ListaPacientes() {
                 filters={filters}
                 onChangeFilter={handleChangeFilter}
                 showSede={showSede}
-                sortBy={sortBy}
-                onChangeSortBy={handleChangeSortBy}
               />
             </div>
 

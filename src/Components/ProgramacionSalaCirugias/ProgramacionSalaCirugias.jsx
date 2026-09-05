@@ -104,6 +104,12 @@ export default function ProgramacionSalaCirugias() {
   const nuevaCirugiaPatientRef = useRef(null);
   const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
   const patientSearchIntentRef = useRef('cirugia');
+  // Fecha/hora del slot de la grilla que disparó el buscador de pacientes
+  // (clic en una celda vacía de AgendaSemana) -- se guarda en un ref porque
+  // solo se necesita en el próximo handlePatientConfirmedParaCirugia, no en
+  // ningún render intermedio, mismo criterio que nuevaCirugiaPatientRef.
+  const nuevaCirugiaSlotRef = useRef(null);
+  const [nuevaCirugiaInitialFechaHora, setNuevaCirugiaInitialFechaHora] = useState(null);
   // `paciente` viene del buscador legacy (.ps-overlay) -- ese registro no
   // trae `id`, solo `documento` (ver PATIENTS en legacy-nueva-cita.js), así
   // que la ruta usa el documento. El `[id]` de la ruta se ignora igual
@@ -119,6 +125,17 @@ export default function ProgramacionSalaCirugias() {
       return;
     }
     setNuevaCirugiaWizardPatient(patient);
+    setNuevaCirugiaInitialFechaHora(nuevaCirugiaSlotRef.current);
+    nuevaCirugiaSlotRef.current = null;
+  }
+  // Clic en una celda vacía de la grilla (AgendaSemana): arranca el mismo
+  // flujo de "+ Programar cirugía" (buscador de paciente -> wizard), pero
+  // precargando la fecha/hora de la celda clickeada en vez de la fecha/hora
+  // del sistema (ver datosIniciales en NuevaCirugiaWizard.jsx).
+  function handleSlotClick(fecha, hora) {
+    nuevaCirugiaSlotRef.current = { fecha, hora };
+    patientSearchIntentRef.current = 'cirugia';
+    window.openPatientSearch();
   }
 
   useEffect(() => {
@@ -331,6 +348,7 @@ export default function ProgramacionSalaCirugias() {
                   cirugias={cirugias}
                   selectedId={selectedId}
                   onSelect={setSelectedId}
+                  onSlotClick={handleSlotClick}
                   onPrevWeek={handlePrev}
                   onNextWeek={handleNext}
                   navPrevLabel={vista === 'dia' ? 'Día anterior' : 'Semana anterior'}
@@ -365,7 +383,11 @@ export default function ProgramacionSalaCirugias() {
         <NuevaCirugiaWizard
           patient={nuevaCirugiaWizardPatient}
           salaId={salaId}
-          onClose={() => setNuevaCirugiaWizardPatient(null)}
+          initialFechaHora={nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null}
+          onClose={() => {
+            setNuevaCirugiaWizardPatient(null);
+            setNuevaCirugiaInitialFechaHora(null);
+          }}
         />
       )}
 

@@ -173,19 +173,19 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
 
 .filter-popover-wrap{position:relative;flex-shrink:0;}
-.filters-more-btn{
+.filters-more-btn, .date-picker-btn{
   display:inline-flex;align-items:center;gap:8px;
   border:1px solid var(--border);border-radius:var(--radius);
   height:var(--input-md);padding:0 var(--space-3);font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
   background:var(--surface);cursor:pointer;white-space:nowrap;font-family:inherit;
   transition:background .15s,border-color .15s,color .15s;
 }
-.filters-more-btn .icon{width:16px;height:16px;color:var(--ink-500);}
-.filters-more-btn .chev{width:14px;height:14px;color:var(--ink-400);margin-left:2px;}
-.filters-more-btn:hover{background:var(--gray-bg);border-color:var(--ink-400);}
-.filters-more-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.filters-more-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
-.filters-more-btn.active .icon{color:var(--primary);}
+.filters-more-btn .icon, .date-picker-btn .icon{width:16px;height:16px;color:var(--ink-500);}
+.filters-more-btn .chev, .date-picker-btn .chev{width:14px;height:14px;color:var(--ink-400);margin-left:2px;}
+.filters-more-btn:hover, .date-picker-btn:hover{background:var(--gray-bg);border-color:var(--ink-400);}
+.filters-more-btn:focus-visible, .date-picker-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.filters-more-btn.active, .date-picker-btn.active{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-dark);}
+.filters-more-btn.active .icon, .date-picker-btn.active .icon{color:var(--primary);}
 .badge-count{
   background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:var(--fw-bold);min-width:16px;height:16px;
   border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;
@@ -193,12 +193,18 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
 .filter-popover{
   position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);min-width:300px;
-  background:var(--surface);border-radius:var(--radius-lg);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:0 10px 28px rgba(16,24,39,.16);padding:16px;
 }
 .fp-section{margin-bottom:16px;}
 .fp-section:last-of-type{margin-bottom:14px;}
 .fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+/* Título del popover "Rango de fechas" (DateRangeFilter.jsx) -- solo ese
+   popover no agrupa su fp-date-row dentro de un fp-section, por eso el
+   espaciado inferior de la fila va acá (selector de hijo directo, no afecta
+   a FiltrosFacturasPopover donde fp-date-row cuelga de un .fp-section). */
+.fp-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:12px;}
+.filter-popover > .fp-date-row{margin-bottom:14px;}
 .fp-date-row{display:flex;gap:10px;}
 .fp-date-field{flex:1;display:flex;flex-direction:column;gap:4px;}
 .fp-date-field label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}

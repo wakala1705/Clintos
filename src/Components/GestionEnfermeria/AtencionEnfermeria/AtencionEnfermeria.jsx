@@ -5,6 +5,7 @@ import './AtencionEnfermeria.css';
 import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initGestionEnfermeria } from '@/hooks/GestionEnfermeria/legacy-app';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
+import Badge from '@/Components/Badge/Badge';
 import MedicamentosPanel from '@/Components/GestionEnfermeria/MedicamentosPanel/MedicamentosPanel';
 import OrdenesMedicasPanel from '@/Components/GestionEnfermeria/OrdenesMedicasPanel/OrdenesMedicasPanel';
 import PedidosPanel from '@/Components/GestionEnfermeria/PedidosPanel/PedidosPanel';
@@ -89,7 +90,7 @@ export default function AtencionEnfermeria({ id }) {
           { label: 'N° contrato', value: '** No Especificado **' },
           { label: 'ID Contrato', value: '197' },
           { label: 'Cama', value: '305' },
-          { label: 'Estado', value: <span className="badge status-active badge-dot-inline"><span className="dot"></span>Activo</span> },
+          { label: 'Estado', value: <Badge tone="success" dot>Activo</Badge> },
         ]}
       />
 

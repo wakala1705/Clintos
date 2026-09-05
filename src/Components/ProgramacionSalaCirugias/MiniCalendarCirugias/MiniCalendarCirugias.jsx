@@ -5,18 +5,21 @@ import './MiniCalendarCirugias.css';
 import { addMeses, grillaMes, mesLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from 'react-icons/lu';
 import ProgramarCirugiaDropdown from '../ProgramarCirugiaDropdown/ProgramarCirugiaDropdown';
+import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
+
+const ESTADOS_LEYENDA = ['programada', 'borrador', 'urgencia', 'cancelada', 'incumplida'];
 
 // Bloque único de la columna lateral (mismo lugar que MiniCalendar en
-// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 2
+// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 3
 // secciones separadas por .mcc-divider — acción principal "Programar
-// cirugía" y mini-calendario. Las acciones sobre una cirugía seleccionada
-// ("Reprogramar"/"Cancelar"/"Más acciones") viven en el drawer de detalle
-// (ver DetalleCirugiaPanel.jsx), no acá -- encargo explícito: este panel se
-// estira hasta el fondo de la pantalla (ver .mcc-panel en
-// MiniCalendarCirugias.css) y ya no depende de si hay una cirugía
-// seleccionada. Sin leyenda de estados propia: ya vive al pie de
-// AgendaSemana (.as-legend), duplicarla acá solo agregaría una segunda
-// fuente para lo mismo.
+// cirugía", mini-calendario y leyenda de estados. Las acciones sobre una
+// cirugía seleccionada ("Reprogramar"/"Cancelar"/"Más acciones") viven en el
+// drawer de detalle (ver DetalleCirugiaPanel.jsx), no acá -- encargo
+// explícito: este panel se estira hasta el fondo de la pantalla (ver
+// .mcc-panel en MiniCalendarCirugias.css) y ya no depende de si hay una
+// cirugía seleccionada. La leyenda de estados se trasladó acá desde el pie
+// de AgendaSemana/AgendaMes (.psc-agenda-legend, encargo explícito) --
+// antes vivía duplicada al pie de cada vista del calendario.
 export default function MiniCalendarCirugias({
   selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia,
 }) {
@@ -87,6 +90,19 @@ export default function MiniCalendarCirugias({
           })}
         </div>
       )}
+
+      <div className="mcc-legend-group">
+        <div className="mcc-divider" />
+
+        <div className="mcc-legend">
+          <span className="mcc-legend-title">Estados:</span>
+          <div className="mcc-legend-list">
+            {ESTADOS_LEYENDA.map((estado) => (
+              <EstadoCirugiaBadge key={estado} estado={estado} size="sm" />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

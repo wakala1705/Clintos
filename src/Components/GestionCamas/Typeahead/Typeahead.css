@@ -19,7 +19,7 @@
    criterio de z-index que .form-select-dropdown (FormSelect.css). */
 .cbta-dropdown{
   position:fixed;max-height:240px;overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;list-style:none;margin:0;
 }
 .cbta-status{padding:8px 10px;font-size:var(--fs-sm);color:var(--ink-500);}

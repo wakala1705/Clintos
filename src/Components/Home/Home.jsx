@@ -75,8 +75,8 @@ const MODULE_GROUPS = [
         enabled: false,
       },
       {
-        title: 'Vacunación',
-        description: 'Registro y seguimiento del esquema de vacunación de pacientes.',
+        title: 'PyMS',
+        description: 'Registro y seguimiento del esquema de PyMS de pacientes.',
         icon: LuSyringe,
         href: '/vacunacion',
         enabled: true,

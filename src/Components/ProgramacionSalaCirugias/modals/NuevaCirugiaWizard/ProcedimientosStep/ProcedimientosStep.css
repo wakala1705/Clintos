@@ -10,19 +10,28 @@
 }
 
 .pcs-table{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.pcs-row{
-  display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 36px;align-items:center;gap:10px;
-  padding:9px 12px;
-}
-.pcs-row-head{
-  background:#f7f8fb;border-bottom:1px solid var(--border);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
-}
-html[data-theme="dark"] .pcs-row-head{background:#1c2333;}
 
-.pcs-list .pcs-row{border-bottom:1px solid var(--bg);font-size:var(--fs-base);color:var(--ink-700);}
-.pcs-list .pcs-row:last-child{border-bottom:none;}
-.pcs-cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Cada procedimiento es un bloque de 2 filas (encargo explícito) en vez de
+   una fila de tabla con 4 columnas -- ver comentario en
+   ProcedimientosStep.jsx. */
+.pcs-card{padding:10px 12px;border-bottom:1px solid var(--bg);}
+.pcs-list .pcs-card:last-child{border-bottom:none;}
+
+.pcs-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.pcs-card-heading{display:flex;flex-direction:column;gap:2px;}
+.pcs-cell-primary{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pcs-card-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.pcs-card-bottom{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--bg);
+}
+.pcs-card-field{display:flex;flex-direction:column;gap:2px;}
+.pcs-card-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.pcs-card-value{font-size:var(--fs-sm);color:var(--ink-700);}
 
 .pcs-remove-btn{
   width:28px;height:28px;border-radius:var(--radius);flex-shrink:0;
@@ -34,7 +43,5 @@ html[data-theme="dark"] .pcs-row-head{background:#1c2333;}
 .pcs-remove-btn .icon{width:16px;height:16px;}
 
 @media (max-width:768px){
-  .pcs-row{grid-template-columns:1fr;gap:2px;}
-  .pcs-row-head{display:none;}
-  .pcs-list .pcs-row{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;padding:10px 12px;}
+  .pcs-card-bottom{grid-template-columns:1fr;}
 }

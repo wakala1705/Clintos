@@ -12,16 +12,16 @@ export default function Monitoreo() {
   return (
     <div role="tabpanel" id="panel-monitoreo" aria-labelledby="tab-monitoreo" tabIndex="0" className="tab-panel">
       <div className="subnav-bar" role="tablist" aria-label="Secciones de monitoreo">
-        <button type="button" className="subnav-tab active" role="tab" id="subtab-hoja-medicamentos" aria-selected="true" aria-controls="subpanel-hoja-medicamentos" tabIndex="0">
-          Hoja de medicamentos
-        </button>
-        <button type="button" className="subnav-tab" role="tab" id="subtab-signos-vitales" aria-selected="false" aria-controls="subpanel-signos-vitales" tabIndex="-1">
+        <button type="button" className="subnav-tab active" role="tab" id="subtab-signos-vitales" aria-selected="true" aria-controls="subpanel-signos-vitales" tabIndex="0">
           Signos vitales
+        </button>
+        <button type="button" className="subnav-tab" role="tab" id="subtab-hoja-medicamentos" aria-selected="false" aria-controls="subpanel-hoja-medicamentos" tabIndex="-1">
+          Hoja de medicamentos
         </button>
       </div>
 
-      <HojaMedicamentosTab />
       <SignosVitalesTab />
+      <HojaMedicamentosTab />
     </div>
   );
 }

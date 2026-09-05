@@ -4,15 +4,19 @@ import { useRef } from 'react';
 import './TurnosCalendar.css';
 import TurnoCellPopover from './TurnoCellPopover/TurnoCellPopover';
 import { AREA_TURNO_LABEL, TIPO_TURNO_META, diaLargoLabel } from '@/hooks/GestionTurnos/mockProgramacionData';
-import { LuMoon, LuSun, LuSunrise, LuTriangleAlert } from 'react-icons/lu';
+import {
+  LuMoon, LuMoonStar, LuSun, LuSunrise, LuTriangleAlert,
+} from 'react-icons/lu';
 
-// Ícono propio por tipo de turno (mañana/tarde/noche) — el color de la
-// tarjeta (ver .tc-turno-manana/tarde/noche en TurnosCalendar.css) nunca es
-// el único indicador: el ícono + la etiqueta de texto ya distinguen el tipo
-// sin depender de percibir el matiz exacto (encargo explícito + criterio
-// WCAG ya usado en el resto de badges de este feature, ver PatientsTable.jsx
-// ESTADO_ICONO).
-const TIPO_ICONO = { manana: LuSunrise, tarde: LuSun, noche: LuMoon };
+// Ícono propio por tipo de turno (mañana/tarde/noche/madrugada) — el color
+// de la tarjeta (ver .tc-turno-manana/tarde/noche/madrugada en
+// TurnosCalendar.css) nunca es el único indicador: el ícono + la etiqueta de
+// texto ya distinguen el tipo sin depender de percibir el matiz exacto
+// (encargo explícito + criterio WCAG ya usado en el resto de badges de este
+// feature, ver PatientsTable.jsx ESTADO_ICONO).
+const TIPO_ICONO = {
+  manana: LuSunrise, tarde: LuSun, noche: LuMoon, madrugada: LuMoonStar,
+};
 
 // Matriz enfermera x día (filas=enfermeras, columnas=días, ver
 // TurnosEnfermeria.jsx). Tabla real (no una grilla de <div>s) porque el

@@ -1,6 +1,6 @@
-/* .estado-badge (activo/inactivo/dot) reutiliza las reglas globales que ya
-   trae NuevaCitaFlow.css (esta página siempre renderiza <NuevaCitaFlow/> para
-   "Agregar paciente") — no se duplican aquí. */
+/* El pill de estado de esta tabla usa <Badge> (ver PatientsTable.jsx) —
+   NuevaCitaFlow.css sigue cargado en esta página solo para el buscador de
+   "Agregar paciente" (<NuevaCitaFlow/>), no para estas filas. */
 
 .lp-table-wrap{
   flex:1;min-height:0;overflow:auto;

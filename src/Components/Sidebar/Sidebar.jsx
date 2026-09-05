@@ -28,7 +28,6 @@ import {
   LuStethoscope,
   LuSun,
   LuSyringe,
-  LuUserCog,
   LuUsers,
   LuUsersRound,
   LuWrench,
@@ -49,16 +48,12 @@ export default function Sidebar() {
   const isListaPacientes = pathname === '/lista-pacientes';
   const isHistoriaClinica = pathname.startsWith('/historia-clinica');
   const isVacunacion = pathname === '/vacunacion';
-  const isConsultaExternaAdministracion = pathname === '/consulta-externa/administracion';
-  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isVacunacion || isConsultaExternaAdministracion;
+  const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
   const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
-  const isHospitalizacionAdministracion = pathname === '/hospitalizacion/administracion';
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHospitalizacionAdministracion;
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
   const isFacturas = pathname === '/facturas';
-  const isFacturacionAdministracion = pathname === '/facturacion/administracion';
-  const isAyudasDxAdministracion = pathname === '/ayudas-dx/administracion';
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
 
@@ -83,8 +78,7 @@ export default function Sidebar() {
           <div className="nav-subitem" tabIndex="0" role="button"><LuHeart className="icon" />Signos Vitales</div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuSiren className="icon" />Accidentes de Tránsito</div>
           <Link href="/lista-pacientes" className={`nav-subitem${isListaPacientes ? ' active' : ''}`}><LuUsers className="icon" />Pacientes</Link>
-          <Link href="/vacunacion" className={`nav-subitem${isVacunacion ? ' active' : ''}`}><LuSyringe className="icon" />Vacunación</Link>
-          <Link href="/consulta-externa/administracion" className={`nav-subitem${isConsultaExternaAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
+          <Link href="/vacunacion" className={`nav-subitem${isVacunacion ? ' active' : ''}`}><LuSyringe className="icon" />PyMS</Link>
         </div>
       </div>
 
@@ -98,11 +92,10 @@ export default function Sidebar() {
           <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
           <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
           <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
-          <Link href="/hospitalizacion/administracion" className={`nav-subitem${isHospitalizacionAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
         </div>
       </div>
 
-      <div className={`${subGroupClass}${isFacturas || isFacturacionAdministracion ? ' open' : ''}`}>
+      <div className={`${subGroupClass}${isFacturas ? ' open' : ''}`}>
         <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
           <LuReceipt className="icon nav-icon" />
           <span className="label">Facturación</span>
@@ -110,19 +103,16 @@ export default function Sidebar() {
         </div>
         <div className="nav-body">
           <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
-          <Link href="/facturacion/administracion" className={`nav-subitem${isFacturacionAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
         </div>
       </div>
 
-      <div className={`${subGroupClass}${isAyudasDxAdministracion ? ' open' : ''}`}>
+      <div className={subGroupClass}>
         <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
           <LuFlaskConical className="icon nav-icon" />
           <span className="label">Ayudas DX</span>
           <LuChevronDown className="icon chev" />
         </div>
-        <div className="nav-body">
-          <Link href="/ayudas-dx/administracion" className={`nav-subitem${isAyudasDxAdministracion ? ' active' : ''}`}><LuUserCog className="icon" />Administración</Link>
-        </div>
+        <div className="nav-body"></div>
       </div>
 
       <div className={subGroupClass}>
@@ -167,7 +157,7 @@ export default function Sidebar() {
         </Link>
 
         {isAdmin ? (
-          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas || isFacturacionAdministracion || isAyudasDxAdministracion || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
+          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
             <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
               <LuStethoscope className="icon nav-icon" />
               <span className="label">Módulo Asistencial</span>

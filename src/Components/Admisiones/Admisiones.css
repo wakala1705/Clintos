@@ -26,6 +26,7 @@
   --gray-bg:#eef0f4;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
+  --amber:#e08a00;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --radius:8px;
@@ -65,6 +66,7 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
+  --amber:#f5b942;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
   --triage-orange:#ff9142;

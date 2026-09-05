@@ -50,3 +50,18 @@
 }
 .mcc-day.today{background:var(--primary);color:#fff;font-weight:var(--fw-bold);}
 .mcc-day.today:hover{background:var(--primary-dark);}
+
+/* Leyenda de estados, trasladada acá desde el pie de AgendaSemana/AgendaMes
+   (.psc-agenda-legend en shared.css, ver MiniCalendarCirugias.jsx). El
+   divider que la separa del calendario viaja con ella dentro de
+   .mcc-legend-group (no un .mcc-divider suelto en .mcc-panel): así
+   margin-top:auto empuja el grupo completo (línea + leyenda) al fondo del
+   panel -- que se estira con flex:1 hasta el fondo de .psc-side-col -- en
+   vez de dejar el divider pegado debajo del calendario con un hueco vacío
+   hasta la leyenda. Lista en fila con wrap (mismo criterio que el footer
+   horizontal del calendario del que vino, encargo explícito) en vez de
+   columna. */
+.mcc-legend-group{display:flex;flex-direction:column;gap:14px;margin-top:auto;}
+.mcc-legend{display:flex;flex-direction:column;gap:8px;}
+.mcc-legend-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+.mcc-legend-list{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px;}

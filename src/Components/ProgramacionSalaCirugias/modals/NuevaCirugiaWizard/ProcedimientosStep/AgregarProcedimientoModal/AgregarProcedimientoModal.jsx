@@ -32,11 +32,15 @@ const TIPO_PROCEDIMIENTO_OPTIONS = toOptions(TIPOS_PROCEDIMIENTO_CATALOGO);
 // comparten CatalogoMedicosModal (mismo modal, filtrado por `tipo` --
 // encargo explícito, "debe ser un modal que soporte varios en la tabla").
 //
-// Datos del paciente: línea de contenido al inicio del cuerpo del modal
-// (encargo explícito), antes de No. Programación -- ya no en el subtítulo
-// del ModalHeader. No. Programación es un consecutivo real
+// Datos del paciente + No. Programación: un solo bloque con fondo
+// (.apm-patient-info) al inicio del cuerpo del modal (encargo explícito) --
+// ya no en el subtítulo del ModalHeader. Nombre/documento del paciente en
+// columna a la izquierda, No. Programación al extremo derecho (encargo
+// explícito). No. Programación es un consecutivo real
 // (siguienteNumeroProgramacion, encargo explícito: "pon un número real"),
 // generado una vez al montar el modal -- ya no un texto de ejemplo.
+// Id. Cirujano/Id. Anestesiólogo van en grilla de 2 (.apm-grid-2, encargo
+// explícito: ganar alto vertical) en vez de apilados a ancho completo.
 export default function AgregarProcedimientoModal({
   patient, onAdd, onClose,
 }) {
@@ -66,15 +70,17 @@ export default function AgregarProcedimientoModal({
           closeLabel="Cerrar formulario de procedimiento"
         />
         <div className="modal-body apm-body">
-          {patient?.nombre && (
-            <div className="apm-patient">
-              {patient.documento ? `${patient.documento} - ${patient.nombre}` : patient.nombre}
+          <div className="apm-patient-info">
+            {patient?.nombre && (
+              <div className="apm-patient">
+                <span className="apm-patient-name">{patient.nombre}</span>
+                {patient.documento && <span className="apm-patient-doc">{patient.documento}</span>}
+              </div>
+            )}
+            <div className="form-field apm-programacion-field">
+              <span className="apm-label">No. Programación</span>
+              <span className="apm-value">{numeroProgramacion.toLocaleString('es-CO')}</span>
             </div>
-          )}
-
-          <div className="form-field">
-            <span className="apm-label">No. Programación</span>
-            <span className="apm-value">{numeroProgramacion.toLocaleString('es-CO')}</span>
           </div>
 
           <div className="form-field">
@@ -114,49 +120,51 @@ export default function AgregarProcedimientoModal({
           <div className="apm-divider" />
           <h4 className="apm-section-title">Profesionales para el procedimiento</h4>
 
-          <div className="form-field">
-            <label htmlFor="apm-id-cirujano">Id. Cirujano</label>
-            <div className="field-with-search">
-              <input
-                id="apm-id-cirujano"
-                type="text"
-                required
-                placeholder="Ej. Dr. Juan García"
-                value={idCirujano}
-                onChange={(e) => setIdCirujano(e.target.value)}
-              />
-              <button
-                type="button"
-                className="search-btn"
-                onClick={() => setCatalogoAbierto('cirujano')}
-                aria-label="Buscar cirujano"
-                title="Buscar cirujano"
-              >
-                <LuSearch className="icon" />
-              </button>
+          <div className="apm-grid-2">
+            <div className="form-field">
+              <label htmlFor="apm-id-cirujano">Id. Cirujano</label>
+              <div className="field-with-search">
+                <input
+                  id="apm-id-cirujano"
+                  type="text"
+                  required
+                  placeholder="Ej. Dr. Juan García"
+                  value={idCirujano}
+                  onChange={(e) => setIdCirujano(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="search-btn"
+                  onClick={() => setCatalogoAbierto('cirujano')}
+                  aria-label="Buscar cirujano"
+                  title="Buscar cirujano"
+                >
+                  <LuSearch className="icon" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="form-field">
-            <label htmlFor="apm-id-anestesiologo">Id. Anestesiólogo</label>
-            <div className="field-with-search">
-              <input
-                id="apm-id-anestesiologo"
-                type="text"
-                required
-                placeholder="Ej. Dra. Ana López"
-                value={idAnestesiologo}
-                onChange={(e) => setIdAnestesiologo(e.target.value)}
-              />
-              <button
-                type="button"
-                className="search-btn"
-                onClick={() => setCatalogoAbierto('anestesiologo')}
-                aria-label="Buscar anestesiólogo"
-                title="Buscar anestesiólogo"
-              >
-                <LuSearch className="icon" />
-              </button>
+            <div className="form-field">
+              <label htmlFor="apm-id-anestesiologo">Id. Anestesiólogo</label>
+              <div className="field-with-search">
+                <input
+                  id="apm-id-anestesiologo"
+                  type="text"
+                  required
+                  placeholder="Ej. Dra. Ana López"
+                  value={idAnestesiologo}
+                  onChange={(e) => setIdAnestesiologo(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="search-btn"
+                  onClick={() => setCatalogoAbierto('anestesiologo')}
+                  aria-label="Buscar anestesiólogo"
+                  title="Buscar anestesiólogo"
+                >
+                  <LuSearch className="icon" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

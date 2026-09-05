@@ -11,10 +11,8 @@ const FILTER_KEYS = ['estado', 'eps', 'sexo', 'rangoEdad', 'sede'];
 // Los 5 filtros (Estado/Asegurador/Sexo/Rango de edad/Sede) se agrupan en un
 // único botón "Filtros" con popover — mismo patrón .filters-more-btn/
 // .filter-popover que "Otros filtros" en GestionEnfermeria (ver
-// RecepcionSub.jsx) en vez de una fila de 5 selects sueltos. "Ordenar por"
-// no es un filtro (no recorta resultados) y queda fuera del botón, como en
-// el resto del proyecto (ver .lp-sort-field más abajo).
-export default function FiltersRow({ filters, onChangeFilter, showSede, sortBy, onChangeSortBy }) {
+// RecepcionSub.jsx) en vez de una fila de 5 selects sueltos.
+export default function FiltersRow({ filters, onChangeFilter, showSede }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -111,14 +109,6 @@ export default function FiltersRow({ filters, onChangeFilter, showSede, sortBy, 
       </div>
 
       <div className="lp-filters-spacer"></div>
-
-      <div className="lp-select-field lp-sort-field">
-        <label htmlFor="lp-sort-by">Ordenar por</label>
-        <select id="lp-sort-by" value={sortBy} onChange={(e) => onChangeSortBy(e.target.value)}>
-          <option value="apellido">Primer apellido (A-Z)</option>
-          <option value="registro">Fecha de registro (recientes)</option>
-        </select>
-      </div>
     </div>
   );
 }

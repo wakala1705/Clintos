@@ -5,9 +5,11 @@ import './FichaHeader.css';
 import RowActionsMenu from '@/Components/ListaPacientes/PatientsTable/RowActionsMenu/RowActionsMenu';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import Button from '@/Components/Button/Button';
+import Badge from '@/Components/Badge/Badge';
 import { LuArrowLeft, LuCalendarPlus, LuFileText, LuTriangleAlert } from 'react-icons/lu';
 
 const ESTADO_LABEL = { activo: 'Activo', inactivo: 'Inactivo' };
+const ESTADO_TONE = { activo: 'success', inactivo: 'neutral' };
 
 // Header fijo de la ficha: identidad + acciones rápidas. Editar/Inactivar se
 // agrupan en el mismo menú "⋯" (RowActionsMenu) que ya usa Lista de
@@ -47,9 +49,7 @@ export default function FichaHeader({
               <span className="fp-dot">·</span>
               <span>{patient.edad} años</span>
               <span className="fp-dot">·</span>
-              <span className={`estado-badge ${patient.estado}`}>
-                <span className="dot"></span>{ESTADO_LABEL[patient.estado]}
-              </span>
+              <Badge tone={ESTADO_TONE[patient.estado]} dot>{ESTADO_LABEL[patient.estado]}</Badge>
             </div>
           </div>
         </div>

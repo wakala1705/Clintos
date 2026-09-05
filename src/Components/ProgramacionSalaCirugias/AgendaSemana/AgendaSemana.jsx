@@ -2,7 +2,6 @@
 
 import './AgendaSemana.css';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
-import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
@@ -11,17 +10,24 @@ const HORA_FIN = 24;
 const SLOTS_POR_HORA = 2;
 const SLOTS = (HORA_FIN - HORA_INICIO) * SLOTS_POR_HORA;
 const HORAS = Array.from({ length: HORA_FIN - HORA_INICIO }, (_, i) => HORA_INICIO + i);
-const ESTADOS_LEYENDA = ['programada', 'borrador', 'urgencia', 'cancelada', 'incumplida'];
 
 function horaASlot(hora) {
   const [h, m] = hora.split(':').map(Number);
   return (h - HORA_INICIO) * SLOTS_POR_HORA + (m >= 30 ? 1 : 0);
 }
 
+// Inversa de horaASlot -- traduce el slot clickeado de vuelta a "HH:mm" para
+// precargar la hora de inicio del wizard "Nueva cirugía" (ver onSlotClick).
+function slotAHora(slot) {
+  const h = HORA_INICIO + Math.floor(slot / SLOTS_POR_HORA);
+  const m = (slot % SLOTS_POR_HORA) * (60 / SLOTS_POR_HORA);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
 export default function AgendaSemana({
   label, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
-  sedeId, salaId, onSalaChange, estado, onEstadoChange,
+  sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
 }) {
   return (
     <div className="as-wrap">
@@ -63,16 +69,23 @@ export default function AgendaSemana({
           ))}
 
           {HORAS.map((h, i) => (
-            <div key={h} className="as-hour-label" style={{ gridRow: `${i * SLOTS_POR_HORA + 2} / span ${SLOTS_POR_HORA}` }}>
+            <div
+              key={h}
+              className={`as-hour-label${i === 0 ? ' first' : ''}`}
+              style={{ gridRow: `${i * SLOTS_POR_HORA + 2} / span ${SLOTS_POR_HORA}` }}
+            >
               {String(h).padStart(2, '0')}:00
             </div>
           ))}
 
           {days.flatMap((d, dayIdx) => Array.from({ length: SLOTS }, (_, slot) => (
-            <div
+            <button
               key={`${d.fecha}-${slot}`}
+              type="button"
               className={`as-slot${d.isToday ? ' today' : ''}${slot % SLOTS_POR_HORA === 0 ? ' hour-start' : ''}`}
               style={{ gridColumn: dayIdx + 2, gridRow: slot + 2 }}
+              onClick={() => onSlotClick?.(d.fecha, slotAHora(slot))}
+              aria-label={`Programar cirugía ${d.dayNum} ${slotAHora(slot)}`}
             />
           )))}
 
@@ -95,13 +108,6 @@ export default function AgendaSemana({
             );
           })}
         </div>
-      </div>
-
-      <div className="psc-agenda-legend">
-        <span className="psc-agenda-legend-title">Estados:</span>
-        {ESTADOS_LEYENDA.map((estado) => (
-          <EstadoCirugiaBadge key={estado} estado={estado} size="sm" />
-        ))}
       </div>
     </div>
   );

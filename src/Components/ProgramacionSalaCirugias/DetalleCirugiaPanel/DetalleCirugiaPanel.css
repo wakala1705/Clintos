@@ -56,7 +56,7 @@
 .dcp-more-wrap{position:relative;}
 .dcp-more-dropdown{
   position:absolute;bottom:calc(100% + 6px);left:0;z-index:var(--z-popover);
-  background:var(--surface);border-radius:var(--radius);box-shadow:0 -8px 24px rgba(16,24,39,.16);padding:6px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 -8px 24px rgba(16,24,39,.16);padding:6px;
   width:240px;
 }
 .dcp-more-item{

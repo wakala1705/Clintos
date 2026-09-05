@@ -7,6 +7,7 @@ export const TURNO_ID = {
   MANANA: 'manana',
   TARDE: 'tarde',
   NOCHE: 'noche',
+  MADRUGADA: 'madrugada',
 };
 
 // Área o servicio canónica de Gestión de turnos — única fuente para las dos
@@ -47,23 +48,32 @@ export function duracionHoras(horaInicio, horaFin) {
   return Math.round(minutos / 60);
 }
 
+// 4 turnos de 6 horas cubriendo las 24h (encargo: pasar de 3 turnos de 8h a
+// 4 de 6h) — Mañana/Tarde/Noche conservan sus nombres y punto de inicio
+// original, Madrugada es el turno nuevo que cierra el ciclo (00:00–06:00,
+// justo antes de que vuelva a empezar Mañana).
 export const TIPOS_TURNO_INICIALES = [
   {
-    id: TURNO_ID.MANANA, nombre: 'Mañana', horaInicio: '06:00', horaFin: '14:00', estado: 'activo',
+    id: TURNO_ID.MANANA, nombre: 'Mañana', horaInicio: '06:00', horaFin: '12:00', estado: 'activo',
   },
   {
-    id: TURNO_ID.TARDE, nombre: 'Tarde', horaInicio: '14:00', horaFin: '22:00', estado: 'activo',
+    id: TURNO_ID.TARDE, nombre: 'Tarde', horaInicio: '12:00', horaFin: '18:00', estado: 'activo',
   },
   {
-    id: TURNO_ID.NOCHE, nombre: 'Noche', horaInicio: '22:00', horaFin: '06:00', estado: 'activo',
+    id: TURNO_ID.NOCHE, nombre: 'Noche', horaInicio: '18:00', horaFin: '00:00', estado: 'activo',
+  },
+  {
+    id: TURNO_ID.MADRUGADA, nombre: 'Madrugada', horaInicio: '00:00', horaFin: '06:00', estado: 'activo',
   },
 ];
 
 // Tono de badge por tipo de turno (encargo: Mañana azul claro / Tarde
-// morado claro / Noche verde claro) — keyeado por id, no por nombre, para
-// que un turno renombrado desde el modal conserve su tono.
+// morado claro / Noche verde claro / Madrugada gris claro) — keyeado por
+// id, no por nombre, para que un turno renombrado desde el modal conserve
+// su tono.
 export const TURNO_BADGE_TONE = {
   [TURNO_ID.MANANA]: 'blue',
   [TURNO_ID.TARDE]: 'violet',
   [TURNO_ID.NOCHE]: 'green',
+  [TURNO_ID.MADRUGADA]: 'gray',
 };
