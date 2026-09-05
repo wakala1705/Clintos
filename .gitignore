@@ -42,3 +42,6 @@ next-env.d.ts
 
 # superpowers subagent-driven-development scratch workspaces
 /.superpowers/
+
+# Claude Code agent worktrees (nested git repos, not real submodules)
+/.claude/worktrees/
