@@ -19,10 +19,14 @@ export default function SignosVitalesResumen({ latest, getStatus }) {
         {VITAL_PARAMS.map((p) => {
           const value = latest[p.key];
           const status = getStatus(p.key, value);
+          const Icon = p.icon;
           return (
             <div key={p.key} className="svt-resumen-card">
               <div className="svt-resumen-card-head">
-                <span className="svt-resumen-label">{p.label}</span>
+                <span className="svt-resumen-label-group">
+                  <Icon className={`icon svt-resumen-icon svt-resumen-icon-${status.status}`} aria-hidden="true" />
+                  <span className="svt-resumen-label">{p.label}</span>
+                </span>
                 <VitalStatusTag status={status} />
               </div>
               <div className="svt-resumen-value">

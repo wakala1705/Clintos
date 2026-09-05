@@ -6,6 +6,7 @@
 // and re-renders by writing innerHTML / toggling classList on containers that the
 // React shell (page.jsx + src/Components/GestionEnfermeria/**) renders once and never touches again.
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { MEDS, notifyMedicamentosChanged } from '@/hooks/GestionEnfermeria/medicamentosStore';
 
 export function initGestionEnfermeria() {
 
@@ -176,50 +177,10 @@ export function initGestionEnfermeria() {
     return hours.every(h => h === hours[0]) ? hours[0] : null;
   }
 
-  const MEDS = [
-    { name:'ENOXAPARINA SODICA 40 MG SOLUCION INYECTABLE', dose:'40 mg', freq:'c/12h', via:'SC', estado:'activo',
-      lote:'ENX-2291', vencimiento:'11/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{8:'administered', 20:'scheduled'}} },
-    { name:'OMEPRAZOL SODICO 40 MG SOLUCION INYECTABLE', dose:'40 mg', freq:'c/12h', via:'IV', estado:'activo',
-      lote:'OMZ-0457', vencimiento:'03/2027', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{10:'incident', 22:'scheduled'}} },
-    { name:'METAMIZOL 2.5 G / 5 ML SOLUCION INYECTABLE - NOVALGINA', dose:'1 g', freq:'c/8h', via:'IV', estado:'activo',
-      lote:'MTZ-1188', vencimiento:'08/2026', profesional:'Enf. Carlos Ruiz',
-      markersByDate:{[TODAY_DATE]:{6:'administered', 12:'upcoming', 18:'scheduled'}} },
-    { name:'CEFTRIAXONA SODICA 1 G SOLUCION INYECTABLE', dose:'1 g', freq:'c/12h', via:'IV', estado:'activo',
-      lote:'CFX-3305', vencimiento:'01/2027', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{8:'administered', 20:'scheduled'}} },
-    { name:'DEXAMETASONA 4 MG SOLUCION INYECTABLE', dose:'8 mg', freq:'c/8h', via:'IV', estado:'suspendido',
-      lote:'DXM-0876', vencimiento:'05/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{6:'administered', 14:'suspended', 22:'suspended'}} },
-    { name:'ONDANSETRON 8MG / 4ML SOLUCION INYECTABLE', dose:'8 mg', freq:'c/12h', via:'IV', estado:'activo',
-      lote:'OND-2210', vencimiento:'09/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{8:'administered', 20:'scheduled'}} },
-    { name:'ACETAMINOFEN 500 MG TABLETA', dose:'500 mg', freq:'c/6h', via:'VO', estado:'finalizado',
-      lote:'ACT-5541', vencimiento:'12/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{0:'administered', 6:'administered', 12:'administered', 18:'administered'}} },
-    { name:'VANCOMICINA 1 G SOLUCION INYECTABLE', dose:'1 g', freq:'c/12h', via:'IV', estado:'activo',
-      lote:'VCM-4402', vencimiento:'02/2027', profesional:'Enf. Carlos Ruiz',
-      markersByDate:{[TODAY_DATE]:{2:'administered', 14:'upcoming'}} },
-    { name:'INSULINA CRISTALINA 100 UI/ML SOLUCION INYECTABLE', dose:'según esquema', freq:'c/8h', via:'SC', estado:'activo',
-      lote:'INS-7790', vencimiento:'06/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{6:'administered', 14:'administered', 22:'scheduled'}} },
-    { name:'FUROSEMIDA 20 MG SOLUCION INYECTABLE', dose:'20 mg', freq:'c/24h', via:'IV', estado:'activo',
-      lote:'FRS-1123', vencimiento:'04/2027', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{8:'administered'}} },
-    { name:'METOCLOPRAMIDA 10 MG SOLUCION INYECTABLE', dose:'10 mg', freq:'c/8h', via:'IV', estado:'activo',
-      lote:'MTC-9021', vencimiento:'09/2027', profesional:'Enf. Camilo Grondona',
-      markersByDate:{[TODAY_DATE]:{8:'administered', 16:'scheduled', 0:'scheduled'}} },
-    { name:'HIDROCORTISONA 100 MG SOLUCION INYECTABLE', dose:'100 mg', freq:'c/6h', via:'IV', estado:'suspendido',
-      lote:'HDC-6654', vencimiento:'07/2026', profesional:'Enf. Carlos Ruiz',
-      markersByDate:{[TODAY_DATE]:{0:'administered', 6:'suspended', 12:'suspended', 18:'suspended'}} },
-    { name:'TRAMADOL 50 MG SOLUCION INYECTABLE - PRN', dose:'50 mg', freq:'PRN c/8h', via:'IV', estado:'activo',
-      lote:'TRM-9081', vencimiento:'10/2026', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{14:'upcoming', 22:'scheduled'}} },
-    { name:'COMPLEJO B MULTIVITAMINICO TABLETA', dose:'1 tableta', freq:'c/24h', via:'VO', estado:'finalizado',
-      lote:'CBM-3317', vencimiento:'01/2027', profesional:'Enf. Laura Gómez',
-      markersByDate:{[TODAY_DATE]:{8:'administered'}} }
-  ];
+  // MEDS ahora vive en medicamentosStore.js (importado arriba) — es el mismo
+  // arreglo que lee HojaMedicamentosTab (ver "Hoja de medicamentos" en
+  // Monitoreo) para derivar su hoja histórica 1:1 con las dosis que se
+  // administran/suspenden acá.
 
   const ESTADO_LABEL = {activo:'Activo', suspendido:'Suspendido', finalizado:'Finalizado', devuelto:'Devuelto a farmacia'};
   const STATUS_META = {
@@ -376,6 +337,9 @@ export function initGestionEnfermeria() {
       ROWS.push({tr, med});
     });
     attachDoseMarkerEvents();
+    // Único punto por el que pasan todas las mutaciones de MEDS antes de
+    // pintar el timeline — avisa a HojaMedicamentosTab (React) que recalcule.
+    notifyMedicamentosChanged();
   }
 
   function buildBody(){

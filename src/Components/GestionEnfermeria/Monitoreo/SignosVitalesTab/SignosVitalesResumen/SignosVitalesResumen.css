@@ -5,7 +5,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-3);
-  padding: 0px 16px 0px 20px;
+  padding: 16px 16px 0px 20px;
 }
 .svt-resumen-card {
   border: 1px solid var(--border);
@@ -20,12 +20,28 @@
   gap: var(--space-2);
   margin-bottom: var(--space-2);
 }
+.svt-resumen-label-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
 .svt-resumen-label {
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   color: var(--ink-500);
   text-transform: uppercase;
   letter-spacing: .03em;
+}
+.svt-resumen-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--ink-400);
+}
+.svt-resumen-icon-high,
+.svt-resumen-icon-low {
+  color: var(--amber-fg);
 }
 .svt-resumen-value {
   font-size: var(--fs-2xl);

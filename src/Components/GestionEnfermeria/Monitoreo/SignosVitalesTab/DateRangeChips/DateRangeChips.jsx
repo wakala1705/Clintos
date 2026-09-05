@@ -74,7 +74,7 @@ export default function DateRangeChips({ value, onChange }) {
 
         {open && (
           <div
-            className="filter-popover drc-popover"
+            className="filter-popover filter-popover-right drc-popover"
             role="dialog"
             aria-label="Seleccionar rango de fechas"
             onClick={(e) => e.stopPropagation()}

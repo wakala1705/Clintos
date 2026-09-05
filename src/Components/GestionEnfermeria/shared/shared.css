@@ -454,7 +454,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 /* ---------- FILTER BAR (chips, search, popovers) ---------- */
 .filter-bar{
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
-  ;flex-shrink:0;
+  ;flex-shrink:0;border-bottom:1px solid var(--border);
 }
 .search-field{position:relative;width:320px;flex-shrink:0;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
@@ -799,7 +799,7 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .data-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-500);
   font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
-  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);border-top: 1px solid var(--border);
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
 }
 .data-table th.col-right, .data-table td.col-right{text-align:right;}
 .data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}

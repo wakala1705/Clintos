@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import './HojaMedicamentosTab.css';
-import { HOJA_MEDICAMENTOS } from '@/hooks/GestionEnfermeria/mockMonitoreo';
+import { getHojaMedicamentosRows, subscribeMedicamentos } from '@/hooks/GestionEnfermeria/medicamentosStore';
 import ClinicalStatusBadge from '@/Components/GestionEnfermeria/shared/ClinicalStatusBadge/ClinicalStatusBadge';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
@@ -28,27 +28,36 @@ const ESTADO_OPTIONS = [
 ];
 
 // Vista histórica de solo lectura (a diferencia de Gestión de medicamentos,
-// que es operativa) — default "Estancia completa" en vez de "Hoy". El
-// filtro "Rango" no recorta HOJA_MEDICAMENTOS (dataset mock fijo, sin campo
-// de fecha por fila) — queda cableado a UI/estado para cuando este módulo
-// deje de ser un mock, mismo criterio que otras pantallas de este proyecto
-// que documentan esa misma limitación de datos de prototipo.
+// que es operativa) — default "Estancia completa" en vez de "Hoy". Las filas
+// se derivan en vivo de MEDS (medicamentosStore.js), la misma fuente que
+// pinta el timeline de Gestión de medicamentos: administrar/suspender una
+// dosis ahí se refleja acá 1:1, sin un mock separado. El filtro "Rango" no
+// recorta esas filas (no hay más de una fecha en el mock hoy) — queda
+// cableado a UI/estado para cuando este módulo deje de ser un mock, mismo
+// criterio que otras pantallas de este proyecto que documentan esa misma
+// limitación de datos de prototipo.
 export default function HojaMedicamentosTab() {
   const [rango, setRango] = useState('estancia');
   const [turno, setTurno] = useState('');
   const [estado, setEstado] = useState('');
   const [loading, setLoading] = useState(true);
+  const [filasTodas, setFilasTodas] = useState(() => getHojaMedicamentosRows());
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 400);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(
+    () => subscribeMedicamentos(() => setFilasTodas(getHojaMedicamentosRows())),
+    [],
+  );
+
   const filas = useMemo(
-    () => HOJA_MEDICAMENTOS.filter(
+    () => filasTodas.filter(
       (f) => (turno === '' || f.turno === turno) && (estado === '' || f.estado === estado),
     ),
-    [turno, estado],
+    [filasTodas, turno, estado],
   );
 
   return (

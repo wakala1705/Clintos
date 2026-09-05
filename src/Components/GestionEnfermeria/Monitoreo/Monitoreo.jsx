@@ -4,7 +4,7 @@ import { useState } from 'react';
 import './Monitoreo.css';
 import { VITALES_READINGS } from '@/hooks/GestionEnfermeria/mockMonitoreo';
 import Button from '@/Components/Button/Button';
-import { LuPlus } from 'react-icons/lu';
+import { LuPlus, LuActivity, LuListChecks } from 'react-icons/lu';
 import HojaMedicamentosTab from './HojaMedicamentosTab/HojaMedicamentosTab';
 import SignosVitalesTab from './SignosVitalesTab/SignosVitalesTab';
 import RegistrarSignosVitalesModal from './modals/RegistrarSignosVitalesModal/RegistrarSignosVitalesModal';
@@ -34,13 +34,20 @@ export default function Monitoreo() {
     <div role="tabpanel" id="panel-monitoreo" aria-labelledby="tab-monitoreo" tabIndex="0" className="tab-panel">
       <div className="subnav-bar" role="tablist" aria-label="Secciones de monitoreo">
         <button type="button" className="subnav-tab active" role="tab" id="subtab-signos-vitales" aria-selected="true" aria-controls="subpanel-signos-vitales" tabIndex="0">
+          <LuActivity className="icon" aria-hidden="true" />
           Signos vitales
         </button>
         <button type="button" className="subnav-tab" role="tab" id="subtab-hoja-medicamentos" aria-selected="false" aria-controls="subpanel-hoja-medicamentos" tabIndex="-1">
+          <LuListChecks className="icon" aria-hidden="true" />
           Hoja de medicamentos
         </button>
         <div className="filter-spacer" />
-        <Button variant="primary" icon={LuPlus} onClick={() => setShowModal(true)}>
+        <Button
+          variant="primary"
+          icon={LuPlus}
+          className="mon-btn-registrar"
+          onClick={() => setShowModal(true)}
+        >
           Registrar signos vitales
         </Button>
       </div>

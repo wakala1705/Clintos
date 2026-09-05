@@ -1,3 +1,13 @@
-/* Sin reglas propias todavía: .tab-panel/.subnav-bar/.subnav-tab/.sub-panel
-   ya viven en GestionEnfermeria/shared/shared.css. Se completa en tareas
-   siguientes si el layout del shell necesita algo propio. */
+/* .tab-panel/.subnav-bar/.subnav-tab/.sub-panel viven en
+   GestionEnfermeria/shared/shared.css. */
+
+/* "Registrar signos vitales" solo tiene sentido en el subtab de Signos
+   vitales — el switch de subtab activo lo sigue resolviendo el mecanismo
+   genérico de legacy-app.js (toggle de `.active` en `.sub-panel`, ver
+   comentario de Monitoreo.jsx), así que en vez de duplicar ese estado en
+   React, el botón se oculta con :has() leyendo el mismo estado del DOM:
+   si el sub-panel de Hoja de medicamentos (viene después del subnav-bar en
+   el DOM) está activo, se esconde. */
+.subnav-bar:has(~ #subpanel-hoja-medicamentos.active) .mon-btn-registrar {
+  display: none;
+}
