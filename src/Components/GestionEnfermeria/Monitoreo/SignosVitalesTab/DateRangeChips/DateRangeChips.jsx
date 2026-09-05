@@ -28,26 +28,34 @@ export default function DateRangeChips({ value, onChange }) {
 
   const label = value.mode === 'custom' && value.desde && value.hasta
     ? `${value.desde} – ${value.hasta}`
-    : 'Rango personalizado';
+    : 'Personalizado';
 
   return (
     <>
       <div className="chip-group segmented">
         <button
           type="button"
-          className={`chip-filter${value.mode === 'hoy' ? ' active' : ''}`}
-          aria-pressed={value.mode === 'hoy'}
-          onClick={() => onChange({ mode: 'hoy', desde: null, hasta: null })}
+          className={`chip-filter${value.mode === '24h' ? ' active' : ''}`}
+          aria-pressed={value.mode === '24h'}
+          onClick={() => onChange({ mode: '24h', desde: null, hasta: null })}
         >
-          Hoy
+          24 h
         </button>
         <button
           type="button"
-          className={`chip-filter${value.mode === 'semana' ? ' active' : ''}`}
-          aria-pressed={value.mode === 'semana'}
-          onClick={() => onChange({ mode: 'semana', desde: null, hasta: null })}
+          className={`chip-filter${value.mode === '7d' ? ' active' : ''}`}
+          aria-pressed={value.mode === '7d'}
+          onClick={() => onChange({ mode: '7d', desde: null, hasta: null })}
         >
-          Última semana
+          7 días
+        </button>
+        <button
+          type="button"
+          className={`chip-filter${value.mode === '30d' ? ' active' : ''}`}
+          aria-pressed={value.mode === '30d'}
+          onClick={() => onChange({ mode: '30d', desde: null, hasta: null })}
+        >
+          30 días
         </button>
       </div>
 

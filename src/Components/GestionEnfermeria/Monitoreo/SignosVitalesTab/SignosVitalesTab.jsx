@@ -32,7 +32,7 @@ export default function SignosVitalesTab({ getStatus = getVitalStatus }) {
   // dateRange queda cableado a UI/estado pero no recorta `readings` — mismo
   // criterio y misma razón que el filtro "Rango" de HojaMedicamentosTab.jsx
   // (dataset mock fijo, sin rango de fechas real que filtrar todavía).
-  const [dateRange, setDateRange] = useState({ mode: 'hoy', desde: null, hasta: null });
+  const [dateRange, setDateRange] = useState({ mode: '24h', desde: null, hasta: null });
   const [readings, setReadings] = useState(VITALES_READINGS);
   const [showModal, setShowModal] = useState(false);
 
@@ -47,9 +47,9 @@ export default function SignosVitalesTab({ getStatus = getVitalStatus }) {
   return (
     <div role="tabpanel" id="subpanel-signos-vitales" aria-labelledby="subtab-signos-vitales" tabIndex="0" className="sub-panel active">
       <div className="filter-bar">
-        <ViewToggle view={view} onChange={setView} options={VIEW_OPTIONS} />
         <DateRangeChips value={dateRange} onChange={setDateRange} />
         <div className="filter-spacer" />
+        <ViewToggle view={view} onChange={setView} options={VIEW_OPTIONS} />
         <Button variant="primary" icon={LuPlus} onClick={() => setShowModal(true)}>
           Registrar signos vitales
         </Button>

@@ -2,13 +2,15 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  padding: var(--space-4);
+  overflow: hidden;
 }
 .vch-head {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-bottom: 4px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
 }
 .vch-title {
   font-size: var(--fs-base);
@@ -18,6 +20,9 @@
 .vch-unit {
   font-size: var(--fs-sm);
   color: var(--ink-500);
+}
+.vch-body {
+  padding: var(--space-4);
 }
 .vch-legend {
   display: flex;

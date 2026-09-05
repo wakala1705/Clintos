@@ -43,41 +43,43 @@ export default function VitalesChart({ readings, group }) {
         <h4 className="vch-title">{group.title}</h4>
         <span className="vch-unit">{group.unit}</span>
       </div>
-      <div className="vch-legend">
-        {group.params.map((p) => (
-          <span key={p.key} className="vch-legend-item">
-            <span className="vch-legend-swatch" style={{ background: p.color }} />
-            {p.label}
-          </span>
-        ))}
-      </div>
-      <ResponsiveContainer width="100%" height={220}>
-        <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-          <XAxis
-            dataKey="etiqueta"
-            stroke="var(--ink-500)"
-            fontSize={12}
-            label={{ value: 'Hora', position: 'insideBottom', offset: -4, fontSize: 11, fill: 'var(--ink-500)' }}
-          />
-          <YAxis
-            stroke="var(--ink-500)"
-            fontSize={12}
-            domain={['auto', 'auto']}
-            label={{ value: group.unit, angle: -90, position: 'insideLeft', fontSize: 11, fill: 'var(--ink-500)' }}
-          />
-          <Tooltip content={<VitalesTooltip />} />
+      <div className="vch-body">
+        <div className="vch-legend">
           {group.params.map((p) => (
-            <Line
-              key={p.key}
-              dataKey={p.key}
-              name={p.label}
-              stroke={p.color}
-              dot={{ r: 3 }}
-              connectNulls
-            />
+            <span key={p.key} className="vch-legend-item">
+              <span className="vch-legend-swatch" style={{ background: p.color }} />
+              {p.label}
+            </span>
           ))}
-        </LineChart>
-      </ResponsiveContainer>
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+            <XAxis
+              dataKey="etiqueta"
+              stroke="var(--ink-500)"
+              fontSize={12}
+              label={{ value: 'Hora', position: 'insideBottom', offset: -4, fontSize: 11, fill: 'var(--ink-500)' }}
+            />
+            <YAxis
+              stroke="var(--ink-500)"
+              fontSize={12}
+              domain={['auto', 'auto']}
+              label={{ value: group.unit, angle: -90, position: 'insideLeft', fontSize: 11, fill: 'var(--ink-500)' }}
+            />
+            <Tooltip content={<VitalesTooltip />} />
+            {group.params.map((p) => (
+              <Line
+                key={p.key}
+                dataKey={p.key}
+                name={p.label}
+                stroke={p.color}
+                dot={{ r: 3 }}
+                connectNulls
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
