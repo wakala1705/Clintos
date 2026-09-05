@@ -2,14 +2,11 @@
 
 import { useState } from 'react';
 import './SignosVitalesTab.css';
-import { VITALES_READINGS } from '@/hooks/GestionEnfermeria/mockMonitoreo';
 import { getVitalStatus } from '@/hooks/GestionEnfermeria/vitalAbnormality';
 import ViewToggle from '@/Components/GestionEnfermeria/shared/ViewToggle/ViewToggle';
-import Button from '@/Components/Button/Button';
-import { LuList, LuChartLine, LuPlus } from 'react-icons/lu';
+import { LuList, LuChartLine } from 'react-icons/lu';
 import DateRangeChips from './DateRangeChips/DateRangeChips';
 import VitalesChart from './VitalesChart/VitalesChart';
-import RegistrarSignosVitalesModal from '../modals/RegistrarSignosVitalesModal/RegistrarSignosVitalesModal';
 import { VITAL_PARAMS } from './vitalParams';
 import { VITAL_GROUPS } from './vitalGroups';
 import { formatFechaHora, formatRelative } from './vitalTime';
@@ -27,32 +24,25 @@ const VIEW_OPTIONS = [
 // que ese dato exista.
 const patientProfile = {};
 
-export default function SignosVitalesTab({ getStatus = getVitalStatus }) {
+// `readings` viene de Monitoreo.jsx: el botón "Registrar signos vitales" se
+// movió a la fila de subnavegación (fuera de este sub-panel, ver
+// Monitoreo.jsx), así que el estado de las lecturas también se subió ahí
+// para que un registro nuevo se refleje acá sin duplicar la fuente de datos.
+export default function SignosVitalesTab({ readings, getStatus = getVitalStatus }) {
   const [view, setView] = useState('tabla');
   // dateRange queda cableado a UI/estado pero no recorta `readings` — mismo
   // criterio y misma razón que el filtro "Rango" de HojaMedicamentosTab.jsx
   // (dataset mock fijo, sin rango de fechas real que filtrar todavía).
   const [dateRange, setDateRange] = useState({ mode: '24h', desde: null, hasta: null });
-  const [readings, setReadings] = useState(VITALES_READINGS);
-  const [showModal, setShowModal] = useState(false);
 
   const latest = readings.length ? readings[readings.length - 1] : null;
-
-  function handleConfirmRegistro(reading) {
-    setReadings((prev) => [...prev, { id: `vt-${prev.length + 1}`, ...reading }]);
-    setShowModal(false);
-    window.ncToast?.('Signos vitales registrados.');
-  }
 
   return (
     <div role="tabpanel" id="subpanel-signos-vitales" aria-labelledby="subtab-signos-vitales" tabIndex="0" className="sub-panel active">
       <div className="filter-bar">
-        <DateRangeChips value={dateRange} onChange={setDateRange} />
-        <div className="filter-spacer" />
         <ViewToggle view={view} onChange={setView} options={VIEW_OPTIONS} />
-        <Button variant="primary" icon={LuPlus} onClick={() => setShowModal(true)}>
-          Registrar signos vitales
-        </Button>
+        <div className="filter-spacer" />
+        <DateRangeChips value={dateRange} onChange={setDateRange} />
       </div>
 
       <SignosVitalesResumen latest={latest} getStatus={getStatus} />
@@ -111,14 +101,6 @@ export default function SignosVitalesTab({ getStatus = getVitalStatus }) {
             ))}
           </div>
         </div>
-      )}
-
-      {showModal && (
-        <RegistrarSignosVitalesModal
-          registradoPor="Camilo Grondona"
-          onClose={() => setShowModal(false)}
-          onConfirm={handleConfirmRegistro}
-        />
       )}
     </div>
   );

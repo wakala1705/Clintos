@@ -5,7 +5,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-3);
-  padding: 16px 16px 0px 20px;
+  padding: 0px 16px 0px 20px;
 }
 .svt-resumen-card {
   border: 1px solid var(--border);
