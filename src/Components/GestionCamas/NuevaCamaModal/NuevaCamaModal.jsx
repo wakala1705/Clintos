@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import './NuevaCamaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
 import TagChipField from '../TagChipField/TagChipField';
@@ -543,13 +544,13 @@ export default function NuevaCamaModal({
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
             {/* "Guardar y crear otra" no aplica editando una cama existente
                 — solo tiene sentido para carga en lote al crear. */}
             {!editando && (
-              <button type="button" className="btn btn-secondary" onClick={handleGuardarYCrearOtra}>Guardar y crear otra</button>
+              <Button type="button" variant="secondary" onClick={handleGuardarYCrearOtra}>Guardar y crear otra</Button>
             )}
-            <button type="submit" className="btn btn-primary">{editando ? 'Guardar cambios' : 'Guardar'}</button>
+            <Button type="submit" variant="primary">{editando ? 'Guardar cambios' : 'Guardar'}</Button>
           </div>
         </form>
       </div>

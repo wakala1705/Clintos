@@ -1,4 +1,5 @@
 import './AuditoriaEmptyState.css';
+import Button from '@/Components/Button/Button';
 
 export default function AuditoriaEmptyState({
   icon: Icon, title, subtitle, ctaLabel, onCta,
@@ -9,7 +10,7 @@ export default function AuditoriaEmptyState({
       <div className="cbau-empty-title">{title}</div>
       {subtitle && <div className="cbau-empty-sub">{subtitle}</div>}
       {ctaLabel && (
-        <button type="button" className="btn btn-primary cbau-empty-cta" onClick={onCta}>{ctaLabel}</button>
+        <Button type="button" onClick={onCta} className="cbau-empty-cta">{ctaLabel}</Button>
       )}
     </div>
   );

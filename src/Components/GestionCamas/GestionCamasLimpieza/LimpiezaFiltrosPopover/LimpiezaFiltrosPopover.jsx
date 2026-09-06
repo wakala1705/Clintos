@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { LuFilter } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 import { PISOS, SECTORES, TIEMPOS } from '@/hooks/GestionCamas/mockLimpiezaData';
 
 // "Más filtros" — Piso/Sector/Tiempo (encargo: agrupar acá el filtro de SLA
@@ -122,12 +123,12 @@ export default function LimpiezaFiltrosPopover({
           </div>
 
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleLimpiarTodo}>
+            <Button type="button" variant="secondary" size="sm" onClick={handleLimpiarTodo}>
               Limpiar todo
-            </button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={handleAplicar}>
+            </Button>
+            <Button type="button" variant="primary" size="sm" onClick={handleAplicar}>
               Aplicar filtros
-            </button>
+            </Button>
           </div>
         </div>
       )}

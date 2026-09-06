@@ -9,6 +9,7 @@ import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import GestionCamasSidebar from '../GestionCamasSidebar/GestionCamasSidebar';
+import Button from '@/Components/Button/Button';
 import MantenimientoFiltrosPopover from './MantenimientoFiltrosPopover/MantenimientoFiltrosPopover';
 import MantenimientoFechaSelector from './MantenimientoFechaSelector/MantenimientoFechaSelector';
 import MantenimientoRowActionsMenu from './MantenimientoRowActionsMenu/MantenimientoRowActionsMenu';
@@ -293,10 +294,9 @@ export default function GestionCamasMantenimiento() {
                 <h1>Mantenimiento</h1>
                 <p>Gestión de mantenimientos preventivos y correctivos de las camas.</p>
               </div>
-              <button type="button" className="btn btn-primary" onClick={() => abrirModal('crear')}>
-                <LuWrench className="icon" aria-hidden="true" />
+              <Button type="button" variant="primary" icon={LuWrench} onClick={() => abrirModal('crear')}>
                 Programar mantenimiento
-              </button>
+              </Button>
             </div>
 
             <div className="cbm-kpi-row">
@@ -339,11 +339,17 @@ export default function GestionCamasMantenimiento() {
                   onLimpiar={handleLimpiarFiltrosAvanzados}
                 />
                 {hayFiltrosActivos && (
-                  <button type="button" className="btn btn-secondary btn-sm cbm-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                    <LuFilterX className="icon" aria-hidden="true" />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    icon={LuFilterX}
+                    className="cbm-limpiar-filtros-btn"
+                    onClick={handleLimpiarTodo}
+                  >
                     Limpiar filtros
                     <span className="badge-count">{cantidadFiltrosActivos}</span>
-                  </button>
+                  </Button>
                 )}
               </div>
 

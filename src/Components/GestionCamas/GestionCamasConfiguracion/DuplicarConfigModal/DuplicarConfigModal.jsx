@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './DuplicarConfigModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { SEDES } from '@/hooks/GestionCamas/mockConfiguracionData';
 import { LuArrowRight, LuCopy, LuTriangleAlert } from 'react-icons/lu';
 
@@ -77,15 +78,14 @@ export default function DuplicarConfigModal({ onClose, onConfirm }) {
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button
-            type="button"
-            className="btn btn-primary"
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button
+            variant="primary"
             disabled={!puedeConfirmar}
             onClick={() => onConfirm({ desde, hacia, elementos: elegidos.map((e) => e.id) })}
           >
             Duplicar configuración
-          </button>
+          </Button>
         </div>
       </div>
     </div>

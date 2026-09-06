@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './DateRangeChips.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
 
 export default function DateRangeChips({ value, onChange }) {
@@ -91,24 +92,12 @@ export default function DateRangeChips({ value, onChange }) {
               </div>
             </div>
             <div className="fp-actions">
-              {/* raw <button className="btn ..."> here, not <Button>: .fp-actions .btn has a
-                  padding override (shared.css) that a CSS-Modules Button component can't be
-                  targeted by without a browser check — see AGENTS.md Botones section on
-                  documented divergences */}
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => { setDesde(''); setHasta(''); }}
-              >
+              <Button variant="secondary" onClick={() => { setDesde(''); setHasta(''); }}>
                 Limpiar
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => { onChange({ mode: 'custom', desde, hasta }); setOpen(false); }}
-              >
+              </Button>
+              <Button variant="primary" onClick={() => { onChange({ mode: 'custom', desde, hasta }); setOpen(false); }}>
                 Aplicar
-              </button>
+              </Button>
             </div>
           </div>
         )}

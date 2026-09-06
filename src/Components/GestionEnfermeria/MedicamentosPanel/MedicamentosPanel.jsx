@@ -1,4 +1,5 @@
 import './MedicamentosPanel.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuCheck, LuChevronDown, LuChevronLeft, LuChevronRight, LuCircleDotDashed, LuClock, LuFilter, LuMinus, LuPlus, LuSearch, LuSlidersHorizontal, LuTriangleAlert } from 'react-icons/lu';
 
 // Tab "Gestión de medicamentos": navegación de día, filtros del cronograma,
@@ -63,8 +64,8 @@ export default function MedicamentosPanel() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="date-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="date-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="date-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="date-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>
@@ -96,8 +97,8 @@ export default function MedicamentosPanel() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="more-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="more-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="more-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="more-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>

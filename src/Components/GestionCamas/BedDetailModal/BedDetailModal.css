@@ -53,7 +53,10 @@
 .cb-paciente-card-hc{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .cb-paciente-actions{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);margin-top:var(--space-4);}
-.cb-paciente-actions .btn{width:100%;justify-content:center;}
+/* Por elemento, no .btn: los 4 botones de este grupo migraron a <Button>
+   (CSS Modules, ya no llevan la clase global .btn) y no hay otro <button>
+   dentro de .cb-paciente-actions. */
+.cb-paciente-actions button{width:100%;justify-content:center;}
 
 .cb-link-btn{
   display:inline-flex;align-items:center;gap:4px;

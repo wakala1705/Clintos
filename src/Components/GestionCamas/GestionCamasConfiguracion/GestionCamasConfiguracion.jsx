@@ -18,6 +18,7 @@ import DuplicarConfigModal from './DuplicarConfigModal/DuplicarConfigModal';
 import ConfiguracionFiltrosPopover from './ConfiguracionFiltrosPopover/ConfiguracionFiltrosPopover';
 import ConfiguracionSkeleton from './ConfiguracionSkeleton/ConfiguracionSkeleton';
 import ConfiguracionEmptyState from './ConfiguracionEmptyState/ConfiguracionEmptyState';
+import Button from '@/Components/Button/Button';
 import {
   CATALOGOS, CAMBIOS_RECIENTES_INICIALES, SEDES, SEDE_LABEL, SERVICIOS, SERVICIO_LABEL, ESTADOS,
   PUEDE_EDITAR, PUEDE_IMPORTAR, PUEDE_EXPORTAR, PUEDE_DUPLICAR, PUEDE_RESTABLECER,
@@ -242,7 +243,7 @@ export default function GestionCamasConfiguracion() {
                     <div className="cbc-inline-empty">
                       <LuSearchX className="icon" aria-hidden="true" />
                       No encontramos catálogos con estos filtros.
-                      <button type="button" className="btn btn-secondary btn-sm" onClick={handleLimpiarTodo}>Limpiar filtros</button>
+                      <Button variant="secondary" size="sm" onClick={handleLimpiarTodo}>Limpiar filtros</Button>
                     </div>
                   </div>
                 )}

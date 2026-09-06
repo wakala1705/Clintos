@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './RegistrarObservacionModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuMessageSquare } from 'react-icons/lu';
 
 // Mismo patrón de campo requerido + `required-pill` que
@@ -45,8 +46,8 @@ export default function RegistrarObservacionModal({ mantenimiento, onClose, onCo
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={!puedeConfirmar}>Registrar observación</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" variant="primary" disabled={!puedeConfirmar}>Registrar observación</Button>
           </div>
         </form>
       </div>

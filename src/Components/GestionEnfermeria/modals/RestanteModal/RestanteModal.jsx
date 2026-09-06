@@ -1,5 +1,6 @@
 import './RestanteModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuClock, LuInbox } from 'react-icons/lu';
 
 // Modal "Recepcionar restante": lista los ítems faltantes de una orden de
@@ -32,8 +33,8 @@ export default function RestanteModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="restante-cancel-btn">Cancelar</button>
-          <button className="btn btn-primary" type="button" id="restante-confirm-btn">Confirmar recepción parcial</button>
+          <Button variant="secondary" id="restante-cancel-btn">Cancelar</Button>
+          <Button variant="primary" id="restante-confirm-btn">Confirmar recepción parcial</Button>
         </div>
       </div>
     </div>

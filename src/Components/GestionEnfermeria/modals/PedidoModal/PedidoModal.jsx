@@ -1,5 +1,6 @@
 import './PedidoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuBox, LuClock, LuPlus, LuShield, LuUser } from 'react-icons/lu';
 
 // Modal "Pedido a farmacia": cobertura a solicitar (6/12/24h o personalizada),
@@ -53,10 +54,9 @@ export default function PedidoModal() {
               <label>Insumos adicionales</label>
             </div>
             <div className="insumos-resumen" id="pedido-insumos-resumen" style={{display: 'none'}}></div>
-            <button type="button" className="btn btn-outline" id="pedido-add-insumo-btn" >
-              <LuPlus className="icon" aria-hidden="true" />
+            <Button variant="outline" icon={LuPlus} id="pedido-add-insumo-btn">
               <span id="pedido-add-insumo-label">Agregar insumos desde el catálogo</span>
-            </button>
+            </Button>
           </div>
 
           <div className="admin-summary-time" style={{marginTop: '8px'}}>
@@ -71,10 +71,10 @@ export default function PedidoModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="pedido-cancel-btn">Cancelar</button>
-          <button className="btn btn-primary" type="button" id="pedido-confirm-btn">
+          <Button variant="secondary" id="pedido-cancel-btn">Cancelar</Button>
+          <Button variant="primary" id="pedido-confirm-btn">
             Enviar pedido a farmacia
-          </button>
+          </Button>
         </div>
       </div>
     </div>

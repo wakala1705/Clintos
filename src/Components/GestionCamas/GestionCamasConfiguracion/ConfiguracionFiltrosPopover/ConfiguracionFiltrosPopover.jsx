@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './ConfiguracionFiltrosPopover.css';
 import { RANGO_CAMBIOS_OPTIONS } from '@/hooks/GestionCamas/mockConfiguracionData';
 import { LuFilter } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Progressive disclosure (encargo, sección 3) — único filtro avanzado hoy es
 // el rango de fecha de "Cambios recientes" (Sede/Servicio/Estado ya tienen
@@ -65,8 +66,8 @@ export default function ConfiguracionFiltrosPopover({ rango, onChange, onLimpiar
           </div>
 
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleLimpiarTodo}>Limpiar todo</button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={handleAplicar}>Aplicar filtros</button>
+            <Button variant="secondary" size="sm" onClick={handleLimpiarTodo}>Limpiar todo</Button>
+            <Button variant="primary" size="sm" onClick={handleAplicar}>Aplicar filtros</Button>
           </div>
         </div>
       )}

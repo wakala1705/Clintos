@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './ExportarCatalogoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuDownload } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const OPCIONES = [
   { value: 'todos', label: 'Todos los catálogos' },
@@ -50,10 +51,8 @@ export default function ExportarCatalogoModal({
           )}
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={() => onConfirm(seleccion)}>
-            <LuDownload className="icon" aria-hidden="true" />Exportar
-          </button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button variant="primary" icon={LuDownload} onClick={() => onConfirm(seleccion)}>Exportar</Button>
         </div>
       </div>
     </div>

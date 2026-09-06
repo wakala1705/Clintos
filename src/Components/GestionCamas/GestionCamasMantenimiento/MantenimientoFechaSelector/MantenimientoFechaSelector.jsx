@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './MantenimientoFechaSelector.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
 
 function ddmm(iso) {
@@ -80,12 +81,22 @@ export default function MantenimientoFechaSelector({
             />
           </div>
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { onLimpiar(); setOpen(false); }}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => { onLimpiar(); setOpen(false); }}
+            >
               Limpiar
-            </button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => setOpen(false)}>
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={() => setOpen(false)}
+            >
               Listo
-            </button>
+            </Button>
           </div>
         </div>
       )}

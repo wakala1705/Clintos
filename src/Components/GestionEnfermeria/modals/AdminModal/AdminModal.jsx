@@ -1,5 +1,6 @@
 import './AdminModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuClock, LuShieldCheck, LuTriangleAlert } from 'react-icons/lu';
 
 // Modal "Registrar administración": resumen compacto del medicamento en dos
@@ -122,8 +123,8 @@ export default function AdminModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="admin-cancel-btn">Cancelar</button>
-          <button className="btn btn-primary" type="button" id="admin-confirm-btn" disabled>Confirmar administración</button>
+          <Button variant="secondary" id="admin-cancel-btn">Cancelar</Button>
+          <Button variant="primary" id="admin-confirm-btn" disabled>Confirmar administración</Button>
         </div>
       </div>
     </div>

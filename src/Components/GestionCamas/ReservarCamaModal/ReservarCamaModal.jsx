@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import './ReservarCamaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Typeahead from '../Typeahead/Typeahead';
 import {
@@ -307,11 +308,11 @@ export default function ReservarCamaModal({ cama, onClose, onReservar }) {
             {errorEnvio && <div className="rc-submit-error" role="alert">{errorEnvio}</div>}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={enviando}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={enviando}>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={enviando}>Cancelar</Button>
+            <Button type="submit" variant="primary" disabled={enviando}>
               {enviando && <LuLoaderCircle className="icon rc-spin" aria-hidden="true" />}
               {enviando ? 'Reservando…' : 'Reservar'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -3,6 +3,7 @@
 import './RestablecerConfigModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuRotateCcw } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Encargo, sección 18: acción sensible — nunca ejecutable de un solo clic
 // desde "Acciones rápidas" (ver GestionCamasConfiguracion.jsx), siempre pasa
@@ -19,8 +20,8 @@ export default function RestablecerConfigModal({ onClose, onConfirm }) {
           </p>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-danger" onClick={onConfirm}>Restablecer configuración</button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button variant="danger" onClick={onConfirm}>Restablecer configuración</Button>
         </div>
       </div>
     </div>

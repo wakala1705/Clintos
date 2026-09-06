@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import './PacienteActualModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import InfoLine from '../InfoLine/InfoLine';
 import { AREA_LABEL } from '@/hooks/GestionCamas/mockCamasData';
 import { LuUser } from 'react-icons/lu';
@@ -64,10 +65,10 @@ export default function PacienteActualModal({ cama, onClose, onAction }) {
         </div>
 
         <div className="modal-footer cb-paciente-actual-footer">
-          <button type="button" className="btn btn-secondary" onClick={() => handleAction('ver-ficha-paciente')}>Ver paciente</button>
-          <button type="button" className="btn btn-secondary" onClick={() => handleAction('ver-admision')}>Ver admisión</button>
-          <button type="button" className="btn btn-secondary" onClick={() => handleAction('iniciar-alta')}>Iniciar alta</button>
-          <button type="button" className="btn btn-primary" onClick={() => handleAction('trasladar')}>Trasladar</button>
+          <Button type="button" variant="secondary" onClick={() => handleAction('ver-ficha-paciente')}>Ver paciente</Button>
+          <Button type="button" variant="secondary" onClick={() => handleAction('ver-admision')}>Ver admisión</Button>
+          <Button type="button" variant="secondary" onClick={() => handleAction('iniciar-alta')}>Iniciar alta</Button>
+          <Button type="button" variant="primary" onClick={() => handleAction('trasladar')}>Trasladar</Button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import './PatientsPanel.css';
 import PatientsTable from './PatientsTable/PatientsTable';
 import BedBoardModal from '../BedBoardModal/BedBoardModal';
+import Button from '@/Components/Button/Button';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import { LuGrid2X2, LuSearch } from 'react-icons/lu';
@@ -72,10 +73,9 @@ export default function PatientsPanel({
 
         <AreaSelector options={areaOptions} value={areaOperativa} onChange={onAreaOperativaChange} />
 
-        <button type="button" className="btn btn-secondary" onClick={() => setBedBoardOpen(true)}>
-          <LuGrid2X2 className="icon" />
+        <Button variant="secondary" icon={LuGrid2X2} onClick={() => setBedBoardOpen(true)}>
           Mapa de camas
-        </button>
+        </Button>
       </div>
 
       <PatientsTable pacientes={filteredPacientes} onOpenAtencion={onOpenAtencion} />

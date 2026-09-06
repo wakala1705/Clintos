@@ -1,4 +1,5 @@
 import './RecepcionSub.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
 
 // Sub-panel "Recepción" de Pedidos: acordeón orden → medicamento → artículo/lote,
@@ -46,8 +47,8 @@ export default function RecepcionSub() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="recep-date-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="recep-date-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="recep-date-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="recep-date-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>
@@ -67,8 +68,8 @@ export default function RecepcionSub() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="recep-more-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="recep-more-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="recep-more-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="recep-more-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>

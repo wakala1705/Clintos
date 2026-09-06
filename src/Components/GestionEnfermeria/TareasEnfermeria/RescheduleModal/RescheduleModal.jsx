@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './RescheduleModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCalendarClock } from 'react-icons/lu';
 
 // "Reprogramar" — mismo patrón mínimo que ReassignModal.jsx (fecha + hora
@@ -41,8 +42,8 @@ export default function RescheduleModal({ tarea, onClose, onConfirm }) {
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Confirmar</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Confirmar</Button>
           </div>
         </form>
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './FechaSelector.css';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Botón "Fecha: DD/MM/AAAA" + popover con un <input type="date"> (mismo
 // patrón trigger+popover que ViewToggle.jsx: .date-picker-btn +
@@ -60,12 +61,12 @@ export default function FechaSelector({
             />
           </div>
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { onLimpiar(); setOpen(false); }}>
+            <Button variant="secondary" size="sm" onClick={() => { onLimpiar(); setOpen(false); }}>
               Limpiar
-            </button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => setOpen(false)}>
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => setOpen(false)}>
               Listo
-            </button>
+            </Button>
           </div>
         </div>
       )}

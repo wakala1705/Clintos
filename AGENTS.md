@@ -351,17 +351,31 @@ feature seguir inventando los suyos.
       borró el bloque `.btn`/`.btn-primary`/etc. muerto de su CSS — si una
       de estas features vuelve a tener un `.btn` hardcodeado, es una
       regresión, no una reintroducción válida.
-    - **Pendiente**: `GestionCamas` (~90 botones en ~55 archivos — mucho
-      más grande que las anteriores porque `GestionCamas.css` es el
-      `shared.css` de facto de 9 sub-rutas: dashboard, Reservas, Limpieza,
-      Mantenimiento, Auditoría, Configuración, Integridad, Indicadores,
-      Resumen — su bloque `.btn` base solo se puede borrar cuando las 9
-      queden en cero `className="btn`), y las 3 `shared.css` grandes:
-      `GestionEnfermeria/shared.css`, `HistoriaClinica/shared.css`,
-      `SolicitudConsumo/shared.css`. Plan acordado: delegar `GestionCamas`
-      a un subagente en background (mismo patrón ya usado para las
-      features chicas) dado su tamaño; las 3 `shared.css` quedan por
-      decidir cuando se retome.
+    - **Hecha**: `GestionCamas` (53 archivos, 115 botones, sus 9 sub-rutas
+      — dashboard, Reservas, Limpieza, Mantenimiento, Auditoría,
+      Configuración, Integridad, Indicadores, Resumen). Dado su tamaño se
+      delegó a 4 subagentes en background trabajando en paralelo sobre
+      subconjuntos de archivos sin solape, ninguno tocando el bloque `.btn`
+      base de `GestionCamas.css` hasta que los 4 terminaran; verificado
+      cero `className="btn"` restante y borrado el bloque `.btn`/
+      `.btn-primary`/`.btn-secondary`/`.btn-outline`/`.btn-sm` muerto
+      (y la regla ya inerte `.cb-header .btn .icon`) al final. ESLint
+      limpio sobre todo el árbol tras el cleanup.
+    - **Hecha**: `GestionEnfermeria` (31 archivos, 3 subagentes en background
+      en paralelo sin solape de archivos, mismo patrón que `GestionCamas`).
+      Un caso no migrado y dejado así a propósito:
+      `PanelGeneral/AlertsPanel.jsx` usa `<Link className="btn btn-secondary">`
+      para navegar a `/gestion-enfermeria/alertas` — es un link, no un
+      `<button>`, y `Button` no renderiza anchors (sin precedente en el
+      proyecto para un modo "as link"), así que no puede reemplazarlo. Por
+      eso `GestionEnfermeria/shared/shared.css` conserva un bloque `.btn`
+      base + `.btn-secondary` reducido (se borraron `.btn-primary`/
+      `.btn-outline`/`.btn-tinted`/`.btn-warning-outline`/`.btn-danger`/
+      `.btn-sm`, sin más consumidores) — no es deuda pendiente, es el único
+      caso real de un `.btn` fuera de un `<button>` en el proyecto.
+    - **Pendiente**: las 2 `shared.css` grandes que quedan:
+      `HistoriaClinica/shared.css`, `SolicitudConsumo/shared.css` — quedan
+      por decidir cuando se retome.
     - **Gotcha recurrente a repetir en cada migración pendiente**: un
       selector contextual `.wrapper .btn{...}` (flex/width/padding) dejaba
       de aplicar apenas el botón pasaba a `<Button>`, porque ya no lleva la

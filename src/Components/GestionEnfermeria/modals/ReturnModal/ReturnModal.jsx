@@ -1,5 +1,6 @@
 import './ReturnModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuClock, LuShield, LuUndo2, LuUser } from 'react-icons/lu';
 
 // Modal "Devolver a farmacia": reutiliza el patrón visual del modal de
@@ -64,11 +65,10 @@ export default function ReturnModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="return-cancel-btn">Cancelar</button>
-          <button className="btn btn-primary" type="button" id="return-confirm-btn">
-            <LuUndo2 className="icon" aria-hidden="true" />
+          <Button variant="secondary" id="return-cancel-btn">Cancelar</Button>
+          <Button variant="primary" icon={LuUndo2} id="return-confirm-btn">
             Confirmar devolución
-          </button>
+          </Button>
         </div>
       </div>
     </div>

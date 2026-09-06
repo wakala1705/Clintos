@@ -8,4 +8,7 @@
 .cb-paciente-actual-footer{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;
 }
-.cb-paciente-actual-footer .btn{justify-content:center;}
+/* Por elemento, no .btn: los 4 botones de este footer migraron a <Button>
+   (CSS Modules, ya no llevan la clase global .btn) y no hay otro <button>
+   dentro de .cb-paciente-actual-footer. */
+.cb-paciente-actual-footer button{justify-content:center;}

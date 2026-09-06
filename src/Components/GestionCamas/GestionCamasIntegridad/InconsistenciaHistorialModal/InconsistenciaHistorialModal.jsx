@@ -1,6 +1,7 @@
 'use client';
 
 import './InconsistenciaHistorialModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { ESTADO_LABEL, formatFechaHora } from '@/hooks/GestionCamas/mockIntegridadData';
 import { LuCircleCheck, LuEyeOff, LuHistory, LuTriangleAlert } from 'react-icons/lu';
@@ -59,7 +60,7 @@ export default function InconsistenciaHistorialModal({ inconsistencia, onClose }
           </ul>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

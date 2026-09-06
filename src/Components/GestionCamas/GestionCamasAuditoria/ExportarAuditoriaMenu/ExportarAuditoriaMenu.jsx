@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ExportarAuditoriaMenu.css';
+import Button from '@/Components/Button/Button';
 import {
   LuChevronDown, LuDownload, LuFileSpreadsheet, LuFileText, LuFileType2,
 } from 'react-icons/lu';
@@ -37,17 +38,17 @@ export default function ExportarAuditoriaMenu({ onExport }) {
 
   return (
     <div className="cbau-export-wrap" ref={rootRef}>
-      <button
+      <Button
         type="button"
-        className="btn btn-secondary"
+        variant="secondary"
+        icon={LuDownload}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <LuDownload className="icon" aria-hidden="true" />
         Exportar
         <LuChevronDown className={`icon cbau-export-chev${open ? ' open' : ''}`} aria-hidden="true" />
-      </button>
+      </Button>
 
       {open && (
         <div className="cbau-export-dropdown" role="menu">

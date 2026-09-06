@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import '../GestionCamas.css';
 import './GestionCamasIntegridad.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import Button from '@/Components/Button/Button';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
@@ -225,13 +226,13 @@ export default function GestionCamasIntegridad() {
                 <p>Identifica y corrige inconsistencias en la configuración y el estado de las camas.</p>
               </div>
               <div className="cbi-header-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setHistorialVerifOpen(true)}>
-                  <LuHistory className="icon" aria-hidden="true" />Ver historial de verificaciones
-                </button>
-                <button type="button" className="btn btn-primary" onClick={handleVerificar} disabled={verificando}>
+                <Button type="button" variant="secondary" icon={LuHistory} onClick={() => setHistorialVerifOpen(true)}>
+                  Ver historial de verificaciones
+                </Button>
+                <Button type="button" onClick={handleVerificar} disabled={verificando}>
                   <LuRefreshCw className={`icon${verificando ? ' cbi-spin' : ''}`} aria-hidden="true" />
                   {verificando ? 'Verificando…' : 'Verificar ahora'}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -286,11 +287,17 @@ export default function GestionCamasIntegridad() {
                       Impacto/Estado/Sede directamente en el header no dejaba
                       forma de limpiarlos sin abrir "Más filtros". */}
                   {hayFiltrosActivos && (
-                    <button type="button" className="btn btn-secondary btn-sm cbi-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                      <LuFilterX className="icon" aria-hidden="true" />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      icon={LuFilterX}
+                      className="cbi-limpiar-filtros-btn"
+                      onClick={handleLimpiarTodo}
+                    >
                       Limpiar filtros
                       <span className="badge-count">{cantidadFiltrosActivos}</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -357,9 +364,9 @@ export default function GestionCamasIntegridad() {
                             <td className="cell-muted">{formatHoraRelativa(i.detectadoEn)}</td>
                             <td><EstadoInconsistenciaBadge estado={i.estado} /></td>
                             <td className="col-acciones cbi-acciones-cell">
-                              <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleVer(i)}>Ver</button>
+                              <Button type="button" variant="secondary" size="sm" onClick={() => handleVer(i)}>Ver</Button>
                               {i.estado === 'activa' && (
-                                <button type="button" className="btn btn-primary btn-sm" onClick={() => handleCorregir(i)}>Corregir</button>
+                                <Button type="button" size="sm" onClick={() => handleCorregir(i)}>Corregir</Button>
                               )}
                               <InconsistenciaRowActionsMenu
                                 inconsistencia={i}

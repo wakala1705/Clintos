@@ -9,6 +9,7 @@ import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import GestionCamasSidebar from '../GestionCamasSidebar/GestionCamasSidebar';
+import Button from '@/Components/Button/Button';
 import LimpiezaFiltrosPopover from './LimpiezaFiltrosPopover/LimpiezaFiltrosPopover';
 import LimpiezaRowActionsMenu from './LimpiezaRowActionsMenu/LimpiezaRowActionsMenu';
 import IniciarLimpiezaModal from './IniciarLimpiezaModal/IniciarLimpiezaModal';
@@ -257,11 +258,17 @@ export default function GestionCamasLimpieza() {
                   onLimpiar={handleLimpiarFiltrosAvanzados}
                 />
                 {hayFiltrosActivos && (
-                  <button type="button" className="btn btn-secondary btn-sm cbl-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                    <LuFilterX className="icon" aria-hidden="true" />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    icon={LuFilterX}
+                    className="cbl-limpiar-filtros-btn"
+                    onClick={handleLimpiarTodo}
+                  >
                     Limpiar filtros
                     <span className="badge-count">{cantidadFiltrosActivos}</span>
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -322,22 +329,19 @@ export default function GestionCamasLimpieza() {
                             <td className="col-acciones">
                               <div className="cbl-table-actions">
                                 {accionPrimaria === 'iniciar-limpieza' && (
-                                  <button type="button" className="btn btn-sm btn-outline" onClick={() => setModal({ type: 'iniciar', id: t.id })}>
-                                    <LuSprayCan className="icon" aria-hidden="true" />
+                                  <Button type="button" variant="outline" size="sm" icon={LuSprayCan} onClick={() => setModal({ type: 'iniciar', id: t.id })}>
                                     Iniciar limpieza
-                                  </button>
+                                  </Button>
                                 )}
                                 {accionPrimaria === 'finalizar-limpieza' && (
-                                  <button type="button" className="btn btn-sm btn-primary" onClick={() => setModal({ type: 'finalizar', id: t.id })}>
-                                    <LuCircleCheck className="icon" aria-hidden="true" />
+                                  <Button type="button" variant="primary" size="sm" icon={LuCircleCheck} onClick={() => setModal({ type: 'finalizar', id: t.id })}>
                                     Finalizar limpieza
-                                  </button>
+                                  </Button>
                                 )}
                                 {accionPrimaria === 'ver-detalle' && (
-                                  <button type="button" className="btn btn-sm btn-outline" onClick={() => handleAction('ver-detalle', t.id)}>
-                                    <LuEye className="icon" aria-hidden="true" />
+                                  <Button type="button" variant="outline" size="sm" icon={LuEye} onClick={() => handleAction('ver-detalle', t.id)}>
                                     Ver detalle
-                                  </button>
+                                  </Button>
                                 )}
                                 <LimpiezaRowActionsMenu estado={t.estado} cama={t.cama} onAction={(action) => handleAction(action, t.id)} />
                               </div>

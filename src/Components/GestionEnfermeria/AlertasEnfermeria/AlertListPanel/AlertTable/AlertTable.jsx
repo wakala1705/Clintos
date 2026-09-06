@@ -1,6 +1,7 @@
 'use client';
 
 import './AlertTable.css';
+import Button from '@/Components/Button/Button';
 import { PriorityBadge, StatusBadge, ICONOS_ALERTA } from '../../AlertBadges/AlertBadges';
 import { AREAS_ALERTA, TIPO_ALERTA_CONFIG } from '@/hooks/GestionEnfermeria/mockAlertasData';
 import { LuClock } from 'react-icons/lu';
@@ -87,14 +88,14 @@ export default function AlertTable({ alertas, selectedId, onSelect, onAccionPrim
                   <td><StatusBadge estado={a.estado} prioridad={a.prioridad} /></td>
                   <td className="col-acciones">
                     {accion && (
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline"
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        icon={AccionIcon}
                         onClick={(e) => { e.stopPropagation(); onAccionPrimaria(a); }}
                       >
-                        <AccionIcon className="icon" aria-hidden="true" />
                         {accion.label}
-                      </button>
+                      </Button>
                     )}
                   </td>
                 </tr>
@@ -138,10 +139,9 @@ export default function AlertTable({ alertas, selectedId, onSelect, onAccionPrim
               </div>
               {accion && (
                 <div className="alert-row-actions" onClick={(e) => e.stopPropagation()}>
-                  <button type="button" className="btn btn-sm btn-outline" onClick={() => onAccionPrimaria(a)}>
-                    <AccionIcon className="icon" aria-hidden="true" />
+                  <Button variant="outline" size="sm" icon={AccionIcon} onClick={() => onAccionPrimaria(a)}>
                     {accion.label}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

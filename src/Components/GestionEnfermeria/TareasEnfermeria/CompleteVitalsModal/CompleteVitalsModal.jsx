@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './CompleteVitalsModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuActivity } from 'react-icons/lu';
 
 // "Completar tarea" para tareas de tipo Signos vitales abre este registro
@@ -63,8 +64,8 @@ export default function CompleteVitalsModal({ tarea, onClose, onConfirm }) {
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Registrar y completar</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Registrar y completar</Button>
           </div>
         </form>
       </div>

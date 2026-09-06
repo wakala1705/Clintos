@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './CatalogoDetailModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import {
   LuBedDouble, LuBell, LuClipboardList, LuListChecks, LuSettings2, LuShieldCheck, LuTimer, LuWrench,
 } from 'react-icons/lu';
@@ -61,8 +62,8 @@ export default function CatalogoDetailModal({
                   <div className="cbc-det-confirm">
                     <span>¿Desactivar esta regla crítica?</span>
                     <div className="cbc-det-confirm-actions">
-                      <button type="button" className="btn btn-secondary btn-sm" onClick={() => setConfirmandoIdx(null)}>Cancelar</button>
-                      <button type="button" className="btn btn-primary btn-sm" onClick={() => handleConfirmarDesactivar(idx)}>Confirmar</button>
+                      <Button variant="secondary" size="sm" onClick={() => setConfirmandoIdx(null)}>Cancelar</Button>
+                      <Button variant="primary" size="sm" onClick={() => handleConfirmarDesactivar(idx)}>Confirmar</Button>
                     </div>
                   </div>
                 ) : (
@@ -93,11 +94,11 @@ export default function CatalogoDetailModal({
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button variant="secondary" onClick={onClose}>Cerrar</Button>
           {puedeEditar && !catalogo.soloLectura && (
-            <button type="button" className="btn btn-primary" onClick={() => onAccionNoDisponible(`Editar catálogo "${catalogo.nombre}"`)}>
+            <Button variant="primary" onClick={() => onAccionNoDisponible(`Editar catálogo "${catalogo.nombre}"`)}>
               Editar catálogo
-            </button>
+            </Button>
           )}
         </div>
       </div>

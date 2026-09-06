@@ -10,6 +10,7 @@ import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import Button from '@/Components/Button/Button';
 import GestionCamasSidebar from '../GestionCamasSidebar/GestionCamasSidebar';
 import { SEDES, AREAS } from '@/hooks/GestionCamas/mockCamasData';
 import {
@@ -266,9 +267,9 @@ export default function GestionCamasResumen() {
                     <LuClock className="icon" aria-hidden="true" />
                     Última verificación: {ULTIMA_VERIFICACION_INTEGRIDAD}
                   </span>
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => irASeccion('Verificación de integridad')}>
+                  <Button variant="secondary" size="sm" onClick={() => irASeccion('Verificación de integridad')}>
                     Verificar ahora
-                  </button>
+                  </Button>
                 </div>
                 <div className="cbr-card-footer-link">
                   <Link className="cbr-link-btn" href="/gestion-camas/integridad">

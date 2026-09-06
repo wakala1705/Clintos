@@ -2,6 +2,7 @@
 
 import './IniciarLimpiezaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { AREA_LABEL, SEDE_LABEL } from '@/hooks/GestionCamas/mockLimpiezaData';
 import { LuSprayCan } from 'react-icons/lu';
 
@@ -32,11 +33,10 @@ export default function IniciarLimpiezaModal({ tarea, onClose, onConfirm }) {
           </p>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={() => onConfirm(tarea.id)}>
-            <LuSprayCan className="icon" aria-hidden="true" />
+          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button type="button" variant="primary" icon={LuSprayCan} onClick={() => onConfirm(tarea.id)}>
             Iniciar limpieza
-          </button>
+          </Button>
         </div>
       </div>
     </div>

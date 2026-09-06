@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import {
   LuCircleCheck, LuRefreshCw, LuTriangleAlert, LuUpload,
 } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Encargo, sección 16: "no sobrescribir configuraciones silenciosamente" —
 // 3 pasos (seleccionar → validar → confirmar), con conteo de encontrados/
@@ -51,7 +52,7 @@ export default function ImportarCatalogoModal({ onClose, onConfirm }) {
                 <span className="cbc-imp-hint">Selecciona el archivo que deseas importar.</span>
               )}
               <input ref={inputRef} type="file" accept=".xlsx" className="sr-only" onChange={handleFileChange} id="cbc-imp-input" />
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => inputRef.current?.click()}>Seleccionar archivo</button>
+              <Button variant="secondary" size="sm" onClick={() => inputRef.current?.click()}>Seleccionar archivo</Button>
               <span className="cbc-imp-formato">Formato permitido: Excel (.xlsx)</span>
             </div>
           )}
@@ -83,14 +84,12 @@ export default function ImportarCatalogoModal({ onClose, onConfirm }) {
           )}
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
           {step === 'select' && (
-            <button type="button" className="btn btn-primary" disabled={!fileName} onClick={handleContinuar}>Continuar</button>
+            <Button variant="primary" disabled={!fileName} onClick={handleContinuar}>Continuar</Button>
           )}
           {step === 'preview' && (
-            <button type="button" className="btn btn-primary" onClick={handleConfirmar}>
-              <LuCircleCheck className="icon" aria-hidden="true" />Confirmar importación
-            </button>
+            <Button variant="primary" icon={LuCircleCheck} onClick={handleConfirmar}>Confirmar importación</Button>
           )}
         </div>
       </div>

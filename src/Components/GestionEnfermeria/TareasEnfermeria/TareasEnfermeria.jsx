@@ -8,6 +8,7 @@ import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfermeriaSidebar/GestionEnfermeriaSidebar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
+import Button from '@/Components/Button/Button';
 import TaskSummaryCard from './TaskSummaryCard/TaskSummaryCard';
 import TaskListPanel from './TaskListPanel/TaskListPanel';
 import ShiftChangeBanner from './ShiftChangeBanner/ShiftChangeBanner';
@@ -186,10 +187,9 @@ export default function TareasEnfermeria() {
                   value={areaOperativa}
                   onChange={setAreaOperativa}
                 />
-                <button type="button" className="btn btn-primary" onClick={() => setShowNewTaskModal(true)}>
-                  <LuCalendarPlus className="icon" />
+                <Button type="button" icon={LuCalendarPlus} onClick={() => setShowNewTaskModal(true)}>
                   Nueva tarea
-                </button>
+                </Button>
               </div>
             </div>
 

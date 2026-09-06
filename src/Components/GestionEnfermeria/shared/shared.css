@@ -424,7 +424,15 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 
-/* ---------- BUTTONS ---------- */
+/* ---------- BUTTONS ----------
+   Todos los <button> ya migraron a @/Components/Button/Button (CSS Modules,
+   ver AGENTS.md "Botones") — este bloque sobrevive solo porque
+   PanelGeneral/AlertsPanel.jsx usa un <Link className="btn btn-secondary">
+   (navegación, no un <button>) que Button no puede reemplazar (no renderiza
+   anchors). Por eso solo quedan .btn base + .btn-secondary, las únicas
+   clases que ese Link consume; el resto de variantes/tamaños (primary,
+   outline, tinted, warning-outline, danger, sm) se borraron por no tener
+   ya ningún consumidor. */
 .btn{
   display:inline-flex;align-items:center;gap:var(--btn-gap);
   font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
@@ -433,23 +441,10 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   transition:var(--btn-transition);
   white-space:nowrap;
 }
-.btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
-.btn-primary{background:var(--primary);color:#fff;}
-.btn-primary:hover{background:var(--primary-dark);}
-.btn-outline{background:transparent;color:var(--primary);border-color:var(--primary);}
-.btn-outline:hover{background:var(--primary-50);}
 .btn-secondary{background:var(--surface);color:var(--ink-700);border-color:var(--border);}
 .btn-secondary:hover{background:#f3f5f9;border-color:#d7dce6;}
-.btn-tinted{background:var(--primary-50);color:var(--primary-dark);border-color:var(--primary-100);}
-.btn-tinted:hover{background:var(--primary-100);}
-.btn-warning-outline{background:var(--surface);color:var(--amber-fg);border-color:#f4dfae;}
-.btn-warning-outline:hover{background:var(--amber-bg);}
-.btn-danger{background:var(--red);color:#fff;}
-.btn-danger:hover{background:#a82323;}
 .btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
 .btn[disabled]{opacity:var(--btn-disabled-opacity);cursor:not-allowed;pointer-events:none;}
-.btn-sm{padding:var(--btn-padding-sm);font-size:var(--fs-sm);gap:var(--btn-gap-sm);}
-.btn-sm .icon{width:var(--btn-icon-size-sm);height:var(--btn-icon-size-sm);}
 
 /* ---------- FILTER BAR (chips, search, popovers) ---------- */
 .filter-bar{
@@ -592,7 +587,11 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .fp-section:last-of-type{margin-bottom:14px;}
 .fp-section-title{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
-.fp-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
+/* Por elemento, no `.btn` (ya no existe como clase global sobre <Button>,
+   que usa CSS Modules — ver AGENTS.md "Botones"). No hay otro tipo de
+   <button> sin variante dentro de .fp-actions, así que el selector por
+   elemento es seguro. */
+.fp-actions button{padding:7px 14px;font-size:var(--fs-base);}
 
 /* ---------- Popover "info list" pattern (PatientBanner allergy popover + DosePopover) ---------- */
 .dp-info{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
@@ -612,7 +611,8 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .sel-hint{font-size:var(--fs-base);color:var(--ink-500);}
 .sel-spacer{flex:1;}
 .sel-actions{display:flex;align-items:center;gap:10px;}
-.sel-actions .btn{padding:7px 14px;font-size:var(--fs-base);}
+/* Por elemento, no `.btn` (misma razón que .fp-actions button arriba). */
+.sel-actions button{padding:7px 14px;font-size:var(--fs-base);}
 .sel-cancel-btn{
   background:none;border:none;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
   cursor:pointer;padding:var(--space-2) var(--space-2);border-radius:7px;font-family:inherit;
@@ -907,7 +907,6 @@ html[data-theme="dark"] .subnav-tab:hover,
 html[data-theme="dark"] .dp-action:hover,
 html[data-theme="dark"] .btn-secondary:hover,
 html[data-theme="dark"] .modal-close-btn:hover{background:#20283a;border-color:#333e54;}
-html[data-theme="dark"] .btn-outline:hover{background:var(--primary-50);}
 html[data-theme="dark"] .search-field input:focus,
 html[data-theme="dark"] .fp-date-field input:focus{background:var(--surface);}
 html[data-theme="dark"] .data-table tr.child-row td{background:#1a2130;}

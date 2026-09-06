@@ -5,6 +5,7 @@ import './ExportarMenu.css';
 import {
   LuChevronDown, LuDownload, LuFileSpreadsheet, LuFileText, LuFileType2,
 } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 const FORMATOS = [
   { id: 'excel', label: 'Exportar Excel', icon: LuFileSpreadsheet },
@@ -40,17 +41,16 @@ export default function ExportarMenu({ onExport }) {
 
   return (
     <div className="cbin-export-wrap" ref={rootRef}>
-      <button
-        type="button"
-        className="btn btn-secondary"
+      <Button
+        variant="secondary"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
+        icon={LuDownload}
       >
-        <LuDownload className="icon" aria-hidden="true" />
         Exportar
         <LuChevronDown className={`icon cbin-export-chev${open ? ' open' : ''}`} aria-hidden="true" />
-      </button>
+      </Button>
 
       {open && (
         <div className="cbin-export-dropdown" role="menu">

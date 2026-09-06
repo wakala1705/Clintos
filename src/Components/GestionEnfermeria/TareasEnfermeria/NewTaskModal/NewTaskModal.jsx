@@ -7,6 +7,7 @@ import {
 } from '@/hooks/GestionEnfermeria/mockTareasData';
 import { PACIENTES_PISO, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCalendarPlus } from 'react-icons/lu';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 
@@ -195,8 +196,8 @@ export default function NewTaskModal({ onClose, onCreate }) {
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Crear tarea</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Crear tarea</Button>
           </div>
         </form>
       </div>

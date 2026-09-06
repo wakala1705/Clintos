@@ -15,6 +15,7 @@ import ReservaRowActionsMenu from './ReservaRowActionsMenu/ReservaRowActionsMenu
 import ReservasPagination from './ReservasPagination/ReservasPagination';
 import NuevaReservaModal from './NuevaReservaModal/NuevaReservaModal';
 import EstadoReservaBadge from './EstadoReservaBadge/EstadoReservaBadge';
+import Button from '@/Components/Button/Button';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
 import {
   AREAS, AREA_LABEL, ESTADOS, KPIS, RESERVAS_SEED, SEDES, USUARIO_ACTUAL,
@@ -187,10 +188,9 @@ export default function GestionCamasReservas() {
                 <h1>Reservas</h1>
                 <p>Gestión y seguimiento de reservas de camas.</p>
               </div>
-              <button type="button" className="btn btn-primary" onClick={() => setModalNueva(true)}>
-                <LuCirclePlus className="icon" aria-hidden="true" />
+              <Button variant="primary" icon={LuCirclePlus} onClick={() => setModalNueva(true)}>
                 Nueva reserva
-              </button>
+              </Button>
             </div>
 
             <div className="cbr-kpi-row">
@@ -232,11 +232,10 @@ export default function GestionCamasReservas() {
                   onLimpiar={handleLimpiarFiltrosAvanzados}
                 />
                 {hayFiltrosActivos && (
-                  <button type="button" className="btn btn-secondary btn-sm cbr-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                    <LuFilterX className="icon" aria-hidden="true" />
+                  <Button variant="secondary" size="sm" className="cbr-limpiar-filtros-btn" icon={LuFilterX} onClick={handleLimpiarTodo}>
                     Limpiar filtros
                     <span className="badge-count">{cantidadFiltrosActivos}</span>
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -292,19 +291,19 @@ export default function GestionCamasReservas() {
                             <td className="col-acciones">
                               <div className="cbr-table-actions">
                                 {accionPrimaria === 'confirmar' && (
-                                  <button type="button" className="btn btn-sm btn-outline" onClick={() => handleAction('confirmar', r.id)}>
+                                  <Button variant="outline" size="sm" onClick={() => handleAction('confirmar', r.id)}>
                                     Confirmar
-                                  </button>
+                                  </Button>
                                 )}
                                 {accionPrimaria === 'utilizar' && (
-                                  <button type="button" className="btn btn-sm btn-primary" onClick={() => handleAction('utilizar', r.id)}>
+                                  <Button variant="primary" size="sm" onClick={() => handleAction('utilizar', r.id)}>
                                     Utilizar
-                                  </button>
+                                  </Button>
                                 )}
                                 {accionPrimaria === 'ver' && (
-                                  <button type="button" className="btn btn-sm btn-outline" onClick={() => handleAction('ver', r.id)}>
+                                  <Button variant="outline" size="sm" onClick={() => handleAction('ver', r.id)}>
                                     Ver
-                                  </button>
+                                  </Button>
                                 )}
                                 <ReservaRowActionsMenu estado={r.estado} paciente={r.paciente} onAction={(action) => handleAction(action, r.id)} />
                               </div>

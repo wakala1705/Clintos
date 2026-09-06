@@ -2,6 +2,7 @@
 
 import './IniciarMantenimientoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { AREA_LABEL, SEDE_LABEL } from '@/hooks/GestionCamas/mockMantenimientoData';
 import { LuWrench } from 'react-icons/lu';
 
@@ -31,11 +32,10 @@ export default function IniciarMantenimientoModal({ mantenimiento, onClose, onCo
           </p>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={() => onConfirm(mantenimiento.id)}>
-            <LuWrench className="icon" aria-hidden="true" />
+          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button type="button" variant="primary" icon={LuWrench} onClick={() => onConfirm(mantenimiento.id)}>
             Iniciar mantenimiento
-          </button>
+          </Button>
         </div>
       </div>
     </div>

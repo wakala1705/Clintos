@@ -1,6 +1,7 @@
 'use client';
 
 import './InconsistenciaDetailModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import ImpactoBadge from '../ImpactoBadge/ImpactoBadge';
 import EstadoInconsistenciaBadge from '../EstadoInconsistenciaBadge/EstadoInconsistenciaBadge';
@@ -87,11 +88,11 @@ export default function InconsistenciaDetailModal({
         </div>
         <div className="modal-footer">
           {esActiva && PUEDE_IGNORAR && (
-            <button type="button" className="btn btn-secondary" onClick={() => onIgnorar(inconsistencia)}>Ignorar</button>
+            <Button type="button" variant="secondary" onClick={() => onIgnorar(inconsistencia)}>Ignorar</Button>
           )}
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
           {esActiva && (
-            <button type="button" className="btn btn-primary" onClick={() => onCorregir(inconsistencia)}>Corregir</button>
+            <Button type="button" onClick={() => onCorregir(inconsistencia)}>Corregir</Button>
           )}
         </div>
       </div>

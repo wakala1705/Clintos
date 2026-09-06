@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import './HistorialCamaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import { AREA_LABEL, SEDE_LABEL } from '@/hooks/GestionCamas/mockCamasData';
@@ -132,11 +133,17 @@ export default function HistorialCamaModal({ cama, onClose }) {
               </div>
             </div>
             {cantidadFiltrosActivos > 0 && (
-              <button type="button" className="btn btn-secondary btn-sm hcm-limpiar-btn" onClick={() => setFiltros(FILTROS_INICIALES)}>
-                <LuFilterX className="icon" aria-hidden="true" />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                icon={LuFilterX}
+                className="hcm-limpiar-btn"
+                onClick={() => setFiltros(FILTROS_INICIALES)}
+              >
                 Limpiar filtros
                 <span className="badge-count">{cantidadFiltrosActivos}</span>
-              </button>
+              </Button>
             )}
           </div>
 
@@ -172,7 +179,7 @@ export default function HistorialCamaModal({ cama, onClose }) {
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

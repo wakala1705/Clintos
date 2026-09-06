@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import './TaskDetailPanel.css';
 import { PriorityBadge, StatusBadge } from '../TaskBadges/TaskBadges';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { AREA_LABEL, timelineDeTarea } from '@/hooks/GestionEnfermeria/mockTareasData';
 import { LuCalendarClock, LuCircleCheck, LuPlay, LuUserRoundCog } from 'react-icons/lu';
 
@@ -89,23 +90,20 @@ export default function TaskDetailPanel({ tarea, onClose, onIniciar, onReprogram
         </div>
 
         <div className="task-detail-footer">
-          <button type="button" className="btn btn-secondary" disabled={esFinal} onClick={() => onReasignar(tarea.id)}>
-            <LuUserRoundCog className="icon" />
+          <Button type="button" variant="secondary" icon={LuUserRoundCog} disabled={esFinal} onClick={() => onReasignar(tarea.id)}>
             Reasignar
-          </button>
-          <button type="button" className="btn btn-secondary" disabled={esFinal} onClick={() => onReprogramar(tarea.id)}>
-            <LuCalendarClock className="icon" />
+          </Button>
+          <Button type="button" variant="secondary" icon={LuCalendarClock} disabled={esFinal} onClick={() => onReprogramar(tarea.id)}>
             Reprogramar
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-primary"
             disabled={esFinal || tarea.estado === 'en-curso' || !tarea.responsable}
             onClick={() => onIniciar(tarea.id)}
           >
             {tarea.estado === 'en-curso' ? <LuCircleCheck className="icon" /> : <LuPlay className="icon" />}
             {tarea.estado === 'en-curso' ? 'En curso' : 'Iniciar tarea'}
-          </button>
+          </Button>
         </div>
       </aside>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
 
 // Filtro "Rango de fechas" de la barra de filtros del Centro de Alertas —
@@ -73,8 +74,8 @@ export default function DateRangeFilter({ value, onChange }) {
             </div>
           </div>
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary" onClick={limpiar}>Limpiar</button>
-            <button type="button" className="btn btn-primary" onClick={aplicar}>Aplicar</button>
+            <Button variant="secondary" onClick={limpiar}>Limpiar</Button>
+            <Button variant="primary" onClick={aplicar}>Aplicar</Button>
           </div>
         </div>
       )}

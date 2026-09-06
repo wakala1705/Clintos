@@ -2,6 +2,7 @@
 
 import './FinalizarLimpiezaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { SlaBadge } from '../LimpiezaBadges/LimpiezaBadges';
 import { SLA_MINUTOS } from '@/hooks/GestionCamas/mockLimpiezaData';
 import { LuCircleCheck } from 'react-icons/lu';
@@ -31,11 +32,10 @@ export default function FinalizarLimpiezaModal({
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={() => onConfirm(tarea.id)}>
-            <LuCircleCheck className="icon" aria-hidden="true" />
+          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button type="button" variant="primary" icon={LuCircleCheck} onClick={() => onConfirm(tarea.id)}>
             Finalizar limpieza
-          </button>
+          </Button>
         </div>
       </div>
     </div>

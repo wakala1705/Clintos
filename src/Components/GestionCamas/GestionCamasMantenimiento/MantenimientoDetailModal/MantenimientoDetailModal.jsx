@@ -2,6 +2,7 @@
 
 import './MantenimientoDetailModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { EstadoMantenimientoBadge, PrioridadBadge } from '../MantenimientoBadges/MantenimientoBadges';
 import {
   AREA_LABEL, SEDE_LABEL, TIPO_LABEL, formatFecha, formatFechaCorta, formatHoraCorta,
@@ -85,9 +86,9 @@ export default function MantenimientoDetailModal({ mantenimiento, onClose, onFin
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
           {m.estado === 'en-proceso' && (
-            <button type="button" className="btn btn-primary" onClick={() => onFinalizar(m)}>Finalizar mantenimiento</button>
+            <Button type="button" variant="primary" onClick={() => onFinalizar(m)}>Finalizar mantenimiento</Button>
           )}
         </div>
       </div>

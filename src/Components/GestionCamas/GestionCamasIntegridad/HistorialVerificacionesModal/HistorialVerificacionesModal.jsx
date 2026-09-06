@@ -1,6 +1,7 @@
 'use client';
 
 import './HistorialVerificacionesModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { formatFechaHora } from '@/hooks/GestionCamas/mockIntegridadData';
 import { LuHistory } from 'react-icons/lu';
@@ -47,7 +48,7 @@ export default function HistorialVerificacionesModal({ historial, onClose }) {
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

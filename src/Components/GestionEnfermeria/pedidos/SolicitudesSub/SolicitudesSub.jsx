@@ -1,4 +1,5 @@
 import './SolicitudesSub.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
 
 // Sub-panel "Solicitudes" de Pedidos: filtros + acordeón consecutivo → ítems.
@@ -46,8 +47,8 @@ export default function SolicitudesSub() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="sol-date-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="sol-date-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="sol-date-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="sol-date-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>
@@ -67,8 +68,8 @@ export default function SolicitudesSub() {
               </div>
             </div>
             <div className="fp-actions">
-              <button className="btn btn-secondary" type="button" id="sol-more-clear-btn">Limpiar</button>
-              <button className="btn btn-primary" type="button" id="sol-more-apply-btn">Aplicar</button>
+              <Button variant="secondary" id="sol-more-clear-btn">Limpiar</Button>
+              <Button variant="primary" id="sol-more-apply-btn">Aplicar</Button>
             </div>
           </div>
         </div>

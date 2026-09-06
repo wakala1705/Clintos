@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import './CorregirInconsistenciaModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuCircleCheck } from 'react-icons/lu';
 
@@ -146,8 +147,8 @@ export default function CorregirInconsistenciaModal({ inconsistencia, onClose, o
             )}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={!puedeConfirmar}>{CTA_POR_TIPO[inconsistencia.tipo]}</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" disabled={!puedeConfirmar}>{CTA_POR_TIPO[inconsistencia.tipo]}</Button>
           </div>
         </form>
       </div>

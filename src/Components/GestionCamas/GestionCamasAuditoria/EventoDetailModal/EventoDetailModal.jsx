@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import './EventoDetailModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import TipoEventoBadge from '../TipoEventoBadge/TipoEventoBadge';
 import {
@@ -128,14 +129,13 @@ export default function EventoDetailModal({ evento, onClose }) {
               <span className="cbau-detail-label">ID del evento</span>
               <span className="cbau-id-value">{evento.id}</span>
             </div>
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleCopiarId}>
-              {copiado ? <LuCheck className="icon" aria-hidden="true" /> : <LuCopy className="icon" aria-hidden="true" />}
+            <Button type="button" variant="secondary" size="sm" icon={copiado ? LuCheck : LuCopy} onClick={handleCopiarId}>
               {copiado ? 'Copiado' : 'Copiar ID'}
-            </button>
+            </Button>
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

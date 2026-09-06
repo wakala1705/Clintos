@@ -5,6 +5,7 @@ import './AlertListPanel.css';
 import AlertTable from './AlertTable/AlertTable';
 import AlertsPagination from './AlertsPagination/AlertsPagination';
 import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
+import Button from '@/Components/Button/Button';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import {
@@ -133,11 +134,16 @@ export default function AlertListPanel({ alertas, initialTab = 'todas', selected
         </div>
 
         {hayFiltrosActivos && (
-          <button type="button" className="btn-sm btn btn-secondary alert-filtros-activos-btn" onClick={limpiarFiltros}>
-            <LuFilterX className="icon" />
+          <Button
+            variant="secondary"
+            size="sm"
+            className="alert-filtros-activos-btn"
+            icon={LuFilterX}
+            onClick={limpiarFiltros}
+          >
             Limpiar filtros
             <span className="badge-count">{cantidadFiltrosActivos}</span>
-          </button>
+          </Button>
         )}
       </div>
 

@@ -39,4 +39,7 @@
 .task-shift-item-meta2{font-size:var(--fs-sm);color:var(--ink-500);}
 .task-shift-item-meta2 b{color:var(--ink-700);font-weight:var(--fw-semibold);}
 .task-shift-item-motivo{font-size:var(--fs-sm);color:var(--ink-500);font-style:italic;}
-.task-shift-item .btn{flex-shrink:0;}
+/* button en vez de .btn: "Asumir tarea" migró a <Button> (CSS Modules, ya
+   no lleva la clase global .btn) y .task-shift-item no tiene otro <button>
+   adentro. */
+.task-shift-item button{flex-shrink:0;}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './ProgramarMantenimientoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import Button from '@/Components/Button/Button';
 import {
   AREAS, PRIORIDADES, SEDES, TIPOS,
 } from '@/hooks/GestionCamas/mockMantenimientoData';
@@ -182,8 +183,8 @@ export default function ProgramarMantenimientoModal({ onClose, onSubmit }) {
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Programar mantenimiento</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" variant="primary">Programar mantenimiento</Button>
           </div>
         </form>
       </div>

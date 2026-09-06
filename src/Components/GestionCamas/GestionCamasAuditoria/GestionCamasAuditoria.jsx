@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import '../GestionCamas.css';
 import './GestionCamasAuditoria.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import Button from '@/Components/Button/Button';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
@@ -234,11 +235,17 @@ export default function GestionCamasAuditoria() {
                       todo" dentro de AuditoriaFiltrosPopover, que solo
                       resetea los filtros avanzados). */}
                   {hayFiltrosActivos && (
-                    <button type="button" className="btn btn-secondary btn-sm cbau-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                      <LuFilterX className="icon" aria-hidden="true" />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      icon={LuFilterX}
+                      className="cbau-limpiar-filtros-btn"
+                      onClick={handleLimpiarTodo}
+                    >
                       Limpiar filtros
                       <span className="badge-count">{cantidadFiltrosActivos}</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

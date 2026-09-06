@@ -25,6 +25,7 @@ import PacienteActualModal from './PacienteActualModal/PacienteActualModal';
 import NuevaCamaModal from './NuevaCamaModal/NuevaCamaModal';
 import GestionCamasSidebar from './GestionCamasSidebar/GestionCamasSidebar';
 import CamasPagination from './CamasPagination/CamasPagination';
+import Button from '@/Components/Button/Button';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
 import {
   ACTIVIDAD_INICIAL, AREAS, CAMAS, ESTADOS, ESTADO_LABEL, HOY_ADMISION, PISOS,
@@ -575,10 +576,9 @@ export default function GestionCamas() {
                 <h1>Camas</h1>
                 <p>Estado en tiempo real de las camas del hospital.</p>
               </div>
-              <button type="button" className="btn btn-primary" onClick={handleNuevaCama}>
-                <LuPlus className="icon" aria-hidden="true" />
+              <Button type="button" variant="primary" icon={LuPlus} onClick={handleNuevaCama}>
                 Nueva cama
-              </button>
+              </Button>
             </div>
 
             <div className="cb-layout">
@@ -648,11 +648,17 @@ export default function GestionCamas() {
                         los filtros avanzados) — mismo patrón que
                         .cba-limpiar-filtros-btn en GestionCamasCamas.jsx. */}
                     {hayFiltrosActivos && (
-                      <button type="button" className="btn btn-secondary btn-sm cb-limpiar-filtros-btn" onClick={handleLimpiarTodo}>
-                        <LuFilterX className="icon" aria-hidden="true" />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        icon={LuFilterX}
+                        className="cb-limpiar-filtros-btn"
+                        onClick={handleLimpiarTodo}
+                      >
                         Limpiar filtros
                         <span className="badge-count">{cantidadFiltrosActivos}</span>
-                      </button>
+                      </Button>
                     )}
 
                     <ViewToggle view={view} onChange={setView} />

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import './BedBoardModal.css';
+import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import BedCard from '@/Components/GestionCamas/BedCard/BedCard';
 import BedActionsMenu from '@/Components/GestionCamas/BedActionsMenu/BedActionsMenu';
@@ -70,9 +71,9 @@ function BedListView({ camas, onAction }) {
                     <div className="bb-table-actions">
                       {/* Aislamiento/Inactiva no tienen CTA_PRINCIPAL (mockCamasData.js) */}
                       {cta && (
-                        <button type="button" className="btn btn-secondary btn-sm" onClick={() => onAction(cta.action, c.id)}>
+                        <Button variant="secondary" size="sm" onClick={() => onAction(cta.action, c.id)}>
                           {cta.label}
-                        </button>
+                        </Button>
                       )}
                       <BedActionsMenu estado={c.estado} numero={c.numero} onAction={(action) => onAction(action, c.id)} />
                     </div>

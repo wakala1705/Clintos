@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './ReprogramarMantenimientoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { formatFecha, formatHoraCorta } from '@/hooks/GestionCamas/mockMantenimientoData';
 import { LuCalendarClock } from 'react-icons/lu';
 
@@ -53,8 +54,8 @@ export default function ReprogramarMantenimientoModal({ mantenimiento, onClose, 
             {error && <span className="cbm-form-error">{error}</span>}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Reprogramar</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" variant="primary">Reprogramar</Button>
           </div>
         </form>
       </div>

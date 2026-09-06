@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './ReassignModal.css';
 import { RESPONSABLES } from '@/hooks/GestionEnfermeria/mockTareasData';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuUserRoundCog } from 'react-icons/lu';
 
 // "Reasignar" — modal mínimo (1 solo campo) reutilizado desde TaskRowMenu y
@@ -41,8 +42,8 @@ export default function ReassignModal({ tarea, onClose, onConfirm }) {
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Confirmar</button>
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit">Confirmar</Button>
           </div>
         </form>
       </div>

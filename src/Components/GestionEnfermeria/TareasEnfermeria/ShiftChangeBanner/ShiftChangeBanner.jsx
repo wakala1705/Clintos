@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './ShiftChangeBanner.css';
 import { TURNO_LABEL, ubicacionDeTarea } from '@/hooks/GestionEnfermeria/mockTareasData';
+import Button from '@/Components/Button/Button';
 import { LuArrowLeftRight, LuChevronDown, LuUserRoundPlus } from 'react-icons/lu';
 
 // "N tareas pendientes del turno anterior" (encargo explícito) — banner
@@ -49,10 +50,9 @@ export default function ShiftChangeBanner({ tareas, onAsumir }) {
                 </span>
                 <span className="task-shift-item-motivo">{t.motivoPendiente}</span>
               </div>
-              <button type="button" className="btn btn-sm btn-tinted" onClick={() => onAsumir(t.id)}>
-                <LuUserRoundPlus className="icon" aria-hidden="true" />
+              <Button type="button" size="sm" variant="tinted" icon={LuUserRoundPlus} onClick={() => onAsumir(t.id)}>
                 Asumir tarea
-              </button>
+              </Button>
             </div>
           ))}
         </div>

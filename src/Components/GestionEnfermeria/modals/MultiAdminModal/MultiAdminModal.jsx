@@ -1,5 +1,6 @@
 import './MultiAdminModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuClock, LuShieldCheck, LuTriangleAlert } from 'react-icons/lu';
 
 // Modal "Registrar administración" en modo múltiple: wizard de un paso por
@@ -130,9 +131,9 @@ export default function MultiAdminModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="madmin-cancel-btn">Cancelar</button>
-          <button className="btn btn-secondary" type="button" id="madmin-back-btn">Atrás</button>
-          <button className="btn btn-primary" type="button" id="madmin-next-btn" disabled>Siguiente</button>
+          <Button variant="secondary" id="madmin-cancel-btn">Cancelar</Button>
+          <Button variant="secondary" id="madmin-back-btn">Atrás</Button>
+          <Button variant="primary" id="madmin-next-btn" disabled>Siguiente</Button>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import './BuscarPacienteModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { ADMISIONES } from '@/hooks/Admisiones/mockAdmisionesData';
 import { LuCheck, LuSearch, LuUsers } from 'react-icons/lu';
@@ -114,16 +115,16 @@ export default function BuscarPacienteModal({ onClose, onSelect }) {
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-          <button
+          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+          <Button
             type="button"
-            className="btn btn-primary"
+            variant="primary"
+            icon={LuCheck}
             disabled={!selectedId}
             onClick={() => confirmar(admitidos.find((a) => a.id === selectedId))}
           >
-            <LuCheck className="icon" />
             Aceptar
-          </button>
+          </Button>
         </div>
       </div>
     </div>

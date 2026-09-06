@@ -1,5 +1,6 @@
 import './ProgramModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCalendarCheck, LuClock, LuShield, LuUser } from 'react-icons/lu';
 
 // Modal "Programar tratamiento": fecha/hora de inicio del esquema + preview de
@@ -56,10 +57,10 @@ export default function ProgramModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="program-cancel-btn">Cancelar</button>
-          <button className="btn btn-primary" type="button" id="program-confirm-btn">
+          <Button variant="secondary" id="program-cancel-btn">Cancelar</Button>
+          <Button variant="primary" id="program-confirm-btn">
             <span id="program-confirm-label">Confirmar programación</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

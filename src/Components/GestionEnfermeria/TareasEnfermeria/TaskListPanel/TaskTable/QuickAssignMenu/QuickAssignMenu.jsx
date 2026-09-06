@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './QuickAssignMenu.css';
 import { ASIGNACION_RAPIDA_OPCIONES } from '@/hooks/GestionEnfermeria/mockTareasData';
+import Button from '@/Components/Button/Button';
 import { LuUserRoundPlus } from 'react-icons/lu';
 
 // Acción "Asignar" en fila para tareas sin responsable (encargo explícito:
@@ -36,16 +37,17 @@ export default function QuickAssignMenu({ onAsignar }) {
 
   return (
     <div className="task-quick-assign" ref={rootRef}>
-      <button
+      <Button
         type="button"
-        className="btn btn-sm btn-outline"
+        size="sm"
+        variant="outline"
+        icon={LuUserRoundPlus}
         onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <LuUserRoundPlus className="icon" aria-hidden="true" />
         Asignar
-      </button>
+      </Button>
 
       {open && (
         <ul className="task-quick-assign-dropdown" role="listbox" aria-label="Asignar responsable" onClick={(e) => e.stopPropagation()}>

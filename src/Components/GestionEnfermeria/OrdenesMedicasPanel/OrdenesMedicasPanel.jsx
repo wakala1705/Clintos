@@ -1,4 +1,5 @@
 import './OrdenesMedicasPanel.css';
+import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown, LuClipboardList, LuFilter, LuFolderCheck, LuSearch } from 'react-icons/lu';
 
 // Tab "Órdenes médicas": subnavegación Medicamentos / Otros ordenamientos.
@@ -58,8 +59,8 @@ export default function OrdenesMedicasPanel() {
                 </div>
               </div>
               <div className="fp-actions">
-                <button className="btn btn-secondary" type="button" id="ome-date-clear-btn">Limpiar</button>
-                <button className="btn btn-primary" type="button" id="ome-date-apply-btn">Aplicar</button>
+                <Button variant="secondary" id="ome-date-clear-btn">Limpiar</Button>
+                <Button variant="primary" id="ome-date-apply-btn">Aplicar</Button>
               </div>
             </div>
           </div>
@@ -79,8 +80,8 @@ export default function OrdenesMedicasPanel() {
                 </div>
               </div>
               <div className="fp-actions">
-                <button className="btn btn-secondary" type="button" id="ome-more-clear-btn">Limpiar</button>
-                <button className="btn btn-primary" type="button" id="ome-more-apply-btn">Aplicar</button>
+                <Button variant="secondary" id="ome-more-clear-btn">Limpiar</Button>
+                <Button variant="primary" id="ome-more-apply-btn">Aplicar</Button>
               </div>
             </div>
           </div>
@@ -152,8 +153,8 @@ export default function OrdenesMedicasPanel() {
                 </div>
               </div>
               <div className="fp-actions">
-                <button className="btn btn-secondary" type="button" id="otros-date-clear-btn">Limpiar</button>
-                <button className="btn btn-primary" type="button" id="otros-date-apply-btn">Aplicar</button>
+                <Button variant="secondary" id="otros-date-clear-btn">Limpiar</Button>
+                <Button variant="primary" id="otros-date-apply-btn">Aplicar</Button>
               </div>
             </div>
           </div>
@@ -175,8 +176,8 @@ export default function OrdenesMedicasPanel() {
                 </div>
               </div>
               <div className="fp-actions">
-                <button className="btn btn-secondary" type="button" id="otros-more-clear-btn">Limpiar</button>
-                <button className="btn btn-primary" type="button" id="otros-more-apply-btn">Aplicar</button>
+                <Button variant="secondary" id="otros-more-clear-btn">Limpiar</Button>
+                <Button variant="primary" id="otros-more-apply-btn">Aplicar</Button>
               </div>
             </div>
           </div>

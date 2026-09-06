@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import './BedDetailModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import EstadoCamaBadge from '../EstadoCamaBadge/EstadoCamaBadge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { formatVentanaReserva, infoLimpieza } from '@/hooks/GestionCamas/bedContextFormat';
@@ -257,22 +258,18 @@ export default function BedDetailModal({
                         igual de común, ambas deberían quedar secundarias
                         sin ninguna primaria). */}
                     <div className="cb-paciente-actions">
-                      <button type="button" className="btn btn-secondary" onClick={() => onAction('ver-paciente', cama.id)}>
-                        <LuUser className="icon" aria-hidden="true" />
+                      <Button type="button" variant="secondary" icon={LuUser} onClick={() => onAction('ver-paciente', cama.id)}>
                         Ver paciente
-                      </button>
-                      <button type="button" className="btn btn-secondary" onClick={() => onAction('ver-admision', cama.id)}>
-                        <LuFileText className="icon" aria-hidden="true" />
+                      </Button>
+                      <Button type="button" variant="secondary" icon={LuFileText} onClick={() => onAction('ver-admision', cama.id)}>
                         Ver admisión
-                      </button>
-                      <button type="button" className="btn btn-secondary" onClick={() => onAction('trasladar', cama.id)}>
-                        <LuArrowRightLeft className="icon" aria-hidden="true" />
+                      </Button>
+                      <Button type="button" variant="secondary" icon={LuArrowRightLeft} onClick={() => onAction('trasladar', cama.id)}>
                         Trasladar
-                      </button>
-                      <button type="button" className="btn btn-primary" onClick={() => onAction('iniciar-alta', cama.id)}>
-                        <LuLogOut className="icon" aria-hidden="true" />
+                      </Button>
+                      <Button type="button" variant="primary" icon={LuLogOut} onClick={() => onAction('iniciar-alta', cama.id)}>
                         Iniciar alta
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -300,7 +297,7 @@ export default function BedDetailModal({
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
           {/* Ocupada: sin botones extra acá (encargo explícito: "las
               acciones de paciente ya viven contextualmente arriba, no hace
               falta duplicarlas abajo") — Ver paciente/Ver admisión/
@@ -309,15 +306,14 @@ export default function BedDetailModal({
               genérico de siempre (Aislamiento/Inactiva no tienen
               CTA_PRINCIPAL, ver mockCamasData.js). */}
           {cama.estado === 'libre' && (
-            <button type="button" className="btn btn-secondary" onClick={handleReservarClick}>
-              <LuClock className="icon" aria-hidden="true" />
+            <Button type="button" variant="secondary" icon={LuClock} onClick={handleReservarClick}>
               Reservar
-            </button>
+            </Button>
           )}
           {cta && cama.estado !== 'ocupada' && (
-            <button type="button" className="btn btn-primary" onClick={handlePrimary}>
+            <Button type="button" variant="primary" onClick={handlePrimary}>
               {cta.label}
-            </button>
+            </Button>
           )}
         </div>
       </div>

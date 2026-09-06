@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import './TaskListPanel.css';
 import TaskTable from './TaskTable/TaskTable';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
+import Button from '@/Components/Button/Button';
 import {
   ESTADOS, PRIORIDADES, RESPONSABLES, TIPOS_TAREA, TURNOS, USUARIO_ACTUAL, fechaDeTarea,
 } from '@/hooks/GestionEnfermeria/mockTareasData';
@@ -137,11 +138,10 @@ export default function TaskListPanel({
         <div className="filter-spacer" />
 
         {hayFiltrosActivos && (
-          <button type="button" className="btn-sm btn btn-secondary task-filtros-activos-btn" onClick={limpiarFiltros}>
-            <LuFilterX className="icon" />
+          <Button type="button" size="sm" variant="secondary" icon={LuFilterX} className="task-filtros-activos-btn" onClick={limpiarFiltros}>
             Limpiar filtros
             <span className="badge-count">{cantidadFiltrosActivos}</span>
-          </button>
+          </Button>
         )}
       </div>
 

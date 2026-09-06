@@ -3,6 +3,7 @@
 import './TaskTable.css';
 import TaskRowMenu from './TaskRowMenu/TaskRowMenu';
 import QuickAssignMenu from './QuickAssignMenu/QuickAssignMenu';
+import Button from '@/Components/Button/Button';
 import { PriorityBadge, StatusBadge } from '../../TaskBadges/TaskBadges';
 import { TIPOS_TAREA, ubicacionDeTarea } from '@/hooks/GestionEnfermeria/mockTareasData';
 import {
@@ -112,16 +113,14 @@ export default function TaskTable({
                   <td className="col-acciones">
                     <div className="task-row-actions">
                       {accionPrimaria === 'iniciar' && (
-                        <button type="button" className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); onIniciar(t.id); }}>
-                          <LuPlay className="icon" aria-hidden="true" />
+                        <Button type="button" size="sm" variant="outline" icon={LuPlay} onClick={(e) => { e.stopPropagation(); onIniciar(t.id); }}>
                           Iniciar
-                        </button>
+                        </Button>
                       )}
                       {accionPrimaria === 'completar' && (
-                        <button type="button" className="btn btn-sm btn-outline" onClick={(e) => { e.stopPropagation(); onCompletar(t.id); }}>
-                          <LuCircleCheck className="icon" aria-hidden="true" />
+                        <Button type="button" size="sm" variant="outline" icon={LuCircleCheck} onClick={(e) => { e.stopPropagation(); onCompletar(t.id); }}>
                           Completar
-                        </button>
+                        </Button>
                       )}
                       {accionPrimaria === 'asignar' && (
                         <QuickAssignMenu onAsignar={(responsable) => onAsignarRapido(t.id, responsable)} />
@@ -179,16 +178,14 @@ export default function TaskTable({
               </div>
               <div className="task-row-actions" onClick={(e) => e.stopPropagation()}>
                 {accionPrimaria === 'iniciar' && (
-                  <button type="button" className="btn btn-sm btn-outline" onClick={() => onIniciar(t.id)}>
-                    <LuPlay className="icon" aria-hidden="true" />
+                  <Button type="button" size="sm" variant="outline" icon={LuPlay} onClick={() => onIniciar(t.id)}>
                     Iniciar
-                  </button>
+                  </Button>
                 )}
                 {accionPrimaria === 'completar' && (
-                  <button type="button" className="btn btn-sm btn-outline" onClick={() => onCompletar(t.id)}>
-                    <LuCircleCheck className="icon" aria-hidden="true" />
+                  <Button type="button" size="sm" variant="outline" icon={LuCircleCheck} onClick={() => onCompletar(t.id)}>
                     Completar
-                  </button>
+                  </Button>
                 )}
                 {accionPrimaria === 'asignar' && (
                   <QuickAssignMenu onAsignar={(responsable) => onAsignarRapido(t.id, responsable)} />

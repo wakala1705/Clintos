@@ -1,5 +1,6 @@
 import './CerrarParcialModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuBan, LuClock, LuShield } from 'react-icons/lu';
 
 // Modal "Cerrar parcial con justificación": cierre definitivo de una orden de
@@ -62,8 +63,8 @@ export default function CerrarParcialModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="cerrar-parcial-cancel-btn">Cancelar</button>
-          <button className="btn btn-danger" type="button" id="cerrar-parcial-confirm-btn">Cerrar parcial</button>
+          <Button variant="secondary" id="cerrar-parcial-cancel-btn">Cancelar</Button>
+          <Button variant="danger" id="cerrar-parcial-confirm-btn">Cerrar parcial</Button>
         </div>
       </div>
     </div>

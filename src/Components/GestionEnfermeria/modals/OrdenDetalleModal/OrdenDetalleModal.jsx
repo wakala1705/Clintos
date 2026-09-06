@@ -1,5 +1,6 @@
 import './OrdenDetalleModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuClipboardList, LuUser } from 'react-icons/lu';
 
 // Modal "Ver detalle" de una orden médica (Órdenes médicas > Medicamentos):
@@ -50,7 +51,7 @@ export default function OrdenDetalleModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="orden-detalle-close-btn">Cerrar</button>
+          <Button variant="secondary" id="orden-detalle-close-btn">Cerrar</Button>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './InconsistenciasFiltrosPopover.css';
+import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { SERVICIOS } from '@/hooks/GestionCamas/mockIntegridadData';
 import { LuFilter } from 'react-icons/lu';
@@ -94,8 +95,8 @@ export default function InconsistenciasFiltrosPopover({ servicio, detectado, onC
           </div>
 
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleLimpiarTodo}>Limpiar todo</button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={handleAplicar}>Aplicar filtros</button>
+            <Button type="button" variant="secondary" size="sm" onClick={handleLimpiarTodo}>Limpiar todo</Button>
+            <Button type="button" size="sm" onClick={handleAplicar}>Aplicar filtros</Button>
           </div>
         </div>
       )}

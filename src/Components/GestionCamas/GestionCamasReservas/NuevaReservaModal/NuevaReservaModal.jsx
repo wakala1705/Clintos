@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './NuevaReservaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import Button from '@/Components/Button/Button';
 import {
   AREAS, PISOS, SECTORES, SEDES,
 } from '@/hooks/GestionCamas/mockReservasData';
@@ -233,8 +234,8 @@ export default function NuevaReservaModal({ onClose, onSubmit }) {
             {errores.vencimiento && <span className="cbr-form-error">{errores.vencimiento}</span>}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Crear reserva</button>
+            <Button variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button variant="primary" type="submit">Crear reserva</Button>
           </div>
         </form>
       </div>

@@ -2,6 +2,7 @@
 
 import './CambioDetailModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { SEDE_LABEL, formatFechaHora } from '@/hooks/GestionCamas/mockConfiguracionData';
 import { LuArrowRight, LuHistory } from 'react-icons/lu';
 
@@ -52,7 +53,7 @@ export default function CambioDetailModal({ cambio, onClose }) {
           )}
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+          <Button variant="secondary" onClick={onClose}>Cerrar</Button>
         </div>
       </div>
     </div>

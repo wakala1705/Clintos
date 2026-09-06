@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './MasFiltrosPopover.css';
 import { LuFilter } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Filtros avanzados agrupados por categoría conceptual, no por campo
 // (encargo) — 2 columnas: "Ubicación" (Piso/Sector/Habitación) y Clasificación
@@ -175,12 +176,12 @@ export default function MasFiltrosPopover({
           </div>
 
           <div className="fp-actions">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleLimpiarTodo}>
+            <Button type="button" variant="secondary" size="sm" onClick={handleLimpiarTodo}>
               Limpiar todo
-            </button>
-            <button type="button" className="btn btn-primary btn-sm" onClick={handleAplicar}>
+            </Button>
+            <Button type="button" variant="primary" size="sm" onClick={handleAplicar}>
               Aplicar filtros
-            </button>
+            </Button>
           </div>
         </div>
       )}

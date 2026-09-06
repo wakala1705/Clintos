@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './FinalizarMantenimientoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCircleCheck } from 'react-icons/lu';
 
 // Observación opcional al finalizar (no está en el encargo, pero da lugar a
@@ -41,11 +42,10 @@ export default function FinalizarMantenimientoModal({ mantenimiento, onClose, on
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">
-              <LuCircleCheck className="icon" aria-hidden="true" />
+            <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" variant="primary" icon={LuCircleCheck}>
               Finalizar mantenimiento
-            </button>
+            </Button>
           </div>
         </form>
       </div>

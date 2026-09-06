@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './AsignarPacienteModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import BuscarPacienteModal from '../BuscarPacienteModal/BuscarPacienteModal';
 import {
@@ -101,8 +102,8 @@ export default function AsignarPacienteModal({ cama, onClose, onAssign }) {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={!puedeConfirmar}>Asignar paciente</button>
+              <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+              <Button type="submit" variant="primary" disabled={!puedeConfirmar}>Asignar paciente</Button>
             </div>
           </form>
         </div>

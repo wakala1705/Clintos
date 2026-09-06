@@ -1,4 +1,5 @@
 import './InconsistenciasEmptyState.css';
+import Button from '@/Components/Button/Button';
 
 // Un solo componente para los 4 estados sin-tabla del encargo (sección 15:
 // "Sin inconsistencias" es un estado POSITIVO — encargo explícito, ver
@@ -12,7 +13,7 @@ export default function InconsistenciasEmptyState({
       <div className="cbi-empty-title">{title}</div>
       {subtitle && <div className="cbi-empty-sub">{subtitle}</div>}
       {ctaLabel && (
-        <button type="button" className="btn btn-primary cbi-empty-cta" onClick={onCta}>{ctaLabel}</button>
+        <Button type="button" onClick={onCta} className="cbi-empty-cta">{ctaLabel}</Button>
       )}
     </div>
   );

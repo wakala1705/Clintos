@@ -1,5 +1,6 @@
 import './SuspendModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCirclePause, LuClock, LuShield, LuTriangleAlert, LuUser } from 'react-icons/lu';
 
 // Modal "Suspender tratamiento": lista de medicamentos a suspender (uno desde
@@ -65,11 +66,10 @@ export default function SuspendModal() {
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" type="button" id="suspend-cancel-btn">Cancelar</button>
-          <button className="btn btn-danger" type="button" id="suspend-confirm-btn">
-            <LuCirclePause className="icon" aria-hidden="true" />
+          <Button variant="secondary" id="suspend-cancel-btn">Cancelar</Button>
+          <Button variant="danger" icon={LuCirclePause} id="suspend-confirm-btn">
             <span id="suspend-confirm-label">Suspender tratamiento</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

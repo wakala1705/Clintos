@@ -1,5 +1,6 @@
 import './CatalogModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { LuCheck, LuSearch, LuShoppingCart } from 'react-icons/lu';
 
 // Catálogo de insumos (overlay por encima del modal de Pedido a farmacia):
@@ -71,10 +72,9 @@ export default function CatalogModal() {
 
         <div className="modal-footer">
           <div style={{flex: 1}}></div>
-          <button type="button" className="btn btn-primary" id="catalog-confirm-btn" disabled>
-            <LuCheck className="icon" aria-hidden="true" />
+          <Button variant="primary" icon={LuCheck} id="catalog-confirm-btn" disabled>
             Agregar insumos
-          </button>
+          </Button>
         </div>
       </div>
     </div>

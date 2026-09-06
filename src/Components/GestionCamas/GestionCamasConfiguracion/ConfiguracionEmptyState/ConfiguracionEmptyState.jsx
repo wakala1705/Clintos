@@ -1,4 +1,5 @@
 import './ConfiguracionEmptyState.css';
+import Button from '@/Components/Button/Button';
 
 // Estado de página completa (Error, encargo sección 21) — para los "sin
 // resultados" parciales de la grilla/tabla ver los textos inline en
@@ -13,7 +14,7 @@ export default function ConfiguracionEmptyState({
       <div className="cbc-empty-title">{title}</div>
       {subtitle && <div className="cbc-empty-sub">{subtitle}</div>}
       {ctaLabel && (
-        <button type="button" className="btn btn-primary cbc-empty-cta" onClick={onCta}>{ctaLabel}</button>
+        <Button variant="primary" className="cbc-empty-cta" onClick={onCta}>{ctaLabel}</Button>
       )}
     </div>
   );
