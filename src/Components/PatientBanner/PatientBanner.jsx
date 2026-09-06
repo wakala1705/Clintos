@@ -5,7 +5,7 @@ import './PatientBanner.css';
 import Badge from '@/Components/Badge/Badge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
-import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
+import { LuChevronDown, LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 
 // Banner de identidad del paciente, compartido por /asignacion-citas y
 // /gestion-enfermeria (antes duplicado: uno como componente React estático en
@@ -19,8 +19,9 @@ import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 // y `empty` (Asignación de Citas arranca sin paciente hasta que se busca uno;
 // Enfermería siempre entra con un paciente ya admitido). `compact` (usado por
 // PlantillaCrecimt2 al maximizar, ver ViewSettingsMenu.jsx) reduce el banner
-// a una sola línea con solo nombre/sexo/edad — ignora secondRow/statusBadge/
-// onClose/alergias para dejar sitio real a la card que crece por encima.
+// a una sola línea con nombre/CC/edad/sexo/aseguradora — ignora secondRow/
+// statusBadge/onClose/alergias para dejar sitio real a la card que crece
+// por encima.
 // `leadingSelect` (un <select> nativo antes del primer chip de secondRow —
 // hoy solo lo usa Asignación de Citas para "Régimen", ver
 // asignacion-citas/page.jsx; estilo tipo .pc-select-wrap/.pc-picker-trigger
@@ -30,9 +31,17 @@ import { LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
 // `secondRowButton` (botón al final de esa misma fila — hoy solo lo usa
 // Asignación de Citas para "Historial de citas", ver asignacion-citas/
 // page.jsx): { label, icon: Icon, onClick }.
+// El chevron al extremo derecho de admission-row es un toggle interno
+// (`collapsed`, no un prop): al accionarlo el banner se re-renderiza con el
+// mismo markup/clases que la variante `compact` de arriba (name/sexo/edad,
+// clase `patient-banner-compact`), con el chevron reaparece dentro de ese
+// bloque para volver a expandir. Es independiente del prop `compact` — este
+// último sigue siendo la variante fija sin admission-row/chevron que usa
+// PlantillaCrecimt2.
 export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const allergyRef = useRef(null);
 
   useEffect(() => {
@@ -81,9 +90,36 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
         <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
         <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
         <div className="patient-meta">
-          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
+          <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
           <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
+          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
+          <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
         </div>
+      </div>
+    );
+  }
+
+  if (collapsed) {
+    return (
+      <div className="patient-banner patient-banner-compact">
+        <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
+        <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
+        <div className="patient-meta">
+          <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
+          <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
+          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
+          <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
+        </div>
+        <button
+          type="button"
+          className="ar-toggle collapsed"
+          onClick={() => setCollapsed(false)}
+          aria-expanded="false"
+          aria-label="Expandir banner"
+          title="Expandir banner"
+        >
+          <LuChevronDown className="icon" aria-hidden="true" />
+        </button>
       </div>
     );
   }
@@ -96,7 +132,7 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
         <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
         <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
         <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
-        <div className="pm-item"><b>{patient.eps}</b></div>
+        <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
         <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
       </div>
       <div className="patient-banner-right">
@@ -162,6 +198,16 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
               {secondRowButton.label}
             </button>
           )}
+          <button
+            type="button"
+            className="ar-toggle"
+            onClick={() => setCollapsed(true)}
+            aria-expanded="true"
+            aria-label="Contraer banner"
+            title="Contraer banner"
+          >
+            <LuChevronDown className="icon" aria-hidden="true" />
+          </button>
         </div>
       )}
       {detailOpen && (

@@ -26,12 +26,15 @@
 .patient-meta .pm-item-more:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:2px;}
 .patient-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
 
-/* ---------- VARIANTE COMPACTA (maximizar, ver PlantillaCrecimt2.jsx) ----------
+/* ---------- VARIANTE COMPACTA (maximizar/`compact`, y toggle interno
+   `collapsed` — ver PatientBanner.jsx) ----------
    Mismo bloque .patient-banner/.patient-name-block/.patient-meta que la
-   variante normal, solo con padding/gap/tamaño de avatar reducidos y
-   flex-wrap:nowrap para forzar una sola línea — nombre/sexo/edad son las
-   únicas dos filas de datos que se montan en este modo (ver
-   PatientBanner.jsx), así que nunca hay contenido de sobra que desbordar. */
+   variante normal, solo con padding/gap/tamaño de avatar reducidos.
+   flex-wrap:nowrap es sobre el flex externo (avatar/nombre/meta/toggle no
+   pasan a una segunda línea entre sí); .patient-meta conserva su propio
+   flex-wrap:wrap (heredado de la regla base), así que si CC/EDAD/SEXO/Aseg.
+   no entran en una sola línea, esos chips wrappean dentro de su propia caja
+   en vez de desbordar el banner. */
 .patient-banner-compact{padding:8px 20px;gap:12px;flex-wrap:nowrap;}
 .patient-banner-compact .patient-avatar{width:30px;height:30px;font-size:var(--fs-sm);}
 .patient-banner-compact .patient-name-block .pname{font-size:var(--fs-base);}
@@ -70,6 +73,23 @@
 }
 .admission-row .ar-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.02em;margin-right:4px;}
 .admission-row .ar-item b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+
+/* Chevron para contraer/expandir el banner completo a patient-banner-compact
+   (ver PatientBanner.jsx) — vive al extremo derecho de admission-row cuando
+   está expandido, y dentro del propio patient-banner-compact (junto a
+   patient-meta) cuando está colapsado, por eso no está scopeado a
+   .admission-row: margin-left:auto lo empuja al extremo derecho en ambos
+   layouts (patient-meta ya es flex:1 y consume el espacio restante antes). */
+.ar-toggle{
+  margin-left:auto;flex-shrink:0;width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  border:none;background:none;padding:0;cursor:pointer;color:var(--ink-500);
+  border-radius:6px;transition:transform .15s,background .15s,color .15s;
+}
+.ar-toggle:hover{background:var(--gray-bg);color:var(--ink-900);}
+.ar-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.ar-toggle .icon{width:16px;height:16px;}
+.ar-toggle.collapsed{transform:rotate(-90deg);}
 
 /* leadingSelect (ver PatientBanner.jsx) — mismo lenguaje visual que
    .pc-select-wrap/.pc-picker-trigger de ProgramarCita/AgendaToolbar.css
