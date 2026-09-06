@@ -45,3 +45,10 @@ next-env.d.ts
 
 # Claude Code agent worktrees (nested git repos, not real submodules)
 /.claude/worktrees/
+
+# design-sync
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

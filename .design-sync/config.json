@@ -1,0 +1,31 @@
+{
+  "projectId": "7ee128c7-7209-4690-91b7-c0953580180b",
+  "shape": "package",
+  "pkg": "primerproyecto",
+  "globalName": "Clintos",
+  "srcDir": "src",
+  "cssEntry": ".design-sync/tokens.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "componentSrcMap": {
+    "Button": "src/Components/Button/Button.jsx",
+    "Badge": "src/Components/Badge/Badge.jsx",
+    "ModalHeader": "src/Components/ModalHeader/ModalHeader.jsx",
+    "FormSelect": "src/Components/FormSelect/FormSelect.jsx",
+    "SegmentedFilterBar": "src/Components/SegmentedFilterBar/SegmentedFilterBar.jsx",
+    "FilterDropdown": "src/Components/FilterDropdown/FilterDropdown.jsx",
+    "AreaSelector": "src/Components/AreaSelector/AreaSelector.jsx",
+    "KpiCard": "src/Components/KpiCard/KpiCard.jsx",
+    "PatientAvatar": "src/Components/PatientAvatar/PatientAvatar.jsx"
+  },
+  "dtsPropsFor": {
+    "Button": "  variant?: 'primary' | 'secondary' | 'secondary-accent' | 'outline' | 'tinted' | 'warning-outline' | 'danger' | 'danger-outline';\n  size?: 'base' | 'sm';\n  type?: 'button' | 'submit' | 'reset';\n  icon?: React.ComponentType<{ className?: string }>;\n  disabled?: boolean;\n  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;\n  className?: string;\n  children?: React.ReactNode;",
+    "Badge": "  tone?: 'neutral' | 'danger' | 'warn' | 'success' | 'info';\n  dot?: boolean;\n  className?: string;\n  children?: React.ReactNode;",
+    "ModalHeader": "  icon?: React.ComponentType<{ className?: string }>;\n  tone?: 'neutral' | 'primary' | 'warning' | 'danger';\n  title: React.ReactNode;\n  titleId?: string;\n  subtitle?: React.ReactNode;\n  onClose?: () => void;\n  closeLabel?: string;\n  autoFocusClose?: boolean;\n  closeId?: string;\n  trailing?: React.ReactNode;\n  onBack?: () => void;\n  backLabel?: string;\n  backButtonRef?: React.Ref<HTMLButtonElement>;\n  closeButtonRef?: React.Ref<HTMLButtonElement>;\n  titleLive?: boolean;",
+    "FormSelect": "  id?: string;\n  value: string;\n  onChange: (value: string) => void;\n  options: { value: string; label: string }[];\n  placeholder?: string;\n  disabled?: boolean;\n  required?: boolean;\n  ariaLabel?: string;",
+    "SegmentedFilterBar": "  options: { value: string; label: string; count: number }[];\n  value: string;\n  onChange: (value: string) => void;\n  ariaLabel?: string;\n  resetValue?: string;",
+    "FilterDropdown": "  label: string;\n  options: { value: string; label: string }[];\n  value: string;\n  onChange: (value: string) => void;",
+    "AreaSelector": "  options: { value: string; label: string; group?: string }[];\n  value: string;\n  onChange: (value: string) => void;\n  label?: string;",
+    "KpiCard": "  icon: React.ComponentType<{ className?: string }>;\n  label: string;\n  value: React.ReactNode;\n  description: React.ReactNode;\n  variant?: 'neutral' | 'violet' | 'success' | 'warning' | 'danger' | 'info';\n  progress?: { percent: number };",
+    "PatientAvatar": "  iniciales: string;\n  className?: string;"
+  }
+}

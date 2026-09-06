@@ -1,0 +1,86 @@
+/* Aggregated tokens for the Clintos design-sync bundle.
+   Not a new source of truth — copied verbatim from the two places the
+   scoped components actually read from, so the design-sync bundle renders
+   with real project values instead of inventing its own palette:
+   - src/app/globals.css :root -> --fs-*/--fw-*/--bp-*/--btn-* (these are
+     NOT duplicated per feature in the real app; declared once there).
+   - src/Components/GestionCamas/GestionCamas.css :root -> color/radius/
+     input-size tokens (each top-level feature duplicates its own copy per
+     AGENTS.md "Component organization"; GestionCamas.css was picked as the
+     donor because it's the only feature :root that already defines
+     --purple-bg/--purple-fg matching KpiCard's "violet" variant).
+   - --status-info-bg/--status-info-fg: not defined in GestionCamas.css:root,
+     added here using the same var(--primary-50)/var(--primary-dark) pattern
+     other features (e.g. asignacion-citas.css) already use for it. */
+:root {
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 18px;
+  --fs-2xl: 20px;
+  --fs-3xl: 24px;
+  --fs-4xl: 28px;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --bp-tablet: 768px;
+  --bp-desktop: 1024px;
+  --bp-wide: 1440px;
+
+  --btn-radius: 8px;
+  --btn-border-width: 1px;
+  --btn-gap: 8px;
+  --btn-gap-sm: 6px;
+  --btn-padding: 8px 16px;
+  --btn-padding-sm: 8px 12px;
+  --btn-icon-size: 18px;
+  --btn-icon-size-sm: 15px;
+  --btn-disabled-opacity: .45;
+  --btn-focus-outline: 2px;
+  --btn-focus-offset: 2px;
+  --btn-transition: background .15s, border-color .15s, color .15s, opacity .15s;
+
+  --primary: #0065CD;
+  --primary-dark: #004E9E;
+  --primary-50: #eef4ff;
+  --primary-100: #dbe8fe;
+  --ink-900: #101827;
+  --ink-700: #374151;
+  --ink-500: #6b7280;
+  --ink-400: #838a99;
+  --border: #e5e8ef;
+  --surface: #ffffff;
+  --surface-modal: #ffffff;
+  --bg: #f4f6fb;
+  --amber: #e08a00;
+  --amber-bg: #fff4e0;
+  --amber-fg: #a45a05;
+  --green: #12a150;
+  --green-bg: #e6f8ee;
+  --red: #c02b2b;
+  --red-bg: #fdeceb;
+  --gray-fg: #6b7280;
+  --gray-bg: #eef0f4;
+  --blue: #0284c7;
+  --blue-bg: #e0f2fe;
+  --blue-fg: #0369a1;
+  --purple: #7c3aed;
+  --purple-bg: #f3e8ff;
+  --purple-fg: #6d28d9;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --input-sm: 32px;
+  --input-md: 36px;
+  --input-lg: 44px;
+  --z-modal: 50;
+  --status-info-bg: var(--primary-50);
+  --status-info-fg: var(--primary-dark);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+}
