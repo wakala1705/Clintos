@@ -4,7 +4,8 @@ import { useState } from 'react';
 import './SignosVitalesTab.css';
 import { getVitalStatus } from '@/hooks/GestionEnfermeria/vitalAbnormality';
 import ViewToggle from '@/Components/GestionEnfermeria/shared/ViewToggle/ViewToggle';
-import { LuList, LuChartLine } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
+import { LuList, LuChartLine, LuPlus } from 'react-icons/lu';
 import DateRangeChips from './DateRangeChips/DateRangeChips';
 import VitalesChart from './VitalesChart/VitalesChart';
 import { VITAL_PARAMS } from './vitalParams';
@@ -24,11 +25,11 @@ const VIEW_OPTIONS = [
 // que ese dato exista.
 const patientProfile = {};
 
-// `readings` viene de Monitoreo.jsx: el botón "Registrar signos vitales" se
-// movió a la fila de subnavegación (fuera de este sub-panel, ver
-// Monitoreo.jsx), así que el estado de las lecturas también se subió ahí
-// para que un registro nuevo se refleje acá sin duplicar la fuente de datos.
-export default function SignosVitalesTab({ readings, getStatus = getVitalStatus }) {
+// `readings` y `onRegistrar` vienen de Monitoreo.jsx: el estado de las
+// lecturas y el modal de registro viven un nivel arriba (ver Monitoreo.jsx)
+// para que un registro nuevo se refleje acá sin duplicar la fuente de datos;
+// el botón en sí se renderiza en este filter-bar, extremo derecho.
+export default function SignosVitalesTab({ readings, onRegistrar, getStatus = getVitalStatus }) {
   const [view, setView] = useState('tabla');
   // dateRange queda cableado a UI/estado pero no recorta `readings` — mismo
   // criterio y misma razón que el filtro "Rango" de HojaMedicamentosTab.jsx
@@ -43,6 +44,9 @@ export default function SignosVitalesTab({ readings, getStatus = getVitalStatus 
         <ViewToggle view={view} onChange={setView} options={VIEW_OPTIONS} />
         <div className="filter-spacer" />
         <DateRangeChips value={dateRange} onChange={setDateRange} />
+        <Button variant="primary" icon={LuPlus} onClick={onRegistrar}>
+          Registrar signos vitales
+        </Button>
       </div>
 
       <SignosVitalesResumen latest={latest} getStatus={getStatus} />

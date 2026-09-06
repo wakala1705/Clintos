@@ -9,6 +9,25 @@
    posicionalmente usan las MISMAS variables, así que coinciden por
    construcción en vez de por aritmética que se puede desalinear con
    cualquier ajuste futuro de una sola de las dos reglas. */
+/* Sub-tabs Medicamentos / Otros ordenamientos: acá overrideamos el patrón
+   pill de .subnav-bar/.subnav-tab (shared.css) por un patrón de tabs con
+   indicador inferior — mismo lenguaje visual que .card-tabs-bar/.card-tab
+   (AtencionEnfermeria.css, la navegación principal un nivel arriba), para
+   que se lea como jerarquía y no como un filtro. Se overridea con clases
+   propias (.ome-subnav-bar/.ome-subnav-tab) además de las de shared.css, en
+   vez de tocar shared.css directo, porque Monitoreo y PedidosPanel siguen
+   usando esas mismas clases con el look de pills y no deben cambiar. */
+.ome-subnav-bar{gap:24px;padding:14px 20px 0 20px;border-bottom:1px solid var(--border);}
+.ome-subnav-tab{
+  background:none;border:none;border-radius:0;padding:0 0 12px 0;
+  font-weight:var(--fw-medium);color:var(--ink-500);position:relative;outline-offset:2px;
+}
+.ome-subnav-tab:hover{background:none;border-color:transparent;color:var(--ink-900);}
+.ome-subnav-tab.active{background:none;border-color:transparent;color:var(--primary);font-weight:var(--fw-semibold);}
+.ome-subnav-tab.active::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary);
+}
+
 :root{
   --ome-col-check:36px;    /* checkbox/chevron */
   --ome-col-slot2:110px;   /* Consecutivo (cabecera) / vacío (ítem) */

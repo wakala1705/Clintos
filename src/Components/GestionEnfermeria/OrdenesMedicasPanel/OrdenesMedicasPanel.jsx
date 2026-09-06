@@ -1,6 +1,6 @@
 import './OrdenesMedicasPanel.css';
 import Button from '@/Components/Button/Button';
-import { LuCalendar, LuChevronDown, LuClipboardList, LuFilter, LuFolderCheck, LuSearch } from 'react-icons/lu';
+import { LuCalendar, LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
 
 // Tab "Órdenes médicas": subnavegación Medicamentos / Otros ordenamientos.
 // Las filas de cada tabla (ordenes-list / otros-ordenamientos-tbody) se
@@ -9,13 +9,11 @@ import { LuCalendar, LuChevronDown, LuClipboardList, LuFilter, LuFolderCheck, Lu
 export default function OrdenesMedicasPanel() {
   return (
     <div role="tabpanel" id="panel-ordenes" aria-labelledby="tab-ordenes" tabIndex="0" className="tab-panel">
-      <div className="subnav-bar" role="tablist" aria-label="Tipo de orden">
-        <button type="button" className="subnav-tab active" role="tab" id="subtab-ome-medicamentos" aria-selected="true" aria-controls="subpanel-ome-medicamentos" tabIndex="0">
-          <LuFolderCheck className="icon" aria-hidden="true" />
+      <div className="subnav-bar ome-subnav-bar" role="tablist" aria-label="Tipo de orden">
+        <button type="button" className="subnav-tab ome-subnav-tab active" role="tab" id="subtab-ome-medicamentos" aria-selected="true" aria-controls="subpanel-ome-medicamentos" tabIndex="0">
           Medicamentos
         </button>
-        <button type="button" className="subnav-tab" role="tab" id="subtab-ome-otros" aria-selected="false" aria-controls="subpanel-ome-otros" tabIndex="-1">
-          <LuClipboardList className="icon" aria-hidden="true" />
+        <button type="button" className="subnav-tab ome-subnav-tab" role="tab" id="subtab-ome-otros" aria-selected="false" aria-controls="subpanel-ome-otros" tabIndex="-1">
           Otros ordenamientos
         </button>
       </div>

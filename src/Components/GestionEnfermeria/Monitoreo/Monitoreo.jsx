@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import './Monitoreo.css';
 import { VITALES_READINGS } from '@/hooks/GestionEnfermeria/mockMonitoreo';
-import Button from '@/Components/Button/Button';
-import { LuPlus, LuActivity, LuListChecks } from 'react-icons/lu';
 import HojaMedicamentosTab from './HojaMedicamentosTab/HojaMedicamentosTab';
 import SignosVitalesTab from './SignosVitalesTab/SignosVitalesTab';
 import RegistrarSignosVitalesModal from './modals/RegistrarSignosVitalesModal/RegistrarSignosVitalesModal';
@@ -16,10 +14,11 @@ import RegistrarSignosVitalesModal from './modals/RegistrarSignosVitalesModal/Re
 // contenido real (HojaMedicamentosTab y SignosVitalesTab); este shell solo
 // resuelve el subnav y mantiene ambos montados.
 //
-// El botón "Registrar signos vitales" vive acá (fila de subnavegación) en
-// vez de en el filter-bar de SignosVitalesTab — por eso `readings` y el
-// modal de registro también subieron a este nivel: es la única forma de que
-// un registro nuevo se refleje en SignosVitalesTab sin duplicar el estado.
+// El botón "Registrar signos vitales" vive en el filter-bar de
+// SignosVitalesTab (extremo derecho, junto a DateRangeChips), pero
+// `readings` y el modal de registro se quedan en este nivel: es la única
+// forma de que un registro nuevo se refleje en SignosVitalesTab sin
+// duplicar el estado.
 export default function Monitoreo() {
   const [readings, setReadings] = useState(VITALES_READINGS);
   const [showModal, setShowModal] = useState(false);
@@ -32,27 +31,16 @@ export default function Monitoreo() {
 
   return (
     <div role="tabpanel" id="panel-monitoreo" aria-labelledby="tab-monitoreo" tabIndex="0" className="tab-panel">
-      <div className="subnav-bar" role="tablist" aria-label="Secciones de monitoreo">
-        <button type="button" className="subnav-tab active" role="tab" id="subtab-signos-vitales" aria-selected="true" aria-controls="subpanel-signos-vitales" tabIndex="0">
-          <LuActivity className="icon" aria-hidden="true" />
+      <div className="subnav-bar mon-subnav-bar" role="tablist" aria-label="Secciones de monitoreo">
+        <button type="button" className="subnav-tab mon-subnav-tab active" role="tab" id="subtab-signos-vitales" aria-selected="true" aria-controls="subpanel-signos-vitales" tabIndex="0">
           Signos vitales
         </button>
-        <button type="button" className="subnav-tab" role="tab" id="subtab-hoja-medicamentos" aria-selected="false" aria-controls="subpanel-hoja-medicamentos" tabIndex="-1">
-          <LuListChecks className="icon" aria-hidden="true" />
+        <button type="button" className="subnav-tab mon-subnav-tab" role="tab" id="subtab-hoja-medicamentos" aria-selected="false" aria-controls="subpanel-hoja-medicamentos" tabIndex="-1">
           Hoja de medicamentos
         </button>
-        <div className="filter-spacer" />
-        <Button
-          variant="primary"
-          icon={LuPlus}
-          className="mon-btn-registrar"
-          onClick={() => setShowModal(true)}
-        >
-          Registrar signos vitales
-        </Button>
       </div>
 
-      <SignosVitalesTab readings={readings} />
+      <SignosVitalesTab readings={readings} onRegistrar={() => setShowModal(true)} />
       <HojaMedicamentosTab />
 
       {showModal && (
