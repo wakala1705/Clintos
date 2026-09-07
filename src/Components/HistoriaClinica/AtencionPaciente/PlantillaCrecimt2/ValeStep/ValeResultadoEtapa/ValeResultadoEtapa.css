@@ -55,6 +55,7 @@
 
 .vale-res-badge{
   display:inline-flex;align-items:center;gap:6px;width:fit-content;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:20px;white-space:nowrap;
 }
 .vale-res-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}

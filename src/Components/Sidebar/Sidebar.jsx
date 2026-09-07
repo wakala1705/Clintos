@@ -15,6 +15,7 @@ import {
   LuFileText,
   LuFlaskConical,
   LuFolder,
+  LuHandCoins,
   LuHeart,
   LuHeartPulse,
   LuHouse,
@@ -23,6 +24,7 @@ import {
   LuReceipt,
   LuScissors,
   LuSettings,
+  LuShoppingCart,
   LuSiren,
   LuSquarePlus,
   LuStethoscope,
@@ -30,6 +32,8 @@ import {
   LuSyringe,
   LuUsers,
   LuUsersRound,
+  LuVault,
+  LuWallet,
   LuWrench,
 } from 'react-icons/lu';
 
@@ -54,12 +58,14 @@ export default function Sidebar() {
   const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
   const isFacturas = pathname === '/facturas';
+  const isFinanzas = isFacturas;
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
 
-  // Admin ve estos 5 anidados bajo "Módulo Asistencial" (junto a Contable/Nómina);
-  // un usuario de solo-Asistencial ya sabe en qué módulo está, así que se suben
-  // a nivel superior (mismo contenido, sin el nivel extra de navegación redundante).
+  // Admin ve estos 6 anidados bajo "Módulo Asistencial" (junto a Nómina/Otros
+  // soportes); un usuario de solo-Asistencial ya sabe en qué módulo está, así
+  // que se suben a nivel superior (mismo contenido, sin el nivel extra de
+  // navegación redundante).
   const subGroupClass = isAdmin ? 'nav-group sub' : 'nav-group';
 
   const asistencialSubGroups = (
@@ -102,6 +108,21 @@ export default function Sidebar() {
           <LuChevronDown className="icon chev" />
         </div>
         <div className="nav-body"></div>
+      </div>
+
+      <div className={`${subGroupClass}${isFinanzas ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuLandmark className="icon nav-icon" />
+          <span className="label">Finanzas</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuWallet className="icon" />Cartera</div>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuVault className="icon" />Tesorería</div>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuShoppingCart className="icon" />Compras</div>
+          <div className="nav-subitem" tabIndex="0" role="button"><LuHandCoins className="icon" />Caja</div>
+        </div>
       </div>
 
       <div className={subGroupClass}>
@@ -153,7 +174,7 @@ export default function Sidebar() {
         </Link>
 
         {isAdmin ? (
-          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
+          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFinanzas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
             <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
               <LuStethoscope className="icon nav-icon" />
               <span className="label">Módulo Asistencial</span>
@@ -167,19 +188,6 @@ export default function Sidebar() {
 
         {isAdmin && (
           <>
-            <div className="sidebar-divider"></div>
-
-            <div className={`nav-group${isFacturas ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuLandmark className="icon nav-icon" />
-                <span className="label">Módulo Contable</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
-              </div>
-            </div>
-
             <div className="sidebar-divider"></div>
 
             <div className="nav-group">

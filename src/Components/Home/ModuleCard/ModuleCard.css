@@ -35,5 +35,6 @@ html[data-theme="dark"] .module-card:not(.disabled):hover{box-shadow:0 4px 14px 
   background:var(--gray-bg);color:var(--gray-fg);
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);
   padding:4px 9px;border-radius:20px;white-space:nowrap;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 .module-card-badge .icon{width:12px;height:12px;}

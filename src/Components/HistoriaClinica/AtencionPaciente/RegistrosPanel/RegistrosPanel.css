@@ -57,6 +57,7 @@
 .rg-badge-activa{
   font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--green);background:var(--green-bg);
   padding:2px 8px;border-radius:10px;flex-shrink:0;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 
 .rg-group-actions{display:flex;align-items:center;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0;padding-right:10px;}

@@ -4,7 +4,11 @@
    --amber, --green-bg, --status-info-bg/--status-info-fg, --ink-400. Hoy
    --status-info-bg/fg y --amber solo existen en un subconjunto de features
    (ver auditoría) -- si tone="info" o dot en una feature que no los declara
-   todavía, el fix es agregar el token faltante ahí, no tocar este archivo. */
+   todavía, el fix es agregar el token faltante ahí, no tocar este archivo.
+
+   border-color de cada tono usa color-mix() sobre el mismo color del
+   texto/dot (no un token nuevo) para bajarle la saturación -- no depende de
+   ningún token adicional a los ya listados arriba. */
 
 .badge {
   display: inline-flex;
@@ -15,6 +19,7 @@
   font-weight: var(--fw-semibold);
   padding: 4px 10px;
   border-radius: 20px;
+  border: var(--btn-border-width) solid transparent;
   white-space: nowrap;
 }
 
@@ -28,6 +33,7 @@
 .neutral {
   background: var(--gray-bg);
   color: var(--gray-fg);
+  border-color: color-mix(in srgb, var(--ink-400) 45%, transparent);
 }
 .neutralDot {
   background: var(--ink-400);
@@ -36,6 +42,7 @@
 .danger {
   background: var(--red-bg);
   color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 45%, transparent);
 }
 .dangerDot {
   background: var(--red);
@@ -44,6 +51,7 @@
 .warn {
   background: var(--amber-bg);
   color: var(--amber-fg);
+  border-color: color-mix(in srgb, var(--amber) 45%, transparent);
 }
 .warnDot {
   background: var(--amber);
@@ -55,6 +63,7 @@
 .success {
   background: var(--green-bg);
   color: #0d7a3d;
+  border-color: color-mix(in srgb, #0d7a3d 45%, transparent);
 }
 .successDot {
   background: #0d7a3d;
@@ -63,6 +72,7 @@
 .info {
   background: var(--status-info-bg);
   color: var(--status-info-fg);
+  border-color: color-mix(in srgb, var(--status-info-fg) 45%, transparent);
 }
 .infoDot {
   background: var(--status-info-fg);

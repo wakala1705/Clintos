@@ -15,8 +15,8 @@ export default function InsumosTab({ cirugia }) {
         <tbody>
           {canasta.items.map((item) => (
             <tr key={item.nombre}>
-              <td>{item.nombre}</td>
-              <td>{item.cantidad}</td>
+              <td className="cell-primary">{item.nombre}</td>
+              <td className="cell-muted">{item.cantidad}</td>
               <td><span className={`ist-tag ist-tag-${item.estado}`}>{INSUMO_ESTADO_LABEL[item.estado]}</span></td>
             </tr>
           ))}

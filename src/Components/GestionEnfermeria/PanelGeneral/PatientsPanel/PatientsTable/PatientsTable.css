@@ -29,6 +29,7 @@
 .pg-med-badge{
   display:inline-flex;align-items:center;gap:6px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 .pg-med-badge .icon{width:13px;height:13px;}
 .pg-med-badge.pg-med-al-dia{background:var(--green-bg);color:#0d7a3d;}

@@ -5,26 +5,28 @@ import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
-import ResumenTab from './tabs/ResumenTab/ResumenTab';
-import ProcedimientosTab from './tabs/ProcedimientosTab/ProcedimientosTab';
+import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
-import { duracionLabel, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuChevronUp, LuCircleCheck, LuInfo, LuPencil,
 } from 'react-icons/lu';
 
 const ESTADOS_TERMINALES = ['cancelada', 'incumplida'];
 
-const TABS = [
-  { id: 'resumen', label: 'Resumen' },
-  { id: 'procedimientos', label: 'Procedimientos' },
-  { id: 'personal', label: 'Personal' },
-  { id: 'equipos', label: 'Equipos' },
+// Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
+// a las 4 tabs de nivel superior que tenía antes el modal (Personal/Equipos/
+// Insumos/Farmacia). "Procedimientos" ya no es una tab: es la lista fija de
+// la izquierda (mismo esquema que .hqd-split en IntervencionDetalleModal,
+// HistorialQuirurgico -- encargo explícito con esa captura de referencia).
+const DETAIL_TABS = [
   { id: 'insumos', label: 'Insumos' },
   { id: 'farmacia', label: 'Farmacia' },
+  { id: 'personal', label: 'Personal clínico' },
+  { id: 'equipos', label: 'Equipos' },
 ];
 
 // Modal centrado superpuesto (nunca docked en el layout) -- mismo patrón
@@ -33,10 +35,10 @@ const TABS = [
 // demasiado para 6 tabs + el bloque de datos del paciente (encargo
 // explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
-  cirugia, salaLabel, onClose, onEditar, onReprogramar, onCancelar,
+  cirugia, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarProgramada, onMarcarIncumplida, onVerInfo,
 }) {
-  const [activeTab, setActiveTab] = useState('resumen');
+  const [activeDetailTab, setActiveDetailTab] = useState('insumos');
   // Menú "Más acciones" (Marcar como programada/incumplida, Ver
   // información/historial) -- vivía en el panel lateral (AccionesBar, ver
   // MiniCalendarCirugias.jsx antes de este encargo) y se movió acá porque
@@ -55,15 +57,22 @@ export default function DetalleCirugiaPanel({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [masOpen]);
-  // Resetear a "resumen" al cambiar de cirugía sin un useEffect (evita el
-  // cascading-render que marca react-hooks/set-state-in-effect): mismo
-  // patrón "ajustar estado durante el render" que recomienda React para
-  // derivar estado de un prop que cambia, comparando contra el id anterior
-  // guardado en estado.
+  // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
+  // un useEffect (evita el cascading-render que marca
+  // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
+  // el render" que recomienda React para derivar estado de un prop que
+  // cambia, comparando contra el id anterior guardado en estado.
   const [lastCirugiaId, setLastCirugiaId] = useState(cirugia?.id ?? null);
+  // Selección de la lista de procedimientos del split (ver .dcp-split más
+  // abajo) -- mismo truco "ajustar estado durante el render" que
+  // `lastCirugiaId`, para resetear a la primera fila al cambiar de cirugía.
+  const [selectedProcedimientoId, setSelectedProcedimientoId] = useState(
+    cirugia?.procedimientos[0]?.nombre ?? null,
+  );
   if ((cirugia?.id ?? null) !== lastCirugiaId) {
     setLastCirugiaId(cirugia?.id ?? null);
-    setActiveTab('resumen');
+    setActiveDetailTab('insumos');
+    setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
 
   useEffect(() => {
@@ -77,14 +86,14 @@ export default function DetalleCirugiaPanel({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [cirugia, masOpen, onClose]);
 
-  function handleTabsKeyDown(e) {
-    const idx = TABS.findIndex((t) => t.id === activeTab);
+  function handleDetailTabsKeyDown(e) {
+    const idx = DETAIL_TABS.findIndex((t) => t.id === activeDetailTab);
     let next;
-    if (e.key === 'ArrowRight') next = (idx + 1) % TABS.length;
-    else if (e.key === 'ArrowLeft') next = (idx - 1 + TABS.length) % TABS.length;
+    if (e.key === 'ArrowRight') next = (idx + 1) % DETAIL_TABS.length;
+    else if (e.key === 'ArrowLeft') next = (idx - 1 + DETAIL_TABS.length) % DETAIL_TABS.length;
     else return;
     e.preventDefault();
-    setActiveTab(TABS[next].id);
+    setActiveDetailTab(DETAIL_TABS[next].id);
   }
 
   if (!cirugia) return null;
@@ -173,30 +182,52 @@ export default function DetalleCirugiaPanel({
         </div>
       </div>
 
-      <div className="dcp-tabs-bar" role="tablist" aria-label="Secciones del detalle de la cirugía" onKeyDown={handleTabsKeyDown}>
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            aria-controls={`dcp-panel-${tab.id}`}
-            tabIndex={activeTab === tab.id ? 0 : -1}
-            className={`dcp-tab${activeTab === tab.id ? ' active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Split de 2 columnas -- mismo esquema que .hqd-split
+          (IntervencionDetalleModal, HistorialQuirurgico, ver comentario en
+          DetalleCirugiaPanel.css): izquierda, la lista fija de procedimientos
+          de la cirugía; derecha, tabs anidadas Insumos/Farmacia/Personal
+          clínico/Equipos. Reemplaza a las 6 tabs de nivel superior que tenía
+          antes el modal (Resumen se eliminó, Procedimientos pasó a ser la
+          columna izquierda permanente en vez de una tab más) -- encargo
+          explícito con esa captura de referencia. */}
+      <div className="dcp-tab-body">
+        <div className="dcp-split">
+          <section className="dcp-split-left">
+            <div className="dcp-tabs-bar">
+              <span className="dcp-tab active">Procedimientos</span>
+            </div>
+            <ProcedimientosSideList
+              procedimientos={cirugia.procedimientos}
+              selectedId={selectedProcedimientoId}
+              onSelect={setSelectedProcedimientoId}
+            />
+          </section>
 
-      <div className="dcp-tab-body" role="tabpanel" id={`dcp-panel-${activeTab}`}>
-        {activeTab === 'resumen' && <ResumenTab cirugia={cirugia} onNavigateTab={setActiveTab} salaLabel={salaLabel} />}
-        {activeTab === 'procedimientos' && <ProcedimientosTab cirugia={cirugia} />}
-        {activeTab === 'personal' && <PersonalTab cirugia={cirugia} />}
-        {activeTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
-        {activeTab === 'insumos' && <InsumosTab cirugia={cirugia} />}
-        {activeTab === 'farmacia' && <FarmaciaTab cirugia={cirugia} />}
+          <section className="dcp-split-right">
+            <div className="dcp-tabs-bar" role="tablist" aria-label="Detalle de la cirugía" onKeyDown={handleDetailTabsKeyDown}>
+              {DETAIL_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeDetailTab === tab.id}
+                  aria-controls={`dcp-detail-panel-${tab.id}`}
+                  tabIndex={activeDetailTab === tab.id ? 0 : -1}
+                  className={`dcp-tab${activeDetailTab === tab.id ? ' active' : ''}`}
+                  onClick={() => setActiveDetailTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div className="dcp-split-right-body" role="tabpanel" id={`dcp-detail-panel-${activeDetailTab}`}>
+              {activeDetailTab === 'insumos' && <InsumosTab cirugia={cirugia} />}
+              {activeDetailTab === 'farmacia' && <FarmaciaTab cirugia={cirugia} />}
+              {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
+              {activeDetailTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
+            </div>
+          </section>
+        </div>
       </div>
 
       <div className="dcp-actions">

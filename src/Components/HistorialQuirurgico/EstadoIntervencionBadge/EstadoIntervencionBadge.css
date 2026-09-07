@@ -4,5 +4,6 @@
   font-size:var(--fs-sm);font-weight:var(--fw-medium);
   color:var(--green);background:var(--green-bg);
   white-space:nowrap;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 .hq-estado-badge .icon{width:14px;height:14px;}

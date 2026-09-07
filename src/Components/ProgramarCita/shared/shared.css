@@ -30,6 +30,7 @@
    4px 10px, radio 20px — homologado en todo el proyecto (ver AGENTS.md). */
 .pc-estado-badge{
   display:inline-flex;align-items:center;gap:6px;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
 }
 .pc-estado-badge .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor;}

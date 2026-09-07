@@ -1,4 +1,4 @@
-.esb-badge{display:inline-flex;align-items:center;gap:6px;font-weight:var(--fw-semibold);border-radius:20px;padding:4px 10px;white-space:nowrap;}
+.esb-badge{display:inline-flex;align-items:center;gap:6px;font-weight:var(--fw-semibold);border-radius:20px;padding:4px 10px;white-space:nowrap;border:1px solid color-mix(in srgb, currentColor 45%, transparent);}
 .esb-badge .icon{flex-shrink:0;}
 .esb-base{font-size:var(--fs-xs);}
 .esb-base .icon{width:13px;height:13px;}

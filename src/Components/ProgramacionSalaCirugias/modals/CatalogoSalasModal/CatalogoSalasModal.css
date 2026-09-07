@@ -50,6 +50,7 @@ html[data-theme="dark"] .csm-row-head{background:#1c2333;}
 .csm-badge{
   display:inline-flex;align-items:center;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
   padding:3px 9px;border-radius:12px;white-space:nowrap;width:fit-content;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 .csm-badge-activo{background:var(--green-bg);color:#0d7a3d;}
 html[data-theme="dark"] .csm-badge-activo{color:var(--green);}

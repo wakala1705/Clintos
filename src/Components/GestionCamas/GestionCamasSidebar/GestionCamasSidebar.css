@@ -98,6 +98,7 @@
   flex-shrink:0;min-width:20px;text-align:center;
   font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--amber-fg);background:var(--amber-bg);
   padding:1px 7px;border-radius:10px;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 
 /* Tooltip (solo visible colapsado — mostrado por JS vía hover/focus, ver

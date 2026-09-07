@@ -231,7 +231,6 @@ export default function ProgramacionSalaCirugias() {
   }
 
   const selectedCirugia = cirugias.find((c) => c.id === selectedId) ?? null;
-  const salaLabelActual = SALAS.find((s) => s.value === salaId)?.label ?? '';
   // Sáb/Dom se ocultan por defecto vía el toggle del header (encargo
   // explícito) filtrando por `label` en vez de recalcular el día de semana
   // -- diasDeSemana ya lo trae calculado (ver mockCirugiaData.js).
@@ -367,7 +366,6 @@ export default function ProgramacionSalaCirugias() {
 
       <DetalleCirugiaPanel
         cirugia={selectedCirugia}
-        salaLabel={salaLabelActual}
         onClose={() => setSelectedId(null)}
         onEditar={handleEditarCirugia}
         onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}

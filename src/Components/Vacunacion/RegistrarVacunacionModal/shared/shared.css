@@ -45,6 +45,7 @@
    distingue por texto + ícono propio, nunca solo por color (1.4.1). */
 .rv-dosis-badge{
   display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:3px 9px;border-radius:20px;white-space:nowrap;
 }
 .rv-dosis-badge .icon{width:12px;height:12px;flex-shrink:0;}

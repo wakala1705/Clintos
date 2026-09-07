@@ -1,6 +1,7 @@
 .cbm-badge{
   display:inline-flex;align-items:center;gap:6px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;white-space:nowrap;
+  border:1px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 .cbm-badge .icon{width:13px;height:13px;}
 .cbm-tono-blue{background:var(--blue-bg);color:var(--blue-fg);}
