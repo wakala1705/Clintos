@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import './InformacionGeneralStep.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import DuracionInput from '../../../DuracionInput/DuracionInput';
 import CatalogoDiagnosticosModal from '../../CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
 import CatalogoAseguradorasModal from '../../CatalogoAseguradorasModal/CatalogoAseguradorasModal';
 import {
@@ -22,7 +23,6 @@ const CLASE_OPTIONS = toOptions(CLASE_CIRUGIA_CATALOGO);
 const TIPO_ANESTESIA_OPTIONS = toOptions(TIPOS_ANESTESIA_CATALOGO);
 const COMPLEJIDAD_OPTIONS = toOptions(COMPLEJIDAD_CATALOGO);
 const ASA_OPTIONS = toOptions(ASA_CATALOGO);
-const DURACION_OPTIONS = DURACIONES_CIRUGIA_CATALOGO.map((min) => ({ value: String(min), label: `${min} min` }));
 
 // Paso 1 del wizard "Nueva cirugía" -- mismos campos que el formulario de
 // referencia "Programación de Cirugías" del sistema legacy (encargo
@@ -133,31 +133,31 @@ export default function InformacionGeneralStep({
       <div className="igs-grid igs-grid-3">
         <div className="form-field">
           <label htmlFor="igs-dur-estimada">Dur. estimada</label>
-          <FormSelect
+          <DuracionInput
             id="igs-dur-estimada"
             value={datos.duracionEstimada}
             onChange={(v) => onChange('duracionEstimada', v)}
-            options={DURACION_OPTIONS}
+            options={DURACIONES_CIRUGIA_CATALOGO}
             required
           />
         </div>
         <div className="form-field">
           <label htmlFor="igs-dur-postquirurgica">Dur. postquirúrgica</label>
-          <FormSelect
+          <DuracionInput
             id="igs-dur-postquirurgica"
             value={datos.duracionPostquirurgica}
             onChange={(v) => onChange('duracionPostquirurgica', v)}
-            options={DURACION_OPTIONS}
+            options={DURACIONES_CIRUGIA_CATALOGO}
             required
           />
         </div>
         <div className="form-field">
           <label htmlFor="igs-dur-recuperacion">Dur. recuperación</label>
-          <FormSelect
+          <DuracionInput
             id="igs-dur-recuperacion"
             value={datos.duracionRecuperacion}
             onChange={(v) => onChange('duracionRecuperacion', v)}
-            options={DURACION_OPTIONS}
+            options={DURACIONES_CIRUGIA_CATALOGO}
             required
           />
         </div>

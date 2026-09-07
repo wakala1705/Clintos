@@ -4,25 +4,8 @@ import { useState } from 'react';
 import './ProcedimientosStep.css';
 import Button from '@/Components/Button/Button';
 import AgregarProcedimientoModal from './AgregarProcedimientoModal/AgregarProcedimientoModal';
-import { LuPlus, LuTrash2 } from 'react-icons/lu';
-
-// idCirugia/idCirujano/idAnestesiologo llegan como "id - nombre" (ver
-// onSelect en CatalogoProcedimientosModal.jsx/CatalogoMedicosModal.jsx) --
-// acá solo interesa el nombre, el id es metadato del catálogo de origen, no
-// algo que el usuario de este paso necesite ver (encargo explícito para
-// Cirujano/Anestesiólogo, aplicado también al nombre del procedimiento por
-// el mismo criterio).
-function soloNombre(valor) {
-  const i = valor.indexOf(' - ');
-  return i === -1 ? valor : valor.slice(i + 3);
-}
-
-// Tipo cirugía llega en mayúsculas del catálogo (mismo formato que
-// idCirugia/idCirujano/idAnestesiologo) -- capitalizado (solo la primera
-// letra) en vez de minúscula pareja, encargo explícito.
-function capitalizar(texto) {
-  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
-}
+import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { LuChevronDown, LuPlus, LuTrash2 } from 'react-icons/lu';
 
 // Paso 2 del wizard "Nueva cirugía" -- lista los procedimientos agregados
 // vía AgregarProcedimientoModal (`datos.procedimientos`, ver datosIniciales
@@ -32,15 +15,22 @@ function capitalizar(texto) {
 // se espera un puñado de filas por cirugía, no un listado largo. Cada
 // procedimiento es un bloque de 2 filas (encargo explícito) en vez de una
 // fila de tabla con 4 columnas: arriba el nombre del procedimiento con el
-// tipo de cirugía debajo (capitalizado, ver capitalizar() arriba -- llega en
-// mayúsculas del catálogo, encargo explícito, como una
-// etiqueta descriptiva del nombre y no un dato de formulario aparte), abajo
+// tipo de cirugía debajo (capitalizado, ver capitalizar() en
+// mockCirugiaData.js -- llega en mayúsculas del catálogo, encargo explícito,
+// como una etiqueta descriptiva del nombre y no un dato de formulario
+// aparte), abajo
 // Médico/Anestesiólogo en 2 columnas separadas (antes un solo bloque
 // "Personal" con ambos nombres apilados).
 export default function ProcedimientosStep({
   datos, onChange, patient,
 }) {
   const [modalAbierto, setModalAbierto] = useState(false);
+  // Índices (dentro de `procedimientos`) cuya card de insumos está expandida
+  // -- arranca vacío (todas colapsadas, progressive disclosure, mismo
+  // criterio que los rangos de EadDomainEtapa.jsx). Reindexado a mano en
+  // handleRemove para que quitar una card del medio no deje expandida la
+  // card equivocada.
+  const [expandedInsumos, setExpandedInsumos] = useState(() => new Set());
   const procedimientos = datos.procedimientos;
 
   function handleAdd(procedimiento) {
@@ -50,14 +40,30 @@ export default function ProcedimientosStep({
 
   function handleRemove(index) {
     onChange('procedimientos', procedimientos.filter((_, i) => i !== index));
+    setExpandedInsumos((prev) => {
+      const next = new Set();
+      prev.forEach((i) => {
+        if (i < index) next.add(i);
+        else if (i > index) next.add(i - 1);
+      });
+      return next;
+    });
+  }
+
+  function toggleInsumos(index) {
+    setExpandedInsumos((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index); else next.add(index);
+      return next;
+    });
   }
 
   return (
     <div className="pcs-step">
-      <h4 className="pcs-section-title">Procedimientos asociados</h4>
+      <h4 className="ncw-section-title">Procedimientos asociados</h4>
 
       {procedimientos.length === 0 ? (
-        <div className="pcs-empty">Aún no se han agregado procedimientos.</div>
+        <div className="ncw-step-empty">Aún no se han agregado procedimientos.</div>
       ) : (
         <div className="pcs-table">
           <div className="pcs-list">
@@ -70,7 +76,7 @@ export default function ProcedimientosStep({
                   </div>
                   <button
                     type="button"
-                    className="pcs-remove-btn"
+                    className="ncw-icon-btn ncw-icon-btn-danger"
                     onClick={() => handleRemove(i)}
                     aria-label={`Quitar procedimiento ${soloNombre(p.idCirugia)}`}
                     title="Quitar procedimiento"
@@ -88,6 +94,43 @@ export default function ProcedimientosStep({
                     <span className="pcs-card-value">{soloNombre(p.idAnestesiologo)}</span>
                   </div>
                 </div>
+
+                {p.insumos?.length > 0 && (
+                  <div className="pcs-insumos">
+                    <button
+                      type="button"
+                      className="pcs-insumos-header"
+                      onClick={() => toggleInsumos(i)}
+                      aria-expanded={expandedInsumos.has(i)}
+                    >
+                      <span className="pcs-insumos-heading">
+                        Insumos precargados
+                        <span className="pcs-insumos-count">{p.insumos.length}</span>
+                      </span>
+                      <LuChevronDown className={`icon pcs-insumos-chevron${expandedInsumos.has(i) ? '' : ' collapsed'}`} aria-hidden="true" />
+                    </button>
+                    {expandedInsumos.has(i) && (
+                      <div className="pcs-insumos-body">
+                        <div className="ncw-insumos-table-wrap">
+                          <table className="ncw-insumos-table">
+                            <thead>
+                              <tr><th>Id. Servicio</th><th>Insumo</th><th>Cantidad</th></tr>
+                            </thead>
+                            <tbody>
+                              {p.insumos.map((ins) => (
+                                <tr key={ins.codigo}>
+                                  <td className="cell-muted">{ins.codigo}</td>
+                                  <td className="cell-primary">{ins.nombre}</td>
+                                  <td className="cell-muted">{ins.cantidad}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

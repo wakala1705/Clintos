@@ -1,11 +1,11 @@
 'use client';
 
 import './CirugiaCard.css';
-import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 
-// Jerarquía fija horario→paciente→procedimiento→cirujano→estado (spec
-// sección "Tarjeta de cirugía"). `style` viene de AgendaSemana (posición en
-// la grilla) — este componente no sabe nada de horas/slots.
+// Jerarquía fija horario→paciente→procedimiento→cirujano (spec sección
+// "Tarjeta de cirugía"; el estado se comunica solo con el color de la card,
+// sin badge). `style` viene de AgendaSemana (posición en la grilla) — este
+// componente no sabe nada de horas/slots.
 export default function CirugiaCard({
   cirugia, selected, onClick, style,
 }) {
@@ -20,7 +20,6 @@ export default function CirugiaCard({
       <span className="cc-paciente">{cirugia.paciente.nombre}</span>
       <span className="cc-procedimiento">{cirugia.procedimientoPrincipal}</span>
       <span className="cc-cirujano">{cirugia.cirujano}</span>
-      <EstadoCirugiaBadge estado={cirugia.estado} size="sm" />
     </button>
   );
 }

@@ -99,7 +99,7 @@ export default function DetalleCirugiaPanel({
   if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES.includes(cirugia.estado);
-  const puedeMarcarProgramada = ['borrador', 'urgencia'].includes(cirugia.estado);
+  const puedeMarcarProgramada = cirugia.estado === 'urgencia';
   const puedeMarcarIncumplida = cirugia.estado === 'programada';
 
   const body = (

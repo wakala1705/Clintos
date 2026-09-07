@@ -1,0 +1,5 @@
+/* .ncw-icon-btn / .ncw-section-title / .ncw-step-empty / .ncw-insumos-table*
+   (reusada acá para equipos, mismo recipe de tabla chica con borde): ver
+   ../../shared/shared.css. */
+.eqs-step{display:flex;flex-direction:column;gap:14px;}
+.eqs-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}

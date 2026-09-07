@@ -54,8 +54,17 @@
 .as-slot{
   border:none;border-left:1px solid var(--border);border-top:1px solid var(--bg);
   width:100%;height:100%;padding:0;margin:0;background:transparent;cursor:pointer;
-  font:inherit;display:block;
+  font:inherit;display:block;position:relative;
 }
 .as-slot.hour-start{border-top:1px solid var(--border);}
 .as-slot.today{background:rgba(0,101,205,.04);}
-.as-slot:hover{background:var(--primary-50);}
+
+/* Hover: borde punteado + leyenda "+ Programar", mismo patrón que
+   .pc-add-hint en ProgramarCita/ScheduleGrid.css (ver AGENTS.md). */
+.as-add-hint{
+  opacity:0;position:absolute;inset:2px;border:1px dashed var(--primary);
+  border-radius:6px;background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  transition:opacity 120ms ease;pointer-events:none;
+}
+.as-slot:hover .as-add-hint{opacity:1;}

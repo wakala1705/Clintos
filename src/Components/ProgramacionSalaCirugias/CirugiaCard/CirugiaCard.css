@@ -14,7 +14,6 @@
 .cc-cirujano{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 .cc-programada{background:var(--green-bg);border-left-color:var(--green);}
-.cc-borrador{background:var(--blue-bg);border-left-color:var(--blue-fg);}
 .cc-urgencia{background:var(--violet-bg);border-left-color:var(--violet-fg);}
 .cc-cancelada{background:var(--red-bg);border-left-color:var(--red);}
 .cc-incumplida{background:var(--gray-bg);border-left-color:var(--gray-fg);}

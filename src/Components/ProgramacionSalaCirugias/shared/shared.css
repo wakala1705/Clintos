@@ -139,3 +139,53 @@ html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20
 .psc-toast.show{opacity:1;transform:translate(-50%,0);}
 .psc-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
 html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px solid var(--border);}
+
+/* Título de sección dentro de un paso del wizard "Nueva cirugía" -- mismo
+   estilo exacto en ProcedimientosStep, InsumosStep y ConfirmacionStep
+   (3 consumidores, ver AGENTS.md "Component organization"). */
+.ncw-section-title{
+  margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+
+/* Estado vacío genérico de un paso del wizard "Nueva cirugía" -- reusado por
+   ProcedimientosStep (sin procedimientos agregados) e InsumosStep (sin
+   insumos precargados aún, porque no hay procedimientos). */
+.ncw-step-empty{
+  padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);
+  border:1px dashed var(--border);border-radius:var(--radius);
+}
+
+/* Tabla de insumos precargados -- reusada por el preview "Insumos
+   precargados" de ProcedimientosStep (Paso 2) y por InsumosStep (Paso 3):
+   mismas columnas (Id. Servicio/Insumo/Cantidad), mismo mock (ver
+   INSUMOS_PRECARGA_CATALOGO/agregarInsumosPrecargados en
+   mockCirugiaData.js). */
+.ncw-insumos-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.ncw-insumos-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.ncw-insumos-table th{
+  text-align:left;padding:10px 12px;background:var(--table-header-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.ncw-insumos-table td{padding:9px 12px;border-bottom:1px solid var(--bg);color:var(--ink-700);}
+.ncw-insumos-table tbody tr:last-child td{border-bottom:none;}
+.ncw-insumos-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ncw-insumos-table .cell-muted{color:var(--ink-500);}
+.ncw-th-acciones{text-align:right;}
+.ncw-insumos-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+
+/* Botón-ícono chico genérico (quitar procedimiento en ProcedimientosStep,
+   imprimir/agregar insumo en el header de InsumosStep, editar/eliminar fila
+   de insumo) -- 3+ consumidores con la misma estructura (28px, transparente,
+   hover con fondo), por eso vive acá en vez de duplicado en cada CSS (ver
+   AGENTS.md "Component organization"). `.ncw-icon-btn-danger` es el único
+   modificador de color -- el resto usa el hover neutro por default. */
+.ncw-icon-btn{
+  width:28px;height:28px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;background:transparent;color:var(--ink-500);cursor:pointer;
+}
+.ncw-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.ncw-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.ncw-icon-btn .icon{width:16px;height:16px;}
+.ncw-icon-btn-danger:hover{background:var(--red-bg);color:var(--red);}

@@ -8,7 +8,7 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 import CatalogoMedicosModal from '../../../CatalogoMedicosModal/CatalogoMedicosModal';
 import CatalogoProcedimientosModal from '../../../CatalogoProcedimientosModal/CatalogoProcedimientosModal';
 import {
-  TIPOS_PROCEDIMIENTO_CATALOGO, siguienteNumeroProgramacion,
+  TIPOS_PROCEDIMIENTO_CATALOGO, siguienteNumeroProgramacion, INSUMOS_PRECARGA_CATALOGO,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuSearch } from 'react-icons/lu';
 
@@ -56,7 +56,11 @@ export default function AgregarProcedimientoModal({
   function handleAceptar() {
     if (!puedeAceptar) return;
     onAdd({
-      idCirugia, tipoCirugia, idCirujano, idAnestesiologo,
+      idCirugia,
+      tipoCirugia,
+      idCirujano,
+      idAnestesiologo,
+      insumos: INSUMOS_PRECARGA_CATALOGO.map((i) => ({ ...i })),
     });
   }
 

@@ -68,7 +68,7 @@
    derecha -- mismo criterio que .hqd-split-left .hq-tab en HistorialQuirurgico,
    ver comentario ahí. */
 .dcp-split-left .dcp-tab{cursor:default;}
-.dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px;}
+.dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;}
 
 .dcp-actions{
   display:flex;align-items:center;justify-content:space-between;gap:10px;

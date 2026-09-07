@@ -7,7 +7,6 @@ export default function InsumosTab({ cirugia }) {
   const { canasta } = cirugia;
   return (
     <div className="ist-tab">
-      <h4 className="ist-title">Canasta: {canasta.nombre}</h4>
       <table className="ist-table">
         <thead>
           <tr><th>Insumo</th><th>Cantidad</th><th>Estado</th></tr>

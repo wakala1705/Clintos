@@ -33,6 +33,8 @@
   --blue-fg:#0369a1;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
 
   --interactive-selected-bg:var(--primary-50);
   --interactive-selected-border:var(--primary-100);

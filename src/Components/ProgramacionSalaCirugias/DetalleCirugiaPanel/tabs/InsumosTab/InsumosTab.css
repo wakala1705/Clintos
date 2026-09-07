@@ -1,5 +1,4 @@
 .ist-tab{display:flex;flex-direction:column;gap:10px;}
-.ist-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 /* Mismo recipe que .data-table del resto del proyecto (ver
    HistorialQuirurgico/shared/shared.css): header con fondo propio
    (--table-header-bg) + uppercase/fs-xs/ink-500, filas separadas por

@@ -1,0 +1,23 @@
+/* .ncw-section-title / .ncw-step-empty / .ncw-insumos-table*: ver
+   ../../shared/shared.css. */
+.cfs-step{display:flex;flex-direction:column;gap:20px;}
+.cfs-section{display:flex;flex-direction:column;gap:10px;}
+
+.cfs-procedimientos-list, .cfs-personal-list{
+  display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.cfs-procedimiento-item, .cfs-personal-item{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;border-bottom:1px solid var(--bg);background:var(--surface);
+}
+.cfs-procedimiento-item:last-child, .cfs-personal-item:last-child{border-bottom:none;}
+
+.cfs-procedimiento-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cfs-procedimiento-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.cfs-personal-rol{
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.cfs-personal-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

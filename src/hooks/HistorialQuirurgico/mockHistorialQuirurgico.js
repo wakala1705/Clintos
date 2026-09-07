@@ -74,9 +74,9 @@ export const INTERVENCIONES = [
           { nombre: 'Jhon Édison Pabón Rico', rol: 'Circulante', tipoProfesional: 'Enfermería' },
         ],
         equipos: [
-          { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412' },
-          { nombre: 'Electrobisturí monopolar', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087' },
-          { nombre: 'Monitor multiparámetro', tipo: 'Monitoreo', identificacion: 'EQ-0231' },
+          { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'usado' },
+          { nombre: 'Electrobisturí monopolar', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'usado' },
+          { nombre: 'Monitor multiparámetro', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'usado' },
         ],
       },
       // Segundo procedimiento de ejemplo -- encargo explícito para ejercitar
@@ -107,7 +107,7 @@ export const INTERVENCIONES = [
           { nombre: 'Jhon Édison Pabón Rico', rol: 'Circulante', tipoProfesional: 'Enfermería' },
         ],
         equipos: [
-          { nombre: 'Videocolonoscopio', tipo: 'Video/Imagen', identificacion: 'EQ-0501' },
+          { nombre: 'Videocolonoscopio', tipo: 'Video/Imagen', identificacion: 'EQ-0501', estado: 'usado' },
         ],
       },
     ],
@@ -152,9 +152,9 @@ export const INTERVENCIONES = [
           { nombre: 'Wilmer Andrés Ospina Cuartas', rol: 'Circulante', tipoProfesional: 'Enfermería' },
         ],
         equipos: [
-          { nombre: 'Neuronavegador', tipo: 'Neuronavegación', identificacion: 'EQ-0559' },
-          { nombre: 'Microscopio quirúrgico', tipo: 'Visualización', identificacion: 'EQ-0163' },
-          { nombre: 'Monitor de potenciales evocados', tipo: 'Neuromonitoreo', identificacion: 'EQ-0298' },
+          { nombre: 'Neuronavegador', tipo: 'Neuronavegación', identificacion: 'EQ-0559', estado: 'usado' },
+          { nombre: 'Microscopio quirúrgico', tipo: 'Visualización', identificacion: 'EQ-0163', estado: 'usado' },
+          { nombre: 'Monitor de potenciales evocados', tipo: 'Neuromonitoreo', identificacion: 'EQ-0298', estado: 'usado' },
         ],
       },
     ],

@@ -43,7 +43,6 @@ export const SALAS = [
 
 export const ESTADO_FILTRO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
-  { value: 'borrador', label: 'Borrador' },
   { value: 'programada', label: 'Programada' },
   { value: 'urgencia', label: 'Urgencia' },
   { value: 'cancelada', label: 'Cancelada' },
@@ -190,6 +189,35 @@ export const TIPOS_CIRUGIA_CATALOGO = ['Programada', 'Ambulatoria', 'Urgencia'];
 export const INSTRUMENTADORAS_CATALOGO = ['María Fernández', 'Laura Gómez'];
 export const CIRCULANTES_CATALOGO = ['Luis Ramírez', 'Andrés Molina'];
 
+// "Tipo Tercero" de NuevaUrgenciaModal (encargo explícito, ver captura de
+// referencia "Incluir Procedimientos Urgentes en la Programación") --
+// enum cerrado chico, mismo criterio que TIPOS_CIRUGIA_CATALOGO/
+// TIPOS_ANESTESIA_CATALOGO (no exhaustivo real, solo las clasificaciones más
+// comunes de tercero-pagador).
+export const TIPOS_TERCERO_CATALOGO = [
+  'EPS - Empresa Promotora de Salud Contributiva',
+  'EPS - Empresa Promotora de Salud Subsidiada',
+  'ARL - Administradora de Riesgos Laborales',
+  'Medicina Prepagada',
+  'Particular',
+];
+
+// "Id. Contrato" de NuevaUrgenciaModal -- concepto sin catálogo real en el
+// proyecto todavía (vincula la cirugía a un contrato de la aseguradora, ej.
+// "Contrato sanitas 2026-2027" en la captura de referencia). Mock chico y
+// plano, no filtrado por aseguradora (no hay datos reales para cruzarlo
+// todavía -- YAGNI, se cruza el día que haga falta).
+export const CONTRATOS_CATALOGO = [
+  { idContrato: '525', descripcion: 'Contrato Sanitas 2026-2027' },
+  { idContrato: '318', descripcion: 'Contrato Nueva EPS 2025-2026' },
+  { idContrato: '742', descripcion: 'Contrato Sura EPS 2026' },
+  { idContrato: '156', descripcion: 'Contrato Salud Total 2025-2027' },
+  { idContrato: '903', descripcion: 'Contrato Coomeva 2026' },
+  { idContrato: '410', descripcion: 'Contrato Compensar 2025-2026' },
+  { idContrato: '287', descripcion: 'Contrato Colsanitas Medicina Prepagada 2026' },
+  { idContrato: '664', descripcion: 'Contrato Particular 2026' },
+];
+
 // Catálogos del paso "Información general" del wizard "Nueva cirugía" (ver
 // NuevaCirugiaWizard/InformacionGeneralStep) -- valores calcados de los
 // listbox del formulario de referencia (encargo explícito), no inventados.
@@ -203,9 +231,15 @@ export const COMPLEJIDAD_CATALOGO = ['Alta', 'Baja', 'Media'];
 export const ASA_CATALOGO = ['Paciente sano listo para cirugía programada', 'Clase 2', 'Clase 3'];
 
 // Duraciones preestablecidas para Dur. estimada/postquirúrgica/recuperación
-// (encargo explícito): reemplaza el input numérico libre por un FormSelect
-// de valores comunes, más rápido de elegir que tipear minutos a mano.
-export const DURACIONES_CIRUGIA_CATALOGO = [15, 30, 45, 60, 90, 120, 150, 180, 210, 240, 300, 360];
+// (ver DuracionInput.jsx): atajos de un input numérico libre (`type=number`
+// + `<datalist>`), no las únicas opciones válidas -- a diferencia del
+// FormSelect que tenían antes estos campos (encargo explícito, 2026-09-07:
+// "acortar las opciones" + "permitir que el campo también sea editable"),
+// el datalist es solo autocompletado opcional, el valor final puede ser
+// cualquier número tipeado a mano. Lista recortada a la mitad (12 -> 6
+// valores, redondos) respecto de la anterior -- de sobra como atajos ahora
+// que tipear un valor no listado también es válido.
+export const DURACIONES_CIRUGIA_CATALOGO = [30, 60, 90, 120, 180, 240];
 
 // Catálogo de diagnósticos (CIE-10) que alimenta CatalogoDiagnosticosModal
 // (búsqueda de "Dx. ingreso", encargo explícito). Recorte representativo
@@ -449,6 +483,71 @@ export const EQUIPO_ESTADO_LABEL = { disponible: 'Disponible', 'en-uso': 'En uso
 export const FARMACIA_ESTADO_LABEL = { 'en-preparacion': 'En preparación', listo: 'Listo', entregado: 'Entregado' };
 export const INSUMO_ESTADO_LABEL = { disponible: 'Disponible', faltante: 'Faltante' };
 
+// Canasta de insumos que se precarga al agregar un procedimiento QX
+// (AgregarProcedimientoModal, Paso 2 del wizard "Nueva cirugía" -- encargo
+// explícito, ver captura de referencia "Canasta de Insumos"). Todavía no hay
+// un mapeo real procedimiento→insumos (sería distinto por CUPS); por ahora
+// todo procedimiento agregado adjunta esta misma canasta base -- transcripción
+// literal de los 11 ítems de la captura, no inventados.
+export const INSUMOS_PRECARGA_CATALOGO = [
+  { codigo: 'DM000031', nombre: 'AGUJA PUNCION LUMBAR N°27', cantidad: 1 },
+  { codigo: 'DM000090', nombre: 'CANULA DE GUEDEL # 2', cantidad: 1 },
+  { codigo: 'DM000091', nombre: 'CANULA DE GUEDEL # 3', cantidad: 1 },
+  { codigo: 'DM000290', nombre: 'EXTENSION PARA ANESTESIA PEDIATRICA', cantidad: 1 },
+  { codigo: 'DM000412', nombre: 'MASCARA LARINGEA DESECHABLE N 3', cantidad: 1 },
+  { codigo: 'DM000416', nombre: 'MASCARA LARINGEA N° 2.5', cantidad: 1 },
+  { codigo: 'DM000421', nombre: 'MASCARA PARA ANESTESIA # 2', cantidad: 1 },
+  { codigo: 'DM000422', nombre: 'MASCARA PARA ANESTESIA # 3', cantidad: 1 },
+  { codigo: 'DM000537', nombre: 'SENSOR QUATRO ELECTRODO PARA BIS MONITOREO INDIC', cantidad: 1 },
+  { codigo: 'DM000597', nombre: 'SONDA NELATON N° 12', cantidad: 1 },
+  { codigo: 'DM000669', nombre: 'TUBO ENDOTRAQUIAL N° 8.0 MM CON BALON', cantidad: 1 },
+];
+
+// Suma cantidades por código a través de los insumos precargados de cada
+// procedimiento (ver INSUMOS_PRECARGA_CATALOGO/AgregarProcedimientoModal) --
+// alimenta tanto el preview "Insumos precargados" de ProcedimientosStep
+// (Paso 2) como el listado de InsumosStep (Paso 3), para que ambos muestren
+// siempre el mismo total ya consolidado.
+export function agregarInsumosPrecargados(procedimientos) {
+  const porCodigo = new Map();
+  procedimientos.forEach((p) => {
+    (p.insumos ?? []).forEach((i) => {
+      const acc = porCodigo.get(i.codigo);
+      if (acc) acc.cantidad += i.cantidad;
+      else porCodigo.set(i.codigo, { ...i });
+    });
+  });
+  return Array.from(porCodigo.values());
+}
+
+// Catálogo de insumos que alimenta CatalogoInsumosModal ("Agregar insumo" en
+// InsumosStep, Paso 3 del wizard "Nueva cirugía") -- superset de
+// INSUMOS_PRECARGA_CATALOGO (mismos 11 códigos, sin `cantidad` porque acá es
+// un catálogo de búsqueda, no una canasta) más otros insumos quirúrgicos
+// comunes, para que la búsqueda tenga variedad más allá de la canasta que ya
+// se precarga sola.
+export const INSUMOS_CATALOGO = [
+  ...INSUMOS_PRECARGA_CATALOGO.map(({ codigo, nombre }) => ({ codigo, nombre })),
+  { codigo: 'DM000045', nombre: 'APOSITO TRANSPARENTE 10X12CM' },
+  { codigo: 'DM000102', nombre: 'BATA QUIRURGICA DESECHABLE TALLA M' },
+  { codigo: 'DM000103', nombre: 'BATA QUIRURGICA DESECHABLE TALLA L' },
+  { codigo: 'DM000210', nombre: 'CATETER VENOSO CENTRAL 7FR' },
+  { codigo: 'DM000225', nombre: 'COMPRESA DE CAMPO QUIRURGICO 45X45' },
+  { codigo: 'DM000301', nombre: 'GASA ESTERIL 10X10CM PAQUETE X10' },
+  { codigo: 'DM000318', nombre: 'GUANTE QUIRURGICO ESTERIL TALLA 7' },
+  { codigo: 'DM000319', nombre: 'GUANTE QUIRURGICO ESTERIL TALLA 7.5' },
+  { codigo: 'DM000340', nombre: 'HOJA DE BISTURI N 11' },
+  { codigo: 'DM000341', nombre: 'HOJA DE BISTURI N 15' },
+  { codigo: 'DM000355', nombre: 'JERINGA 3 ML' },
+  { codigo: 'DM000400', nombre: 'LLAVE DE TRES VIAS' },
+  { codigo: 'DM000450', nombre: 'SET DE VENOCLISIS MACROGOTERO' },
+  { codigo: 'DM000470', nombre: 'SONDA VESICAL FOLEY N 16' },
+  { codigo: 'DM000500', nombre: 'SUTURA VICRYL 2-0' },
+  { codigo: 'DM000501', nombre: 'SUTURA NYLON 3-0' },
+  { codigo: 'DM000610', nombre: 'TAPABOCAS QUIRURGICO' },
+  { codigo: 'DM000650', nombre: 'TELA ADHESIVA MICROPORE 5CM' },
+];
+
 function pad2(n) { return String(n).padStart(2, '0'); }
 
 export function fechaISO(date) {
@@ -605,6 +704,69 @@ export function edadDetalleLabel({ edad, edadMeses = 0, edadDias = 0 }) {
   return `${edad} años ${pad2(edadMeses)} meses ${pad2(edadDias)} días`;
 }
 
+// Desglosa fechaNacimiento (paciente, ver PATIENTS en mockPatientsData.js)
+// en {edad, edadMeses, edadDias} -- shape que espera edadDetalleLabel arriba.
+// Los pacientes del mock solo traen fechaNacimiento, no esta terna ya
+// calculada (a diferencia de los registros de CIRUGIAS, que sí la traen
+// hardcodeada) -- necesario para armarCirugiaDesdeWizard más abajo.
+export function calcularEdadDesglosada(fechaNacimientoISO, fechaReferencia = new Date()) {
+  const nacimiento = new Date(fechaNacimientoISO);
+  let anios = fechaReferencia.getFullYear() - nacimiento.getFullYear();
+  let meses = fechaReferencia.getMonth() - nacimiento.getMonth();
+  let dias = fechaReferencia.getDate() - nacimiento.getDate();
+  if (dias < 0) {
+    meses -= 1;
+    dias += new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth(), 0).getDate();
+  }
+  if (meses < 0) {
+    anios -= 1;
+    meses += 12;
+  }
+  return { edad: anios, edadMeses: meses, edadDias: dias };
+}
+
+// idCirugia/idCirujano/idAnestesiologo de un procedimiento llegan como
+// "id - nombre" (ver onSelect en CatalogoProcedimientosModal.jsx/
+// CatalogoMedicosModal.jsx) -- acá solo interesa el nombre, el id es
+// metadato del catálogo de origen. Extraído de ProcedimientosStep.jsx
+// (Paso 2) porque ConfirmacionStep (Paso 4) también lo necesita para su
+// resumen de personal/procedimientos.
+export function soloNombre(valor) {
+  const i = valor.indexOf(' - ');
+  return i === -1 ? valor : valor.slice(i + 3);
+}
+
+// Tipo cirugía llega en mayúsculas del catálogo (mismo formato que
+// idCirugia/idCirujano/idAnestesiologo) -- capitalizado (solo la primera
+// letra) para mostrar. Mismo motivo de extracción que soloNombre arriba.
+export function capitalizar(texto) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+}
+
+// Personal único (Cirujano/Anestesiólogo) a través de todos los
+// procedimientos del wizard -- dedup por rol+nombre (2 procedimientos con el
+// mismo cirujano no lo listan/guardan dos veces). Extraído de
+// ConfirmacionStep.jsx (Paso 5) porque armarCirugiaDesdeWizard más abajo
+// también lo necesita para construir `personal` al guardar. Instrumentadora/
+// Circulante no se arman acá -- ningún paso del wizard los recolecta hoy.
+export function personalDeProcedimientos(procedimientos) {
+  const vistos = new Set();
+  const personal = [];
+  procedimientos.forEach((p) => {
+    [
+      { rol: 'Cirujano', nombre: soloNombre(p.idCirujano) },
+      { rol: 'Anestesiólogo', nombre: soloNombre(p.idAnestesiologo) },
+    ].forEach((item) => {
+      const key = `${item.rol}:${item.nombre}`;
+      if (!vistos.has(key)) {
+        vistos.add(key);
+        personal.push(item);
+      }
+    });
+  });
+  return personal;
+}
+
 export function periodKeyDeSemana(weekStart, salaId) {
   return `week:${fechaISO(weekStart)}:${salaId}`;
 }
@@ -642,9 +804,9 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Luis Ramírez' },
     ],
     equipos: [
-      { nombre: 'Torre de laparoscopia', estado: 'disponible' },
-      { nombre: 'Cauterio', estado: 'disponible' },
-      { nombre: 'Monitor de signos vitales', estado: 'disponible' },
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
+      { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
     ],
     canasta: { nombre: 'Colecistectomía estándar', items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -667,7 +829,7 @@ let CIRUGIAS = [
     fecha: '2026-08-31',
     horaInicio: '09:30',
     horaFin: '11:30',
-    estado: 'borrador',
+    estado: 'programada',
     procedimientos: [
       { nombre: 'Hernia inguinal', tipo: 'principal', duracionMin: 90, notas: 'Abordaje abierto.' },
     ],
@@ -678,8 +840,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Andrés Molina' },
     ],
     equipos: [
-      { nombre: 'Cauterio', estado: 'disponible' },
-      { nombre: 'Mesa quirúrgica eléctrica', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
+      { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
     ],
     canasta: { nombre: 'Hernia inguinal estándar', items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -713,8 +875,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Luis Ramírez' },
     ],
     equipos: [
-      { nombre: 'Mesa quirúrgica eléctrica', estado: 'disponible' },
-      { nombre: 'Monitor de signos vitales', estado: 'disponible' },
+      { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
+      { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
     ],
     canasta: { nombre: 'Ortopedia menor', items: CANASTAS_CATALOGO[3].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -748,8 +910,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Andrés Molina' },
     ],
     equipos: [
-      { nombre: 'Torre de laparoscopia', estado: 'disponible' },
-      { nombre: 'Cauterio', estado: 'disponible' },
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
     ],
     canasta: { nombre: 'Apendicectomía estándar', items: CANASTAS_CATALOGO[1].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -783,8 +945,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Luis Ramírez' },
     ],
     equipos: [
-      { nombre: 'Torre de laparoscopia', estado: 'en-uso' },
-      { nombre: 'Monitor de signos vitales', estado: 'disponible' },
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'en-uso' },
+      { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
     ],
     canasta: { nombre: 'Ginecología mayor', items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -807,7 +969,7 @@ let CIRUGIAS = [
     fecha: '2026-09-02',
     horaInicio: '07:30',
     horaFin: '10:00',
-    estado: 'borrador',
+    estado: 'programada',
     procedimientos: [
       { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 130, notas: 'Colecistitis crónica.' },
     ],
@@ -818,8 +980,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Andrés Molina' },
     ],
     equipos: [
-      { nombre: 'Torre de laparoscopia', estado: 'disponible' },
-      { nombre: 'Cauterio', estado: 'mantenimiento' },
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'mantenimiento' },
     ],
     canasta: { nombre: 'Colecistectomía estándar', items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -853,8 +1015,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Luis Ramírez' },
     ],
     equipos: [
-      { nombre: 'Mesa quirúrgica eléctrica', estado: 'disponible' },
-      { nombre: 'Cauterio', estado: 'disponible' },
+      { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
     ],
     canasta: { nombre: 'Ginecología mayor', items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -877,7 +1039,7 @@ let CIRUGIAS = [
     fecha: '2026-09-04',
     horaInicio: '11:00',
     horaFin: '13:00',
-    estado: 'borrador',
+    estado: 'programada',
     procedimientos: [
       { nombre: 'Hernia umbilical', tipo: 'principal', duracionMin: 100, notas: 'Reparación con malla.' },
     ],
@@ -888,8 +1050,8 @@ let CIRUGIAS = [
       { rol: 'Circulante', nombre: 'Andrés Molina' },
     ],
     equipos: [
-      { nombre: 'Cauterio', estado: 'disponible' },
-      { nombre: 'Mesa quirúrgica eléctrica', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
+      { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
     ],
     canasta: { nombre: 'Hernia inguinal estándar', items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i })) },
     farmacia: {
@@ -935,11 +1097,167 @@ export function fetchAgendaRango({
   });
 }
 
+// Catálogo de equipos que alimenta CatalogoEquiposModal ("Agregar equipo" en
+// EquiposStep, Paso 4 del wizard "Nueva cirugía") -- mismo shape
+// {nombre,tipo,identificacion} que ya consume EquiposTable
+// (@/Components/EquiposTable), con los mismos nombres/tipos/identificación
+// ya usados en los registros semilla de CIRUGIAS arriba (Torre de
+// laparoscopia, Cauterio, Monitor de signos vitales, Mesa quirúrgica
+// eléctrica) más variedad adicional para que la búsqueda tenga sentido.
+export const EQUIPOS_QX_CATALOGO = [
+  { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412' },
+  { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087' },
+  { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231' },
+  { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560' },
+  { nombre: 'Máquina de anestesia', tipo: 'Anestesia', identificacion: 'EQ-0198' },
+  { nombre: 'Bisturí eléctrico', tipo: 'Energía quirúrgica', identificacion: 'EQ-0102' },
+  { nombre: 'Lámpara quirúrgica', tipo: 'Iluminación', identificacion: 'EQ-0305' },
+  { nombre: 'Aspirador quirúrgico', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0447' },
+  { nombre: 'Desfibrilador', tipo: 'Monitoreo', identificacion: 'EQ-0512' },
+  { nombre: 'Torre de artroscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0399' },
+];
+
+// Suma `duracionMin` a `horaInicio` ("HH:mm") y devuelve la hora de fin
+// ("HH:mm") -- no rueda al día siguiente si se pasa de medianoche (queda en
+// 00:xx), simplificación aceptable para el mock. Compartido por
+// armarCirugiaDesdeWizard/armarCirugiaUrgencia más abajo y por el preview
+// en vivo de "Finaliza" en NuevaUrgenciaModal.jsx (3 consumidores).
+export function calcularHoraFin(horaInicio, duracionMin) {
+  const [h, m] = horaInicio.split(':').map(Number);
+  const total = (h * 60 + m + Number(duracionMin || 0)) % 1440;
+  return `${pad2(Math.floor(total / 60))}:${pad2(total % 60)}`;
+}
+
+// Traduce `datos` del wizard "Nueva cirugía" (NuevaCirugiaWizard.jsx) al
+// shape de un registro de CIRUGIAS (ver fetchAgendaRango/CirugiaCard/
+// DetalleCirugiaPanel) -- son 2 modelos distintos porque el wizard recolecta
+// datos de admisión paso a paso, mientras que el registro final es lo que ya
+// consumen calendario + detalle. Decisiones tomadas para las piezas sin
+// origen real en el wizard hoy (encargo "qué necesitás para guardar",
+// 2026-09-07): `tipoCirugia` a nivel de cirugía queda fijo en 'Programada'
+// (ningún paso lo pregunta -- "Nueva urgencia" ya tiene su propio flujo
+// corto, ver armarCirugiaUrgencia más abajo, así que este wizard siempre es
+// el camino "no urgente"); `servicio` queda vacío (no leído por ninguna
+// pantalla hoy); `aseguradora` usa `patient.eps` en vez de
+// `datos.idAseguradora` del Paso 1 (decisión explícita: son 2 campos que
+// pueden no coincidir); `nivel`/`tipoAfiliado`/`dirección` del paciente
+// quedan vacíos (el detalle ya los muestra con fallback '—', ver
+// DetalleCirugiaPanel.jsx); Instrumentadora/Circulante de `personal` y
+// `farmacia.medicamentos` quedan vacíos (ningún paso los recolecta todavía).
+// `duracionMin` se replica igual en todos los procedimientos (el wizard solo
+// pide una duración total, no una por procedimiento).
+export function armarCirugiaDesdeWizard(datos, patient, salaId) {
+  const sala = SALAS.find((s) => s.value === salaId);
+  const { edad, edadMeses, edadDias } = calcularEdadDesglosada(patient.fechaNacimiento);
+  const [fecha, horaInicio] = datos.fechaInicio.split('T');
+  const duracionMin = Number(datos.duracionEstimada) || 0;
+  const horaFin = calcularHoraFin(horaInicio, duracionMin);
+
+  const insumos = datos.insumos ?? agregarInsumosPrecargados(datos.procedimientos);
+  const primerProcedimiento = datos.procedimientos[0];
+
+  return {
+    sedeId: sala?.sedeId ?? '02',
+    salaId,
+    paciente: {
+      nombre: patient.nombre,
+      documento: patient.documento,
+      edad,
+      edadMeses,
+      edadDias,
+      sexo: patient.sexo,
+      aseguradora: patient.eps,
+      nivel: '',
+      tipoAfiliado: '',
+      direccion: '',
+      telAviso: datos.telefonosAviso,
+    },
+    procedimientoPrincipal: primerProcedimiento ? soloNombre(primerProcedimiento.idCirugia) : '',
+    servicio: '',
+    tipoCirugia: 'Programada',
+    cirujano: primerProcedimiento ? soloNombre(primerProcedimiento.idCirujano) : '',
+    fecha,
+    horaInicio,
+    horaFin,
+    procedimientos: datos.procedimientos.map((p, i) => ({
+      nombre: soloNombre(p.idCirugia),
+      tipo: i === 0 ? 'principal' : 'asociado',
+      duracionMin,
+      notas: '',
+    })),
+    personal: personalDeProcedimientos(datos.procedimientos),
+    equipos: datos.equipos ?? [],
+    canasta: {
+      nombre: 'Canasta de la cirugía',
+      items: insumos.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })),
+    },
+    farmacia: {
+      numeroPedido: '—', estado: 'en-preparacion', fechaSolicitud: `${datos.fechaSolicitud}T${datos.horaSolicitud}`, medicamentos: [],
+    },
+  };
+}
+
+// Traduce el formulario de NuevaUrgenciaModal.jsx al shape de un registro de
+// CIRUGIAS -- flujo corto de una sola pantalla (Validar/Cancelar, sin pasos),
+// mismo espíritu que el formulario legacy de referencia "Incluir
+// Procedimientos Urgentes en la Programación": se guarda de inmediato con
+// procedimientos/insumos/equipos/personal vacíos, para completarse después
+// abriendo el detalle de la cirugía ya creada (no encadena al wizard de
+// "Nueva cirugía"). `idAseguradora`/`tipoTercero`/`idContrato` del
+// formulario se guardan en `admisionUrgencia` -- son datos de admisión
+// capturados en el formulario, no leídos por ninguna pantalla del detalle
+// todavía (mismo criterio que `estado` sin consumir en
+// ASEGURADORAS_CATALOGO: se conservan por si un futuro ajuste los necesita).
+// `aseguradora` del paciente sigue usando `patient.eps`, igual que
+// armarCirugiaDesdeWizard arriba (mismo criterio, misma decisión explícita).
+export function armarCirugiaUrgencia(form, patient, salaId) {
+  const sala = SALAS.find((s) => s.value === salaId);
+  const { edad, edadMeses, edadDias } = calcularEdadDesglosada(patient.fechaNacimiento);
+  const duracionMin = Number(form.duracionEstimada) || 0;
+  const horaFin = calcularHoraFin(form.horaCirugia, duracionMin);
+
+  return {
+    sedeId: sala?.sedeId ?? '02',
+    salaId,
+    paciente: {
+      nombre: patient.nombre,
+      documento: patient.documento,
+      edad,
+      edadMeses,
+      edadDias,
+      sexo: patient.sexo,
+      aseguradora: patient.eps,
+      nivel: '',
+      tipoAfiliado: '',
+      direccion: '',
+      telAviso: patient.celular ?? '',
+    },
+    procedimientoPrincipal: '',
+    servicio: '',
+    tipoCirugia: 'Urgencia',
+    cirujano: '',
+    fecha: form.fechaCirugia,
+    horaInicio: form.horaCirugia,
+    horaFin,
+    procedimientos: [],
+    personal: [],
+    equipos: [],
+    canasta: { nombre: 'Canasta de la cirugía', items: [] },
+    farmacia: {
+      numeroPedido: '—', estado: 'en-preparacion', fechaSolicitud: `${form.fechaCirugia}T${form.horaCirugia}`, medicamentos: [],
+    },
+    admisionUrgencia: {
+      idAseguradora: form.idAseguradora, tipoTercero: form.tipoTercero, idContrato: form.idContrato,
+    },
+    urgencia: true,
+  };
+}
+
 export function crearCirugia(datos) {
   const id = String(nextIdSeq);
   nextIdSeq += 1;
   const { urgencia, ...resto } = datos;
-  const cirugia = { id, estado: urgencia ? 'urgencia' : 'borrador', ...resto };
+  const cirugia = { id, estado: urgencia ? 'urgencia' : 'programada', ...resto };
   CIRUGIAS = [...CIRUGIAS, cirugia];
   return cirugia;
 }

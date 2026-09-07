@@ -4,9 +4,12 @@ import { useState } from 'react';
 import './NuevaCirugiaWizard.css';
 import InformacionGeneralStep from './InformacionGeneralStep/InformacionGeneralStep';
 import ProcedimientosStep from './ProcedimientosStep/ProcedimientosStep';
+import InsumosStep from './InsumosStep/InsumosStep';
+import EquiposStep from './EquiposStep/EquiposStep';
+import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
 import {
-  fechaISO, fechaHoraLocalISO, horaLocal, SALAS,
+  fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuX } from 'react-icons/lu';
 
@@ -14,6 +17,8 @@ const PASOS = [
   { n: 1, titulo: 'Información general', sub: 'Datos administrativos y de admisión de la cirugía.' },
   { n: 2, titulo: 'Procedimientos', sub: 'Procedimiento principal y asociados.' },
   { n: 3, titulo: 'Insumos', sub: 'Canasta e insumos requeridos.' },
+  { n: 4, titulo: 'Equipos', sub: 'Equipos requeridos para la cirugía.' },
+  { n: 5, titulo: 'Confirmación', sub: 'Resumen antes de guardar.' },
 ];
 
 // Fecha de programación (campo `fechaInicio`, label "Fecha de
@@ -52,6 +57,12 @@ function datosIniciales(patient, salaId, initialFechaHora) {
     horaVence: '',
     observaciones: '',
     procedimientos: [],
+    // `null` hasta que InsumosStep (Paso 3) escribe una primera edición real
+    // -- mientras tanto se muestra el cálculo derivado de procedimientos
+    // (ver agregarInsumosPrecargados en mockCirugiaData.js) sin persistirlo,
+    // así ConfirmacionStep (Paso 5) siempre lee el mismo dato ya editado.
+    insumos: null,
+    equipos: [],
   };
 }
 
@@ -61,12 +72,19 @@ function datosIniciales(patient, salaId, initialFechaHora) {
 // NuevaProgramacionWizard (GestionTurnos): React puro con clases `ncw-*`
 // propias en vez de reusar el flujo legacy-imperativo de NuevaCitaFlow (ese
 // es "Nueva cita", este es un dominio distinto -- ver AGENTS.md "Modales").
-// Pasos 1 (Información general) y 2 (Procedimientos) tienen formulario
-// (encargo explícito, paso 2 activado después) -- Insumos queda listado en
-// el riel pero bloqueado (`locked`), y "Continuar" del paso 2 queda
-// deshabilitado sin importar el estado del formulario hasta que ese paso
-// exista. `paso` es estado (no una constante como antes) para poder navegar
-// entre 1 y 2 vía el riel o los botones Continuar/Atrás del footer.
+// Los 5 pasos (Información general, Procedimientos, Insumos, Equipos,
+// Confirmación) ya tienen contenido y son navegables desde el riel --
+// Confirmación (Paso 5, el último) resume procedimientos/insumos/equipos/
+// personal para revisar antes de guardar (ver ConfirmacionStep.jsx).
+// "Guardar cirugía" arma el registro final vía armarCirugiaDesdeWizard +
+// crearCirugia (ver handleGuardar más abajo) y notifica al padre por
+// `onGuardar` para que lo sume a la vista actual si corresponde (ver
+// perteneceAVistaActual/applyUpdated en ProgramacionSalaCirugias.jsx) --
+// mismas piezas sin origen real en el wizard hoy (tipoCirugia/servicio/
+// nivel/tipoAfiliado/dirección/Instrumentadora/Circulante/farmacia)
+// documentadas en el comentario de armarCirugiaDesdeWizard
+// (mockCirugiaData.js), no acá. `paso` es estado para poder navegar entre
+// los 5 pasos vía el riel o los botones Continuar/Atrás del footer.
 //
 // "Es afiliado" vive en el header del riel (no en InformacionGeneralStep,
 // encargo explícito) porque acompaña al nombre/documento del paciente que ya
@@ -78,7 +96,7 @@ function datosIniciales(patient, salaId, initialFechaHora) {
 // porque este wizard solo crea cirugías nuevas (el número se asigna al
 // guardar, nunca existe en este paso).
 export default function NuevaCirugiaWizard({
-  patient, salaId, onClose, initialFechaHora,
+  patient, salaId, onClose, onGuardar, initialFechaHora,
 }) {
   const [paso, setPaso] = useState(1);
   const [datos, setDatos] = useState(() => datosIniciales(patient, salaId, initialFechaHora));
@@ -86,6 +104,12 @@ export default function NuevaCirugiaWizard({
 
   function set(campo, valor) {
     setDatos((d) => ({ ...d, [campo]: valor }));
+  }
+
+  function handleGuardar() {
+    const nueva = crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaId));
+    onGuardar?.(nueva);
+    onClose();
   }
 
   return (
@@ -123,13 +147,11 @@ export default function NuevaCirugiaWizard({
             <div className="ncw-rail-nav">
               {PASOS.map((p) => {
                 const active = p.n === paso;
-                const locked = p.n > 2;
                 return (
                   <button
                     key={p.n}
                     type="button"
-                    className={`ncw-rail-step${active ? ' active' : ''}${locked ? ' locked' : ''}`}
-                    disabled={locked}
+                    className={`ncw-rail-step${active ? ' active' : ''}`}
                     onClick={() => setPaso(p.n)}
                   >
                     <span className="ncw-rail-circle">{p.n}</span>
@@ -166,18 +188,46 @@ export default function NuevaCirugiaWizard({
               {paso === 2 && (
                 <ProcedimientosStep datos={datos} onChange={set} patient={patient} />
               )}
+              {paso === 3 && (
+                <InsumosStep datos={datos} onChange={set} />
+              )}
+              {paso === 4 && (
+                <EquiposStep datos={datos} onChange={set} />
+              )}
+              {paso === 5 && (
+                <ConfirmacionStep datos={datos} />
+              )}
             </div>
 
             <div className="ncw-footer">
-              {paso === 1 ? (
+              {paso === 1 && (
                 <>
                   <Button variant="secondary" onClick={onClose}>Cancelar</Button>
                   <Button variant="primary" onClick={() => setPaso(2)}>Continuar</Button>
                 </>
-              ) : (
+              )}
+              {paso === 2 && (
                 <>
                   <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
-                  <Button variant="primary" disabled>Continuar</Button>
+                  <Button variant="primary" onClick={() => setPaso(3)}>Continuar</Button>
+                </>
+              )}
+              {paso === 3 && (
+                <>
+                  <Button variant="secondary" onClick={() => setPaso(2)}>Atrás</Button>
+                  <Button variant="primary" onClick={() => setPaso(4)}>Continuar</Button>
+                </>
+              )}
+              {paso === 4 && (
+                <>
+                  <Button variant="secondary" onClick={() => setPaso(3)}>Atrás</Button>
+                  <Button variant="primary" onClick={() => setPaso(5)}>Continuar</Button>
+                </>
+              )}
+              {paso === 5 && (
+                <>
+                  <Button variant="secondary" onClick={() => setPaso(4)}>Atrás</Button>
+                  <Button variant="primary" onClick={handleGuardar}>Guardar cirugía</Button>
                 </>
               )}
             </div>

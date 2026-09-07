@@ -1,0 +1,14 @@
+.is-step{display:flex;flex-direction:column;gap:14px;}
+
+/* .ncw-icon-btn (imprimir/agregar insumo) / .ncw-section-title: ver
+   ../../shared/shared.css. */
+.is-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.is-header-actions{display:flex;align-items:center;gap:4px;}
+
+/* Input de cantidad en edición inline (ver handleEmpezarEdicion en
+   InsumosStep.jsx) -- ancho fijo chico porque solo espera 1-3 dígitos. */
+.is-cantidad-input{
+  width:64px;height:30px;border:1px solid var(--border);border-radius:var(--radius);
+  padding:0 8px;font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.is-cantidad-input:focus{outline:2px solid var(--primary);outline-offset:1px;}

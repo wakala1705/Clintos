@@ -20,6 +20,7 @@ import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
+import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -97,12 +98,17 @@ export default function ProgramacionSalaCirugias() {
   // separa este uso del de citas: normalmente elegir/crear un paciente
   // encadena directo al wizard de agendamiento (ncOpen) -- acá en cambio
   // bifurca según qué botón abrió el buscador (patientSearchIntentRef):
-  // NuevaCirugiaWizard para "+ Programar cirugía"/"Nueva urgencia" (mismo
-  // criterio que handlePatientConfirmed en Admisiones.jsx, adaptado a un
-  // wizard propio en vez de continuar un formulario de una sola pantalla),
-  // o navegar a Historial Quirúrgico para el ícono "Buscar".
+  // NuevaCirugiaWizard para "+ Programar cirugía" (mismo criterio que
+  // handlePatientConfirmed en Admisiones.jsx, adaptado a un wizard propio en
+  // vez de continuar un formulario de una sola pantalla), NuevaUrgenciaModal
+  // para "Nueva urgencia" (flujo corto de una sola pantalla, distinto del
+  // wizard -- ver NuevaUrgenciaModal.jsx), o navegar a Historial Quirúrgico
+  // para el ícono "Buscar". Las 3 intenciones se setean explícitamente en
+  // cada trigger (nunca se asume el default) para que un clic residual no
+  // reabra el flujo equivocado si el usuario ya usó otro botón antes.
   const nuevaCirugiaPatientRef = useRef(null);
   const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
+  const [nuevaUrgenciaPatient, setNuevaUrgenciaPatient] = useState(null);
   const patientSearchIntentRef = useRef('cirugia');
   // Fecha/hora del slot de la grilla que disparó el buscador de pacientes
   // (clic en una celda vacía de AgendaSemana) -- se guarda en un ref porque
@@ -110,6 +116,11 @@ export default function ProgramacionSalaCirugias() {
   // ningún render intermedio, mismo criterio que nuevaCirugiaPatientRef.
   const nuevaCirugiaSlotRef = useRef(null);
   const [nuevaCirugiaInitialFechaHora, setNuevaCirugiaInitialFechaHora] = useState(null);
+  // Mismo criterio que nuevaCirugiaInitialFechaHora pero para
+  // NuevaUrgenciaModal (fecha/hora como campos sueltos ahí -- ver
+  // handlePatientConfirmedParaCirugia -- en vez del ISO combinado que espera
+  // el wizard).
+  const [nuevaUrgenciaInitialFechaHora, setNuevaUrgenciaInitialFechaHora] = useState(null);
   // `paciente` viene del buscador legacy (.ps-overlay) -- ese registro no
   // trae `id`, solo `documento` (ver PATIENTS en legacy-nueva-cita.js), así
   // que la ruta usa el documento. El `[id]` de la ruta se ignora igual
@@ -118,23 +129,42 @@ export default function ProgramacionSalaCirugias() {
   function handleSeleccionarPacienteHistorial(paciente) {
     router.push(`/historial-quirurgico/${encodeURIComponent(paciente.documento)}`);
   }
+  function handleAbrirProgramarCirugia() {
+    patientSearchIntentRef.current = 'cirugia';
+    window.openPatientSearch();
+  }
+  function handleAbrirNuevaUrgencia() {
+    patientSearchIntentRef.current = 'urgencia';
+    window.openPatientSearch();
+  }
   function handlePatientConfirmedParaCirugia(patient) {
     if (patientSearchIntentRef.current === 'historial') {
       patientSearchIntentRef.current = 'cirugia';
       handleSeleccionarPacienteHistorial(patient);
       return;
     }
+    if (patientSearchIntentRef.current === 'urgencia') {
+      setNuevaUrgenciaPatient(patient);
+      setNuevaUrgenciaInitialFechaHora(nuevaCirugiaSlotRef.current);
+      nuevaCirugiaSlotRef.current = null;
+      return;
+    }
     setNuevaCirugiaWizardPatient(patient);
     setNuevaCirugiaInitialFechaHora(nuevaCirugiaSlotRef.current);
     nuevaCirugiaSlotRef.current = null;
   }
-  // Clic en una celda vacía de la grilla (AgendaSemana): arranca el mismo
-  // flujo de "+ Programar cirugía" (buscador de paciente -> wizard), pero
-  // precargando la fecha/hora de la celda clickeada en vez de la fecha/hora
-  // del sistema (ver datosIniciales en NuevaCirugiaWizard.jsx).
-  function handleSlotClick(fecha, hora) {
+  // Clic en una celda vacía de la grilla (AgendaSemana): a diferencia de
+  // antes (siempre "Programar cirugía"), ahora la celda primero muestra
+  // SlotAccionesMenu para elegir entre los 2 flujos de creación que ya
+  // existían por separado en ProgramarCirugiaDropdown -- `tipo` llega desde
+  // esa elección ('cirugia' | 'urgencia', ver onProgramarCirugia/
+  // onCirugiaUrgencia en AgendaSemana.jsx). En ambos casos se precarga la
+  // fecha/hora de la celda clickeada en vez de la fecha/hora del sistema
+  // (wizard: ver datosIniciales en NuevaCirugiaWizard.jsx; urgencia: ver
+  // fechaCirugia/horaCirugia en NuevaUrgenciaModal.jsx).
+  function handleSlotClick(fecha, hora, tipo) {
     nuevaCirugiaSlotRef.current = { fecha, hora };
-    patientSearchIntentRef.current = 'cirugia';
+    patientSearchIntentRef.current = tipo === 'urgencia' ? 'urgencia' : 'cirugia';
     window.openPatientSearch();
   }
 
@@ -319,8 +349,8 @@ export default function ProgramacionSalaCirugias() {
               <MiniCalendarCirugias
                 selectedDate={fechaAncla}
                 onSelectDate={handleSelectMiniCalDate}
-                onNuevaCirugia={() => window.openPatientSearch()}
-                onNuevaUrgencia={() => window.openPatientSearch()}
+                onNuevaCirugia={handleAbrirProgramarCirugia}
+                onNuevaUrgencia={handleAbrirNuevaUrgencia}
               />
             </div>
 
@@ -382,9 +412,29 @@ export default function ProgramacionSalaCirugias() {
           patient={nuevaCirugiaWizardPatient}
           salaId={salaId}
           initialFechaHora={nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null}
+          onGuardar={(nueva) => {
+            applyUpdated(nueva);
+            showToast('Cirugía guardada correctamente');
+          }}
           onClose={() => {
             setNuevaCirugiaWizardPatient(null);
             setNuevaCirugiaInitialFechaHora(null);
+          }}
+        />
+      )}
+
+      {nuevaUrgenciaPatient && (
+        <NuevaUrgenciaModal
+          patient={nuevaUrgenciaPatient}
+          salaId={salaId}
+          initialFechaHora={nuevaUrgenciaInitialFechaHora}
+          onGuardar={(nueva) => {
+            applyUpdated(nueva);
+            showToast('Cirugía de urgencia guardada correctamente');
+          }}
+          onClose={() => {
+            setNuevaUrgenciaPatient(null);
+            setNuevaUrgenciaInitialFechaHora(null);
           }}
         />
       )}

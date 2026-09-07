@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import './AgendaSemana.css';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
 import FiltrosBar from '../FiltrosBar/FiltrosBar';
+import SlotAccionesMenu from '../SlotAccionesMenu/SlotAccionesMenu';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
 const HORA_INICIO = 0;
@@ -29,6 +31,29 @@ export default function AgendaSemana({
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
 }) {
+  // Slot clickeado a la espera de que el usuario elija tipo de programación
+  // en SlotAccionesMenu (null = menú cerrado) -- guarda fecha/hora + el
+  // <button> que se clickeó (anchorEl del menú) en vez de disparar
+  // onSlotClick directo, porque ahora una celda sirve a los 2 flujos de
+  // creación que antes solo vivían en ProgramarCirugiaDropdown (encargo
+  // explícito: "Programar cirugía" y "Cirugía de urgencia").
+  const [slotMenu, setSlotMenu] = useState(null);
+
+  function closeSlotMenu() { setSlotMenu(null); }
+  function handleSlotButtonClick(e, fecha, hora) {
+    setSlotMenu({ fecha, hora, anchorEl: e.currentTarget });
+  }
+  function handleProgramarCirugia() {
+    if (!slotMenu) return;
+    onSlotClick?.(slotMenu.fecha, slotMenu.hora, 'cirugia');
+    closeSlotMenu();
+  }
+  function handleCirugiaUrgencia() {
+    if (!slotMenu) return;
+    onSlotClick?.(slotMenu.fecha, slotMenu.hora, 'urgencia');
+    closeSlotMenu();
+  }
+
   return (
     <div className="as-wrap">
       <div className="psc-agenda-nav">
@@ -84,9 +109,12 @@ export default function AgendaSemana({
               type="button"
               className={`as-slot${d.isToday ? ' today' : ''}${slot % SLOTS_POR_HORA === 0 ? ' hour-start' : ''}`}
               style={{ gridColumn: dayIdx + 2, gridRow: slot + 2 }}
-              onClick={() => onSlotClick?.(d.fecha, slotAHora(slot))}
+              onClick={(e) => handleSlotButtonClick(e, d.fecha, slotAHora(slot))}
+              aria-haspopup="menu"
               aria-label={`Programar cirugía ${d.dayNum} ${slotAHora(slot)}`}
-            />
+            >
+              <span className="as-add-hint" aria-hidden="true">+ Programar</span>
+            </button>
           )))}
 
           {cirugias.map((c) => {
@@ -109,6 +137,15 @@ export default function AgendaSemana({
           })}
         </div>
       </div>
+
+      {slotMenu && (
+        <SlotAccionesMenu
+          anchorEl={slotMenu.anchorEl}
+          onClose={closeSlotMenu}
+          onProgramarCirugia={handleProgramarCirugia}
+          onCirugiaUrgencia={handleCirugiaUrgencia}
+        />
+      )}
     </div>
   );
 }

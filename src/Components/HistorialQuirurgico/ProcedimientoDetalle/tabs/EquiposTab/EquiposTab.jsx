@@ -1,6 +1,7 @@
 'use client';
 
 import './EquiposTab.css';
+import EquiposTable from '@/Components/EquiposTable/EquiposTable';
 import EmptyState from '../../../EmptyState/EmptyState';
 import { LuServerOff } from 'react-icons/lu';
 
@@ -11,24 +12,7 @@ export default function EquiposTab({ procedimiento }) {
   }
   return (
     <div className="hq-table-wrap">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Equipo</th>
-            <th>Tipo</th>
-            <th>Identificación</th>
-          </tr>
-        </thead>
-        <tbody>
-          {equipos.map((e) => (
-            <tr key={e.identificacion}>
-              <td className="cell-primary">{e.nombre}</td>
-              <td className="cell-muted">{e.tipo}</td>
-              <td className="cell-muted">{e.identificacion}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <EquiposTable equipos={equipos} />
     </div>
   );
 }
