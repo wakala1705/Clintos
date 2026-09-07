@@ -7,10 +7,9 @@
 
 .fvc-flag-badge{
   display:inline-flex;align-items:center;justify-content:center;
-  width:20px;height:20px;border-radius:5px;background:var(--primary-50);color:var(--primary);
+  width:20px;height:20px;border-radius:5px;color:var(--primary);
   font-size:var(--fs-xs);font-weight:var(--fw-bold);
 }
-.fvc-grid tbody tr.selected .fvc-flag-badge{background:#fff;color:var(--primary);}
 
 .fvc-actions-cell{text-align:center;}
 .fvc-row-actions{display:flex;align-items:center;justify-content:center;gap:2px;}
@@ -21,5 +20,3 @@
 .fvc-row-action-btn .icon{width:17px;height:17px;}
 .fvc-row-action-btn:hover{background:var(--primary-50);}
 .fvc-row-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.fvc-grid tbody tr.selected .fvc-row-action-btn{color:#fff;}
-.fvc-grid tbody tr.selected .fvc-row-action-btn:hover{background:rgba(255,255,255,.16);}

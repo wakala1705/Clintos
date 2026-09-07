@@ -95,17 +95,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className={`${subGroupClass}${isFacturas ? ' open' : ''}`}>
-        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-          <LuReceipt className="icon nav-icon" />
-          <span className="label">Facturación</span>
-          <LuChevronDown className="icon chev" />
-        </div>
-        <div className="nav-body">
-          <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
-        </div>
-      </div>
-
       <div className={subGroupClass}>
         <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
           <LuFlaskConical className="icon nav-icon" />
@@ -164,7 +153,7 @@ export default function Sidebar() {
         </Link>
 
         {isAdmin ? (
-          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFacturas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
+          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
             <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
               <LuStethoscope className="icon nav-icon" />
               <span className="label">Módulo Asistencial</span>
@@ -180,13 +169,15 @@ export default function Sidebar() {
           <>
             <div className="sidebar-divider"></div>
 
-            <div className="nav-group">
+            <div className={`nav-group${isFacturas ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuLandmark className="icon nav-icon" />
                 <span className="label">Módulo Contable</span>
                 <LuChevronDown className="icon chev" />
               </div>
-              <div className="nav-body"></div>
+              <div className="nav-body">
+                <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
+              </div>
             </div>
 
             <div className="sidebar-divider"></div>

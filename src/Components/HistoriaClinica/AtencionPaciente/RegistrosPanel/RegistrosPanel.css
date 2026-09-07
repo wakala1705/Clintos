@@ -79,7 +79,7 @@
 }
 .rg-subrow:first-child{border-top:none;}
 .rg-subrow:hover{background:var(--gray-bg);}
-.rg-subrow.selected{background:var(--interactive-selected-bg);}
+.rg-subrow.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .rg-subrow:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .rg-subrow-datetime{font-size:var(--fs-base);color:var(--ink-500);}
 .rg-subrow-title{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

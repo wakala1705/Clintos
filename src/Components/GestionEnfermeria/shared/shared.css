@@ -323,7 +323,7 @@ body{
 .lote-table tbody tr{cursor:pointer;transition:background .1s;}
 .lote-table tbody tr:last-child td{border-bottom:none;}
 .lote-table tbody tr:hover{background:#fafbfd;}
-.lote-table tbody tr.selected{background:var(--primary-50);}
+.lote-table tbody tr.selected{background:var(--primary-50);box-shadow:inset 3px 0 0 var(--primary);}
 .lote-table input[type="radio"], .lote-table input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;}
 .lote-table .lote-code{font-weight:var(--fw-bold);color:var(--ink-900);}
 .lote-table .lote-venc{color:var(--ink-700);}

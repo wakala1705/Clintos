@@ -109,7 +109,7 @@
    ProcedimientoDetalle/tabs no lo usan, sus filas no reaccionan al click. */
 .hq-table-wrap.selectable .data-table tbody tr{cursor:pointer;}
 .hq-table-wrap.selectable .data-table tbody tr:hover{background:var(--bg);}
-.hq-table-wrap.selectable .data-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.hq-table-wrap.selectable .data-table tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .hq-table-wrap.selectable .data-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
 .hq-table-wrap.selectable .data-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 

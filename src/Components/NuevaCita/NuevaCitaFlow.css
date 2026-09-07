@@ -239,6 +239,7 @@
   .wiz-table-wrap tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
   .wiz-table-wrap tbody tr.row-disabled{cursor:not-allowed;opacity:.45;}
   .wiz-table-wrap tbody tr.row-disabled:hover{background:transparent;}
+  .wiz-table-wrap tbody tr.selected{background:var(--primary-50);}
   .wiz-table-wrap tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
   .wiz-row-chevron{color:var(--ink-500);text-align:right;}
   .wiz-row-chevron .icon{width:16px;height:16px;}
@@ -326,9 +327,6 @@
     background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
     padding:8px 12px;margin:0;
   }
-
-  /* ---- Servicios: filas multi-selección ---- */
-  .wiz-table-wrap tbody tr.selected{background:var(--primary-50);}
 
   /* ---- Información de la cita ---- */
   .field-block{margin-bottom:16px;max-width:100%;}

@@ -6,7 +6,7 @@
 .alert-table{width:100%;}
 .alert-table tbody tr{cursor:pointer;}
 .alert-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.alert-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.alert-table tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .alert-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
 
 .alert-col-alerta{min-width:220px;display:flex;align-items:flex-start;gap:10px;}
@@ -47,7 +47,7 @@
   border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
   padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;
 }
-.alert-card.selected{background:var(--interactive-selected-bg);}
+.alert-card.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .alert-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .alert-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .alert-card-meta{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-base);color:var(--ink-700);margin-top:2px;}

@@ -5,7 +5,7 @@
 .pg-patients-table{width:100%;}
 .pg-patients-table tbody tr{cursor:pointer;}
 .pg-patients-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.pg-patients-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.pg-patients-table tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .pg-patients-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
 
 .pg-col-diagnostico{min-width:220px;color:var(--ink-700);}
@@ -52,7 +52,7 @@ html[data-theme="dark"] .pg-med-badge.pg-med-al-dia{color:var(--green);}
   border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
   padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;
 }
-.pg-card.selected{background:var(--interactive-selected-bg);}
+.pg-card.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .pg-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .pg-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .pg-card-id{min-width:0;}

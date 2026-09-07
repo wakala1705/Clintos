@@ -255,11 +255,9 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fvc-grid tbody tr{cursor:pointer;background:var(--surface);}
 .fvc-grid tbody tr:hover{background:var(--gray-bg);}
 .fvc-grid tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.fvc-grid tbody tr.selected{background:var(--primary);}
-.fvc-grid tbody tr.selected td{color:#fff;}
+.fvc-grid tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 
 .fvc-strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
-.fvc-grid tbody tr.selected .fvc-strong{color:#fff;}
 .fvc-num{text-align:right;}
 .fvc-ellipsis{max-width:260px;overflow:hidden;text-overflow:ellipsis;}
 

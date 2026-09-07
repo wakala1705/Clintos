@@ -10,10 +10,13 @@ import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 // Reemplaza el <select> nativo de "Área operativa" (encargo explícito) por
 // un dropdown propio — mismo patrón autocontenido que RowActionsMenu.jsx
 // (estado local `open` + cierre por click-afuera/Escape) en vez del
-// <select> del sistema operativo, para que el trigger se lea igual que el
-// resto de botones del header (mismo .btn/.btn-secondary que "Tareas", ver
-// AreaSelector.css) y el desplegable siga el mismo look que
-// RowActionsMenu/ViewSettingsMenu. `value`/`onChange` controlados desde
+// <select> del sistema operativo. El trigger define su propio estilo de
+// botón en AreaSelector.css (no la clase global `.btn`/`.btn-secondary`:
+// este componente es app-wide y esa clase no está garantizada en toda
+// feature que lo monte — de hecho ya no existe en GestionCamas.css tras la
+// migración a <Button>, lo que dejaba el trigger sin estilo ahí) y el
+// desplegable sigue el mismo look que RowActionsMenu/ViewSettingsMenu.
+// `value`/`onChange` controlados desde
 // PanelGeneral.jsx — este componente no guarda su propia copia del área
 // elegida, igual que lo haría un <select> controlado. `label` es opcional:
 // sin él el trigger solo muestra la opción elegida (PanelGeneral/Tareas,
@@ -94,7 +97,7 @@ export default function AreaSelector({ options, value, onChange, label }) {
       <button
         type="button"
         ref={triggerRef}
-        className="btn btn-secondary pg-area-select-trigger"
+        className="pg-area-select-trigger"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}

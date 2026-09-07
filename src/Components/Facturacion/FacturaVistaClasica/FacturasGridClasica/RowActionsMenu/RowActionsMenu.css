@@ -7,8 +7,6 @@
 .fvc-row-menu-btn .icon{width:17px;height:17px;}
 .fvc-row-menu-btn:hover{background:var(--primary-50);}
 .fvc-row-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.fvc-grid tbody tr.selected .fvc-row-menu-btn{color:#fff;}
-.fvc-grid tbody tr.selected .fvc-row-menu-btn:hover{background:rgba(255,255,255,.16);}
 
 .fvc-row-menu-dropdown{
   position:absolute;top:calc(100% + 4px);right:0;min-width:200px;z-index:20;

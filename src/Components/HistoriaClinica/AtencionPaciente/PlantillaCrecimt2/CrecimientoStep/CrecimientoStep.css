@@ -82,6 +82,7 @@
 .gc-hist-table tbody tr:nth-child(even) td{background:var(--bg);}
 .gc-hist-table tbody tr:hover td{background:#fafbfd;}
 .gc-hist-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+.gc-hist-table tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
 .gc-hist-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 
 /* Indicador de que hay más columnas fuera del viewport — franja de

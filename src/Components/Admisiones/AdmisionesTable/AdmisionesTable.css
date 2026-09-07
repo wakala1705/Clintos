@@ -18,7 +18,7 @@
 .data-table tbody tr{cursor:pointer;}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:var(--bg);}
-.data-table tbody tr.selected{background:var(--interactive-selected-bg);}
+.data-table tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .data-table tbody tr.selected:hover{background:var(--interactive-selected-bg);}
 .data-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
@@ -62,7 +62,7 @@ html[data-theme="dark"] .adm-atendido-si{color:var(--green);}
   border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
   padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;
 }
-.adm-card.selected{background:var(--interactive-selected-bg);}
+.adm-card.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .adm-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .adm-card-top{display:flex;align-items:flex-start;gap:10px;}
 .adm-card-id{flex:1;min-width:0;}

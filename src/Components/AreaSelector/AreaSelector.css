@@ -1,10 +1,22 @@
-/* .btn/.btn-secondary: definidas en ../../shared/shared.css (shared del
-   feature) — el trigger las reutiliza para leerse igual que "Tareas", su
-   vecino en .pg-header-actions (ver PanelGeneral.css). Acá solo el
-   posicionamiento del dropdown propio (mismo patrón que .pg-row-menu-*,
-   RowActionsMenu.css) y el chevron giratorio. */
+/* Trigger self-contenido (mismo criterio que .form-select-trigger en
+   FormSelect.css): este componente es app-wide y no puede depender de la
+   clase global `.btn`/`.btn-secondary` de una feature puntual — esa clase
+   ya no existe en GestionCamas.css (borrada tras la migración a <Button>,
+   ver AGENTS.md "Botones"), lo que dejaba este trigger sin estilo ahí.
+   Los valores replican el `.btn`/`.btn-secondary` histórico usando los
+   tokens `--btn-*` de globals.css, así se ve igual en cualquier feature
+   sin importar si esa feature todavía define `.btn` o no. */
 .pg-area-select{position:relative;flex-shrink:0;}
-.pg-area-select-trigger{white-space:nowrap;}
+.pg-area-select-trigger{
+  display:inline-flex;align-items:center;gap:var(--btn-gap);white-space:nowrap;
+  font-family:inherit;font-weight:var(--fw-medium);font-size:var(--fs-base);
+  padding:var(--btn-padding);border-radius:var(--btn-radius);
+  border:var(--btn-border-width) solid var(--border);background:var(--surface);color:var(--ink-700);
+  cursor:pointer;transition:var(--btn-transition);
+}
+.pg-area-select-trigger:hover{background:#f3f5f9;border-color:#d7dce6;}
+.pg-area-select-trigger:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.pg-area-select-trigger .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
 .pg-area-select-chev{transition:transform .15s ease;}
 .pg-area-select-chev.open{transform:rotate(180deg);}
 
