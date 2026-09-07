@@ -5,8 +5,20 @@
   font-family:inherit;background:var(--surface);min-width:0;z-index:1;position:relative;
 }
 .cc-card:hover{box-shadow:0 2px 6px rgba(16,24,39,.12);}
+/* Compacto (<=1h, ver AgendaSemana.jsx): un único renglón, centrado en vez
+   de pegado arriba como el resto de las cards (justify-content default de
+   .cc-card, alineado con la primera línea de 4). */
+.cc-card.compact{justify-content:center;}
 .cc-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cc-card.selected{outline:2px solid var(--primary);outline-offset:1px;z-index:2;}
+
+/* Menú "..." (ver CirugiaCardMenu.jsx): oculto por default, revelado al
+   hacer hover/focus en la card completa (no solo en el propio botón, para
+   que sea descubrible sin tener que apuntarle con precisión a una card tan
+   chica) -- `.open` en CirugiaCardMenu.css lo fuerza visible mientras el
+   dropdown está abierto. */
+.cc-menu-wrap{position:absolute;top:2px;right:2px;z-index:2;opacity:0;transition:opacity 120ms ease;}
+.cc-card:hover .cc-menu-wrap,.cc-card:focus-within .cc-menu-wrap{opacity:1;}
 
 .cc-horario{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-700);}
 .cc-paciente{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -15,5 +27,6 @@
 
 .cc-programada{background:var(--green-bg);border-left-color:var(--green);}
 .cc-urgencia{background:var(--violet-bg);border-left-color:var(--violet-fg);}
+.cc-realizada{background:var(--blue-bg);border-left-color:var(--blue-fg);}
 .cc-cancelada{background:var(--red-bg);border-left-color:var(--red);}
 .cc-incumplida{background:var(--gray-bg);border-left-color:var(--gray-fg);}

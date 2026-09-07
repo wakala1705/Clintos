@@ -12,7 +12,12 @@ import { LuPlus, LuTrash2 } from 'react-icons/lu';
 // que ya consume @/Components/EquiposTable en el detalle de la cirugía.
 // Todo equipo agregado acá arranca en estado 'disponible' -- sin edición de
 // estado inline (a diferencia de la cantidad en InsumosStep, no fue pedido
-// para este paso), solo agregar/quitar filas.
+// para este paso), solo agregar/quitar filas. "Agregar equipo" lleva label
+// visible (a diferencia del ícono solo que tenían este botón y el de
+// InsumosStep -- encargo explícito, 2026-09-07: acá el step arranca con un
+// empty-state grande y sin más contexto que un "+" chico arriba a la
+// derecha, poco intuitivo) -- por eso ya no lleva aria-label/title propios,
+// el texto visible ya es su nombre accesible.
 export default function EquiposStep({ datos, onChange }) {
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
   const equipos = datos.equipos;
@@ -32,12 +37,11 @@ export default function EquiposStep({ datos, onChange }) {
         <h4 className="ncw-section-title">Equipos</h4>
         <button
           type="button"
-          className="ncw-icon-btn"
+          className="ncw-icon-btn ncw-icon-btn-primary eqs-add-btn"
           onClick={() => setCatalogoAbierto(true)}
-          aria-label="Agregar equipo"
-          title="Agregar equipo"
         >
           <LuPlus className="icon" />
+          Agregar equipo
         </button>
       </div>
 

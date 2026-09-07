@@ -45,9 +45,19 @@ export const ESTADO_FILTRO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
   { value: 'programada', label: 'Programada' },
   { value: 'urgencia', label: 'Urgencia' },
+  { value: 'realizada', label: 'Realizada' },
   { value: 'cancelada', label: 'Cancelada' },
   { value: 'incumplida', label: 'Incumplida' },
 ];
+
+// Estados terminales de una cirugía: ya no admiten Editar/Reprogramar/
+// Cancelar/Marcar como realizada (encargo explícito, 2026-09-07: menú "..."
+// de CirugiaCard con esas acciones) -- "realizada" se suma acá a las 2
+// terminales que ya tenía DetalleCirugiaPanel.jsx (cancelada/incumplida, ver
+// ESTADOS_TERMINALES ahí antes de este cambio). Vive en un solo lugar para
+// que DetalleCirugiaPanel.jsx y CirugiaCardMenu.jsx compartan exactamente la
+// misma regla en vez de 2 arrays duplicados que puedan divergir.
+export const ESTADOS_TERMINALES_CIRUGIA = ['cancelada', 'incumplida', 'realizada'];
 
 // Catálogo de procedimientos QX (CUPS) que alimenta CatalogoProcedimientosModal
 // ("Listado de Procedimientos contratados para el Tercero (KCNT)", encargo
@@ -108,6 +118,42 @@ export const TIPOS_PROCEDIMIENTO_CATALOGO = [
   'PAQUETE 30',
   'PAQUETE 65',
   'UNICA',
+];
+
+// Catálogo de causales de anulación/reprogramación ("Causales de anulación
+// (CAU)", encargo explícito -- ver capturas adjuntas) que alimenta
+// CatalogoCausalesModal para "Causal de reprogramación" en
+// ReprogramarCirugiaModal. Transcripción literal de las filas visibles en
+// esas 2 capturas (mismo criterio que PROCEDIMIENTOS_QX_CATALOGO/
+// MEDICOS_CATALOGO: recorte representativo, no inventado), en el mismo
+// orden alfabético por descripción que ya traía la referencia -- incluye
+// 'NA' ("No Aplica") como único id no numérico, tal cual aparece ahí.
+export const CAUSALES_REPROGRAMACION_CIRUGIA = [
+  { idCausal: '01', descripcion: 'ACCIDENTE' },
+  { idCausal: '17', descripcion: 'ADELANTO DE HORA' },
+  { idCausal: '08', descripcion: 'BAJO STOCK' },
+  { idCausal: '11', descripcion: 'CAMBIO DE ATENCION' },
+  { idCausal: '19', descripcion: 'CANCELACION POR AGENDAMIENTO DE CITA PRIORITARIA' },
+  { idCausal: '10', descripcion: 'EGRESO' },
+  { idCausal: '14', descripcion: 'FALTA DE AUTORIZACION SERVICIO EPS' },
+  { idCausal: '15', descripcion: 'FALTA DE EXAMENES MEDICOS' },
+  { idCausal: '13', descripcion: 'FALTA RECURSO ECONOMICO' },
+  { idCausal: '07', descripcion: 'HORARIO RESTRINGIDO' },
+  { idCausal: '06', descripcion: 'INCAPACIDAD' },
+  { idCausal: '20', descripcion: 'INCAPACIDAD MEDICA' },
+  { idCausal: '09', descripcion: 'INGRESO' },
+  { idCausal: '21', descripcion: 'LICENCIA DE LUTO' },
+  { idCausal: 'NA', descripcion: 'No Aplica' },
+  { idCausal: '22', descripcion: 'PACIENTE FALLECIDO' },
+  { idCausal: '12', descripcion: 'PACIENTE HOSPITALIZADO' },
+  { idCausal: '02', descripcion: 'PERDIDA' },
+  { idCausal: '03', descripcion: 'PERMISO' },
+  { idCausal: '24', descripcion: 'POR CAMBIO DE RAZON SOCIAL' },
+  { idCausal: '04', descripcion: 'REUNION ADMINISTRATIVA' },
+  { idCausal: '18', descripcion: 'SALIDA A CONGRESO' },
+  { idCausal: '16', descripcion: 'SIN EXISTENCIAS' },
+  { idCausal: '23', descripcion: 'SOLICITUD DE PACIENTE' },
+  { idCausal: '05', descripcion: 'VACACIONES' },
 ];
 
 // Catálogo de médicos ("Listado de médicos por tipo de Recurso Humano",
@@ -1272,10 +1318,19 @@ export function actualizarEstadoCirugia(id, nuevoEstado) {
 }
 
 export function reprogramarCirugia(id, {
-  fecha, horaInicio, horaFin, motivo,
+  fecha, horaInicio, horaFin, salaId, cirujano, causal,
+  duracionEstimadaMin, duracionPostquirurgicaMin, duracionRecuperacionMin,
 }) {
   return actualizarCirugia(id, {
-    fecha, horaInicio, horaFin, motivoReprogramacion: motivo,
+    fecha,
+    horaInicio,
+    horaFin,
+    salaId,
+    cirujano,
+    causalReprogramacion: causal,
+    duracionEstimadaMin,
+    duracionPostquirurgicaMin,
+    duracionRecuperacionMin,
   });
 }
 

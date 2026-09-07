@@ -3,3 +3,9 @@
    ../../shared/shared.css. */
 .eqs-step{display:flex;flex-direction:column;gap:14px;}
 .eqs-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
+/* Único consumidor de este ancho auto + label -- InsumosStep mantiene su
+   "+" cuadrado de 28px (encargo explícito solo para este step, ver
+   comentario en EquiposStep.jsx), así que la variante con texto no sube a
+   shared.css (no hay 2do consumidor todavía). */
+.eqs-add-btn{width:auto;height:30px;padding:0 12px 0 10px;gap:6px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);}

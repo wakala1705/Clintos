@@ -7,7 +7,7 @@ import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from 'react
 import ProgramarCirugiaDropdown from '../ProgramarCirugiaDropdown/ProgramarCirugiaDropdown';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 
-const ESTADOS_LEYENDA = ['programada', 'urgencia', 'cancelada', 'incumplida'];
+const ESTADOS_LEYENDA = ['programada', 'urgencia', 'realizada', 'cancelada', 'incumplida'];
 
 // Bloque único de la columna lateral (mismo lugar que MiniCalendar en
 // Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 3

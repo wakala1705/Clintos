@@ -30,6 +30,7 @@ export default function AgendaSemana({
   label, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
+  onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
 }) {
   // Slot clickeado a la espera de que el usuario elija tipo de programación
   // en SlotAccionesMenu (null = menú cerrado) -- guarda fecha/hora + el
@@ -122,16 +123,31 @@ export default function AgendaSemana({
             if (dayIdx === -1) return null;
             const startSlot = horaASlot(c.horaInicio);
             const endSlot = horaASlot(c.horaFin);
+            const spanSlots = Math.max(endSlot - startSlot, 1);
             return (
               <CirugiaCard
                 key={c.id}
                 cirugia={c}
                 selected={c.id === selectedId}
                 onClick={() => onSelect(c.id)}
+                // <= 1h (2 slots de 30 min, ver SLOTS_POR_HORA): la card no
+                // tiene alto para las 4 líneas (horario/paciente/
+                // procedimiento/cirujano, ver CirugiaCard.jsx) sin cortarse
+                // -- encargo explícito tras ver una cirugía de 60 min
+                // desbordando su propia celda. En compacto solo queda el
+                // nombre del paciente (el resto ya vive en
+                // DetalleCirugiaPanel al seleccionarla, más el tooltip
+                // nativo de CirugiaCard con el resumen completo).
+                compact={spanSlots <= SLOTS_POR_HORA}
                 style={{
                   gridColumn: dayIdx + 2,
-                  gridRow: `${startSlot + 2} / span ${Math.max(endSlot - startSlot, 1)}`,
+                  gridRow: `${startSlot + 2} / span ${spanSlots}`,
                 }}
+                onEditar={onEditarCirugia}
+                onReprogramar={onReprogramarCirugia}
+                onMarcarRealizada={onMarcarRealizada}
+                onMarcarIncumplida={onMarcarIncumplida}
+                onCancelar={onCancelarCirugia}
               />
             );
           })}

@@ -10,12 +10,10 @@ import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
-import { edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuChevronUp, LuCircleCheck, LuInfo, LuPencil,
 } from 'react-icons/lu';
-
-const ESTADOS_TERMINALES = ['cancelada', 'incumplida'];
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
 // a las 4 tabs de nivel superior que tenía antes el modal (Personal/Equipos/
@@ -98,7 +96,7 @@ export default function DetalleCirugiaPanel({
 
   if (!cirugia) return null;
 
-  const puedeAccionar = !ESTADOS_TERMINALES.includes(cirugia.estado);
+  const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
   const puedeMarcarProgramada = cirugia.estado === 'urgencia';
   const puedeMarcarIncumplida = cirugia.estado === 'programada';
 
@@ -242,7 +240,7 @@ export default function DetalleCirugiaPanel({
                 className="dcp-more-item"
                 role="menuitem"
                 disabled={!puedeMarcarProgramada}
-                onClick={() => { setMasOpen(false); onMarcarProgramada(); }}
+                onClick={() => { setMasOpen(false); onMarcarProgramada(cirugia); }}
               >
                 <LuCircleCheck className="icon" aria-hidden="true" />
                 Marcar como programada
@@ -252,7 +250,7 @@ export default function DetalleCirugiaPanel({
                 className="dcp-more-item"
                 role="menuitem"
                 disabled={!puedeMarcarIncumplida}
-                onClick={() => { setMasOpen(false); onMarcarIncumplida(); }}
+                onClick={() => { setMasOpen(false); onMarcarIncumplida(cirugia); }}
               >
                 <LuCalendarClock className="icon" aria-hidden="true" />
                 Marcar como incumplida
@@ -271,9 +269,9 @@ export default function DetalleCirugiaPanel({
         </div>
 
         <div className="dcp-actions-main">
-          <Button variant="secondary" icon={LuPencil} disabled={!puedeAccionar} onClick={onEditar}>Editar</Button>
-          <Button variant="secondary" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={onReprogramar}>Reprogramar</Button>
-          <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={onCancelar}>Cancelar</Button>
+          <Button variant="secondary" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
+          <Button variant="secondary" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
+          <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
         </div>
       </div>
     </>

@@ -2,15 +2,21 @@
 
 import './EstadoCirugiaBadge.css';
 import {
-  LuCalendarX, LuCircleCheck, LuCircleX, LuTriangleAlert,
+  LuCalendarX, LuCheckCheck, LuCircleCheck, LuCircleX, LuTriangleAlert,
 } from 'react-icons/lu';
 
 // Ícono + texto siempre visibles (nunca solo color, ver AGENTS.md/WCAG) —
 // mismo patrón "píldora" que TurnoBadges/EstadoCamaBadge, un componente por
-// feature en vez de una clase .badge genérica compartida.
+// feature en vez de una clase .badge genérica compartida. `realizada` (menú
+// "..." de CirugiaCard, encargo explícito 2026-09-07) usa tone 'blue' --
+// único tono que ya tenía CSS definida (esb-blue) sin ningún consumidor
+// todavía, y LuCheckCheck (doble check) en vez de LuCircleCheck para no
+// repetir el mismo ícono que 'programada' con un significado distinto
+// (agendada vs. ya efectuada).
 const META = {
   programada: { label: 'Programada', icon: LuCircleCheck, tone: 'green' },
   urgencia: { label: 'Urgencia', icon: LuTriangleAlert, tone: 'violet' },
+  realizada: { label: 'Realizada', icon: LuCheckCheck, tone: 'blue' },
   cancelada: { label: 'Cancelada', icon: LuCircleX, tone: 'red' },
   incumplida: { label: 'Incumplida', icon: LuCalendarX, tone: 'gray' },
 };

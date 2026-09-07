@@ -1,0 +1,41 @@
+/* Trigger "..." -- oculto por default, revelado por CirugiaCard.css al hacer
+   hover/focus en la card (ver .cc-menu-wrap ahí); `.open` lo fuerza visible
+   mientras el dropdown está abierto (el mouse puede salir de la card hacia
+   el dropdown, portado a document.body, sin que eso deba ocultar el
+   trigger). */
+.ccm-wrap.open{opacity:1;}
+.ccm-trigger{
+  width:20px;height:20px;border-radius:5px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.ccm-trigger .icon{width:13px;height:13px;}
+.ccm-trigger:hover{background:var(--gray-bg);color:var(--ink-900);}
+.ccm-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* position:fixed + portal a document.body (mismo motivo que
+   BedActionsMenu.css): .cc-card tiene overflow:hidden y recortaría el menú
+   si quedara anidado dentro. z-index +1 sobre --z-modal por la misma razón
+   que ahí. */
+.ccm-dropdown{
+  position:fixed;min-width:210px;z-index:calc(var(--z-modal, 50) + 1);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
+}
+.ccm-item{
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
+}
+.ccm-item .icon{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
+.ccm-item:hover{background:var(--bg);}
+.ccm-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+.ccm-item:disabled{opacity:var(--btn-disabled-opacity, .45);cursor:not-allowed;}
+.ccm-item:disabled:hover{background:none;}
+.ccm-item-primary .icon{color:var(--primary);}
+.ccm-item-danger .icon{color:var(--red);}
+
+/* Separa los 3 grupos de acciones (editar/reprogramar, marcar como
+   realizada/incumplida, cancelar -- ver CirugiaCardMenu.jsx). Márgen
+   vertical en vez de padding: `.ccm-dropdown` ya trae `padding:6px`. */
+.ccm-divider{height:1px;background:var(--border);margin:6px -6px;}

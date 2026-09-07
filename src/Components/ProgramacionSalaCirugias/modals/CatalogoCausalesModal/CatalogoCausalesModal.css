@@ -1,0 +1,53 @@
+/* Homologado al look de CatalogoSalasModal (buscador + tabla con borde +
+   fila-botón seleccionable, sin paginación) -- ver comentario en el .jsx.
+   Tamaño "sm" (encargo explícito): sin flex:1 en .ccam-body/.ccam-table (esos
+   sí crecen hasta el tope de .modal-card en CatalogoSalasModal porque ahí
+   solo hay 7 salas -- acá, con 25 causales, esa combinación estiraba la
+   tarjeta hasta su max-height casi de pantalla completa). .ccam-table fija
+   su alto en vez de heredarlo, y es .ccam-list el único que scrollea.*/
+.ccam-modal-card{width:620px;}
+.ccam-modal-card > .modal-body{overflow:hidden;}
+.ccam-body{padding:16px 24px 20px;gap:12px;}
+
+.ccam-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.ccam-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.ccam-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.ccam-search input::placeholder{color:var(--ink-400);}
+
+.ccam-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  height:360px;display:flex;flex-direction:column;overflow:hidden;
+}
+.ccam-row{
+  display:grid;grid-template-columns:96px 1fr;align-items:center;gap:12px;
+  padding:10px 14px;
+}
+.ccam-row-head{
+  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+html[data-theme="dark"] .ccam-row-head{background:#1c2333;}
+
+.ccam-list{flex:1;min-height:0;overflow-y:auto;}
+.ccam-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.ccam-option:last-child{border-bottom:none;}
+.ccam-option:hover{background:var(--bg);}
+.ccam-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.ccam-option.active{background:var(--primary-50);}
+.ccam-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;}
+.ccam-option-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ccam-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+@media (max-width:560px){
+  .ccam-modal-card{width:100%;}
+}

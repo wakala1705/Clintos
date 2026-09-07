@@ -71,7 +71,7 @@ export default function InsumosStep({ datos, onChange }) {
           </button>
           <button
             type="button"
-            className="ncw-icon-btn"
+            className="ncw-icon-btn ncw-icon-btn-primary"
             onClick={() => setCatalogoAbierto(true)}
             aria-label="Agregar insumo"
             title="Agregar insumo"
@@ -141,7 +141,7 @@ export default function InsumosStep({ datos, onChange }) {
                           <>
                             <button
                               type="button"
-                              className="ncw-icon-btn"
+                              className="ncw-icon-btn ncw-icon-btn-primary"
                               onClick={() => handleEmpezarEdicion(i)}
                               aria-label={`Editar cantidad de ${i.nombre}`}
                               title="Editar cantidad"

@@ -282,14 +282,35 @@ export default function ProgramacionSalaCirugias() {
     showToast('Cirugía cancelada correctamente.');
   }
 
-  function handleMarcarProgramada() {
-    if (!selectedCirugia) return;
-    applyUpdated(actualizarEstadoCirugia(selectedCirugia.id, 'programada'));
+  // De acá para abajo, los handlers de acciones sobre una cirugía puntual
+  // reciben `cirugia` como parámetro en vez de cerrar sobre `selectedCirugia`
+  // (encargo explícito, 2026-09-07: menú "..." de CirugiaCard con Editar/
+  // Reprogramar/Marcar como realizada/Marcar como incumplida/Cancelar) --
+  // así los mismos handlers sirven tanto al menú "Más acciones"/botones de
+  // DetalleCirugiaPanel (que ya tiene la cirugía seleccionada a mano) como al
+  // menú de la card en la grilla (que actúa sobre la cirugía de esa card
+  // puntual, esté o no seleccionada).
+  function handleReprogramarCirugia(cirugia) {
+    setModal({ type: 'reprogramar', cirugia });
+  }
+  function handleCancelarCirugia(cirugia) {
+    setModal({ type: 'cancelar', cirugia });
+  }
+  function handleMarcarProgramada(cirugia) {
+    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'programada'));
     showToast('Cirugía marcada como programada.');
   }
-  function handleMarcarIncumplida() {
-    if (!selectedCirugia) return;
-    applyUpdated(actualizarEstadoCirugia(selectedCirugia.id, 'incumplida'));
+  // "realizada" es un estado nuevo (encargo explícito, mismo momento que el
+  // menú "..." de arriba) -- antes solo existían programada/urgencia/
+  // cancelada/incumplida (ver ESTADOS_TERMINALES_CIRUGIA/ESTADO_FILTRO_OPTIONS
+  // en mockCirugiaData.js y EstadoCirugiaBadge.jsx para el resto de lugares
+  // que necesitaban conocerlo).
+  function handleMarcarRealizada(cirugia) {
+    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'realizada'));
+    showToast('Cirugía marcada como realizada.');
+  }
+  function handleMarcarIncumplida(cirugia) {
+    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'incumplida'));
     showToast('Cirugía marcada como incumplida.');
   }
   // "Ver información/historial" solo tiene sentido con una cirugía
@@ -303,7 +324,6 @@ export default function ProgramacionSalaCirugias() {
   // que el resto de acciones stub del proyecto (ver handleEditar en
   // Admisiones.jsx).
   function handleEditarCirugia() {
-    if (!selectedCirugia) return;
     showToast('Editar cirugía (en desarrollo).');
   }
   return (
@@ -387,6 +407,11 @@ export default function ProgramacionSalaCirugias() {
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  onEditarCirugia={handleEditarCirugia}
+                  onReprogramarCirugia={handleReprogramarCirugia}
+                  onMarcarRealizada={handleMarcarRealizada}
+                  onMarcarIncumplida={handleMarcarIncumplida}
+                  onCancelarCirugia={handleCancelarCirugia}
                 />
               )}
             </div>
@@ -398,8 +423,8 @@ export default function ProgramacionSalaCirugias() {
         cirugia={selectedCirugia}
         onClose={() => setSelectedId(null)}
         onEditar={handleEditarCirugia}
-        onReprogramar={() => selectedCirugia && setModal({ type: 'reprogramar', cirugia: selectedCirugia })}
-        onCancelar={() => selectedCirugia && setModal({ type: 'cancelar', cirugia: selectedCirugia })}
+        onReprogramar={handleReprogramarCirugia}
+        onCancelar={handleCancelarCirugia}
         onMarcarProgramada={handleMarcarProgramada}
         onMarcarIncumplida={handleMarcarIncumplida}
         onVerInfo={handleVerInfo}

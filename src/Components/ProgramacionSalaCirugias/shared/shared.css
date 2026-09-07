@@ -176,10 +176,20 @@ html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px so
 
 /* Botón-ícono chico genérico (quitar procedimiento en ProcedimientosStep,
    imprimir/agregar insumo en el header de InsumosStep, editar/eliminar fila
-   de insumo) -- 3+ consumidores con la misma estructura (28px, transparente,
-   hover con fondo), por eso vive acá en vez de duplicado en cada CSS (ver
-   AGENTS.md "Component organization"). `.ncw-icon-btn-danger` es el único
-   modificador de color -- el resto usa el hover neutro por default. */
+   de insumo, agregar equipo en EquiposStep) -- 3+ consumidores con la misma
+   estructura (28px, transparente, hover con fondo), por eso vive acá en vez
+   de duplicado en cada CSS (ver AGENTS.md "Component organization").
+   Modificadores de color semántico por tipo de acción (encargo explícito,
+   2026-09-07, Insumos/Equipos): `-primary` (agregar/editar), `-danger`
+   (eliminar/quitar) -- el ícono ya lleva el color de su acción en reposo, no
+   solo al hover (antes `-danger` recién se ponía rojo al hacer hover,
+   indistinguible en reposo del resto de íconos neutros de la fila). Agregar
+   arrancó con `-success` (verde) propio y se unificó a `-primary` (mismo
+   encargo, corrección inmediata: "cambiemos el verde agregar por el azul
+   primary") -- agregar/editar comparten azul a propósito, no hace falta
+   distinguirlos entre sí, solo de eliminar. Imprimir/Guardar/Cancelar
+   quedan sin modificador (no son agregar/editar/eliminar) -- siguen con el
+   hover neutro default. */
 .ncw-icon-btn{
   width:28px;height:28px;border-radius:var(--radius);flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
@@ -188,4 +198,7 @@ html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px so
 .ncw-icon-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .ncw-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .ncw-icon-btn .icon{width:16px;height:16px;}
+.ncw-icon-btn-primary{color:var(--primary);}
+.ncw-icon-btn-primary:hover{background:var(--primary-50);color:var(--primary);}
+.ncw-icon-btn-danger{color:var(--red);}
 .ncw-icon-btn-danger:hover{background:var(--red-bg);color:var(--red);}
