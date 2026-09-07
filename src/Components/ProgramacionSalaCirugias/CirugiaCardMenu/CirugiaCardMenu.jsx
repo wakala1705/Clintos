@@ -131,7 +131,7 @@ export default function CirugiaCardMenu({
 
           <button
             type="button"
-            className="ccm-item ccm-item-primary"
+            className="ccm-item"
             role="menuitem"
             disabled={!puedeAccionar}
             onClick={() => handleItem(onMarcarRealizada)}

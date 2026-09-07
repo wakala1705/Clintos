@@ -9,7 +9,7 @@
   display:inline-flex;align-items:center;justify-content:center;
   color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
 }
-.ccm-trigger .icon{width:13px;height:13px;}
+.ccm-trigger .icon{width:20px;height:20px;}
 .ccm-trigger:hover{background:var(--gray-bg);color:var(--ink-900);}
 .ccm-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
@@ -27,12 +27,15 @@
   padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
 }
-.ccm-item .icon{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
+/* Ícono en --primary por default (mismo criterio "accent" que
+   variant="secondary-accent" de @/Components/Button/Button, ver footer de
+   DetalleCirugiaPanel.jsx) -- ya no gris (var(--ink-500)) salvo la acción
+   danger, que se overridea abajo. */
+.ccm-item .icon{width:20px;height:20px;color:var(--primary);flex-shrink:0;}
 .ccm-item:hover{background:var(--bg);}
 .ccm-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
 .ccm-item:disabled{opacity:var(--btn-disabled-opacity, .45);cursor:not-allowed;}
 .ccm-item:disabled:hover{background:none;}
-.ccm-item-primary .icon{color:var(--primary);}
 .ccm-item-danger .icon{color:var(--red);}
 
 /* Separa los 3 grupos de acciones (editar/reprogramar, marcar como

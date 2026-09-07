@@ -9,7 +9,7 @@ import EquiposStep from './EquiposStep/EquiposStep';
 import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
 import {
-  fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia,
+  fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuX } from 'react-icons/lu';
 
@@ -92,14 +92,25 @@ function datosIniciales(patient, salaId, initialFechaHora) {
 // ese mismo header). Sala de cirugía/No. cirugía también se movieron al
 // riel (encargo explícito), como texto plano bajo un divider debajo del
 // checkbox -- no son datos editables en este paso, así que no tiene sentido
-// que ocupen espacio en el formulario. No. cirugía siempre muestra "--"
-// porque este wizard solo crea cirugías nuevas (el número se asigna al
-// guardar, nunca existe en este paso).
+// que ocupen espacio en el formulario. No. cirugía muestra "--" al crear (el
+// número se asigna recién al guardar, no existe todavía en este paso) o el
+// id real en modo edición (`cirugiaId`, ver más abajo).
+// `cirugiaId`/`initialDatos` (encargo explícito, "Editar cirugía"): mismo
+// wizard de creación, reabierto en modo edición -- `initialDatos` viene de
+// datosWizardDesdeCirugia (mockCirugiaData.js) y se mergea sobre
+// datosIniciales para completar cualquier campo que esa reconstrucción no
+// haya podido llenar. `cirugiaId` presente es lo que distingue "editando" de
+// "creando": cambia a qué función de guardado se llama (editarCirugiaDesdeWizard
+// vs armarCirugiaDesdeWizard+crearCirugia) y los textos del riel/footer.
 export default function NuevaCirugiaWizard({
-  patient, salaId, onClose, onGuardar, initialFechaHora,
+  patient, salaId, onClose, onGuardar, initialFechaHora, initialDatos, cirugiaId,
 }) {
+  const editando = Boolean(cirugiaId);
   const [paso, setPaso] = useState(1);
-  const [datos, setDatos] = useState(() => datosIniciales(patient, salaId, initialFechaHora));
+  const [datos, setDatos] = useState(() => ({
+    ...datosIniciales(patient, salaId, initialFechaHora),
+    ...initialDatos,
+  }));
   const salaLabel = SALAS.find((s) => s.value === salaId)?.label ?? '—';
 
   function set(campo, valor) {
@@ -107,8 +118,10 @@ export default function NuevaCirugiaWizard({
   }
 
   function handleGuardar() {
-    const nueva = crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaId));
-    onGuardar?.(nueva);
+    const resultado = editando
+      ? editarCirugiaDesdeWizard(cirugiaId, datos, salaId)
+      : crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaId));
+    onGuardar?.(resultado);
     onClose();
   }
 
@@ -118,7 +131,7 @@ export default function NuevaCirugiaWizard({
         <div className="ncw-body">
           <nav className="ncw-rail">
             <div className="ncw-rail-header">
-              <div className="ncw-rail-eyebrow">Nueva cirugía</div>
+              <div className="ncw-rail-eyebrow">{editando ? 'Editar cirugía' : 'Nueva cirugía'}</div>
               <h3 id="ncw-title" className="ncw-rail-title">{patient?.nombre ?? 'Paciente'}</h3>
               {patient?.documento && <p className="ncw-rail-desc">CC {patient.documento}</p>}
               <label className="ncw-rail-checkbox">
@@ -139,7 +152,7 @@ export default function NuevaCirugiaWizard({
                 </div>
                 <div className="ncw-rail-meta-item">
                   <span className="ncw-rail-meta-label">No. cirugía</span>
-                  <span className="ncw-rail-meta-value">--</span>
+                  <span className="ncw-rail-meta-value">{cirugiaId ?? '--'}</span>
                 </div>
               </div>
             </div>
@@ -227,7 +240,7 @@ export default function NuevaCirugiaWizard({
               {paso === 5 && (
                 <>
                   <Button variant="secondary" onClick={() => setPaso(4)}>Atrás</Button>
-                  <Button variant="primary" onClick={handleGuardar}>Guardar cirugía</Button>
+                  <Button variant="primary" onClick={handleGuardar}>{editando ? 'Guardar cambios' : 'Guardar cirugía'}</Button>
                 </>
               )}
             </div>

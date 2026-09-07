@@ -28,6 +28,7 @@ import {
   addDias,
   addMeses,
   cancelarCirugia,
+  datosWizardDesdeCirugia,
   diaLabel,
   diaUnico,
   diasDeSemana,
@@ -108,6 +109,12 @@ export default function ProgramacionSalaCirugias() {
   // reabra el flujo equivocado si el usuario ya usó otro botón antes.
   const nuevaCirugiaPatientRef = useRef(null);
   const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
+  // "Editar" (encargo explícito) reabre el mismo NuevaCirugiaWizard en modo
+  // edición -- comparte el mismo montaje que "+ Programar cirugía" más abajo
+  // (ver `{(nuevaCirugiaWizardPatient || editCirugia) && ...}`), pero con su
+  // propio disparador: no pasa por el buscador de pacientes (el paciente ya
+  // es el de la cirugía seleccionada, no cambia al editar).
+  const [editCirugia, setEditCirugia] = useState(null);
   const [nuevaUrgenciaPatient, setNuevaUrgenciaPatient] = useState(null);
   const patientSearchIntentRef = useRef('cirugia');
   // Fecha/hora del slot de la grilla que disparó el buscador de pacientes
@@ -296,10 +303,6 @@ export default function ProgramacionSalaCirugias() {
   function handleCancelarCirugia(cirugia) {
     setModal({ type: 'cancelar', cirugia });
   }
-  function handleMarcarProgramada(cirugia) {
-    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'programada'));
-    showToast('Cirugía marcada como programada.');
-  }
   // "realizada" es un estado nuevo (encargo explícito, mismo momento que el
   // menú "..." de arriba) -- antes solo existían programada/urgencia/
   // cancelada/incumplida (ver ESTADOS_TERMINALES_CIRUGIA/ESTADO_FILTRO_OPTIONS
@@ -313,18 +316,10 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(actualizarEstadoCirugia(cirugia.id, 'incumplida'));
     showToast('Cirugía marcada como incumplida.');
   }
-  // "Ver información/historial" solo tiene sentido con una cirugía
-  // seleccionada -- el panel de detalle ya está visible en ese momento, así
-  // que no hay ninguna acción adicional que ejecutar en V1 (no existe un
-  // historial de auditoría real en el mock, ver spec).
-  function handleVerInfo() {}
-  // NuevaCirugiaModal se eliminó junto con "+ Programar cirugía" (encargo
-  // explícito, ver handlePatientConfirmedParaCirugia arriba) -- "Editar"
-  // queda sin flujo propio todavía, mismo criterio de toast "(en desarrollo)"
-  // que el resto de acciones stub del proyecto (ver handleEditar en
-  // Admisiones.jsx).
-  function handleEditarCirugia() {
-    showToast('Editar cirugía (en desarrollo).');
+  // "Editar" (encargo explícito) reabre NuevaCirugiaWizard en modo edición
+  // -- ver `editCirugia` arriba y su montaje más abajo.
+  function handleEditarCirugia(cirugia) {
+    setEditCirugia(cirugia);
   }
   return (
     <div className="app">
@@ -425,25 +420,40 @@ export default function ProgramacionSalaCirugias() {
         onEditar={handleEditarCirugia}
         onReprogramar={handleReprogramarCirugia}
         onCancelar={handleCancelarCirugia}
-        onMarcarProgramada={handleMarcarProgramada}
+        onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
-        onVerInfo={handleVerInfo}
       />
 
       <NuevaCitaFlow />
 
-      {nuevaCirugiaWizardPatient && (
+      {/* "Editar" (encargo explícito) comparte este mismo montaje con "+
+          Programar cirugía" -- `editCirugia` presente es lo que activa el
+          modo edición del wizard (`cirugiaId`/`initialDatos`, ver
+          NuevaCirugiaWizard.jsx): patient/salaId/initialDatos se arman desde
+          la cirugía seleccionada en vez de venir del buscador de pacientes,
+          y `initialFechaHora` no aplica (el wizard ya arranca con la
+          fecha/hora real de la cirugía vía initialDatos). */}
+      {(nuevaCirugiaWizardPatient || editCirugia) && (
         <NuevaCirugiaWizard
-          patient={nuevaCirugiaWizardPatient}
-          salaId={salaId}
-          initialFechaHora={nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null}
-          onGuardar={(nueva) => {
-            applyUpdated(nueva);
-            showToast('Cirugía guardada correctamente');
+          patient={editCirugia ? {
+            nombre: editCirugia.paciente.nombre,
+            documento: editCirugia.paciente.documento,
+            telefono: editCirugia.paciente.telAviso,
+          } : nuevaCirugiaWizardPatient}
+          salaId={editCirugia ? editCirugia.salaId : salaId}
+          cirugiaId={editCirugia?.id}
+          initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : undefined}
+          initialFechaHora={editCirugia
+            ? null
+            : (nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null)}
+          onGuardar={(resultado) => {
+            applyUpdated(resultado);
+            showToast(editCirugia ? 'Cirugía actualizada correctamente' : 'Cirugía guardada correctamente');
           }}
           onClose={() => {
             setNuevaCirugiaWizardPatient(null);
             setNuevaCirugiaInitialFechaHora(null);
+            setEditCirugia(null);
           }}
         />
       )}

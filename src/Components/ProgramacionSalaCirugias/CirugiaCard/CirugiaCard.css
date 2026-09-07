@@ -21,9 +21,9 @@
 .cc-card:hover .cc-menu-wrap,.cc-card:focus-within .cc-menu-wrap{opacity:1;}
 
 .cc-horario{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-700);}
-.cc-paciente{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cc-procedimiento{font-size:var(--fs-xs);color:var(--ink-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cc-cirujano{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-paciente{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-procedimiento{font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-cirujano{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 .cc-programada{background:var(--green-bg);border-left-color:var(--green);}
 .cc-urgencia{background:var(--violet-bg);border-left-color:var(--violet-fg);}

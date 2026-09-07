@@ -21,9 +21,14 @@
    el modal centrado sí tiene el ancho para repartirlos sin necesitar los
    divs `.dcp-info-row`/`.dcp-info-row-inline` que agrupaban manualmente las
    filas que iban lado a lado -- acá el grid ya los reparte solo. */
+/* Encapsulado en su propia caja (var(--gray-bg), mismo criterio que
+   .apm-patient-info en AgregarProcedimientoModal.css) en vez de una franja a
+   sangre con solo un border-bottom -- encargo explícito para darle más
+   jerarquía visual frente al split de abajo. */
 .dcp-info-grid{
   display:grid;grid-template-columns:repeat(6, 1fr);gap:14px 24px;
-  padding:0 24px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+  margin:0 24px;padding:14px 20px;
+  background:var(--bg);border-radius:var(--radius-lg);flex-shrink:0;border:1px solid var(--border);
 }
 .dcp-info-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
 .dcp-info-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
@@ -51,18 +56,19 @@
    (IntervencionDetalleModal.css, HistorialQuirurgico), reimplementado acá
    con su propio prefijo en vez de importar cruzado entre features (ver
    AGENTS.md "Component organization"). Columna izquierda a ancho fijo
-   (300px, más angosta que los 400px de .hqd-split-left porque la tabla acá
-   es de solo 3 columnas cortas: Item/Procedimiento/Duración) con la lista de
+   (500px) con la lista de
    procedimientos siempre visible; la derecha, con las tabs Insumos/Farmacia/
    Personal clínico/Equipos, se lleva el resto con 1fr. Cada lado es su
    propia card (mismo criterio que .hq-card en hqd-split: border/radio/fondo
    propios, no comparten box con el otro) para que quede clara la separación
    entre "lista fija" y "detalle que cambia de tab". */
-.dcp-split{display:grid;grid-template-columns:300px 1fr;gap:24px;flex:1;min-height:0;}
+.dcp-split{display:grid;grid-template-columns:500px 1fr;gap:24px;flex:1;min-height:0;}
 .dcp-split-left,.dcp-split-right{
   display:flex;flex-direction:column;min-width:0;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
+.dcp-split-left{width:500px;}
+.dcp-split-right{width:100%;}
 /* El label "Procedimientos" reusa .dcp-tabs-bar/.dcp-tab (activo, no
    clickeable) para alinear su altura con la barra de tabs real de la
    derecha -- mismo criterio que .hqd-split-left .hq-tab en HistorialQuirurgico,
@@ -70,27 +76,10 @@
 .dcp-split-left .dcp-tab{cursor:default;}
 .dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;}
 
+/* Las 5 acciones (Editar/Reprogramar/Marcar como realizada/Marcar como
+   incumplida/Cancelar) van todas directo acá, sin dropdown "Más acciones"
+   -- ver comentario en DetalleCirugiaPanel.jsx. */
 .dcp-actions{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
   padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
-.dcp-actions-main{display:flex;align-items:center;gap:10px;}
-
-/* Menú "Más acciones" (Marcar como programada/incumplida, Ver
-   información/historial) -- movido acá desde AccionesBar.css (ver
-   MiniCalendarCirugias.jsx). Abre hacia arriba (`bottom`, no `top`) porque
-   .dcp-actions vive pegado al borde inferior del modal. */
-.dcp-more-wrap{position:relative;}
-.dcp-more-dropdown{
-  position:absolute;bottom:calc(100% + 6px);left:0;z-index:var(--z-popover);
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 -8px 24px rgba(16,24,39,.16);padding:6px;
-  width:240px;
-}
-.dcp-more-item{
-  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
-  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;white-space:nowrap;
-}
-.dcp-more-item:hover{background:var(--bg);}
-.dcp-more-item:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
-.dcp-more-item .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}

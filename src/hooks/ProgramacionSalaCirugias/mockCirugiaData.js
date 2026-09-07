@@ -1192,6 +1192,13 @@ export function calcularHoraFin(horaInicio, duracionMin) {
 // `farmacia.medicamentos` quedan vacíos (ningún paso los recolecta todavía).
 // `duracionMin` se replica igual en todos los procedimientos (el wizard solo
 // pide una duración total, no una por procedimiento).
+// `wizardDatos` (encargo explícito, ver "Editar cirugía"): copia cruda del
+// `datos` del wizard, para que reabrirlo desde un registro ya guardado
+// (ver datosWizardDesdeCirugia más abajo) tenga fidelidad total en vez de
+// tener que reconstruir campos que el registro final no guarda en ningún
+// otro lado (dx. ingreso, autorización, ASA, clase, tipo anestesia,
+// observaciones...). No afecta a ningún consumidor existente del registro:
+// es un campo nuevo, nadie más lo lee todavía.
 export function armarCirugiaDesdeWizard(datos, patient, salaId) {
   const sala = SALAS.find((s) => s.value === salaId);
   const { edad, edadMeses, edadDias } = calcularEdadDesglosada(patient.fechaNacimiento);
@@ -1240,6 +1247,107 @@ export function armarCirugiaDesdeWizard(datos, patient, salaId) {
     farmacia: {
       numeroPedido: '—', estado: 'en-preparacion', fechaSolicitud: `${datos.fechaSolicitud}T${datos.horaSolicitud}`, medicamentos: [],
     },
+    wizardDatos: datos,
+  };
+}
+
+// Guarda una edición hecha desde el wizard "Nueva cirugía" reabierto en modo
+// edición (ver datosWizardDesdeCirugia/NuevaCirugiaWizard.jsx `cirugiaId`) --
+// a diferencia de armarCirugiaDesdeWizard+crearCirugia (que arman un registro
+// nuevo de cero), acá el paciente/estado/farmacia/causal de reprogramación/
+// motivo de cancelación del registro existente NO se tocan: solo se
+// recalculan los campos que el wizard sí edita (sala, fecha/hora,
+// procedimientos, personal, canasta, equipos), vía actualizarCirugia (merge
+// superficial) en vez de reemplazar el registro entero como haría
+// armarCirugiaDesdeWizard. El paciente no cambia en una edición -- por eso
+// esta función no recibe `patient` (a diferencia de armarCirugiaDesdeWizard,
+// que sí lo necesita para armar el registro desde cero); solo el teléfono de
+// aviso (`datos.telefonosAviso`) se sincroniza de vuelta a `paciente.telAviso`
+// porque es el único dato del paciente que el wizard edita.
+export function editarCirugiaDesdeWizard(id, datos, salaId) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) return actual;
+
+  const sala = SALAS.find((s) => s.value === salaId);
+  const [fecha, horaInicio] = datos.fechaInicio.split('T');
+  const duracionMin = Number(datos.duracionEstimada) || 0;
+  const horaFin = calcularHoraFin(horaInicio, duracionMin);
+
+  const insumos = datos.insumos ?? agregarInsumosPrecargados(datos.procedimientos);
+  const primerProcedimiento = datos.procedimientos[0];
+
+  return actualizarCirugia(id, {
+    sedeId: sala?.sedeId ?? actual.sedeId,
+    salaId,
+    paciente: { ...actual.paciente, telAviso: datos.telefonosAviso },
+    procedimientoPrincipal: primerProcedimiento ? soloNombre(primerProcedimiento.idCirugia) : '',
+    cirujano: primerProcedimiento ? soloNombre(primerProcedimiento.idCirujano) : '',
+    fecha,
+    horaInicio,
+    horaFin,
+    procedimientos: datos.procedimientos.map((p, i) => ({
+      nombre: soloNombre(p.idCirugia),
+      tipo: i === 0 ? 'principal' : 'asociado',
+      duracionMin,
+      notas: '',
+    })),
+    personal: personalDeProcedimientos(datos.procedimientos),
+    equipos: datos.equipos ?? [],
+    canasta: {
+      nombre: actual.canasta?.nombre ?? 'Canasta de la cirugía',
+      items: insumos.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })),
+    },
+    wizardDatos: datos,
+  });
+}
+
+// Reconstruye el `datos` del wizard a partir de una cirugía ya guardada, para
+// que "Editar" reabra "Nueva cirugía" con los datos cargados (encargo
+// explícito). Con `wizardDatos` (grabado la última vez que se creó/editó
+// desde el wizard, ver armarCirugiaDesdeWizard/editarCirugiaDesdeWizard
+// arriba) se usa tal cual -- fidelidad total -- salvo sala/fecha-hora, que
+// siempre se toman del registro vivo por si se movieron después vía
+// "Reprogramar" (que no pasa por el wizard y no actualiza el snapshot).
+//
+// Sin snapshot (datos semilla del mock, o creadas por "Nueva urgencia"): se
+// arma un `datos` best-effort con solo lo recuperable de forma confiable del
+// registro guardado. ~15 campos administrativos del Paso 1 (dx. ingreso,
+// autorización, ASA, clase, tipo anestesia, observaciones...) nunca se
+// guardaron en el registro final y quedan en blanco -- igual que un
+// registro migrado de un sistema viejo sin esos datos (decisión explícita,
+// no hay forma de recuperarlos). Procedimientos/insumos reconstruidos usan
+// el nombre plano como id/código en vez de buscar el código real del
+// catálogo (soloNombre() es un passthrough para strings sin "id - nombre":
+// si el usuario no los toca en el wizard, se guardan de vuelta exactamente
+// igual) -- solo se pierde el vínculo con el catálogo (tipoCirugia por
+// procedimiento, insumos propios de un procedimiento), no el dato en sí.
+export function datosWizardDesdeCirugia(cirugia) {
+  const salaFecha = {
+    salaId: cirugia.salaId,
+    fechaInicio: `${cirugia.fecha}T${cirugia.horaInicio}`,
+  };
+  if (cirugia.wizardDatos) {
+    return { ...cirugia.wizardDatos, ...salaFecha };
+  }
+
+  const anestesiologo = cirugia.personal?.find((p) => p.rol === 'Anestesiólogo')?.nombre ?? '';
+  const [fechaSolicitud, horaSolicitud] = cirugia.farmacia?.fechaSolicitud?.split('T') ?? [];
+
+  return {
+    ...salaFecha,
+    telefonosAviso: cirugia.paciente.telAviso ?? '',
+    fechaSolicitud: fechaSolicitud ?? fechaISO(new Date()),
+    horaSolicitud: horaSolicitud ?? horaLocal(new Date()),
+    duracionEstimada: cirugia.procedimientos?.[0]?.duracionMin ? String(cirugia.procedimientos[0].duracionMin) : '',
+    procedimientos: (cirugia.procedimientos ?? []).map((p) => ({
+      idCirugia: p.nombre,
+      idCirujano: cirugia.cirujano || '',
+      idAnestesiologo: anestesiologo,
+      tipoCirugia: '',
+      insumos: [],
+    })),
+    insumos: (cirugia.canasta?.items ?? []).map((i) => ({ codigo: i.nombre, nombre: i.nombre, cantidad: i.cantidad })),
+    equipos: cirugia.equipos ?? [],
   };
 }
 

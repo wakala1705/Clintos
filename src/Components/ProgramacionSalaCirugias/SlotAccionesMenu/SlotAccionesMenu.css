@@ -14,7 +14,7 @@
   padding:9px 10px;border-radius:8px;border:none;background:none;font-family:inherit;
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
 }
-.sam-item .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.sam-item .icon{width:20px;height:20px;color:var(--ink-500);flex-shrink:0;}
 .sam-item:hover{background:var(--bg);}
 .sam-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
 .sam-item-warning .icon{color:var(--amber-fg);}

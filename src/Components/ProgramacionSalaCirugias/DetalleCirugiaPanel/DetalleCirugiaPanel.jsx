@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -12,7 +12,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuChevronUp, LuCircleCheck, LuInfo, LuPencil,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
@@ -34,27 +34,9 @@ const DETAIL_TABS = [
 // explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
-  onMarcarProgramada, onMarcarIncumplida, onVerInfo,
+  onMarcarRealizada, onMarcarIncumplida,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
-  // Menú "Más acciones" (Marcar como programada/incumplida, Ver
-  // información/historial) -- vivía en el panel lateral (AccionesBar, ver
-  // MiniCalendarCirugias.jsx antes de este encargo) y se movió acá porque
-  // ya depende de una cirugía seleccionada igual que el resto de este
-  // modal. Abre hacia arriba (`.dcp-more-dropdown`) por estar pegado al
-  // borde inferior de `.dcp-actions` -- mismo patrón autocontenido de
-  // click-afuera/Escape que tenía AccionesBar.
-  const [masOpen, setMasOpen] = useState(false);
-  const masRef = useRef(null);
-
-  useEffect(() => {
-    if (!masOpen) return undefined;
-    function handleClickOutside(e) {
-      if (masRef.current && !masRef.current.contains(e.target)) setMasOpen(false);
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [masOpen]);
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -76,13 +58,11 @@ export default function DetalleCirugiaPanel({
   useEffect(() => {
     if (!cirugia) return undefined;
     function handleKeyDown(e) {
-      if (e.key !== 'Escape') return;
-      if (masOpen) setMasOpen(false);
-      else onClose();
+      if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cirugia, masOpen, onClose]);
+  }, [cirugia, onClose]);
 
   function handleDetailTabsKeyDown(e) {
     const idx = DETAIL_TABS.findIndex((t) => t.id === activeDetailTab);
@@ -97,7 +77,6 @@ export default function DetalleCirugiaPanel({
   if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
-  const puedeMarcarProgramada = cirugia.estado === 'urgencia';
   const puedeMarcarIncumplida = cirugia.estado === 'programada';
 
   const body = (
@@ -228,51 +207,19 @@ export default function DetalleCirugiaPanel({
         </div>
       </div>
 
+      {/* Mismas 5 acciones que CirugiaCardMenu.jsx (Editar/Reprogramar/Marcar
+          como realizada/Marcar como incumplida/Cancelar), todas visibles acá
+          en vez de detrás de un dropdown "Más acciones" -- encargo explícito
+          para que el footer del detalle no esconda ninguna acción que la
+          card sí muestra directo. Mismas reglas de disabled que el menú
+          (puedeAccionar/puedeMarcarIncumplida, ambas comparten
+          ESTADOS_TERMINALES_CIRUGIA). */}
       <div className="dcp-actions">
-        <div className="dcp-more-wrap" ref={masRef}>
-          <Button variant="secondary" icon={LuChevronUp} onClick={() => setMasOpen((v) => !v)}>
-            Más acciones
-          </Button>
-          {masOpen && (
-            <div className="dcp-more-dropdown" role="menu">
-              <button
-                type="button"
-                className="dcp-more-item"
-                role="menuitem"
-                disabled={!puedeMarcarProgramada}
-                onClick={() => { setMasOpen(false); onMarcarProgramada(cirugia); }}
-              >
-                <LuCircleCheck className="icon" aria-hidden="true" />
-                Marcar como programada
-              </button>
-              <button
-                type="button"
-                className="dcp-more-item"
-                role="menuitem"
-                disabled={!puedeMarcarIncumplida}
-                onClick={() => { setMasOpen(false); onMarcarIncumplida(cirugia); }}
-              >
-                <LuCalendarClock className="icon" aria-hidden="true" />
-                Marcar como incumplida
-              </button>
-              <button
-                type="button"
-                className="dcp-more-item"
-                role="menuitem"
-                onClick={() => { setMasOpen(false); onVerInfo(); }}
-              >
-                <LuInfo className="icon" aria-hidden="true" />
-                Ver información/historial
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="dcp-actions-main">
-          <Button variant="secondary" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
-          <Button variant="secondary" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
-          <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
-        </div>
+        <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
+        <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
+        <Button variant="secondary-accent" icon={LuCheckCheck} disabled={!puedeAccionar} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
+        <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
+        <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
       </div>
     </>
   );
