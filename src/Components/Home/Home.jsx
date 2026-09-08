@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import './Home.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { useActiveModule } from '@/hooks/Session/session';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
+import AllModulesModal from '@/Components/Home/AllModulesModal/AllModulesModal';
+import PillTabs from '@/Components/Home/PillTabs/PillTabs';
 import {
   LuActivity,
   LuBed,
@@ -14,9 +17,15 @@ import {
   LuCalendarPlus,
   LuClipboardCheck,
   LuFileText,
+  LuFlaskConical,
   LuHeart,
   LuHeartPulse,
   LuChevronDown,
+  LuLandmark,
+  LuLayoutGrid,
+  LuLock,
+  LuPill,
+  LuReceipt,
   LuScissors,
   LuSiren,
   LuStethoscope,
@@ -24,10 +33,30 @@ import {
   LuUsers,
 } from 'react-icons/lu';
 
+// Mismo criterio de color por módulo que Login/ModuleCard.jsx (tone
+// blue/green/orange) — así se identifica cada módulo por color en todo el
+// aplicativo, no solo en el login. Nómina no tiene contenido propio todavía
+// (ver "Ayudas DX"/grupo vacío para el mismo caso), pero el tono queda listo
+// para cuando lo tenga.
+const MODULE_TONES = {
+  asistencial: 'blue',
+  contable: 'green',
+  nomina: 'orange',
+};
+
+// Mismos 3 valores/labels que MODULE_LABELS en hooks/Session/session.js
+// (sin 'administrador', que no es un módulo elegible acá).
+const MODULE_OPTIONS = [
+  { value: 'asistencial', label: 'Asistencial' },
+  { value: 'contable', label: 'Contable' },
+  { value: 'nomina', label: 'Nómina' },
+];
+
 const MODULE_GROUPS = [
   {
     title: 'Consulta Externa',
     icon: LuStethoscope,
+    module: 'asistencial',
     items: [
       {
         title: 'Asignación de citas',
@@ -87,6 +116,7 @@ const MODULE_GROUPS = [
   {
     title: 'Hospitalización',
     icon: LuBed,
+    module: 'asistencial',
     items: [
       {
         title: 'Gestión de enfermería',
@@ -123,6 +153,41 @@ const MODULE_GROUPS = [
       },
     ],
   },
+  {
+    title: 'Finanzas',
+    icon: LuLandmark,
+    module: 'asistencial',
+    items: [
+      {
+        title: 'Facturación',
+        description: 'Consulta, filtra y gestiona las facturas emitidas.',
+        icon: LuReceipt,
+        href: '/facturas',
+        enabled: true,
+      },
+    ],
+  },
+  {
+    title: 'Ayudas DX',
+    icon: LuFlaskConical,
+    module: 'asistencial',
+    enabled: false,
+    items: [],
+  },
+  {
+    title: 'Insumos Farmacia',
+    icon: LuPill,
+    module: 'contable',
+    items: [
+      {
+        title: 'Solicitudes',
+        description: 'Registra y gestiona solicitudes de insumos de farmacia.',
+        icon: LuFileText,
+        href: '/insumos-farmacia/solicitudes',
+        enabled: true,
+      },
+    ],
+  },
 ];
 
 export default function Home() {
@@ -132,6 +197,18 @@ export default function Home() {
   }, []);
 
   const [collapsedGroups, setCollapsedGroups] = useState(() => new Set());
+  const [previewModule, setPreviewModule] = useState('asistencial');
+  const [allModulesOpen, setAllModulesOpen] = useState(false);
+
+  const activeModule = useActiveModule();
+  const isAdmin = activeModule === 'administrador';
+  // El admin previsualiza cualquier módulo sin tocar su sesión real (ver
+  // Sidebar.jsx: isAdmin ya muestra el árbol completo independientemente de
+  // activeModule); un usuario de un solo módulo simplemente ve el suyo,
+  // igual que ya hace Sidebar.jsx (isContable ? contableSubGroups : asistencialSubGroups).
+  const effectiveModule = isAdmin ? previewModule : activeModule;
+  const visibleGroups = MODULE_GROUPS.filter((group) => group.module === effectiveModule);
+  const effectiveModuleLabel = MODULE_OPTIONS.find((opt) => opt.value === effectiveModule)?.label ?? '';
 
   const toggleGroup = (title) => {
     setCollapsedGroups((prev) => {
@@ -155,17 +232,64 @@ export default function Home() {
           <div className="home-inner">
 
             <div className="home-hero">
-              <h1>Bienvenido a Clintos</h1>
-              <p>Selecciona un módulo para continuar.</p>
+              <div className="home-hero-text">
+                <h1>Bienvenido a Clintos</h1>
+                <p>Selecciona un módulo para continuar.</p>
+              </div>
+              {isAdmin && (
+                <div className="home-hero-controls">
+                  <PillTabs
+                    options={MODULE_OPTIONS}
+                    value={previewModule}
+                    onChange={setPreviewModule}
+                    ariaLabel="Selector rápido de módulo"
+                  />
+                  <button
+                    type="button"
+                    className="home-all-modules-btn"
+                    onClick={() => setAllModulesOpen(true)}
+                    aria-label="Buscar en todos los módulos"
+                    title="Buscar en todos los módulos"
+                  >
+                    <LuLayoutGrid className="icon" />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {MODULE_GROUPS.map((group) => {
+            {allModulesOpen && (
+              <AllModulesModal
+                groups={MODULE_GROUPS}
+                initialModule={previewModule}
+                onClose={() => setAllModulesOpen(false)}
+              />
+            )}
+
+            {visibleGroups.length === 0 && (
+              <p className="home-empty-state">Todavía no hay módulos disponibles para {effectiveModuleLabel}.</p>
+            )}
+
+            {visibleGroups.map((group) => {
+              const tone = MODULE_TONES[group.module];
+
+              if (group.enabled === false) {
+                return (
+                  <section className="module-section" key={group.title}>
+                    <div className={`module-section-header disabled tone-${tone}`} aria-disabled="true">
+                      <group.icon className="icon" />
+                      <h2>{group.title}</h2>
+                      <span className="module-card-badge"><LuLock className="icon" />Próximamente</span>
+                    </div>
+                  </section>
+                );
+              }
+
               const collapsed = collapsedGroups.has(group.title);
               const bodyId = `module-section-body-${group.title.replace(/\s+/g, '-').toLowerCase()}`;
               return (
                 <section className={`module-section${collapsed ? ' collapsed' : ''}`} key={group.title}>
                   <div
-                    className="module-section-header"
+                    className={`module-section-header tone-${tone}`}
                     role="button"
                     tabIndex="0"
                     aria-expanded={!collapsed}
@@ -192,6 +316,7 @@ export default function Home() {
                           description={item.description}
                           href={item.href}
                           enabled={item.enabled}
+                          tone={tone}
                         />
                       ))}
                     </div>

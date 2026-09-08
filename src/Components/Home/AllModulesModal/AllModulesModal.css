@@ -1,0 +1,72 @@
+/* Scaffolding de modal propio (.amm-overlay/.amm-modal) — mismo criterio que
+   FiltroPickerModal.css: no hay un modal-scaffolding compartido cargado en
+   toda ruta, así que cada modal es dueño del suyo. El header de título/
+   cerrar sí es el homologado (@/Components/ModalHeader/ModalHeader). */
+.amm-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;
+}
+.amm-overlay.open{display:flex;}
+.amm-modal{
+  width:1200px;max-width:calc(100vw - 32px);height:600px;max-height:calc(100vh - 32px);
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  box-shadow:0 20px 48px rgba(16,24,39,.24);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* Tabs + buscador en una sola fila (ver Home.jsx). */
+.amm-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin:16px 24px;
+}
+
+.amm-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  width:280px;height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.amm-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.amm-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.amm-search input::placeholder{color:var(--ink-400);}
+
+/* Tabs de módulo: @/Components/Home/PillTabs/PillTabs (compartido con el
+   selector rápido del hero, ver Home.jsx). */
+
+.amm-grid{
+  flex:1;min-height:0;overflow-y:auto;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+  padding:16px 24px 24px;align-content:start;
+}
+.amm-empty{grid-column:1 / -1;padding:32px 0;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+.amm-item{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:6px;text-align:left;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;
+}
+.amm-item:not(.disabled):hover{border-color:var(--primary-100);box-shadow:0 4px 14px rgba(16,24,39,.06);}
+.amm-item:not(.disabled):focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+html[data-theme="dark"] .amm-item:not(.disabled):hover{box-shadow:0 4px 14px rgba(0,0,0,.28);}
+.amm-item.disabled{cursor:default;opacity:.68;}
+
+.amm-item-icon{
+  width:36px;height:36px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary-dark);
+}
+.amm-item-icon .icon{width:18px;height:18px;}
+/* Tono por módulo (ver MODULE_TONES en AllModulesModal.jsx/Home.jsx) —
+   asistencial se queda con el azul por defecto de arriba. */
+.amm-item-icon.tone-green{background:var(--green-bg);color:var(--green);}
+.amm-item-icon.tone-orange{background:var(--orange-bg);color:var(--orange);}
+
+.amm-item-body{flex:1;min-width:0;}
+.amm-item-section{display:block;font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.amm-item-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:2px;}
+.amm-item-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.amm-item-desc{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;margin-top:2px;}

@@ -1,0 +1,10 @@
+.pill-tabs{display:flex;gap:4px;flex-shrink:0;}
+.pill-tab{
+  border:none;background:none;cursor:pointer;
+  padding:8px 14px;border-radius:var(--radius);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  transition:background .15s,color .15s;
+}
+.pill-tab:hover{background:var(--gray-bg);}
+.pill-tab:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.pill-tab.active{background:var(--gray-bg);color:var(--ink-900);font-weight:var(--fw-medium);}

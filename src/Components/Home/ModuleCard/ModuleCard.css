@@ -22,6 +22,10 @@ html[data-theme="dark"] .module-card:not(.disabled):hover{box-shadow:0 4px 14px 
   background:var(--primary-50);color:var(--primary-dark);
 }
 .module-card-icon .icon{width:20px;height:20px;}
+/* Tono por módulo (ver MODULE_TONES en Home.jsx) — asistencial se queda con
+   el azul por defecto de arriba. */
+.module-card-icon.tone-green{background:var(--green-bg);color:var(--green);}
+.module-card-icon.tone-orange{background:var(--orange-bg);color:var(--orange);}
 
 .module-card-body{flex:1;min-width:0;}
 .module-card-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}

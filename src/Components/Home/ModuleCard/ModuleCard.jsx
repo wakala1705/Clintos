@@ -2,10 +2,12 @@ import Link from 'next/link';
 import './ModuleCard.css';
 import { LuArrowRight, LuLock } from 'react-icons/lu';
 
-export default function ModuleCard({ icon: Icon, title, description, href, enabled = true }) {
+export default function ModuleCard({
+  icon: Icon, title, description, href, enabled = true, tone = 'blue',
+}) {
   const inner = (
     <>
-      <div className="module-card-icon"><Icon className="icon" /></div>
+      <div className={`module-card-icon${tone !== 'blue' ? ` tone-${tone}` : ''}`}><Icon className="icon" /></div>
       <div className="module-card-body">
         <div className="module-card-title-row">
           <span className="module-card-title">{title}</span>

@@ -25,6 +25,15 @@
   --radius:8px;
   --radius-lg:12px;
 
+  /* Tonos por módulo (ver "MODULE_TONES" en Home.jsx) — mismos valores que
+     ya usa el resto del proyecto para verde/naranja (Vacunacion.css,
+     GestionCamas.css, etc.), no los de Login/ModuleCard.module.css (esa es
+     una paleta hardcodeada aparte, sin tokens). */
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --orange:#e8720c;
+  --orange-bg:#fdead9;
+
   /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
      bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
   --input-sm:32px;
@@ -44,6 +53,10 @@ html[data-theme="dark"]{
   --bg:#0c0f17;
   --gray-fg:#9aa3b2;
   --gray-bg:#242c3d;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --orange:#f5975a;
+  --orange-bg:rgba(232,114,12,.20);
 }
 
 /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
@@ -116,13 +129,36 @@ body{
 .home-content{padding:32px;}
 .home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px;}
 
+.home-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
 .home-hero h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .home-hero p{font-size:var(--fs-base);color:var(--ink-500);margin-top:4px;}
+
+.home-hero-controls{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* Selector rápido de módulo (solo admin, ver Home.jsx): @/Components/Home/
+   PillTabs/PillTabs, compartido con las tabs de AllModulesModal.jsx. */
+
+/* Botón "todos los módulos" (ver AllModulesModal.jsx) — mismo trigger que el
+   ícono de grilla "Todas las herramientas" de referencia (Magnific). */
+.home-all-modules-btn{
+  width:36px;height:36px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);color:var(--ink-500);cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.home-all-modules-btn .icon{width:18px;height:18px;}
+.home-all-modules-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.home-all-modules-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+.home-empty-state{font-size:var(--fs-base);color:var(--ink-500);}
 
 /* Mismo mecanismo que .nav-group/.nav-body de Sidebar.css (grid-template-rows
    0fr/1fr + overflow:hidden en el body) en vez de display:none, para que el
    colapso/expansión anime en vez de saltar. */
 .module-section{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 24px;
   display:grid;grid-template-rows:auto 1fr;
   transition:grid-template-rows .22s ease;
 }
@@ -130,15 +166,25 @@ body{
 
 .module-section-header{
   display:flex;align-items:center;gap:10px;
-  margin-bottom:14px;
   cursor:pointer;user-select:none;
   border-radius:var(--radius);
 }
 .module-section-header:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .module-section-header .icon{width:19px;height:19px;color:var(--primary-dark);}
+/* Tono por módulo (ver MODULE_TONES en Home.jsx) — asistencial se queda con
+   el azul por defecto de arriba, así que solo hace falta overridear los
+   otros dos. */
+.module-section-header.tone-green .icon{color:var(--green);}
+.module-section-header.tone-orange .icon{color:var(--orange);}
 .module-section-header h2{flex:1;min-width:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .module-section-header .chev{width:19px;height:19px;color:var(--ink-400);transition:transform .18s;}
 .module-section.collapsed .module-section-header .chev{transform:rotate(-90deg);}
+
+/* Sección sin contenido todavía (ej. Ayudas DX): header no clickeable, sin
+   chevron/body — mismo badge que ModuleCard.jsx usa para un ítem individual
+   deshabilitado (ver ModuleCard.css), reutilizado a nivel de sección. */
+.module-section-header.disabled{cursor:default;}
+.module-section-header.disabled .icon:first-child{opacity:.75;}
 
 .module-section-body{overflow:hidden;min-height:0;}
 
@@ -146,4 +192,9 @@ body{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:14px;
+  margin-top:16px;
+  background:var(--bg);
+  border-radius:var(--radius-lg);
+  padding:16px;
+  border:1px solid var(--border);
 }
