@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './Home.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
@@ -16,6 +16,7 @@ import {
   LuFileText,
   LuHeart,
   LuHeartPulse,
+  LuChevronDown,
   LuScissors,
   LuSiren,
   LuStethoscope,
@@ -130,6 +131,17 @@ export default function Home() {
     return cleanup;
   }, []);
 
+  const [collapsedGroups, setCollapsedGroups] = useState(() => new Set());
+
+  const toggleGroup = (title) => {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title);
+      else next.add(title);
+      return next;
+    });
+  };
+
   return (
     <div className="app">
 
@@ -147,26 +159,46 @@ export default function Home() {
               <p>Selecciona un módulo para continuar.</p>
             </div>
 
-            {MODULE_GROUPS.map((group) => (
-              <section className="module-section" key={group.title}>
-                <div className="module-section-header">
-                  <group.icon className="icon" />
-                  <h2>{group.title}</h2>
-                </div>
-                <div className="module-grid">
-                  {group.items.map((item) => (
-                    <ModuleCard
-                      key={item.title}
-                      icon={item.icon}
-                      title={item.title}
-                      description={item.description}
-                      href={item.href}
-                      enabled={item.enabled}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
+            {MODULE_GROUPS.map((group) => {
+              const collapsed = collapsedGroups.has(group.title);
+              const bodyId = `module-section-body-${group.title.replace(/\s+/g, '-').toLowerCase()}`;
+              return (
+                <section className={`module-section${collapsed ? ' collapsed' : ''}`} key={group.title}>
+                  <div
+                    className="module-section-header"
+                    role="button"
+                    tabIndex="0"
+                    aria-expanded={!collapsed}
+                    aria-controls={bodyId}
+                    onClick={() => toggleGroup(group.title)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleGroup(group.title);
+                      }
+                    }}
+                  >
+                    <group.icon className="icon" />
+                    <h2>{group.title}</h2>
+                    <LuChevronDown className="icon chev" />
+                  </div>
+                  <div className="module-section-body" id={bodyId}>
+                    <div className="module-grid">
+                      {group.items.map((item) => (
+                        <ModuleCard
+                          key={item.title}
+                          icon={item.icon}
+                          title={item.title}
+                          description={item.description}
+                          href={item.href}
+                          enabled={item.enabled}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
 
           </div>
         </div>
