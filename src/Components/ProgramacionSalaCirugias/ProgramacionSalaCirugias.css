@@ -36,7 +36,7 @@
   --status-info-bg:var(--primary-50);
   --status-info-fg:var(--primary-dark);
 
-  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-bg:var(--primary-100);
   --interactive-selected-border:var(--primary-100);
   --interactive-selected-text:var(--primary-dark);
 

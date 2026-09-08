@@ -6,7 +6,7 @@
    verse como inputs. */
 .rcm-info-box{
   display:grid;grid-template-columns:repeat(3,1fr);gap:12px 20px;
-  padding:12px 16px;background:var(--gray-bg);border-radius:var(--radius);
+  padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
 }
 .rcm-info-item{display:flex;flex-direction:column;gap:2px;}
 .rcm-info-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}

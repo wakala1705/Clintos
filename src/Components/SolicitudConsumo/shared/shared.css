@@ -59,7 +59,7 @@ tbody td.strong{color:var(--ink-900);font-weight:var(--fw-semibold);}
 tbody tr{cursor:pointer;transition:background .1s;}
 tbody tr:hover{background:#f7f9fd;}
 html[data-theme="dark"] tbody tr:hover{background:#1a2130;}
-tbody tr.selected{background:var(--primary-50);}
+tbody tr.selected{background:var(--interactive-selected-bg);}
 tbody tr.selected td{color:var(--ink-900);}
 tbody tr:last-child td{border-bottom:none;}
 tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}

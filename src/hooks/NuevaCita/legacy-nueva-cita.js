@@ -52,6 +52,20 @@ export function initNuevaCita({
     { iniciales:'SM', nombre:'Sandra Milena Vargas Díaz',    edad:41, sexo:'Femenino',  ciudad:'Pereira',        documento:'52.483.917',    telefono:'305 555 6789', eps:'Coomeva',    estado:'activo',     citasFuturas:1 },
   ];
   const PATIENT_ESTADO_LABEL = { activo:'Activo', inactivo:'Inactivo', suspendido:'Suspendido' };
+  // Nombre legal completo de la aseguradora para la columna "Aseguradora" de
+  // la Lista de Pacientes — p.eps sigue siendo el nombre corto (usado tal
+  // cual en el resto del flujo: badge de la agenda de AsignacionCitas,
+  // filaNueva.eps en ncConfirmar, apData.eps del alta de paciente), así que
+  // este mapeo es solo de presentación en esta tabla, no un cambio de dato.
+  const PS_ASEGURADORA_LABEL = {
+    'Sura':'SEGUROS GENERALES SURAMERICANA S.A.',
+    'Nueva EPS':'NUEVA EPS',
+    'Compensar':'COMPENSAR EPS',
+    'Salud Total':'SALUD TOTAL S.A. EPS',
+    'Colsanitas':'ENTIDAD PROMOTORA DE SALUD SANITAS S A S',
+    'Famisanar':'FAMISANAR EPS',
+    'Coomeva':'COOMEVA EPS S.A.',
+  };
 
   // Este flujo se monta de forma independiente en varias páginas
   // (AsignacionCitas, FichaPaciente, ProgramarCita), cada una con su propia
@@ -67,10 +81,17 @@ export function initNuevaCita({
   });
 
   let psSelectedIdx = null;
+  // true mientras el panel de búsqueda avanzada (4 campos de nombre) está
+  // abierto en vez del campo único de documento -- ver
+  // togglePsAdvancedSearch() más abajo. Se resetea a false cada vez que se
+  // abre el modal (openPatientSearch) para que siempre arranque en modo
+  // simple, sin importar en qué modo haya quedado la última vez.
+  let psAdvancedMode = false;
 
   function openPatientSearch(){
     psSelectedIdx = null;
     document.getElementById('ps-overlay').classList.add('open');
+    resetPsAdvancedSearch();
     filterPatients('');
     document.getElementById('ps-accept-btn').disabled = true;
     const input = document.querySelector('#ps-overlay .ps-search-field input');
@@ -81,22 +102,124 @@ export function initNuevaCita({
     document.getElementById('ps-overlay').classList.remove('open');
   }
 
+  // Búsqueda simple: solo por N° de documento (encargo explícito -- antes
+  // también matcheaba por nombre libre, ver filterPatientsAdvanced() más
+  // abajo para la búsqueda por nombre desglosada). Sin dígitos en el query
+  // no hay nada que pueda matchear (el documento es siempre numérico), así
+  // que la lista queda vacía en vez de caer a "mostrar todo" con texto no
+  // numérico.
   function filterPatients(query){
-    const q = query.trim().toLowerCase();
-    const qDigits = q.replace(/\D/g,'');
+    const qDigits = query.trim().replace(/\D/g,'');
     const list = PATIENTS.filter(p=>{
-      if(!q) return true;
-      const matchNombre = p.nombre.toLowerCase().includes(q);
-      const matchDoc = qDigits && p.documento.replace(/\D/g,'').includes(qDigits);
-      return matchNombre || matchDoc;
+      if(!qDigits) return true;
+      return p.documento.replace(/\D/g,'').includes(qDigits);
     });
     renderPatientTable(list);
   }
 
+  // NFD descompone "í" en "i" + tilde combinante (rango U+0300-U+036F, todos
+  // los diacríticos combinantes), el replace se los quita y deja el resto
+  // intacto -- mismo patrón que normalizarNombre() en
+  // mockVacunacionData.js/mockFacturasData.js, reimplementado acá porque
+  // este módulo es imperativo, no un componente React (no comparten util
+  // chico entre sí, ver AGENTS.md "Component organization").
+  function normalizarTexto(texto){
+    return texto.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  }
+
+  // PATIENTS trae `nombre` como un único string (ver arriba) -- la búsqueda
+  // avanzada necesita primer/segundo nombre + primer/segundo apellido por
+  // separado, así que se parte por espacios. Los 7 mocks siguen todos el
+  // patrón de 4 palabras (nombre1 nombre2 apellido1 apellido2); un paciente
+  // real con menos de 4 palabras simplemente deja esas partes vacías en vez
+  // de romper.
+  function nombrePartes(nombre){
+    const partes = nombre.trim().split(/\s+/);
+    return {
+      nombre1: partes[0] || '',
+      nombre2: partes[1] || '',
+      apellido1: partes[2] || '',
+      apellido2: partes[3] || '',
+    };
+  }
+
+  // Búsqueda avanzada: cada campo no vacío debe matchear su parte
+  // correspondiente del nombre (AND entre campos, no OR) -- alguien que
+  // llena "primer apellido" espera acotar por ese apellido, no ver
+  // cualquier paciente que matchee cualquiera de los 4 campos.
+  function filterPatientsAdvanced(){
+    const nombre1 = normalizarTexto((document.getElementById('ps-adv-nombre1')?.value || '').trim());
+    const nombre2 = normalizarTexto((document.getElementById('ps-adv-nombre2')?.value || '').trim());
+    const apellido1 = normalizarTexto((document.getElementById('ps-adv-apellido1')?.value || '').trim());
+    const apellido2 = normalizarTexto((document.getElementById('ps-adv-apellido2')?.value || '').trim());
+    const list = PATIENTS.filter(p=>{
+      const partes = nombrePartes(p.nombre);
+      const matchNombre1 = !nombre1 || normalizarTexto(partes.nombre1).includes(nombre1);
+      const matchNombre2 = !nombre2 || normalizarTexto(partes.nombre2).includes(nombre2);
+      const matchApellido1 = !apellido1 || normalizarTexto(partes.apellido1).includes(apellido1);
+      const matchApellido2 = !apellido2 || normalizarTexto(partes.apellido2).includes(apellido2);
+      return matchNombre1 && matchNombre2 && matchApellido1 && matchApellido2;
+    });
+    renderPatientTable(list);
+  }
+
+  const PS_ADV_FIELD_IDS = ['ps-adv-nombre1', 'ps-adv-nombre2', 'ps-adv-apellido1', 'ps-adv-apellido2'];
+
+  // Alterna entre búsqueda simple (campo único de documento) y avanzada (4
+  // campos de nombre) -- nunca las dos visibles a la vez. Cambiar de modo
+  // limpia el campo/campos del modo que se abandona y vuelve a mostrar la
+  // lista completa, para que no queden filtros "fantasma" aplicados de un
+  // modo que ya no se ve en pantalla.
+  function togglePsAdvancedSearch(){
+    psAdvancedMode = !psAdvancedMode;
+    aplicarPsAdvancedMode();
+    if(psAdvancedMode){
+      const simpleInput = document.querySelector('#ps-search-simple input');
+      if(simpleInput) simpleInput.value = '';
+      filterPatientsAdvanced();
+      document.getElementById('ps-adv-nombre1')?.focus();
+    } else {
+      PS_ADV_FIELD_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+      });
+      filterPatients('');
+      document.querySelector('#ps-search-simple input')?.focus();
+    }
+  }
+
+  // Refleja psAdvancedMode en el DOM (hidden de ambos paneles + estado
+  // .active del botón toggle) sin decidir qué lista mostrar -- eso lo hacen
+  // los llamadores (togglePsAdvancedSearch/resetPsAdvancedSearch), que sí
+  // saben si corresponde re-filtrar o solo resetear en silencio.
+  function aplicarPsAdvancedMode(){
+    const simple = document.getElementById('ps-search-simple');
+    const advanced = document.getElementById('ps-search-advanced');
+    const toggleBtn = document.getElementById('ps-adv-toggle');
+    const toggleLabel = document.getElementById('ps-adv-toggle-label');
+    if(simple) simple.hidden = psAdvancedMode;
+    if(advanced) advanced.hidden = !psAdvancedMode;
+    if(toggleBtn) toggleBtn.classList.toggle('active', psAdvancedMode);
+    if(toggleLabel) toggleLabel.textContent = psAdvancedMode ? 'Búsqueda simple' : 'Búsqueda avanzada';
+  }
+
+  // Fuerza el modal a arrancar siempre en modo simple con los 4 campos
+  // avanzados vacíos, sin importar en qué modo haya quedado la última vez
+  // que se cerró -- llamado desde openPatientSearch().
+  function resetPsAdvancedSearch(){
+    psAdvancedMode = false;
+    aplicarPsAdvancedMode();
+    PS_ADV_FIELD_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+  }
+
   function renderPatientTable(list){
     const tbody = document.getElementById('ps-tbody');
+    updatePsPaginationLabel(list.length);
     if(!list.length){
-      tbody.innerHTML = `<tr class="row-disabled"><td colspan="6" style="text-align:center;color:var(--ink-500);padding:24px;">No se encontraron pacientes</td></tr>`;
+      tbody.innerHTML = `<tr class="row-disabled"><td colspan="7" style="text-align:center;color:var(--ink-500);padding:24px;">No se encontraron pacientes</td></tr>`;
       return;
     }
     tbody.innerHTML = list.map(p=>{
@@ -111,16 +234,13 @@ export function initNuevaCita({
       // especialidades sin médicos disponibles (ver ncContentEspecialidad).
       const disabled = p.estado !== 'activo';
       const disabledTitle = disabled ? ` title="No se puede agendar: paciente ${PATIENT_ESTADO_LABEL[p.estado].toLowerCase()}. Reactiva el registro desde “Editar” para continuar."` : '';
+      const aseguradora = PS_ASEGURADORA_LABEL[p.eps] || p.eps;
       return `<tr class="${selected?'selected':''} ${disabled?'row-disabled':''}" ${disabled?'':`tabindex="0" onclick="setPsSelected(${idx},this)" ondblclick="setPsSelected(${idx},this); confirmPatientSelection();"`}${disabledTitle}>
-        <td>
-          <div class="ps-patient-cell">
-            <span class="ps-avatar">${p.iniciales}</span>
-            <span class="ps-pname">${p.nombre}</span>
-          </div>
-        </td>
         <td>${p.documento}</td>
+        <td><span class="ps-pname">${p.nombre}</span></td>
+        <td>${p.sexo}</td>
+        <td><span class="ps-aseguradora" title="${aseguradora}">${aseguradora}</span></td>
         <td>${p.ciudad}</td>
-        <td><span class="badge eps">${p.eps}</span></td>
         <td><span class="estado-badge ${p.estado}"><span class="dot"></span>${PATIENT_ESTADO_LABEL[p.estado]}</span></td>
         <td>
           <button class="row-menu-btn" style="display:inline-flex;" onclick="event.stopPropagation(); togglePsRowMenu(event, ${idx});" aria-label="Más acciones" title="Más acciones">
@@ -129,6 +249,19 @@ export function initNuevaCita({
         </td>
       </tr>`;
     }).join('');
+  }
+
+  // El paginador de la Lista de Pacientes es de demostración (7 pacientes
+  // mock, siempre entran en una sola página, ver Anterior/Siguiente
+  // deshabilitados en NuevaCitaFlow.jsx) — mismo criterio que VacPagination.
+  // Solo el conteo "Mostrando X de Y pacientes" se actualiza en vivo con el
+  // resultado filtrado de filterPatients().
+  function updatePsPaginationLabel(count){
+    const label = document.getElementById('ps-pagination-label');
+    if(!label) return;
+    label.innerHTML = count
+      ? `Mostrando <b>1–${count}</b> de <b>${count}</b> pacientes`
+      : `Mostrando <b>0</b> de <b>0</b> pacientes`;
   }
 
   /* ---- Menú contextual de fila (Editar / Historial / Desactivar) ---- */
@@ -1425,7 +1558,8 @@ export function initNuevaCita({
   // inline (onclick="...") resuelven identificadores en el scope global, así
   // que todo lo que el HTML generado necesita llamar vive en `window`.
   const exported = {
-    openPatientSearch, closePatientSearch, filterPatients, setPsSelected,
+    openPatientSearch, closePatientSearch, filterPatients, filterPatientsAdvanced,
+    togglePsAdvancedSearch, setPsSelected,
     togglePsRowMenu, psAccionEditar, psAccionHistorial, psAccionDesactivar,
     confirmPatientSelection,
     ncOpen, ncClose, ncCancelDiscard, ncConfirmDiscard, ncBack, ncGoTo, ncSelectRegimen, ncSelectEspecialidad,

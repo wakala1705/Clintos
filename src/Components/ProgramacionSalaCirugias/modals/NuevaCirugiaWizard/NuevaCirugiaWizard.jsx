@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './NuevaCirugiaWizard.css';
 import InformacionGeneralStep from './InformacionGeneralStep/InformacionGeneralStep';
 import ProcedimientosStep from './ProcedimientosStep/ProcedimientosStep';
@@ -11,7 +11,9 @@ import Button from '@/Components/Button/Button';
 import {
   fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuX } from 'react-icons/lu';
+import {
+  LuCheck, LuTrash2, LuTriangleAlert, LuX,
+} from 'react-icons/lu';
 
 const PASOS = [
   { n: 1, titulo: 'Información general', sub: 'Datos administrativos y de admisión de la cirugía.' },
@@ -20,6 +22,43 @@ const PASOS = [
   { n: 4, titulo: 'Equipos', sub: 'Equipos requeridos para la cirugía.' },
   { n: 5, titulo: 'Confirmación', sub: 'Resumen antes de guardar.' },
 ];
+
+// Labels de los campos obligatorios del Paso 1 (InformacionGeneralStep),
+// en el mismo orden en que aparecen en el formulario -- alimenta tanto el
+// gate de "Continuar"/"Guardar cirugía" como el mensaje explícito de qué
+// falta (heurística "ayudar a reconocer/recuperarse de errores": el
+// resaltado ámbar de .form-field ya existente es insuficiente por sí solo,
+// se puede desactivar por completo desde Configuración > Apariencia vía
+// data-required-highlight, ver shared/shared.css). `vacio()` trata 0/false
+// como valores válidos (ej. "Días cama" en 0) -- a diferencia de un simple
+// `!valor`, que los marcaría como faltantes.
+function vacio(v) {
+  return v === '' || v === null || v === undefined;
+}
+function camposFaltantesPaso1(datos) {
+  const faltantes = [];
+  if (vacio(datos.fechaInicio)) faltantes.push('Fecha de programación');
+  if (vacio(datos.telefonosAviso)) faltantes.push('Teléfonos aviso');
+  if (vacio(datos.fechaSolicitud)) faltantes.push('Fecha solicitud');
+  if (vacio(datos.horaSolicitud)) faltantes.push('Hora solicitud');
+  if (vacio(datos.duracionEstimada)) faltantes.push('Dur. estimada');
+  if (vacio(datos.duracionPostquirurgica)) faltantes.push('Dur. postquirúrgica');
+  if (vacio(datos.duracionRecuperacion)) faltantes.push('Dur. recuperación');
+  if (vacio(datos.clase)) faltantes.push('Clase');
+  if (vacio(datos.tipoAnestesia)) faltantes.push('Tipo anestesia');
+  if (vacio(datos.complejidad)) faltantes.push('Complejidad');
+  if (vacio(datos.asa)) faltantes.push('Asa');
+  if (vacio(datos.dxIngreso)) faltantes.push('Dx. ingreso');
+  if (vacio(datos.idAseguradora)) faltantes.push('Id. aseguradora');
+  if (vacio(datos.noAutorizacion)) faltantes.push('No. autorización');
+  if (vacio(datos.quienAutoriza)) faltantes.push('Quién autoriza');
+  if (datos.reservaHabitacion && vacio(datos.diasCama)) faltantes.push('Días cama');
+  if (datos.seVenceAutorizacion) {
+    if (vacio(datos.fechaVence)) faltantes.push('Fecha vence');
+    if (vacio(datos.horaVence)) faltantes.push('Hora vence');
+  }
+  return faltantes;
+}
 
 // Fecha de programación (campo `fechaInicio`, label "Fecha de
 // programación" en InformacionGeneralStep.jsx) precarga la fecha/hora del
@@ -111,13 +150,56 @@ export default function NuevaCirugiaWizard({
     ...datosIniciales(patient, salaId, initialFechaHora),
     ...initialDatos,
   }));
+  const [mostrarDescartar, setMostrarDescartar] = useState(false);
   const salaLabel = SALAS.find((s) => s.value === salaId)?.label ?? '—';
+  // Snapshot del primer `datos` -- `useRef(datos)` solo toma el argumento en
+  // el montaje, así que sirve de línea base estable para detectar progreso
+  // real del usuario sin recalcularla en cada render (ver haCambiado más
+  // abajo).
+  const datosInicialesRef = useRef(datos);
 
   function set(campo, valor) {
     setDatos((d) => ({ ...d, [campo]: valor }));
   }
 
+  // Paso 3/4 (Insumos/Equipos) no tienen campos obligatorios propios --
+  // Paso 2 exige al menos un procedimiento (si no, `armarCirugiaDesdeWizard`
+  // guardaría una cirugía sin cirujano/anestesiólogo/procedimiento
+  // principal). `puedeIrA` replica el mismo criterio de
+  // NuevaProgramacionWizard.jsx (GestionTurnos, wizard hermano): siempre se
+  // puede volver a un paso ya visitado/actual, pero saltar hacia adelante
+  // exige que todos los pasos anteriores estén completos.
+  const faltantesPaso1 = camposFaltantesPaso1(datos);
+  const pasoCompleto = {
+    1: faltantesPaso1.length === 0,
+    2: datos.procedimientos.length > 0,
+    3: true,
+    4: true,
+    5: true,
+  };
+  function puedeIrA(n) {
+    if (n <= paso) return true;
+    for (let i = 1; i < n; i += 1) if (!pasoCompleto[i]) return false;
+    return true;
+  }
+  const pasosIncompletos = PASOS.filter((p) => p.n < 5 && !pasoCompleto[p.n]).map((p) => p.titulo);
+
+  // "Con progreso" -- gatea si cerrar pide confirmación de descarte (ver
+  // handleIntentarCerrar). `paso > 1` ya implica datos reales cargados (el
+  // Paso 1 exige sus campos obligatorios para avanzar), pero se suma la
+  // comparación contra el snapshot inicial para cubrir edición sin avanzar
+  // de paso (tipear en el Paso 1 sin hacer clic en Continuar todavía).
+  function haCambiado() {
+    if (paso > 1 || datos.procedimientos.length > 0 || datos.equipos.length > 0 || datos.insumos !== null) return true;
+    return Object.keys(datosInicialesRef.current).some((k) => datos[k] !== datosInicialesRef.current[k]);
+  }
+  function handleIntentarCerrar() {
+    if (haCambiado()) setMostrarDescartar(true);
+    else onClose();
+  }
+
   function handleGuardar() {
+    if (!pasoCompleto[1] || !pasoCompleto[2]) return;
     const resultado = editando
       ? editarCirugiaDesdeWizard(cirugiaId, datos, salaId)
       : crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaId));
@@ -126,8 +208,9 @@ export default function NuevaCirugiaWizard({
   }
 
   return (
-    <div className="modal-overlay open">
-      <div className="ncw-modal" role="dialog" aria-modal="true" aria-labelledby="ncw-title">
+    <>
+      <div className="modal-overlay open">
+        <div className="ncw-modal" role="dialog" aria-modal="true" aria-labelledby="ncw-title">
         <div className="ncw-body">
           <nav className="ncw-rail">
             <div className="ncw-rail-header">
@@ -160,14 +243,17 @@ export default function NuevaCirugiaWizard({
             <div className="ncw-rail-nav">
               {PASOS.map((p) => {
                 const active = p.n === paso;
+                const done = p.n < paso && pasoCompleto[p.n];
+                const locked = !puedeIrA(p.n);
                 return (
                   <button
                     key={p.n}
                     type="button"
-                    className={`ncw-rail-step${active ? ' active' : ''}`}
-                    onClick={() => setPaso(p.n)}
+                    className={`ncw-rail-step${active ? ' active' : ''}${done ? ' done' : ''}${locked ? ' locked' : ''}`}
+                    disabled={locked}
+                    onClick={() => { if (puedeIrA(p.n)) setPaso(p.n); }}
                   >
-                    <span className="ncw-rail-circle">{p.n}</span>
+                    <span className="ncw-rail-circle">{done ? <LuCheck /> : p.n}</span>
                     <span className="ncw-rail-step-text">
                       <span className="ncw-rail-step-title">{p.titulo}</span>
                       <span className="ncw-rail-step-sub">{p.sub}</span>
@@ -189,7 +275,7 @@ export default function NuevaCirugiaWizard({
                 {' '}
                 {PASOS.length}
               </span>
-              <button type="button" className="ncw-close" onClick={onClose} aria-label="Cerrar" title="Cerrar">
+              <button type="button" className="ncw-close" onClick={handleIntentarCerrar} aria-label="Cerrar" title="Cerrar">
                 <LuX className="icon" />
               </button>
             </div>
@@ -215,38 +301,91 @@ export default function NuevaCirugiaWizard({
             <div className="ncw-footer">
               {paso === 1 && (
                 <>
-                  <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-                  <Button variant="primary" onClick={() => setPaso(2)}>Continuar</Button>
+                  {faltantesPaso1.length > 0 && (
+                    <span className="ncw-footer-hint">
+                      Completa: {faltantesPaso1.join(', ')}.
+                    </span>
+                  )}
+                  <div className="ncw-footer-actions">
+                    <Button variant="secondary" onClick={handleIntentarCerrar}>Cancelar</Button>
+                    <Button variant="primary" disabled={!pasoCompleto[1]} onClick={() => setPaso(2)}>Continuar</Button>
+                  </div>
                 </>
               )}
               {paso === 2 && (
                 <>
-                  <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
-                  <Button variant="primary" onClick={() => setPaso(3)}>Continuar</Button>
+                  {!pasoCompleto[2] && (
+                    <span className="ncw-footer-hint">Agrega al menos un procedimiento para continuar.</span>
+                  )}
+                  <div className="ncw-footer-actions">
+                    <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
+                    <Button variant="primary" disabled={!pasoCompleto[2]} onClick={() => setPaso(3)}>Continuar</Button>
+                  </div>
                 </>
               )}
               {paso === 3 && (
-                <>
+                <div className="ncw-footer-actions">
                   <Button variant="secondary" onClick={() => setPaso(2)}>Atrás</Button>
                   <Button variant="primary" onClick={() => setPaso(4)}>Continuar</Button>
-                </>
+                </div>
               )}
               {paso === 4 && (
-                <>
+                <div className="ncw-footer-actions">
                   <Button variant="secondary" onClick={() => setPaso(3)}>Atrás</Button>
                   <Button variant="primary" onClick={() => setPaso(5)}>Continuar</Button>
-                </>
+                </div>
               )}
               {paso === 5 && (
                 <>
-                  <Button variant="secondary" onClick={() => setPaso(4)}>Atrás</Button>
-                  <Button variant="primary" onClick={handleGuardar}>{editando ? 'Guardar cambios' : 'Guardar cirugía'}</Button>
+                  {pasosIncompletos.length > 0 && (
+                    <span className="ncw-footer-hint">
+                      Faltan datos obligatorios en: {pasosIncompletos.join(', ')}.
+                    </span>
+                  )}
+                  <div className="ncw-footer-actions">
+                    <Button variant="secondary" onClick={() => setPaso(4)}>Atrás</Button>
+                    <Button
+                      variant="primary"
+                      disabled={!pasoCompleto[1] || !pasoCompleto[2]}
+                      onClick={handleGuardar}
+                    >
+                      {editando ? 'Guardar cambios' : 'Guardar cirugía'}
+                    </Button>
+                  </div>
                 </>
               )}
             </div>
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {mostrarDescartar && (
+        <div
+          className="modal-overlay open"
+          onClick={(e) => { if (e.target === e.currentTarget) setMostrarDescartar(false); }}
+        >
+          <div
+            className="ncw-discard-modal"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="ncw-discard-title"
+            aria-describedby="ncw-discard-desc"
+          >
+            <div className="ncw-discard-icon"><LuTriangleAlert className="icon" /></div>
+            <h3 id="ncw-discard-title">¿Descartar {editando ? 'los cambios' : 'esta cirugía'}?</h3>
+            <p id="ncw-discard-desc">
+              Perderás la información ingresada en este {editando ? 'formulario' : 'agendamiento'}. Esta acción no se puede deshacer.
+            </p>
+            <div className="ncw-discard-actions">
+              <Button variant="secondary" onClick={() => setMostrarDescartar(false)}>Seguir editando</Button>
+              <Button variant="danger-outline" icon={LuTrash2} onClick={() => { setMostrarDescartar(false); onClose(); }}>
+                Sí, descartar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

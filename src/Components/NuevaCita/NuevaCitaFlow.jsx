@@ -3,17 +3,18 @@ import Button from '@/Components/Button/Button';
 import {
   LuCheck,
   LuChevronLeft,
+  LuChevronRight,
   LuHistory,
   LuIdCard,
   LuScanLine,
   LuSearch,
+  LuSlidersHorizontal,
   LuSquarePen,
   LuTrash2,
   LuTriangleAlert,
   LuUser,
   LuUserPlus,
   LuUserX,
-  LuUsers,
   LuX,
 } from 'react-icons/lu';
 
@@ -61,33 +62,90 @@ export default function NuevaCitaFlow() {
         <div className="ps-modal">
           <div className="ps-header">
             <div className="ps-header-title">
-              <LuUsers className="icon" />
               Lista de Pacientes
             </div>
             <button className="wizard-close" onClick={() => window.closePatientSearch()} aria-label="Cerrar" title="Cerrar">
               <LuX className="icon" />
             </button>
           </div>
-          <div className="ps-search-row">
-            <div className="ps-search-field">
-              <LuSearch className="icon" />
-              <input type="text" placeholder="Buscar por nombre o documento..." onInput={(e) => window.filterPatients(e.target.value)} autoFocus />
-            </div>
-            <button className="icon-btn-circle" onClick={() => window.ncToast('Escaneo de QR de cédula en desarrollo.')} aria-label="Buscar por QR de cédula" title="Buscar por QR de cédula">
-              <LuScanLine className="icon" />
-            </button>
-          </div>
+          {/* Bloque 2 de 3 del modal (ver ps-header/wizard-footer): búsqueda +
+              tabla + su paginador, todo dentro de .ps-table-wrap en vez de
+              tener .ps-search-row como bloque hermano suelto. */}
           <div className="ps-table-wrap">
-            <table>
-              <thead><tr>
-                <th>Paciente</th><th style={{width:'150px'}}>Documento</th><th style={{width:'130px'}}>Ciudad</th><th style={{width:'130px'}}>EPS</th><th style={{width:'120px'}}>Estado</th><th style={{width:'44px'}}></th>
-              </tr></thead>
-              <tbody id="ps-tbody"></tbody>
-            </table>
+            <div className="ps-search-row">
+              {/* Búsqueda simple (por N° de documento) -- oculta cuando se
+                  activa la búsqueda avanzada (ver .ps-search-advanced abajo),
+                  nunca las dos a la vez. Su visibilidad/reset la maneja
+                  togglePsAdvancedSearch()/openPatientSearch() en
+                  legacy-nueva-cita.js, no React (mismo criterio imperativo
+                  que el resto de este modal). */}
+              <div className="ps-search-field" id="ps-search-simple">
+                <LuSearch className="icon" />
+                <input type="text" placeholder="Buscar por número de documento..." onInput={(e) => window.filterPatients(e.target.value)} autoFocus />
+              </div>
+
+              {/* Búsqueda avanzada: 4 campos de nombre en vez del único
+                  campo libre de arriba -- encargo explícito. Cada paciente
+                  mock trae `nombre` como un string único (ver PATIENTS en
+                  legacy-nueva-cita.js); nombrePartes() ahí mismo lo separa
+                  en primer/segundo nombre + primer/segundo apellido para
+                  poder filtrar campo por campo. */}
+              <div className="ps-search-advanced" id="ps-search-advanced" hidden>
+                <input type="text" id="ps-adv-nombre1" placeholder="Primer nombre" aria-label="Primer nombre" onInput={() => window.filterPatientsAdvanced()} />
+                <input type="text" id="ps-adv-nombre2" placeholder="Segundo nombre" aria-label="Segundo nombre" onInput={() => window.filterPatientsAdvanced()} />
+                <input type="text" id="ps-adv-apellido1" placeholder="Primer apellido" aria-label="Primer apellido" onInput={() => window.filterPatientsAdvanced()} />
+                <input type="text" id="ps-adv-apellido2" placeholder="Segundo apellido" aria-label="Segundo apellido" onInput={() => window.filterPatientsAdvanced()} />
+              </div>
+
+              <button type="button" className="ps-adv-toggle" id="ps-adv-toggle" onClick={() => window.togglePsAdvancedSearch()}>
+                <LuSlidersHorizontal className="icon" />
+                <span id="ps-adv-toggle-label">Búsqueda avanzada</span>
+              </button>
+              <button className="icon-btn-circle" onClick={() => window.ncToast('Escaneo de QR de cédula en desarrollo.')} aria-label="Buscar por QR de cédula" title="Buscar por QR de cédula">
+                <LuScanLine className="icon" />
+              </button>
+            </div>
+            <div className="ps-table-card">
+              <div className="ps-table-scroll">
+                <table>
+                  <thead><tr>
+                    <th style={{width:'130px'}}>Documento</th><th>Paciente</th><th style={{width:'90px'}}>Sexo</th><th style={{width:'210px'}}>Aseguradora</th><th style={{width:'110px'}}>Ciudad</th><th style={{width:'110px'}}>Estado</th><th style={{width:'44px'}}></th>
+                  </tr></thead>
+                  <tbody id="ps-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Paginador fuera de .ps-table-card (mismo criterio que
+                .cdm-pagination/CatalogoDiagnosticosModal.jsx, encargo
+                explícito): antes vivía dentro de la card, pegado a la tabla
+                con su propia barra de fondo — ahora es una fila hermana
+                suelta, separada de la tabla por el mismo gap que el resto de
+                bloques de .ps-table-wrap. */}
+            <div className="ps-table-footer">
+              <span className="ps-pagination-label" id="ps-pagination-label">
+                Mostrando <b>0</b> de <b>0</b> pacientes
+              </span>
+              <div className="ps-pagination-controls">
+                <button type="button" className="icon-btn-circle" aria-label="Página anterior" disabled>
+                  <LuChevronLeft className="icon" />
+                </button>
+                <span className="ps-pagination-page">Página 1 de 1</span>
+                <button
+                  type="button"
+                  className="icon-btn-circle"
+                  aria-label="Página siguiente"
+                  title="Vista de demostración: no hay más páginas cargadas"
+                  disabled
+                >
+                  <LuChevronRight className="icon" />
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="wizard-footer">
-            <Button variant="secondary" icon={LuUserPlus} onClick={() => window.apOpen()}>
+            <Button variant="secondary-accent" icon={LuUserPlus} onClick={() => window.apOpen()}>
               Agregar paciente
             </Button>
             <div className="wizard-footer-actions">

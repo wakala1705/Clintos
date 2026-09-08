@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import './FiltrosBar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import CatalogPickerTrigger from '../CatalogPickerTrigger/CatalogPickerTrigger';
 import CatalogoSalasModal from '../modals/CatalogoSalasModal/CatalogoSalasModal';
 import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronDown } from 'react-icons/lu';
 
 // Vive embebido en .as-week-nav (ver AgendaSemana.jsx), junto a la
 // navegación de semana propia de la agenda — por eso no tiene campo "Fecha"
@@ -29,22 +29,13 @@ export default function FiltrosBar({
 
   return (
     <div className="fb-bar">
-      <div className="form-select">
-        <button
-          type="button"
-          id="fb-sala"
-          className={`form-select-trigger${catalogoOpen ? ' open' : ''}`}
-          onClick={() => setCatalogoOpen(true)}
-          aria-haspopup="dialog"
-          aria-expanded={catalogoOpen}
-          aria-label="Sala / Quirófano"
-        >
-          <span className={salaActual ? 'form-select-value' : 'form-select-placeholder'}>
-            {salaActual ? salaActual.label : 'Selecciona una opción'}
-          </span>
-          <LuChevronDown className="icon form-select-chev" aria-hidden="true" />
-        </button>
-      </div>
+      <CatalogPickerTrigger
+        id="fb-sala"
+        label={salaActual?.label}
+        open={catalogoOpen}
+        onClick={() => setCatalogoOpen(true)}
+        ariaLabel="Sala / Quirófano"
+      />
       <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
 
       {catalogoOpen && (

@@ -46,8 +46,8 @@
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
 }
 .pcs-insumos-count{
-  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  background:var(--gray-bg);border-radius:999px;padding:1px 7px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary-dark);
+  background:var(--primary-50);border-radius:999px;padding:1px 7px;
 }
 .pcs-insumos-chevron{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
 .pcs-insumos-chevron.collapsed{transform:rotate(-90deg);}

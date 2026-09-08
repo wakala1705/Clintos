@@ -35,7 +35,7 @@
     --input-md:36px;
     --input-lg:44px;
 
-    --interactive-selected-bg:var(--primary-50);
+    --interactive-selected-bg:var(--primary-100);
     --interactive-selected-border:var(--primary-100);
     --interactive-selected-text:var(--primary-dark);
     --status-info-bg:var(--primary-50);
@@ -386,7 +386,7 @@
   tbody tr{cursor:pointer;transition:background .1s;}
   tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
   tbody tr:hover{background:#f7f9fd;}
-  tbody tr.selected{background:var(--primary-50);}
+  tbody tr.selected{background:var(--interactive-selected-bg);}
   tbody tr.selected td{color:var(--ink-900);}
   tbody tr:last-child td{border-bottom:none;}
   tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}

@@ -5,7 +5,7 @@
 }
 .fact-row:hover{background:var(--bg);}
 .fact-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.fact-row.selected{background:var(--primary-50);border-left:3px solid var(--primary);padding-left:17px;}
+.fact-row.selected{background:var(--interactive-selected-bg);border-left:3px solid var(--primary);padding-left:17px;}
 
 .fact-row-main{min-width:0;flex:1;}
 .fact-row-title{

@@ -101,10 +101,10 @@
 .ome-item-row .row-indent b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ome-item-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-500);font-size:var(--fs-sm);}
 .ome-item-row:hover{background:#f5f6fa;}
-.ome-item-row.selected{background:var(--primary-50);box-shadow:inset 3px 0 0 var(--primary);}
+.ome-item-row.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .ome-check-cell{display:flex;}
 .ome-check-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--primary);}
 .ome-actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;justify-self:end;}
 .btn-programar{padding:6px var(--space-3);font-size:var(--fs-base);}
 html[data-theme="dark"] .ome-item-row:hover{background:#1a2130;}
-html[data-theme="dark"] .ome-item-row.selected{background:var(--primary-50);}
+html[data-theme="dark"] .ome-item-row.selected{background:var(--interactive-selected-bg);}

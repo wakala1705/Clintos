@@ -41,7 +41,7 @@ html[data-theme="dark"] .ceq-row-head{background:#1c2333;}
 .ceq-option:last-child{border-bottom:none;}
 .ceq-option:hover{background:var(--bg);}
 .ceq-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.ceq-option.active{background:var(--primary-50);}
+.ceq-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .ceq-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ceq-tipo{font-size:var(--fs-sm);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ceq-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

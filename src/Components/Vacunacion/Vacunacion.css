@@ -151,7 +151,7 @@ body{
 }
 .chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
 .chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
-.chip-filter.active{background:var(--interactive-selected-bg,var(--primary-50));border-color:var(--interactive-selected-border,var(--primary-100));color:var(--interactive-selected-text,var(--primary-dark));}
+.chip-filter.active{background:var(--interactive-selected-bg,var(--primary-100));border-color:var(--interactive-selected-border,var(--primary-100));color:var(--interactive-selected-text,var(--primary-dark));}
 .chip-filter.active .count{color:inherit;opacity:.75;}
 
 .chip-group.segmented{

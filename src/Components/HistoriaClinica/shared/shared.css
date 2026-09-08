@@ -48,7 +48,7 @@
   /* Semántico: acentos derivados de --primary, nombrados aparte para poder
      restylear cada uso (selección activa, tinte "info") sin tocar --primary
      directamente — mismo patrón que GestionEnfermeria/shared/shared.css. */
-  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-bg:var(--primary-100);
   --interactive-selected-border:var(--primary-100);
   --interactive-selected-text:var(--primary-dark);
   --status-info-bg:var(--primary-50);

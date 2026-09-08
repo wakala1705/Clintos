@@ -41,7 +41,7 @@ html[data-theme="dark"] .cim-row-head{background:#1c2333;}
 .cim-option:last-child{border-bottom:none;}
 .cim-option:hover{background:var(--bg);}
 .cim-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.cim-option.active{background:var(--primary-50);}
+.cim-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .cim-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cim-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cim-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

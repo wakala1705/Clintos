@@ -31,7 +31,7 @@
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
 
-  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-bg:var(--primary-100);
   --interactive-selected-border:var(--primary-100);
   --interactive-selected-text:var(--primary-dark);
 

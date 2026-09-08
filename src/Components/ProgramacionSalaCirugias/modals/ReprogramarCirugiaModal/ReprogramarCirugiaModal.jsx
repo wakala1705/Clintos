@@ -4,13 +4,14 @@ import { useState } from 'react';
 import './ReprogramarCirugiaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import CatalogPickerTrigger from '../../CatalogPickerTrigger/CatalogPickerTrigger';
 import CatalogoSalasModal from '../CatalogoSalasModal/CatalogoSalasModal';
 import CatalogoMedicosModal from '../CatalogoMedicosModal/CatalogoMedicosModal';
 import CatalogoCausalesModal from '../CatalogoCausalesModal/CatalogoCausalesModal';
 import {
   SALAS, CAUSALES_REPROGRAMACION_CIRUGIA, fechaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuCalendarClock, LuChevronDown, LuSearch } from 'react-icons/lu';
+import { LuCalendarClock, LuSearch } from 'react-icons/lu';
 
 // Redisñado a partir de un formulario legacy de referencia ("Reprogramación
 // de cirugía", captura adjunta) -- adaptado al design system del proyecto en
@@ -120,38 +121,24 @@ export default function ReprogramarCirugiaModal({ cirugia, onClose, onSubmit }) 
             <div className="rcm-grid">
               <div className="form-field full">
                 <label htmlFor="rcm-causal">Causal de reprogramación</label>
-                <div className="form-select">
-                  <button
-                    type="button"
-                    id="rcm-causal"
-                    className="form-select-trigger"
-                    onClick={() => setCatalogoAbierto('causal')}
-                    aria-haspopup="dialog"
-                    data-required-empty={!causal ? 'true' : undefined}
-                  >
-                    <span className={causalSeleccionada ? 'form-select-value' : 'form-select-placeholder'}>
-                      {causalSeleccionada ? `${causalSeleccionada.idCausal} - ${causalSeleccionada.descripcion}` : 'Selecciona una causal'}
-                    </span>
-                    <LuChevronDown className="icon form-select-chev" aria-hidden="true" />
-                  </button>
-                </div>
+                <CatalogPickerTrigger
+                  id="rcm-causal"
+                  label={causalSeleccionada ? `${causalSeleccionada.idCausal} - ${causalSeleccionada.descripcion}` : undefined}
+                  placeholder="Selecciona una causal"
+                  open={catalogoAbierto === 'causal'}
+                  onClick={() => setCatalogoAbierto('causal')}
+                  required
+                />
               </div>
               <div className="form-field">
                 <label htmlFor="rcm-sala">Nueva sala</label>
-                <div className="form-select">
-                  <button
-                    type="button"
-                    id="rcm-sala"
-                    className="form-select-trigger"
-                    onClick={() => setCatalogoAbierto('sala')}
-                    aria-haspopup="dialog"
-                  >
-                    <span className={salaSeleccionada ? 'form-select-value' : 'form-select-placeholder'}>
-                      {salaSeleccionada ? salaSeleccionada.label : 'Selecciona una sala'}
-                    </span>
-                    <LuChevronDown className="icon form-select-chev" aria-hidden="true" />
-                  </button>
-                </div>
+                <CatalogPickerTrigger
+                  id="rcm-sala"
+                  label={salaSeleccionada?.label}
+                  placeholder="Selecciona una sala"
+                  open={catalogoAbierto === 'sala'}
+                  onClick={() => setCatalogoAbierto('sala')}
+                />
               </div>
               <div className="form-field">
                 <label htmlFor="rcm-cirujano">Nuevo cirujano</label>

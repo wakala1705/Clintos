@@ -35,7 +35,7 @@
 .sps-list{overflow-y:auto;background:var(--surface);}
 .sps-list tbody tr{cursor:pointer;transition:background .1s;}
 .sps-list tbody tr:hover{background:var(--bg);}
-.sps-list tbody tr.selected{background:var(--primary-50);}
+.sps-list tbody tr.selected{background:var(--interactive-selected-bg);}
 .sps-list tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
 .sps-list tbody tr.selected .npw-nurse-name{color:var(--primary-dark);}
 .sps-list .sps-col-check{width:36px;padding-right:0;}

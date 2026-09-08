@@ -42,6 +42,9 @@
 
   --status-info-bg:var(--primary-50);
   --status-info-fg:var(--primary-dark);
+
+  --interactive-selected-bg:var(--primary-100);
+  --interactive-selected-border:var(--primary-100);
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);

@@ -138,7 +138,7 @@
   --input-sm:32px;
   --input-md:36px;
   --input-lg:44px;
-  --interactive-selected-bg:var(--primary-50);
+  --interactive-selected-bg:var(--primary-100);
   --interactive-selected-border:var(--primary-100);
   --interactive-selected-text:var(--primary-dark);
   --space-1:4px;
