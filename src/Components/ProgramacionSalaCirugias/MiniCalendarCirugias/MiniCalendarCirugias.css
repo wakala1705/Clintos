@@ -51,6 +51,30 @@
 .mcc-day.today{background:var(--primary);color:#fff;font-weight:var(--fw-bold);}
 .mcc-day.today:hover{background:var(--primary-dark);}
 
+/* Resumen operativo de la agenda visible (ver resumenAgenda en
+   mockCirugiaData.js) -- título + grid 2 columnas, sin tarjeta/borde propio
+   (encargo explícito "no crear una tarjeta visualmente pesada"), mismo
+   nivel de peso visual que .mcc-legend-title de abajo. El valor lleva más
+   jerarquía que su etiqueta (--fs-lg semibold vs --fs-xs), nunca al revés. */
+.mcc-resumen{display:flex;flex-direction:column;gap:10px;}
+.mcc-resumen-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+.mcc-resumen-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;}
+.mcc-resumen-stat{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mcc-resumen-value{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.mcc-resumen-label{font-size:var(--fs-xs);color:var(--ink-500);line-height:1.3;}
+/* Único indicador con color de advertencia del bloque (encargo explícito) --
+   separado por una línea sutil (--bg, el mismo divisor tenue que
+   .pcs-card-bottom en ProcedimientosStep.css) en vez de un .mcc-divider de
+   ancho completo, y sin fondo propio (no es .tf-warning-note de shared.css:
+   esa es una caja para formularios, acá alcanza con texto+ícono en tono
+   ámbar para no volver pesado un panel angosto). */
+.mcc-resumen-urgencia{
+  display:flex;align-items:center;gap:6px;
+  padding-top:10px;border-top:1px solid var(--bg);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--amber-fg);
+}
+.mcc-resumen-urgencia .icon{width:15px;height:15px;flex-shrink:0;}
+
 /* Leyenda de estados, trasladada acá desde el pie de AgendaSemana/AgendaMes
    (.psc-agenda-legend en shared.css, ver MiniCalendarCirugias.jsx). El
    divider que la separa del calendario viaja con ella dentro de

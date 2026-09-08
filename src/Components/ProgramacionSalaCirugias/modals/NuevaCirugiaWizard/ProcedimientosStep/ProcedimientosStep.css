@@ -11,7 +11,17 @@
 .pcs-list .pcs-card:last-child{border-bottom:none;}
 
 .pcs-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.pcs-card-heading{display:flex;flex-direction:column;gap:2px;}
+.pcs-card-heading{display:flex;align-items:flex-start;gap:10px;}
+/* Mismo criterio de círculo-ícono que .modal-header-icon (ModalHeader.css)
+   y .alert-type-icon (AlertTable.css) -- 34px, tono primary fijo (no hay
+   variación por tipo de procedimiento). */
+.pcs-cell-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.pcs-cell-icon .icon{width:18px;height:18px;}
+.pcs-card-heading-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
 .pcs-cell-primary{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pcs-card-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
 

@@ -17,6 +17,21 @@ import { LuCheck, LuChevronDown } from 'react-icons/lu';
 // position:absolute dentro de .form-select) porque este componente se usa
 // dentro de .modal-body (overflow-y:auto) — si quedara absoluto ahí, su alto
 // suma al scrollHeight del modal y genera un scroll que no debería existir.
+//
+// Navegación por teclado (hallazgo de auditoría WCAG 2.1 AA, 2.1.2/2.4.3/
+// 4.1.2, 2026-09-08): antes solo se podía abrir con clic/Enter y no había
+// forma de moverse entre opciones con flechas -- como el listado vive
+// portado al final de `document.body`, Tab desde el trigger tampoco
+// aterrizaba en la primera opción (saltaba al siguiente campo del
+// formulario), así que en la práctica un usuario de teclado no podía elegir
+// una opción distinta a la ya seleccionada. Se resuelve con el patrón
+// "listbox popup" de WAI-ARIA APG: el foco del DOM nunca sale del botón
+// disparador -- las flechas mueven `activeIndex` (opción "resaltada", no
+// necesariamente seleccionada) y el trigger la anuncia vía
+// `aria-activedescendant`; Enter/Espacio confirman la resaltada sin haber
+// tocado Tab en ningún momento. Por eso las opciones llevan `tabIndex={-1}`
+// (siguen siendo clicables con mouse, pero ya no son su propia parada de
+// Tab -- ver AGENTS.md "Selects de formulario" para el resto del contrato).
 // `required` (opcional): agrega el mismo resaltado ámbar "obligatorio y
 // vacío" que .form-field input/textarea:required:placeholder-shown ya tiene
 // en otras features (PlantillaCrecimt2.css, NuevaCitaFlow.css) — un
@@ -34,6 +49,7 @@ export default function FormSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -67,6 +83,15 @@ export default function FormSelect({
     }
   }, [open, coords]);
 
+  // Mantiene la opción resaltada visible al navegar con flechas -- el
+  // listado puede ser más alto que su `max-height` (ver FormSelect.css).
+  useLayoutEffect(() => {
+    if (!open || activeIndex < 0 || !dropdownRef.current) return;
+    dropdownRef.current.children[activeIndex]
+      ?.querySelector('.form-select-option')
+      ?.scrollIntoView({ block: 'nearest' });
+  }, [open, activeIndex]);
+
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
@@ -86,10 +111,59 @@ export default function FormSelect({
   }, [open]);
 
   const selected = options.find((o) => o.value === value);
+  const optionId = (i) => `${id}-option-${i}`;
 
   function handleSelect(v) {
     setOpen(false);
     if (v !== value) onChange(v);
+  }
+
+  function openDropdown(indexIfNoSelection = 0) {
+    const currentIndex = options.findIndex((o) => o.value === value);
+    setActiveIndex(currentIndex >= 0 ? currentIndex : indexIfNoSelection);
+    setOpen(true);
+  }
+
+  function handleTriggerKeyDown(e) {
+    if (disabled) return;
+    if (!open) {
+      if (['ArrowDown', 'ArrowUp', 'Enter', ' ', 'Home', 'End'].includes(e.key)) {
+        e.preventDefault();
+        openDropdown(e.key === 'End' ? options.length - 1 : 0);
+      }
+      return;
+    }
+    if (options.length === 0) return;
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setActiveIndex((i) => Math.min(i + 1, options.length - 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setActiveIndex((i) => Math.max(i - 1, 0));
+        break;
+      case 'Home':
+        e.preventDefault();
+        setActiveIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setActiveIndex(options.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (activeIndex >= 0) handleSelect(options[activeIndex].value);
+        break;
+      case 'Tab':
+        // No se cancela el Tab -- el foco debe seguir avanzando al próximo
+        // campo con normalidad, el listado solo deja de tener sentido abierto.
+        setOpen(false);
+        break;
+      default:
+        break;
+    }
   }
 
   return (
@@ -99,9 +173,11 @@ export default function FormSelect({
         id={id}
         ref={triggerRef}
         className={`form-select-trigger${open ? ' open' : ''}`}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open ? setOpen(false) : openDropdown())}
+        onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
         aria-label={ariaLabel}
         data-required-empty={required && !value ? 'true' : undefined}
         disabled={disabled}
@@ -120,13 +196,16 @@ export default function FormSelect({
           aria-labelledby={id}
           style={{ top: coords.top, left: coords.left, minWidth: coords.minWidth }}
         >
-          {options.map((o) => (
+          {options.map((o, i) => (
             <li key={o.value} role="presentation">
               <button
                 type="button"
+                id={optionId(i)}
                 role="option"
+                tabIndex={-1}
                 aria-selected={o.value === value}
-                className={`form-select-option${o.value === value ? ' active' : ''}`}
+                className={`form-select-option${o.value === value ? ' active' : ''}${i === activeIndex ? ' highlighted' : ''}`}
+                onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => handleSelect(o.value)}
               >
                 {o.label}

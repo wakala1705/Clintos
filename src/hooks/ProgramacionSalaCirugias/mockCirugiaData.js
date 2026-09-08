@@ -1143,6 +1143,67 @@ export function fetchAgendaRango({
   });
 }
 
+function minutosCirugia(c) {
+  const [h1, m1] = c.horaInicio.split(':').map(Number);
+  const [h2, m2] = c.horaFin.split(':').map(Number);
+  return (h2 * 60 + m2) - (h1 * 60 + m1);
+}
+
+function diasEnRango(inicio, fin) {
+  const ms = new Date(`${fin}T00:00:00`) - new Date(`${inicio}T00:00:00`);
+  return Math.floor(ms / 86400000) + 1;
+}
+
+// "18h 30m" -- formato propio del resumen de agenda (encargo explícito, ver
+// "Resumen de agenda" en MiniCalendarCirugias.jsx), distinto del "18h 30min"
+// de duracionLabel de arriba (esa es para la duración de 1 sola cirugía en
+// el detalle, no para un agregado del panel lateral).
+function resumenHorasLabel(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
+// Jornada operativa asumida por sala para el % de "Ocupación" del resumen de
+// agenda (07:00-19:00, mismo horario en que arrancan las cirugías del mock
+// más temprano) -- no hay un dato real de "horario de quirófano" en este
+// modelo, así que queda fijo acá en vez de inventar un campo nuevo en SALAS.
+const JORNADA_OPERATIVA_MIN = 12 * 60;
+
+// Resumen operativo para el bloque "Resumen de agenda" del panel lateral
+// (ver MiniCalendarCirugias.jsx) -- combina `cirugias` (la misma lista ya
+// cargada para la sala/estado/rango que se ve en la grilla principal, sin
+// re-fetch) con un vistazo cross-sala (todas las salas ACTIVAS de la sede,
+// no solo la seleccionada) para "Salas ocupadas": acotado a 1 sola sala ese
+// indicador siempre sería 0/1 o 1/1 y no diría nada -- Cirugías/Horas/
+// Ocupación/Urgencias sí quedan atadas a la sala seleccionada porque son
+// exactamente lo que la grilla principal está mostrando en ese momento.
+// Cancelada no cuenta como "ocupando" agenda en ninguno de los indicadores.
+export function resumenAgenda({
+  cirugias, sedeId, inicio, fin, estado = 'todos',
+}) {
+  const activas = cirugias.filter((c) => c.estado !== 'cancelada');
+  const minutosOcupados = activas.reduce((acc, c) => acc + minutosCirugia(c), 0);
+  const dias = diasEnRango(inicio, fin);
+
+  const salasActivas = SALAS.filter((s) => s.sedeId === sedeId && s.estado === 'Activo');
+  const salasOcupadas = salasActivas.filter((sala) => CIRUGIAS.some((c) => (
+    c.sedeId === sedeId && c.salaId === sala.value
+    && c.fecha >= inicio && c.fecha <= fin
+    && c.estado !== 'cancelada'
+    && (estado === 'todos' || c.estado === estado)
+  ))).length;
+
+  return {
+    totalCirugias: activas.length,
+    horasOcupadasLabel: resumenHorasLabel(minutosOcupados),
+    urgencias: activas.filter((c) => c.estado === 'urgencia').length,
+    salasOcupadas,
+    salasTotal: salasActivas.length,
+    ocupacionPct: dias > 0 ? Math.round((minutosOcupados / (dias * JORNADA_OPERATIVA_MIN)) * 100) : 0,
+  };
+}
+
 // Catálogo de equipos que alimenta CatalogoEquiposModal ("Agregar equipo" en
 // EquiposStep, Paso 4 del wizard "Nueva cirugía") -- mismo shape
 // {nombre,tipo,identificacion} que ya consume EquiposTable

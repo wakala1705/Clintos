@@ -3,25 +3,27 @@
 import { useState } from 'react';
 import './MiniCalendarCirugias.css';
 import { addMeses, grillaMes, mesLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from 'react-icons/lu';
+import {
+  LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuTriangleAlert,
+} from 'react-icons/lu';
 import ProgramarCirugiaDropdown from '../ProgramarCirugiaDropdown/ProgramarCirugiaDropdown';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 
 const ESTADOS_LEYENDA = ['programada', 'urgencia', 'realizada', 'cancelada', 'incumplida'];
 
 // Bloque único de la columna lateral (mismo lugar que MiniCalendar en
-// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 3
+// Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 4
 // secciones separadas por .mcc-divider — acción principal "Programar
-// cirugía", mini-calendario y leyenda de estados. Las acciones sobre una
-// cirugía seleccionada ("Reprogramar"/"Cancelar"/"Más acciones") viven en el
-// drawer de detalle (ver DetalleCirugiaPanel.jsx), no acá -- encargo
-// explícito: este panel se estira hasta el fondo de la pantalla (ver
-// .mcc-panel en MiniCalendarCirugias.css) y ya no depende de si hay una
-// cirugía seleccionada. La leyenda de estados se trasladó acá desde el pie
-// de AgendaSemana/AgendaMes (.psc-agenda-legend, encargo explícito) --
-// antes vivía duplicada al pie de cada vista del calendario.
+// cirugía", mini-calendario, resumen de agenda y leyenda de estados. Las
+// acciones sobre una cirugía seleccionada ("Reprogramar"/"Cancelar"/"Más
+// acciones") viven en el drawer de detalle (ver DetalleCirugiaPanel.jsx), no
+// acá -- encargo explícito: este panel se estira hasta el fondo de la
+// pantalla (ver .mcc-panel en MiniCalendarCirugias.css) y ya no depende de
+// si hay una cirugía seleccionada. La leyenda de estados se trasladó acá
+// desde el pie de AgendaSemana/AgendaMes (.psc-agenda-legend, encargo
+// explícito) -- antes vivía duplicada al pie de cada vista del calendario.
 export default function MiniCalendarCirugias({
-  selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia,
+  selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia, resumen,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [monthDate, setMonthDate] = useState(() => new Date());
@@ -90,6 +92,42 @@ export default function MiniCalendarCirugias({
           })}
         </div>
       )}
+
+      {/* Resumen operativo de la agenda actualmente visible (sala/estado/
+          rango de la grilla principal, ver resumenAgenda en
+          mockCirugiaData.js) -- no colapsa junto con el calendario (`!collapsed`
+          de arriba solo esconde .mcc-grid): es un bloque propio, no una
+          extensión del mini-calendario. Sin tarjeta/borde propio (encargo
+          explícito "no crear una tarjeta visualmente pesada") -- mismo
+          criterio minimalista que .mcc-legend de abajo, solo título + grid. */}
+      <div className="mcc-divider" />
+      <div className="mcc-resumen">
+        <span className="mcc-resumen-title">Resumen de agenda</span>
+        <div className="mcc-resumen-grid">
+          <div className="mcc-resumen-stat">
+            <span className="mcc-resumen-value">{resumen.totalCirugias}</span>
+            <span className="mcc-resumen-label">Cirugías programadas</span>
+          </div>
+          <div className="mcc-resumen-stat">
+            <span className="mcc-resumen-value">{resumen.horasOcupadasLabel}</span>
+            <span className="mcc-resumen-label">Horas ocupadas</span>
+          </div>
+          <div className="mcc-resumen-stat">
+            <span className="mcc-resumen-value">{resumen.salasOcupadas} / {resumen.salasTotal}</span>
+            <span className="mcc-resumen-label">Salas ocupadas</span>
+          </div>
+          <div className="mcc-resumen-stat">
+            <span className="mcc-resumen-value">{resumen.ocupacionPct}%</span>
+            <span className="mcc-resumen-label">Ocupación</span>
+          </div>
+        </div>
+        {resumen.urgencias > 0 && (
+          <div className="mcc-resumen-urgencia">
+            <LuTriangleAlert className="icon" aria-hidden="true" />
+            <span>{resumen.urgencias} {resumen.urgencias === 1 ? 'cirugía de urgencia' : 'cirugías de urgencia'}</span>
+          </div>
+        )}
+      </div>
 
       <div className="mcc-legend-group">
         <div className="mcc-divider" />

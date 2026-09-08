@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './CatalogoMedicosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { MEDICOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
@@ -51,6 +52,8 @@ function rangoPaginas(page, totalPages) {
 export default function CatalogoMedicosModal({
   tipo, onSelect, onClose,
 }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -86,7 +89,7 @@ export default function CatalogoMedicosModal({
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card cmm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cmm-title">
+      <div ref={modalRef} className="modal-card cmm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cmm-title">
         <ModalHeader
           title="Listado de médicos por tipo de Recurso Humano"
           titleId="cmm-title"

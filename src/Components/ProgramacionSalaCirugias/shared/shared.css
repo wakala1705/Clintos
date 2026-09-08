@@ -167,7 +167,7 @@ html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px so
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);white-space:nowrap;
 }
-.ncw-insumos-table td{padding:9px 12px;border-bottom:1px solid var(--bg);color:var(--ink-700);}
+.ncw-insumos-table td{padding:4px 8px;border-bottom:1px solid var(--bg);color:var(--ink-700);}
 .ncw-insumos-table tbody tr:last-child td{border-bottom:none;}
 .ncw-insumos-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ncw-insumos-table .cell-muted{color:var(--ink-500);}

@@ -45,5 +45,12 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
 }
 .form-select-option:hover{background:var(--bg);}
 .form-select-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+/* "Resaltada" por teclado (aria-activedescendant, ver FormSelect.jsx) -- el
+   foco del DOM nunca llega a este <button> (tabIndex=-1), así que no hay
+   :focus-visible real que mostrar; esta clase es el equivalente visual para
+   quien navega con flechas desde el trigger. Mismo estilo que
+   :focus-visible arriba para que se vea igual de "foco" sin depender de
+   foco real del DOM. */
+.form-select-option.highlighted{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
 .form-select-option.active{color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .form-select-option .icon{width:15px;height:15px;color:var(--primary);flex-shrink:0;}

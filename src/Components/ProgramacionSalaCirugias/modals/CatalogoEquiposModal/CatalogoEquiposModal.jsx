@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './CatalogoEquiposModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { EQUIPOS_QX_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuSearch } from 'react-icons/lu';
 
@@ -28,6 +29,8 @@ function normalizar(texto) {
 // INSUMOS_CATALOGO/MEDICOS_CATALOGO. `onSelect` recibe el equipo completo
 // `{nombre, tipo, identificacion}`.
 export default function CatalogoEquiposModal({ onSelect, onClose }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState(null);
 
@@ -44,7 +47,7 @@ export default function CatalogoEquiposModal({ onSelect, onClose }) {
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card ceq-modal-card" role="dialog" aria-modal="true" aria-labelledby="ceq-title">
+      <div ref={modalRef} className="modal-card ceq-modal-card" role="dialog" aria-modal="true" aria-labelledby="ceq-title">
         <ModalHeader
           title="Seleccionar equipo"
           titleId="ceq-title"

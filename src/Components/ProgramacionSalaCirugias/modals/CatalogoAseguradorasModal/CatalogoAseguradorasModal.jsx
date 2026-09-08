@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './CatalogoAseguradorasModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { ASEGURADORAS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
@@ -43,6 +44,8 @@ function rangoPaginas(page, totalPages) {
 // simultáneos -- Id./Razón social -- en vez del único buscador con tabs de
 // la primera versión).
 export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [queryId, setQueryId] = useState('');
   const [queryRazonSocial, setQueryRazonSocial] = useState('');
   const [page, setPage] = useState(1);
@@ -85,7 +88,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card caam-modal-card" role="dialog" aria-modal="true" aria-labelledby="caam-title">
+      <div ref={modalRef} className="modal-card caam-modal-card" role="dialog" aria-modal="true" aria-labelledby="caam-title">
         <ModalHeader
           title="Seleccionar aseguradora"
           titleId="caam-title"

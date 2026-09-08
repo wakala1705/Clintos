@@ -39,6 +39,7 @@ import {
   mesLabel,
   rangoSemanaLabel,
   reprogramarCirugia,
+  resumenAgenda,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
@@ -268,6 +269,14 @@ export default function ProgramacionSalaCirugias() {
   }
 
   const selectedCirugia = cirugias.find((c) => c.id === selectedId) ?? null;
+  // "Resumen de agenda" del panel lateral (ver MiniCalendarCirugias.jsx) --
+  // se recalcula acá en vez de re-fetchear: `cirugias` ya es exactamente la
+  // sala/estado/rango que la grilla principal está mostrando en este
+  // momento, mismo criterio que selectedCirugia arriba (derivado, no estado
+  // propio).
+  const resumen = resumenAgenda({
+    cirugias, sedeId, inicio: rangoInicio, fin: rangoFin, estado,
+  });
   // Sáb/Dom se ocultan por defecto vía el toggle del header (encargo
   // explícito) filtrando por `label` en vez de recalcular el día de semana
   // -- diasDeSemana ya lo trae calculado (ver mockCirugiaData.js).
@@ -366,6 +375,7 @@ export default function ProgramacionSalaCirugias() {
                 onSelectDate={handleSelectMiniCalDate}
                 onNuevaCirugia={handleAbrirProgramarCirugia}
                 onNuevaUrgencia={handleAbrirNuevaUrgencia}
+                resumen={resumen}
               />
             </div>
 

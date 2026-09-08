@@ -127,3 +127,15 @@ html[data-contrast="high"] textarea {
 html[data-contrast="high"] :focus-visible {
   outline-width: 3px;
 }
+
+/* Respeta la preferencia de SO "reducir movimiento" en toda transición/
+   animación del proyecto (modales, chevrons, toasts...) -- único CSS que
+   carga en toda ruta vía layout.js, mismo criterio que el bloque de alto
+   contraste de arriba. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

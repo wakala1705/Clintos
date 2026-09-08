@@ -23,7 +23,7 @@
 }
 .ccm-row{
   display:grid;grid-template-columns:110px 1fr;align-items:center;gap:10px;
-  padding:9px 12px;
+  padding:10px 12px;
 }
 .ccm-row-head{
   background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;

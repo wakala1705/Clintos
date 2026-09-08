@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './CatalogoDiagnosticosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { DIAGNOSTICOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
@@ -54,6 +55,8 @@ function rangoPaginas(page, totalPages) {
 // ese sexo + los diagnósticos "Ambos" (no excluye los genéricos), igual que
 // un filtro de aplicabilidad clínica esperaría comportarse.
 export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [queryDescripcion, setQueryDescripcion] = useState('');
   const [queryCodigo, setQueryCodigo] = useState('');
   const [sexo, setSexo] = useState('');
@@ -102,7 +105,7 @@ export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card cdm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cdm-title">
+      <div ref={modalRef} className="modal-card cdm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cdm-title">
         <ModalHeader
           title="Seleccionar diagnóstico"
           titleId="cdm-title"

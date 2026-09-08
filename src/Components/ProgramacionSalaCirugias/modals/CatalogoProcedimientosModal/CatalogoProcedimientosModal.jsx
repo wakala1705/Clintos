@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './CatalogoProcedimientosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { PROCEDIMIENTOS_QX_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
@@ -55,6 +56,8 @@ function rangoPaginas(page, totalPages) {
 // filtrando en vivo -- sin botón "Buscar" aparte, mismo criterio que el
 // resto de catálogos de este proyecto (filtran mientras se escribe).
 export default function CatalogoProcedimientosModal({ onSelect, onClose }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [queryId, setQueryId] = useState('');
   const [queryDescripcion, setQueryDescripcion] = useState('');
   const [prefijo, setPrefijo] = useState('');
@@ -103,7 +106,7 @@ export default function CatalogoProcedimientosModal({ onSelect, onClose }) {
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card cpm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cpm-title">
+      <div ref={modalRef} className="modal-card cpm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cpm-title">
         <ModalHeader
           title="Seleccionar procedimiento quirúrgico"
           titleId="cpm-title"

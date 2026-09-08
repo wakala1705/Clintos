@@ -8,6 +8,7 @@ import InsumosStep from './InsumosStep/InsumosStep';
 import EquiposStep from './EquiposStep/EquiposStep';
 import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
   fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -158,6 +159,18 @@ export default function NuevaCirugiaWizard({
   // abajo).
   const datosInicialesRef = useRef(datos);
 
+  // Foco atrapado dentro del wizard mientras está montado, y dentro de la
+  // confirmación de descarte mientras está abierta -- 2 instancias porque
+  // son 2 diálogos distintos que pueden estar visibles a la vez (el de
+  // descarte se dibuja encima del wizard, ver el JSX más abajo). El del
+  // wizard usa el default `active=true` (vive lo mismo que el componente);
+  // el de descarte pasa `mostrarDescartar` explícito porque ese diálogo
+  // alterna sin desmontar NuevaCirugiaWizard -- ver useModalFocusTrap.js.
+  const wizardModalRef = useRef(null);
+  const discardModalRef = useRef(null);
+  useModalFocusTrap(wizardModalRef);
+  useModalFocusTrap(discardModalRef, mostrarDescartar);
+
   function set(campo, valor) {
     setDatos((d) => ({ ...d, [campo]: valor }));
   }
@@ -210,11 +223,11 @@ export default function NuevaCirugiaWizard({
   return (
     <>
       <div className="modal-overlay open">
-        <div className="ncw-modal" role="dialog" aria-modal="true" aria-labelledby="ncw-title">
+        <div ref={wizardModalRef} className="ncw-modal" role="dialog" aria-modal="true" aria-labelledby="ncw-eyebrow ncw-title">
         <div className="ncw-body">
           <nav className="ncw-rail">
             <div className="ncw-rail-header">
-              <div className="ncw-rail-eyebrow">{editando ? 'Editar cirugía' : 'Nueva cirugía'}</div>
+              <div id="ncw-eyebrow" className="ncw-rail-eyebrow">{editando ? 'Editar cirugía' : 'Nueva cirugía'}</div>
               <h3 id="ncw-title" className="ncw-rail-title">{patient?.nombre ?? 'Paciente'}</h3>
               {patient?.documento && <p className="ncw-rail-desc">CC {patient.documento}</p>}
               <label className="ncw-rail-checkbox">
@@ -300,28 +313,16 @@ export default function NuevaCirugiaWizard({
 
             <div className="ncw-footer">
               {paso === 1 && (
-                <>
-                  {faltantesPaso1.length > 0 && (
-                    <span className="ncw-footer-hint">
-                      Completa: {faltantesPaso1.join(', ')}.
-                    </span>
-                  )}
-                  <div className="ncw-footer-actions">
-                    <Button variant="secondary" onClick={handleIntentarCerrar}>Cancelar</Button>
-                    <Button variant="primary" disabled={!pasoCompleto[1]} onClick={() => setPaso(2)}>Continuar</Button>
-                  </div>
-                </>
+                <div className="ncw-footer-actions">
+                  <Button variant="secondary" onClick={handleIntentarCerrar}>Cancelar</Button>
+                  <Button variant="primary" disabled={!pasoCompleto[1]} onClick={() => setPaso(2)}>Continuar</Button>
+                </div>
               )}
               {paso === 2 && (
-                <>
-                  {!pasoCompleto[2] && (
-                    <span className="ncw-footer-hint">Agrega al menos un procedimiento para continuar.</span>
-                  )}
-                  <div className="ncw-footer-actions">
-                    <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
-                    <Button variant="primary" disabled={!pasoCompleto[2]} onClick={() => setPaso(3)}>Continuar</Button>
-                  </div>
-                </>
+                <div className="ncw-footer-actions">
+                  <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
+                  <Button variant="primary" disabled={!pasoCompleto[2]} onClick={() => setPaso(3)}>Continuar</Button>
+                </div>
               )}
               {paso === 3 && (
                 <div className="ncw-footer-actions">
@@ -366,6 +367,7 @@ export default function NuevaCirugiaWizard({
           onClick={(e) => { if (e.target === e.currentTarget) setMostrarDescartar(false); }}
         >
           <div
+            ref={discardModalRef}
             className="ncw-discard-modal"
             role="alertdialog"
             aria-modal="true"

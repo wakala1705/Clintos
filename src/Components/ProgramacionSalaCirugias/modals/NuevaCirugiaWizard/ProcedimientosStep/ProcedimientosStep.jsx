@@ -5,7 +5,9 @@ import './ProcedimientosStep.css';
 import Button from '@/Components/Button/Button';
 import AgregarProcedimientoModal from './AgregarProcedimientoModal/AgregarProcedimientoModal';
 import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronDown, LuPlus, LuTrash2 } from 'react-icons/lu';
+import {
+  LuChevronDown, LuPlus, LuScissors, LuTrash2,
+} from 'react-icons/lu';
 
 // Paso 2 del wizard "Nueva cirugía" -- lista los procedimientos agregados
 // vía AgregarProcedimientoModal (`datos.procedimientos`, ver datosIniciales
@@ -71,8 +73,11 @@ export default function ProcedimientosStep({
               <div className="pcs-card" key={i}>
                 <div className="pcs-card-top">
                   <div className="pcs-card-heading">
-                    <span className="pcs-cell-primary">{soloNombre(p.idCirugia)}</span>
-                    <span className="pcs-card-tipo">{capitalizar(p.tipoCirugia)}</span>
+                    <span className="pcs-cell-icon" aria-hidden="true"><LuScissors className="icon" /></span>
+                    <div className="pcs-card-heading-text">
+                      <span className="pcs-cell-primary">{soloNombre(p.idCirugia)}</span>
+                      <span className="pcs-card-tipo">{capitalizar(p.tipoCirugia)}</span>
+                    </div>
                   </div>
                   <button
                     type="button"

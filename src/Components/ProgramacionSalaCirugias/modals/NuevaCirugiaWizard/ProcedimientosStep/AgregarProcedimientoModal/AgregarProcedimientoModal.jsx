@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './AgregarProcedimientoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import CatalogoMedicosModal from '../../../CatalogoMedicosModal/CatalogoMedicosModal';
 import CatalogoProcedimientosModal from '../../../CatalogoProcedimientosModal/CatalogoProcedimientosModal';
 import {
@@ -44,6 +45,8 @@ const TIPO_PROCEDIMIENTO_OPTIONS = toOptions(TIPOS_PROCEDIMIENTO_CATALOGO);
 export default function AgregarProcedimientoModal({
   patient, onAdd, onClose,
 }) {
+  const modalRef = useRef(null);
+  useModalFocusTrap(modalRef);
   const [numeroProgramacion] = useState(() => siguienteNumeroProgramacion());
   const [idCirugia, setIdCirugia] = useState('');
   const [tipoCirugia, setTipoCirugia] = useState('');
@@ -66,7 +69,7 @@ export default function AgregarProcedimientoModal({
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card apm-modal-card" role="dialog" aria-modal="true" aria-labelledby="apm-title">
+      <div ref={modalRef} className="modal-card apm-modal-card" role="dialog" aria-modal="true" aria-labelledby="apm-title">
         <ModalHeader
           title="Adicionar procedimientos QX"
           titleId="apm-title"
