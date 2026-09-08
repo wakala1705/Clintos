@@ -4,7 +4,8 @@ import { useState } from 'react';
 import './MiniCalendarCirugias.css';
 import { addMeses, grillaMes, mesLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuTriangleAlert,
+  LuBuilding2, LuCalendarCheck, LuChartPie, LuChevronDown, LuChevronLeft, LuChevronRight,
+  LuChevronUp, LuClock, LuTriangleAlert,
 } from 'react-icons/lu';
 import ProgramarCirugiaDropdown from '../ProgramarCirugiaDropdown/ProgramarCirugiaDropdown';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
@@ -97,27 +98,55 @@ export default function MiniCalendarCirugias({
           rango de la grilla principal, ver resumenAgenda en
           mockCirugiaData.js) -- no colapsa junto con el calendario (`!collapsed`
           de arriba solo esconde .mcc-grid): es un bloque propio, no una
-          extensión del mini-calendario. Sin tarjeta/borde propio (encargo
-          explícito "no crear una tarjeta visualmente pesada") -- mismo
-          criterio minimalista que .mcc-legend de abajo, solo título + grid. */}
+          extensión del mini-calendario. Cada métrica vive en su propia
+          mini-tarjeta (`--bg`, el mismo tinte "sutil" que ya usa
+          .tf-readonly-value/.pcs-card-bottom en este feature) para
+          escanearse rápido sin pesar el panel -- sin borde propio (ya la
+          separa el tinte de fondo del `--surface` blanco de `.mcc-panel`,
+          mismo criterio de "un solo lenguaje de elevación" que el resto del
+          proyecto: no apilar borde + tinte + sombra para decir lo mismo).
+          Cada ícono lleva un acento de color distinto pero tomado 1:1 de la
+          paleta de tokens ya declarada en este feature (mismo par bg/fg que
+          ModalHeader/Badge, nunca un hex nuevo) -- no es información, solo
+          ayuda a escanear cuál métrica es cuál. */}
       <div className="mcc-divider" />
       <div className="mcc-resumen">
         <span className="mcc-resumen-title">Resumen de agenda</span>
         <div className="mcc-resumen-grid">
           <div className="mcc-resumen-stat">
-            <span className="mcc-resumen-value">{resumen.totalCirugias}</span>
+            <div className="mcc-resumen-top">
+              <span className="mcc-resumen-icon mcc-resumen-icon-primary">
+                <LuCalendarCheck className="icon" aria-hidden="true" />
+              </span>
+              <span className="mcc-resumen-value">{resumen.totalCirugias}</span>
+            </div>
             <span className="mcc-resumen-label">Cirugías programadas</span>
           </div>
           <div className="mcc-resumen-stat">
-            <span className="mcc-resumen-value">{resumen.horasOcupadasLabel}</span>
+            <div className="mcc-resumen-top">
+              <span className="mcc-resumen-icon mcc-resumen-icon-violet">
+                <LuClock className="icon" aria-hidden="true" />
+              </span>
+              <span className="mcc-resumen-value">{resumen.horasOcupadasLabel}</span>
+            </div>
             <span className="mcc-resumen-label">Horas ocupadas</span>
           </div>
           <div className="mcc-resumen-stat">
-            <span className="mcc-resumen-value">{resumen.salasOcupadas} / {resumen.salasTotal}</span>
+            <div className="mcc-resumen-top">
+              <span className="mcc-resumen-icon mcc-resumen-icon-blue">
+                <LuBuilding2 className="icon" aria-hidden="true" />
+              </span>
+              <span className="mcc-resumen-value">{resumen.salasOcupadas} / {resumen.salasTotal}</span>
+            </div>
             <span className="mcc-resumen-label">Salas ocupadas</span>
           </div>
           <div className="mcc-resumen-stat">
-            <span className="mcc-resumen-value">{resumen.ocupacionPct}%</span>
+            <div className="mcc-resumen-top">
+              <span className="mcc-resumen-icon mcc-resumen-icon-green">
+                <LuChartPie className="icon" aria-hidden="true" />
+              </span>
+              <span className="mcc-resumen-value">{resumen.ocupacionPct}%</span>
+            </div>
             <span className="mcc-resumen-label">Ocupación</span>
           </div>
         </div>
@@ -125,6 +154,7 @@ export default function MiniCalendarCirugias({
           <div className="mcc-resumen-urgencia">
             <LuTriangleAlert className="icon" aria-hidden="true" />
             <span>{resumen.urgencias} {resumen.urgencias === 1 ? 'cirugía de urgencia' : 'cirugías de urgencia'}</span>
+            <LuChevronRight className="icon mcc-resumen-urgencia-chevron" aria-hidden="true" />
           </div>
         )}
       </div>

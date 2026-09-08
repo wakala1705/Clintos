@@ -31,8 +31,8 @@ const MODULES = [
     description: 'Facturación, cartera, cuentas y reportes financieros.',
     icon: LuChartBar,
     tone: 'green',
-    route: null,
-    available: false,
+    route: '/home',
+    available: true,
   },
   {
     id: 'nomina',

@@ -9,6 +9,7 @@ import {
   LuCalendarClock,
   LuCalendarDays,
   LuCalendarPlus,
+  LuChartBar,
   LuChevronDown,
   LuChevronLeft,
   LuClipboardCheck,
@@ -21,6 +22,7 @@ import {
   LuHouse,
   LuLandmark,
   LuMoon,
+  LuPill,
   LuReceipt,
   LuScissors,
   LuSettings,
@@ -59,13 +61,16 @@ export default function Sidebar() {
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
   const isFacturas = pathname === '/facturas';
   const isFinanzas = isFacturas;
+  const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
+  const isInsumosFarmacia = isSolicitudesInsumosFarmacia;
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
+  const isContable = activeModule === 'contable';
 
-  // Admin ve estos 6 anidados bajo "Módulo Asistencial" (junto a Nómina/Otros
-  // soportes); un usuario de solo-Asistencial ya sabe en qué módulo está, así
-  // que se suben a nivel superior (mismo contenido, sin el nivel extra de
-  // navegación redundante).
+  // Admin ve estos anidados bajo "Módulo Asistencial"/"Módulo Contable" (junto
+  // a Nómina/Otros soportes); un usuario de un solo módulo ya sabe en qué
+  // módulo está, así que se suben a nivel superior (mismo contenido, sin el
+  // nivel extra de navegación redundante).
   const subGroupClass = isAdmin ? 'nav-group sub' : 'nav-group';
 
   const asistencialSubGroups = (
@@ -141,6 +146,19 @@ export default function Sidebar() {
     </>
   );
 
+  const contableSubGroups = (
+    <div className={`${subGroupClass}${isInsumosFarmacia ? ' open' : ''}`}>
+      <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+        <LuPill className="icon nav-icon" />
+        <span className="label">Insumos Farmacia</span>
+        <LuChevronDown className="icon chev" />
+      </div>
+      <div className="nav-body">
+        <Link href="/insumos-farmacia/solicitudes" className={`nav-subitem${isSolicitudesInsumosFarmacia ? ' active' : ''}`}><LuFileText className="icon" />Solicitudes</Link>
+      </div>
+    </div>
+  );
+
   return (
     <aside className="sidebar" id="sidebar">
 
@@ -174,17 +192,32 @@ export default function Sidebar() {
         </Link>
 
         {isAdmin ? (
-          <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFinanzas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
-            <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-              <LuStethoscope className="icon nav-icon" />
-              <span className="label">Módulo Asistencial</span>
-              <LuChevronDown className="icon chev" />
+          <>
+            <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFinanzas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuStethoscope className="icon nav-icon" />
+                <span className="label">Módulo Asistencial</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                {asistencialSubGroups}
+              </div>
             </div>
-            <div className="nav-body">
-              {asistencialSubGroups}
+
+            <div className="sidebar-divider"></div>
+
+            <div className={`nav-group${isInsumosFarmacia ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuChartBar className="icon nav-icon" />
+                <span className="label">Módulo Contable</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                {contableSubGroups}
+              </div>
             </div>
-          </div>
-        ) : asistencialSubGroups}
+          </>
+        ) : isContable ? contableSubGroups : asistencialSubGroups}
 
         {isAdmin && (
           <>

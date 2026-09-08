@@ -52,28 +52,55 @@
 .mcc-day.today:hover{background:var(--primary-dark);}
 
 /* Resumen operativo de la agenda visible (ver resumenAgenda en
-   mockCirugiaData.js) -- título + grid 2 columnas, sin tarjeta/borde propio
-   (encargo explícito "no crear una tarjeta visualmente pesada"), mismo
-   nivel de peso visual que .mcc-legend-title de abajo. El valor lleva más
-   jerarquía que su etiqueta (--fs-lg semibold vs --fs-xs), nunca al revés. */
+   mockCirugiaData.js) -- título + grid 2x2 de mini-tarjetas, mismo nivel de
+   peso visual que .mcc-legend-title de abajo para el título. Cada
+   .mcc-resumen-stat es su propia mini-tarjeta: tinte `--bg` (mismo tono
+   "sutil" que .tf-readonly-value/.pcs-card-bottom en este feature) en vez
+   de borde -- un solo lenguaje de "elevación" (tinte de fondo), nunca borde
+   + tinte + sombra apilados para decir lo mismo. El valor (con su ícono)
+   lleva más jerarquía que su etiqueta (--fs-lg/--fw-bold vs --fs-xs/
+   --fw-regular, reservando --fw-bold para la cifra como cualquier otro KPI
+   del proyecto -- ver AGENTS.md "Tipografía"), nunca al revés. */
 .mcc-resumen{display:flex;flex-direction:column;gap:10px;}
 .mcc-resumen-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
-.mcc-resumen-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;}
-.mcc-resumen-stat{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.mcc-resumen-value{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.mcc-resumen-label{font-size:var(--fs-xs);color:var(--ink-500);line-height:1.3;}
+.mcc-resumen-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mcc-resumen-stat{
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+  background:var(--bg);border-radius:var(--radius);padding:8px 10px;
+}
+.mcc-resumen-top{display:flex;align-items:center;gap:6px;min-width:0;}
+/* Ícono por métrica: mismo par bg/fg "acento suave" que ya usa el resto del
+   proyecto (ModalHeader/Badge, ver AGENTS.md) -- nunca un hex nuevo, solo
+   ayuda a escanear cuál métrica es cuál, no aporta información nueva. */
+.mcc-resumen-icon{
+  width:22px;height:22px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.mcc-resumen-icon .icon{width:13px;height:13px;}
+.mcc-resumen-icon-primary{background:var(--primary-50);color:var(--primary);}
+.mcc-resumen-icon-violet{background:var(--violet-bg);color:var(--violet-fg);}
+.mcc-resumen-icon-blue{background:var(--blue-bg);color:var(--blue-fg);}
+.mcc-resumen-icon-green{background:var(--green-bg);color:var(--green);}
+.mcc-resumen-value{
+  font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.mcc-resumen-label{font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--ink-500);line-height:1.3;}
 /* Único indicador con color de advertencia del bloque (encargo explícito) --
-   separado por una línea sutil (--bg, el mismo divisor tenue que
-   .pcs-card-bottom en ProcedimientosStep.css) en vez de un .mcc-divider de
-   ancho completo, y sin fondo propio (no es .tf-warning-note de shared.css:
-   esa es una caja para formularios, acá alcanza con texto+ícono en tono
-   ámbar para no volver pesado un panel angosto). */
+   su propia mini-tarjeta en tono ámbar (mismo par --amber-bg/--amber-fg que
+   el resto del proyecto, nunca rojo: una urgencia programada no es un
+   error) en vez del tinte neutro `--bg` de las 4 métricas de arriba, para
+   diferenciarse de ellas sin salirse de la paleta. Chevron a la derecha
+   como pista visual de interactividad (aún no conectado a una acción real,
+   ver comentario en MiniCalendarCirugias.jsx). */
 .mcc-resumen-urgencia{
   display:flex;align-items:center;gap:6px;
-  padding-top:10px;border-top:1px solid var(--bg);
+  background:var(--amber-bg);border-radius:var(--radius);padding:8px 10px;
   font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--amber-fg);
 }
 .mcc-resumen-urgencia .icon{width:15px;height:15px;flex-shrink:0;}
+.mcc-resumen-urgencia span{flex:1;min-width:0;}
+.mcc-resumen-urgencia-chevron{width:14px;height:14px;color:var(--amber-fg);opacity:.7;}
 
 /* Leyenda de estados, trasladada acá desde el pie de AgendaSemana/AgendaMes
    (.psc-agenda-legend en shared.css, ver MiniCalendarCirugias.jsx). El
