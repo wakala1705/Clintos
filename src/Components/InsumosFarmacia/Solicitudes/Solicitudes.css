@@ -26,6 +26,7 @@
   --red-bg:#fdeceb;
   --interactive-selected-bg:var(--primary-100);
   --input-sm:32px;
+  --input-md:36px;
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);

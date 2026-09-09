@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './MovimientoDetalle.css';
 import MovimientoItemsTable from './MovimientoItemsTable/MovimientoItemsTable';
 import Button from '@/Components/Button/Button';
+import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 
 const TABS = [
   { id: 'detalle', label: 'Detalle' },
@@ -39,7 +40,7 @@ export default function MovimientoDetalle({ movimiento }) {
       <div className="mig-meta-bar">
         <div className="mig-meta-item">
           <span className="lbl">Fecha Contable:</span>
-          <span className="val mig-meta-link">{movimiento.fechaContable}</span>
+          <span className="val mig-meta-link">{formatFecha(movimiento.fechaContable)}</span>
         </div>
         <div className="mig-meta-item">
           <span className="lbl">Confirmó:</span>
@@ -47,7 +48,7 @@ export default function MovimientoDetalle({ movimiento }) {
         </div>
         <div className="mig-meta-item">
           <span className="lbl">Fecha:</span>
-          <span className="val">{movimiento.fecha}</span>
+          <span className="val">{formatFecha(movimiento.fecha)}</span>
         </div>
         <label className="mig-meta-checkbox">
           <input type="checkbox" defaultChecked={movimiento.permitirEditarCostos} />

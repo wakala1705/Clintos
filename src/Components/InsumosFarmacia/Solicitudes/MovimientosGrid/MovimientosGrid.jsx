@@ -35,7 +35,7 @@ export default function MovimientosGrid({ movimientos, selectedId, onSelect }) {
               tabIndex={0}
               aria-selected={m.id === selectedId}
             >
-              <td><span className="mig-bdg-dot" style={{ background: m.bodegaColor }} title={`Bodega ${m.bdg}`} /></td>
+              <td><span className="mig-bdg-dot" style={{ background: m.bodegaColor }} title={`Bodega ${m.bdg}`} aria-label={`Bodega ${m.bdg}`} /></td>
               <td>{m.grupo}</td>
               <td className="mig-strong">{m.consecutivo}</td>
               <td>{m.noAdmision}</td>

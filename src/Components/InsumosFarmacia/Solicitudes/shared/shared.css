@@ -32,6 +32,7 @@
 .mig-detail-empty{
   display:flex;align-items:center;justify-content:center;
   padding:24px;color:var(--ink-500);font-size:var(--fs-base);text-align:center;
+  border-top:1px solid var(--border);
 }
 
 @media (max-width:1024px){

@@ -2,3 +2,4 @@
    ../../shared/shared.css. */
 .mig-items-scroll{overflow-x:auto;}
 .mig-items-grid{font-size:var(--fs-sm);}
+.mig-items-grid tbody tr{cursor:default;}
