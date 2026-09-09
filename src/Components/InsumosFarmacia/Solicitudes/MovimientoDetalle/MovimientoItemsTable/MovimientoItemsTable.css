@@ -1,0 +1,4 @@
+/* .mig-grid/.mig-num/.mig-ellipsis se resuelven en
+   ../../shared/shared.css. */
+.mig-items-scroll{overflow-x:auto;}
+.mig-items-grid{font-size:var(--fs-sm);}
