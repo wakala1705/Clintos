@@ -1,0 +1,49 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css (reusable por futuros modales de
+   Facturación). Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá -- acá solo lo
+   exclusivo de este modal. .form-field/resaltado ámbar de campo obligatorio:
+   ver bloque duplicado más abajo (mismo criterio que GestionCamas.css, ver
+   AGENTS.md "Component organization" -- primer form de esta feature, antes
+   no había ningún .form-field acá). */
+.fem-modal{width:640px;max-width:95vw;}
+
+/* Consecutivo/Compañía como texto plano (encargo explícito, no un input) --
+   una sola fila, Consecutivo a la izquierda y Compañía a la derecha. */
+.fem-readonly-row{display:flex;justify-content:space-between;align-items:center;}
+.fem-readonly-item{font-size:var(--fs-base);color:var(--ink-900);}
+.fem-readonly-label{font-weight:var(--fw-semibold);color:var(--ink-700);}
+
+.fem-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;
+}
+.fem-span-2{grid-column:1/-1;}
+
+.fem-required-mark{color:var(--red);margin-left:2px;}
+
+/* Duplicado por feature (mismo criterio que GestionCamas.css/PlantillaCrecimt2.css
+   -- ver AGENTS.md "Component organization"): scaffolding genérico de campo
+   de formulario + resaltado ámbar "obligatorio y vacío" (toggle "Resaltado de
+   campos obligatorios" en Configuración > Apariencia). Para un FormSelect
+   (botón, sin :required nativo) ver la regla equivalente basada en
+   `data-required-empty` en FormSelect.css. */
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field input, .form-field select, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input, .form-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  outline:2px solid var(--primary);outline-offset:1px;
+}
+.form-field textarea{resize:vertical;min-height:64px;}
+.form-field input[readonly]{background:var(--gray-bg);color:var(--ink-500);cursor:default;}
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown,
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}

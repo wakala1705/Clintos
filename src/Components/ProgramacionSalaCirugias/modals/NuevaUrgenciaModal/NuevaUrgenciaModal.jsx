@@ -6,7 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DuracionInput from '../../DuracionInput/DuracionInput';
-import CatalogoAseguradorasModal from '../CatalogoAseguradorasModal/CatalogoAseguradorasModal';
+import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
 import CatalogoContratosModal from '../CatalogoContratosModal/CatalogoContratosModal';
 import {
   TIPOS_TERCERO_CATALOGO,

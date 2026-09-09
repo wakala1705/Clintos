@@ -103,7 +103,6 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
               <>
                 <div className={`amm-item-icon${tone !== 'blue' ? ` tone-${tone}` : ''}`}><item.icon className="icon" /></div>
                 <div className="amm-item-body">
-                  <span className="amm-item-section">{item.sectionTitle}</span>
                   <div className="amm-item-title-row">
                     <span className="amm-item-title">{item.title}</span>
                     {!item.enabled && (
@@ -111,6 +110,7 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
                     )}
                   </div>
                   <p className="amm-item-desc">{item.description}</p>
+                  <span className="amm-item-section">{item.sectionTitle}</span>
                 </div>
               </>
             );

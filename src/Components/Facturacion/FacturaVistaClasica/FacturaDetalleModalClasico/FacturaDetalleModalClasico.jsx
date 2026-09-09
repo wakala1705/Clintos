@@ -17,7 +17,7 @@ const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
 // TIPO_LABEL/CLASE_LABEL de arriba).
 const ESTADO_PE = {
   pendiente: { label: 'Pendiente', tone: 'neutral' },
-  'fe-pendiente': { label: 'Factura electrónica pendiente', tone: 'warn' },
+  'fe-pendiente': { label: 'Pendiente de envío', tone: 'warn' },
   enviada: { label: 'Enviada', tone: 'success' },
 };
 
@@ -27,7 +27,7 @@ const ESTADO_PE = {
 function estadoFacturaBadge(f) {
   return f.estado === 'anulada'
     ? { label: 'Anulada', tone: 'danger' }
-    : { label: 'Pagada', tone: 'success' };
+    : { label: 'Pendiente', tone: 'neutral' };
 }
 
 function Field({ label, value, children }) {

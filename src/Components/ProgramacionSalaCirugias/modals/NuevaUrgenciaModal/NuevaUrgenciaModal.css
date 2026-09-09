@@ -13,9 +13,9 @@
    (ver AGENTS.md "Component organization"). */
 .nug-patient-info{
   display:flex;flex-direction:column;gap:2px;
-  padding:12px 16px;background:var(--gray-bg);border-radius:var(--radius);
+  padding:12px 16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);
 }
-.nug-patient-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.nug-patient-name{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .nug-patient-doc{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .nug-checkbox{

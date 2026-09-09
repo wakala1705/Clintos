@@ -1,18 +1,16 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './CatalogoAseguradorasModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
-import { ASEGURADORAS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { ASEGURADORAS_CATALOGO } from '@/hooks/CatalogoAseguradorasModal/mockAseguradorasData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
-// Quita tildes -- mismo helper que CatalogoSalasModal.jsx/
-// CatalogoDiagnosticosModal.jsx (no compartido entre los 3, ver AGENTS.md
-// "Component organization").
+// Quita tildes -- mismo helper que AllModulesModal.jsx/FiltroPickerModal.jsx
+// (no compartido entre features, ver AGENTS.md "Component organization").
 function normalizar(texto) {
   return Array.from(texto.normalize('NFD'))
     .filter((ch) => {
@@ -37,15 +35,28 @@ function rangoPaginas(page, totalPages) {
   return rango;
 }
 
-// Ventana de búsqueda de "Id. aseguradora" -- mismo look que
-// CatalogoDiagnosticosModal (2 buscadores + tabla con borde + fila-botón
-// seleccionable + footer Cancelar/Confirmar + paginación real). Sin tabs ni
-// checkbox "Sólo activos" (encargo explícito: se simplificó a 2 buscadores
-// simultáneos -- Id./Razón social -- en vez del único buscador con tabs de
-// la primera versión).
+// Picker de "Id. Tercero"/"Id. aseguradora" -- componente app-wide (ver
+// AGENTS.md "Component organization": "App-wide components... viven
+// directamente bajo src/Components/<ComponentName>/", no anidados en una
+// sola feature). Nació en ProgramacionSalaCirugias (disparado desde el
+// ícono de búsqueda de "Id. Aseguradora"/"Id. Contrato" en NuevaUrgenciaModal/
+// InformacionGeneralStep) y se promovió acá cuando Facturación
+// (FacturaEditarModalClasico) empezó a necesitar exactamente el mismo picker
+// -- encargo explícito: "usa el mismo componente de programación de
+// cirugía, en el de facturación" en vez de duplicarlo con datos propios.
+// Chrome de modal completamente autocontenido (.cam-overlay/.cam-modal/
+// .cam-body/.cam-footer, NO el `.modal-card` de ProgramacionSalaCirugias ni
+// el `.modal` de Facturación/SolicitudConsumo) para poder montarse sin
+// cambios en cualquier feature -- solo consume tokens de color (--primary/
+// --border/--surface-modal/--ink-*/--bg/--gray-bg/--interactive-selected-*)
+// y --z-modal, ya declarados por cada feature en su propio `:root` (mismo
+// contrato que @/Components/ModalHeader/ModalHeader, ver AGENTS.md
+// "Modales"). Sin focus trap (useModalFocusTrap es un hook propio de
+// ProgramacionSalaCirugias, no se llevó acá): ningún consumidor de este
+// picker lo necesitaba ya (NuevaUrgenciaModal/InformacionGeneralStep no lo
+// usaban en su propio modal padre tampoco), mismo criterio simple de
+// Escape+click-afuera que el resto de modales del proyecto.
 export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
-  const modalRef = useRef(null);
-  useModalFocusTrap(modalRef);
   const [queryId, setQueryId] = useState('');
   const [queryRazonSocial, setQueryRazonSocial] = useState('');
   const [page, setPage] = useState(1);
@@ -82,22 +93,22 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
 
   function handleConfirm() {
     if (!seleccion) return;
-    onSelect(`${seleccion.idTercero} - ${seleccion.razonSocial}`);
+    onSelect(seleccion.idTercero);
     onClose();
   }
 
   return (
-    <div className="modal-overlay open">
-      <div ref={modalRef} className="modal-card caam-modal-card" role="dialog" aria-modal="true" aria-labelledby="caam-title">
+    <div className="cam-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="cam-modal" role="dialog" aria-modal="true" aria-labelledby="cam-title">
         <ModalHeader
           title="Seleccionar aseguradora"
-          titleId="caam-title"
+          titleId="cam-title"
           onClose={onClose}
           closeLabel="Cerrar búsqueda de aseguradora"
         />
-        <div className="modal-body caam-body">
-          <div className="caam-search-row">
-            <div className="caam-search">
+        <div className="cam-body">
+          <div className="cam-search-row">
+            <div className="cam-search">
               <LuSearch className="icon" aria-hidden="true" />
               <input
                 type="text"
@@ -107,7 +118,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
                 aria-label="Buscar por Id."
               />
             </div>
-            <div className="caam-search">
+            <div className="cam-search">
               <LuSearch className="icon" aria-hidden="true" />
               <input
                 type="text"
@@ -119,16 +130,16 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
             </div>
           </div>
 
-          <div className="caam-table">
-            <div className="caam-row caam-row-head">
+          <div className="cam-table">
+            <div className="cam-row cam-row-head">
               <span>Id. Tercero</span>
               <span>Razón social</span>
               <span>Id. Ciudad</span>
               <span>Ciudad</span>
             </div>
-            <div className="caam-list" role="listbox" aria-labelledby="caam-title">
+            <div className="cam-list" role="listbox" aria-labelledby="cam-title">
               {pageItems.length === 0 && (
-                <div className="caam-empty">Sin resultados para los filtros aplicados.</div>
+                <div className="cam-empty">Sin resultados para los filtros aplicados.</div>
               )}
               {pageItems.map((a) => {
                 const active = seleccion?.idTercero === a.idTercero;
@@ -138,13 +149,13 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
                     key={a.idTercero}
                     role="option"
                     aria-selected={active}
-                    className={`caam-row caam-option${active ? ' active' : ''}`}
+                    className={`cam-row cam-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(a)}
                   >
-                    <span className="caam-id">{a.idTercero}</span>
-                    <span className="caam-razon-social">{a.razonSocial}</span>
-                    <span className="caam-id">{a.idCiudad}</span>
-                    <span className="caam-ciudad">{a.ciudad}</span>
+                    <span className="cam-id">{a.idTercero}</span>
+                    <span className="cam-razon-social">{a.razonSocial}</span>
+                    <span className="cam-id">{a.idCiudad}</span>
+                    <span className="cam-ciudad">{a.ciudad}</span>
                   </button>
                 );
               })}
@@ -152,13 +163,13 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
           </div>
 
           {total > 0 && (
-            <div className="caam-pagination">
-              <span className="caam-pagination-label">
+            <div className="cam-pagination">
+              <span className="cam-pagination-label">
                 {start}–{end} de {total} registros
               </span>
 
-              <div className="caam-pagination-controls">
-                <label className="caam-pagination-size">
+              <div className="cam-pagination-controls">
+                <label className="cam-pagination-size">
                   <select value={pageSize} onChange={(e) => handleChangePageSize(Number(e.target.value))} aria-label="Registros por página">
                     {PAGE_SIZE_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
                   </select>
@@ -166,7 +177,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
 
                 <button
                   type="button"
-                  className="caam-pagination-nav-btn"
+                  className="cam-pagination-nav-btn"
                   aria-label="Página anterior"
                   disabled={currentPage <= 1}
                   onClick={() => setPage(currentPage - 1)}
@@ -175,11 +186,11 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
                 </button>
 
                 {paginas.map((p, i) => (
-                  p === '...' ? <span key={`ellipsis-${i}`} className="caam-pagination-ellipsis">…</span> : (
+                  p === '...' ? <span key={`ellipsis-${i}`} className="cam-pagination-ellipsis">…</span> : (
                     <button
                       type="button"
                       key={p}
-                      className={`caam-pagination-page${p === currentPage ? ' active' : ''}`}
+                      className={`cam-pagination-page${p === currentPage ? ' active' : ''}`}
                       aria-current={p === currentPage ? 'page' : undefined}
                       onClick={() => setPage(p)}
                     >
@@ -190,7 +201,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
 
                 <button
                   type="button"
-                  className="caam-pagination-nav-btn"
+                  className="cam-pagination-nav-btn"
                   aria-label="Página siguiente"
                   disabled={currentPage >= totalPages}
                   onClick={() => setPage(currentPage + 1)}
@@ -201,7 +212,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
             </div>
           )}
         </div>
-        <div className="modal-footer">
+        <div className="cam-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
         </div>

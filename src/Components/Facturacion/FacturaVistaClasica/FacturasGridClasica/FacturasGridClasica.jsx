@@ -19,7 +19,7 @@ const COLUMNS = [
   { key: 'valorTotal', label: 'Valor Total' },
   { key: 'c', label: 'C' },
   { key: 'flagFE', label: 'F.Elect FE' },
-  { key: 'estadoPE', label: 'PE' },
+  { key: 'estadoPE', label: 'Pendiente de envío' },
   { key: 'estado', label: 'Estado' },
   { key: 'acciones', label: 'Acciones' },
 ];
@@ -33,18 +33,18 @@ const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
 // distinto (factura anulada) y no se toca acá.
 const ESTADO_PE = {
   pendiente: { label: 'Pendiente', tone: 'neutral' },
-  'fe-pendiente': { label: 'Factura electrónica pendiente', tone: 'warn' },
+  'fe-pendiente': { label: 'Pendiente de envío', tone: 'warn' },
   enviada: { label: 'Enviada', tone: 'success' },
 };
 
 // Columna "Estado" del formulario legacy (P/A, encargo explícito) -- deriva
 // de `f.estado` (misma fuente que el badge de FacturaRow en la vista nueva):
 // 'anulada' -> Anulada, cualquier otro valor (null/'pendiente-electronica')
-// -> Pagada.
+// -> Pendiente.
 function estadoFacturaBadge(f) {
   return f.estado === 'anulada'
     ? { label: 'Anulada', tone: 'danger' }
-    : { label: 'Pagada', tone: 'success' };
+    : { label: 'Pendiente', tone: 'neutral' };
 }
 
 // Réplica de la grilla densa del formulario legacy de Facturas (encargo
@@ -55,7 +55,7 @@ function estadoFacturaBadge(f) {
 // Id. Afiliado se ocultaron de esta grilla (encargo explícito) pero siguen
 // disponibles en FacturaDetalleModalClasico ("Ver detalle").
 export default function FacturasGridClasica({
-  facturas, selectedId, onSelect, onVerDetalle,
+  facturas, selectedId, onSelect, onVerDetalle, onEditar,
 }) {
   return (
     <div className="fvc-grid-scroll">
@@ -103,7 +103,7 @@ export default function FacturasGridClasica({
                   <button
                     type="button"
                     className="fvc-row-action-btn"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => { e.stopPropagation(); onEditar(f); }}
                     aria-label={`Editar factura ${f.numero}`}
                     title="Editar"
                   >

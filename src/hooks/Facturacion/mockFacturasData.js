@@ -12,6 +12,13 @@ const TERCEROS = [
   { id: '890301620', razonSocial: 'Coosalud EPS-S' },
 ];
 
+// El picker de "Id. Tercero" de FacturaEditarModalClasico usa
+// @/Components/CatalogoAseguradorasModal (componente app-wide, ver AGENTS.md
+// "Component organization") con su propio catálogo en
+// @/hooks/CatalogoAseguradorasModal/mockAseguradorasData.js -- no uno propio
+// de esta feature (encargo explícito: "usa el mismo componente de
+// programación de cirugía, en el de facturación").
+
 const SEDES = ['Sede 01', 'Sede 02', 'Sede 03'];
 const SEDE_CODIGOS = { 'Sede 01': '01', 'Sede 02': '02', 'Sede 03': '03' };
 const PREFIJOS_ITEM = ['15', '43', '07'];

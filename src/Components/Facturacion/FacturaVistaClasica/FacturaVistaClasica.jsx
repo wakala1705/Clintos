@@ -12,6 +12,7 @@ import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
+import FacturaEditarModalClasico from './FacturaEditarModalClasico/FacturaEditarModalClasico';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
 
 const FILTROS_INICIALES = {
@@ -40,6 +41,7 @@ export default function FacturaVistaClasica() {
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [detalleFactura, setDetalleFactura] = useState(null);
+  const [editFactura, setEditFactura] = useState(null);
 
   // Sin el filtro "pe" -- se reusa tanto para el conteo de cada chip (cuántas
   // facturas tendría cada opción de PE con el resto de filtros ya aplicados)
@@ -111,11 +113,16 @@ export default function FacturaVistaClasica() {
         selectedId={effectiveSelectedId}
         onSelect={setSelectedId}
         onVerDetalle={setDetalleFactura}
+        onEditar={setEditFactura}
       />
 
       <FacturaDetalleClasico factura={selectedFactura} />
 
       <FacturaDetalleModalClasico factura={detalleFactura} onClose={() => setDetalleFactura(null)} />
+
+      {editFactura && (
+        <FacturaEditarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />
+      )}
     </div>
   );
 }

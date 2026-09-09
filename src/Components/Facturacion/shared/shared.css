@@ -292,3 +292,22 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   padding:16px 24px;border-top:1px solid var(--border);
   display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
 }
+
+/* Input con ícono integrado adentro (ej. "Id. Tercero" en
+   FacturaEditarModalClasico) -- mismo patrón que .field-with-search/
+   .search-btn de ProgramacionSalaCirugias/shared/shared.css, duplicado acá
+   por feature (ver AGENTS.md "Component organization"). Wrapper relative +
+   botón absolute encima del input; el input gana padding-right para que el
+   texto nunca quede debajo del ícono. */
+.field-with-search{position:relative;}
+.field-with-search input{padding-right:38px;}
+.search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn .icon{width:16px;height:16px;}

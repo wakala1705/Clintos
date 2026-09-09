@@ -66,7 +66,7 @@ html[data-theme="dark"] .amm-item:not(.disabled):hover{box-shadow:0 4px 14px rgb
 .amm-item-icon.tone-orange{background:var(--orange-bg);color:var(--orange);}
 
 .amm-item-body{flex:1;min-width:0;}
-.amm-item-section{display:block;font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
-.amm-item-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:2px;}
+.amm-item-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
 .amm-item-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .amm-item-desc{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;margin-top:2px;}
+.amm-item-section{display:block;font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;margin-top:2px;}
