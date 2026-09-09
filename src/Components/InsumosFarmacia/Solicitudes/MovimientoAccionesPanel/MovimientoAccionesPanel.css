@@ -1,0 +1,14 @@
+.mig-acciones-panel{
+  flex-shrink:0;width:152px;
+  display:flex;flex-direction:column;gap:8px;
+  padding:12px;border-left:1px solid var(--border);
+}
+.mig-acciones-panel button{width:100%;justify-content:flex-start;}
+
+@media (max-width:1024px){
+  .mig-acciones-panel{
+    width:auto;flex-direction:row;flex-wrap:wrap;
+    border-left:none;border-top:1px solid var(--border);
+  }
+  .mig-acciones-panel button{width:auto;}
+}
