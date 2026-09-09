@@ -300,7 +300,13 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    botón absolute encima del input; el input gana padding-right para que el
    texto nunca quede debajo del ícono. */
 .field-with-search{position:relative;}
-.field-with-search input{padding-right:38px;}
+/* .form-field .field-with-search (no solo .field-with-search): el
+   shorthand `padding:9px 10px` de `.form-field input` más abajo tiene la
+   misma especificidad de clase+elemento y viene después en la cascada, así
+   que sin este selector compuesto pisaba este padding-right y el texto de
+   un valor largo (ej. razón social de Id Tercero) quedaba por debajo del
+   ícono -- mismo tipo de bug de especificidad que .content, ver AGENTS.md. */
+.form-field .field-with-search input{padding-right:38px;}
 .search-btn{
   position:absolute;top:50%;right:4px;transform:translateY(-50%);
   width:28px;height:28px;flex-shrink:0;

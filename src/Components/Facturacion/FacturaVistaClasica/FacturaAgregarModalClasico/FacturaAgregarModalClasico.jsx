@@ -23,10 +23,38 @@ const TIPO_FACTURA_OPTIONS = [
 // imágenes de referencia.
 const RESTRICTED_TIPOS = ['copago', 'moderadora', 'pago-compartido'];
 
+// Listado por defecto -- Tipo Factura "normal" (sin caso especial abajo).
 const ORIGEN_OPTIONS = [
   { value: 'admisiones', label: 'Admisiones' },
   { value: 'manual', label: 'Manual' },
 ];
+
+// Origen depende del Tipo Factura elegido (encargo explícito, ver
+// ORIGEN_OPTIONS_BY_TIPO/origenOptions más abajo): cada tipo restringido
+// habilita un listado propio de procedencias en vez del genérico de
+// arriba.
+const ORIGEN_OPTIONS_COPAGO = [
+  { value: 'admisiones', label: 'Admisiones' },
+  { value: 'consulta-externa', label: 'Consulta Externa' },
+];
+
+const ORIGEN_OPTIONS_MODERADORA = [
+  { value: 'admisiones', label: 'Admisiones' },
+  { value: 'citas', label: 'Citas' },
+  { value: 'ambulatorio', label: 'Ambulatorio' },
+];
+
+const ORIGEN_OPTIONS_PAGO_COMPARTIDO = [
+  { value: 'admisiones', label: 'Admisiones' },
+  { value: 'citas', label: 'Citas' },
+  { value: 'consulta-externa', label: 'Consulta Externa' },
+];
+
+const ORIGEN_OPTIONS_BY_TIPO = {
+  copago: ORIGEN_OPTIONS_COPAGO,
+  moderadora: ORIGEN_OPTIONS_MODERADORA,
+  'pago-compartido': ORIGEN_OPTIONS_PAGO_COMPARTIDO,
+};
 
 const MODO_FACTURACION_OPTIONS = [
   { value: 'manual', label: 'Manual' },
@@ -51,6 +79,15 @@ const MONEDA_OPTIONS = [
 // con el consecutivo, como en la imagen de referencia.
 const PROXIMO_CONSECUTIVO = '0200289592';
 
+// Fecha Vencimiento es siempre un mes después de Fecha Factura (encargo
+// explícito) -- se recalcula automáticamente cada vez que Fecha Factura
+// cambia, ver handleChangeFechaFactura más abajo.
+function addOneMonth(dateStr) {
+  const d = new Date(`${dateStr}T00:00:00`);
+  d.setMonth(d.getMonth() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 function buildInitialForm() {
   const today = new Date().toISOString().slice(0, 10);
   return {
@@ -59,7 +96,7 @@ function buildInitialForm() {
     noReferencia: '',
     noFactura: PROXIMO_CONSECUTIVO,
     fechaFactura: today,
-    fechaVencimiento: today,
+    fechaVencimiento: addOneMonth(today),
     idTercero: '',
     regimen: '',
     modoFacturacion: 'contratacion',
@@ -132,22 +169,57 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   // Copago/Moderadora/Pago Compartido son tipos de factura "de un solo
   // valor" (encargo explícito, ver imágenes de referencia): autoseleccionan
   // Modo Facturación en "Manual" (queda seleccionable igual, no se
-  // deshabilita -- encargo explícito) y deshabilitan No Contrato/Tipo
-  // Contrato/Descuento/ID/Valor Servicios/Valor Copago + los "Valor X" que
-  // no correspondan al tipo elegido (Valor Moderadora/Valor Pago Comp. son
-  // los únicos que se habilitan según el tipo activo -- Valor Copago queda
-  // deshabilitado siempre, incluso eligiendo "Copago", encargo explícito).
-  // Fecha Factura/Fecha Vencimiento/No. Referencia/Id Tercero/Régimen/
-  // Administradora/Moneda/Concepto nunca se restringen (encargo explícito:
-  // fechas quedan siempre habilitadas). "Normal" no restringe nada.
+  // deshabilita -- encargo explícito). Progressive disclosure (encargo
+  // explícito: "en vez de mostrar esos campos muertos ahi, vamos a
+  // ocultarlos"): No Contrato/Descuento/ID/Administradora/Valor Copago/
+  // Valor Pago Comp./Valor Moderadora/Valor Factura/Moneda se OCULTAN por
+  // completo (no solo se deshabilitan) cuando isRestricted -- los 4
+  // "Valor X" quedan ocultos siempre bajo isRestricted, incluso el que
+  // coincide con el tipo elegido (encargo explícito, ningún caso especial
+  // por tipo). Tipo Contrato es la excepción: a diferencia de sus vecinos
+  // de fila (No Contrato/ID), queda siempre visible/habilitado -- también
+  // bajo isRestricted (encargo explícito, mismas opciones Evento/Capita/
+  // PGP) -- y se precarga en "Evento" cada vez que se elige uno de estos 3
+  // tipos (encargo explícito, ver handleChangeTipoFactura; queda
+  // seleccionable igual, el usuario puede cambiarlo a mano después). Los
+  // campos que quedan sin su vecino de fila bajo isRestricted
+  // (Modo Facturación, Tipo Contrato) pasan a `fam-span-2` para no dejar
+  // hueco en el grid. Fecha Factura/Fecha Vencimiento/No. Referencia/Id
+  // Tercero/Régimen/Concepto nunca se restringen ni se ocultan. "Normal"
+  // no oculta ni deshabilita nada.
   const isRestricted = RESTRICTED_TIPOS.includes(form.tipoFactura);
+  // Listado de Origen habilitado para el Tipo Factura activo (encargo
+  // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
+  // Citas/Ambulatorio, Pago Compartido->Admisiones/Citas/Consulta Externa).
+  const origenOptions = ORIGEN_OPTIONS_BY_TIPO[form.tipoFactura] ?? ORIGEN_OPTIONS;
 
   function handleChangeTipoFactura(value) {
+    const nextOrigenOptions = ORIGEN_OPTIONS_BY_TIPO[value] ?? ORIGEN_OPTIONS;
+    const nextIsRestricted = RESTRICTED_TIPOS.includes(value);
     setForm((f) => ({
       ...f,
       tipoFactura: value,
-      modoFacturacion: RESTRICTED_TIPOS.includes(value) ? 'manual' : f.modoFacturacion,
+      modoFacturacion: nextIsRestricted ? 'manual' : f.modoFacturacion,
+      origen: nextOrigenOptions.some((o) => o.value === f.origen) ? f.origen : nextOrigenOptions[0].value,
+      tipoContrato: nextIsRestricted ? 'evento' : f.tipoContrato,
     }));
+  }
+
+  // Bajo Copago/Moderadora/Pago Compartido (encargo explícito), elegir una
+  // admisión en AdmisionPickerModal también autocompleta "Id Tercero" con
+  // documento + nombre del afiliado de esa admisión (en vez de dejarlo para
+  // buscar aparte en CatalogoAseguradorasModal) -- fuera de isRestricted el
+  // picker solo carga "No. Referencia", igual que antes.
+  function handleSeleccionAdmision(admision) {
+    setForm((f) => ({
+      ...f,
+      noReferencia: admision.numeroAdmision,
+      idTercero: isRestricted ? `${admision.documento} - ${admision.nombreAfiliado}` : f.idTercero,
+    }));
+  }
+
+  function handleChangeFechaFactura(value) {
+    setForm((f) => ({ ...f, fechaFactura: value, fechaVencimiento: addOneMonth(value) }));
   }
 
   return (
@@ -164,6 +236,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
           <div className="fam-readonly-row">
             <span className="fam-readonly-item"><span className="fam-readonly-label">Compañía:</span> 02</span>
             <span className="fam-readonly-item"><span className="fam-readonly-label">Consecutivo:</span> {PROXIMO_CONSECUTIVO}</span>
+            <span className="fam-readonly-item"><span className="fam-readonly-label">No. de Factura:</span> {form.noFactura}</span>
           </div>
 
           <div className="fam-grid">
@@ -182,13 +255,8 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                 id="fam-origen"
                 value={form.origen}
                 onChange={setField(setForm, 'origen')}
-                options={ORIGEN_OPTIONS}
+                options={origenOptions}
               />
-            </div>
-
-            <div className="form-field fam-span-2">
-              <label htmlFor="fam-no-factura">No. de Factura</label>
-              <input id="fam-no-factura" type="text" value={form.noFactura} readOnly />
             </div>
 
             <div className="form-field fam-span-2">
@@ -220,7 +288,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                 id="fam-fecha-factura"
                 type="date"
                 value={form.fechaFactura}
-                onChange={(e) => setField(setForm, 'fechaFactura')(e.target.value)}
+                onChange={(e) => handleChangeFechaFactura(e.target.value)}
                 required
               />
             </div>
@@ -280,7 +348,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
               </div>
             </div>
 
-            <div className="form-field">
+            <div className={`form-field${isRestricted ? ' fam-span-2' : ''}`}>
               <label htmlFor="fam-modo-facturacion">Modo Facturación</label>
               <FormSelect
                 id="fam-modo-facturacion"
@@ -289,41 +357,42 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                 options={MODO_FACTURACION_OPTIONS}
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="fam-no-contrato">No Contrato</label>
-              <div className="field-with-search">
-                <input
-                  id="fam-no-contrato"
-                  type="text"
-                  value={form.noContrato}
-                  onChange={(e) => setField(setForm, 'noContrato')(e.target.value)}
-                  disabled={isRestricted}
-                />
-                <button
-                  type="button"
-                  className="search-btn"
-                  onClick={() => setCatalogoContratacionAbierto(true)}
-                  aria-label="Buscar contrato"
-                  title="Buscar contrato"
-                  disabled={isRestricted}
-                >
-                  <LuEye className="icon" />
-                </button>
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-no-contrato">No Contrato</label>
+                <div className="field-with-search">
+                  <input
+                    id="fam-no-contrato"
+                    type="text"
+                    value={form.noContrato}
+                    onChange={(e) => setField(setForm, 'noContrato')(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="search-btn"
+                    onClick={() => setCatalogoContratacionAbierto(true)}
+                    aria-label="Buscar contrato"
+                    title="Buscar contrato"
+                  >
+                    <LuEye className="icon" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="form-field">
-              <label htmlFor="fam-id-contrato">ID<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-id-contrato"
-                type="number"
-                value={form.idContrato}
-                onChange={(e) => setField(setForm, 'idContrato')(e.target.value)}
-                required
-                disabled={isRestricted}
-              />
-            </div>
-            <div className="form-field">
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-id-contrato">ID<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-id-contrato"
+                  type="number"
+                  value={form.idContrato}
+                  onChange={(e) => setField(setForm, 'idContrato')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+            <div className={`form-field${isRestricted ? ' fam-span-2' : ''}`}>
               <label htmlFor="fam-tipo-contrato">Tipo Contrato</label>
               <FormSelect
                 id="fam-tipo-contrato"
@@ -331,113 +400,123 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                 onChange={setField(setForm, 'tipoContrato')}
                 options={TIPO_CONTRATO_OPTIONS}
                 placeholder="Selecciona una opción"
-                disabled={isRestricted}
               />
             </div>
 
-            <div className="form-field fam-span-2">
-              <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
-              <div className="field-with-search">
-                <input
-                  id="fam-administradora"
-                  type="text"
-                  value={form.administradora}
-                  onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
-                  required
-                  placeholder="Ej. Clintos"
-                />
-                <button
-                  type="button"
-                  className="search-btn"
-                  onClick={() => setCatalogoAdministradoraAbierto(true)}
-                  aria-label="Buscar administradora"
-                  title="Buscar administradora"
-                >
-                  <LuEye className="icon" />
-                </button>
+            {!isRestricted && (
+              <div className="form-field fam-span-2">
+                <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
+                <div className="field-with-search">
+                  <input
+                    id="fam-administradora"
+                    type="text"
+                    value={form.administradora}
+                    onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
+                    required
+                    placeholder="Ej. Clintos"
+                  />
+                  <button
+                    type="button"
+                    className="search-btn"
+                    onClick={() => setCatalogoAdministradoraAbierto(true)}
+                    aria-label="Buscar administradora"
+                    title="Buscar administradora"
+                  >
+                    <LuEye className="icon" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="form-field">
-              <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-valor-servicios"
-                type="number"
-                step="0.01"
-                value={form.valorServicios}
-                onChange={(e) => setField(setForm, 'valorServicios')(e.target.value)}
-                required
-                disabled={isRestricted}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-valor-copago"
-                type="number"
-                step="0.01"
-                value={form.valorCopago}
-                onChange={(e) => setField(setForm, 'valorCopago')(e.target.value)}
-                required
-                disabled={isRestricted}
-              />
-            </div>
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-valor-servicios"
+                  type="number"
+                  step="0.01"
+                  value={form.valorServicios}
+                  onChange={(e) => setField(setForm, 'valorServicios')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-valor-copago"
+                  type="number"
+                  step="0.01"
+                  value={form.valorCopago}
+                  onChange={(e) => setField(setForm, 'valorCopago')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
 
-            <div className="form-field">
-              <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-pago-compartido"
-                type="number"
-                step="0.01"
-                value={form.valorPagoCompartido}
-                onChange={(e) => setField(setForm, 'valorPagoCompartido')(e.target.value)}
-                required
-                disabled={isRestricted && form.tipoFactura !== 'pago-compartido'}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-valor-moderadora"
-                type="number"
-                step="0.01"
-                value={form.valorModeradora}
-                onChange={(e) => setField(setForm, 'valorModeradora')(e.target.value)}
-                required
-                disabled={isRestricted && form.tipoFactura !== 'moderadora'}
-              />
-            </div>
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-pago-compartido"
+                  type="number"
+                  step="0.01"
+                  value={form.valorPagoCompartido}
+                  onChange={(e) => setField(setForm, 'valorPagoCompartido')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-valor-moderadora"
+                  type="number"
+                  step="0.01"
+                  value={form.valorModeradora}
+                  onChange={(e) => setField(setForm, 'valorModeradora')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
 
-            <div className="form-field">
-              <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-descuento"
-                type="number"
-                step="0.01"
-                value={form.descuento}
-                onChange={(e) => setField(setForm, 'descuento')(e.target.value)}
-                required
-                disabled={isRestricted}
-              />
-            </div>
-            <div className="form-field">
-              {/* Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento,
-                  a calcular cuando se cablee la lógica real -- por ahora solo
-                  muestra el placeholder readonly del formulario legacy. */}
-              <label htmlFor="fam-valor-factura">Valor Factura</label>
-              <input id="fam-valor-factura" type="number" step="0.01" value="0.00" readOnly />
-            </div>
+            {!isRestricted && (
+              <div className="form-field">
+                <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
+                <input
+                  id="fam-descuento"
+                  type="number"
+                  step="0.01"
+                  value={form.descuento}
+                  onChange={(e) => setField(setForm, 'descuento')(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+            {!isRestricted && (
+              <div className="form-field">
+                {/* Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento,
+                    a calcular cuando se cablee la lógica real -- por ahora solo
+                    muestra el placeholder readonly del formulario legacy. */}
+                <label htmlFor="fam-valor-factura">Valor Factura</label>
+                <input id="fam-valor-factura" type="number" step="0.01" value="0.00" readOnly />
+              </div>
+            )}
 
-            <div className="form-field fam-span-2">
-              <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
-              <FormSelect
-                id="fam-moneda"
-                value={form.moneda}
-                onChange={setField(setForm, 'moneda')}
-                options={MONEDA_OPTIONS}
-                required
-              />
-            </div>
+            {!isRestricted && (
+              <div className="form-field fam-span-2">
+                <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
+                <FormSelect
+                  id="fam-moneda"
+                  value={form.moneda}
+                  onChange={setField(setForm, 'moneda')}
+                  options={MONEDA_OPTIONS}
+                  required
+                />
+              </div>
+            )}
 
             <div className="form-field fam-span-2">
               <label htmlFor="fam-concepto">Concepto<span className="fam-required-mark">*</span></label>
@@ -495,7 +574,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
 
       {admisionPickerAbierto && (
         <AdmisionPickerModal
-          onSelect={setField(setForm, 'noReferencia')}
+          onSelect={handleSeleccionAdmision}
           onClose={() => setAdmisionPickerAbierto(false)}
         />
       )}

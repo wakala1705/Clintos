@@ -49,6 +49,11 @@ function normalizar(texto) {
 // solo las que siguen activas. Búsqueda multi-campo (N° admisión/documento/
 // nombre) client-side sobre el resultado ya filtrado por estado -- distinto
 // de fetchAdmisiones, que solo busca un campo a la vez.
+// `onSelect` recibe el registro de admisión completo (no solo
+// numeroAdmision, encargo explícito): bajo Copago/Moderadora/Pago
+// Compartido, FacturaAgregarModalClasico también usa `documento`/
+// `nombreAfiliado` de acá para autocompletar "Id Tercero", además de
+// `numeroAdmision` para "No. Referencia" -- ver handleSeleccionAdmision ahí.
 export default function AdmisionPickerModal({ onSelect, onClose }) {
   const [query, setQuery] = useState('');
   const [estado, setEstado] = useState('todos');
@@ -88,7 +93,7 @@ export default function AdmisionPickerModal({ onSelect, onClose }) {
 
   function handleElegir() {
     if (!seleccion) return;
-    onSelect(seleccion.numeroAdmision);
+    onSelect(seleccion);
     onClose();
   }
 
