@@ -1,0 +1,56 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- "extragrande" (encargo explícito), el más ancho de Facturación,
+   para que la tabla de 9 columnas no quede apretada. */
+.apm-modal{width:1180px;max-width:95vw;max-height:88vh;}
+
+.apm-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+
+.apm-search{
+  display:flex;align-items:center;gap:8px;flex:1;min-width:280px;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.apm-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.apm-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.apm-search input::placeholder{color:var(--ink-400);}
+
+.apm-estado-filter{width:220px;flex-shrink:0;}
+
+.apm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.apm-row{
+  display:grid;
+  grid-template-columns:120px 90px 64px 150px 110px 1fr 1fr 100px 120px;
+  align-items:center;gap:10px;
+  padding:9px 12px;
+}
+.apm-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.apm-list{max-height:min(52vh,460px);overflow-y:auto;}
+.apm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);
+}
+.apm-option:last-child{border-bottom:none;}
+.apm-option:hover{background:var(--bg);}
+.apm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.apm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.apm-num{font-variant-numeric:tabular-nums;}
+.apm-ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.apm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+@media (max-width:768px){
+  .apm-modal{width:100%;}
+  .apm-estado-filter{width:100%;}
+}

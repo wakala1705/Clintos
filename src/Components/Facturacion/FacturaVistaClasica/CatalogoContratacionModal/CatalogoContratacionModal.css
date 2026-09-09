@@ -1,0 +1,51 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- tabla de 7 columnas, más ancho que el resto de los modales de
+   Facturación. */
+.ccm-modal{width:900px;max-width:95vw;}
+
+/* Panel de contexto (Modo/Sede/Tercero/Fecha...) -- 4 columnas x 3 filas,
+   con celdas vacías explícitas (<div/> sin contenido en Field) donde la
+   imagen de referencia no trae valor, para que la grilla no se reacomode. */
+.ccm-info-panel{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px 20px;
+  background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--radius);
+  padding:14px 16px;
+}
+.ccm-field{display:flex;gap:6px;font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;}
+.ccm-field-label{font-weight:var(--fw-semibold);color:var(--ink-700);flex-shrink:0;}
+.ccm-field-value{color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;}
+
+.ccm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.ccm-row{
+  display:grid;
+  grid-template-columns:56px 110px 150px 1fr 1fr 90px 80px;
+  align-items:center;gap:10px;
+  padding:9px 12px;
+}
+.ccm-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.ccm-list{max-height:260px;overflow-y:auto;}
+.ccm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);
+}
+.ccm-option:last-child{border-bottom:none;}
+.ccm-option:hover{background:var(--bg);}
+.ccm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.ccm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.ccm-num{font-variant-numeric:tabular-nums;}
+.ccm-ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+@media (max-width:768px){
+  .ccm-modal{width:100%;}
+  .ccm-info-panel{grid-template-columns:repeat(2,1fr);}
+}

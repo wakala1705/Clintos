@@ -21,7 +21,7 @@ export default function Utilitarios() {
       <div className="main">
         <Topbar page="Utilitarios" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }} />
 
-        <div className="content">
+        <div className="content util-content">
           <UnderConstruction
             icon={LuWrench}
             title="Utilitarios en desarrollo"

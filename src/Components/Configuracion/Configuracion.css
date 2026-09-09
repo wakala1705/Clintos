@@ -75,7 +75,13 @@ body{
 }
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
 
-.content{
+/* Selector COMPUESTO .content.cfg-content (especificidad 0-2-0), no
+   ".content" solo — varias features definen su propio ".content" con
+   overflow(-y):hidden y, al tener todas la misma especificidad, gana la que
+   se inyectó último en el DOM según el orden de navegación client-side, no
+   el archivo (mismo bug ya documentado para Home/.home-content, ver
+   AGENTS.md / bitácora de homologación). */
+.content.cfg-content{
   padding:16px;
   display:flex;flex-direction:column;
   gap:16px;

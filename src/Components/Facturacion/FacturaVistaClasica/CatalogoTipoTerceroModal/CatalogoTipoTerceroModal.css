@@ -1,0 +1,32 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- catálogo fijo y angosto, sin búsqueda/paginación (a diferencia
+   de @/Components/CatalogoAseguradorasModal). */
+.ctc-modal{width:460px;max-width:95vw;}
+
+.ctc-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.ctc-row{
+  display:grid;grid-template-columns:90px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.ctc-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.ctc-list{max-height:220px;overflow-y:auto;}
+.ctc-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.ctc-option:last-child{border-bottom:none;}
+.ctc-option:hover{background:var(--bg);}
+.ctc-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.ctc-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.ctc-tipo{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ctc-detalle{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

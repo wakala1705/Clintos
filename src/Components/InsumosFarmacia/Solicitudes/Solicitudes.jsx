@@ -84,6 +84,11 @@ export default function Solicitudes() {
         />
 
         <div className="content">
+          <div className="mig-page-header">
+            <h1>Salidas asistenciales de inventario</h1>
+            <p>Catálogo de movimientos de inventario tipo SA para dispensación y control asistencial</p>
+          </div>
+
           <div className="card">
             <div className="mig-shell">
               <MovimientosToolbar filtros={filtros} onChange={(patch) => setFiltros((f) => ({ ...f, ...patch }))} />

@@ -30,7 +30,7 @@ export default function SubmoduleAdministracion({ section }) {
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content">
+        <div className="content subm-content">
           <UnderConstruction
             icon={LuUserCog}
             title="Administración en desarrollo"

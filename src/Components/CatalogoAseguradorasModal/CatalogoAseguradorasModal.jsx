@@ -56,7 +56,14 @@ function rangoPaginas(page, totalPages) {
 // picker lo necesitaba ya (NuevaUrgenciaModal/InformacionGeneralStep no lo
 // usaban en su propio modal padre tampoco), mismo criterio simple de
 // Escape+click-afuera que el resto de modales del proyecto.
-export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
+// `selectField` (opcional, default "idTercero"): qué propiedad del registro
+// elegido entrega `onSelect` -- por defecto el ID (NuevaUrgenciaModal/
+// InformacionGeneralStep/FacturaEditarModalClasico ya lo consumen así), pero
+// FacturaAgregarModalClasico (Id Tercero/Administradora) pide
+// `selectField="razonSocial"` porque ahí es más diciente mostrar la razón
+// social que el ID puro (encargo explícito). Opt-in: sin este prop no
+// cambia nada para los demás consumidores.
+export default function CatalogoAseguradorasModal({ onSelect, onClose, selectField = 'idTercero' }) {
   const [queryId, setQueryId] = useState('');
   const [queryRazonSocial, setQueryRazonSocial] = useState('');
   const [page, setPage] = useState(1);
@@ -93,7 +100,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose }) {
 
   function handleConfirm() {
     if (!seleccion) return;
-    onSelect(seleccion.idTercero);
+    onSelect(seleccion[selectField]);
     onClose();
   }
 

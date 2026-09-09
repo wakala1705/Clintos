@@ -310,4 +310,41 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 }
 .search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
 .search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn:disabled{color:var(--ink-400);cursor:not-allowed;}
+.search-btn:disabled:hover{background:transparent;}
 .search-btn .icon{width:16px;height:16px;}
+
+/* Scaffolding genérico de campo de formulario + resaltado ámbar "obligatorio
+   y vacío" (toggle "Resaltado de campos obligatorios" en Configuración >
+   Apariencia) -- reusado por FacturaEditarModalClasico y
+   FacturaAgregarModalClasico (2+ consumidores, ver AGENTS.md "Component
+   organization"; vivía duplicado en FacturaEditarModalClasico.css cuando
+   era el único form de la feature). Para un FormSelect (botón, sin
+   :required nativo) ver la regla equivalente basada en
+   `data-required-empty` en FormSelect.css. */
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field input, .form-field select, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input, .form-field select{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+  outline:2px solid var(--primary);outline-offset:1px;
+}
+.form-field textarea{resize:vertical;min-height:64px;}
+.form-field input[readonly]{background:var(--gray-bg);color:var(--ink-500);cursor:default;}
+/* input[disabled] (ej. Fecha Factura/Descuento/Valor X al elegir Copago/
+   Moderadora/Pago Compartido en FacturaAgregarModalClasico, ver
+   isRestricted ahí) -- mismo tono que [readonly], :not(:disabled) en la
+   regla ámbar de abajo para que un campo obligatorio-y-vacío pero
+   deshabilitado no quede con las dos apariencias en conflicto. */
+.form-field input:disabled, .form-field textarea:disabled{background:var(--gray-bg);color:var(--ink-500);cursor:not-allowed;}
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown:not(:disabled),
+html:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown:not(:disabled){
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown:not(:disabled),
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textarea:required:placeholder-shown:not(:disabled){
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}

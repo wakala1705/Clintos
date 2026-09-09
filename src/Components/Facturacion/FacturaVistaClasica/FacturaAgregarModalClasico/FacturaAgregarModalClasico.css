@@ -1,0 +1,21 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer + .form-field (scaffolding
+   genérico de campo, incluido el resaltado ámbar de obligatorios): ver
+   ../../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal. Más ancho que .fem-modal (FacturaEditarModalClasico, 640px) porque
+   tiene más campos por fila. */
+.fam-modal{width:720px;max-width:95vw;}
+
+/* Compañía/Consecutivo como texto plano -- mismo patrón que
+   .fem-readonly-row de FacturaEditarModalClasico.css. */
+.fam-readonly-row{display:flex;justify-content:space-between;align-items:center;}
+.fam-readonly-item{font-size:var(--fs-base);color:var(--ink-900);}
+.fam-readonly-label{font-weight:var(--fw-semibold);color:var(--ink-700);}
+
+.fam-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;
+  align-items:start;
+}
+.fam-span-2{grid-column:1/-1;}
+
+.fam-required-mark{color:var(--red);margin-left:2px;}

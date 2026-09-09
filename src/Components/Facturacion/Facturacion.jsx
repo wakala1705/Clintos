@@ -13,6 +13,7 @@ import FiltrosActivosChips from './FiltrosActivosChips/FiltrosActivosChips';
 import FacturaListPane from './FacturaListPane/FacturaListPane';
 import FacturaDetallePanel from './FacturaDetallePanel/FacturaDetallePanel';
 import FacturaVistaClasica from './FacturaVistaClasica/FacturaVistaClasica';
+import FacturaAgregarModalClasico from './FacturaVistaClasica/FacturaAgregarModalClasico/FacturaAgregarModalClasico';
 import { LuPlus, LuSearch } from 'react-icons/lu';
 
 const PAGE_SIZE = 15;
@@ -41,6 +42,8 @@ export default function Facturacion() {
   // visibles. Seleccionar una fila abre el detalle a pantalla completa;
   // "Volver al listado" solo lo oculta, no pierde la selección de escritorio.
   const [detailOpenMobile, setDetailOpenMobile] = useState(false);
+
+  const [nuevaFacturaAbierta, setNuevaFacturaAbierta] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -126,7 +129,7 @@ export default function Facturacion() {
               <p>Consulta, filtra y gestiona las facturas emitidas.</p>
             </div>
             <div className="fact-page-header-actions">
-              <Button icon={LuPlus} onClick={() => {}}>Nueva factura</Button>
+              <Button icon={LuPlus} onClick={() => setNuevaFacturaAbierta(true)}>Nueva factura</Button>
             </div>
           </div>
 
@@ -180,6 +183,10 @@ export default function Facturacion() {
           )}
         </div>
       </div>
+
+      {nuevaFacturaAbierta && (
+        <FacturaAgregarModalClasico onClose={() => setNuevaFacturaAbierta(false)} />
+      )}
     </div>
   );
 }

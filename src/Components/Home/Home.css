@@ -111,22 +111,35 @@ body{
 /* .topbar / .breadcrumb / .topbar-right moved to
    src/Components/Topbar/Topbar.css — see AGENTS.md (topbar homologada). */
 
-.content{
-  padding:16px;
+/* ---------- HOME ---------- */
+/* Selector COMPUESTO .content.home-content (especificidad 0-2-0), no
+   ".content" solo — varias features (Admisiones, Facturación, FichaPaciente,
+   GestionTurnos, ProgramarCita, ListaPacientes, HistorialQuirurgico,
+   SolicitudConsumo, GestionEnfermeria, GestionCamas,
+   ProgramacionSalaCirugias) definen su propio ".content" con
+   overflow(-y):hidden (su scroll real vive en un hijo interno propio, ej.
+   .hq-body) — mismo criterio de duplicación por feature que el resto de
+   tokens (ver AGENTS.md), pero con overflow divergente. Como todas usan el
+   mismo selector con la misma especificidad que un ".content" a secas
+   tendría acá, gana la que se inyectó último en el DOM según el orden de
+   navegación client-side, no el archivo — volver a Inicio después de visitar
+   cualquiera de esas features dejaba el overflow-y:hidden de esa feature
+   pegado sobre el de Home (contenido cortado, sin scrollbar, hasta F5). Mismo
+   fix ya establecido para overrides tipo .ge-shell-content/.cbr-content (ver
+   bitácora de homologación de modales / AGENTS.md), aplicado acá a la regla
+   base en vez de a un override.
+   .home-inner (hijo) sigue siendo el que centra/limita el ancho — nunca acá:
+   ponerlos en el mismo elemento hace que la barra de scroll se dibuje en el
+   borde del bloque angosto en vez del borde real de la ventana ("scroll en
+   medio de la pantalla"). */
+.content.home-content{
+  padding:32px;
   display:flex;flex-direction:column;
   gap:16px;
   flex:1;
   min-height:0;
   overflow-y:auto;
 }
-
-/* ---------- HOME ---------- */
-/* .home-content es el propio contenedor con scroll (.content, overflow-y:auto
-   a lo ancho completo de .main) — el centrado/max-width vive en .home-inner
-   (hijo), NUNCA en .home-content: ponerlos en el mismo elemento hace que la
-   barra de scroll se dibuje en el borde del bloque angosto en vez del borde
-   real de la ventana ("scroll en medio de la pantalla"). */
-.home-content{padding:32px;}
 .home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px;}
 
 .home-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}

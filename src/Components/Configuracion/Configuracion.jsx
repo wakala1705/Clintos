@@ -21,7 +21,7 @@ export default function Configuracion() {
       <div className="main">
         <Topbar page="Configuración" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }} />
 
-        <div className="content">
+        <div className="content cfg-content">
           <UnderConstruction
             icon={LuSettings}
             title="Configuración en desarrollo"
