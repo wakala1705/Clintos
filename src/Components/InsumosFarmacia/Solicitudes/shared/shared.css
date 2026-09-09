@@ -1,0 +1,39 @@
+/* Estilos cross-cutting de Solicitudes de Insumos Farmacia -- importado una
+   sola vez desde Solicitudes.jsx (ver AGENTS.md "Component organization").
+   .card: mismo contrato que Facturacion/shared/shared.css (llena el alto
+   restante de .content, cada sección interna decide su propio scroll).
+   .mig-grid/.mig-num/.mig-ellipsis: reusadas por MovimientosGrid y
+   MovimientoItemsTable -- mismo criterio que .fvc-grid en
+   Facturacion/shared/shared.css. */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+
+.mig-grid{border-collapse:collapse;width:100%;font-size:var(--fs-sm);white-space:nowrap;}
+.mig-grid thead th{
+  text-align:left;padding:8px 12px;background:var(--table-header-bg);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+  position:sticky;top:0;
+}
+.mig-grid tbody td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.mig-grid tbody tr{cursor:pointer;background:var(--surface);}
+.mig-grid tbody tr:hover{background:var(--gray-bg);}
+.mig-grid tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.mig-grid tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.mig-strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.mig-num{text-align:right;}
+.mig-ellipsis{max-width:220px;overflow:hidden;text-overflow:ellipsis;}
+
+.mig-bdg-dot{display:inline-block;width:14px;height:14px;border-radius:3px;flex-shrink:0;}
+
+.mig-detail-empty{
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;color:var(--ink-500);font-size:var(--fs-base);text-align:center;
+}
+
+@media (max-width:1024px){
+  .mig-ellipsis{max-width:160px;}
+}
