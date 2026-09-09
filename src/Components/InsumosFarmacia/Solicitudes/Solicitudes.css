@@ -89,3 +89,15 @@ body{
   min-height:0;
   overflow-y:auto;
 }
+
+.mig-shell{display:flex;flex-direction:column;flex:1;min-height:0;}
+.mig-body{display:flex;flex:1;min-height:0;}
+
+/* Bajo --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints"):
+   .mig-body pasa de fila a columna para que MovimientoAccionesPanel (que ya
+   cambia a fila horizontal de botones en su propio CSS, ver
+   MovimientoAccionesPanel.css) quede apilado debajo de la grilla con el
+   ancho completo, en vez de angostarla compitiendo por espacio horizontal. */
+@media (max-width:1024px){
+  .mig-body{flex-direction:column;}
+}
