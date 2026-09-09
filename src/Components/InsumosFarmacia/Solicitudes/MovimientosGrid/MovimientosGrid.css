@@ -1,0 +1,5 @@
+/* .mig-grid/.mig-strong/.mig-num/.mig-ellipsis/.mig-bdg-dot: definidas en
+   ../shared/shared.css. */
+.mig-grid-scroll{flex:1;min-height:0;overflow:auto;}
+
+.mig-grid-empty{padding:32px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
