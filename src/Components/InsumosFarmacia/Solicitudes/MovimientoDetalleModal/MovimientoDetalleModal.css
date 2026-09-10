@@ -1,7 +1,10 @@
-.mig-detalle{
-  display:flex;flex-direction:column;gap:12px;
-  border-top:1px solid var(--border);padding:16px;flex-shrink:0;
-}
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico en
+   ../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+/* Extragrande (encargo explícito) para que MovimientoItemsTable (17
+   columnas) no quede apretada -- mismo criterio que .fvcd-modal de
+   FacturaDetalleModalClasico. */
+.mig-detalle-modal{width:95vw;max-width:1400px;}
 
 .mig-meta-bar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px;}
 .mig-meta-item{display:flex;align-items:baseline;gap:6px;font-size:var(--fs-base);}
@@ -23,7 +26,19 @@
 .mig-tab-body{min-height:0;}
 .mig-tab-empty{padding:24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 
-.mig-detalle-actions{display:flex;justify-content:flex-end;gap:8px;}
+/* Border general de la tabla (encargo explícito) + altura fija con scroll
+   propio (así el modal no "salta" de alto entre movimientos con distinta
+   cantidad de artículos) -- mismo criterio que .fvcd-items-card de
+   FacturaDetalleModalClasico. .mig-items-scroll es de MovimientoItemsTable
+   (../MovimientoItemsTable/MovimientoItemsTable.css); acá se overridea su
+   overflow-x:auto a overflow:auto + alto 100% para que scrollee dentro de
+   esta tarjeta en vez de crecer libre. */
+.mig-items-card{
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  height:280px;display:flex;flex-direction:column;
+}
+.mig-items-card .mig-items-scroll{flex:1;min-height:0;overflow:auto;}
+.mig-items-card .mig-grid tbody tr:last-child td{border-bottom:none;}
 
 @media (max-width:768px){
   .mig-meta-checkbox{margin-left:0;}

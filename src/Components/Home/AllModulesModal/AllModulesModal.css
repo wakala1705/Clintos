@@ -64,6 +64,7 @@ html[data-theme="dark"] .amm-item:not(.disabled):hover{box-shadow:0 4px 14px rgb
    asistencial se queda con el azul por defecto de arriba. */
 .amm-item-icon.tone-green{background:var(--green-bg);color:var(--green);}
 .amm-item-icon.tone-orange{background:var(--orange-bg);color:var(--orange);}
+.amm-item-icon.tone-purple{background:var(--purple-bg);color:var(--purple);}
 
 .amm-item-body{flex:1;min-width:0;}
 .amm-item-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}

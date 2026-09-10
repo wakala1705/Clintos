@@ -26,6 +26,7 @@ html[data-theme="dark"] .module-card:not(.disabled):hover{box-shadow:0 4px 14px 
    el azul por defecto de arriba. */
 .module-card-icon.tone-green{background:var(--green-bg);color:var(--green);}
 .module-card-icon.tone-orange{background:var(--orange-bg);color:var(--orange);}
+.module-card-icon.tone-purple{background:var(--purple-bg);color:var(--purple);}
 
 .module-card-body{flex:1;min-width:0;}
 .module-card-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}

@@ -43,6 +43,7 @@ const MODULE_LABELS = {
   administrador: 'Administrador',
   asistencial: 'Asistencial',
   contable: 'Contable',
+  inventario: 'Inventario',
   nomina: 'Nómina',
 };
 

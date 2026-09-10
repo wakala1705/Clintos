@@ -7,6 +7,20 @@
     --gray-fg: #6b7280;
     --primary: #0065CD;
     --primary-dark: #0050a3;
+
+    /* Requeridos por @/Components/BodegaPickerModal (catálogo de bodega
+       disparado al iniciar sesión, ver login.jsx) -- mismos valores que
+       Home.css/Solicitudes.css, sin variantes de tema oscuro (Login no las
+       maneja, ver arriba). */
+    --surface-modal: #ffffff;
+    --bg: #f4f6fb;
+    --border: #e5e8ef;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --ink-900: #101827;
+    --ink-700: #374151;
+    --ink-500: #6b7280;
+    --interactive-selected-bg: #dbe8fe;
 }
 
 .body-login {
@@ -406,7 +420,6 @@
 .adminLink {
     display: block;
     padding-top: 16px;
-    border-top: 1px solid #E2E8F0;
     text-align: left;
     color: #48546E;
     text-decoration: none;

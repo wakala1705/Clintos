@@ -1,0 +1,73 @@
+/* Scaffolding de modal propio (.afp-overlay/.afp-modal/.afp-body/.afp-footer)
+   -- mismo criterio que @/Components/CatalogoAseguradorasModal (.cam-*):
+   app-wide, sin depender del .modal-overlay/.modal de un shared.css por
+   feature. Fallback inline (var(--token, valor)) en los tokens que no todas
+   las features declaran todavía. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader. */
+.afp-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal,50);
+  background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.afp-modal{
+  width:600px;max-width:95vw;max-height:90vh;overflow:hidden;
+  background:var(--surface-modal,#fff);border-radius:var(--radius-lg,12px);
+  display:flex;flex-direction:column;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+.afp-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;min-height:0;}
+.afp-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}
+
+.afp-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md,36px);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius,8px);background:var(--bg);
+}
+.afp-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.afp-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.afp-search input::placeholder{color:var(--ink-400);}
+
+.afp-table{
+  border:1px solid var(--border);border-radius:var(--radius,8px);
+  overflow:hidden;
+}
+.afp-row{
+  display:grid;grid-template-columns:70px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.afp-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+/* Scrollbar propia -- mismo criterio y mismos valores que
+   BodegaPickerModal.css (ver ese comentario para el detalle). */
+.afp-list{
+  max-height:260px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
+}
+.afp-list::-webkit-scrollbar{width:6px;}
+.afp-list::-webkit-scrollbar-track{background:transparent;}
+.afp-list::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+.afp-list::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] .afp-list{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] .afp-list::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] .afp-list::-webkit-scrollbar-thumb:hover{background:#454e60;}
+.afp-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.afp-option:last-child{border-bottom:none;}
+.afp-option:hover{background:var(--bg);}
+.afp-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.afp-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.afp-id{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.afp-descripcion{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.afp-empty{padding:24px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

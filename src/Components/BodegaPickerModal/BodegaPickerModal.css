@@ -1,0 +1,65 @@
+/* Scaffolding de modal propio (.bdg-overlay/.bdg-modal/.bdg-body/.bdg-footer)
+   -- mismo criterio que AllModulesModal.css (.amm-overlay/.amm-modal): al
+   ser un componente app-wide (Home + InsumosFarmacia lo montan) no hay un
+   modal-scaffolding compartido garantizado en toda ruta, así que este modal
+   es dueño del suyo. Header de título+cerrar sí es el homologado (ver
+   @/Components/ModalHeader/ModalHeader). z-index numérico fijo (no
+   var(--z-modal)) por el mismo motivo -- ese token no está declarado en el
+   :root de todas las features que lo montan. */
+.bdg-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.bdg-modal{
+  width:480px;max-width:95vw;max-height:90vh;overflow:hidden;
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+.bdg-body{padding:20px 24px;overflow-y:auto;min-height:0;}
+.bdg-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}
+
+.bdg-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.bdg-row{
+  display:grid;grid-template-columns:100px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.bdg-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+/* Scrollbar propia (no una regla global "*", ver GestionCamas.css/
+   Facturacion/shared/shared.css) porque este modal se monta en cualquier
+   feature (Login/Home/InsumosFarmacia) sin garantía de que esa feature ya
+   la declare -- mismos valores que Sidebar.css (::-webkit-scrollbar), otro
+   componente app-wide con el mismo problema. */
+.bdg-list{
+  max-height:260px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
+}
+.bdg-list::-webkit-scrollbar{width:6px;}
+.bdg-list::-webkit-scrollbar-track{background:transparent;}
+.bdg-list::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+.bdg-list::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] .bdg-list{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] .bdg-list::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] .bdg-list::-webkit-scrollbar-thumb:hover{background:#454e60;}
+.bdg-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.bdg-option:last-child{border-bottom:none;}
+.bdg-option:hover{background:var(--bg);}
+.bdg-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.bdg-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.bdg-id{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.bdg-descripcion{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

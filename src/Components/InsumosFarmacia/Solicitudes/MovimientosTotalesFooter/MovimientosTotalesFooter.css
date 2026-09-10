@@ -1,5 +1,8 @@
+/* Oculto a pedido -- se deja el componente y el cálculo de totales en
+   Solicitudes.jsx intactos por si se vuelve a mostrar más adelante. */
 .mig-footer{
-  display:flex;flex-wrap:wrap;gap:10px;
+  display:none;
+  flex-wrap:wrap;gap:10px;
   border-top:1px solid var(--border);padding:14px 16px;flex-shrink:0;
 }
 .mig-total-card{

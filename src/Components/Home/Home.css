@@ -33,6 +33,13 @@
   --green-bg:#e6f8ee;
   --orange:#e8720c;
   --orange-bg:#fdead9;
+  --purple:#7c3aed;
+  --purple-bg:#f3e8ff;
+
+  /* Fila activa de BodegaPickerModal (@/Components/BodegaPickerModal, gate
+     post-login vía BodegaPickerButton) -- mismo valor que
+     InsumosFarmacia/Solicitudes/Solicitudes.css. */
+  --interactive-selected-bg:var(--primary-100);
 
   /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
      bloque en GestionEnfermeria/shared/shared.css. No aplica a textareas. */
@@ -57,6 +64,8 @@ html[data-theme="dark"]{
   --green-bg:rgba(52,211,153,.16);
   --orange:#f5975a;
   --orange-bg:rgba(232,114,12,.20);
+  --purple:#a78bfa;
+  --purple-bg:rgba(124,58,237,.22);
 }
 
 /* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
@@ -189,6 +198,7 @@ body{
    otros dos. */
 .module-section-header.tone-green .icon{color:var(--green);}
 .module-section-header.tone-orange .icon{color:var(--orange);}
+.module-section-header.tone-purple .icon{color:var(--purple);}
 .module-section-header h2{flex:1;min-width:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .module-section-header .chev{width:19px;height:19px;color:var(--ink-400);transition:transform .18s;}
 .module-section.collapsed .module-section-header .chev{transform:rotate(-90deg);}

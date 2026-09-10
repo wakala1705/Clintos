@@ -25,6 +25,20 @@
 }
 .meta-item .icon{width:18px;height:18px;color:var(--primary);}
 .meta-item b{font-weight:var(--fw-medium);color:var(--ink-900);}
+
+/* .meta-item es un div sin interacción por defecto -- .picker-btn lo
+   convierte en botón tipo picker (ver @/Components/BodegaPickerButton y
+   @/Components/AreaFuncionalPickerButton, el mismo reset lo usan los dos)
+   reseteando los estilos nativos de <button> + un chevron final como
+   affordance, sin perder su apariencia. */
+.picker-btn{
+  border:none;background:none;padding:0;font-family:inherit;cursor:pointer;
+}
+.picker-btn:hover{color:var(--primary-dark);}
+.picker-btn:hover b{color:var(--primary-dark);}
+.picker-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.picker-btn .chev{width:14px;height:14px;color:var(--ink-400);}
+
 .divider-v{width:1px;height:24px;background:var(--border);}
 .icon-btn-circle{
   width:34px;height:34px;border-radius:50%;

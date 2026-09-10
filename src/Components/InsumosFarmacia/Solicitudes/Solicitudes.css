@@ -24,7 +24,18 @@
   --radius-lg:12px;
   --red:#c02b2b;
   --red-bg:#fdeceb;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --amber:#e08a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
   --interactive-selected-bg:var(--primary-100);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --space-2:8px;
+  --space-3:12px;
+  --z-popover:20;
+  --z-modal:50;
   --input-sm:32px;
   --input-md:36px;
 }
@@ -43,6 +54,11 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --red:#ff8a8a;
   --red-bg:rgba(192,43,43,.20);
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --amber:#f5b942;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
 }
 
 html[data-contrast="high"]{
@@ -91,21 +107,20 @@ body{
   overflow-y:auto;
 }
 
+/* Bodega: picker de bodega (.bodega-picker-btn) movido a un componente
+   app-wide (@/Components/BodegaPickerButton) -- se sumó como children de
+   <Topbar> tal cual, nada propio que overridear acá. */
+
 /* Mismo patrón de page-header que Admisiones.css/Facturacion.css/
-   ProgramacionSalaCirugias.css (h1 --fs-3xl + p --fs-base/--ink-500) --
-   sin fila de acciones porque esta pantalla no tiene botón de encabezado. */
-.mig-page-header{flex-shrink:0;}
+   ProgramacionSalaCirugias.css (h1 --fs-3xl + p --fs-base/--ink-500), con
+   el botón "Nuevo" al extremo derecho -- mismo patrón que
+   adm-page-header-actions/fact-page-header-actions. */
+.mig-page-header{
+  display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  flex-shrink:0;
+}
 .mig-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
 .mig-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+.mig-page-header-actions{display:flex;align-items:center;gap:12px;}
 
 .mig-shell{display:flex;flex-direction:column;flex:1;min-height:0;}
-.mig-body{display:flex;flex:1;min-height:0;}
-
-/* Bajo --bp-desktop (1024px, ver AGENTS.md "Responsive / Breakpoints"):
-   .mig-body pasa de fila a columna para que MovimientoAccionesPanel (que ya
-   cambia a fila horizontal de botones en su propio CSS, ver
-   MovimientoAccionesPanel.css) quede apilado debajo de la grilla con el
-   ancho completo, en vez de angostarla compitiendo por espacio horizontal. */
-@media (max-width:1024px){
-  .mig-body{flex-direction:column;}
-}

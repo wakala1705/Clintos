@@ -6,6 +6,7 @@ import { useActiveModule } from '@/hooks/Session/session';
 import './Sidebar.css';
 import {
   LuBed,
+  LuBoxes,
   LuCalendarClock,
   LuCalendarDays,
   LuCalendarPlus,
@@ -36,6 +37,7 @@ import {
   LuUsersRound,
   LuVault,
   LuWallet,
+  LuWarehouse,
   LuWrench,
 } from 'react-icons/lu';
 
@@ -66,6 +68,7 @@ export default function Sidebar() {
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
   const isContable = activeModule === 'contable';
+  const isInventario = activeModule === 'inventario';
 
   // Admin ve estos anidados bajo "Módulo Asistencial"/"Módulo Contable" (junto
   // a Nómina/Otros soportes); un usuario de un solo módulo ya sabe en qué
@@ -146,17 +149,30 @@ export default function Sidebar() {
     </>
   );
 
-  const contableSubGroups = (
-    <div className={`${subGroupClass}${isInsumosFarmacia ? ' open' : ''}`}>
-      <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-        <LuPill className="icon nav-icon" />
-        <span className="label">Insumos Farmacia</span>
-        <LuChevronDown className="icon chev" />
+  const contableSubGroups = null;
+
+  const inventarioSubGroups = (
+    <>
+      <div className={`${subGroupClass}${isInsumosFarmacia ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuPill className="icon nav-icon" />
+          <span className="label">Inventario</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/insumos-farmacia/solicitudes" className={`nav-subitem${isSolicitudesInsumosFarmacia ? ' active' : ''}`}><LuFileText className="icon" />Salidas asistenciales</Link>
+        </div>
       </div>
-      <div className="nav-body">
-        <Link href="/insumos-farmacia/solicitudes" className={`nav-subitem${isSolicitudesInsumosFarmacia ? ' active' : ''}`}><LuFileText className="icon" />Solicitudes</Link>
+
+      <div className={subGroupClass}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuBoxes className="icon nav-icon" />
+          <span className="label">Existencias</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body"></div>
       </div>
-    </div>
+    </>
   );
 
   return (
@@ -206,7 +222,7 @@ export default function Sidebar() {
 
             <div className="sidebar-divider"></div>
 
-            <div className={`nav-group${isInsumosFarmacia ? ' open' : ''}`}>
+            <div className="nav-group">
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuChartBar className="icon nav-icon" />
                 <span className="label">Módulo Contable</span>
@@ -216,8 +232,21 @@ export default function Sidebar() {
                 {contableSubGroups}
               </div>
             </div>
+
+            <div className="sidebar-divider"></div>
+
+            <div className={`nav-group${isInsumosFarmacia ? ' open' : ''}`}>
+              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+                <LuWarehouse className="icon nav-icon" />
+                <span className="label">Módulo Inventario</span>
+                <LuChevronDown className="icon chev" />
+              </div>
+              <div className="nav-body">
+                {inventarioSubGroups}
+              </div>
+            </div>
           </>
-        ) : isContable ? contableSubGroups : asistencialSubGroups}
+        ) : isContable ? contableSubGroups : isInventario ? inventarioSubGroups : asistencialSubGroups}
 
         {isAdmin && (
           <>

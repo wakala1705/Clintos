@@ -7,13 +7,14 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import PillTabs from '@/Components/Home/PillTabs/PillTabs';
 import { LuLayoutGrid, LuLock, LuSearch } from 'react-icons/lu';
 
-// Mismos 3 valores que MODULE_OPTIONS de Home.jsx — duplicado acá (no
+// Mismos 4 valores que MODULE_OPTIONS de Home.jsx — duplicado acá (no
 // importado desde ahí) para no crear un import circular Home.jsx ->
 // AllModulesModal.jsx -> Home.jsx; mismo criterio que ya usa
 // FiltroPickerModal.jsx para su helper `normalizar` (ver ese archivo).
 const MODULE_TABS = [
   { value: 'asistencial', label: 'Asistencial' },
   { value: 'contable', label: 'Contable' },
+  { value: 'inventario', label: 'Inventario' },
   { value: 'nomina', label: 'Nómina' },
 ];
 
@@ -22,6 +23,7 @@ const MODULE_TABS = [
 const MODULE_TONES = {
   asistencial: 'blue',
   contable: 'green',
+  inventario: 'purple',
   nomina: 'orange',
 };
 

@@ -4,10 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LuChevronDown, LuEye, LuEyeOff, LuBuilding2, LuMapPin,
-  LuArrowLeft, LuStethoscope, LuChartBar, LuUsers, LuUserCog,
+  LuArrowLeft, LuStethoscope, LuChartBar, LuLandmark, LuUsers, LuUserCog,
 } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import BodegaPickerModal from '@/Components/BodegaPickerModal/BodegaPickerModal';
+import AreaFuncionalPickerModal from '@/Components/AreaFuncionalPickerModal/AreaFuncionalPickerModal';
 import { setActiveModule } from '@/hooks/Session/session';
+import { setBodegaSeleccionada } from '@/hooks/Bodega/bodega';
+import { setAreaFuncionalSeleccionada } from '@/hooks/AreaFuncional/areaFuncional';
 import ModuleCard from './ModuleCard/ModuleCard';
 import styles from './login.module.css';
 
@@ -26,13 +30,22 @@ const MODULES = [
     available: true,
   },
   {
+    id: 'inventario',
+    label: 'Módulo Inventario',
+    description: 'Insumos, existencias, movimientos y control de stock.',
+    icon: LuChartBar,
+    tone: 'purple',
+    route: '/home',
+    available: true,
+  },
+  {
     id: 'contable',
     label: 'Módulo Contable',
     description: 'Facturación, cartera, cuentas y reportes financieros.',
-    icon: LuChartBar,
+    icon: LuLandmark,
     tone: 'green',
-    route: '/home',
-    available: true,
+    route: null,
+    available: false,
   },
   {
     id: 'nomina',
@@ -64,6 +77,8 @@ export default function Login() {
   });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [bodegaPickerAbierto, setBodegaPickerAbierto] = useState(false);
+  const [areaPickerAbierto, setAreaPickerAbierto] = useState(false);
 
   const handleSelectModule = (moduleItem) => {
     if (!moduleItem.available) return;
@@ -99,7 +114,28 @@ export default function Login() {
     }
 
     setError('');
-    setActiveModule(selectedModule?.id ?? 'asistencial');
+    const moduleId = selectedModule?.id ?? 'asistencial';
+    setActiveModule(moduleId);
+
+    // El catálogo de bodega/área funcional se dispara acá en vez de navegar
+    // directo a /home (encargo explícito): login queda montado de fondo, el
+    // modal en foco encima -- solo al elegir (handleBodegaSeleccionada/
+    // handleAreaSeleccionada) se navega. Inventario pide bodega, Asistencial
+    // pide área funcional; el resto (ej. Administrador) no tiene un picker
+    // de entrada propio -- Home ya gatea solo si hace falta uno (ver
+    // BodegaPickerButton/AreaFuncionalPickerButton).
+    if (moduleId === 'inventario') setBodegaPickerAbierto(true);
+    else if (moduleId === 'asistencial') setAreaPickerAbierto(true);
+    else router.push(selectedModule?.route ?? '/home');
+  };
+
+  const handleBodegaSeleccionada = (bodega) => {
+    setBodegaSeleccionada(bodega.idGrupo);
+    router.push(selectedModule?.route ?? '/home');
+  };
+
+  const handleAreaSeleccionada = (area) => {
+    setAreaFuncionalSeleccionada(area.id);
     router.push(selectedModule?.route ?? '/home');
   };
 
@@ -239,6 +275,22 @@ export default function Login() {
           )}
         </div>
       </div>
+
+      {bodegaPickerAbierto && (
+        <BodegaPickerModal
+          bodega={null}
+          onSelect={handleBodegaSeleccionada}
+          onClose={() => setBodegaPickerAbierto(false)}
+        />
+      )}
+
+      {areaPickerAbierto && (
+        <AreaFuncionalPickerModal
+          area={null}
+          onSelect={handleAreaSeleccionada}
+          onClose={() => setAreaPickerAbierto(false)}
+        />
+      )}
     </div>
   );
 }

@@ -67,6 +67,11 @@
     color: #C05F1E;
 }
 
+.purple .icon {
+    background: #EEE7FD;
+    color: #6941C6;
+}
+
 .text {
     display: flex;
     flex-direction: column;

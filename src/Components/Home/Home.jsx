@@ -6,6 +6,8 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { useActiveModule } from '@/hooks/Session/session';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
+import BodegaPickerButton from '@/Components/BodegaPickerButton/BodegaPickerButton';
+import AreaFuncionalPickerButton from '@/Components/AreaFuncionalPickerButton/AreaFuncionalPickerButton';
 import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
 import AllModulesModal from '@/Components/Home/AllModulesModal/AllModulesModal';
 import PillTabs from '@/Components/Home/PillTabs/PillTabs';
@@ -41,14 +43,16 @@ import {
 const MODULE_TONES = {
   asistencial: 'blue',
   contable: 'green',
+  inventario: 'purple',
   nomina: 'orange',
 };
 
-// Mismos 3 valores/labels que MODULE_LABELS en hooks/Session/session.js
+// Mismos 4 valores/labels que MODULE_LABELS en hooks/Session/session.js
 // (sin 'administrador', que no es un módulo elegible acá).
 const MODULE_OPTIONS = [
   { value: 'asistencial', label: 'Asistencial' },
   { value: 'contable', label: 'Contable' },
+  { value: 'inventario', label: 'Inventario' },
   { value: 'nomina', label: 'Nómina' },
 ];
 
@@ -175,12 +179,12 @@ const MODULE_GROUPS = [
     items: [],
   },
   {
-    title: 'Insumos Farmacia',
+    title: 'Inventario',
     icon: LuPill,
-    module: 'contable',
+    module: 'inventario',
     items: [
       {
-        title: 'Solicitudes',
+        title: 'Salidas asistenciales',
         description: 'Registra y gestiona solicitudes de insumos de farmacia.',
         icon: LuFileText,
         href: '/insumos-farmacia/solicitudes',
@@ -226,7 +230,10 @@ export default function Home() {
 
       <div className="main">
 
-        <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }} />
+        <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}>
+          {effectiveModule === 'inventario' && <BodegaPickerButton />}
+          {effectiveModule === 'asistencial' && <AreaFuncionalPickerButton />}
+        </Topbar>
 
         <div className="content home-content">
           <div className="home-inner">

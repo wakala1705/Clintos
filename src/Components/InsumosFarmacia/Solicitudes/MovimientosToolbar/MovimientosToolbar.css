@@ -1,26 +1,5 @@
-.mig-toolbar{
-  display:flex;flex-direction:column;gap:10px;
-  padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.mig-toolbar-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;}
-
-.mig-static-field{display:flex;align-items:center;gap:5px;flex-shrink:0;font-size:var(--fs-sm);}
-.mig-static-field .lbl{color:var(--ink-500);}
-.mig-static-field .val{color:var(--ink-900);font-weight:var(--fw-medium);}
-
-.mig-filter-field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.mig-filter-field label{font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}
-.mig-filter-field .form-select{min-width:130px;}
-
-.mig-input{
-  border:1px solid var(--border);border-radius:var(--radius);height:var(--input-sm);padding:0 10px;
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);
-  width:130px;flex-shrink:0;
-}
-.mig-input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
-
-.mig-refresh-btn{margin-left:auto;flex-shrink:0;}
-
-@media (max-width:1024px){
-  .mig-toolbar-row{overflow-x:auto;flex-wrap:nowrap;}
-}
+/* .filter-bar/.search-field/.filter-spacer/.filter-cluster: definidas en
+   ../shared/shared.css. .mig-toolbar solo overridea .search-field{width:...}
+   -- mismo criterio que .pg-patients-toolbar (ver AGENTS.md "Barra de
+   filtros de listado"). */
+.mig-toolbar .search-field{width:220px;}

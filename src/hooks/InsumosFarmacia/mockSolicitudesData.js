@@ -10,13 +10,16 @@
 
 // Contexto fijo de la página (bodega/año/sede activos) -- no son filtros de
 // la tabla, son los campos de solo lectura del toolbar (Año/Grp Bdg./
-// Bodega/Id.Sede de la referencia). V1 no tiene selector de bodega.
+// Bodega/Id.Sede de la referencia).
 export const CONTEXTO_BODEGA = {
   anio: '2026',
   grupoBodega: '01',
   bodega: 'FARMACIA PISO 3',
   idSede: '01',
 };
+
+// BODEGAS_CATALOGO se movió a @/hooks/Bodega/bodega (ahora también lo usa
+// el gate post-login de Home vía BodegaPickerButton, no solo esta pantalla).
 
 export const TIPO_OPTIONS = [
   { value: 'debito', label: 'Debito' },
@@ -37,9 +40,10 @@ export const PROCEDENCIA_OPTIONS = [
 ];
 
 export const ESTADO_OPTIONS = [
-  { value: 'sin-confirmar', label: 'Sin Confirmar' },
-  { value: 'confirmado', label: 'Confirmado' },
   { value: 'todos', label: 'Todos' },
+  { value: 'confirmado', label: 'Confirmados' },
+  { value: 'sin-confirmar', label: 'Sin Confirmar' },
+  { value: 'anulado', label: 'Anulados' },
 ];
 
 export const TRNS_OPTIONS = [
@@ -71,7 +75,7 @@ function articulo(overrides) {
   };
 }
 
-export const MOVIMIENTOS = [
+const MOVIMIENTOS_BASE = [
   {
     id: '0200203069-2',
     bdg: '01',
@@ -312,3 +316,141 @@ export const MOVIMIENTOS = [
     ],
   },
 ];
+
+// Generador determinístico (mismo patrón seededRandom/pick/Array.from que
+// FACTURAS en mockFacturasData.js) para simular un escenario de 60
+// movimientos visibles en la grilla en vez de los 6-7 de MOVIMIENTOS_BASE --
+// encargo explícito para probar la tabla con volumen real entre los 3
+// estados. Todos con trns:'sal'/tipo:'debito' (los únicos valores fijos que
+// hoy filtra movimientoCoincide, ver Solicitudes.jsx) para que efectivamente
+// aparezcan en "Todos".
+function seededRandom(seed) {
+  let value = seed;
+  return () => {
+    value = (value * 9301 + 49297) % 233280;
+    return value / 233280;
+  };
+}
+
+function pick(list, rand) {
+  return list[Math.floor(rand() * list.length)];
+}
+
+function fechaISO(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function sumarDias(iso, dias) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const date = new Date(y, m - 1, d + dias);
+  return fechaISO(date);
+}
+
+const NOMBRES_PACIENTES_GEN = [
+  'MORENO CASTILLO LUIS FERNANDO', 'RAMIREZ TORRES SANDRA MILENA', 'CORREA PATIÑO JORGE LUIS',
+  'MARTINEZ GOMEZ LAURA SOFIA', 'HERRERA RINCON ANDRES FELIPE', 'PEDRAZA MORA VALENTINA',
+  'OSPINA CASTAÑO CARLOS EDUARDO', 'VARGAS DIAZ CAMILA', 'TORRES MESA SANTIAGO', 'CARDENAS RUIZ DANIELA',
+  'GUTIERREZ LEON MARIA JOSE', 'SALAZAR PEÑA JUAN DAVID', 'ROJAS ACOSTA NATALIA', 'MEDINA CORTES OSCAR IVAN',
+  'BUSTAMANTE VEGA PAULA ANDREA',
+];
+
+const CONFIRMADORES_GEN = ['ROJAS MENDEZ PAOLA', 'GOMEZ TORRES LUIS', 'MARTINEZ RUIZ SANDRA', 'CASTRO LEON DIEGO'];
+
+const UBICACIONES_GEN = [
+  { area: 'Urgencias', costo: 'URGENCIAS' },
+  { area: 'Consulta Externa', costo: 'CONSULTA EXTERNA' },
+  { area: 'Hospitalización Piso 2', costo: 'HOSPITALIZACION' },
+  { area: 'Hospitalización Piso 3', costo: 'HOSPITALIZACION PISO 3' },
+  { area: 'Ambulancia', costo: 'AMBULANCIA' },
+  { area: 'Cirugía', costo: 'CIRUGIA' },
+  { area: 'UCI', costo: 'CUIDADO INTENSIVO' },
+];
+
+const IDCONTRATOS_GEN = ['900156264', '800251440', '900177531'];
+const HORAS_GEN = ['8:12 a. m.', '9:45 a. m.', '10:30 a. m.', '11:05 a. m.', '1:20 p. m.', '2:40 p. m.', '3:55 p. m.', '4:30 p. m.', '5:15 p. m.', '6:02 p. m.'];
+
+const ARTICULOS_POOL_GEN = [
+  { codigo: 'MX0000005', descripcion: 'Acetaminofén 500 mg tableta', tipoArticulo: 'medicamento', precio: 320 },
+  { codigo: 'MX0000053', descripcion: 'Amikacina 500 mg solución inyectable', tipoArticulo: 'medicamento', precio: 4100 },
+  { codigo: 'MX0000112', descripcion: 'Carbamazepina 200 mg tableta', tipoArticulo: 'medicamento', precio: 850 },
+  { codigo: 'MX0000371', descripcion: 'Losartán potásico 50 mg tableta', tipoArticulo: 'medicamento', precio: 420 },
+  { codigo: 'MX0000158', descripcion: 'Clopidogrel bisulfato 75 mg tableta', tipoArticulo: 'medicamento', precio: 610 },
+  { codigo: 'MX0000201', descripcion: 'Omeprazol 20 mg cápsula', tipoArticulo: 'medicamento', precio: 280 },
+  { codigo: 'DM000360', descripcion: 'Jeringa 20 ml', tipoArticulo: 'insumo', precio: 650 },
+  { codigo: 'DM000118', descripcion: 'Guante de nitrilo talla M', tipoArticulo: 'insumo', precio: 210 },
+  { codigo: 'DM000275', descripcion: 'Gasa estéril 10x10 cm', tipoArticulo: 'insumo', precio: 190 },
+  { codigo: 'DM000512', descripcion: 'Cánula nasal adulto', tipoArticulo: 'dispositivo', precio: 3200 },
+  { codigo: 'DM000630', descripcion: 'Equipo de venoclisis', tipoArticulo: 'dispositivo', precio: 5400 },
+];
+
+// Distribución fija (no aleatoria) de estado para los 54 nuevos, sumada a la
+// de MOVIMIENTOS_BASE (5 sin-confirmar/1 confirmado/0 anulado con trns:sal)
+// da el total pedido: 24 Sin Confirmar, 20 Confirmados, 16 Anulados = 60.
+const ESTADOS_GEN_ORDENADOS = [
+  ...Array(19).fill('confirmado'),
+  ...Array(19).fill('sin-confirmar'),
+  ...Array(16).fill('anulado'),
+];
+const randEstado = seededRandom(42);
+const ESTADOS_GEN = [...ESTADOS_GEN_ORDENADOS].sort(() => randEstado() - 0.5);
+
+const rand = seededRandom(7);
+
+const MOVIMIENTOS_GENERADOS = Array.from({ length: 54 }, (_, i) => {
+  const numero = 203055 - i;
+  const consecutivo = i % 5 === 4 ? `0200${numero}-1` : `0200${numero}`;
+  const estado = ESTADOS_GEN[i];
+  const esParticular = rand() < 0.15;
+  const ubicacion = pick(UBICACIONES_GEN, rand);
+  const fecha = sumarDias('2026-07-21', -Math.floor(i * 1.3) - Math.floor(rand() * 2));
+  const cantidadArticulos = 1 + Math.floor(rand() * 2);
+  const articulos = Array.from({ length: cantidadArticulos }, (_, j) => {
+    const base = pick(ARTICULOS_POOL_GEN, rand);
+    const cantidadSolicitada = 1 + Math.floor(rand() * 10);
+    const cantidadEntregada = Math.max(1, cantidadSolicitada - Math.floor(rand() * 2));
+    if (estado !== 'confirmado') {
+      return articulo({
+        item: j + 1, codigo: base.codigo, descripcion: base.descripcion, cantidadSolicitada, cantidadEntregada,
+      });
+    }
+    const costoTotalNeto = base.precio * cantidadEntregada;
+    return articulo({
+      item: j + 1,
+      codigo: base.codigo,
+      descripcion: base.descripcion,
+      cantidadSolicitada,
+      cantidadEntregada,
+      costoUnidad: { anterior: base.precio, unidad: base.precio, descuento: 0, neto: base.precio },
+      costoTotal: { unidad: costoTotalNeto, descuento: 0, neto: costoTotalNeto },
+      confirmado: true,
+    });
+  });
+
+  return {
+    id: consecutivo,
+    bdg: '01',
+    bodegaColor: '#e8801a',
+    grupo: '01',
+    consecutivo,
+    noAdmision: `0200277${String(220 - i * 3).padStart(3, '0')}`,
+    noPrestacion: i % 2 === 0 ? `0200000${String(193 - i).padStart(3, '0')}` : `0201706${String(740 - i).padStart(3, '0')}`,
+    fecha,
+    hora: pick(HORAS_GEN, rand),
+    procedencia: esParticular ? 'PARTICULAR' : 'SALUD',
+    movimiento: 'SA-Ventas a Clientes',
+    paciente: pick(NOMBRES_PACIENTES_GEN, rand),
+    ubicacion: `Sede 01 · Área: ${ubicacion.area} · C.Costo: ${ubicacion.costo}`,
+    idContrato: pick(IDCONTRATOS_GEN, rand),
+    tipo: 'debito',
+    tipoArticulo: pick(TIPO_ARTICULO_OPTIONS.slice(1), rand).value,
+    procedenciaTipo: esParticular ? 'particular' : 'salud',
+    estado,
+    trns: 'sal',
+    fechaContable: sumarDias(fecha, 2),
+    confirmo: estado === 'confirmado' ? pick(CONFIRMADORES_GEN, rand) : '',
+    permitirEditarCostos: estado === 'confirmado',
+    articulos,
+  };
+});
+
+export const MOVIMIENTOS = [...MOVIMIENTOS_BASE, ...MOVIMIENTOS_GENERADOS];
