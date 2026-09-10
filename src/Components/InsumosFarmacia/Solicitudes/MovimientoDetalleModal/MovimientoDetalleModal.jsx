@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './MovimientoDetalleModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -8,31 +8,36 @@ import MovimientoItemsTable from './MovimientoItemsTable/MovimientoItemsTable';
 import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 import { LuArrowRightLeft, LuEye, LuRepeat } from 'react-icons/lu';
 
-const TABS = [
-  { id: 'detalle', label: 'Detalle' },
-  { id: 'linea', label: 'Línea' },
-  { id: 'prefijos', label: 'Prefijos' },
-];
+// Mismo label que ESTADO_BADGE en MovimientosGrid.jsx, duplicado a propósito
+// (texto plano acá, sin tono/Badge -- encargo explícito del resumen de
+// abajo) -- mismo criterio que TIPO_LABEL/CLASE_LABEL en
+// FacturaDetalleModalClasico.jsx.
+const ESTADO_LABEL = {
+  confirmado: 'Confirmado',
+  'sin-confirmar': 'Sin Confirmar',
+  anulado: 'Anulado',
+};
+
+function Field({ label, value }) {
+  return (
+    <div className="mig-field">
+      <span className="mig-field-label">{label}</span>
+      <span className="mig-field-value">{value}</span>
+    </div>
+  );
+}
 
 // Modal grande de detalle (encargo explícito), disparado por "Ver detalle"
 // en MovimientoRowMenu (columna Acciones de MovimientosGrid) -- antes vivía
 // siempre visible debajo de la grilla como MovimientoDetalle. Mismo patrón
 // .modal-overlay/.modal extragrande que FacturaDetalleModalClasico (ver
-// Solicitudes/shared/shared.css), `movimiento` null = cerrado. Tabs "Línea"/
-// "Prefijos" siguen siendo placeholders sin contenido propio en V1 (ver
-// spec).
+// Solicitudes/shared/shared.css), `movimiento` null = cerrado. El bloque
+// "mig-tabs-bar" (Detalle/Línea/Prefijos) se eliminó (encargo explícito):
+// "Línea"/"Prefijos" eran placeholders sin contenido propio, así que en su
+// lugar va un resumen en texto plano de los mismos datos que ya muestra la
+// tabla maestra (MovimientosGrid) -- mismo patrón Field/fvcd-compact-fields
+// que FacturaDetalleModalClasico.jsx.
 export default function MovimientoDetalleModal({ movimiento, onClose }) {
-  const [activeTab, setActiveTab] = useState('detalle');
-
-  // Reset de tab a "detalle" al abrir un movimiento distinto -- ajustado
-  // durante el render comparando contra el movimiento anterior (evita el
-  // efecto con setState síncrono), mismo patrón que FiltrosFacturasPopover.
-  const [lastMovimientoId, setLastMovimientoId] = useState(movimiento?.id ?? null);
-  if ((movimiento?.id ?? null) !== lastMovimientoId) {
-    setLastMovimientoId(movimiento?.id ?? null);
-    setActiveTab('detalle');
-  }
-
   useEffect(() => {
     if (!movimiento) return undefined;
     function handleKeyDown(e) {
@@ -44,16 +49,6 @@ export default function MovimientoDetalleModal({ movimiento, onClose }) {
 
   if (!movimiento) return null;
 
-  function handleTabsKeyDown(e) {
-    const idx = TABS.findIndex((t) => t.id === activeTab);
-    let next;
-    if (e.key === 'ArrowRight') next = (idx + 1) % TABS.length;
-    else if (e.key === 'ArrowLeft') next = (idx - 1 + TABS.length) % TABS.length;
-    else return;
-    e.preventDefault();
-    setActiveTab(TABS[next].id);
-  }
-
   return (
     <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal mig-detalle-modal" role="dialog" aria-modal="true" aria-labelledby="mig-detalle-title">
@@ -64,30 +59,23 @@ export default function MovimientoDetalleModal({ movimiento, onClose }) {
         />
 
         <div className="modal-body">
-          <div className="mig-tabs-bar" role="tablist" aria-label="Detalle del movimiento" onKeyDown={handleTabsKeyDown}>
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                aria-controls={`mig-panel-${tab.id}`}
-                tabIndex={activeTab === tab.id ? 0 : -1}
-                className={`mig-tab${activeTab === tab.id ? ' active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="mig-resumen">
+            <Field label="Estado" value={ESTADO_LABEL[movimiento.estado] ?? movimiento.estado} />
+            <Field label="Consecutivo" value={movimiento.consecutivo} />
+            <Field label="No. Admisión" value={movimiento.noAdmision} />
+            <Field label="No. Prestación" value={movimiento.noPrestacion} />
+            <Field label="Fecha" value={formatFecha(movimiento.fecha)} />
+            <Field label="Hora" value={movimiento.hora} />
+            <Field label="Procedencia" value={movimiento.procedencia} />
+            <Field label="Movimiento" value={movimiento.movimiento} />
+            <Field label="Paciente" value={movimiento.paciente} />
+            <Field label="Solicitante" value={movimiento.solicitante} />
+            <Field label="Ubicación" value={movimiento.ubicacion} />
+            <Field label="Id. Contrato" value={movimiento.idContrato} />
           </div>
 
-          <div className="mig-tab-body" role="tabpanel" id={`mig-panel-${activeTab}`}>
-            {activeTab === 'detalle' && (
-              <div className="mig-items-card">
-                <MovimientoItemsTable articulos={movimiento.articulos} />
-              </div>
-            )}
-            {activeTab !== 'detalle' && <div className="mig-tab-empty">Sin información disponible.</div>}
+          <div className="mig-items-card">
+            <MovimientoItemsTable key={movimiento.id} articulos={movimiento.articulos} />
           </div>
 
           <div className="mig-meta-bar">

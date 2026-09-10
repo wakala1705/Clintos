@@ -25,10 +25,14 @@ export default function BodegaPickerModal({ bodega, onSelect, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  function confirmar(b) {
+    onSelect(b);
+    onClose();
+  }
+
   function handleElegir() {
     if (!seleccion) return;
-    onSelect(seleccion);
-    onClose();
+    confirmar(seleccion);
   }
 
   return (
@@ -58,6 +62,7 @@ export default function BodegaPickerModal({ bodega, onSelect, onClose }) {
                     aria-selected={active}
                     className={`bdg-row bdg-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(b)}
+                    onDoubleClick={() => confirmar(b)}
                   >
                     <span className="bdg-id">{b.idGrupo}</span>
                     <span className="bdg-descripcion">{b.descripcion}</span>

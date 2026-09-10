@@ -45,10 +45,14 @@ export default function AreaFuncionalPickerModal({ area, onSelect, onClose }) {
     ? AREAS_FUNCIONALES_CATALOGO.filter((a) => normalizar(a.id).includes(q) || normalizar(a.descripcion).includes(q))
     : AREAS_FUNCIONALES_CATALOGO;
 
+  function confirmar(a) {
+    onSelect(a);
+    onClose();
+  }
+
   function handleSeleccionar() {
     if (!seleccion) return;
-    onSelect(seleccion);
-    onClose();
+    confirmar(seleccion);
   }
 
   return (
@@ -92,6 +96,7 @@ export default function AreaFuncionalPickerModal({ area, onSelect, onClose }) {
                     aria-selected={active}
                     className={`afp-row afp-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(a)}
+                    onDoubleClick={() => confirmar(a)}
                   >
                     <span className="afp-id">{a.id}</span>
                     <span className="afp-descripcion">{a.descripcion}</span>

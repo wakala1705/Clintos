@@ -62,6 +62,7 @@ const ADMIN_MODULE = {
   id: 'administrador',
   label: 'Administrador',
   icon: LuUserCog,
+  tone: 'neutral',
   route: '/home',
 };
 
@@ -102,7 +103,15 @@ export default function Login() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+      // Simulación (encargo explícito): al ingresar el usuario se reconoce
+      // de inmediato la Sede 01, sin esperar a que la elija a mano -- hoy
+      // cualquier usuario cae ahí por igual, pendiente de reemplazar por la
+      // lógica real de sede-por-usuario más adelante.
+      if (name === 'name') next.area = value.trim() ? 'sede1' : '';
+      return next;
+    });
   };
 
   const handleSubmit = (e) => {
@@ -180,11 +189,18 @@ export default function Login() {
           ) : (
             <div key="login" className={styles.step}>
               <div>
-                <button type="button" className={styles.backChip} onClick={handleBack}>
-                  <LuArrowLeft className={styles.backChipIcon} />
-                  {selectedModule && <selectedModule.icon className={styles.backChipModuleIcon} />}
-                  {selectedModule?.label.replace('Módulo ', '')}
-                </button>
+                <div className={styles.stepHeaderRow}>
+                  <button type="button" className={styles.backBtn} onClick={handleBack} aria-label="Volver a selección de módulo">
+                    <LuArrowLeft className={styles.backBtnIcon} />
+                  </button>
+
+                  {selectedModule && (
+                    <span className={`${styles.moduleTag} ${styles[selectedModule.tone ?? 'neutral']}`}>
+                      <selectedModule.icon className={styles.moduleTagIcon} />
+                      {selectedModule.label.replace('Módulo ', '')}
+                    </span>
+                  )}
+                </div>
 
                 <div className={styles.header}>
                   <h2>Inicio de sesión</h2>

@@ -3,17 +3,24 @@
 import { useEffect, useRef, useState } from 'react';
 import './MovimientoRowMenu.css';
 import {
-  LuBan, LuEllipsis, LuEye, LuPrinter,
+  LuBan, LuEllipsis, LuEye, LuPackage, LuPencil, LuPrinter,
 } from 'react-icons/lu';
 
-// Menú "⋮" que agrupa Ver detalle/Imprimir/Anular -- mismo patrón
+// Menú "⋮" que agrupa Editar/Ver detalle/Imprimir/Anular -- mismo patrón
 // autocontenido (estado local de apertura/cierre + cierre por click-afuera/
 // Escape) que TaskRowMenu/RowActionsMenu, ver AGENTS.md "Component
-// organization". "Editar" queda fuera, como botón directo en la fila (ver
-// MovimientosGrid.jsx). "Ver detalle" abre MovimientoDetalleModal (único
-// ítem con efecto real); Imprimir/Anular siguen visual-only (sin modales
-// todavía, ver spec).
-export default function MovimientoRowMenu({ consecutivo, onVerDetalle }) {
+// organization". "Editar" vivía como botón directo en la fila
+// (MovimientosGrid.jsx); se movió acá (encargo explícito) para no repartir
+// las acciones de la columna en dos disparadores distintos. "Ver detalle"
+// abre MovimientoDetalleModal (único ítem con efecto real); Editar/Imprimir/
+// Anular siguen visual-only (sin modales todavía, ver spec). "Alistar
+// pedido" (encargo explícito) solo aparece para movimientos en estado "Sin
+// Confirmar" -- es la acción principal de esa fila, por eso va primera en
+// la lista; abre AlistarPedidoModal (leyenda "en desarrollo", ver ese
+// componente), mismo trigger que el doble clic en la fila (MovimientosGrid.jsx).
+export default function MovimientoRowMenu({
+  consecutivo, estado, onVerDetalle, onAlistarPedido,
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -54,6 +61,16 @@ export default function MovimientoRowMenu({ consecutivo, onVerDetalle }) {
 
       {open && (
         <div className="mig-row-menu-dropdown" role="menu">
+          {estado === 'sin-confirmar' && (
+            <button type="button" className="mig-row-menu-item" role="menuitem" onClick={(e) => { handleItem(e); onAlistarPedido(); }}>
+              <LuPackage className="icon" aria-hidden="true" />
+              Alistar pedido
+            </button>
+          )}
+          <button type="button" className="mig-row-menu-item" role="menuitem" onClick={handleItem}>
+            <LuPencil className="icon" aria-hidden="true" />
+            Editar
+          </button>
           <button type="button" className="mig-row-menu-item" role="menuitem" onClick={(e) => { handleItem(e); onVerDetalle(); }}>
             <LuEye className="icon" aria-hidden="true" />
             Ver detalle

@@ -12,7 +12,7 @@
   display:flex;align-items:center;justify-content:center;padding:24px;
 }
 .bdg-modal{
-  width:480px;max-width:95vw;max-height:90vh;overflow:hidden;
+  width:600px;max-width:95vw;max-height:90vh;overflow:hidden;
   background:var(--surface-modal);border-radius:var(--radius-lg);
   display:flex;flex-direction:column;
   box-shadow:0 12px 32px rgba(6,25,42,.22);

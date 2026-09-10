@@ -4,11 +4,12 @@ import './MovimientosGrid.css';
 import Badge from '@/Components/Badge/Badge';
 import MovimientoRowMenu from '../MovimientoRowMenu/MovimientoRowMenu';
 import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
-import { LuPencil } from 'react-icons/lu';
 
+// "Id.Contrato" se ocultó de la grilla (encargo explícito) -- sigue vivo en
+// el resumen de MovimientoDetalleModal ("Ver detalle"), ya no se duplica acá.
 const COLUMNS = [
   'Estado', 'Consecutivo', 'No.Admisión', 'No.Prestación', 'Fecha', 'Hora',
-  'Procedencia', 'Movimiento', 'Paciente', 'Ubicación', 'Id.Contrato',
+  'Procedencia', 'Movimiento', 'Paciente', 'Ubicación',
 ];
 
 // Tono/label del Badge por fila -- distinto de ESTADO_OPTIONS (plural,
@@ -24,13 +25,17 @@ const ESTADO_BADGE = {
 // mismo esqueleto .mig-grid/.mig-ellipsis/.mig-num que MovimientoItemsTable
 // (ver Solicitudes/shared/shared.css), fila seleccionable con el mismo
 // patrón de teclado/aria que FacturasGridClasica/AdmisionesTable. Columna
-// "Acciones": "Editar" queda como botón directo (mismo patrón .col-acciones/
-// icon-btn + stopPropagation que AdmisionesTable), Ver detalle/Imprimir/
-// Anular se agrupan en el menú "⋮" (MovimientoRowMenu) -- V1 sigue siendo
-// visual-only (sin modales todavía, ver spec), por eso sin onClick con
-// efecto real.
+// "Acciones": Editar/Ver detalle/Imprimir/Anular viven todas en el menú "⋮"
+// (MovimientoRowMenu) -- "Editar" era antes un botón directo, se movió
+// adentro (encargo explícito) para no repartir la columna en dos
+// disparadores. V1 sigue siendo visual-only salvo "Ver detalle" (sin
+// modales todavía para el resto, ver spec). Doble clic en la fila (encargo
+// explícito) dispara el mismo AlistarPedidoModal que "Alistar pedido" del
+// menú -- el clic simple de esa misma secuencia ya deja la fila
+// seleccionada antes de que dispare el dblclick, así que no hace falta
+// lógica extra para "la fila seleccionada".
 export default function MovimientosGrid({
-  movimientos, selectedId, onSelect, onVerDetalle,
+  movimientos, selectedId, onSelect, onVerDetalle, onAlistarPedido,
 }) {
   function handleKeyDown(e, id) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -53,6 +58,7 @@ export default function MovimientosGrid({
               key={m.id}
               className={m.id === selectedId ? 'selected' : ''}
               onClick={() => onSelect(m.id)}
+              onDoubleClick={() => onAlistarPedido(m)}
               onKeyDown={(e) => handleKeyDown(e, m.id)}
               tabIndex={0}
               aria-selected={m.id === selectedId}
@@ -67,13 +73,14 @@ export default function MovimientosGrid({
               <td>{m.movimiento}</td>
               <td className="mig-ellipsis" title={m.paciente}>{m.paciente}</td>
               <td className="mig-ellipsis" title={m.ubicacion}>{m.ubicacion}</td>
-              <td className="mig-num">{m.idContrato}</td>
               <td className="col-acciones" onClick={(e) => e.stopPropagation()}>
                 <div className="mig-row-actions">
-                  <button type="button" className="mig-icon-btn" onClick={(e) => e.stopPropagation()} aria-label={`Editar movimiento ${m.consecutivo}`} title="Editar">
-                    <LuPencil className="icon" />
-                  </button>
-                  <MovimientoRowMenu consecutivo={m.consecutivo} onVerDetalle={() => onVerDetalle(m)} />
+                  <MovimientoRowMenu
+                    consecutivo={m.consecutivo}
+                    estado={m.estado}
+                    onVerDetalle={() => onVerDetalle(m)}
+                    onAlistarPedido={() => onAlistarPedido(m)}
+                  />
                 </div>
               </td>
             </tr>

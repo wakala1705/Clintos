@@ -39,11 +39,14 @@ export const PROCEDENCIA_OPTIONS = [
   { value: 'particular', label: 'Particular' },
 ];
 
+// Orden del chip-group segmented del toolbar (encargo explícito): Sin
+// Confirmar primero (coincide con el default de FILTROS_INICIALES en
+// Solicitudes.jsx), luego Confirmados/Anulados, "Todos" al final.
 export const ESTADO_OPTIONS = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'confirmado', label: 'Confirmados' },
   { value: 'sin-confirmar', label: 'Sin Confirmar' },
+  { value: 'confirmado', label: 'Confirmados' },
   { value: 'anulado', label: 'Anulados' },
+  { value: 'todos', label: 'Todos' },
 ];
 
 export const TRNS_OPTIONS = [
@@ -89,6 +92,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'GARCIA GARCIA ANGELICA MARIA',
+    solicitante: 'ENF. GARCIA LOPEZ MONICA',
     ubicacion: 'Sede 01 · Área: Urgencias · C.Costo: URGENCIAS',
     idContrato: '900156264',
     tipo: 'debito',
@@ -123,6 +127,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'UNICIA GOKU',
+    solicitante: 'ENF. RAMIREZ CASTRO JUAN',
     ubicacion: 'Sede 01 · Área: Consulta Externa · C.Costo: CONSULTA EXTERNA',
     idContrato: '900156264',
     tipo: 'debito',
@@ -169,6 +174,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'CARPIO PITALUA ISA',
+    solicitante: 'DR. MORALES PEÑA CARLOS',
     ubicacion: 'Sede 01 · Área: Consulta Externa · C.Costo: CONSULTA EXTERNA',
     idContrato: '900156264',
     tipo: 'debito',
@@ -199,6 +205,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'DIAZ GONZALEZ JOSE CARLOS',
+    solicitante: 'ENF. VARGAS TORRES LINA',
     ubicacion: 'Sede 01 · Área: Hospitalización Piso 2 · C.Costo: HOSPITALIZACION',
     idContrato: '800251440',
     tipo: 'debito',
@@ -229,6 +236,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'RODRIGUEZ JAMES',
+    solicitante: 'DR. HERRERA SOTO ANDREA',
     ubicacion: 'Sede 01 · Área: Ambulancia · C.Costo: AMBULANCIA',
     idContrato: '800251440',
     tipo: 'debito',
@@ -259,6 +267,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: 'AGUSTU JULIO JULIO',
+    solicitante: 'ENF. JIMENEZ RUIZ PEDRO',
     ubicacion: 'Sede 01 · Área: Hospitalización Piso 2 · C.Costo: HOSPITALIZACION',
     idContrato: '800251440',
     tipo: 'debito',
@@ -296,6 +305,7 @@ const MOVIMIENTOS_BASE = [
     procedencia: 'SALUD',
     movimiento: 'EN-Traslado Entre Bodegas',
     paciente: 'DE LA ESPRIELLA PARRA ALFONSO',
+    solicitante: 'ENF. GARCIA LOPEZ MONICA',
     ubicacion: 'Sede 01 · Área: Hospitalización Piso 2 · C.Costo: HOSPITALIZACION',
     idContrato: '800251440',
     tipo: 'debito',
@@ -355,6 +365,11 @@ const NOMBRES_PACIENTES_GEN = [
 ];
 
 const CONFIRMADORES_GEN = ['ROJAS MENDEZ PAOLA', 'GOMEZ TORRES LUIS', 'MARTINEZ RUIZ SANDRA', 'CASTRO LEON DIEGO'];
+
+const SOLICITANTES_GEN = [
+  'ENF. GARCIA LOPEZ MONICA', 'ENF. RAMIREZ CASTRO JUAN', 'DR. MORALES PEÑA CARLOS',
+  'ENF. VARGAS TORRES LINA', 'DR. HERRERA SOTO ANDREA', 'ENF. JIMENEZ RUIZ PEDRO',
+];
 
 const UBICACIONES_GEN = [
   { area: 'Urgencias', costo: 'URGENCIAS' },
@@ -439,6 +454,7 @@ const MOVIMIENTOS_GENERADOS = Array.from({ length: 54 }, (_, i) => {
     procedencia: esParticular ? 'PARTICULAR' : 'SALUD',
     movimiento: 'SA-Ventas a Clientes',
     paciente: pick(NOMBRES_PACIENTES_GEN, rand),
+    solicitante: pick(SOLICITANTES_GEN, rand),
     ubicacion: `Sede 01 · Área: ${ubicacion.area} · C.Costo: ${ubicacion.costo}`,
     idContrato: pick(IDCONTRATOS_GEN, rand),
     tipo: 'debito',

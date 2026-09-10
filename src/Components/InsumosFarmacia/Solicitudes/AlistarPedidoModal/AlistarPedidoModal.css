@@ -1,0 +1,16 @@
+/* .modal-overlay/.modal/.modal-body: scaffolding genérico en
+   ../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+/* Extragrande (mismo criterio que .mig-detalle-modal/.fvcd-modal) + alto
+   fijo para que la leyenda "en desarrollo" quede centrada en vez de pegada
+   arriba con el modal encogido al contenido. */
+.mig-alistar-modal{width:95vw;max-width:1400px;height:75vh;}
+.mig-alistar-modal .modal-body{flex:1;}
+
+.mig-alistar-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;text-align:center;
+}
+.mig-alistar-empty .icon{width:48px;height:48px;color:var(--ink-400);}
+.mig-alistar-empty h3{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.mig-alistar-empty p{font-size:var(--fs-base);color:var(--ink-500);max-width:420px;}

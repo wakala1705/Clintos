@@ -13,6 +13,7 @@ import MovimientosToolbar from './MovimientosToolbar/MovimientosToolbar';
 import MovimientosGrid from './MovimientosGrid/MovimientosGrid';
 import MovimientosPagination from './MovimientosPagination/MovimientosPagination';
 import MovimientoDetalleModal from './MovimientoDetalleModal/MovimientoDetalleModal';
+import AlistarPedidoModal from './AlistarPedidoModal/AlistarPedidoModal';
 import MovimientosTotalesFooter from './MovimientosTotalesFooter/MovimientosTotalesFooter';
 import { MOVIMIENTOS } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 
@@ -46,13 +47,14 @@ function sumBy(list, pick) {
 // memoria sobre el array mock (sin fetch simulado, ver mockSolicitudesData.js).
 export default function Solicitudes() {
   useEffect(() => {
-    const cleanup = initShellChrome({ startCollapsed: false });
+    const cleanup = initShellChrome({ startCollapsed: true });
     return cleanup;
   }, []);
 
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [detalleMovimiento, setDetalleMovimiento] = useState(null);
+  const [alistarMovimiento, setAlistarMovimiento] = useState(null);
   const [page, setPage] = useState(1);
 
   function handleFiltrosChange(patch) {
@@ -147,6 +149,7 @@ export default function Solicitudes() {
                 selectedId={effectiveSelectedId}
                 onSelect={setSelectedId}
                 onVerDetalle={setDetalleMovimiento}
+                onAlistarPedido={setAlistarMovimiento}
               />
 
               <MovimientosPagination
@@ -163,6 +166,7 @@ export default function Solicitudes() {
       </div>
 
       <MovimientoDetalleModal movimiento={detalleMovimiento} onClose={() => setDetalleMovimiento(null)} />
+      <AlistarPedidoModal movimiento={alistarMovimiento} onClose={() => setAlistarMovimiento(null)} />
     </div>
   );
 }

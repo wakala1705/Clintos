@@ -432,32 +432,57 @@
     text-decoration: underline;
 }
 
-.backChip {
-    display: inline-flex;
-    align-self: flex-start;
+/* Fila del paso 2: flecha de volver a la izquierda, tag del módulo elegido
+   (ícono + nombre, coloreado con el tono de ese módulo) al extremo derecho
+   del bloque del form -- antes un solo "chip" combinaba ambos (encargo
+   explícito de separarlos). */
+.stepHeaderRow {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 12px 6px 8px;
-    border: none;
-    border-radius: 300px;
-    background: #EEF3FC;
-    color: #0065CD;
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-semibold);
-    cursor: pointer;
-    margin-bottom: 16px;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.backChip:hover {
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: #EEF3FC;
+    color: #0065CD;
+    cursor: pointer;
+}
+
+.backBtn:hover {
     background: #E3EFFD;
 }
 
-.backChipIcon {
+.backBtnIcon {
     width: 16px;
     height: 16px;
 }
 
-.backChipModuleIcon {
+.moduleTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+}
+
+.moduleTagIcon {
     width: 16px;
     height: 16px;
 }
+
+/* Mismos tonos que Login/ModuleCard.module.css (.blue/.green/.orange/.purple
+   .icon) -- acá solo el color de texto, sin fondo. */
+.moduleTag.blue { color: #0065CD; }
+.moduleTag.green { color: #0d7a3d; }
+.moduleTag.orange { color: #C05F1E; }
+.moduleTag.purple { color: #6941C6; }
+.moduleTag.neutral { color: #6f7c94; }

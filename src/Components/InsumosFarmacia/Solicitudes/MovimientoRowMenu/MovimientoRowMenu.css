@@ -1,6 +1,6 @@
 /* Mismo patrón que TaskRowMenu.css/RowActionsMenu.css (ver AGENTS.md
-   "Component organization") -- .mig-icon-btn de MovimientosGrid.css cubre
-   el botón "Editar" directo; acá solo el trigger "⋮" + dropdown. */
+   "Component organization") -- trigger "⋮" + dropdown con las 4 acciones
+   de la fila (Editar/Ver detalle/Imprimir/Anular). */
 .mig-row-menu{position:relative;flex-shrink:0;}
 .mig-row-menu-btn{
   width:28px;height:28px;border-radius:7px;flex-shrink:0;
