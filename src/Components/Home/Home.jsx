@@ -43,16 +43,14 @@ import {
 const MODULE_TONES = {
   asistencial: 'blue',
   contable: 'green',
-  inventario: 'purple',
   nomina: 'orange',
 };
 
-// Mismos 4 valores/labels que MODULE_LABELS en hooks/Session/session.js
+// Mismos 3 valores/labels que MODULE_LABELS en hooks/Session/session.js
 // (sin 'administrador', que no es un módulo elegible acá).
 const MODULE_OPTIONS = [
   { value: 'asistencial', label: 'Asistencial' },
   { value: 'contable', label: 'Contable' },
-  { value: 'inventario', label: 'Inventario' },
   { value: 'nomina', label: 'Nómina' },
 ];
 
@@ -181,7 +179,7 @@ const MODULE_GROUPS = [
   {
     title: 'Inventario',
     icon: LuPill,
-    module: 'inventario',
+    module: 'contable',
     items: [
       {
         title: 'Salidas asistenciales',
@@ -209,8 +207,11 @@ export default function Home() {
   // El admin previsualiza cualquier módulo sin tocar su sesión real (ver
   // Sidebar.jsx: isAdmin ya muestra el árbol completo independientemente de
   // activeModule); un usuario de un solo módulo simplemente ve el suyo,
-  // igual que ya hace Sidebar.jsx (isContable ? contableSubGroups : asistencialSubGroups).
-  const effectiveModule = isAdmin ? previewModule : activeModule;
+  // igual que ya hace Sidebar.jsx (isContable || isInventario ? contableSubGroups : asistencialSubGroups).
+  // activeModule 'inventario' se normaliza a 'contable': el login mantiene ese
+  // id por compatibilidad (ver Login.jsx), pero su contenido ya vive bajo el
+  // grupo "Inventario" con module:'contable' más abajo.
+  const effectiveModule = isAdmin ? previewModule : (activeModule === 'inventario' ? 'contable' : activeModule);
   const visibleGroups = MODULE_GROUPS.filter((group) => group.module === effectiveModule);
   const effectiveModuleLabel = MODULE_OPTIONS.find((opt) => opt.value === effectiveModule)?.label ?? '';
 
@@ -231,7 +232,7 @@ export default function Home() {
       <div className="main">
 
         <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}>
-          {effectiveModule === 'inventario' && <BodegaPickerButton />}
+          {effectiveModule === 'contable' && <BodegaPickerButton />}
           {effectiveModule === 'asistencial' && <AreaFuncionalPickerButton />}
         </Topbar>
 

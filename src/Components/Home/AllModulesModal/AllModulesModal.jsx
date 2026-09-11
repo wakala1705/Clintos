@@ -14,7 +14,6 @@ import { LuLayoutGrid, LuLock, LuSearch } from 'react-icons/lu';
 const MODULE_TABS = [
   { value: 'asistencial', label: 'Asistencial' },
   { value: 'contable', label: 'Contable' },
-  { value: 'inventario', label: 'Inventario' },
   { value: 'nomina', label: 'Nómina' },
 ];
 
@@ -23,7 +22,6 @@ const MODULE_TABS = [
 const MODULE_TONES = {
   asistencial: 'blue',
   contable: 'green',
-  inventario: 'purple',
   nomina: 'orange',
 };
 

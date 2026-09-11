@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LuChevronDown, LuEye, LuEyeOff, LuBuilding2, LuMapPin,
-  LuArrowLeft, LuStethoscope, LuChartBar, LuLandmark, LuUsers, LuUserCog,
+  LuArrowLeft, LuStethoscope, LuLandmark, LuUsers, LuUserCog,
 } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 import BodegaPickerModal from '@/Components/BodegaPickerModal/BodegaPickerModal';
@@ -22,7 +22,7 @@ const COMPANY_OPTIONS = [
 const MODULES = [
   {
     id: 'asistencial',
-    label: 'Módulo Asistencial',
+    label: 'Asistencial HIS',
     description: 'Historia clínica, órdenes médicas, enfermería y camas.',
     icon: LuStethoscope,
     tone: 'blue',
@@ -31,25 +31,16 @@ const MODULES = [
   },
   {
     id: 'inventario',
-    label: 'Módulo Inventario',
-    description: 'Insumos, existencias, movimientos y control de stock.',
-    icon: LuChartBar,
-    tone: 'purple',
+    label: 'Contable',
+    description: 'Facturación, cartera, cuentas y reportes financieros.',
+    icon: LuLandmark,
+    tone: 'green',
     route: '/home',
     available: true,
   },
   {
-    id: 'contable',
-    label: 'Módulo Contable',
-    description: 'Facturación, cartera, cuentas y reportes financieros.',
-    icon: LuLandmark,
-    tone: 'green',
-    route: null,
-    available: false,
-  },
-  {
     id: 'nomina',
-    label: 'Módulo Nómina',
+    label: 'Nómina',
     description: 'Turnos, contratos, novedades y liquidación de personal.',
     icon: LuUsers,
     tone: 'orange',
@@ -197,7 +188,7 @@ export default function Login() {
                   {selectedModule && (
                     <span className={`${styles.moduleTag} ${styles[selectedModule.tone ?? 'neutral']}`}>
                       <selectedModule.icon className={styles.moduleTagIcon} />
-                      {selectedModule.label.replace('Módulo ', '')}
+                      {selectedModule.label}
                     </span>
                   )}
                 </div>

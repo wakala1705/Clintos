@@ -37,7 +37,6 @@ import {
   LuUsersRound,
   LuVault,
   LuWallet,
-  LuWarehouse,
   LuWrench,
 } from 'react-icons/lu';
 
@@ -70,7 +69,7 @@ export default function Sidebar() {
   const isContable = activeModule === 'contable';
   const isInventario = activeModule === 'inventario';
 
-  // Admin ve estos anidados bajo "Módulo Asistencial"/"Módulo Contable" (junto
+  // Admin ve estos anidados bajo "Asistencial HIS"/"Contable" (junto
   // a Nómina/Otros soportes); un usuario de un solo módulo ya sabe en qué
   // módulo está, así que se suben a nivel superior (mismo contenido, sin el
   // nivel extra de navegación redundante).
@@ -149,9 +148,7 @@ export default function Sidebar() {
     </>
   );
 
-  const contableSubGroups = null;
-
-  const inventarioSubGroups = (
+  const contableSubGroups = (
     <>
       <div className={`${subGroupClass}${isInsumosFarmacia ? ' open' : ''}`}>
         <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
@@ -212,7 +209,7 @@ export default function Sidebar() {
             <div className={`nav-group${isConsultaExterna || isHospitalizacion || isFinanzas || isUtilitarios || isConfiguracion ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuStethoscope className="icon nav-icon" />
-                <span className="label">Módulo Asistencial</span>
+                <span className="label">Asistencial HIS</span>
                 <LuChevronDown className="icon chev" />
               </div>
               <div className="nav-body">
@@ -222,31 +219,18 @@ export default function Sidebar() {
 
             <div className="sidebar-divider"></div>
 
-            <div className="nav-group">
+            <div className={`nav-group${isInsumosFarmacia ? ' open' : ''}`}>
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuChartBar className="icon nav-icon" />
-                <span className="label">Módulo Contable</span>
+                <span className="label">Contable</span>
                 <LuChevronDown className="icon chev" />
               </div>
               <div className="nav-body">
                 {contableSubGroups}
               </div>
             </div>
-
-            <div className="sidebar-divider"></div>
-
-            <div className={`nav-group${isInsumosFarmacia ? ' open' : ''}`}>
-              <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
-                <LuWarehouse className="icon nav-icon" />
-                <span className="label">Módulo Inventario</span>
-                <LuChevronDown className="icon chev" />
-              </div>
-              <div className="nav-body">
-                {inventarioSubGroups}
-              </div>
-            </div>
           </>
-        ) : isContable ? contableSubGroups : isInventario ? inventarioSubGroups : asistencialSubGroups}
+        ) : isContable || isInventario ? contableSubGroups : asistencialSubGroups}
 
         {isAdmin && (
           <>
@@ -255,7 +239,7 @@ export default function Sidebar() {
             <div className="nav-group">
               <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
                 <LuUsersRound className="icon nav-icon" />
-                <span className="label">Módulo Nómina</span>
+                <span className="label">Nómina</span>
                 <LuChevronDown className="icon chev" />
               </div>
               <div className="nav-body"></div>

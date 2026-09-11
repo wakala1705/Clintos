@@ -7,7 +7,9 @@
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
   padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.fvc-search-field{flex:1;min-width:220px;}
+/* width fijo (no flex:1) -- mismo valor que .fact-search-field (vista nueva,
+   Facturacion.css), no se ajusta al espacio sobrante del toolbar. */
+.fvc-search-field{width:340px;flex-shrink:0;}
 
 .fvc-filter-field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .fvc-filter-field label{font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}

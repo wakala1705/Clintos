@@ -203,9 +203,6 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
             <Field label="Estado">
               <Badge tone={estadoFacturaBadge(factura).tone} className="fvcd-badge">{estadoFacturaBadge(factura).label}</Badge>
             </Field>
-            <Field label="PE">
-              <Badge tone={ESTADO_PE[factura.estadoPE].tone} className="fvcd-badge">{ESTADO_PE[factura.estadoPE].label}</Badge>
-            </Field>
           </div>
 
           {factura.estado === 'anulada' && (

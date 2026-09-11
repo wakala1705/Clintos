@@ -4,12 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 import './FacturaVistaClasica.css';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
 } from '@/hooks/Facturacion/mockFacturasData';
 import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
-import TipoFacturaFilter from './TipoFacturaFilter/TipoFacturaFilter';
+import OtrosFiltrosPopover from './OtrosFiltrosPopover/OtrosFiltrosPopover';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
@@ -34,10 +33,12 @@ const FILTROS_INICIALES = {
   clase: 'todas', tipo: TIPO_FACTURA_VALUES, desde: '', hasta: '', pe: 'todos',
 };
 
-// Opciones del chip rápido "PE" (encargo explícito) -- mismas keys que
-// ESTADO_PE en FacturasGridClasica.jsx (pendiente/fe-pendiente/enviada), acá
-// con etiquetas cortas para el chip en vez de la etiqueta completa del badge
-// ("Factura electrónica pendiente").
+// Opciones del dropdown "PE" (encargo explícito: antes chip segmentado, ahora
+// select dropdown normal -- mismo patrón/componente que "Tipo Factura", ver
+// FormSelect más abajo) -- mismas keys que ESTADO_PE en
+// FacturasGridClasica.jsx (pendiente/fe-pendiente/enviada), acá con
+// etiquetas cortas en vez de la etiqueta completa del badge ("Factura
+// electrónica pendiente").
 const PE_FILTROS = [
   { value: 'todos', label: 'Todo' },
   { value: 'pendiente', label: 'Pendiente' },
@@ -86,9 +87,8 @@ export default function FacturaVistaClasica() {
     ))
   ), [estadoPEOverrides]);
 
-  // Sin el filtro "pe" -- se reusa tanto para el conteo de cada chip (cuántas
-  // facturas tendría cada opción de PE con el resto de filtros ya aplicados)
-  // como para la lista final de abajo.
+  // Sin el filtro "pe" -- separado de `facturas` de abajo solo para no
+  // repetir el resto de los filtros dos veces.
   const facturasSinPe = useMemo(() => facturasConEstadoPE.filter((f) => {
     if (filtros.clase !== 'todas' && f.clase !== filtros.clase) return false;
     if (filtros.tipo.length > 0 && !filtros.tipo.includes(f.tipo)) return false;
@@ -96,11 +96,6 @@ export default function FacturaVistaClasica() {
     if (filtros.hasta && f.fecha > filtros.hasta) return false;
     return matchesQuery(f, query.trim());
   }), [facturasConEstadoPE, query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
-
-  const peOpciones = useMemo(() => PE_FILTROS.map((o) => ({
-    ...o,
-    count: o.value === 'todos' ? facturasSinPe.length : facturasSinPe.filter((f) => f.estadoPE === o.value).length,
-  })), [facturasSinPe]);
 
   const facturas = useMemo(() => (
     filtros.pe === 'todos' ? facturasSinPe : facturasSinPe.filter((f) => f.estadoPE === filtros.pe)
@@ -112,6 +107,16 @@ export default function FacturaVistaClasica() {
   // legacy de referencia, derivado en cada render en vez de sincronizado.
   const effectiveSelectedId = facturas.some((f) => f.id === selectedId) ? selectedId : (facturas[0]?.id ?? null);
   const selectedFactura = facturas.find((f) => f.id === effectiveSelectedId) ?? null;
+
+  // Badge de "Otros filtros" (Clase/Tipo Factura, ver OtrosFiltrosPopover) --
+  // 1 punto por control con un valor distinto al inicial, no por cantidad de
+  // tipos deseleccionados.
+  const otrosFiltrosCount = (filtros.clase !== 'todas' ? 1 : 0)
+    + (filtros.tipo.length !== TIPO_FACTURA_VALUES.length ? 1 : 0);
+
+  function handleLimpiarOtrosFiltros() {
+    setFiltros((f) => ({ ...f, clase: 'todas', tipo: TIPO_FACTURA_VALUES }));
+  }
 
   // Ícono de imprimir (columna Acciones, ver FacturasGridClasica) -- si ya
   // hay un flujo en curso se ignora (una factura a la vez, mismo criterio
@@ -135,27 +140,23 @@ export default function FacturaVistaClasica() {
           />
         </div>
 
-        <SegmentedFilterBar
-          options={peOpciones}
-          value={filtros.pe}
-          onChange={(v) => setFiltros((f) => ({ ...f, pe: v }))}
-          ariaLabel="Filtrar por PE"
-        />
+        <div className="filter-spacer" />
 
         <div className="fvc-filter-field">
-          <label htmlFor="fvc-clase">Clase:</label>
-          <FormSelect id="fvc-clase" value={filtros.clase} onChange={(v) => setFiltros((f) => ({ ...f, clase: v }))} options={CLASE_OPTIONS} />
+          <label htmlFor="fvc-pe">PE:</label>
+          <FormSelect id="fvc-pe" value={filtros.pe} onChange={(v) => setFiltros((f) => ({ ...f, pe: v }))} options={PE_FILTROS} />
         </div>
-        <div className="fvc-filter-field">
-          <label htmlFor="fvc-tipo">Tipo Factura:</label>
-          <TipoFacturaFilter
-            id="fvc-tipo"
-            ariaLabel="Tipo Factura"
-            value={filtros.tipo}
-            onChange={(v) => setFiltros((f) => ({ ...f, tipo: v }))}
-            options={TIPO_FACTURA_OPTIONS}
-          />
-        </div>
+
+        <OtrosFiltrosPopover
+          clase={filtros.clase}
+          onChangeClase={(v) => setFiltros((f) => ({ ...f, clase: v }))}
+          claseOptions={CLASE_OPTIONS}
+          tipo={filtros.tipo}
+          onChangeTipo={(v) => setFiltros((f) => ({ ...f, tipo: v }))}
+          tipoOptions={TIPO_FACTURA_OPTIONS}
+          onLimpiar={handleLimpiarOtrosFiltros}
+          activeCount={otrosFiltrosCount}
+        />
         <DateRangeFilter
           desde={filtros.desde}
           hasta={filtros.hasta}

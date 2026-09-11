@@ -39,11 +39,14 @@ export function useActiveModule() {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 }
 
+// 'inventario' se muestra como 'Contable': el login mantiene ese id por
+// compatibilidad (ver Login.jsx), pero su contenido y label ya son los de
+// Contable en toda la app (Sidebar/Home).
 const MODULE_LABELS = {
   administrador: 'Administrador',
   asistencial: 'Asistencial',
   contable: 'Contable',
-  inventario: 'Inventario',
+  inventario: 'Contable',
   nomina: 'Nómina',
 };
 
