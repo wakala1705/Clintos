@@ -2,22 +2,12 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
-import {
-  LuClipboardCheck, LuPackage, LuPencil, LuRefreshCw, LuThumbsUp, LuTrash2,
-} from 'react-icons/lu';
+import { LuPackage } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
-import FormSelect from '@/Components/FormSelect/FormSelect';
 import ArticulosItemsTable from './ArticulosItemsTable/ArticulosItemsTable';
 import LotesDisponiblesTable from './LotesDisponiblesTable/LotesDisponiblesTable';
-import { formatFecha, formatMoneda } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
-
-const ESTADO_ENTREGA_OPTIONS = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'pendiente', label: 'Pendiente' },
-  { value: 'entregado', label: 'Entregado' },
-];
 
 // Mismo mapa tono/label que MovimientosGrid.jsx (estado del movimiento
 // completo, no del ítem) -- se muestra junto al título en mig-alistar-identity,
@@ -30,19 +20,6 @@ const ESTADO_BADGE = {
 
 function estadoEntregaDe(a) {
   return a.cantidadEntregada > 0 ? 'entregado' : 'pendiente';
-}
-
-// Mismo helper Field que FacturaDetalleModalClasico.jsx/MovimientoDetalleModal.jsx
-// (duplicado a propósito -- ver AGENTS.md/comentario de .mig-field en
-// Solicitudes/shared/shared.css): label chico + valor, sin componente propio
-// en @/Components porque es de un solo uso por modal.
-function Field({ label, value }) {
-  return (
-    <div className="mig-field">
-      <span className="mig-field-label">{label}</span>
-      <span className="mig-field-value">{value}</span>
-    </div>
-  );
 }
 
 // Réplica de "Catálogo Movimiento De Inventario -> Artículos Genéricos"
@@ -58,14 +35,16 @@ function Field({ label, value }) {
 //
 // Rediseño (encargo explícito: "repliquemos el mismo diseño del detalle de
 // facturas") sobre FacturaDetalleModalClasico.jsx -- mig-alistar-identity
-// (ícono+título+badge+subtítulo, paciente/admisión, Costo Total) es el mismo
-// patrón que fvcd-identity-row; mig-resumen/Field (arriba) es el mismo
-// fvcd-compact-fields con el resto de los campos del movimiento que no viven
-// ya en la identity row. El "Resumen" de Facturas (fvcd-bottom-summary,
-// responde a la fila seleccionada de la tabla) se aplicó puntualmente a la
-// SEGUNDA tabla (encargo explícito) -- mig-lotes-summary, a la derecha de
-// LotesDisponiblesTable, responde a `selectedLoteIndex` con el mismo criterio
-// "sin selección, hint" que fvcd-summary-hint.
+// (ícono+título+badge+subtítulo, paciente/admisión, Solicitante) es el mismo
+// patrón que fvcd-identity-row. El "mig-resumen" (fvcd-compact-fields, resto
+// de campos del movimiento) se eliminó (encargo explícito) -- Solicitante,
+// el único dato de ese bloque que se conservó, se movió a la identity row.
+// El "Resumen" de Facturas (fvcd-bottom-summary, responde a la fila
+// seleccionada de la tabla) se aplicó puntualmente a la SEGUNDA tabla
+// (encargo explícito) -- mig-lotes-summary, a la derecha de
+// LotesDisponiblesTable, responde a `effectiveLoteIndex`. A diferencia de
+// fvcd-summary-hint, acá el primer lote llega seleccionado por defecto
+// (encargo explícito) -- el hint solo se ve cuando no hay lotes.
 export default function AlistarPedidoModal({ movimiento, onClose }) {
   const [filtroCodigo, setFiltroCodigo] = useState('');
   const [filtroDescripcion, setFiltroDescripcion] = useState('');
@@ -120,12 +99,14 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
     setLastArticuloItem(effectiveSelected?.item ?? null);
     if (selectedLoteIndex !== null) setSelectedLoteIndex(null);
   }
-  const selectedLote = selectedLoteIndex !== null ? (lotes[selectedLoteIndex] ?? null) : null;
 
-  const costoTotalMovimiento = useMemo(
-    () => (movimiento?.articulos ?? []).reduce((acc, a) => acc + a.costoTotal.neto, 0),
-    [movimiento],
-  );
+  // Igual que effectiveSelected de arriba -- por defecto, el primer lote
+  // queda seleccionado en vez de dejar la tabla sin selección (encargo
+  // explícito).
+  const effectiveLoteIndex = selectedLoteIndex !== null && lotes[selectedLoteIndex]
+    ? selectedLoteIndex
+    : (lotes.length > 0 ? 0 : null);
+  const selectedLote = effectiveLoteIndex !== null ? lotes[effectiveLoteIndex] : null;
 
   if (!movimiento) return null;
 
@@ -150,48 +131,11 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
                 {`${movimiento.trns.toUpperCase()} · ${movimiento.consecutivo}`}
                 <Badge tone={estadoBadge.tone} className="mig-alistar-badge">{estadoBadge.label}</Badge>
               </div>
-              <div className="mig-alistar-identity-sub">{movimiento.movimiento}</div>
+              <div className="mig-alistar-identity-sub">{movimiento.solicitante}</div>
             </div>
-
-            <div className="mig-alistar-divider" aria-hidden="true" />
-
-            <div className="mig-alistar-identity-text">
-              <div className="mig-alistar-identity-name">{movimiento.paciente}</div>
-              <div className="mig-alistar-identity-sub">No. Admisión {movimiento.noAdmision}</div>
-            </div>
-
-            <div className="mig-alistar-identity-total">
-              <span className="mig-field-label">Costo Total</span>
-              <span className="mig-alistar-total-value">${formatMoneda(costoTotalMovimiento)}</span>
-            </div>
-          </div>
-
-          <div className="mig-resumen">
-            <Field label="Fecha" value={formatFecha(movimiento.fecha)} />
-            <Field label="Hora" value={movimiento.hora} />
-            <Field label="Solicitante" value={movimiento.solicitante} />
-            <Field label="Ubicación" value={movimiento.ubicacion} />
-            <Field label="No. Admisión" value={movimiento.noAdmision} />
-            <Field label="No. Prestación" value={movimiento.noPrestacion} />
-            <Field label="Procedencia" value={movimiento.procedencia} />
-            <Field label="Id. Contrato" value={movimiento.idContrato} />
           </div>
 
           <div className="mig-articulos-panel">
-            <div className="mig-alistar-filters">
-              <div className="mig-inline-field">
-                <label htmlFor="mig-alistar-estado-entrega">Estado De Entrega:</label>
-                <FormSelect
-                  id="mig-alistar-estado-entrega"
-                  value={filtroEstadoEntrega}
-                  onChange={setFiltroEstadoEntrega}
-                  options={ESTADO_ENTREGA_OPTIONS}
-                />
-              </div>
-
-              <Button variant="outline" icon={LuRefreshCw}>Sugerir Todos</Button>
-            </div>
-
             <ArticulosItemsTable
               articulos={articulosFiltrados}
               selectedItem={effectiveSelected?.item ?? null}
@@ -211,11 +155,15 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
             </h4>
 
             <div className="mig-lotes-row">
-              <LotesDisponiblesTable lotes={lotes} selectedIndex={selectedLoteIndex} onSelect={setSelectedLoteIndex} />
+              <LotesDisponiblesTable lotes={lotes} selectedIndex={effectiveLoteIndex} onSelect={setSelectedLoteIndex} />
 
               <div className="mig-lotes-summary">
                 <div className="mig-summary-title">Resumen de lote</div>
                 {!selectedLote && <div className="mig-summary-hint">Selecciona un lote de la tabla para ver su resumen.</div>}
+                <div className="mig-summary-row"><span>Id Sede</span><span>{selectedLote?.idSede ?? '—'}</span></div>
+                <div className="mig-summary-row"><span>Id.Bdg</span><span>{selectedLote?.bdg ?? '—'}</span></div>
+                <div className="mig-summary-row"><span>Id. Artículo</span><span>{selectedLote?.generico ?? '—'}</span></div>
+                <div className="mig-summary-row"><span>Genérico</span><span>{selectedLote?.generico ?? '—'}</span></div>
                 <div className="mig-summary-row"><span>Stock</span><span>{(selectedLote?.stock ?? 0).toFixed(2)}</span></div>
                 <div className="mig-summary-row"><span>Esperada</span><span>{(selectedLote?.esperada ?? 0).toFixed(2)}</span></div>
                 <div className="mig-summary-row"><span>Cantidad</span><span>{(selectedLote?.cantidad ?? 0).toFixed(2)}</span></div>
@@ -226,14 +174,6 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
                 <div className="mig-summary-divider" aria-hidden="true" />
                 <div className="mig-summary-row mig-summary-total"><span>No.Documento</span><span>{selectedLote?.noDocumento ?? '—'}</span></div>
               </div>
-            </div>
-
-            <div className="mig-alistar-actions">
-              <Button variant="outline" icon={LuRefreshCw}>Sugerir</Button>
-              <Button variant="primary" icon={LuThumbsUp}>Confirmar</Button>
-              <Button variant="outline" icon={LuPencil}>Editar</Button>
-              <Button variant="danger-outline" icon={LuTrash2}>Borrar</Button>
-              <Button variant="secondary" icon={LuClipboardCheck}>Movimiento</Button>
             </div>
           </div>
         </div>

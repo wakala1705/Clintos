@@ -1,7 +1,6 @@
-/* .modal-overlay/.modal/.modal-body/.mig-resumen/.mig-field*: scaffolding
-   genérico y ficha compacta compartidos en ../shared/shared.css. Header de
-   título+cerrar: ver @/Components/ModalHeader/ModalHeader, no se redefine
-   acá. */
+/* .modal-overlay/.modal/.modal-body: scaffolding genérico compartido en
+   ../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
 /* Extragrande (mismo criterio que .mig-detalle-modal/.fvcd-modal) + alto
    fijo para que la tabla de ítems y la de lotes se repartan el alto del
    modal en vez de depender del contenido. 88vh/1500px (encargo "agrandemos
@@ -13,7 +12,7 @@
    contenido nuevo (identity row + ficha), no la vía principal. */
 .mig-alistar-modal{width:95vw;max-width:1500px;height:88vh;}
 .mig-alistar-modal .modal-body{flex:1;padding:16px 20px;}
-.mig-alistar-body{gap:8px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+.mig-alistar-body{gap:6px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
 .mig-alistar-body::-webkit-scrollbar{width:6px;height:6px;}
 .mig-alistar-body::-webkit-scrollbar-track{background:transparent;}
 .mig-alistar-body::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
@@ -24,11 +23,12 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 
 /* Fila de identidad (encargo explícito: "repliquemos el mismo diseño del
    detalle de facturas") -- mismo patrón que .fvcd-identity-row de
-   FacturaDetalleModalClasico.css: ícono en círculo + título/badge/subtítulo,
-   separador, segundo bloque de identidad (acá paciente/admisión en vez de
-   tercero/afiliado), total a la derecha. Reimplementado acá (no importado
-   de Facturacion) porque los tokens de color son por feature, ver AGENTS.md
-   "Component organization". */
+   FacturaDetalleModalClasico.css: ícono en círculo + título/badge/subtítulo.
+   El segundo bloque (paciente/admisión) y el divisor+Solicitante que vivían
+   a la derecha se eliminaron (encargo explícito) -- el subtítulo ahora
+   muestra el solicitante directamente, quedaba duplicado con el bloque de
+   la derecha. Reimplementado acá (no importado de Facturacion) porque los
+   tokens de color son por feature, ver AGENTS.md "Component organization". */
 .mig-alistar-identity{display:flex;align-items:center;gap:12px;}
 .mig-alistar-icon{
   flex-shrink:0;width:34px;height:34px;border-radius:50%;
@@ -40,46 +40,34 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 .mig-alistar-identity-name{display:flex;align-items:center;gap:8px;font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
 .mig-alistar-badge{align-self:flex-start;}
 .mig-alistar-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-.mig-alistar-divider{width:1px;align-self:stretch;background:var(--border);}
-.mig-alistar-identity-total{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
-.mig-alistar-total-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--primary);}
 
-/* Estado De Entrega + tabla de ítems, ver AGENTS.md "Barra de filtros de
-   listado" para el orden de la fila de filtros. El "mig-tabs-bar" que vivía
-   encima de este bloque se eliminó (encargo explícito, ver
-   AlistarPedidoModal.jsx) -- en su lugar, todo el bloque queda encapsulado
-   en una caja con borde propio (mismo criterio que .mig-items-card en
-   MovimientoDetalleModal.css: "border general de la tabla" tras eliminar su
-   propio mig-tabs-bar). */
+/* Tabla de ítems, ver AGENTS.md "Barra de filtros de listado". El
+   "mig-tabs-bar" que vivía encima de este bloque se eliminó (encargo
+   explícito, ver AlistarPedidoModal.jsx) -- en su lugar, todo el bloque
+   queda encapsulado en una caja con borde propio (mismo criterio que
+   .mig-items-card en MovimientoDetalleModal.css: "border general de la
+   tabla" tras eliminar su propio mig-tabs-bar). El filtro "Estado De
+   Entrega" + botón "Sugerir Todos" (mig-alistar-filters/mig-inline-field) se
+   eliminaron acá (encargo explícito) -- filtroEstadoEntrega sigue vivo en
+   AlistarPedidoModal.jsx (estado + filtrado), mismo criterio que
+   filtroCodigo/filtroDescripcion, sin control visible que lo cambie por
+   ahora. */
 .mig-articulos-panel{
   display:flex;flex-direction:column;gap:10px;flex-shrink:0;
   border:1px solid var(--border);border-radius:var(--radius);padding:10px;
 }
-/* justify-content:flex-end -- el consecutivo/badge que vivía acá (mig-alistar-meta)
-   subió a mig-alistar-identity (encargo explícito), así que ya no hay nada a
-   la izquierda de esta fila que empujar con un spacer. */
-.mig-alistar-filters{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:10px 16px;flex-shrink:0;}
-
-/* Código/Descripción (búsqueda por texto) se ocultaron acá (encargo
-   explícito) -- filtroCodigo/filtroDescripcion siguen vivos en
-   AlistarPedidoModal.jsx (estado + filtrado), solo sin campo visible que los
-   cambie por ahora. .mig-inline-field ya no envuelve un <input> propio (solo
-   el FormSelect de Estado De Entrega), por eso no queda una regla ".mig-inline-field input"
-   acá -- se hubiera quedado muerta sin un <input> que la use. */
-.mig-inline-field{display:flex;align-items:center;gap:8px;}
-.mig-inline-field label{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);white-space:nowrap;}
-.mig-inline-field .form-select{width:170px;}
 
 /* "Artículos disponibles para el código" -- título + fila de tabla de lotes
    + resumen + acciones. Encapsulado en su propia caja con borde (mismo
-   criterio que .mig-articulos-panel de arriba). Alto dictado por su
-   contenido, no flex:1 -- mismo motivo que documentaba esta sección antes de
-   mover las acciones a una fila horizontal (con flex:1 sobre un modal de
-   alto fijo, esta sección quedaba comprimida por debajo de lo que su
-   contenido necesitaba). .modal-body sigue con overflow-y:auto (shared.css)
-   como red de seguridad si el contenido total supera el alto del modal. */
+   criterio que .mig-articulos-panel de arriba). flex:1;min-height:0 (encargo
+   explícito "ajustemos la tabla mig-lotes-table-scroll al fondo del
+   contenido") -- con más espacio libre en el modal tras eliminar mig-resumen,
+   esta sección ahora crece para ocupar el resto del alto disponible en vez
+   de quedar con su alto mínimo y dejar espacio en blanco debajo. .modal-body
+   sigue con overflow-y:auto (shared.css) como red de seguridad si el
+   contenido total supera el alto del modal. */
 .mig-lotes-section{
-  display:flex;flex-direction:column;gap:10px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;
   border:1px solid var(--border);border-radius:var(--radius);padding:10px;
 }
 .mig-lotes-title{
@@ -92,25 +80,26 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 /* Tabla de lotes + "Resumen de lote" en 2 columnas (encargo explícito: el
    "Resumen" de la referencia de Facturas -- fvcd-bottom-summary, responde a
    la fila seleccionada -- se aplica puntualmente acá, no a la primera
-   tabla). Mismo criterio que .fvcd-detail-row/.fvcd-bottom-summary. */
-.mig-lotes-row{display:flex;align-items:flex-start;gap:16px;}
+   tabla). Mismo criterio que .fvcd-detail-row/.fvcd-bottom-summary.
+   flex:1;min-height:0 + align-items:stretch (en vez de flex-start) para que
+   la tabla (mig-lotes-table-scroll) y el resumen lleguen ambos al fondo del
+   contenido de mig-lotes-section, sin dejar espacio en blanco debajo. */
+.mig-lotes-row{display:flex;align-items:stretch;gap:16px;flex:1;min-height:0;}
 .mig-lotes-summary{
-  width:260px;flex-shrink:0;
-  border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;background:var(--surface);
+  width:260px;flex-shrink:0;overflow-y:auto;
+  border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;background:var(--surface);
 }
-.mig-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:8px;}
-.mig-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:-2px 0 8px;}
-.mig-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:3px 0;}
+.mig-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:4px;}
+.mig-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:-2px 0 4px;}
+.mig-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:2px 0;}
 .mig-summary-row span:first-child{color:var(--ink-500);}
-.mig-summary-divider{height:1px;background:var(--border);margin:8px 0;}
+.mig-summary-divider{height:1px;background:var(--border);margin:6px 0;}
 .mig-summary-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .mig-summary-total span:last-child{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--primary);}
 
-/* Acciones (Sugerir/Confirmar/Editar/Borrar/Movimiento) integradas debajo de
-   la fila tabla+resumen, en fila horizontal (encargo explícito) -- antes
-   vivían en una columna vertical al lado de la tabla. Alineadas a la
-   derecha, mismo criterio que .modal-footer. */
-.mig-alistar-actions{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:8px;}
+/* .mig-alistar-actions (Sugerir/Confirmar/Editar/Borrar/Movimiento) -- ver
+   LotesDisponiblesTable.css, ahora integradas dentro de
+   mig-lotes-table-scroll (encargo explícito). */
 
 @media (max-width:1024px){
   .mig-lotes-row{flex-direction:column;}
