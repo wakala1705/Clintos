@@ -123,6 +123,11 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
     setSelectedItemId((cur) => (cur === id ? null : id));
   }
 
+  // CCosto es un dato por ítem (ver mockFacturasData.js), no de la factura --
+  // se muestra en "Información adicional" atado a la selección de la tabla,
+  // mismo criterio que "Resumen de factura" (sin ítem seleccionado, "—").
+  const selectedItem = factura?.items.find((it) => it.id === selectedItemId) ?? null;
+
   // "Resumen de factura" responde a la selección (encargo explícito): sin
   // ítem seleccionado, todo en cero -- no cae a sumar todos los ítems.
   const resumen = useMemo(() => {
@@ -257,6 +262,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
                 <div className="fvcd-summary-row"><span>Administradora Afi</span><span>{factura.terceroId}</span></div>
                 <div className="fvcd-summary-row"><span>Usuario</span><span>{factura.usuario}</span></div>
                 <div className="fvcd-summary-row"><span>Procedencia</span><span>{factura.procedencia}</span></div>
+                <div className="fvcd-summary-row"><span>CCosto</span><span>{selectedItem?.ccosto ?? '—'}</span></div>
               </div>
             </div>
           </div>

@@ -8,7 +8,7 @@ import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 // "Id.Contrato" se ocultó de la grilla (encargo explícito) -- sigue vivo en
 // el resumen de MovimientoDetalleModal ("Ver detalle"), ya no se duplica acá.
 const COLUMNS = [
-  'Estado', 'Consecutivo', 'No.Admisión', 'No.Prestación', 'Fecha', 'Hora',
+  'Estado', 'Consecutivo', 'No.Admisión', 'No.Prestación', 'Fecha de solicitud',
   'Procedencia', 'Movimiento', 'Paciente', 'Ubicación',
 ];
 
@@ -67,8 +67,7 @@ export default function MovimientosGrid({
               <td className="mig-strong">{m.consecutivo}</td>
               <td>{m.noAdmision}</td>
               <td>{m.noPrestacion}</td>
-              <td>{formatFecha(m.fecha)}</td>
-              <td>{m.hora}</td>
+              <td className="mig-fecha-solicitud">{formatFecha(m.fecha)} <span className="mig-fecha-sep">·</span> {m.hora}</td>
               <td>{m.procedencia}</td>
               <td>{m.movimiento}</td>
               <td className="mig-ellipsis" title={m.paciente}>{m.paciente}</td>

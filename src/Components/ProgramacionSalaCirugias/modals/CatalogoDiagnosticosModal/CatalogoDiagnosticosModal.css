@@ -7,7 +7,7 @@
    z-index porque un elemento fixed sigue pintándose después de su ancestro
    dentro del mismo stacking context (confirmado con Playwright), mismo
    criterio que documentado para el resto de overlays de este feature. */
-.cdm-modal-card{width:700px;}
+.cdm-modal-card{width:800px;}
 .cdm-modal-card > .modal-body{overflow:hidden;}
 .cdm-body{padding:16px 24px 20px;gap:12px;flex:1;min-height:0;}
 

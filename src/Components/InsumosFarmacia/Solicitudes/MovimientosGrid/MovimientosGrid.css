@@ -1,7 +1,9 @@
-/* .mig-grid/.mig-strong/.mig-num/.mig-ellipsis: definidas en
-   ../shared/shared.css. Única tabla del feature con columna de acciones por
-   ahora -- .sr-only/.col-acciones quedan acá en vez de shared.css hasta que
-   un segundo consumidor los necesite (mismo criterio que AdmisionesTable.css). */
+/* .mig-grid/.mig-strong/.mig-num/.mig-ellipsis/.mig-grid-empty/.sr-only:
+   definidas en ../shared/shared.css (promovidas ahí cuando ArticulosItemsTable
+   -- AlistarPedidoModal -- sumó un segundo consumidor real, mismo criterio
+   que AdmisionesTable.css). Única tabla del feature con columna de acciones
+   por ahora -- .col-acciones queda acá hasta que un segundo consumidor lo
+   necesite. */
 /* Scrollbar propia (encargo explícito) -- mismos valores que
    MovimientoItemsTable.css/BodegaPickerModal.css/AreaFuncionalPickerModal.css
    (thin + thumb gris claro redondeado, hover más oscuro, variante de tema
@@ -18,12 +20,10 @@ html[data-theme="dark"] .mig-grid-scroll{scrollbar-color:#333e54 transparent;}
 html[data-theme="dark"] .mig-grid-scroll::-webkit-scrollbar-thumb{background:#333e54;}
 html[data-theme="dark"] .mig-grid-scroll::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
-.mig-grid-empty{padding:32px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
-
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
-  clip:rect(0,0,0,0);white-space:nowrap;border:0;
-}
-
 .col-acciones{width:1%;text-align:center;}
 .mig-row-actions{display:flex;align-items:center;justify-content:center;gap:2px;}
+
+/* Columna "Fecha de solicitud" (fecha+hora unificadas, encargo explícito) --
+   fecha y hora al mismo tono (--ink-900, heredado de .mig-grid tbody td);
+   el separador va más tenue para no competir con ninguno de los dos datos. */
+.mig-fecha-sep{color:var(--ink-400);}

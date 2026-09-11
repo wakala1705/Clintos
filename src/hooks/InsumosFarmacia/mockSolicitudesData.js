@@ -66,8 +66,63 @@ export function formatMoneda(valor) {
   return valor.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Lotes/existencias por código de artículo -- alimenta la tabla "Artículos
+// disponibles para el código" de AlistarPedidoModal (réplica del catálogo
+// legacy "Artículos Genéricos"). Generado desde `articulo()` (abajo) en vez
+// de a mano en cada uno de los ~90 artículos de MOVIMIENTOS_BASE/GENERADOS --
+// determinístico por `codigo` (mismo criterio seededRandom/pick que
+// MOVIMIENTOS_GENERADOS) para que un mismo código siempre muestre los mismos
+// lotes sin importar en qué movimiento aparezca.
+const MARCAS_LOTE = ['GENFAR', 'MK', 'TECNOQUIMICAS', 'PROCAPS', 'LAFRANCOL'];
+const ESTANTES_LOTE = ['FI', 'PB', 'A1', 'B2', 'C3', 'D4'];
+
+function hashSeed(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i += 1) h = (h * 31 + str.charCodeAt(i)) % 233280;
+  return h || 1;
+}
+
+function generarLotes(codigo, descripcion, cantidadEntregada, cantidadSolicitada) {
+  const randLote = seededRandom(hashSeed(codigo));
+  const marca = pick(MARCAS_LOTE, randLote);
+  const cantidadLotes = 2 + Math.floor(randLote() * 3);
+  // Un solo lote concentra la cantidad ya entregada (fiel a la referencia:
+  // de 4 lotes visibles, solo 1 tenía Cantidad > 0) -- el resto queda en
+  // 0.00, disponibles pero sin asignar todavía.
+  const idxConCantidad = Math.floor(randLote() * cantidadLotes);
+  return Array.from({ length: cantidadLotes }, (_, i) => {
+    const stock = 10 + Math.floor(randLote() * 290);
+    const diasVence = 90 + Math.floor(randLote() * 700);
+    const vence = sumarDias('2026-07-25', diasVence);
+    const letraPrefijo = String.fromCharCode(70 + Math.floor(randLote() * 6));
+    const letraSufijo = String.fromCharCode(65 + Math.floor(randLote() * 26));
+    const loteSerie = `${letraPrefijo}${String(10000 + Math.floor(randLote() * 89999))}${letraSufijo}`;
+    const noDocumento = `0200${800000 + Math.floor(randLote() * 99999)}-S`;
+    const numeroEstante = 1 + Math.floor(randLote() * 40);
+    const estante = pick(ESTANTES_LOTE, randLote);
+    return {
+      stock,
+      esperada: cantidadSolicitada,
+      cantidad: i === idxConCantidad ? cantidadEntregada : 0,
+      descripcion: `${descripcion.toUpperCase()}-${marca}`,
+      vence,
+      loteSerie,
+      diasVence,
+      trans: 'SAL',
+      noDocumento,
+      generico: codigo,
+      // Id Sede/Id.Bdg: mismo contexto fijo de bodega/sede del resto de la
+      // página (CONTEXTO_BODEGA), no varían por lote -- Ubicación sí es
+      // propia de cada lote (repisa física donde está guardado).
+      idSede: CONTEXTO_BODEGA.idSede,
+      bdg: CONTEXTO_BODEGA.grupoBodega,
+      ubicacion: `ESTANTE ${numeroEstante} ${estante}`,
+    };
+  });
+}
+
 function articulo(overrides) {
-  return {
+  const base = {
     marca: 'NA',
     bdg: '01',
     costoUnidad: { anterior: 0, unidad: 0, descuento: 0, neto: 0 },
@@ -75,6 +130,11 @@ function articulo(overrides) {
     iva: { porcentaje: 0, unitario: 0, total: 0 },
     confirmado: false,
     ...overrides,
+  };
+  return {
+    ...base,
+    lotes: base.lotes
+      ?? generarLotes(base.codigo, base.descripcion, base.cantidadEntregada, base.cantidadSolicitada),
   };
 }
 
@@ -103,14 +163,34 @@ const MOVIMIENTOS_BASE = [
     fechaContable: '2026-07-27',
     confirmo: '',
     permitirEditarCostos: false,
+    // 6 ítems fieles a la referencia legacy de "Alistar pedido" (encargo
+    // explícito) -- mismas cantidades esperada/entregada, incluido el
+    // patrón real que valida el flag ➜/— de ArticulosItemsTable.jsx (items
+    // 1 y 6 con Cant.Entregada=0 muestran "—", el resto ➜).
     articulos: [
       articulo({
-        item: 1, codigo: 'MX0000005', descripcion: 'Acetaminofén 500 mg tableta',
+        item: 1, codigo: 'MX0000169', descripcion: 'Cloruro de sodio 0.9% x 500 ml solución inyectable',
+        cantidadSolicitada: 3, cantidadEntregada: 0,
+      }),
+      articulo({
+        item: 2, codigo: 'MX0000211', descripcion: 'Dipirona 1 g solución inyectable',
+        cantidadSolicitada: 6, cantidadEntregada: 6,
+      }),
+      articulo({
+        item: 3, codigo: 'MX0000293', descripcion: 'Hidroclorotiazida 25 mg tableta',
+        cantidadSolicitada: 1, cantidadEntregada: 1,
+      }),
+      articulo({
+        item: 4, codigo: 'MX0000390', descripcion: 'Metoclopramida 10 mg / 2 ml sol. inyectable',
         cantidadSolicitada: 3, cantidadEntregada: 3,
       }),
       articulo({
-        item: 2, codigo: 'MX0000053', descripcion: 'Amikacina 500 mg solución inyectable',
-        cantidadSolicitada: 6, cantidadEntregada: 6,
+        item: 5, codigo: 'MX0000434', descripcion: 'Omeprazol sódico 40 mg solución inyectable',
+        cantidadSolicitada: 2, cantidadEntregada: 2,
+      }),
+      articulo({
+        item: 6, codigo: 'MX0000497', descripcion: 'Cloruro de sodio 0.9% x 100 ml bolsa con adaptador',
+        cantidadSolicitada: 2, cantidadEntregada: 0,
       }),
     ],
   },

@@ -8,7 +8,7 @@ import { formatCOP } from '@/hooks/Facturacion/mockFacturasData';
 // Pago compartido/Descuento, ver FacturaDetalleModalClasico.jsx) apenas se
 // selecciona un ítem; mostrarlas repetidas en la tabla era redundante.
 const ITEM_COLUMNS = [
-  'Item', 'Referencia', 'Descripción', 'Prefijo', 'Cantidad', 'Vlr. Unidad', 'Vlr. Total', 'CCosto',
+  'Item', 'Prefijo', 'Referencia', 'Descripción', 'Cantidad', 'Vlr. Unidad', 'Vlr. Total',
 ];
 
 // Grilla densa de ítems de una factura (mismas columnas que el formulario
@@ -46,13 +46,12 @@ export default function FacturaItemsTable({ items, selectedId, onSelect }) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(item.id); } }}
             >
               <td>{String(idx + 1).padStart(3, '0')}</td>
+              <td className="fvc-num">{item.prefijo}</td>
               <td>{item.referencia}</td>
               <td className="fvc-ellipsis" title={item.descripcion}>{item.descripcion}</td>
-              <td className="fvc-num">{item.prefijo}</td>
               <td className="fvc-num">{item.cantidad}</td>
               <td className="fvc-num">{formatCOP(item.vlrUnidad)}</td>
               <td className="fvc-num">{formatCOP(item.vlrUnidad)}</td>
-              <td>{item.ccosto}</td>
             </tr>
           ))}
         </tbody>

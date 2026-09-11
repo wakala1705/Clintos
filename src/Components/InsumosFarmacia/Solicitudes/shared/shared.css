@@ -17,6 +17,13 @@
   text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
   position:sticky;top:0;
 }
+/* `.mig-grid thead th` (arriba) le gana a `.mig-num` en un <th> por
+   especificidad (1 clase+2 elementos vs. 1 clase sola) aunque el th ya
+   tenga className="mig-num" -- sin esta regla, un header numérico queda a
+   la izquierda mientras su columna de datos queda a la derecha (encontrado
+   en ArticulosItemsTable/LotesDisponiblesTable de AlistarPedidoModal, que sí
+   ya pasaban mig-num al <th> pero no se veía reflejado). */
+.mig-grid thead th.mig-num{text-align:right;}
 .mig-grid tbody td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);}
 .mig-grid tbody tr{cursor:pointer;background:var(--surface);}
 .mig-grid tbody tr:hover{background:var(--gray-bg);}
@@ -26,6 +33,14 @@
 .mig-strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .mig-num{text-align:right;}
 .mig-ellipsis{max-width:220px;overflow:hidden;text-overflow:ellipsis;}
+.mig-grid-empty{padding:32px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
+
+/* Promovido desde MovimientosGrid.css: 2 consumidores reales hoy
+   (MovimientosGrid, ArticulosItemsTable de AlistarPedidoModal). */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
 
 /* ---------- FILTER BAR (buscador + filtros), ver AGENTS.md "Barra de
    filtros de listado": una sola fila, buscador → filter-spacer → filtros. */
