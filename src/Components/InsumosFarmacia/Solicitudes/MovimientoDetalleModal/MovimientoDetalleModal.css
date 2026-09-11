@@ -13,18 +13,11 @@
 .mig-meta-link{color:var(--primary);text-decoration:underline;cursor:pointer;}
 .mig-meta-checkbox{display:flex;align-items:center;gap:6px;font-size:var(--fs-base);color:var(--ink-700);margin-left:auto;}
 
-/* Resumen en texto plano de los mismos datos que ya muestra la tabla
-   maestra (MovimientosGrid) -- reemplaza el "mig-tabs-bar" eliminado
-   (encargo explícito). Mismo patrón que .fvcd-compact-fields/.fvcd-field de
-   FacturaDetalleModalClasico.css, sin los separadores verticales de ese
-   (acá es una sola franja de campos, no varios grupos lógicos). */
-.mig-resumen{
-  display:flex;flex-wrap:wrap;gap:14px 28px;
-  padding:12px;border:1px solid var(--border);background: var(--bg);border-radius:var(--radius);
-}
-.mig-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.mig-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
-.mig-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}
+/* .mig-resumen/.mig-field*: promovidas a ../shared/shared.css (2do
+   consumidor real: AlistarPedidoModal). Mismo patrón que
+   .fvcd-compact-fields/.fvcd-field de FacturaDetalleModalClasico.css, sin
+   los separadores verticales de ese (acá es una sola franja de campos, no
+   varios grupos lógicos). */
 
 /* Border general de la tabla (encargo explícito) + altura fija con scroll
    propio (así el modal no "salta" de alto entre movimientos con distinta

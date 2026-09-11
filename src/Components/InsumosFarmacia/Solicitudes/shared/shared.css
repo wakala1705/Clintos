@@ -42,6 +42,20 @@
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 
+/* Franja compacta de campos "label chico + valor" (ficha de solo lectura) --
+   promovida desde MovimientoDetalleModal.css: 2 consumidores reales hoy
+   (MovimientoDetalleModal, AlistarPedidoModal). El componente `Field` que la
+   consume se duplica en cada .jsx (mismo criterio que FacturaDetalleModalClasico.jsx/
+   MovimientoDetalleModal.jsx: es un helper de una sola línea, no amerita su
+   propio componente en @/Components). */
+.mig-resumen{
+  display:flex;flex-wrap:wrap;gap:14px 28px;
+  padding:12px;border:1px solid var(--border);background:var(--bg);border-radius:var(--radius);
+}
+.mig-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.mig-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+.mig-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}
+
 /* ---------- FILTER BAR (buscador + filtros), ver AGENTS.md "Barra de
    filtros de listado": una sola fila, buscador → filter-spacer → filtros. */
 .filter-bar{

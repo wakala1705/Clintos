@@ -2,12 +2,12 @@
    ../../shared/shared.css. */
 /* Scrollbar propia (mismo criterio que ArticulosItemsTable.css/
    MovimientosGrid.css/MovimientoItemsTable.css -- thin + thumb gris claro
-   redondeado, hover más oscuro, variante de tema oscuro). Ancho completo
-   (ya no comparte fila con una columna de acciones -- ver AlistarPedidoModal.css
-   .mig-alistar-actions, ahora una fila de botones debajo de esta tabla, no
-   al lado) y alto fijo propio, sin depender del contenido de esos botones. */
+   redondeado, hover más oscuro, variante de tema oscuro). `flex:1;min-width:0`
+   reparte el ancho de mig-lotes-row con mig-lotes-summary (ancho fijo, ver
+   AlistarPedidoModal.css) -- el alto fijo es propio, no depende de esa
+   columna ni de las acciones (que ahora viven debajo de toda la fila). */
 .mig-lotes-table-scroll{
-  height:225px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-width:0;height:190px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
   scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
 }
 .mig-lotes-table-scroll::-webkit-scrollbar{width:6px;height:6px;}

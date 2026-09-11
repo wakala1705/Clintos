@@ -19,8 +19,17 @@ function colorVencimiento(diasVence) {
 // lista (no un id global) -- Id Sede/Id.Bdg vienen de CONTEXTO_BODEGA (fijos
 // para toda la página, no varían por lote); "Id. Artículo" repite el mismo
 // código que "Genérico" al final (mismo criterio que la referencia, que
-// también lo duplica en ambos extremos de la tabla).
-export default function LotesDisponiblesTable({ lotes }) {
+// también lo duplica en ambos extremos de la tabla). Fila seleccionable
+// (encargo explícito, mismo patrón clic/Enter-Espacio que ArticulosItemsTable)
+// -- alimenta "Resumen de lote" en AlistarPedidoModal.jsx, mismo criterio que
+// FacturaItemsTable/"Resumen de factura" en FacturaDetalleModalClasico.
+export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }) {
+  function handleKeyDown(e, index) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onSelect(index);
+  }
+
   return (
     <div className="mig-lotes-table-scroll">
       <table className="mig-grid mig-lotes-grid">
@@ -45,7 +54,14 @@ export default function LotesDisponiblesTable({ lotes }) {
         </thead>
         <tbody>
           {lotes.map((l, i) => (
-            <tr key={`${l.loteSerie}-${i}`}>
+            <tr
+              key={`${l.loteSerie}-${i}`}
+              className={i === selectedIndex ? 'selected' : ''}
+              onClick={() => onSelect(i)}
+              onKeyDown={(e) => handleKeyDown(e, i)}
+              tabIndex={0}
+              aria-selected={i === selectedIndex}
+            >
               <td>{i + 1}</td>
               <td>{l.idSede}</td>
               <td>{l.bdg}</td>

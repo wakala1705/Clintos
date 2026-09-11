@@ -7,7 +7,7 @@
    MovimientosGrid, que llena todo `.mig-grid-scroll`) porque acá conviven
    con la tabla de lotes debajo repartiéndose el alto del modal.*/
 .mig-items-table-scroll{
-  max-height:298px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
+  max-height:210px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
   flex-shrink:0;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
 }
 .mig-items-table-scroll::-webkit-scrollbar{width:6px;height:6px;}
