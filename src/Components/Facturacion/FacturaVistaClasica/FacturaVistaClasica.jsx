@@ -9,14 +9,22 @@ import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
 } from '@/hooks/Facturacion/mockFacturasData';
 import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
+import TipoFacturaFilter from './TipoFacturaFilter/TipoFacturaFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
 import FacturaEditarModalClasico from './FacturaEditarModalClasico/FacturaEditarModalClasico';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
 
+// Opciones del filtro "Tipo Factura" sin el sentinel "todas" de TIPO_OPTIONS
+// (ese sentinel es para el FormSelect de selección única de
+// FiltrosFacturasPopover.jsx, vista nueva -- acá cada opción es un checkbox
+// propio, ver TipoFacturaFilter.jsx).
+const TIPO_FACTURA_OPTIONS = TIPO_OPTIONS.filter((o) => o.value !== 'todas');
+const TIPO_FACTURA_VALUES = TIPO_FACTURA_OPTIONS.map((o) => o.value);
+
 const FILTROS_INICIALES = {
-  clase: 'todas', tipo: 'todas', desde: '', hasta: '', pe: 'todos',
+  clase: 'todas', tipo: TIPO_FACTURA_VALUES, desde: '', hasta: '', pe: 'todos',
 };
 
 // Opciones del chip rápido "PE" (encargo explícito) -- mismas keys que
@@ -48,7 +56,7 @@ export default function FacturaVistaClasica() {
   // como para la lista final de abajo.
   const facturasSinPe = useMemo(() => FACTURAS.filter((f) => {
     if (filtros.clase !== 'todas' && f.clase !== filtros.clase) return false;
-    if (filtros.tipo !== 'todas' && f.tipo !== filtros.tipo) return false;
+    if (filtros.tipo.length > 0 && !filtros.tipo.includes(f.tipo)) return false;
     if (filtros.desde && f.fecha < filtros.desde) return false;
     if (filtros.hasta && f.fecha > filtros.hasta) return false;
     return matchesQuery(f, query.trim());
@@ -96,8 +104,14 @@ export default function FacturaVistaClasica() {
           <FormSelect id="fvc-clase" value={filtros.clase} onChange={(v) => setFiltros((f) => ({ ...f, clase: v }))} options={CLASE_OPTIONS} />
         </div>
         <div className="fvc-filter-field">
-          <label htmlFor="fvc-tipo">Tipo:</label>
-          <FormSelect id="fvc-tipo" value={filtros.tipo} onChange={(v) => setFiltros((f) => ({ ...f, tipo: v }))} options={TIPO_OPTIONS} />
+          <label htmlFor="fvc-tipo">Tipo Factura:</label>
+          <TipoFacturaFilter
+            id="fvc-tipo"
+            ariaLabel="Tipo Factura"
+            value={filtros.tipo}
+            onChange={(v) => setFiltros((f) => ({ ...f, tipo: v }))}
+            options={TIPO_FACTURA_OPTIONS}
+          />
         </div>
         <DateRangeFilter
           desde={filtros.desde}

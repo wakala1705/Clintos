@@ -33,7 +33,10 @@ export const CLASE_OPTIONS = [
 export const TIPO_OPTIONS = [
   { value: 'todas', label: 'Todas' },
   { value: 'individual', label: 'Individual' },
-  { value: 'capitada', label: 'Capitada' },
+  { value: 'masiva', label: 'Masiva' },
+  { value: 'copago', label: 'Copago' },
+  { value: 'moderadora', label: 'Moderadora' },
+  { value: 'pago-compartido', label: 'Pago Compartido' },
 ];
 
 export const SORT_OPTIONS = [
@@ -62,6 +65,19 @@ const NOMBRES_AFILIADO = [
   'MARTINEZ GOMEZ LAURA SOFIA', 'HERRERA RINCON ANDRES FELIPE', 'PEDRAZA MORA VALENTINA',
   'OSPINA CASTAÑO CARLOS EDUARDO', 'VARGAS DIAZ CAMILA', 'TORRES MESA SANTIAGO', 'CARDENAS RUIZ DANIELA',
 ];
+
+// Solo para facturas con estado 'anulada' -- bloque "Factura anulada" del
+// modal de detalle (encargo explícito). `horaAnulacion` es un string literal
+// (no un Date real) -- mismo criterio que `hora` en mockSolicitudesData.js,
+// no hay lógica de negocio real todavía.
+const MOTIVOS_ANULACION = [
+  'Factura generada con información incorrecta del paciente.',
+  'Duplicidad con otra factura ya generada para la misma admisión.',
+  'Error en el valor facturado, se requiere regenerar la factura.',
+  'Solicitud del área de auditoría por inconsistencia en los ítems facturados.',
+];
+const ANULADORES = ['María González', 'Carlos Ramírez', 'Laura Torres', 'Andrés Peña'];
+const HORAS_ANULACION = ['8:15 a. m.', '10:42 a. m.', '1:30 p. m.', '3:05 p. m.', '4:50 p. m.'];
 
 function seededRandom(seed) {
   let value = seed;
@@ -95,6 +111,12 @@ function buildItems(rand, cantidad) {
     const base = pick(ITEMS_CATALOGO, rand);
     const valor = Math.round((500 + rand() * 30000) / 100) * 100;
     items.push({
+      // Id estable dentro de la factura (único por posición, no por
+      // referencia -- una misma referencia puede repetirse varias veces en
+      // items, ver ITEMS_CATALOGO) -- lo usa la selección de fila en
+      // FacturaItemsTable/FacturaDetalleModalClasico para sobrevivir al
+      // buscador de ítems (que filtra el array, corriendo los índices).
+      id: `item-${i}`,
       referencia: base.referencia,
       descripcion: base.descripcion,
       valor,
@@ -142,7 +164,7 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
     terceroRazonSocial: tercero.razonSocial,
     sede,
     clase: 'salud',
-    tipo: rand() > 0.15 ? 'individual' : 'capitada',
+    tipo: pick(['individual', 'individual', 'individual', 'masiva', 'copago', 'moderadora', 'pago-compartido'], rand),
     fecha: fechaFactura,
     estado,
     valorTotal,
@@ -163,10 +185,16 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
     estadoPE,
     sedeCodigo: SEDE_CODIGOS[sede],
     impreso: 0,
+    ...(estado === 'anulada' ? {
+      motivoAnulacion: pick(MOTIVOS_ANULACION, rand),
+      anuladaPor: pick(ANULADORES, rand),
+      fechaAnulacion: fechaFactura,
+      horaAnulacion: pick(HORAS_ANULACION, rand),
+    } : {}),
   };
 }).sort((a, b) => b.fecha.localeCompare(a.fecha) || b.numero.localeCompare(a.numero));
 
-function normalize(str) {
+export function normalize(str) {
   return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 

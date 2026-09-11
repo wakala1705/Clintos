@@ -21,3 +21,6 @@
 .fvc-row-menu-item:hover{background:var(--bg);}
 .fvc-row-menu-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
 .fvc-row-menu-item .icon{width:16px;height:16px;color:var(--ink-500);}
+/* Separa "Editar" (único ítem real, ver RowActionsMenu.jsx) del resto de
+   acciones decorativas del menú. */
+.fvc-row-menu-divider{height:1px;background:var(--border);margin:4px 2px;}

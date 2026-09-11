@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './RowActionsMenu.css';
 import {
-  LuBan, LuCopy, LuDollarSign, LuEllipsis, LuFileMinus, LuFileStack,
+  LuBan, LuCopy, LuDollarSign, LuEllipsis, LuFileMinus, LuFileStack, LuPencil,
 } from 'react-icons/lu';
 
 const ACCIONES = [
@@ -20,7 +20,14 @@ const ACCIONES = [
 // sueltas en la fila fvc-acciones-bar del panel de detalle (sin
 // funcionalidad real, ver FacturaDetalleClasico), ahora por fila en la
 // columna Acciones de la grilla.
-export default function RowActionsMenu({ numero }) {
+//
+// "Editar" (encargo explícito: se saca del botón suelto de lápiz en
+// fvc-row-actions y se mueve acá) es la única entrada real del menú -- se
+// renderiza aparte de ACCIONES (con su propio onClick a `onEditar`, mismo
+// patrón que RowActionsMenu de ListaPacientes: ítems reales explícitos,
+// ítems decorativos mapeados de un array), en vez de agregarla al array
+// ACCIONES que hoy no tiene handlers reales.
+export default function RowActionsMenu({ numero, onEditar }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -56,6 +63,16 @@ export default function RowActionsMenu({ numero }) {
 
       {open && (
         <div className="fvc-row-menu-dropdown" role="menu">
+          <button
+            type="button"
+            className="fvc-row-menu-item"
+            role="menuitem"
+            onClick={(e) => { e.stopPropagation(); setOpen(false); onEditar(); }}
+          >
+            <LuPencil className="icon" aria-hidden="true" />
+            Editar
+          </button>
+          <div className="fvc-row-menu-divider" aria-hidden="true" />
           {ACCIONES.map(({ key, label, icon: Icon }) => (
             <button
               key={key}

@@ -22,7 +22,10 @@
 }
 .fvcd-factura-icon .icon{width:19px;height:19px;}
 .fvcd-identity-text{flex:1;min-width:0;}
-.fvcd-identity-name{font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
+/* display:flex acá es solo para el badge de PE inline (encargo explícito,
+   ver comentario en el .jsx) -- .fvcd-identity-text de al lado (afiliado) no
+   lleva badge y no le afecta. */
+.fvcd-identity-name{display:flex;align-items:center;gap:8px;font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
 .fvcd-identity-id{
   margin-left:8px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);
 }
@@ -32,21 +35,29 @@
 
 /* La tabla de ítems es lo importante del modal (encargo explícito) -- va en
    su propia tarjeta con borde (en vez del simple separador border-top de
-   .fvcd-compact-fields de abajo), dividida en 3 bloques: el header (título +
-   fondo tenue), el body (la tabla) y el footer (Imprimir anexo/Anexo por
-   prefijo/Capitados, trasladados acá desde FacturaDetalleClasico -- encargo
-   explícito). overflow:hidden recorta las esquinas rectas de
-   FacturaItemsTable a los bordes redondeados de la tarjeta. */
+   .fvcd-compact-fields de abajo), dividida en 2 bloques: el header (título +
+   fondo tenue) y el body (la tabla). Imprimir anexo/Anexo por
+   prefijo/Capitados + el resumen ya no viven adentro de esta tarjeta, ver
+   .fvcd-detail-row más abajo (encargo explícito: tabla+resumen en un solo
+   bloque de 2 columnas en vez de apilados, para no alargar la modal ahora
+   que la tabla ganó ancho libre al sacarle las columnas redundantes con el
+   resumen). overflow:hidden recorta las esquinas rectas de FacturaItemsTable
+   a los bordes redondeados de la tarjeta. */
+/* flex-shrink:0 -- .fvcd-detail-main (su contenedor flex-column directo) es
+   la única sección con overflow:hidden; sin esto, su tamaño mínimo
+   automático en flexbox pasa a ser 0 (spec: min-size auto solo aplica con
+   overflow:visible) y, apenas el contenido total supera max-height:90vh del
+   modal, el algoritmo de flex-shrink la colapsa a ella sola en vez de
+   repartir el achique -- la tabla queda con su alto real pero recortada a
+   ~unos px de alto. Bug real encontrado al agregar el footer de acciones/
+   resumen debajo (mismo riesgo sin importar en qué nivel de anidamiento de
+   flex-columns viva esta tarjeta, por eso se repite acá). */
 .fvcd-items-card{
-  margin-top:16px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
 }
 .fvcd-items-header{
   padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg);
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
-}
-.fvcd-items-footer{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);
 }
 /* FacturaItemsTable (.fvc-grid) pone border-right/border-bottom en cada
    celda (pensado para sus otros 2 usos sin tarjeta propia, ver
@@ -61,15 +72,16 @@
   border-bottom:none;
 }
 
-/* El resto de los campos de la ficha en una sola franja compacta (encargo
-   explícito: "más compacto, puede ser en una fila") en vez de los 5 bloques
-   con título propio + grid de 3 columnas que tenía antes -- separadores
+/* El resto de los campos de la ficha en una sola tarjeta compacta (encargo
+   explícito, ver imagen de referencia: caja con borde propio en vez del
+   simple separador border-top de antes) en vez de los 5 bloques con título
+   propio + grid de 3 columnas de la versión original -- separadores
    verticales finos agrupan por tema (Datos de factura/Fechas/Estado y
    control/Gestión) sin el peso visual de un título + borde por grupo.
    No. Admisión/Id. Afiliado ya no van acá, ver .fvcd-identity-id/-sub. */
 .fvcd-compact-fields{
   display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px 24px;
-  padding-top:16px;border-top:1px solid var(--border);
+  padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
 }
 /* Reusada también en .fvcd-identity-row (separador factura/afiliado) --
    mismo separador visual, no hace falta una clase aparte. */
@@ -78,3 +90,71 @@
 .fvcd-badge{align-self:flex-start;}
 .fvcd-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
 .fvcd-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}
+
+/* Bloque contextual "Factura anulada" (encargo explícito) -- solo se monta
+   cuando factura.estado === 'anulada' (ver .jsx), así que nunca deja hueco
+   vacío. Mismo lenguaje visual que el resto del modal: --radius (igual que
+   .fvcd-compact-fields/.fvcd-items-card), --red-bg/--red ya declarados en
+   Facturacion/shared/shared.css (mismo criterio que el resto de tokens de
+   color por feature) -- --red-bg ya es "rojo muy claro" (#fdeceb) por sí
+   solo, sin necesitar un tono nuevo. El borde usa color-mix sobre --red al
+   25% (más sutil que el 45% de Badge -- acá es una tarjeta grande, no un
+   pill chico, así que no necesita tanto contraste) en vez de un hex nuevo. */
+.fvcd-anulada-card{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-radius:var(--radius);
+  background:var(--red-bg);border:1px solid color-mix(in srgb, var(--red) 25%, transparent);
+}
+/* Mismo círculo 34px que .fvcd-factura-icon/.modal-header-icon.tone-danger
+   (ModalHeader.css) -- reimplementado acá por el mismo motivo que
+   .fvcd-factura-icon: esos tokens están scopeados por feature. */
+.fvcd-anulada-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);color:var(--red);
+}
+.fvcd-anulada-icon .icon{width:18px;height:18px;}
+.fvcd-anulada-body{min-width:0;}
+.fvcd-anulada-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* Mismo label chico/secundario que .fvcd-field-label, con margen propio en
+   vez de heredar el gap:3px de .fvcd-field (acá el título de arriba también
+   necesita separación). */
+.fvcd-anulada-motivo-label{
+  margin-top:8px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+/* Más legible que el label (encargo explícito) -- mismo tratamiento que
+   .fvcd-field-value. */
+.fvcd-anulada-motivo{
+  margin-top:2px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+}
+.fvcd-anulada-meta{margin-top:8px;font-size:var(--fs-sm);color:var(--ink-500);}
+
+/* Tabla de ítems + resumen en un solo bloque de 2 columnas (encargo
+   explícito, ver comentario en .fvcd-items-card arriba): a la izquierda
+   fvcd-detail-main (la tarjeta de ítems + Imprimir anexo/Anexo por
+   prefijo/Capitados debajo), a la derecha el resumen en ancho fijo -- mismo
+   criterio de "columna lateral de ancho fijo" que .fvcd-identity-total
+   arriba. flex-shrink:0 en la fila (mismo motivo que .fvcd-items-card) --
+   ninguno de sus 2 hijos directos tiene overflow:hidden propio, pero se deja
+   explícito para no depender del comportamiento por defecto de flexbox acá. */
+.fvcd-detail-row{display:flex;align-items:flex-start;gap:16px;flex-shrink:0;}
+.fvcd-detail-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
+.fvcd-bottom-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fvcd-bottom-summary{display:flex;flex-direction:column;gap:12px;width:300px;flex-shrink:0;}
+.fvcd-summary-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--surface);}
+.fvcd-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:10px;}
+/* Visible solo sin ítem seleccionado (encargo explícito: "resumen responde a
+   la selección", en cero por defecto) -- evita que unos totales en $0 lean
+   como un bug en vez de un estado "todavía sin elegir". */
+.fvcd-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:-4px 0 10px;}
+.fvcd-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:4px 0;}
+.fvcd-summary-row span:first-child{color:var(--ink-500);}
+.fvcd-summary-divider{height:1px;background:var(--border);margin:8px 0;}
+.fvcd-summary-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fvcd-summary-total span:last-child{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--primary);}
+
+@media (max-width:1024px){
+  .fvcd-detail-row{flex-direction:column;}
+  .fvcd-bottom-summary{width:100%;}
+}

@@ -1,0 +1,44 @@
+/* Trigger dimensionado igual que .form-select-trigger (mismo --input-md/
+   border/radius/font-size, ver @/Components/FormSelect/FormSelect.css) --
+   sin reusar esa clase directamente (component organization: el CSS de un
+   componente solo lleva sus propias reglas). */
+.tff-root{position:relative;}
+.tff-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:150px;
+  height:var(--input-md);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;
+}
+.tff-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.tff-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tff-chev{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
+.tff-chev.open{transform:rotate(180deg);}
+
+/* position:fixed + top/left/width inline (ver TipoFacturaFilter.jsx) -- el
+   listado se porta a document.body, mismo motivo que .form-select-dropdown. */
+.tff-dropdown{
+  position:fixed;width:max-content;max-width:min(280px,calc(100vw - 16px));z-index:calc(var(--z-modal, 50) + 1);
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(16,24,39,.16);border:solid 1px var(--border);
+  padding:6px;
+}
+.tff-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:6px 8px 8px;margin-bottom:4px;border-bottom:1px solid var(--border);
+}
+.tff-action-btn{
+  border:none;background:none;padding:0;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);
+  color:var(--primary);cursor:pointer;
+}
+.tff-action-btn:hover{text-decoration:underline;}
+.tff-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+
+.tff-options{list-style:none;margin:0;padding:0;max-height:260px;overflow-y:auto;}
+.tff-option{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:8px 10px;border-radius:7px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.tff-option:hover{background:var(--bg);}
+.tff-option input[type="checkbox"]{
+  width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer;margin:0;
+}
+.tff-option input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

@@ -4,7 +4,7 @@ import './FacturasGridClasica.css';
 import Badge from '@/Components/Badge/Badge';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import { formatCOP, formatFechaClasica } from '@/hooks/Facturacion/mockFacturasData';
-import { LuEye, LuPencil, LuPrinter } from 'react-icons/lu';
+import { LuEye, LuPrinter } from 'react-icons/lu';
 
 const COLUMNS = [
   { key: 'flag', label: 'F' },
@@ -24,7 +24,13 @@ const COLUMNS = [
   { key: 'acciones', label: 'Acciones' },
 ];
 
-const TIPO_LABEL = { individual: 'Individual', capitada: 'Capitada' };
+const TIPO_LABEL = {
+  individual: 'Individual',
+  masiva: 'Masiva',
+  copago: 'Copago',
+  moderadora: 'Moderadora',
+  'pago-compartido': 'Pago Compartido',
+};
 const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
 
 // 3 estados del flujo de facturación electrónica (encargo explícito) --
@@ -32,7 +38,7 @@ const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
 // (anulada/pendiente-electronica, ver FacturaRow) que es un concepto
 // distinto (factura anulada) y no se toca acá.
 const ESTADO_PE = {
-  pendiente: { label: 'Pendiente', tone: 'neutral' },
+  pendiente: { label: 'Pendiente de impresión', tone: 'neutral' },
   'fe-pendiente': { label: 'Pendiente de envío', tone: 'warn' },
   enviada: { label: 'Enviada', tone: 'success' },
 };
@@ -40,11 +46,15 @@ const ESTADO_PE = {
 // Columna "Estado" del formulario legacy (P/A, encargo explícito) -- deriva
 // de `f.estado` (misma fuente que el badge de FacturaRow en la vista nueva):
 // 'anulada' -> Anulada, cualquier otro valor (null/'pendiente-electronica')
-// -> Pendiente.
+// -> Procesada (encargo explícito: antes "Pendiente" tone="neutral", pasa a
+// tone="info" -- azul, mismo `--status-info-bg`/`--status-info-fg` que ya
+// usan otras features para Badge tone="info" -- Facturación no los tenía
+// declarados en su :root todavía, se agregaron en shared.css para este
+// cambio, mismo bug ya documentado antes para ModalHeader/--gray-bg).
 function estadoFacturaBadge(f) {
   return f.estado === 'anulada'
     ? { label: 'Anulada', tone: 'danger' }
-    : { label: 'Pendiente', tone: 'neutral' };
+    : { label: 'Procesada', tone: 'info' };
 }
 
 // Réplica de la grilla densa del formulario legacy de Facturas (encargo
@@ -53,7 +63,10 @@ function estadoFacturaBadge(f) {
 // scroll horizontal propio (nunca scrollea la página, ver AGENTS.md
 // "Responsive"). Sede/Administradora Afi/Usuario/Procedencia/No. Admisión/
 // Id. Afiliado se ocultaron de esta grilla (encargo explícito) pero siguen
-// disponibles en FacturaDetalleModalClasico ("Ver detalle").
+// disponibles en FacturaDetalleModalClasico ("Ver detalle"). Doble clic en la
+// fila (encargo explícito) abre ese mismo modal -- mismo `onVerDetalle` que
+// ya usa el ícono de ojo en Acciones, sin duplicar lógica; el clic simple
+// sigue solo seleccionando la fila (`onSelect`).
 export default function FacturasGridClasica({
   facturas, selectedId, onSelect, onVerDetalle, onEditar,
 }) {
@@ -71,6 +84,7 @@ export default function FacturasGridClasica({
               key={f.id}
               className={f.id === selectedId ? 'selected' : ''}
               onClick={() => onSelect(f.id)}
+              onDoubleClick={() => onVerDetalle(f)}
               tabIndex={0}
               aria-selected={f.id === selectedId}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(f.id); } }}
@@ -103,22 +117,13 @@ export default function FacturasGridClasica({
                   <button
                     type="button"
                     className="fvc-row-action-btn"
-                    onClick={(e) => { e.stopPropagation(); onEditar(f); }}
-                    aria-label={`Editar factura ${f.numero}`}
-                    title="Editar"
-                  >
-                    <LuPencil className="icon" />
-                  </button>
-                  <button
-                    type="button"
-                    className="fvc-row-action-btn"
                     onClick={(e) => e.stopPropagation()}
                     aria-label={`Imprimir factura ${f.numero}`}
                     title="Imprimir"
                   >
                     <LuPrinter className="icon" />
                   </button>
-                  <RowActionsMenu numero={f.numero} />
+                  <RowActionsMenu numero={f.numero} onEditar={() => onEditar(f)} />
                 </div>
               </td>
             </tr>
