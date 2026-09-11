@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './FacturaVistaClasica.css';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
@@ -14,7 +14,14 @@ import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
 import FacturaEditarModalClasico from './FacturaEditarModalClasico/FacturaEditarModalClasico';
+import PrintLoadingModal from './PrintLoadingModal/PrintLoadingModal';
+import FacturaPdfViewerModal from './FacturaPdfViewerModal/FacturaPdfViewerModal';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
+
+// Delay artificial del paso 1 del flujo de impresión (ver handleImprimir más
+// abajo) -- sin backend real (mockFacturasData.js: "solo pinta el front"),
+// simula el tiempo de generación antes de mostrar el visor de PDF.
+const PRINT_LOADING_DELAY_MS = 1200;
 
 // Opciones del filtro "Tipo Factura" sin el sentinel "todas" de TIPO_OPTIONS
 // (ese sentinel es para el FormSelect de selección única de
@@ -51,16 +58,44 @@ export default function FacturaVistaClasica() {
   const [detalleFactura, setDetalleFactura] = useState(null);
   const [editFactura, setEditFactura] = useState(null);
 
+  // Override local de `estadoPE` (id -> 'enviada'), aplicado por
+  // handleImprimir/el efecto de abajo cuando termina el flujo de impresión de
+  // una factura "pendiente" -- FACTURAS es el dataset mock compartido (ver
+  // mockFacturasData.js), no se muta directamente.
+  const [estadoPEOverrides, setEstadoPEOverrides] = useState({});
+  // Flujo de impresión disparado por el ícono de la columna Acciones (ver
+  // onImprimir más abajo): null = sin flujo activo; 'loading' = modal de
+  // carga simulada; 'viewer' = visor de PDF. Solo una factura a la vez.
+  const [printFlow, setPrintFlow] = useState(null);
+
+  useEffect(() => {
+    if (!printFlow || printFlow.stage !== 'loading') return undefined;
+    const { factura } = printFlow;
+    const timer = setTimeout(() => {
+      if (factura.estadoPE === 'pendiente') {
+        setEstadoPEOverrides((overrides) => ({ ...overrides, [factura.id]: 'enviada' }));
+      }
+      setPrintFlow({ factura, stage: 'viewer' });
+    }, PRINT_LOADING_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [printFlow]);
+
+  const facturasConEstadoPE = useMemo(() => (
+    Object.keys(estadoPEOverrides).length === 0 ? FACTURAS : FACTURAS.map((f) => (
+      estadoPEOverrides[f.id] ? { ...f, estadoPE: estadoPEOverrides[f.id] } : f
+    ))
+  ), [estadoPEOverrides]);
+
   // Sin el filtro "pe" -- se reusa tanto para el conteo de cada chip (cuántas
   // facturas tendría cada opción de PE con el resto de filtros ya aplicados)
   // como para la lista final de abajo.
-  const facturasSinPe = useMemo(() => FACTURAS.filter((f) => {
+  const facturasSinPe = useMemo(() => facturasConEstadoPE.filter((f) => {
     if (filtros.clase !== 'todas' && f.clase !== filtros.clase) return false;
     if (filtros.tipo.length > 0 && !filtros.tipo.includes(f.tipo)) return false;
     if (filtros.desde && f.fecha < filtros.desde) return false;
     if (filtros.hasta && f.fecha > filtros.hasta) return false;
     return matchesQuery(f, query.trim());
-  }), [query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
+  }), [facturasConEstadoPE, query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
 
   const peOpciones = useMemo(() => PE_FILTROS.map((o) => ({
     ...o,
@@ -77,6 +112,14 @@ export default function FacturaVistaClasica() {
   // legacy de referencia, derivado en cada render en vez de sincronizado.
   const effectiveSelectedId = facturas.some((f) => f.id === selectedId) ? selectedId : (facturas[0]?.id ?? null);
   const selectedFactura = facturas.find((f) => f.id === effectiveSelectedId) ?? null;
+
+  // Ícono de imprimir (columna Acciones, ver FacturasGridClasica) -- si ya
+  // hay un flujo en curso se ignora (una factura a la vez, mismo criterio
+  // que editFactura/detalleFactura).
+  function handleImprimir(factura) {
+    if (printFlow) return;
+    setPrintFlow({ factura, stage: 'loading' });
+  }
 
   return (
     <div className="fvc-shell">
@@ -128,6 +171,7 @@ export default function FacturaVistaClasica() {
         onSelect={setSelectedId}
         onVerDetalle={setDetalleFactura}
         onEditar={setEditFactura}
+        onImprimir={handleImprimir}
       />
 
       <FacturaDetalleClasico factura={selectedFactura} />
@@ -136,6 +180,13 @@ export default function FacturaVistaClasica() {
 
       {editFactura && (
         <FacturaEditarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />
+      )}
+
+      {printFlow?.stage === 'loading' && (
+        <PrintLoadingModal numero={printFlow.factura.numero} />
+      )}
+      {printFlow?.stage === 'viewer' && (
+        <FacturaPdfViewerModal numero={printFlow.factura.numero} onClose={() => setPrintFlow(null)} />
       )}
     </div>
   );

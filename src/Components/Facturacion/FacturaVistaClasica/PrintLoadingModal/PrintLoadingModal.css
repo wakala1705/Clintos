@@ -1,0 +1,22 @@
+.fvc-print-loading-modal{
+  width:280px;
+  align-items:center;
+  text-align:center;
+  padding:32px 24px;
+  gap:12px;
+}
+.fvc-print-loading-spinner{
+  width:32px;height:32px;color:var(--primary);
+  animation:fvc-print-spin .8s linear infinite;
+}
+.fvc-print-loading-text{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fvc-print-loading-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+
+@keyframes fvc-print-spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .fvc-print-loading-spinner{animation-duration:2.4s;}
+}

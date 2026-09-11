@@ -68,7 +68,7 @@ function estadoFacturaBadge(f) {
 // ya usa el ícono de ojo en Acciones, sin duplicar lógica; el clic simple
 // sigue solo seleccionando la fila (`onSelect`).
 export default function FacturasGridClasica({
-  facturas, selectedId, onSelect, onVerDetalle, onEditar,
+  facturas, selectedId, onSelect, onVerDetalle, onEditar, onImprimir,
 }) {
   return (
     <div className="fvc-grid-scroll">
@@ -117,7 +117,7 @@ export default function FacturasGridClasica({
                   <button
                     type="button"
                     className="fvc-row-action-btn"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => { e.stopPropagation(); onImprimir(f); }}
                     aria-label={`Imprimir factura ${f.numero}`}
                     title="Imprimir"
                   >
