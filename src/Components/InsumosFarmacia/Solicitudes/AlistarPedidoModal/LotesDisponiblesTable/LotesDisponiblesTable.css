@@ -1,14 +1,14 @@
 /* .mig-grid/.mig-num/.mig-ellipsis/.mig-grid-empty: definidas en
    ../../shared/shared.css. */
-/* Caja que agrupa la tabla de lotes + mig-alistar-actions (encargo explícito:
-   las acciones se ubicaron dentro de este bloque, ya no debajo de toda la
-   fila tabla+resumen). `flex:1;min-width:0` reparte el ancho de mig-lotes-row
-   con mig-lotes-summary (ancho fijo, ver AlistarPedidoModal.css); `min-height:0`
+/* Caja que agrupa la tabla de lotes. Las acciones (antes una franja
+   mig-alistar-actions fija debajo de toda la tabla) ahora van por fila, en
+   la columna Acciones (ver mig-lotes-acciones más abajo) -- encargo
+   explícito. `flex:1;min-width:0` reparte el ancho de mig-lotes-row con
+   mig-lotes-summary (ancho fijo, ver AlistarPedidoModal.css); `min-height:0`
    para que, siendo mig-lotes-row ahora align-items:stretch, este bloque
    pueda llegar hasta el fondo del contenido (encargo explícito "ajustemos la
    tabla al fondo del contenido") en vez de quedar limitado a su alto de
-   contenido. El scroll queda en mig-lotes-table-inner (solo las filas), para
-   que las acciones siempre queden visibles sin depender de ese scroll. */
+   contenido. */
 .mig-lotes-table-scroll{
   flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;
   border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
@@ -33,10 +33,62 @@ html[data-theme="dark"] .mig-lotes-table-inner::-webkit-scrollbar-thumb:hover{ba
 
 .mig-vence-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;}
 
-/* Acciones (Sugerir/Confirmar/Editar/Borrar/Movimiento) -- franja inferior
-   fija del bloque, fuera del scroll de las filas. Alineadas a la derecha,
-   mismo criterio que .modal-footer. */
-.mig-alistar-actions{
-  display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:8px;
-  flex-shrink:0;padding:8px;border-top:1px solid var(--border);
+/* Anchos de columna (encargo explícito "démosle más espacio a Descripción")
+   -- table-layout:fixed + un ancho fijo por columna, salvo Descripción
+   (nth-child(5)), que se deja sin ancho para que absorba el espacio
+   restante. .mig-lotes-descripcion pisa el max-width:220px de .mig-ellipsis
+   (shared.css, pensado para columnas angostas) -- acá el límite real ya lo
+   da el ancho de columna fijo, no ese tope. Columnas: Item/Ubicación/Stock/
+   Cantidad/Descripción/Vence/Lote Serie/Acciones ("Esperada" se sacó, ver
+   comentario en LotesDisponiblesTable.jsx -- por eso el salto de nth-child(3)
+   a (4) en vez de (5)). */
+.mig-lotes-grid{table-layout:fixed;}
+.mig-lotes-grid th:nth-child(1),.mig-lotes-grid td:nth-child(1){width:48px;}
+.mig-lotes-grid th:nth-child(2),.mig-lotes-grid td:nth-child(2){width:120px;}
+.mig-lotes-grid th:nth-child(3),.mig-lotes-grid td:nth-child(3){width:72px;}
+.mig-lotes-grid th:nth-child(4),.mig-lotes-grid td:nth-child(4){width:80px;}
+.mig-lotes-grid th:nth-child(6),.mig-lotes-grid td:nth-child(6){width:120px;}
+.mig-lotes-grid th:nth-child(7),.mig-lotes-grid td:nth-child(7){width:110px;}
+.mig-lotes-grid th:nth-child(8),.mig-lotes-grid td:nth-child(8){width:76px;}
+.mig-lotes-grid td.mig-lotes-descripcion{max-width:none;}
+
+/* Stock con más peso visual que el resto de columnas (encargo explícito) --
+   mismo criterio que .mig-strong en shared.css. Cantidad (nth-child(4)) ya
+   no es texto plano (ver mig-lotes-cantidad-input más abajo), así que su
+   semibold vive en el input, no en el <td>. */
+.mig-lotes-grid td:nth-child(3){font-weight:var(--fw-semibold);}
+
+/* Cantidad editable en línea (encargo explícito "mejoremos la usabilidad")
+   -- antes solo se podía cambiar abriendo EditarLoteModal; comparte el mismo
+   cantidadOverrides que ese modal (ver LotesDisponiblesTable.jsx), así que
+   ambos caminos quedan sincronizados. 22px de alto para que quepa dentro del
+   padding compacto de fila (5px, ver AlistarPedidoModal.css) sin desalinear
+   el alto del resto de filas; el click/dblclick/keydown se frenan en la
+   celda para no disparar la selección de fila (mismo criterio que
+   .mig-lotes-acciones) ni el doble-clic que abre EditarLoteModal -- si no,
+   un doble clic para seleccionar el texto del input terminaría abriendo el
+   modal en su lugar. */
+.mig-lotes-cantidad-input{
+  width:100%;height:24px;
+  border:1px solid var(--border);border-radius:6px;padding:0 8px;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);
+  background:var(--surface);text-align:right;
 }
+.mig-lotes-cantidad-input:hover{border-color:var(--ink-400);}
+.mig-lotes-cantidad-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Columna Acciones (encargo explícito) -- reemplazó la franja
+   mig-alistar-actions que vivía debajo de toda la tabla: Editar + LoteRowMenu
+   ("⋮" con Sugerir/Movimiento/Borrar) ahora van por fila. white-space:nowrap
+   ya viene de .mig-grid; text-align:right en el header/celda para que quede
+   pegada al borde derecho, mismo criterio que .mig-num. */
+.mig-lotes-acciones-th{text-align:right;}
+.mig-lotes-acciones{display:flex;align-items:center;justify-content:flex-end;gap:2px;}
+.mig-lotes-accion-btn{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.mig-lotes-accion-btn .icon{width:17px;height:17px;}
+.mig-lotes-accion-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.mig-lotes-accion-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

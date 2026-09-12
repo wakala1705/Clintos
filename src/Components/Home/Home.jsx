@@ -252,6 +252,7 @@ export default function Home() {
                     onChange={setPreviewModule}
                     ariaLabel="Selector rápido de módulo"
                   />
+                  <span className="home-hero-controls-divider" aria-hidden="true" />
                   <button
                     type="button"
                     className="home-all-modules-btn"

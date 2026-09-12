@@ -23,11 +23,20 @@ const ESTADO_ENTREGA_BADGE = {
   pendiente: { tone: 'warn', label: 'Pendiente' },
 };
 
-function estadoEntregaDe(a) {
+// Un movimiento "Sin Confirmar" todavía no entregó nada de verdad (encargo
+// explícito) -- aunque cantidadEntregada venga > 0 en el mock (fiel a la
+// referencia legacy), se muestra "Pendiente" para todos sus ítems mientras
+// el movimiento como un todo siga sin confirmar. Solo "Confirmado"/"Anulado"
+// respetan cantidadEntregada tal cual. Mismo criterio duplicado en
+// AlistarPedidoModal.jsx (filtroEstadoEntrega, hoy sin control visible).
+function estadoEntregaDe(a, movimientoEstado) {
+  if (movimientoEstado === 'sin-confirmar') return 'pendiente';
   return a.cantidadEntregada > 0 ? 'entregado' : 'pendiente';
 }
 
-export default function ArticulosItemsTable({ articulos, selectedItem, onSelect }) {
+export default function ArticulosItemsTable({
+  articulos, selectedItem, onSelect, movimientoEstado,
+}) {
   function handleKeyDown(e, item) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -60,12 +69,12 @@ export default function ArticulosItemsTable({ articulos, selectedItem, onSelect 
             >
               <td><span className="mig-articulo-dot" aria-hidden="true" />{a.item}</td>
               <td className="mig-strong">{a.codigo}</td>
-              <td className="mig-ellipsis" title={a.descripcion}>{a.descripcion}</td>
+              <td className="mig-ellipsis mig-items-descripcion" title={a.descripcion}>{a.descripcion}</td>
               <td className="mig-num">{a.cantidadSolicitada.toFixed(2)}</td>
               <td className="mig-num">{a.cantidadEntregada.toFixed(2)}</td>
               <td>
-                <Badge tone={ESTADO_ENTREGA_BADGE[estadoEntregaDe(a)].tone}>
-                  {ESTADO_ENTREGA_BADGE[estadoEntregaDe(a)].label}
+                <Badge tone={ESTADO_ENTREGA_BADGE[estadoEntregaDe(a, movimientoEstado)].tone}>
+                  {ESTADO_ENTREGA_BADGE[estadoEntregaDe(a, movimientoEstado)].label}
                 </Badge>
               </td>
               <td className="mig-num">${formatMoneda(a.costoTotal.neto)}</td>

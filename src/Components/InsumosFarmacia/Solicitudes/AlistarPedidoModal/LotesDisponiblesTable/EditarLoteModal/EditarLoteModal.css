@@ -1,0 +1,51 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   compartido en ../../../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+/* 560px -- mismo ancho que el resto de modales de formulario medianos del
+   proyecto (ver .modal en Admisiones/shared/shared.css), no el extragrande
+   de AlistarPedidoModal (esta ficha es de un solo lote, no dos tablas). */
+.mig-editar-lote-modal{width:100%;max-width:560px;}
+.mig-editar-lote-item{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);white-space:nowrap;}
+
+/* Bloque de identidad del lote: 3 columnas (encargo explícito) -- 9 campos
+   calzan exacto en 3 filas sin necesitar celda vacía de relleno. El bloque
+   de cantidades (mig-editar-lote-cantidades más abajo) se queda en 2. */
+.mig-editar-lote-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px;}
+.mig-editar-lote-cantidades{grid-template-columns:repeat(2,minmax(0,1fr));}
+.mig-editar-lote-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mig-editar-lote-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.mig-editar-lote-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* Semáforo de cantidades (encargo explícito, réplica de los 4 campos
+   coloreados de la referencia legacy) -- mismos tokens que el resto del
+   proyecto usa para esos 3 tonos (ver AlistarPedidoModal/colorVencimiento);
+   "stock"/"cantidad" comparten --primary-50 (celeste en la referencia),
+   distinguibles porque Cantidad es el único <input> real de la ficha. */
+.mig-editar-lote-field.tone-stock,
+.mig-editar-lote-field.tone-esperada,
+.mig-editar-lote-field.tone-pendiente,
+.mig-editar-lote-field.tone-cantidad,
+.mig-editar-lote-field.tone-comprometida{
+  padding:6px 10px;border-radius:var(--radius);
+}
+.tone-stock{background:var(--primary-50);}
+.tone-esperada{background:var(--red-bg);}
+.tone-pendiente{background:var(--green-bg);}
+.tone-cantidad{background:var(--primary-50);}
+.tone-comprometida{background:var(--amber-bg);}
+
+.mig-editar-lote-descripcion{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 12px;font-size:var(--fs-sm);color:var(--ink-700);
+}
+
+.mig-editar-lote-input{
+  height:var(--input-sm);width:100%;
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  background:var(--surface);
+}
+.mig-editar-lote-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

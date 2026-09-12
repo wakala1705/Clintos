@@ -12,7 +12,13 @@
    contenido nuevo (identity row + ficha), no la vía principal. */
 .mig-alistar-modal{width:95vw;max-width:1500px;height:88vh;}
 .mig-alistar-modal .modal-body{flex:1;padding:16px 20px;}
-.mig-alistar-body{gap:6px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+/* Filas más compactas que el resto del proyecto (encargo explícito) --
+   override puntual sobre .mig-grid tbody/thead de shared.css, sin tocar la
+   regla compartida con MovimientosGrid/MovimientoItemsTable (esas tablas no
+   pidieron este ajuste). */
+.mig-alistar-modal .mig-grid thead th{padding:6px 12px;}
+.mig-alistar-modal .mig-grid tbody td{padding:5px 12px;}
+.mig-alistar-body{gap:16px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
 .mig-alistar-body::-webkit-scrollbar{width:6px;height:6px;}
 .mig-alistar-body::-webkit-scrollbar-track{background:transparent;}
 .mig-alistar-body::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
@@ -43,19 +49,16 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 
 /* Tabla de ítems, ver AGENTS.md "Barra de filtros de listado". El
    "mig-tabs-bar" que vivía encima de este bloque se eliminó (encargo
-   explícito, ver AlistarPedidoModal.jsx) -- en su lugar, todo el bloque
-   queda encapsulado en una caja con borde propio (mismo criterio que
-   .mig-items-card en MovimientoDetalleModal.css: "border general de la
-   tabla" tras eliminar su propio mig-tabs-bar). El filtro "Estado De
-   Entrega" + botón "Sugerir Todos" (mig-alistar-filters/mig-inline-field) se
-   eliminaron acá (encargo explícito) -- filtroEstadoEntrega sigue vivo en
+   explícito, ver AlistarPedidoModal.jsx). El filtro "Estado De Entrega" +
+   botón "Sugerir Todos" (mig-alistar-filters/mig-inline-field) se eliminaron
+   acá (encargo explícito) -- filtroEstadoEntrega sigue vivo en
    AlistarPedidoModal.jsx (estado + filtrado), mismo criterio que
    filtroCodigo/filtroDescripcion, sin control visible que lo cambie por
-   ahora. */
-.mig-articulos-panel{
-  display:flex;flex-direction:column;gap:10px;flex-shrink:0;
-  border:1px solid var(--border);border-radius:var(--radius);padding:10px;
-}
+   ahora. El wrapper .mig-articulos-panel (caja con borde propio alrededor de
+   mig-items-table-scroll) se sacó (encargo explícito): duplicaba el borde de
+   .mig-items-table-scroll (ver ArticulosItemsTable.css) generando una doble
+   caja anidada -- ahora ArticulosItemsTable pone su borde directo sobre
+   .mig-alistar-body, sin contenedor intermedio. */
 
 /* "Artículos disponibles para el código" -- título + fila de tabla de lotes
    + resumen + acciones. Encapsulado en su propia caja con borde (mismo
@@ -68,14 +71,20 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    contenido total supera el alto del modal. */
 .mig-lotes-section{
   display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;
-  border:1px solid var(--border);border-radius:var(--radius);padding:10px;
+  
 }
 .mig-lotes-title{
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
-  display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
 }
 .mig-lotes-codigo{color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .mig-lotes-descripcion{color:var(--ink-700);font-weight:var(--fw-regular);}
+/* "Cnt. Esperada" (encargo explícito) -- se sacó de LotesDisponiblesTable
+   (era el mismo valor repetido en las 4 filas, ver comentario en ese
+   componente) y se muestra acá una sola vez, empujada al extremo derecho del
+   título con margin-left:auto. */
+.mig-lotes-esperada{margin-left:auto;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);flex-shrink:0;}
+.mig-lotes-esperada strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 /* Tabla de lotes + "Resumen de lote" en 2 columnas (encargo explícito: el
    "Resumen" de la referencia de Facturas -- fvcd-bottom-summary, responde a
@@ -97,9 +106,10 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 .mig-summary-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .mig-summary-total span:last-child{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--primary);}
 
-/* .mig-alistar-actions (Sugerir/Confirmar/Editar/Borrar/Movimiento) -- ver
-   LotesDisponiblesTable.css, ahora integradas dentro de
-   mig-lotes-table-scroll (encargo explícito). */
+/* Acciones de la tabla de lotes (Sugerir/Editar/Borrar/Movimiento): ya no
+   viven en una franja aparte -- son una columna por fila (mig-lotes-acciones,
+   ver LotesDisponiblesTable.css/LoteRowMenu.css), encargo explícito.
+   "Confirmar" es la acción principal del modal, vive en .modal-footer. */
 
 @media (max-width:1024px){
   .mig-lotes-row{flex-direction:column;}

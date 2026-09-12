@@ -7,9 +7,15 @@
    MovimientosGrid, que llena todo `.mig-grid-scroll`) porque acá conviven
    con la tabla de lotes debajo repartiéndose el alto del modal.*/
 .mig-items-table-scroll{
-  max-height:210px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
+  max-height:280px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
   flex-shrink:0;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
 }
+/* Cuando las filas no llenan max-height (caso común, 6 ítems), la última fila
+   queda pegada al borde inferior del wrapper -- su border-bottom (de
+   .mig-grid tbody td en shared.css) y el border del wrapper de arriba caen
+   sobre la misma línea y se veían como un borde doble. Se saca el de la
+   última fila, el del wrapper ya cierra la caja. */
+.mig-items-table tbody tr:last-child td{border-bottom:none;}
 .mig-items-table-scroll::-webkit-scrollbar{width:6px;height:6px;}
 .mig-items-table-scroll::-webkit-scrollbar-track{background:transparent;}
 .mig-items-table-scroll::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
@@ -17,6 +23,11 @@
 html[data-theme="dark"] .mig-items-table-scroll{scrollbar-color:#333e54 transparent;}
 html[data-theme="dark"] .mig-items-table-scroll::-webkit-scrollbar-thumb{background:#333e54;}
 html[data-theme="dark"] .mig-items-table-scroll::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
+/* Encargo explícito: descripción en mayúscula solo en esta tabla (no la de
+   lotes) -- transform visual, no toca el dato original (el title del <td>
+   conserva el texto tal cual para el tooltip). */
+.mig-items-descripcion{text-transform:uppercase;}
 
 .mig-articulo-dot{
   display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);

@@ -157,19 +157,30 @@ body{
 .home-hero h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .home-hero p{font-size:var(--fs-base);color:var(--ink-500);margin-top:4px;}
 
-.home-hero-controls{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+/* Un solo bloque visual (barra+separador+botón), no 2 controles sueltos
+   flotando lado a lado como antes — mismo criterio de "un componente, un
+   contenedor" que el resto del proyecto (ver AGENTS.md). */
+.home-hero-controls{
+  display:flex;align-items:center;gap:2px;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:4px;
+}
 
 /* Selector rápido de módulo (solo admin, ver Home.jsx): @/Components/Home/
-   PillTabs/PillTabs, compartido con las tabs de AllModulesModal.jsx. */
+   PillTabs/PillTabs, compartido con las tabs de AllModulesModal.jsx. Vive sin
+   fondo/borde propio para que el del contenedor de arriba se lea como uno solo. */
+
+.home-hero-controls-divider{width:1px;align-self:stretch;background:var(--border);margin:0 4px;}
 
 /* Botón "todos los módulos" (ver AllModulesModal.jsx) — mismo trigger que el
-   ícono de grilla "Todas las herramientas" de referencia (Magnific). */
+   ícono de grilla "Todas las herramientas" de referencia (Magnific). Sin
+   borde/fondo propio: es un segmento más del bloque, no un botón aparte. */
 .home-all-modules-btn{
   width:36px;height:36px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--surface);color:var(--ink-500);cursor:pointer;
-  transition:background .15s,color .15s,border-color .15s;
+  border:none;border-radius:var(--radius);
+  background:none;color:var(--ink-500);cursor:pointer;
+  transition:background .15s,color .15s;
 }
 .home-all-modules-btn .icon{width:18px;height:18px;}
 .home-all-modules-btn:hover{background:var(--gray-bg);color:var(--ink-900);}

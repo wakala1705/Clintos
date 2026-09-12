@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
-import { LuPackage } from 'react-icons/lu';
+import { LuPackage, LuThumbsUp } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -18,7 +18,15 @@ const ESTADO_BADGE = {
   anulado: { tone: 'danger', label: 'Anulado' },
 };
 
-function estadoEntregaDe(a) {
+// Un movimiento "Sin Confirmar" todavía no entregó nada de verdad (encargo
+// explícito) -- aunque cantidadEntregada venga > 0 en el mock, se muestra
+// "Pendiente" para todos sus ítems mientras el movimiento como un todo siga
+// sin confirmar. Solo "Confirmado"/"Anulado" respetan cantidadEntregada tal
+// cual. Mismo criterio duplicado en ArticulosItemsTable.jsx (ver ese
+// archivo), que es quien realmente pinta el Badge -- esta copia solo
+// alimenta filtroEstadoEntrega, hoy sin control visible que lo cambie.
+function estadoEntregaDe(a, movimientoEstado) {
+  if (movimientoEstado === 'sin-confirmar') return 'pendiente';
   return a.cantidadEntregada > 0 ? 'entregado' : 'pendiente';
 }
 
@@ -79,7 +87,7 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
   const articulosFiltrados = useMemo(() => (movimiento?.articulos ?? []).filter((a) => {
     if (filtroCodigo && !a.codigo.toLowerCase().includes(filtroCodigo.trim().toLowerCase())) return false;
     if (filtroDescripcion && !a.descripcion.toLowerCase().includes(filtroDescripcion.trim().toLowerCase())) return false;
-    if (filtroEstadoEntrega !== 'todos' && estadoEntregaDe(a) !== filtroEstadoEntrega) return false;
+    if (filtroEstadoEntrega !== 'todos' && estadoEntregaDe(a, movimiento?.estado) !== filtroEstadoEntrega) return false;
     return true;
   }), [movimiento, filtroCodigo, filtroDescripcion, filtroEstadoEntrega]);
 
@@ -135,13 +143,12 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
             </div>
           </div>
 
-          <div className="mig-articulos-panel">
-            <ArticulosItemsTable
-              articulos={articulosFiltrados}
-              selectedItem={effectiveSelected?.item ?? null}
-              onSelect={setSelectedItem}
-            />
-          </div>
+          <ArticulosItemsTable
+            articulos={articulosFiltrados}
+            selectedItem={effectiveSelected?.item ?? null}
+            onSelect={setSelectedItem}
+            movimientoEstado={movimiento.estado}
+          />
 
           <div className="mig-lotes-section">
             <h4 className="mig-lotes-title">
@@ -150,6 +157,9 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
                 <>
                   <span className="mig-lotes-codigo">{effectiveSelected.codigo}</span>
                   <span className="mig-lotes-descripcion">{effectiveSelected.descripcion}</span>
+                  <span className="mig-lotes-esperada">
+                    Cnt. Esperada: <strong>{effectiveSelected.cantidadSolicitada.toFixed(2)}</strong>
+                  </span>
                 </>
               )}
             </h4>
@@ -162,17 +172,13 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
                 {!selectedLote && <div className="mig-summary-hint">Selecciona un lote de la tabla para ver su resumen.</div>}
                 <div className="mig-summary-row"><span>Id Sede</span><span>{selectedLote?.idSede ?? '—'}</span></div>
                 <div className="mig-summary-row"><span>Id.Bdg</span><span>{selectedLote?.bdg ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Id. Artículo</span><span>{selectedLote?.generico ?? '—'}</span></div>
+                <div className="mig-summary-row"><span>No.Documento</span><span>{selectedLote?.noDocumento ?? '—'}</span></div>
                 <div className="mig-summary-row"><span>Genérico</span><span>{selectedLote?.generico ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Stock</span><span>{(selectedLote?.stock ?? 0).toFixed(2)}</span></div>
-                <div className="mig-summary-row"><span>Esperada</span><span>{(selectedLote?.esperada ?? 0).toFixed(2)}</span></div>
-                <div className="mig-summary-row"><span>Cantidad</span><span>{(selectedLote?.cantidad ?? 0).toFixed(2)}</span></div>
-                <div className="mig-summary-row"><span>Vence</span><span>{selectedLote ? selectedLote.vence.replaceAll('-', '/') : '—'}</span></div>
                 <div className="mig-summary-row"><span>Días vence</span><span>{selectedLote?.diasVence ?? '—'}</span></div>
                 <div className="mig-summary-row"><span>Lote serie</span><span>{selectedLote?.loteSerie ?? '—'}</span></div>
                 <div className="mig-summary-row"><span>Trans.</span><span>{selectedLote?.trans ?? '—'}</span></div>
                 <div className="mig-summary-divider" aria-hidden="true" />
-                <div className="mig-summary-row mig-summary-total"><span>No.Documento</span><span>{selectedLote?.noDocumento ?? '—'}</span></div>
+                <div className="mig-summary-row mig-summary-total"><span>Id. Artículo</span><span>{selectedLote?.generico ?? '—'}</span></div>
               </div>
             </div>
           </div>
@@ -180,6 +186,7 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
 
         <div className="modal-footer">
           <Button variant="secondary" onClick={onClose}>Cerrar</Button>
+          <Button variant="primary" icon={LuThumbsUp}>Confirmar</Button>
         </div>
       </div>
     </div>

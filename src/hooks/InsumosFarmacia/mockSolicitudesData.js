@@ -100,12 +100,21 @@ function generarLotes(codigo, descripcion, cantidadEntregada, cantidadSolicitada
     const noDocumento = `0200${800000 + Math.floor(randLote() * 99999)}-S`;
     const numeroEstante = 1 + Math.floor(randLote() * 40);
     const estante = pick(ESTANTES_LOTE, randLote);
+    // "Lote" (código de fabricación, ej. 20251224) -- distinto de loteSerie
+    // (serial alfanumérico de estantería, ej. I20938C): alimenta el modal
+    // "Editar lote" (ver EditarLoteModal.jsx), sin columna propia en
+    // LotesDisponiblesTable (no estaba en la referencia legacy de esa
+    // grilla). "Cnt. Comprometida" idem -- solo visible en ese modal.
+    const lote = sumarDias('2024-01-01', Math.floor(randLote() * 700)).replaceAll('-', '');
+    const comprometida = Math.floor(randLote() * 3);
     return {
       stock,
       esperada: cantidadSolicitada,
       cantidad: i === idxConCantidad ? cantidadEntregada : 0,
+      comprometida,
       descripcion: `${descripcion.toUpperCase()}-${marca}`,
       vence,
+      lote,
       loteSerie,
       diasVence,
       trans: 'SAL',
