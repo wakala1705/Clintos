@@ -172,10 +172,12 @@ const MOVIMIENTOS_BASE = [
     fechaContable: '2026-07-27',
     confirmo: '',
     permitirEditarCostos: false,
-    // 6 ítems fieles a la referencia legacy de "Alistar pedido" (encargo
-    // explícito) -- mismas cantidades esperada/entregada, incluido el
-    // patrón real que valida el flag ➜/— de ArticulosItemsTable.jsx (items
-    // 1 y 6 con Cant.Entregada=0 muestran "—", el resto ➜).
+    // 6 ítems fieles a la referencia legacy de "Alistar pedido" (mismas
+    // cantidades esperadas), pero cantidadEntregada arranca en 0 en los 6
+    // (encargo explícito "reiniciemos... como si fuese un pedido desde
+    // cero") -- ya no simula un pedido parcialmente alistado antes de este
+    // rediseño, así que Confirmar (AlistarPedidoModal.jsx) siempre exige
+    // repartir los 6 ítems entre lotes, no solo 2.
     articulos: [
       articulo({
         item: 1, codigo: 'MX0000169', descripcion: 'Cloruro de sodio 0.9% x 500 ml solución inyectable',
@@ -183,19 +185,19 @@ const MOVIMIENTOS_BASE = [
       }),
       articulo({
         item: 2, codigo: 'MX0000211', descripcion: 'Dipirona 1 g solución inyectable',
-        cantidadSolicitada: 6, cantidadEntregada: 6,
+        cantidadSolicitada: 6, cantidadEntregada: 0,
       }),
       articulo({
         item: 3, codigo: 'MX0000293', descripcion: 'Hidroclorotiazida 25 mg tableta',
-        cantidadSolicitada: 1, cantidadEntregada: 1,
+        cantidadSolicitada: 1, cantidadEntregada: 0,
       }),
       articulo({
         item: 4, codigo: 'MX0000390', descripcion: 'Metoclopramida 10 mg / 2 ml sol. inyectable',
-        cantidadSolicitada: 3, cantidadEntregada: 3,
+        cantidadSolicitada: 3, cantidadEntregada: 0,
       }),
       articulo({
         item: 5, codigo: 'MX0000434', descripcion: 'Omeprazol sódico 40 mg solución inyectable',
-        cantidadSolicitada: 2, cantidadEntregada: 2,
+        cantidadSolicitada: 2, cantidadEntregada: 0,
       }),
       articulo({
         item: 6, codigo: 'MX0000497', descripcion: 'Cloruro de sodio 0.9% x 100 ml bolsa con adaptador',

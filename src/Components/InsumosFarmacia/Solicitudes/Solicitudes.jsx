@@ -56,6 +56,11 @@ export default function Solicitudes() {
   const [detalleMovimiento, setDetalleMovimiento] = useState(null);
   const [alistarMovimiento, setAlistarMovimiento] = useState(null);
   const [page, setPage] = useState(1);
+  // Copia en estado del mock (encargo explícito "simulemos Confirmar de
+  // verdad") -- MOVIMIENTOS es un const importado, así que Confirmar no
+  // puede mutarlo directo; esta copia es la única fuente de verdad que la
+  // grilla lee de acá en adelante (ver handleConfirmarMovimiento más abajo).
+  const [movimientosState, setMovimientosState] = useState(MOVIMIENTOS);
 
   function handleFiltrosChange(patch) {
     setPage(1);
@@ -63,9 +68,30 @@ export default function Solicitudes() {
   }
 
   const movimientos = useMemo(
-    () => MOVIMIENTOS.filter((m) => movimientoCoincide(m, filtros)),
-    [filtros],
+    () => movimientosState.filter((m) => movimientoCoincide(m, filtros)),
+    [movimientosState, filtros],
   );
+
+  // Confirmar (AlistarPedidoModal.jsx) ya validó ahí que todos los ítems del
+  // documento quedaron completamente repartidos entre lotes -- acá solo se
+  // aplica: estado -> 'confirmado' y, por ítem, cantidadEntregada -> lo
+  // realmente asignado (`cantidadesPorItem`, calculado en ese modal). Update
+  // inmutable porque movimientosState es el único lugar donde vive esta
+  // "base de datos" en memoria.
+  function handleConfirmarMovimiento(id, cantidadesPorItem) {
+    setMovimientosState((prev) => prev.map((m) => {
+      if (m.id !== id) return m;
+      return {
+        ...m,
+        estado: 'confirmado',
+        articulos: m.articulos.map((a) => {
+          const nueva = cantidadesPorItem.find((c) => c.item === a.item);
+          return nueva ? { ...a, cantidadEntregada: nueva.cantidadEntregada } : a;
+        }),
+      };
+    }));
+    setAlistarMovimiento(null);
+  }
 
   // Clamp defensivo (mismo criterio que effectiveSelectedId abajo): si el
   // set filtrado encoge por debajo de la página actual sin pasar por
@@ -83,8 +109,8 @@ export default function Solicitudes() {
   // PatientsPanel (los chips cuentan sobre la lista ya acotada por el resto
   // de filtros activos, no sobre el universo completo).
   const movimientosSinFiltroEstado = useMemo(
-    () => MOVIMIENTOS.filter((m) => movimientoCoincide(m, { ...filtros, estado: 'todos' })),
-    [filtros],
+    () => movimientosState.filter((m) => movimientoCoincide(m, { ...filtros, estado: 'todos' })),
+    [movimientosState, filtros],
   );
   const estadoCounts = useMemo(() => ({
     todos: movimientosSinFiltroEstado.length,
@@ -166,7 +192,11 @@ export default function Solicitudes() {
       </div>
 
       <MovimientoDetalleModal movimiento={detalleMovimiento} onClose={() => setDetalleMovimiento(null)} />
-      <AlistarPedidoModal movimiento={alistarMovimiento} onClose={() => setAlistarMovimiento(null)} />
+      <AlistarPedidoModal
+        movimiento={alistarMovimiento}
+        onClose={() => setAlistarMovimiento(null)}
+        onConfirmar={handleConfirmarMovimiento}
+      />
     </div>
   );
 }

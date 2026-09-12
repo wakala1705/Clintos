@@ -1,0 +1,49 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico en
+   ../../shared/shared.css. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. .mig-ellipsis:
+   ../../shared/shared.css. */
+/* 640px -- más ancho que un modal de formulario simple (EditarLoteModal,
+   560px) porque cada ítem trae su propia mini-tabla de lotes, pero muy por
+   debajo del extragrande de AlistarPedidoModal (esto es un resumen, no un
+   catálogo). */
+.mig-confirmar-modal{width:100%;max-width:640px;}
+.mig-confirmar-body{gap:12px;}
+
+.mig-confirmar-item{
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.mig-confirmar-item-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mig-confirmar-item-info{display:flex;align-items:baseline;gap:8px;min-width:0;}
+.mig-confirmar-item-codigo{font-weight:var(--fw-semibold);color:var(--ink-900);flex-shrink:0;}
+.mig-confirmar-item-descripcion{
+  color:var(--ink-700);font-size:var(--fs-sm);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* Siempre verde -- solo se llega a este modal cuando `puedeConfirmar` ya dio
+   true (ver AlistarPedidoModal.jsx), así que todo lo que se lista acá está
+   completo por construcción, no es un semáforo con estado real. */
+.mig-confirmar-item-cantidades{
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--green);
+}
+.mig-confirmar-item-cantidades .icon{width:16px;height:16px;}
+
+/* Mini-tabla de lotes por ítem -- no reusa .mig-grid (shared.css): su
+   `thead th{position:sticky;top:0}` está pensado para UNA tabla que scrollea
+   sola (ArticulosItemsTable/LotesDisponiblesTable); acá hay varias tablas
+   apiladas dentro del mismo scroll de .modal-body, y todas intentarían
+   pegarse en el mismo punto -- se solaparían entre sí al hacer scroll. */
+.mig-confirmar-lotes-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
+.mig-confirmar-lotes-table th{
+  text-align:left;padding:4px 8px;color:var(--ink-500);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.03em;
+  border-bottom:1px solid var(--border);
+}
+.mig-confirmar-lotes-table th.mig-num{text-align:right;}
+.mig-confirmar-lotes-table td{padding:5px 8px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.mig-confirmar-lotes-table tbody tr:last-child td{border-bottom:none;}
+
+.mig-confirmar-sin-lotes{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.mig-confirmar-total{margin-right:auto;font-size:var(--fs-sm);color:var(--ink-500);}

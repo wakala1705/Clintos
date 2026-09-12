@@ -59,15 +59,15 @@ html[data-theme="dark"] .mig-lotes-table-inner::-webkit-scrollbar-thumb:hover{ba
 .mig-lotes-grid td:nth-child(3){font-weight:var(--fw-semibold);}
 
 /* Cantidad editable en línea (encargo explícito "mejoremos la usabilidad")
-   -- antes solo se podía cambiar abriendo EditarLoteModal; comparte el mismo
-   cantidadOverrides que ese modal (ver LotesDisponiblesTable.jsx), así que
-   ambos caminos quedan sincronizados. 22px de alto para que quepa dentro del
-   padding compacto de fila (5px, ver AlistarPedidoModal.css) sin desalinear
-   el alto del resto de filas; el click/dblclick/keydown se frenan en la
-   celda para no disparar la selección de fila (mismo criterio que
-   .mig-lotes-acciones) ni el doble-clic que abre EditarLoteModal -- si no,
-   un doble clic para seleccionar el texto del input terminaría abriendo el
-   modal en su lugar. */
+   -- antes solo se podía cambiar abriendo EditarLoteModal; ambos caminos
+   disparan `onCantidadChange` hacia AlistarPedidoModal.jsx (dueño del estado
+   `cantidadOverrides`, ver ese archivo), así que quedan sincronizados. 22px
+   de alto para que quepa dentro del padding compacto de fila (5px, ver
+   AlistarPedidoModal.css) sin desalinear el alto del resto de filas; el
+   click/dblclick/keydown se frenan en la celda para no disparar la
+   selección de fila (mismo criterio que .mig-lotes-acciones) ni el
+   doble-clic que abre EditarLoteModal -- si no, un doble clic para
+   seleccionar el texto del input terminaría abriendo el modal en su lugar. */
 .mig-lotes-cantidad-input{
   width:100%;height:24px;
   border:1px solid var(--border);border-radius:6px;padding:0 8px;

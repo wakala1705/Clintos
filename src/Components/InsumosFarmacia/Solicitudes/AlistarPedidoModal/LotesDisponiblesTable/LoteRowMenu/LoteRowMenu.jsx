@@ -2,17 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './LoteRowMenu.css';
-import { LuClipboardCheck, LuEllipsis, LuRefreshCw, LuTrash2 } from 'react-icons/lu';
+import { LuClipboardCheck, LuEllipsis, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 // Menú "⋮" de la columna Acciones de LotesDisponiblesTable -- agrupa
-// Sugerir/Movimiento/Borrar (encargo explícito), mismo patrón autocontenido
+// Editar/Movimiento/Borrar (encargo explícito), mismo patrón autocontenido
 // (estado local de apertura/cierre + cierre por click-afuera/Escape) que
-// MovimientoRowMenu.jsx (ver AGENTS.md "Component organization"). "Editar"
-// queda como botón directo al lado del trigger, fuera de este menú (encargo
-// explícito) -- es la acción más frecuente de la fila, no una secundaria.
-// Sin acciones reales todavía (visual-only, mismo criterio que el resto de
-// AlistarPedidoModal, ver ese componente).
-export default function LoteRowMenu({ itemLabel }) {
+// MovimientoRowMenu.jsx (ver AGENTS.md "Component organization"). "Sugerir"
+// se sacó de acá (encargo explícito) -- pasó a ser el botón directo al lado
+// del trigger (ver LotesDisponiblesTable.jsx): es la acción más frecuente
+// del flujo de reparto. "Editar" entró en su lugar -- ya tiene un
+// disparador propio más rápido (doble clic en la fila), así que no
+// necesitaba también un botón directo; acá solo abre EditarLoteModal vía
+// `onEditar`. Movimiento/Borrar siguen visual-only (mismo criterio que el
+// resto de AlistarPedidoModal).
+export default function LoteRowMenu({ itemLabel, onEditar }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -53,9 +56,9 @@ export default function LoteRowMenu({ itemLabel }) {
 
       {open && (
         <div className="mig-lote-row-menu-dropdown" role="menu">
-          <button type="button" className="mig-lote-row-menu-item" role="menuitem" onClick={handleItem}>
-            <LuRefreshCw className="icon" aria-hidden="true" />
-            Sugerir
+          <button type="button" className="mig-lote-row-menu-item" role="menuitem" onClick={(e) => { handleItem(e); onEditar(); }}>
+            <LuPencil className="icon" aria-hidden="true" />
+            Editar
           </button>
           <button type="button" className="mig-lote-row-menu-item" role="menuitem" onClick={handleItem}>
             <LuClipboardCheck className="icon" aria-hidden="true" />

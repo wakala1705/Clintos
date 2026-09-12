@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import './LotesDisponiblesTable.css';
-import { LuPencil } from 'react-icons/lu';
+import { LuRefreshCw } from 'react-icons/lu';
 import LoteRowMenu from './LoteRowMenu/LoteRowMenu';
 import EditarLoteModal from './EditarLoteModal/EditarLoteModal';
 
@@ -33,36 +33,32 @@ function colorVencimiento(diasVence) {
 // FacturaItemsTable/"Resumen de factura" en FacturaDetalleModalClasico.
 // Columna "Acciones" (encargo explícito) -- reemplazó la franja
 // mig-alistar-actions que vivía debajo de toda la tabla (Sugerir/Editar/
-// Borrar/Movimiento): ahora son acciones por fila, no globales. "Editar"
-// queda como botón directo (acción más frecuente); Sugerir/Movimiento/Borrar
-// se agrupan en LoteRowMenu ("⋮", mismo patrón que MovimientoRowMenu.jsx).
+// Borrar/Movimiento): ahora son acciones por fila, no globales. "Sugerir"
+// queda como botón directo (encargo explícito) -- es la acción más frecuente
+// del flujo de reparto (redistribuye por FEFO, ver onSugerirTodos abajo);
+// "Editar" se movió adentro de LoteRowMenu ("⋮", junto a Movimiento/Borrar)
+// porque ya tiene un disparador propio más rápido -- doble clic en la fila
+// (mismo patrón que MovimientosGrid.jsx -> AlistarPedidoModal: el clic
+// simple de esa misma secuencia ya deja la fila seleccionada antes de que
+// dispare el dblclick) -- así que no necesita también un botón directo.
 // stopPropagation en la celda evita que un click en estos botones dispare
 // también el onSelect de la fila (mismo criterio que MovimientosGrid.jsx).
-// "Editar" abre EditarLoteModal (encargo explícito) -- también por doble
-// clic en la fila, mismo patrón que MovimientosGrid.jsx -> AlistarPedidoModal
-// (el clic simple de esa misma secuencia ya deja la fila seleccionada antes
-// de que dispare el dblclick, sin lógica extra acá). "Guardar" en ese modal
-// simula la persistencia (encargo explícito "que se vea reflejado en la
-// tabla") -- `cantidadOverrides` (keyed por loteSerie, identidad estable del
-// lote) pisa la `cantidad` original solo para el render de esta tabla/el
-// modal reabierto; no hay backend real ni se toca mockSolicitudesData.js.
-// La celda Cantidad además es un <input> editable en línea (encargo
-// explícito "mejoremos la usabilidad") -- comparte el mismo `cantidadOverrides`
-// que EditarLoteModal, así que editar acá o desde el modal siempre queda
-// consistente. Se guarda el string crudo del input (no `.toFixed`, mismo
+//
+// Componente puramente presentacional (encargo explícito "validemos lo
+// asignado contra lo esperado y habilitemos Confirmar") -- `lotes` ya llega
+// fusionado con las ediciones de cantidad desde AlistarPedidoModal, que es
+// quien ahora dueña `cantidadOverrides`: Confirmar necesita sumarlas por
+// ítem para TODO el documento, no solo para el ítem cuyos lotes están
+// visibles acá. `onCantidadChange` (input en línea o "Guardar" de
+// EditarLoteModal) y `onSugerirTodos` (redistribuye por FEFO todo el ítem
+// seleccionado, ver AlistarPedidoModal.jsx) solo delegan hacia arriba. La
+// celda Cantidad guarda el string crudo del input (no `.toFixed`, mismo
 // criterio que ArticulosModal.jsx/SolicitudConsumo) para no pisarle al
 // usuario el punto decimal mientras todavía está escribiendo.
-export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }) {
+export default function LotesDisponiblesTable({
+  lotes, selectedIndex, onSelect, onCantidadChange, onSugerirTodos,
+}) {
   const [editIndex, setEditIndex] = useState(null);
-  const [cantidadOverrides, setCantidadOverrides] = useState({});
-
-  const lotesConEdicion = lotes.map((l) => (
-    l.loteSerie in cantidadOverrides ? { ...l, cantidad: cantidadOverrides[l.loteSerie] } : l
-  ));
-
-  function updateCantidad(loteSerie, value) {
-    setCantidadOverrides((prev) => ({ ...prev, [loteSerie]: value }));
-  }
 
   function handleKeyDown(e, index) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -87,7 +83,7 @@ export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }
             </tr>
           </thead>
           <tbody>
-            {lotesConEdicion.map((l, i) => (
+            {lotes.map((l, i) => (
               <tr
                 key={`${l.loteSerie}-${i}`}
                 className={i === selectedIndex ? 'selected' : ''}
@@ -108,7 +104,7 @@ export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }
                     min={0}
                     step="0.01"
                     aria-label={`Cantidad del lote ${i + 1}`}
-                    onChange={(e) => updateCantidad(l.loteSerie, e.target.value)}
+                    onChange={(e) => onCantidadChange(l.loteSerie, e.target.value)}
                   />
                 </td>
                 <td className="mig-ellipsis mig-lotes-descripcion" title={l.descripcion}>{l.descripcion}</td>
@@ -121,13 +117,13 @@ export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }
                   <button
                     type="button"
                     className="mig-lotes-accion-btn"
-                    aria-label={`Editar lote ${i + 1}`}
-                    title="Editar"
-                    onClick={() => setEditIndex(i)}
+                    aria-label="Sugerir reparto por FEFO"
+                    title="Sugerir"
+                    onClick={onSugerirTodos}
                   >
-                    <LuPencil className="icon" />
+                    <LuRefreshCw className="icon" />
                   </button>
-                  <LoteRowMenu itemLabel={i + 1} />
+                  <LoteRowMenu itemLabel={i + 1} onEditar={() => setEditIndex(i)} />
                 </td>
               </tr>
             ))}
@@ -139,13 +135,13 @@ export default function LotesDisponiblesTable({ lotes, selectedIndex, onSelect }
         )}
       </div>
 
-      {editIndex !== null && lotesConEdicion[editIndex] && (
+      {editIndex !== null && lotes[editIndex] && (
         <EditarLoteModal
-          lote={lotesConEdicion[editIndex]}
+          lote={lotes[editIndex]}
           itemLabel={editIndex + 1}
           onClose={() => setEditIndex(null)}
           onSave={(cantidad) => {
-            setCantidadOverrides((prev) => ({ ...prev, [lotesConEdicion[editIndex].loteSerie]: cantidad }));
+            onCantidadChange(lotes[editIndex].loteSerie, cantidad);
             setEditIndex(null);
           }}
         />

@@ -60,6 +60,18 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    caja anidada -- ahora ArticulosItemsTable pone su borde directo sobre
    .mig-alistar-body, sin contenedor intermedio. */
 
+/* "Sugerir Todos" (encargo explícito) -- recuperado como el equivalente
+   "todos los ítems de una" del "Sugerir" por fila de LotesDisponiblesTable,
+   ahora que esa lógica FEFO es real (ver handleSugerirTodos en
+   AlistarPedidoModal.jsx). mig-articulos-block agrupa la toolbar+la tabla en
+   un solo bloque visual (gap:8px, más chico que el gap:16px entre bloques de
+   mig-alistar-body) para que se lean como una unidad, no dos elementos
+   sueltos. */
+.mig-articulos-block{display:flex;flex-direction:column;gap:8px;}
+.mig-articulos-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mig-articulos-toolbar-hint{font-size:var(--fs-sm);color:var(--amber-fg);}
+.mig-articulos-toolbar-hint.completo{color:var(--green);}
+
 /* "Artículos disponibles para el código" -- título + fila de tabla de lotes
    + resumen + acciones. Encapsulado en su propia caja con borde (mismo
    criterio que .mig-articulos-panel de arriba). flex:1;min-height:0 (encargo
@@ -79,12 +91,33 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 }
 .mig-lotes-codigo{color:var(--primary-dark);font-weight:var(--fw-semibold);}
 .mig-lotes-descripcion{color:var(--ink-700);font-weight:var(--fw-regular);}
-/* "Cnt. Esperada" (encargo explícito) -- se sacó de LotesDisponiblesTable
+/* "Cnt. Esperada"/"Asignado" (encargo explícito "resaltémoslos más, con
+   borde y fondo") -- ambos como chips (mismo radio 20px que Badge.module.css,
+   no reutilizado directo porque acá conviven borde+texto libre, no el
+   contrato fijo de <Badge>). "Esperada" se sacó de LotesDisponiblesTable
    (era el mismo valor repetido en las 4 filas, ver comentario en ese
    componente) y se muestra acá una sola vez, empujada al extremo derecho del
-   título con margin-left:auto. */
-.mig-lotes-esperada{margin-left:auto;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);flex-shrink:0;}
+   título con margin-left:auto -- "Asignado" queda pegado al lado, ambos
+   flex-shrink:0 para no comprimirse si el código/descripción es largo. */
+.mig-lotes-esperada{
+  margin-left:auto;flex-shrink:0;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);
+  font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);
+}
 .mig-lotes-esperada strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* "Asignado" -- suma en vivo de lo repartido entre los lotes del ítem
+   seleccionado (ver asignadoDe en AlistarPedidoModal.jsx). Ámbar mientras no
+   calza con Cnt. Esperada, verde cuando sí -- mismo criterio semántico que
+   el resto de semáforos del proyecto (ver AGENTS.md), no un color nuevo. */
+.mig-lotes-asignado{
+  flex-shrink:0;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:20px;border:1px solid var(--amber);background:var(--amber-bg);
+  font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--amber-fg);
+}
+.mig-lotes-asignado strong{font-weight:var(--fw-semibold);color:inherit;}
+.mig-lotes-asignado.completo{border-color:var(--green);background:var(--green-bg);color:var(--green);}
 
 /* Tabla de lotes + "Resumen de lote" en 2 columnas (encargo explícito: el
    "Resumen" de la referencia de Facturas -- fvcd-bottom-summary, responde a
@@ -109,7 +142,13 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 /* Acciones de la tabla de lotes (Sugerir/Editar/Borrar/Movimiento): ya no
    viven en una franja aparte -- son una columna por fila (mig-lotes-acciones,
    ver LotesDisponiblesTable.css/LoteRowMenu.css), encargo explícito.
-   "Confirmar" es la acción principal del modal, vive en .modal-footer. */
+   "Confirmar" es la acción principal del modal, vive en .modal-footer --
+   deshabilitado hasta que `itemsSinResolver` (ver AlistarPedidoModal.jsx)
+   quede vacío; al habilitarse abre ConfirmarAlistamientoModal (resumen antes
+   de confirmar de verdad, encargo explícito) en vez de confirmar directo.
+   margin-right:auto lo empuja contra Cerrar/Confirmar sin tocar el
+   justify-content:flex-end genérico de .modal-footer (shared.css). */
+.mig-alistar-confirm-hint{margin-right:auto;font-size:var(--fs-sm);color:var(--amber-fg);}
 
 @media (max-width:1024px){
   .mig-lotes-row{flex-direction:column;}

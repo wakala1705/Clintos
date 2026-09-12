@@ -30,8 +30,17 @@ function Field({ label, value, tone }) {
 // MovimientoDetalleModal/AlistarPedidoModal: una pestaña única se aplana).
 // "Guardar" simula la persistencia (encargo explícito "que se vea reflejado
 // en la tabla") -- llama a onSave con la cantidad editada; LotesDisponiblesTable
-// la aplica a su copia local del lote (ver ese componente), no hay backend
-// real detrás.
+// reenvía eso a `onCantidadChange`, que en definitiva vive en
+// AlistarPedidoModal.jsx (`cantidadOverrides`, usado también para validar
+// Confirmar). No hay backend real detrás.
+// `lote?.cantidad`/`lote?.loteSerie` de acá abajo (antes del `if (!lote)
+// return null`) son seguros solo porque LotesDisponiblesTable.jsx monta este
+// componente ya guardado (`editIndex !== null && lotes[editIndex] && ...`) --
+// `lote` nunca es null en un render real. Si alguna vez se monta sin ese
+// guard (como pasaba con AlistarPedidoModal.jsx, ver 'use no memo' ahí), el
+// React Compiler puede generar una comparación de caché que lea
+// `lote.cantidad` sin el `?.` y reviente con movimiento null en el primer
+// render -- mismo bug real, no hipotético.
 export default function EditarLoteModal({ lote, itemLabel, onClose, onSave }) {
   const [cantidad, setCantidad] = useState(lote?.cantidad ?? 0);
 

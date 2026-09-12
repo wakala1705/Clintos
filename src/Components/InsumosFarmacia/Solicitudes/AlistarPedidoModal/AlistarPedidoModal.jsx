@@ -2,12 +2,13 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
-import { LuPackage, LuThumbsUp } from 'react-icons/lu';
+import { LuPackage, LuRefreshCw, LuThumbsUp } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import ArticulosItemsTable from './ArticulosItemsTable/ArticulosItemsTable';
 import LotesDisponiblesTable from './LotesDisponiblesTable/LotesDisponiblesTable';
+import ConfirmarAlistamientoModal from './ConfirmarAlistamientoModal/ConfirmarAlistamientoModal';
 
 // Mismo mapa tono/label que MovimientosGrid.jsx (estado del movimiento
 // completo, no del ítem) -- se muestra junto al título en mig-alistar-identity,
@@ -33,10 +34,10 @@ function estadoEntregaDe(a, movimientoEstado) {
 // Réplica de "Catálogo Movimiento De Inventario -> Artículos Genéricos"
 // (acción "Alistar pedido" de un movimiento Sin Confirmar) -- iteración
 // sobre la primera versión visual (encargo explícito) sobre datos mock
-// (`movimiento.articulos`/`.lotes`, ver mockSolicitudesData.js); sin
-// acciones reales todavía (Sugerir/Confirmar/Editar/Borrar/Movimiento son
-// visual-only, mismo criterio que Editar/Imprimir/Anular en
-// MovimientoRowMenu). El "mig-tabs-bar" (Por Consecutivo/Por Id Articulo)
+// (`movimiento.articulos`/`.lotes`, ver mockSolicitudesData.js); Editar/
+// Borrar/Movimiento siguen siendo visual-only (mismo criterio que Editar/
+// Imprimir/Anular en MovimientoRowMenu) -- Sugerir y Confirmar ya no lo son,
+// ver más abajo. El "mig-tabs-bar" (Por Consecutivo/Por Id Articulo)
 // se eliminó (encargo explícito) -- mismo criterio que MovimientoDetalleModal
 // (que ya pasó por esto: tabs sin contenido diferenciado real se reemplazan
 // por el contenido plano directo, no por un selector que no aporta).
@@ -53,12 +54,36 @@ function estadoEntregaDe(a, movimientoEstado) {
 // LotesDisponiblesTable, responde a `effectiveLoteIndex`. A diferencia de
 // fvcd-summary-hint, acá el primer lote llega seleccionado por defecto
 // (encargo explícito) -- el hint solo se ve cuando no hay lotes.
-export default function AlistarPedidoModal({ movimiento, onClose }) {
+//
+// `cantidadOverrides` (keyed por loteSerie, encargo explícito "simulemos el
+// guardado") vive acá -- no en LotesDisponiblesTable -- porque Confirmar
+// necesita sumarlo por ÍTEM (todos los lotes de todos los ítems del
+// documento, no solo los del ítem seleccionado) para validar que cada uno
+// quedó completamente repartido antes de habilitar el botón. La tabla de
+// lotes queda puramente presentacional: recibe `lotes` ya fusionados y
+// dispara `onCantidadChange`/`onSugerirTodos` hacia acá.
+export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar }) {
+  // 'use no memo' (encargo: bug real, ver bitácora del chat) -- el React
+  // Compiler (reactCompiler:true en next.config.mjs) auto-memoiza
+  // `articulosFiltrados`/`itemsSinResolver` (dependen de `movimiento?.articulos`,
+  // necesario porque este componente se monta siempre, sin
+  // `{alistarMovimiento && ...}` en Solicitudes.jsx, así que `movimiento` es
+  // `null` en el primer render) generando una comparación de caché que lee
+  // `movimiento.articulos` SIN el `?.` -- revienta con
+  // "Cannot read properties of null (reading 'articulos')" apenas carga la
+  // página. No es un bug de este archivo: es una narrowing incorrecta del
+  // compilador sobre optional chaining cuando el objeto puede ser null en el
+  // primer render. Esta directiva desactiva la auto-memoización SOLO en este
+  // componente (los demás siguen optimizados).
+  'use no memo';
+
   const [filtroCodigo, setFiltroCodigo] = useState('');
   const [filtroDescripcion, setFiltroDescripcion] = useState('');
   const [filtroEstadoEntrega, setFiltroEstadoEntrega] = useState('todos');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedLoteIndex, setSelectedLoteIndex] = useState(null);
+  const [cantidadOverrides, setCantidadOverrides] = useState({});
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   useEffect(() => {
     if (!movimiento) return undefined;
@@ -82,6 +107,19 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
     setFiltroEstadoEntrega('todos');
     setSelectedItem(null);
     setSelectedLoteIndex(null);
+    setCantidadOverrides({});
+    setMostrarConfirmacion(false);
+  }
+
+  // Pisa `cantidad` con lo editado (input en línea o EditarLoteModal) sobre
+  // el lote crudo del mock -- mismo criterio que ya tenía LotesDisponiblesTable
+  // antes de subir el estado acá.
+  function mergeLotes(loteList) {
+    return loteList.map((l) => (l.loteSerie in cantidadOverrides ? { ...l, cantidad: cantidadOverrides[l.loteSerie] } : l));
+  }
+
+  function asignadoDe(articulo) {
+    return mergeLotes(articulo.lotes ?? []).reduce((acc, l) => acc + (Number(l.cantidad) || 0), 0);
   }
 
   const articulosFiltrados = useMemo(() => (movimiento?.articulos ?? []).filter((a) => {
@@ -97,7 +135,7 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
     ? articulosFiltrados.find((a) => a.item === selectedItem)
     : (articulosFiltrados[0] ?? null);
 
-  const lotes = effectiveSelected?.lotes ?? [];
+  const lotes = mergeLotes(effectiveSelected?.lotes ?? []);
 
   // La lista de lotes cambia con el ítem elegido arriba -- si la selección de
   // lote quedó fuera de rango (o el ítem cambió), la resetea durante el
@@ -116,7 +154,77 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
     : (lotes.length > 0 ? 0 : null);
   const selectedLote = effectiveLoteIndex !== null ? lotes[effectiveLoteIndex] : null;
 
+  const asignadoActual = effectiveSelected ? asignadoDe(effectiveSelected) : 0;
+  const asignadoCompleto = !!effectiveSelected && Math.abs(asignadoActual - effectiveSelected.cantidadSolicitada) < 0.001;
+
+  // Confirmar exige que TODOS los ítems del documento (no solo el
+  // seleccionado/filtrado) queden con su cantidad esperada completamente
+  // repartida entre lotes (encargo explícito) -- sobre `movimiento.articulos`
+  // completo, para que un filtro activo no esconda un ítem sin resolver.
+  const itemsSinResolver = (movimiento?.articulos ?? [])
+    .filter((a) => Math.abs(asignadoDe(a) - a.cantidadSolicitada) > 0.001);
+  const puedeConfirmar = movimiento?.estado === 'sin-confirmar' && itemsSinResolver.length === 0;
+
+  // "Sugerir" (encargo explícito: redistribuir por FEFO) -- reparte toda la
+  // cantidad esperada de UN ítem entre SUS lotes, priorizando el que vence
+  // antes (comparación lexicográfica de 'YYYY-MM-DD', válida sin parsear a
+  // Date), respetando el stock de cada uno. Pisa cualquier reparto manual
+  // previo de ese ítem -- es un redo completo, no un relleno parcial. Función
+  // pura (no toca estado) para poder reusarla tanto en "Sugerir" (un ítem,
+  // ver handleSugerirFEFO) como en "Sugerir Todos" (encargo explícito, todos
+  // los ítems del documento de una, ver handleSugerirTodos).
+  function calcularSugerenciaFEFO(articulo) {
+    let restante = articulo.cantidadSolicitada;
+    const ordenados = [...(articulo.lotes ?? [])].sort((a, b) => (a.vence < b.vence ? -1 : a.vence > b.vence ? 1 : 0));
+    const asignaciones = {};
+    ordenados.forEach((l) => {
+      const asignar = Math.min(l.stock, Math.max(0, restante));
+      asignaciones[l.loteSerie] = asignar;
+      restante -= asignar;
+    });
+    return asignaciones;
+  }
+
+  function handleSugerirFEFO() {
+    if (!effectiveSelected) return;
+    setCantidadOverrides((prev) => ({ ...prev, ...calcularSugerenciaFEFO(effectiveSelected) }));
+  }
+
+  // "Sugerir Todos" (encargo explícito) -- réplica del botón que vivía
+  // arriba de la tabla principal antes de que "Sugerir" fuera visual-only
+  // (ver comentario viejo más abajo, "mig-alistar-filters"); ahora que la
+  // lógica FEFO es real, tiene sentido recuperarlo como el equivalente
+  // "todos los ítems de una" del Sugerir por fila.
+  function handleSugerirTodos() {
+    if (!movimiento) return;
+    const asignaciones = {};
+    movimiento.articulos.forEach((a) => Object.assign(asignaciones, calcularSugerenciaFEFO(a)));
+    setCantidadOverrides((prev) => ({ ...prev, ...asignaciones }));
+  }
+
+  // El botón "Confirmar" del footer ya no confirma directo (encargo
+  // explícito "modal de confirmación con resumen") -- abre
+  // ConfirmarAlistamientoModal; el Confirmar real vive en ese modal y
+  // dispara handleConfirmarDefinitivo.
+  function handleConfirmarDefinitivo() {
+    const cantidadesPorItem = movimiento.articulos.map((a) => ({ item: a.item, cantidadEntregada: asignadoDe(a) }));
+    onConfirmar(movimiento.id, cantidadesPorItem);
+    setMostrarConfirmacion(false);
+  }
+
   if (!movimiento) return null;
+
+  // Solo se arma cuando el modal de confirmación está abierto -- por ítem,
+  // esperada/alistada (ya validadas iguales, puedeConfirmar lo exige) y sus
+  // lotes con cantidad > 0 (los que quedaron en 0 no aportan al resumen).
+  const resumenItems = mostrarConfirmacion ? movimiento.articulos.map((a) => ({
+    item: a.item,
+    codigo: a.codigo,
+    descripcion: a.descripcion,
+    esperada: a.cantidadSolicitada,
+    alistada: asignadoDe(a),
+    lotes: mergeLotes(a.lotes ?? []).filter((l) => (Number(l.cantidad) || 0) > 0),
+  })) : [];
 
   const estadoBadge = ESTADO_BADGE[movimiento.estado];
 
@@ -143,12 +251,32 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
             </div>
           </div>
 
-          <ArticulosItemsTable
-            articulos={articulosFiltrados}
-            selectedItem={effectiveSelected?.item ?? null}
-            onSelect={setSelectedItem}
-            movimientoEstado={movimiento.estado}
-          />
+          <div className="mig-articulos-block">
+            <div className="mig-articulos-toolbar">
+              <span className={`mig-articulos-toolbar-hint${itemsSinResolver.length === 0 ? ' completo' : ''}`}>
+                {itemsSinResolver.length === 0
+                  ? 'Todos los ítems ya están asignados'
+                  : `${itemsSinResolver.length} ${itemsSinResolver.length === 1 ? 'ítem' : 'ítems'} por asignar`}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                icon={LuRefreshCw}
+                disabled={movimiento.estado !== 'sin-confirmar'}
+                title="Redistribuye por FEFO la cantidad esperada de todos los ítems entre sus lotes"
+                onClick={handleSugerirTodos}
+              >
+                Sugerir Todos
+              </Button>
+            </div>
+
+            <ArticulosItemsTable
+              articulos={articulosFiltrados}
+              selectedItem={effectiveSelected?.item ?? null}
+              onSelect={setSelectedItem}
+              movimientoEstado={movimiento.estado}
+            />
+          </div>
 
           <div className="mig-lotes-section">
             <h4 className="mig-lotes-title">
@@ -160,12 +288,21 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
                   <span className="mig-lotes-esperada">
                     Cnt. Esperada: <strong>{effectiveSelected.cantidadSolicitada.toFixed(2)}</strong>
                   </span>
+                  <span className={`mig-lotes-asignado${asignadoCompleto ? ' completo' : ''}`}>
+                    Asignado: <strong>{asignadoActual.toFixed(2)}</strong>
+                  </span>
                 </>
               )}
             </h4>
 
             <div className="mig-lotes-row">
-              <LotesDisponiblesTable lotes={lotes} selectedIndex={effectiveLoteIndex} onSelect={setSelectedLoteIndex} />
+              <LotesDisponiblesTable
+                lotes={lotes}
+                selectedIndex={effectiveLoteIndex}
+                onSelect={setSelectedLoteIndex}
+                onCantidadChange={(loteSerie, value) => setCantidadOverrides((prev) => ({ ...prev, [loteSerie]: value }))}
+                onSugerirTodos={handleSugerirFEFO}
+              />
 
               <div className="mig-lotes-summary">
                 <div className="mig-summary-title">Resumen de lote</div>
@@ -185,10 +322,32 @@ export default function AlistarPedidoModal({ movimiento, onClose }) {
         </div>
 
         <div className="modal-footer">
+          {movimiento.estado === 'sin-confirmar' && itemsSinResolver.length > 0 && (
+            <span className="mig-alistar-confirm-hint">
+              Faltan {itemsSinResolver.length} {itemsSinResolver.length === 1 ? 'ítem' : 'ítems'} por asignar entre lotes
+            </span>
+          )}
           <Button variant="secondary" onClick={onClose}>Cerrar</Button>
-          <Button variant="primary" icon={LuThumbsUp}>Confirmar</Button>
+          <Button
+            variant="primary"
+            icon={LuThumbsUp}
+            disabled={!puedeConfirmar}
+            title={puedeConfirmar ? undefined : 'Asigná la cantidad esperada de cada ítem entre sus lotes antes de confirmar'}
+            onClick={() => setMostrarConfirmacion(true)}
+          >
+            Confirmar
+          </Button>
         </div>
       </div>
+
+      {mostrarConfirmacion && (
+        <ConfirmarAlistamientoModal
+          movimiento={movimiento}
+          resumenItems={resumenItems}
+          onClose={() => setMostrarConfirmacion(false)}
+          onConfirmar={handleConfirmarDefinitivo}
+        />
+      )}
     </div>
   );
 }
