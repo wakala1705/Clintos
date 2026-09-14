@@ -1,42 +1,20 @@
 'use client';
 
 import './ArticulosItemsTable.css';
-import Badge from '@/Components/Badge/Badge';
-import { formatMoneda } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 
 // Réplica de la grilla superior "Artículos Genéricos" de la referencia
-// legacy (catálogo Movimiento De Inventario -> Alistar pedido). El punto
-// rojo es un indicador visual fijo por ahora (la referencia lo muestra en
-// las 6 filas de su único movimiento capturado, todas Sin Confirmar) --
-// pendiente de definir su regla real cuando se conecte la lógica de
-// alistamiento (ver AlistarPedidoModal.jsx). La columna "Ref." de la
-// referencia legacy se ocultó (encargo explícito): siempre vino vacía, sin
-// dato del mock que la alimente -- en su lugar va "Estado", con el mismo
-// criterio pendiente/entregado que ya filtraba "Estado De Entrega" en
-// AlistarPedidoModal.jsx (duplicado acá a propósito, mismo criterio que
-// ESTADO_BADGE repetido en MovimientosGrid.jsx/AlistarPedidoModal.jsx). La
-// columna ➜/— (antes entre Item e Id.Artículo, mismo criterio
-// cantidadEntregada > 0) se eliminó (encargo explícito): quedaba redundante
-// con este Badge, que ya comunica lo mismo con más claridad.
-const ESTADO_ENTREGA_BADGE = {
-  entregado: { tone: 'success', label: 'Entregado' },
-  pendiente: { tone: 'warn', label: 'Pendiente' },
-};
-
-// Un movimiento "Sin Confirmar" todavía no entregó nada de verdad (encargo
-// explícito) -- aunque cantidadEntregada venga > 0 en el mock (fiel a la
-// referencia legacy), se muestra "Pendiente" para todos sus ítems mientras
-// el movimiento como un todo siga sin confirmar. Solo "Confirmado"/"Anulado"
-// respetan cantidadEntregada tal cual. Mismo criterio duplicado en
-// AlistarPedidoModal.jsx (filtroEstadoEntrega, hoy sin control visible).
-function estadoEntregaDe(a, movimientoEstado) {
-  if (movimientoEstado === 'sin-confirmar') return 'pendiente';
-  return a.cantidadEntregada > 0 ? 'entregado' : 'pendiente';
-}
-
-export default function ArticulosItemsTable({
-  articulos, selectedItem, onSelect, movimientoEstado,
-}) {
+// legacy (catálogo Movimiento De Inventario -> Alistar pedido), reducida a
+// 2 columnas (encargo explícito "reorganicemos el contenido, ganemos
+// espacio"): la columna "#" se eliminó y Descripción/Id.Artículo se
+// fusionaron en una sola columna (descripción arriba en semibold, código
+// abajo en regular) en vez de 2 columnas angostas separadas. La selección
+// de fila la comunica solo `.mig-grid tbody tr.selected` (shared.css --
+// fondo azul suave + barra izquierda), sin un indicador propio de radio
+// (encargo explícito, se sacó). Cant. Entregada/Estado/Costo Neto ya se
+// habían sacado antes (layout de 2 columnas, ver comentario viejo en git
+// log) -- siempre 0/$0/"Pendiente" en un movimiento "Sin Confirmar", sin
+// info real que aportar en este paso.
+export default function ArticulosItemsTable({ articulos, selectedItem, onSelect }) {
   function handleKeyDown(e, item) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -48,13 +26,8 @@ export default function ArticulosItemsTable({
       <table className="mig-grid mig-items-table">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Id. Artículo</th>
-            <th>Descripción</th>
+            <th>Artículo</th>
             <th className="mig-num">Cnt. Esperada</th>
-            <th className="mig-num">Cant. Entregada</th>
-            <th>Estado</th>
-            <th className="mig-num">Costo Neto</th>
           </tr>
         </thead>
         <tbody>
@@ -67,17 +40,13 @@ export default function ArticulosItemsTable({
               tabIndex={0}
               aria-selected={a.item === selectedItem}
             >
-              <td><span className="mig-articulo-dot" aria-hidden="true" />{a.item}</td>
-              <td className="mig-strong">{a.codigo}</td>
-              <td className="mig-ellipsis mig-items-descripcion" title={a.descripcion}>{a.descripcion}</td>
-              <td className="mig-num">{a.cantidadSolicitada.toFixed(2)}</td>
-              <td className="mig-num">{a.cantidadEntregada.toFixed(2)}</td>
-              <td>
-                <Badge tone={ESTADO_ENTREGA_BADGE[estadoEntregaDe(a, movimientoEstado)].tone}>
-                  {ESTADO_ENTREGA_BADGE[estadoEntregaDe(a, movimientoEstado)].label}
-                </Badge>
+              <td className="mig-items-info">
+                <div className="mig-items-info-text">
+                  <span className="mig-items-descripcion mig-strong" title={a.descripcion}>{a.descripcion}</span>
+                  <span className="mig-items-codigo">{a.codigo}</span>
+                </div>
               </td>
-              <td className="mig-num">${formatMoneda(a.costoTotal.neto)}</td>
+              <td className="mig-num">{a.cantidadSolicitada}</td>
             </tr>
           ))}
         </tbody>

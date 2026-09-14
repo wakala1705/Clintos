@@ -84,15 +84,25 @@ function hashSeed(str) {
 
 function generarLotes(codigo, descripcion, cantidadEntregada, cantidadSolicitada) {
   const randLote = seededRandom(hashSeed(codigo));
-  const marca = pick(MARCAS_LOTE, randLote);
   const cantidadLotes = 2 + Math.floor(randLote() * 3);
   // Un solo lote concentra la cantidad ya entregada (fiel a la referencia:
   // de 4 lotes visibles, solo 1 tenía Cantidad > 0) -- el resto queda en
   // 0.00, disponibles pero sin asignar todavía.
   const idxConCantidad = Math.floor(randLote() * cantidadLotes);
   return Array.from({ length: cantidadLotes }, (_, i) => {
+    // Marca por lote, no por artículo (bug real: `pick` vivía afuera del
+    // `Array.from`, así que TODOS los lotes de un mismo código quedaban con
+    // el mismo laboratorio -- encargo explícito "que no todos sean los
+    // mismos", como si cada lote viniera de una compra distinta).
+    const marca = pick(MARCAS_LOTE, randLote);
     const stock = 10 + Math.floor(randLote() * 290);
-    const diasVence = 90 + Math.floor(randLote() * 700);
+    // Rango con cola negativa (antes 90 a 789, siempre futuro -- encargo
+    // explícito "agrega un estado vencido, para ver el ejemplo") -- ahora
+    // -45 a 804, así que ~5% de los lotes caen con `vence` ya pasado
+    // respecto al ancla de abajo. `toneVencimiento` (LotesDisponiblesTable.jsx/
+    // AlistarPedidoModal.jsx) ya cubre diasVence negativo con el mismo tono
+    // "danger" que "próximo a vencer".
+    const diasVence = -45 + Math.floor(randLote() * 850);
     const vence = sumarDias('2026-07-25', diasVence);
     const letraPrefijo = String.fromCharCode(70 + Math.floor(randLote() * 6));
     const letraSufijo = String.fromCharCode(65 + Math.floor(randLote() * 26));

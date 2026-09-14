@@ -3,26 +3,37 @@
 import { useState } from 'react';
 import './LotesDisponiblesTable.css';
 import { LuRefreshCw } from 'react-icons/lu';
+import Badge from '@/Components/Badge/Badge';
 import LoteRowMenu from './LoteRowMenu/LoteRowMenu';
 import EditarLoteModal from './EditarLoteModal/EditarLoteModal';
 
-// Semáforo rojo/ámbar/verde para "Vence" -- mismos 3 tonos que el resto del
-// proyecto usa para vigencias, sin umbral fijo todavía (60/180 días es un
-// primer corte visual; a ajustar cuando el negocio defina la regla real de
-// próximo-a-vencer para insumos de farmacia).
-function colorVencimiento(diasVence) {
-  if (diasVence <= 60) return 'var(--red)';
-  if (diasVence <= 180) return 'var(--amber)';
-  return 'var(--green)';
+// Tono de Badge para "Vence" (encargo explícito "pongamos la fecha en un
+// badge... que cambie de color", reemplaza el cuadrito de color + texto
+// plano de antes) -- mismo umbral (60/180 días) que toneVencimiento() de
+// AlistarPedidoModal.jsx (el que colorea "Días para vencer" en Resumen de
+// lote); si el umbral cambia acá, cambia allá también. "Vencido" (encargo
+// explícito "agrega un estado vencido, para ver el ejemplo") es su propia
+// rama por legibilidad, aunque hoy comparta el mismo tono "danger" que
+// "próximo a vencer" -- Badge no tiene un 5to tono más urgente que rojo.
+function toneVencimiento(diasVence) {
+  if (diasVence < 0) return 'danger'; // vencido
+  if (diasVence <= 60) return 'danger'; // próximo a vencer
+  if (diasVence <= 180) return 'warn';
+  return 'success';
 }
 
 // Réplica de la grilla inferior "Artículos disponibles para el código" de la
 // referencia legacy -- lotes/existencias del artículo seleccionado en
 // ArticulosItemsTable (ver AlistarPedidoModal.jsx, que pasa `lotes` desde
-// mockSolicitudesData.js). "Item" es la posición del lote dentro de esta
-// lista (no un id global). Id Sede/Id.Bdg/Id. Artículo/Genérico/Días Vence/
-// Trans./No.Documento se sacaron de esta tabla (encargo explícito) -- viven
-// en "Resumen de lote" (mig-lotes-summary, AlistarPedidoModal.jsx).
+// mockSolicitudesData.js). La columna "Item" se eliminó (encargo explícito)
+// -- la posición del lote dentro de esta lista (no un id global) sigue
+// existiendo como `i`/`i + 1` en el código (EditarLoteModal/LoteRowMenu/
+// aria-label de Cantidad la siguen usando), solo dejó de tener columna
+// visible propia. Orden de columnas también por encargo explícito:
+// Descripción primera, Ubicación antepenúltima (justo antes de Lote Serie/
+// Acciones). Id Sede/Id.Bdg/Id. Artículo/Genérico/Días Vence/Trans./
+// No.Documento se sacaron de esta tabla (encargo explícito) -- viven en
+// "Resumen de lote" (mig-lotes-summary, AlistarPedidoModal.jsx).
 // "Esperada" también se sacó (encargo explícito) -- es el mismo valor para
 // las 4 filas (la cantidad solicitada del ítem, no varía por lote), así que
 // se movió a mig-lotes-title (ver AlistarPedidoModal.jsx), junto al código/
@@ -52,9 +63,12 @@ function colorVencimiento(diasVence) {
 // visibles acá. `onCantidadChange` (input en línea o "Guardar" de
 // EditarLoteModal) y `onSugerirTodos` (redistribuye por FEFO todo el ítem
 // seleccionado, ver AlistarPedidoModal.jsx) solo delegan hacia arriba. La
-// celda Cantidad guarda el string crudo del input (no `.toFixed`, mismo
-// criterio que ArticulosModal.jsx/SolicitudConsumo) para no pisarle al
-// usuario el punto decimal mientras todavía está escribiendo.
+// celda Cantidad guarda el string crudo del input, ya filtrado a solo
+// dígitos (encargo explícito "solo números enteros" -- las cantidades de
+// una solicitud de farmacia no se reparten en fracciones de unidad). type="text"
+// + inputMode="numeric" en vez de type="number" (evita los estados
+// intermedios válidos de un <input type=number> como "3." o "3e" que sí
+// dejarían pasar un valor no entero al pegar/escribir rápido).
 export default function LotesDisponiblesTable({
   lotes, selectedIndex, onSelect, onCantidadChange, onSugerirTodos,
 }) {
@@ -66,18 +80,21 @@ export default function LotesDisponiblesTable({
     onSelect(index);
   }
 
+  function handleCantidadChange(loteSerie, rawValue) {
+    onCantidadChange(loteSerie, rawValue.replace(/\D/g, ''));
+  }
+
   return (
     <div className="mig-lotes-table-scroll">
       <div className="mig-lotes-table-inner">
         <table className="mig-grid mig-lotes-grid">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Ubicación</th>
+              <th>Descripción</th>
               <th className="mig-num">Stock</th>
               <th className="mig-num">Cantidad</th>
-              <th>Descripción</th>
               <th>Vence</th>
+              <th>Ubicación</th>
               <th>Lote Serie</th>
               <th className="mig-lotes-acciones-th">Acciones</th>
             </tr>
@@ -93,25 +110,23 @@ export default function LotesDisponiblesTable({
                 tabIndex={0}
                 aria-selected={i === selectedIndex}
               >
-                <td>{i + 1}</td>
-                <td className="mig-ellipsis" title={l.ubicacion}>{l.ubicacion}</td>
-                <td className="mig-num">{l.stock.toFixed(2)}</td>
+                <td className="mig-ellipsis mig-lotes-descripcion" title={l.descripcion}>{l.descripcion}</td>
+                <td className="mig-num">{l.stock}</td>
                 <td className="mig-num" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                   <input
-                    type="number"
-                    className="mig-lotes-cantidad-input"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className={`mig-lotes-cantidad-input${Number(l.cantidad) > 0 ? ' asignado' : ''}`}
                     value={l.cantidad}
-                    min={0}
-                    step="0.01"
                     aria-label={`Cantidad del lote ${i + 1}`}
-                    onChange={(e) => onCantidadChange(l.loteSerie, e.target.value)}
+                    onChange={(e) => handleCantidadChange(l.loteSerie, e.target.value)}
                   />
                 </td>
-                <td className="mig-ellipsis mig-lotes-descripcion" title={l.descripcion}>{l.descripcion}</td>
                 <td>
-                  <span className="mig-vence-dot" style={{ background: colorVencimiento(l.diasVence) }} aria-hidden="true" />
-                  {l.vence.replaceAll('-', '/')}
+                  <Badge tone={toneVencimiento(l.diasVence)}>{l.vence.replaceAll('-', '/')}</Badge>
                 </td>
+                <td className="mig-ellipsis" title={l.ubicacion}>{l.ubicacion}</td>
                 <td>{l.loteSerie}</td>
                 <td className="mig-lotes-acciones" onClick={(e) => e.stopPropagation()}>
                   <button

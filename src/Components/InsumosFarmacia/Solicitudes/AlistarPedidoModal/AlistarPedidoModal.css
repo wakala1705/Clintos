@@ -3,22 +3,35 @@
    @/Components/ModalHeader/ModalHeader, no se redefine acá. */
 /* Extragrande (mismo criterio que .mig-detalle-modal/.fvcd-modal) + alto
    fijo para que la tabla de ítems y la de lotes se repartan el alto del
-   modal en vez de depender del contenido. 88vh/1500px (encargo "agrandemos
-   un poco más" tras agregar los 6 ítems de la referencia) -- el extra de
-   alto se lo lleva mig-items-table-scroll (ver ArticulosItemsTable.css),
-   así los 6 ítems entran sin su propio scroll interno en el caso común.
-   .modal-body sigue con overflow-y:auto (shared.css) como red de seguridad
-   para pantallas más bajas o movimientos con más ítems/lotes/el resto del
-   contenido nuevo (identity row + ficha), no la vía principal. */
-.mig-alistar-modal{width:95vw;max-width:1500px;height:88vh;}
-.mig-alistar-modal .modal-body{flex:1;padding:16px 20px;}
-/* Filas más compactas que el resto del proyecto (encargo explícito) --
-   override puntual sobre .mig-grid tbody/thead de shared.css, sin tocar la
-   regla compartida con MovimientosGrid/MovimientoItemsTable (esas tablas no
-   pidieron este ajuste). */
+   modal en vez de depender del contenido. 90vh (subido desde 88vh) --
+   90vh es el techo real: `.modal{max-height:90vh}` en shared.css es
+   compartido por TODOS los modales del proyecto, así que pedir más que eso
+   acá (probado con 94vh/97vh) queda recortado igual, sin ganar nada; no se
+   toca ese máximo compartido por esta sola feature. La iteración visual
+   agregó la tarjeta "Artículo seleccionado" + encabezados de sección + chip
+   de fecha, contenido nuevo que le restaba alto a la tabla de lotes (bug
+   real medido: mig-lotes-row llegó a quedar en ~85px con 4 lotes que
+   necesitan ~193px) -- subir a 90vh + los ajustes de padding/gap de abajo
+   lo llevan a ~160px: la mayoría de los casos (2-3 lotes) entran sin scroll
+   propio, 4 lotes puede pedir un scroll corto dentro de
+   mig-lotes-table-inner (ver LotesDisponiblesTable.css), que ya estaba
+   pensado para poder scrollear (no es una regresión del criterio original,
+   que solo garantizaba "sin scroll" para la tabla de ARTÍCULOS, no para
+   ésta). .modal-body sigue con overflow-y:auto (shared.css) como red de
+   seguridad adicional. */
+.mig-alistar-modal{width:95vw;max-width:1500px;height:90vh;}
+.mig-alistar-modal .modal-body{flex:1;padding:14px 20px;}
+/* 6px (subido desde el 5px original, "más cómodo para leer" -- encargo
+   explícito de la iteración visual) -- probado explícitamente contra el
+   cupo fijo de 280px de mig-items-table-scroll (ArticulosItemsTable.css):
+   6px deja los 6 ítems en ~255px, con margen; 8px ya los empuja a ~283px y
+   rompe ese cupo (bug real encontrado al medir esto). Override puntual
+   sobre .mig-grid tbody/thead de shared.css, sin tocar la regla compartida
+   con MovimientosGrid/MovimientoItemsTable (esas tablas no pidieron este
+   ajuste). */
 .mig-alistar-modal .mig-grid thead th{padding:6px 12px;}
-.mig-alistar-modal .mig-grid tbody td{padding:5px 12px;}
-.mig-alistar-body{gap:16px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+.mig-alistar-modal .mig-grid tbody td{padding:6px 12px;}
+.mig-alistar-body{gap:14px;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
 .mig-alistar-body::-webkit-scrollbar{width:6px;height:6px;}
 .mig-alistar-body::-webkit-scrollbar-track{background:transparent;}
 .mig-alistar-body::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
@@ -30,12 +43,9 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 /* Fila de identidad (encargo explícito: "repliquemos el mismo diseño del
    detalle de facturas") -- mismo patrón que .fvcd-identity-row de
    FacturaDetalleModalClasico.css: ícono en círculo + título/badge/subtítulo.
-   El segundo bloque (paciente/admisión) y el divisor+Solicitante que vivían
-   a la derecha se eliminaron (encargo explícito) -- el subtítulo ahora
-   muestra el solicitante directamente, quedaba duplicado con el bloque de
-   la derecha. Reimplementado acá (no importado de Facturacion) porque los
-   tokens de color son por feature, ver AGENTS.md "Component organization". */
-.mig-alistar-identity{display:flex;align-items:center;gap:12px;}
+   Reimplementado acá (no importado de Facturacion) porque los tokens de
+   color son por feature, ver AGENTS.md "Component organization". */
+.mig-alistar-identity{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .mig-alistar-icon{
   flex-shrink:0;width:34px;height:34px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -46,98 +56,168 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 .mig-alistar-identity-name{display:flex;align-items:center;gap:8px;font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
 .mig-alistar-badge{align-self:flex-start;}
 .mig-alistar-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+/* Chip de "Fecha solicitud" (encargo explícito: iteración visual) -- único
+   dato complementario que se agregó a la identity card, porque es el único
+   que ya existe tal cual en `movimiento` (fecha+hora); Bodega/Tipo se
+   dejaron afuera a propósito (no están modelados en este objeto, ver
+   AlistarPedidoModal.jsx). */
+.mig-alistar-identity-meta{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-sm);color:var(--ink-500);
+  padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.mig-alistar-identity-meta .icon{width:15px;height:15px;color:var(--ink-400);}
+.mig-alistar-identity-meta strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 
-/* Tabla de ítems, ver AGENTS.md "Barra de filtros de listado". El
-   "mig-tabs-bar" que vivía encima de este bloque se eliminó (encargo
-   explícito, ver AlistarPedidoModal.jsx). El filtro "Estado De Entrega" +
-   botón "Sugerir Todos" (mig-alistar-filters/mig-inline-field) se eliminaron
-   acá (encargo explícito) -- filtroEstadoEntrega sigue vivo en
-   AlistarPedidoModal.jsx (estado + filtrado), mismo criterio que
-   filtroCodigo/filtroDescripcion, sin control visible que lo cambie por
-   ahora. El wrapper .mig-articulos-panel (caja con borde propio alrededor de
-   mig-items-table-scroll) se sacó (encargo explícito): duplicaba el borde de
-   .mig-items-table-scroll (ver ArticulosItemsTable.css) generando una doble
-   caja anidada -- ahora ArticulosItemsTable pone su borde directo sobre
-   .mig-alistar-body, sin contenedor intermedio. */
+/* Layout de 2 columnas (encargo explícito: "dividamos la pantalla en 2
+   columnas asi como en la imagen") -- reemplaza el apilado vertical de
+   sección 1 encima de sección 2. align-items:stretch para que ambas
+   columnas midan lo mismo (la altura la da mig-alistar-body, flex:1 dentro
+   del modal de 90vh); cada columna maneja su propio overflow-y:auto como
+   red de seguridad independiente -- ya no hay una única sección "flex:1"
+   final peleando por el resto del alto (ver bitácora del bug de la
+   iteración anterior, mig-lotes-row llegando a ~85px). */
+.mig-alistar-columns{display:flex;gap:20px;flex:1;min-height:0;align-items:stretch;}
 
-/* "Sugerir Todos" (encargo explícito) -- recuperado como el equivalente
-   "todos los ítems de una" del "Sugerir" por fila de LotesDisponiblesTable,
-   ahora que esa lógica FEFO es real (ver handleSugerirTodos en
-   AlistarPedidoModal.jsx). mig-articulos-block agrupa la toolbar+la tabla en
-   un solo bloque visual (gap:8px, más chico que el gap:16px entre bloques de
-   mig-alistar-body) para que se lean como una unidad, no dos elementos
-   sueltos. */
-.mig-articulos-block{display:flex;flex-direction:column;gap:8px;}
-.mig-articulos-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.mig-articulos-toolbar-hint{font-size:var(--fs-sm);color:var(--amber-fg);}
-.mig-articulos-toolbar-hint.completo{color:var(--green);}
+/* Encabezado de sección numerado ("1. Artículos solicitados"/"2. Asignación
+   de inventario", encargo explícito) -- mismo patrón en las 2 secciones:
+   título+descripción, sin controles al lado (ahora que cada sección es una
+   columna angosta, buscador/Sugerir Todos bajan a su propia fila, ver
+   mig-articulos-toolbar). */
+.mig-section-header{display:flex;flex-wrap:wrap;}
+.mig-section-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;}
+.mig-section-desc{font-size:var(--fs-sm);color:var(--ink-500);margin:2px 0 0;}
 
-/* "Artículos disponibles para el código" -- título + fila de tabla de lotes
-   + resumen + acciones. Encapsulado en su propia caja con borde (mismo
-   criterio que .mig-articulos-panel de arriba). flex:1;min-height:0 (encargo
-   explícito "ajustemos la tabla mig-lotes-table-scroll al fondo del
-   contenido") -- con más espacio libre en el modal tras eliminar mig-resumen,
-   esta sección ahora crece para ocupar el resto del alto disponible en vez
-   de quedar con su alto mínimo y dejar espacio en blanco debajo. .modal-body
-   sigue con overflow-y:auto (shared.css) como red de seguridad si el
-   contenido total supera el alto del modal. */
+/* Columna izquierda: header de sección+toolbar+hint+tabla, todo en un solo
+   bloque visual que ocupa el ~42% de mig-alistar-columns -- min-width:0 es
+   necesario en un flex item para que .mig-ellipsis/table-layout puedan
+   angostarse en vez de forzar overflow horizontal del padre.
+   overflow-y:auto es la red de seguridad de ESTA columna (antes lo era
+   .mig-alistar-body para todo el modal) por si el contenido crece más que
+   el alto disponible. */
+.mig-articulos-block{
+  display:flex;flex-direction:column;gap:8px;
+  flex:1 1 30%;min-width:0;overflow-y:auto;
+}
+.mig-articulos-toolbar{display:flex;align-items:center;gap:10px;}
+/* Buscador único código/descripción (encargo explícito) -- `.search-field`
+   ya está definido en ../shared/shared.css (mismo recipiente que
+   MovimientosToolbar). flex:1 (a diferencia del ancho fijo que tenía
+   cuando compartía fila con el hint de la derecha) porque acá es el único
+   elemento junto al botón, así ocupa todo el ancho de columna disponible
+   -- mismo layout que la imagen de referencia. */
+.mig-articulos-search{flex:1;}
+
+/* Tarjeta "Artículo seleccionado" (encargo explícito: reemplaza el bloque
+   plano "Artículos disponibles para el código") -- fondo primary-50 (mismo
+   tono que .mig-alistar-icon) para que se lea como la superficie más
+   importante del modal, ver AGENTS.md "Tipografía" para la escala de
+   fs/fw usada abajo. Una sola fila (encargo explícito "agrupemos en una
+   fila mig-asc-top y mig-asc-metrics") -- antes 2 filas apiladas (info
+   arriba, métricas abajo); mig-asc-info y mig-asc-metrics ahora son los 2
+   hijos de esa única fila (mig-asc-top), repartidos con space-between. */
+.mig-articulo-seleccionado-card{
+  padding:10px 16px;border:1px solid var(--primary-100);border-radius:var(--radius-lg);background:var(--primary-50);
+}
+.mig-asc-top{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.mig-asc-info{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto;}
+.mig-asc-text{display:flex;flex-direction:column;gap:1px;min-width:0;}
+/* Kicker reemplazado por el índice (encargo explícito "el índice
+   reemplázalo por el kicker") -- antes decía el texto fijo "Artículo
+   seleccionado" y "Artículo X de N" vivía aparte como pill (.mig-asc-indice,
+   eliminada); ahora el kicker directamente muestra "Artículo X de N", sin
+   duplicar el concepto en 2 lugares de la card. `indiceSeleccionado` nunca es
+   -1 acá: esta card solo se monta cuando `effectiveSelected` existe, y
+   `effectiveSelected` siempre sale de `articulosFiltrados` (ver
+   AlistarPedidoModal.jsx), así que el `findIndex` siempre lo encuentra. */
+.mig-asc-kicker{font-size:var(--fs-xs);font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.04em;color:var(--primary-dark);}
+/* Jerarquía invertida (encargo explícito) -- mismo criterio que
+   .mig-items-descripcion/.mig-items-codigo en ArticulosItemsTable.css:
+   Descripción pasa a ser la línea protagonista (semibold, mayúscula, más
+   grande) y el código baja a línea secundaria (regular, chico, gris) en vez
+   de al revés. */
+.mig-asc-descripcion{
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);text-transform:uppercase;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+}
+.mig-asc-codigo{font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--ink-500);}
+
+/* 3 métricas (Requerida/Asignado/Pendiente, encargo explícito) -- misma
+   jerarquía en las 3: label chico gris arriba, valor grande abajo. El color
+   del valor es lo único que cambia por métrica (azul/verde/ámbar, mismo
+   criterio semántico que el resto de semáforos del proyecto). Pendiente
+   pasa a verde cuando ya no queda nada por repartir (mismo criterio que
+   `.completo` tenía en el chip "Asignado" que este bloque reemplaza). gap
+   fijo (no space-between) -- ahora es un grupo compacto a la derecha de
+   mig-asc-info, no una fila propia de ancho completo. */
+.mig-asc-metrics{display:flex;align-items:center;flex-shrink:0;gap:24px;}
+.mig-asc-metric{display:flex;flex-direction:column;gap:2px;}
+.mig-asc-metric-label{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+.mig-asc-metric-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);}
+.mig-asc-metric-value.requerida{color:var(--primary);}
+.mig-asc-metric-value.asignado{color:var(--green);}
+.mig-asc-metric-value.pendiente{color:var(--amber-fg);}
+.mig-asc-metric-value.pendiente.completo{color:var(--green);}
+
+/* Columna derecha: header de sección + tarjeta de artículo + tabla de
+   lotes + resumen de lote, todo apilado en un solo bloque (encargo
+   explícito, layout de 2 columnas) -- ya no hay una fila tabla+resumen
+   lado a lado (mig-lotes-row, eliminada): con la mitad del ancho del
+   modal, tabla+resumen angostos uno al lado del otro quedaban apretados;
+   apilados con el resumen como grilla de 2 columnas (ver
+   mig-summary-grid) se lee mejor y es lo que muestra la imagen de
+   referencia. ~58% de mig-alistar-columns (más que el 42% de la
+   izquierda: acá vive la tabla de lotes + resumen, con más columnas que
+   la lista de artículos). overflow-y:auto: red de seguridad propia de
+   esta columna, igual que mig-articulos-block. */
 .mig-lotes-section{
-  display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;
-  
+  display:flex;flex-direction:column;gap:10px;
+  flex:1 1 70%;min-width:0;overflow-y:auto;
 }
-.mig-lotes-title{
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
-  display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
-}
-.mig-lotes-codigo{color:var(--primary-dark);font-weight:var(--fw-semibold);}
-.mig-lotes-descripcion{color:var(--ink-700);font-weight:var(--fw-regular);}
-/* "Cnt. Esperada"/"Asignado" (encargo explícito "resaltémoslos más, con
-   borde y fondo") -- ambos como chips (mismo radio 20px que Badge.module.css,
-   no reutilizado directo porque acá conviven borde+texto libre, no el
-   contrato fijo de <Badge>). "Esperada" se sacó de LotesDisponiblesTable
-   (era el mismo valor repetido en las 4 filas, ver comentario en ese
-   componente) y se muestra acá una sola vez, empujada al extremo derecho del
-   título con margin-left:auto -- "Asignado" queda pegado al lado, ambos
-   flex-shrink:0 para no comprimirse si el código/descripción es largo. */
-.mig-lotes-esperada{
-  margin-left:auto;flex-shrink:0;
-  display:inline-flex;align-items:center;gap:4px;
-  padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);
-  font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);
-}
-.mig-lotes-esperada strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
-/* "Asignado" -- suma en vivo de lo repartido entre los lotes del ítem
-   seleccionado (ver asignadoDe en AlistarPedidoModal.jsx). Ámbar mientras no
-   calza con Cnt. Esperada, verde cuando sí -- mismo criterio semántico que
-   el resto de semáforos del proyecto (ver AGENTS.md), no un color nuevo. */
-.mig-lotes-asignado{
-  flex-shrink:0;
-  display:inline-flex;align-items:center;gap:4px;
-  padding:4px 10px;border-radius:20px;border:1px solid var(--amber);background:var(--amber-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--amber-fg);
-}
-.mig-lotes-asignado strong{font-weight:var(--fw-semibold);color:inherit;}
-.mig-lotes-asignado.completo{border-color:var(--green);background:var(--green-bg);color:var(--green);}
+.mig-lotes-subtitle{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;flex-shrink:0;}
 
-/* Tabla de lotes + "Resumen de lote" en 2 columnas (encargo explícito: el
-   "Resumen" de la referencia de Facturas -- fvcd-bottom-summary, responde a
-   la fila seleccionada -- se aplica puntualmente acá, no a la primera
-   tabla). Mismo criterio que .fvcd-detail-row/.fvcd-bottom-summary.
-   flex:1;min-height:0 + align-items:stretch (en vez de flex-start) para que
-   la tabla (mig-lotes-table-scroll) y el resumen lleguen ambos al fondo del
-   contenido de mig-lotes-section, sin dejar espacio en blanco debajo. */
-.mig-lotes-row{display:flex;align-items:stretch;gap:16px;flex:1;min-height:0;}
 .mig-lotes-summary{
-  width:260px;flex-shrink:0;overflow-y:auto;
-  border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;background:var(--surface);
+  flex-shrink:0;
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;background:var(--surface);
 }
-.mig-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:4px;}
-.mig-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:-2px 0 4px;}
-.mig-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:2px 0;}
-.mig-summary-row span:first-child{color:var(--ink-500);}
-.mig-summary-divider{height:1px;background:var(--border);margin:6px 0;}
-.mig-summary-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.mig-summary-total span:last-child{font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--primary);}
+/* Colapsable, cerrado por default (encargo explícito) -- <button> en vez del
+   <div> que era antes (mismo criterio que .pf-block-header en
+   PlantillaCrecimt2.css: reset de botón nativo + width:100% para que toda
+   la fila sea el área de click, no solo el texto). El margin-bottom que
+   separaba el título del contenido se movió a mig-summary-hint/-grid (ver
+   abajo) -- colapsado, el título ya no tiene nada debajo y no debe dejar un
+   padding inferior de sobra dentro del panel. */
+.mig-summary-title{
+  display:flex;align-items:center;gap:6px;width:100%;
+  background:none;border:none;padding:0;font-family:inherit;text-align:left;cursor:pointer;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.mig-summary-title .icon{width:16px;height:16px;color:var(--ink-500);}
+.mig-summary-title:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.mig-summary-chevron{margin-left:auto;flex-shrink:0;transition:transform .15s ease;}
+.mig-summary-chevron.collapsed{transform:rotate(-90deg);}
+.mig-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:8px 0 0;}
+/* Grilla de 3 columnas (encargo explícito) -- antes 2 columnas (la imagen de
+   referencia original mostraba pares label/valor en 2 columnas); el orden
+   de los 8 campos en el markup no se reordenó al pasar a 3, así que el fill
+   por fila de grid-auto-flow ya no los empareja igual que en esa imagen
+   vieja -- eso queda así hasta que se pida un reacomodo explícito. margin-top
+   (antes vivía como margin-bottom en mig-summary-title, ver ahí) -- solo se
+   aplica cuando el panel está expandido, ya que colapsado ni se monta. */
+.mig-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 24px;margin-top:8px;}
+/* align-items:flex-start (no el stretch por default de un flex column) --
+   sin esto el Badge de "Días para vencer" se estiraba a todo el ancho de
+   la celda de grilla en vez de quedar como un pill compacto (bug real
+   encontrado al verificar en el navegador). */
+.mig-summary-field{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;}
+.mig-summary-field-label{font-size:var(--fs-xs);color:var(--ink-500);}
+.mig-summary-field-value{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);}
+/* Lote/Serie destacado (encargo explícito "destaquemos lote/serie y el
+   Id.Artículo") -- Id.Artículo ya se destacaba vía .mig-summary-total,
+   este es el mismo criterio (semibold+ink-900) aplicado al otro campo que
+   pedía el mismo tratamiento. */
+.mig-summary-highlight .mig-summary-field-value{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.mig-summary-total .mig-summary-field-value{font-weight:var(--fw-bold);color:var(--primary);}
 
 /* Acciones de la tabla de lotes (Sugerir/Editar/Borrar/Movimiento): ya no
    viven en una franja aparte -- son una columna por fila (mig-lotes-acciones,
@@ -145,12 +225,26 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    "Confirmar" es la acción principal del modal, vive en .modal-footer --
    deshabilitado hasta que `itemsSinResolver` (ver AlistarPedidoModal.jsx)
    quede vacío; al habilitarse abre ConfirmarAlistamientoModal (resumen antes
-   de confirmar de verdad, encargo explícito) en vez de confirmar directo.
-   margin-right:auto lo empuja contra Cerrar/Confirmar sin tocar el
-   justify-content:flex-end genérico de .modal-footer (shared.css). */
-.mig-alistar-confirm-hint{margin-right:auto;font-size:var(--fs-sm);color:var(--amber-fg);}
+   de confirmar de verdad, encargo explícito) en vez de confirmar directo. */
+/* Bloque de "Asignación incompleta" (encargo explícito: iteración visual,
+   reemplaza el texto plano .mig-alistar-confirm-hint) -- mismo criterio de
+   tono ámbar suave que .mig-lotes-asignado usaba antes de que esta tarjeta
+   lo reemplazara. Vive en mig-articulos-block (encargo explícito "para no
+   alterar el alto del footer") -- antes estaba en .modal-footer, donde
+   aparecer/desaparecer según `itemsSinResolver` cambiaba el alto de esa
+   franja; acá adentro no importa, mig-articulos-block ya es una columna
+   con su propio overflow-y:auto. */
+.mig-alistar-incomplete-alert{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 14px;border:1px solid var(--amber);border-radius:var(--radius);background:var(--amber-bg);
+}
+.mig-alistar-incomplete-alert .icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:var(--amber-fg);}
+.mig-alistar-incomplete-text{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.mig-alistar-incomplete-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--amber-fg);}
+.mig-alistar-incomplete-msg{font-size:var(--fs-sm);color:var(--amber-fg);}
+.mig-alistar-incomplete-hint{font-size:var(--fs-xs);color:var(--ink-500);}
 
 @media (max-width:1024px){
-  .mig-lotes-row{flex-direction:column;}
-  .mig-lotes-summary{width:100%;}
+  .mig-alistar-columns{flex-direction:column;}
+  .mig-articulos-block,.mig-lotes-section{flex:1 1 auto;}
 }

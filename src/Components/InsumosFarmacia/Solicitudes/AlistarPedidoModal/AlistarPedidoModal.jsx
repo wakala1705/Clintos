@@ -2,13 +2,16 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
-import { LuPackage, LuRefreshCw, LuThumbsUp } from 'react-icons/lu';
+import {
+  LuPackage, LuRefreshCw, LuThumbsUp, LuSearch, LuCalendar, LuBoxes, LuTriangleAlert, LuChevronDown,
+} from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import ArticulosItemsTable from './ArticulosItemsTable/ArticulosItemsTable';
 import LotesDisponiblesTable from './LotesDisponiblesTable/LotesDisponiblesTable';
 import ConfirmarAlistamientoModal from './ConfirmarAlistamientoModal/ConfirmarAlistamientoModal';
+import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 
 // Mismo mapa tono/label que MovimientosGrid.jsx (estado del movimiento
 // completo, no del ítem) -- se muestra junto al título en mig-alistar-identity,
@@ -77,13 +80,17 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   // componente (los demás siguen optimizados).
   'use no memo';
 
-  const [filtroCodigo, setFiltroCodigo] = useState('');
-  const [filtroDescripcion, setFiltroDescripcion] = useState('');
+  const [busqueda, setBusqueda] = useState('');
   const [filtroEstadoEntrega, setFiltroEstadoEntrega] = useState('todos');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedLoteIndex, setSelectedLoteIndex] = useState(null);
   const [cantidadOverrides, setCantidadOverrides] = useState({});
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  // Colapsable, cerrado por default (encargo explícito) -- "Resumen de lote"
+  // es información de detalle secundaria a la tarea principal (repartir
+  // cantidades en la tabla de arriba), así que arranca oculta y el usuario
+  // la abre solo cuando la necesita.
+  const [resumenLoteAbierto, setResumenLoteAbierto] = useState(false);
 
   useEffect(() => {
     if (!movimiento) return undefined;
@@ -102,13 +109,13 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   const [resetKey, setResetKey] = useState(movimiento?.id ?? null);
   if ((movimiento?.id ?? null) !== resetKey) {
     setResetKey(movimiento?.id ?? null);
-    setFiltroCodigo('');
-    setFiltroDescripcion('');
+    setBusqueda('');
     setFiltroEstadoEntrega('todos');
     setSelectedItem(null);
     setSelectedLoteIndex(null);
     setCantidadOverrides({});
     setMostrarConfirmacion(false);
+    setResumenLoteAbierto(false);
   }
 
   // Pisa `cantidad` con lo editado (input en línea o EditarLoteModal) sobre
@@ -122,12 +129,18 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
     return mergeLotes(articulo.lotes ?? []).reduce((acc, l) => acc + (Number(l.cantidad) || 0), 0);
   }
 
-  const articulosFiltrados = useMemo(() => (movimiento?.articulos ?? []).filter((a) => {
-    if (filtroCodigo && !a.codigo.toLowerCase().includes(filtroCodigo.trim().toLowerCase())) return false;
-    if (filtroDescripcion && !a.descripcion.toLowerCase().includes(filtroDescripcion.trim().toLowerCase())) return false;
-    if (filtroEstadoEntrega !== 'todos' && estadoEntregaDe(a, movimiento?.estado) !== filtroEstadoEntrega) return false;
-    return true;
-  }), [movimiento, filtroCodigo, filtroDescripcion, filtroEstadoEntrega]);
+  // Búsqueda única por código O descripción (encargo explícito, mismo patrón
+  // de `term`/`.includes` OR que ArticulosModal.jsx de SolicitudConsumo, con
+  // el mismo placeholder) -- reemplaza los dos filtros AND (filtroCodigo/
+  // filtroDescripcion) que nunca tuvieron un input real que los alimentara.
+  const articulosFiltrados = useMemo(() => {
+    const term = busqueda.trim().toLowerCase();
+    return (movimiento?.articulos ?? []).filter((a) => {
+      if (term && !a.codigo.toLowerCase().includes(term) && !a.descripcion.toLowerCase().includes(term)) return false;
+      if (filtroEstadoEntrega !== 'todos' && estadoEntregaDe(a, movimiento?.estado) !== filtroEstadoEntrega) return false;
+      return true;
+    });
+  }, [movimiento, busqueda, filtroEstadoEntrega]);
 
   // Sin useState/useEffect: mismo patrón "siempre hay algo seleccionado" que
   // effectiveSelectedId en Solicitudes.jsx.
@@ -155,14 +168,18 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   const selectedLote = effectiveLoteIndex !== null ? lotes[effectiveLoteIndex] : null;
 
   const asignadoActual = effectiveSelected ? asignadoDe(effectiveSelected) : 0;
-  const asignadoCompleto = !!effectiveSelected && Math.abs(asignadoActual - effectiveSelected.cantidadSolicitada) < 0.001;
+  // Comparación exacta (no epsilon) -- las cantidades son siempre enteras
+  // (encargo explícito "solo números enteros", ver el input de Cantidad en
+  // LotesDisponiblesTable.jsx/EditarLoteModal.jsx), así que no hay error de
+  // redondeo de punto flotante que amortiguar.
+  const asignadoCompleto = !!effectiveSelected && asignadoActual === effectiveSelected.cantidadSolicitada;
 
   // Confirmar exige que TODOS los ítems del documento (no solo el
   // seleccionado/filtrado) queden con su cantidad esperada completamente
   // repartida entre lotes (encargo explícito) -- sobre `movimiento.articulos`
   // completo, para que un filtro activo no esconda un ítem sin resolver.
   const itemsSinResolver = (movimiento?.articulos ?? [])
-    .filter((a) => Math.abs(asignadoDe(a) - a.cantidadSolicitada) > 0.001);
+    .filter((a) => asignadoDe(a) !== a.cantidadSolicitada);
   const puedeConfirmar = movimiento?.estado === 'sin-confirmar' && itemsSinResolver.length === 0;
 
   // "Sugerir" (encargo explícito: redistribuir por FEFO) -- reparte toda la
@@ -217,22 +234,65 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   // Solo se arma cuando el modal de confirmación está abierto -- por ítem,
   // esperada/alistada (ya validadas iguales, puedeConfirmar lo exige) y sus
   // lotes con cantidad > 0 (los que quedaron en 0 no aportan al resumen).
+  // El `.map` a `cantidad: Number(l.cantidad) || 0` es obligatorio acá (bug
+  // real: "l.cantidad.toFixed is not a function" al tipear la cantidad de
+  // más de un lote a mano) -- `cantidadOverrides` guarda el string crudo
+  // (solo dígitos, ver `handleCantidadChange` en LotesDisponiblesTable.jsx)
+  // de `e.target.value`, y `mergeLotes` lo pisa tal cual sobre `l.cantidad`.
+  // El resto de este archivo ya lee `Number(l.cantidad) || 0` en vez de
+  // `l.cantidad` a secas (ver `asignadoDe` arriba); ConfirmarAlistamientoModal
+  // es el único consumidor de `resumenItems` y sí asume que `cantidad` ya es
+  // numérico, así que la normalización tiene que pasar acá, en el borde
+  // donde se arma el resumen.
   const resumenItems = mostrarConfirmacion ? movimiento.articulos.map((a) => ({
     item: a.item,
     codigo: a.codigo,
     descripcion: a.descripcion,
     esperada: a.cantidadSolicitada,
     alistada: asignadoDe(a),
-    lotes: mergeLotes(a.lotes ?? []).filter((l) => (Number(l.cantidad) || 0) > 0),
+    lotes: mergeLotes(a.lotes ?? [])
+      .map((l) => ({ ...l, cantidad: Number(l.cantidad) || 0 }))
+      .filter((l) => l.cantidad > 0),
   })) : [];
 
   const estadoBadge = ESTADO_BADGE[movimiento.estado];
+
+  // Posición del artículo seleccionado dentro de la lista FILTRADA (no del
+  // total del documento) -- si hay una búsqueda activa que la reduce a 2
+  // ítems, "Artículo 1 de 2" describe mejor lo que el usuario ve en la tabla
+  // de arriba que "1 de 6".
+  const indiceSeleccionado = effectiveSelected
+    ? articulosFiltrados.findIndex((a) => a.item === effectiveSelected.item)
+    : -1;
+  const pendienteActual = effectiveSelected ? effectiveSelected.cantidadSolicitada - asignadoActual : 0;
+
+  // Mismo umbral (60/180 días) que toneVencimiento() de LotesDisponiblesTable.jsx
+  // -- ese colorea el Badge de "Vence" de la tabla de lotes, este el de "Días
+  // para vencer" en el panel Resumen de lote; si el umbral cambia ahí, cambia
+  // acá también. "Vencido" (diasVence negativo, encargo explícito "agrega un
+  // estado vencido, para ver el ejemplo") es su propia rama por legibilidad,
+  // aunque comparta el mismo tono "danger" que "próximo a vencer".
+  function toneVencimiento(diasVence) {
+    if (diasVence < 0) return 'danger'; // vencido
+    if (diasVence <= 60) return 'danger'; // próximo a vencer
+    if (diasVence <= 180) return 'warn';
+    return 'success';
+  }
+
+  // "Vencido" en vez del número negativo crudo (encargo explícito "agrega un
+  // estado vencido") -- un lote con diasVence -12 mostrando literal "-12" en
+  // el campo "Días para vencer" se lee como un dato roto, no como un estado;
+  // el signo ya no aporta nada una vez que el tono del Badge (arriba) marca
+  // la urgencia.
+  function labelDiasVence(diasVence) {
+    return diasVence < 0 ? 'Vencido' : diasVence;
+  }
 
   return (
     <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal mig-alistar-modal" role="dialog" aria-modal="true" aria-labelledby="mig-alistar-title">
         <ModalHeader
-          title="Artículos Genéricos"
+          title="Asignación de artículos"
           titleId="mig-alistar-title"
           onClose={onClose}
         />
@@ -249,53 +309,102 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
               </div>
               <div className="mig-alistar-identity-sub">{movimiento.solicitante}</div>
             </div>
+            <div className="mig-alistar-identity-meta">
+              <LuCalendar className="icon" aria-hidden="true" />
+              Fecha solicitud: <strong>{formatFecha(movimiento.fecha)} · {movimiento.hora}</strong>
+            </div>
           </div>
 
-          <div className="mig-articulos-block">
-            <div className="mig-articulos-toolbar">
-              <span className={`mig-articulos-toolbar-hint${itemsSinResolver.length === 0 ? ' completo' : ''}`}>
-                {itemsSinResolver.length === 0
-                  ? 'Todos los ítems ya están asignados'
-                  : `${itemsSinResolver.length} ${itemsSinResolver.length === 1 ? 'ítem' : 'ítems'} por asignar`}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={LuRefreshCw}
-                disabled={movimiento.estado !== 'sin-confirmar'}
-                title="Redistribuye por FEFO la cantidad esperada de todos los ítems entre sus lotes"
-                onClick={handleSugerirTodos}
-              >
-                Sugerir Todos
-              </Button>
+          <div className="mig-alistar-columns">
+            <div className="mig-articulos-block">
+              <div className="mig-section-header">
+                <div>
+                  <h4 className="mig-section-title">1. Artículos solicitados ({movimiento.articulos.length})</h4>
+                  <p className="mig-section-desc">Seleccione un artículo para ver sus lotes disponibles.</p>
+                </div>
+              </div>
+              <div className="mig-articulos-toolbar">
+                <div className="search-field mig-articulos-search">
+                  <LuSearch className="icon" aria-hidden="true" />
+                  <input
+                    type="text"
+                    placeholder="Buscar por código o descripción..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={LuRefreshCw}
+                  disabled={movimiento.estado !== 'sin-confirmar'}
+                  title="Redistribuye por FEFO la cantidad esperada de todos los ítems entre sus lotes"
+                  onClick={handleSugerirTodos}
+                >
+                  Sugerir Todos
+                </Button>
+              </div>
+              <ArticulosItemsTable
+                articulos={articulosFiltrados}
+                selectedItem={effectiveSelected?.item ?? null}
+                onSelect={setSelectedItem}
+              />
+
+              {movimiento.estado === 'sin-confirmar' && itemsSinResolver.length > 0 && (
+                <div className="mig-alistar-incomplete-alert">
+                  <LuTriangleAlert className="icon" aria-hidden="true" />
+                  <div className="mig-alistar-incomplete-text">
+                    <span className="mig-alistar-incomplete-title">Asignación incompleta</span>
+                    <span className="mig-alistar-incomplete-msg">
+                      Faltan {itemsSinResolver.length} {itemsSinResolver.length === 1 ? 'ítem' : 'ítems'} por asignar entre lotes
+                    </span>
+                    <span className="mig-alistar-incomplete-hint">Complete la asignación de todos los artículos para poder confirmar la salida.</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <ArticulosItemsTable
-              articulos={articulosFiltrados}
-              selectedItem={effectiveSelected?.item ?? null}
-              onSelect={setSelectedItem}
-              movimientoEstado={movimiento.estado}
-            />
-          </div>
+            <div className="mig-lotes-section">
+              <div className="mig-section-header">
+                <div>
+                  <h4 className="mig-section-title">2. Asignación de inventario</h4>
+                  <p className="mig-section-desc">Asigne las cantidades desde los lotes disponibles del artículo seleccionado.</p>
+                </div>
+              </div>
 
-          <div className="mig-lotes-section">
-            <h4 className="mig-lotes-title">
-              Artículos disponibles para el código:
               {effectiveSelected && (
-                <>
-                  <span className="mig-lotes-codigo">{effectiveSelected.codigo}</span>
-                  <span className="mig-lotes-descripcion">{effectiveSelected.descripcion}</span>
-                  <span className="mig-lotes-esperada">
-                    Cnt. Esperada: <strong>{effectiveSelected.cantidadSolicitada.toFixed(2)}</strong>
-                  </span>
-                  <span className={`mig-lotes-asignado${asignadoCompleto ? ' completo' : ''}`}>
-                    Asignado: <strong>{asignadoActual.toFixed(2)}</strong>
-                  </span>
-                </>
+                <div className="mig-articulo-seleccionado-card">
+                  <div className="mig-asc-top">
+                    <div className="mig-asc-info">
+                      <div className="mig-alistar-icon">
+                        <LuPackage className="icon" aria-hidden="true" />
+                      </div>
+                      <div className="mig-asc-text">
+                        <span className="mig-asc-kicker">Artículo {indiceSeleccionado + 1} de {articulosFiltrados.length}</span>
+                        <span className="mig-asc-descripcion" title={effectiveSelected.descripcion}>{effectiveSelected.descripcion}</span>
+                        <span className="mig-asc-codigo">{effectiveSelected.codigo}</span>
+                      </div>
+                    </div>
+                    <div className="mig-asc-metrics">
+                      <div className="mig-asc-metric">
+                        <span className="mig-asc-metric-label">Cantidad requerida</span>
+                        <span className="mig-asc-metric-value requerida">{effectiveSelected.cantidadSolicitada}</span>
+                      </div>
+                      <div className="mig-asc-metric">
+                        <span className="mig-asc-metric-label">Asignado</span>
+                        <span className="mig-asc-metric-value asignado">{asignadoActual}</span>
+                      </div>
+                      <div className="mig-asc-metric">
+                        <span className="mig-asc-metric-label">Pendiente</span>
+                        <span className={`mig-asc-metric-value pendiente${asignadoCompleto ? ' completo' : ''}`}>{pendienteActual}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
-            </h4>
 
-            <div className="mig-lotes-row">
+              <h5 className="mig-lotes-subtitle">Lotes disponibles</h5>
+
               <LotesDisponiblesTable
                 lotes={lotes}
                 selectedIndex={effectiveLoteIndex}
@@ -305,28 +414,40 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
               />
 
               <div className="mig-lotes-summary">
-                <div className="mig-summary-title">Resumen de lote</div>
-                {!selectedLote && <div className="mig-summary-hint">Selecciona un lote de la tabla para ver su resumen.</div>}
-                <div className="mig-summary-row"><span>Id Sede</span><span>{selectedLote?.idSede ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Id.Bdg</span><span>{selectedLote?.bdg ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>No.Documento</span><span>{selectedLote?.noDocumento ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Genérico</span><span>{selectedLote?.generico ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Días vence</span><span>{selectedLote?.diasVence ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Lote serie</span><span>{selectedLote?.loteSerie ?? '—'}</span></div>
-                <div className="mig-summary-row"><span>Trans.</span><span>{selectedLote?.trans ?? '—'}</span></div>
-                <div className="mig-summary-divider" aria-hidden="true" />
-                <div className="mig-summary-row mig-summary-total"><span>Id. Artículo</span><span>{selectedLote?.generico ?? '—'}</span></div>
+                <button
+                  type="button"
+                  className="mig-summary-title"
+                  onClick={() => setResumenLoteAbierto((v) => !v)}
+                  aria-expanded={resumenLoteAbierto}
+                >
+                  <LuBoxes className="icon" aria-hidden="true" />
+                  Resumen de lote
+                  <LuChevronDown className={`icon mig-summary-chevron${resumenLoteAbierto ? '' : ' collapsed'}`} aria-hidden="true" />
+                </button>
+                {resumenLoteAbierto && (
+                  <>
+                    {!selectedLote && <div className="mig-summary-hint">Selecciona un lote de la tabla para ver su resumen.</div>}
+                    <div className="mig-summary-grid">
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">Id Sede</span><span className="mig-summary-field-value">{selectedLote?.idSede ?? '—'}</span></div>
+                      <div className="mig-summary-field">
+                        <span className="mig-summary-field-label">Días para vencer</span>
+                        {selectedLote ? <Badge tone={toneVencimiento(selectedLote.diasVence)}>{labelDiasVence(selectedLote.diasVence)}</Badge> : <span className="mig-summary-field-value">—</span>}
+                      </div>
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">Id.Bdg</span><span className="mig-summary-field-value">{selectedLote?.bdg ?? '—'}</span></div>
+                      <div className="mig-summary-field mig-summary-highlight"><span className="mig-summary-field-label">Lote / serie</span><span className="mig-summary-field-value">{selectedLote?.loteSerie ?? '—'}</span></div>
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">No.Documento</span><span className="mig-summary-field-value">{selectedLote?.noDocumento ?? '—'}</span></div>
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">Transacción</span><span className="mig-summary-field-value">{selectedLote?.trans ?? '—'}</span></div>
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">Genérico</span><span className="mig-summary-field-value">{selectedLote?.generico ?? '—'}</span></div>
+                      <div className="mig-summary-field mig-summary-total"><span className="mig-summary-field-label">Id. Artículo</span><span className="mig-summary-field-value">{selectedLote?.generico ?? '—'}</span></div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className="modal-footer">
-          {movimiento.estado === 'sin-confirmar' && itemsSinResolver.length > 0 && (
-            <span className="mig-alistar-confirm-hint">
-              Faltan {itemsSinResolver.length} {itemsSinResolver.length === 1 ? 'ítem' : 'ítems'} por asignar entre lotes
-            </span>
-          )}
           <Button variant="secondary" onClick={onClose}>Cerrar</Button>
           <Button
             variant="primary"

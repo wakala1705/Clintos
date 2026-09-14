@@ -3,18 +3,21 @@
 /* Scrollbar propia (encargo explícito) -- mismos valores que
    MovimientosGrid.css/MovimientoItemsTable.css/BodegaPickerModal.css/
    AreaFuncionalPickerModal.css (thin + thumb gris claro redondeado, hover
-   más oscuro, variante de tema oscuro). Tope de alto fijo (a diferencia de
-   MovimientosGrid, que llena todo `.mig-grid-scroll`) porque acá conviven
-   con la tabla de lotes debajo repartiéndose el alto del modal.*/
+   más oscuro, variante de tema oscuro). flex:1;min-height:0 (en vez de un
+   max-height fijo, encargo explícito "layout de 2 columnas") -- esta tabla
+   ahora es el único contenido de la columna izquierda del modal (ver
+   .mig-articulos-block en AlistarPedidoModal.css), así que puede ocupar
+   toda la altura disponible de esa columna en vez de un tope fijo pensado
+   para cuando compartía el modal con la sección de lotes debajo. */
 .mig-items-table-scroll{
-  max-height:280px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
-  flex-shrink:0;scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
+  flex:1;min-height:0;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
+  scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
 }
-/* Cuando las filas no llenan max-height (caso común, 6 ítems), la última fila
-   queda pegada al borde inferior del wrapper -- su border-bottom (de
-   .mig-grid tbody td en shared.css) y el border del wrapper de arriba caen
-   sobre la misma línea y se veían como un borde doble. Se saca el de la
-   última fila, el del wrapper ya cierra la caja. */
+/* Cuando las filas no llenan el alto disponible, la última fila queda
+   pegada al borde inferior del wrapper -- su border-bottom (de .mig-grid
+   tbody td en shared.css) y el border del wrapper de arriba caen sobre la
+   misma línea y se veían como un borde doble. Se saca el de la última fila,
+   el del wrapper ya cierra la caja. */
 .mig-items-table tbody tr:last-child td{border-bottom:none;}
 .mig-items-table-scroll::-webkit-scrollbar{width:6px;height:6px;}
 .mig-items-table-scroll::-webkit-scrollbar-track{background:transparent;}
@@ -24,12 +27,35 @@ html[data-theme="dark"] .mig-items-table-scroll{scrollbar-color:#333e54 transpar
 html[data-theme="dark"] .mig-items-table-scroll::-webkit-scrollbar-thumb{background:#333e54;}
 html[data-theme="dark"] .mig-items-table-scroll::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
-/* Encargo explícito: descripción en mayúscula solo en esta tabla (no la de
-   lotes) -- transform visual, no toca el dato original (el title del <td>
-   conserva el texto tal cual para el tooltip). */
-.mig-items-descripcion{text-transform:uppercase;}
+/* table-layout:fixed + ancho fijo en Cnt. Esperada (encargo explícito
+   "ganemos espacio") -- sin esto, una tabla con layout automático agranda
+   la columna "Artículo" para que la descripción entre completa en vez de
+   truncarse, aunque el <span> tenga overflow:hidden (el ancho de la celda
+   la termina definiendo el contenido, no el hijo). Con table-layout:fixed,
+   "Artículo" toma el resto del ancho de la tabla y sí queda acotada. */
+.mig-items-table{table-layout:fixed;}
+.mig-items-table th:nth-child(2),.mig-items-table td:nth-child(2){width:110px;}
 
-.mig-articulo-dot{
-  display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);
-  margin-right:8px;vertical-align:middle;
+/* Columna única "Artículo" (encargo explícito "reorganicemos el contenido,
+   ganemos espacio") -- fusiona lo que antes eran 2 columnas (Id.Artículo/
+   Descripción) en una sola: descripción arriba, código abajo. min-width:0
+   en ambos niveles (celda + bloque de texto) para que la descripción pueda
+   truncarse en vez de forzar overflow horizontal de toda la tabla. */
+.mig-items-info{min-width:0;}
+.mig-items-info-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+
+/* Encargo explícito: descripción en mayúscula solo en esta tabla (no la de
+   lotes) -- transform visual, no toca el dato original (el title del <span>
+   conserva el texto tal cual para el tooltip). Trunca a una línea (antes lo
+   resolvía .mig-ellipsis sobre el <td>; acá el <span> vive dentro de un
+   flex column, así que la regla se define directo). */
+.mig-items-descripcion{
+  text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
 }
+
+/* Jerarquía de peso invertida (encargo explícito) -- Descripción pasa a
+   semibold (clase compartida .mig-strong, shared.css) e Id.Artículo pasa a
+   regular, chico y gris (--fs-xs/--ink-500) -- ahora es la línea
+   secundaria bajo la descripción, no una columna propia con protagonismo
+   de tamaño. */
+.mig-items-codigo{font-size:var(--fs-xs);color:var(--ink-500);}

@@ -17,6 +17,8 @@ import Button from '@/Components/Button/Button';
 // ahí arriba). "Confirmar" ejecuta el `onConfirmar` real (ver
 // AlistarPedidoModal.jsx) -- este componente no sabe nada de mock/estado
 // global, solo pinta `resumenItems` y delega los dos botones hacia arriba.
+// Tabla única (no una card+mini-tabla por ítem): un ítem con >1 lote genera
+// una fila por lote, repitiendo código/descripción/estado en cada una.
 export default function ConfirmarAlistamientoModal({
   movimiento, resumenItems, onClose, onConfirmar,
 }) {
@@ -35,50 +37,57 @@ export default function ConfirmarAlistamientoModal({
         />
 
         <div className="modal-body mig-confirmar-body">
-          {resumenItems.map((it) => (
-            <div className="mig-confirmar-item" key={it.item}>
-              <div className="mig-confirmar-item-header">
-                <div className="mig-confirmar-item-info">
-                  <span className="mig-confirmar-item-codigo">{it.codigo}</span>
-                  <span className="mig-confirmar-item-descripcion" title={it.descripcion}>{it.descripcion}</span>
-                </div>
-                <div className="mig-confirmar-item-cantidades">
-                  <LuCheck className="icon" aria-hidden="true" />
-                  {it.alistada.toFixed(2)} / {it.esperada.toFixed(2)}
-                </div>
-              </div>
-
-              {it.lotes.length > 0 ? (
-                <table className="mig-confirmar-lotes-table">
-                  <thead>
-                    <tr>
-                      <th>Ubicación</th>
-                      <th>Lote Serie</th>
-                      <th>Vence</th>
-                      <th className="mig-num">Cantidad</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {it.lotes.map((l) => (
-                      <tr key={l.loteSerie}>
+          <div className="mig-confirmar-table-wrap">
+            <table className="mig-confirmar-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Descripción</th>
+                  <th>Ubicación</th>
+                  <th>Lote Serie</th>
+                  <th>Vence</th>
+                  <th className="mig-num">Cantidad</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resumenItems.map((it) => (
+                  it.lotes.length > 0 ? (
+                    it.lotes.map((l) => (
+                      <tr key={`${it.item}-${l.loteSerie}`}>
+                        <td className="mig-confirmar-codigo">{it.codigo}</td>
+                        <td className="mig-ellipsis" title={it.descripcion}>{it.descripcion}</td>
                         <td className="mig-ellipsis" title={l.ubicacion}>{l.ubicacion}</td>
                         <td>{l.loteSerie}</td>
                         <td>{l.vence.replaceAll('-', '/')}</td>
-                        <td className="mig-num">{l.cantidad.toFixed(2)}</td>
+                        <td className="mig-num">{l.cantidad}</td>
+                        <td className="mig-confirmar-estado">
+                          <LuCheck className="icon" aria-hidden="true" />
+                          {it.alistada} / {it.esperada}
+                        </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="mig-confirmar-sin-lotes">Sin lotes asignados.</div>
-              )}
-            </div>
-          ))}
+                    ))
+                  ) : (
+                    <tr key={it.item}>
+                      <td className="mig-confirmar-codigo">{it.codigo}</td>
+                      <td className="mig-ellipsis" title={it.descripcion}>{it.descripcion}</td>
+                      <td className="mig-confirmar-sin-lotes" colSpan={3}>Sin lotes asignados.</td>
+                      <td className="mig-num">—</td>
+                      <td className="mig-confirmar-estado">
+                        <LuCheck className="icon" aria-hidden="true" />
+                        {it.alistada} / {it.esperada}
+                      </td>
+                    </tr>
+                  )
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="modal-footer">
           <span className="mig-confirmar-total">
-            {resumenItems.length} {resumenItems.length === 1 ? 'ítem' : 'ítems'} · {totalUnidades.toFixed(2)} unidades alistadas
+            {resumenItems.length} {resumenItems.length === 1 ? 'ítem' : 'ítems'} · {totalUnidades} unidades alistadas
           </span>
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button variant="primary" icon={LuThumbsUp} onClick={onConfirmar}>Confirmar</Button>

@@ -78,27 +78,27 @@ export default function EditarLoteModal({ lote, itemLabel, onClose, onSave }) {
             <Field label="Id. Genérico" value={lote.generico} />
             <Field label="Lote" value={lote.lote} />
             <Field label="Vencimiento" value={lote.vence.replaceAll('-', '/')} />
-            <Field label="Stock Actual" value={lote.stock.toFixed(2)} tone="stock" />
+            <Field label="Stock Actual" value={lote.stock} tone="stock" />
           </div>
 
           <div className="mig-editar-lote-descripcion">{lote.descripcion}</div>
 
           <div className="mig-editar-lote-grid mig-editar-lote-cantidades">
-            <Field label="Cnt. Esperada" value={lote.esperada.toFixed(2)} tone="esperada" />
-            <Field label="Cnt. Pendiente" value={pendiente.toFixed(2)} tone="pendiente" />
+            <Field label="Cnt. Esperada" value={lote.esperada} tone="esperada" />
+            <Field label="Cnt. Pendiente" value={pendiente} tone="pendiente" />
             <div className="mig-editar-lote-field tone-cantidad">
               <label htmlFor="mig-editar-lote-cantidad" className="mig-editar-lote-label">Cantidad</label>
               <input
                 id="mig-editar-lote-cantidad"
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 className="mig-editar-lote-input"
                 value={cantidad}
-                min={0}
-                step="0.01"
-                onChange={(e) => setCantidad(e.target.value)}
+                onChange={(e) => setCantidad(e.target.value.replace(/\D/g, ''))}
               />
             </div>
-            <Field label="Cnt. Comprometida" value={lote.comprometida.toFixed(2)} tone="comprometida" />
+            <Field label="Cnt. Comprometida" value={lote.comprometida} tone="comprometida" />
           </div>
         </div>
 
