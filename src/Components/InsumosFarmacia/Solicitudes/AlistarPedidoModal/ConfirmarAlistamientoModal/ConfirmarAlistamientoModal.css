@@ -3,9 +3,11 @@
    @/Components/ModalHeader/ModalHeader, no se redefine acá. .mig-ellipsis:
    ../../shared/shared.css. */
 /* 840px -- más ancho que un modal de formulario simple (EditarLoteModal,
-   560px) para que las 7 columnas de la tabla única entren sin scroll
-   horizontal ni apretar Descripción, pero muy por debajo del extragrande de
-   AlistarPedidoModal (esto es un resumen, no un catálogo). */
+   560px); la tabla bajó de 7 a 5 columnas (Ubicación se sacó, Descripción+
+   Código se fusionaron, encargo explícito) pero se deja el mismo ancho para
+   que "Artículo" (la columna que más varía en longitud) tenga aire, en vez
+   de angostar el modal y volver a apretarla. Muy por debajo del extragrande
+   de AlistarPedidoModal (esto es un resumen, no un catálogo). */
 .mig-confirmar-modal{width:100%;max-width:840px;}
 
 /* Border general de la tabla + alto máximo con scroll propio -- mismo
@@ -21,26 +23,29 @@
    solaparse con ninguna otra. */
 .mig-confirmar-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);white-space:nowrap;}
 .mig-confirmar-table thead th{
-  position:sticky;top:0;background:var(--surface);
-  text-align:left;padding:8px 12px;color:var(--ink-500);
+  position:sticky;top:0;background:var(--gray-bg);
+  text-align:left;padding:10px 12px;color:var(--ink-500);
   font-size:var(--fs-xs);font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.03em;
   border-bottom:1px solid var(--border);
 }
 .mig-confirmar-table th.mig-num{text-align:right;}
-.mig-confirmar-table td{padding:6px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);vertical-align:middle;}
+.mig-confirmar-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);vertical-align:middle;}
+/* Cebrado suave (encargo explícito "estiliza un poco más esta tabla") --
+   mismo tono que el hover de .mig-grid en shared.css (--gray-bg), pero fijo
+   en vez de a :hover: esta tabla es de solo lectura (sin selección de fila
+   como .mig-grid), así que un hover interactivo sería engañoso. */
+.mig-confirmar-table tbody tr:nth-child(even){background:var(--bg);}
 .mig-confirmar-table tbody tr:last-child td{border-bottom:none;}
 .mig-confirmar-table td.mig-ellipsis{max-width:200px;white-space:nowrap;}
 
-.mig-confirmar-codigo{font-weight:var(--fw-semibold);white-space:nowrap;}
-
-/* Siempre verde -- solo se llega a este modal cuando `puedeConfirmar` ya dio
-   true (ver AlistarPedidoModal.jsx), así que todo lo que se lista acá está
-   completo por construcción, no es un semáforo con estado real. */
-.mig-confirmar-estado{
-  display:flex;align-items:center;gap:6px;white-space:nowrap;
-  font-weight:var(--fw-semibold);color:var(--green);
-}
-.mig-confirmar-estado .icon{width:16px;height:16px;}
+/* Columna "Artículo" fusionada (encargo explícito, mismo criterio que
+   .mig-items-info/.mig-items-descripcion/.mig-items-codigo en
+   ArticulosItemsTable.css): descripción arriba con más jerarquía (semibold),
+   código abajo en regular y más chico -- en vez de 2 columnas separadas con
+   el mismo peso visual. */
+.mig-confirmar-articulo{display:flex;flex-direction:column;gap:1px;white-space:nowrap;}
+.mig-confirmar-descripcion{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.mig-confirmar-codigo{font-size:var(--fs-xs);font-weight:var(--fw-regular);color:var(--ink-500);}
 
 .mig-confirmar-sin-lotes{color:var(--ink-500);}
 

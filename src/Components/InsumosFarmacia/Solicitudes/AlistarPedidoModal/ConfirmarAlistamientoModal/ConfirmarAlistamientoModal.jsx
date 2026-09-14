@@ -1,8 +1,9 @@
 'use client';
 
 import './ConfirmarAlistamientoModal.css';
-import { LuCheck, LuClipboardCheck, LuThumbsUp } from 'react-icons/lu';
+import { LuClipboardCheck, LuThumbsUp } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 
 // Paso de revisión antes del Confirmar real (encargo explícito) -- se monta
@@ -18,7 +19,11 @@ import Button from '@/Components/Button/Button';
 // AlistarPedidoModal.jsx) -- este componente no sabe nada de mock/estado
 // global, solo pinta `resumenItems` y delega los dos botones hacia arriba.
 // Tabla única (no una card+mini-tabla por ítem): un ítem con >1 lote genera
-// una fila por lote, repitiendo código/descripción/estado en cada una.
+// una fila por lote, repitiendo artículo/estado en cada una. Columna
+// "Artículo" fusiona descripción+código (encargo explícito, mismo criterio
+// que ArticulosItemsTable.css: descripción arriba con más jerarquía, código
+// abajo en regular) -- Ubicación se sacó de la tabla (encargo explícito, no
+// vive en ningún otro lado de este modal).
 export default function ConfirmarAlistamientoModal({
   movimiento, resumenItems, onClose, onConfirmar,
 }) {
@@ -41,9 +46,7 @@ export default function ConfirmarAlistamientoModal({
             <table className="mig-confirmar-table">
               <thead>
                 <tr>
-                  <th>Código</th>
-                  <th>Descripción</th>
-                  <th>Ubicación</th>
+                  <th>Artículo</th>
                   <th>Lote Serie</th>
                   <th>Vence</th>
                   <th className="mig-num">Cantidad</th>
@@ -55,28 +58,25 @@ export default function ConfirmarAlistamientoModal({
                   it.lotes.length > 0 ? (
                     it.lotes.map((l) => (
                       <tr key={`${it.item}-${l.loteSerie}`}>
-                        <td className="mig-confirmar-codigo">{it.codigo}</td>
-                        <td className="mig-ellipsis" title={it.descripcion}>{it.descripcion}</td>
-                        <td className="mig-ellipsis" title={l.ubicacion}>{l.ubicacion}</td>
+                        <td className="mig-confirmar-articulo">
+                          <span className="mig-confirmar-descripcion" title={it.descripcion}>{it.descripcion}</span>
+                          <span className="mig-confirmar-codigo">{it.codigo}</span>
+                        </td>
                         <td>{l.loteSerie}</td>
                         <td>{l.vence.replaceAll('-', '/')}</td>
                         <td className="mig-num">{l.cantidad}</td>
-                        <td className="mig-confirmar-estado">
-                          <LuCheck className="icon" aria-hidden="true" />
-                          {it.alistada} / {it.esperada}
-                        </td>
+                        <td><Badge tone="success">{it.alistada} / {it.esperada}</Badge></td>
                       </tr>
                     ))
                   ) : (
                     <tr key={it.item}>
-                      <td className="mig-confirmar-codigo">{it.codigo}</td>
-                      <td className="mig-ellipsis" title={it.descripcion}>{it.descripcion}</td>
-                      <td className="mig-confirmar-sin-lotes" colSpan={3}>Sin lotes asignados.</td>
-                      <td className="mig-num">—</td>
-                      <td className="mig-confirmar-estado">
-                        <LuCheck className="icon" aria-hidden="true" />
-                        {it.alistada} / {it.esperada}
+                      <td className="mig-confirmar-articulo">
+                        <span className="mig-confirmar-descripcion" title={it.descripcion}>{it.descripcion}</span>
+                        <span className="mig-confirmar-codigo">{it.codigo}</span>
                       </td>
+                      <td className="mig-confirmar-sin-lotes" colSpan={2}>Sin lotes asignados.</td>
+                      <td className="mig-num">—</td>
+                      <td><Badge tone="success">{it.alistada} / {it.esperada}</Badge></td>
                     </tr>
                   )
                 ))}

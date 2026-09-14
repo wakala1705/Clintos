@@ -14,6 +14,12 @@
   max-height:260px;flex-shrink:0;display:flex;flex-direction:column;
   border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
 }
+/* Doble borde al final de la tabla (encargo explícito) -- el border-bottom
+   de la última fila (.mig-grid tbody td, shared.css) caía justo sobre el
+   border del wrapper de arriba, mismo bug ya resuelto en
+   ArticulosItemsTable.css. El wrapper ya cierra la caja, así que la última
+   fila no necesita el suyo. */
+.mig-lotes-grid tbody tr:last-child td{border-bottom:none;}
 
 /* Scrollbar propia (mismo criterio que ArticulosItemsTable.css/
    MovimientosGrid.css/MovimientoItemsTable.css -- thin + thumb gris claro
@@ -31,19 +37,20 @@ html[data-theme="dark"] .mig-lotes-table-inner::-webkit-scrollbar-thumb{backgrou
 html[data-theme="dark"] .mig-lotes-table-inner::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
 /* Anchos de columna (encargo explícito "démosle más espacio a Descripción",
-   luego "eliminemos Item, Descripción primera, Ubicación antepenúltima") --
-   table-layout:fixed + un ancho fijo por columna, salvo Descripción
-   (nth-child(1)), que se deja sin ancho para que absorba el espacio
-   restante. .mig-lotes-descripcion pisa el max-width:220px de .mig-ellipsis
-   (shared.css, pensado para columnas angostas) -- acá el límite real ya lo
-   da el ancho de columna fijo, no ese tope. Columnas: Descripción/Stock/
-   Cantidad/Vence/Ubicación/Lote Serie/Acciones. */
+   luego "eliminemos Item, Descripción primera, Ubicación antepenúltima",
+   luego "intercambia Ubicación por Lote Serie") -- table-layout:fixed + un
+   ancho fijo por columna, salvo Descripción (nth-child(1)), que se deja sin
+   ancho para que absorba el espacio restante. .mig-lotes-descripcion pisa
+   el max-width:220px de .mig-ellipsis (shared.css, pensado para columnas
+   angostas) -- acá el límite real ya lo da el ancho de columna fijo, no ese
+   tope. Columnas: Descripción/Stock/Cantidad/Vence/Lote Serie/Ubicación/
+   Acciones. */
 .mig-lotes-grid{table-layout:fixed;}
 .mig-lotes-grid th:nth-child(2),.mig-lotes-grid td:nth-child(2){width:72px;}
 .mig-lotes-grid th:nth-child(3),.mig-lotes-grid td:nth-child(3){width:80px;}
 .mig-lotes-grid th:nth-child(4),.mig-lotes-grid td:nth-child(4){width:120px;}
-.mig-lotes-grid th:nth-child(5),.mig-lotes-grid td:nth-child(5){width:120px;}
-.mig-lotes-grid th:nth-child(6),.mig-lotes-grid td:nth-child(6){width:110px;}
+.mig-lotes-grid th:nth-child(5),.mig-lotes-grid td:nth-child(5){width:110px;}
+.mig-lotes-grid th:nth-child(6),.mig-lotes-grid td:nth-child(6){width:120px;}
 .mig-lotes-grid th:nth-child(7),.mig-lotes-grid td:nth-child(7){width:76px;}
 .mig-lotes-grid td.mig-lotes-descripcion{max-width:none;}
 
