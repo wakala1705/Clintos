@@ -6,7 +6,9 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
-import { LuFilePenLine, LuEye } from 'react-icons/lu';
+import {
+  LuFilePenLine, LuEye, LuCheck, LuTrash2, LuTriangleAlert,
+} from 'react-icons/lu';
 
 const CLASE_COMPROMISO_OPTIONS = [
   { value: 'evento', label: 'Evento' },
@@ -55,33 +57,85 @@ function setField(setForm, key) {
 // (mismo criterio que CambiarEstadoModal/GestionCamas.jsx) -- necesario para
 // que `useState(buildInitialForm(factura))` arranque de cero en cada
 // apertura sin un efecto de reseteo. Solo pinta el front (ver
-// mockFacturasData.js): "Guardar" no persiste, solo cierra el modal.
+// mockFacturasData.js): "Guardar" sigue sin persistir en un backend real,
+// pero ahora valida Fecha Vencimiento >= Fecha Factura y muestra un aviso
+// "Guardado (simulado)" antes de cerrar (mismo criterio que
+// FacturaAgregarModalClasico, ver validate/handleGuardar más abajo). Cerrar
+// con cambios sin guardar pide confirmación primero (ver attemptClose/
+// fvc-discard-modal, clases compartidas con el modal de Agregar en
+// shared.css).
 export default function FacturaEditarModalClasico({ factura, onClose }) {
   const [form, setForm] = useState(() => buildInitialForm(factura));
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [confirmingClose, setConfirmingClose] = useState(false);
+
+  // Mismo criterio que FacturaAgregarModalClasico: useState (no useRef) para
+  // poder leer el snapshot inicial durante el render sin violar
+  // react-hooks/refs.
+  const [initialForm] = useState(form);
+  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm);
+
+  function attemptClose() {
+    if (saving) return;
+    if (isDirty) setConfirmingClose(true);
+    else onClose();
+  }
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') attemptClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  });
+
+  function handleChangeFecha(key) {
+    return (value) => {
+      setField(setForm, key)(value);
+      setErrors((er) => (er.fechaVencimiento ? { ...er, fechaVencimiento: undefined } : er));
+    };
+  }
+
+  function validate() {
+    const errs = {};
+    if (form.fechaFactura && form.fechaVencimiento && form.fechaVencimiento < form.fechaFactura) {
+      errs.fechaVencimiento = 'No puede ser anterior a la Fecha Factura.';
+    }
+    return errs;
+  }
+
+  function handleGuardar() {
+    if (saving) return;
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setSaving(true);
+    setTimeout(onClose, 1100);
+  }
 
   const tipoTercero = TIPO_TERCERO_POR_CLASE[factura.clase] ?? '—';
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
       <div className="modal fem-modal" role="dialog" aria-modal="true" aria-labelledby="fem-title">
         <ModalHeader
           icon={LuFilePenLine}
           title="Cambiando un registro"
           titleId="fem-title"
           subtitle={`Factura ${factura.numero}`}
-          onClose={onClose}
+          onClose={attemptClose}
         />
 
         <div className="modal-body">
+          {saving && (
+            <div className="fvc-save-toast" role="status" aria-live="polite">
+              <LuCheck className="icon" aria-hidden="true" />
+              Cambios guardados (simulado) — no persiste todavía en el servidor.
+            </div>
+          )}
+
           <div className="fem-readonly-row">
             <span className="fem-readonly-item"><span className="fem-readonly-label">Consecutivo:</span> {factura.noAdmision}</span>
             <span className="fem-readonly-item"><span className="fem-readonly-label">Compañía:</span> {factura.sedeCodigo}</span>
@@ -136,15 +190,17 @@ export default function FacturaEditarModalClasico({ factura, onClose }) {
               />
             </div>
 
-            <div className="form-field">
+            <div className={`form-field${errors.fechaVencimiento ? ' has-error' : ''}`}>
               <label htmlFor="fem-fecha-vencimiento">Fecha Vencimiento<span className="fem-required-mark">*</span></label>
               <input
                 id="fem-fecha-vencimiento"
                 type="date"
                 value={form.fechaVencimiento}
-                onChange={(e) => setField(setForm, 'fechaVencimiento')(e.target.value)}
+                onChange={(e) => handleChangeFecha('fechaVencimiento')(e.target.value)}
                 required
+                aria-invalid={!!errors.fechaVencimiento}
               />
+              {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
             </div>
             <div className="form-field">
               <label htmlFor="fem-fecha-factura">Fecha Factura<span className="fem-required-mark">*</span></label>
@@ -152,7 +208,7 @@ export default function FacturaEditarModalClasico({ factura, onClose }) {
                 id="fem-fecha-factura"
                 type="date"
                 value={form.fechaFactura}
-                onChange={(e) => setField(setForm, 'fechaFactura')(e.target.value)}
+                onChange={(e) => handleChangeFecha('fechaFactura')(e.target.value)}
                 required
               />
             </div>
@@ -216,8 +272,8 @@ export default function FacturaEditarModalClasico({ factura, onClose }) {
         </div>
 
         <div className="modal-footer">
-          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={onClose}>Guardar</Button>
+          <Button variant="secondary" onClick={attemptClose} disabled={saving}>Cancelar</Button>
+          <Button variant="primary" onClick={handleGuardar} disabled={saving}>Guardar</Button>
         </div>
       </div>
 
@@ -226,6 +282,20 @@ export default function FacturaEditarModalClasico({ factura, onClose }) {
           onSelect={setField(setForm, 'idTercero')}
           onClose={() => setCatalogoAbierto(false)}
         />
+      )}
+
+      {confirmingClose && (
+        <div className="modal-overlay" role="presentation">
+          <div className="fvc-discard-modal" role="alertdialog" aria-modal="true" aria-labelledby="fem-discard-title" aria-describedby="fem-discard-desc">
+            <div className="fvc-discard-icon"><LuTriangleAlert className="icon" aria-hidden="true" /></div>
+            <h3 id="fem-discard-title">¿Descartar los cambios?</h3>
+            <p id="fem-discard-desc">Vas a perder la información que ingresaste en este formulario. Esta acción no se puede deshacer.</p>
+            <div className="fvc-discard-actions">
+              <Button variant="secondary" onClick={() => setConfirmingClose(false)}>Seguir editando</Button>
+              <Button variant="danger-outline" icon={LuTrash2} onClick={onClose}>Sí, descartar</Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

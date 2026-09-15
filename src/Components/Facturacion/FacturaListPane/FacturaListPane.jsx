@@ -4,7 +4,7 @@ import './FacturaListPane.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { SORT_OPTIONS } from '@/hooks/Facturacion/mockFacturasData';
 import FacturaRow from './FacturaRow/FacturaRow';
-import FacturasEmptyState from './FacturasEmptyState/FacturasEmptyState';
+import FacturasEmptyState from '../FacturasEmptyState/FacturasEmptyState';
 import FacturasListSkeleton from './FacturasListSkeleton/FacturasListSkeleton';
 import Pagination from './Pagination/Pagination';
 

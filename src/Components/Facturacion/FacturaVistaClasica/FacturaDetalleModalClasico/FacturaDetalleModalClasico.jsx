@@ -8,7 +8,7 @@ import Badge from '@/Components/Badge/Badge';
 import FacturaItemsTable from '../FacturaItemsTable/FacturaItemsTable';
 import { formatCOP, formatFechaClasica } from '@/hooks/Facturacion/mockFacturasData';
 import {
-  LuBuilding2, LuFileText, LuPrinter, LuTriangleAlert,
+  LuBuilding2, LuCheck, LuFileText, LuPrinter, LuTriangleAlert,
 } from 'react-icons/lu';
 
 const TIPO_LABEL = {
@@ -24,15 +24,22 @@ const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
 // FacturasGridClasica.jsx (duplicado a propósito, mismo criterio que
 // TIPO_LABEL/CLASE_LABEL de arriba).
 const ESTADO_PE = {
-  pendiente: { label: 'Pendiente de impresión', tone: 'neutral' },
-  'fe-pendiente': { label: 'Pendiente de envío', tone: 'warn' },
+  pendiente: { label: 'Pendiente', tone: 'warn' },
+  'fe-pendiente': { label: 'Pendiente de correo', tone: 'warn' },
   enviada: { label: 'Enviada', tone: 'success' },
 };
 
-// Columna "Estado" (P/A) del formulario legacy -- ver mismo helper en
+// Columna "Facturación" -- ver mismo mapa en FacturasGridClasica.jsx
+// (duplicado a propósito, mismo criterio que ESTADO_PE de arriba).
+const ESTADO_FACTURACION = {
+  pendiente: { label: 'Pendiente', tone: 'warn' },
+  facturada: { label: 'Facturada', tone: 'success' },
+};
+
+// Columna "Estado FE" (P/A) del formulario legacy -- ver mismo helper en
 // FacturasGridClasica.jsx (duplicado a propósito, mismo criterio que
-// ESTADO_PE de arriba, incluido el cambio "Pendiente" -> "Procesada"
-// tone="info").
+// ESTADO_PE de arriba): solo 2 estados (encargo), 'pendiente-electronica'
+// colapsa junto con null en "Procesada".
 function estadoFacturaBadge(f) {
   return f.estado === 'anulada'
     ? { label: 'Anulada', tone: 'danger' }
@@ -78,18 +85,26 @@ function Field({ label, value, children }) {
 // apiladas -- "Resumen de factura" e "Información adicional" (Administradora
 // Afi/Usuario/Procedencia, encargo explícito: bajaron acá desde
 // fvcd-compact-fields -- por eso ya no se repiten ahí, ver ese bloque más
-// abajo). El campo "C" de fvcd-compact-fields también se sacó (encargo
-// explícito: "no me comunica nada").
+// abajo). La columna "C" de FacturasGridClasica (encargo explícito: su
+// significado todavía no está claro) bajó acá como "C" dentro de
+// fvcd-compact-fields en vez de quedar en la grilla -- mismo valor fijo que
+// mostraba la grilla ('0'), no hay un campo real de `factura` todavía. La
+// columna "F" ya no vive acá: volvió a la grilla con significado real
+// ("Facturación", ver ESTADO_FACTURACION arriba) -- este modal la refleja
+// como el primer campo de fvcd-compact-fields, mismo criterio que
+// Estado de envío/Estado FE (duplicados a propósito entre grilla y detalle).
 //
 // Cada fila de la tabla de ítems es seleccionable (encargo explícito, clic o
-// Enter/Espacio, mismo patrón accesible que las filas de FacturasGridClasica)
-// y "Resumen de factura" responde a esa selección: `resumen` (sumado de los
-// ítems seleccionados, no de `factura.items` completo) queda en cero sin
-// selección -- no cae a sumar todo, ver hint `fvcd-summary-hint`. Selección
-// por `id` estable del ítem (ver buildItems en mockFacturasData.js), no por
-// índice del array -- FacturaItemsTable ya lo espera así independientemente
-// de si hay algo más arriba filtrando `items`. `factura` null = cerrado, mismo
-// patrón que AdmisionDetalleModal.
+// Enter/Espacio, mismo patrón accesible que las filas de FacturasGridClasica).
+// "Resumen de factura" muestra por defecto el total agregado de TODOS los
+// ítems de la factura (encargo: "mostrar por defecto el resumen agregado...
+// que la selección de un ítem sea un detalle adicional, no el único camino
+// para ver totales") -- seleccionar un ítem acota `resumen` a ese ítem solo
+// (ver hint `fvcd-summary-hint`, visible únicamente con selección activa).
+// Selección por `id` estable del ítem (ver buildItems en
+// mockFacturasData.js), no por índice del array -- FacturaItemsTable ya lo
+// espera así independientemente de si hay algo más arriba filtrando `items`.
+// `factura` null = cerrado, mismo patrón que AdmisionDetalleModal.
 //
 // fvcd-anulada-card (encargo explícito) -- solo cuando `factura.estado ===
 // 'anulada'`, entre fvcd-compact-fields y fvcd-detail-row (nunca deja hueco
@@ -98,17 +113,47 @@ function Field({ label, value, children }) {
 // anuladaPor/fechaAnulacion/horaAnulacion en mockFacturasData.js), solo
 // presentes en facturas ya generadas como 'anulada' -- mismo criterio que
 // `hora` en mockSolicitudesData.js (string literal, no Date real).
-export default function FacturaDetalleModalClasico({ factura, onClose }) {
+//
+// Acción principal "Facturar" en el footer (encargo) -- solo visible cuando
+// `factura.estadoFacturacion === 'pendiente'` (ver ESTADO_FACTURACION
+// arriba); pasa la factura a "Facturada" vía `onFacturar(factura.id)`, que
+// el padre (FacturaVistaClasica) aplica como override local, mismo patrón
+// que `estadoPEOverrides`/handleImprimir para "enviada". No aparece en
+// absoluto si la factura ya está "Facturada" -- no es un botón
+// deshabilitado, se oculta del todo.
+export default function FacturaDetalleModalClasico({ factura, onClose, onFacturar }) {
   const [selectedItemId, setSelectedItemId] = useState(null);
+  // Acción principal "Facturar" (encargo: solo visible con
+  // `factura.estadoFacturacion === 'pendiente'`, ver footer más abajo) --
+  // mismo patrón "toast + delay antes de cerrar" que Guardar en
+  // FacturaAgregarModalClasico/FacturaEditarModalClasico (`fvc-save-toast`,
+  // compartida en shared.css). Bloquea el cierre (Escape/overlay/botón X/
+  // "Cerrar") mientras está en curso, mismo criterio que `saving` en esos
+  // modales.
+  const [facturando, setFacturando] = useState(false);
+
+  function handleClose() {
+    if (facturando) return;
+    onClose();
+  }
+
+  function handleFacturar() {
+    if (facturando) return;
+    setFacturando(true);
+    setTimeout(() => {
+      onFacturar(factura.id);
+      onClose();
+    }, 1100);
+  }
 
   useEffect(() => {
     if (!factura) return undefined;
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [factura, onClose]);
+  });
 
   // Reinicia la selección de ítems al cambiar de factura (o cerrar el modal)
   // -- evita que quede una selección de la factura anterior aplicada
@@ -128,12 +173,14 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
   // mismo criterio que "Resumen de factura" (sin ítem seleccionado, "—").
   const selectedItem = factura?.items.find((it) => it.id === selectedItemId) ?? null;
 
-  // "Resumen de factura" responde a la selección (encargo explícito): sin
-  // ítem seleccionado, todo en cero -- no cae a sumar todos los ítems.
+  // "Resumen de factura" agrega TODOS los ítems por defecto; con un ítem
+  // seleccionado, se acota a ese único ítem (ver comentario del componente).
   const resumen = useMemo(() => {
     if (!factura) return null;
-    const seleccionados = factura.items.filter((it) => it.id === selectedItemId);
-    const totales = seleccionados.reduce((acc, it) => ({
+    const itemsResumen = selectedItemId
+      ? factura.items.filter((it) => it.id === selectedItemId)
+      : factura.items;
+    const totales = itemsResumen.reduce((acc, it) => ({
       subtotalServicios: acc.subtotalServicios + it.vlrServicio,
       iva: acc.iva + it.vlrIVA,
       copago: acc.copago + it.vlrCopago,
@@ -145,7 +192,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
     });
     return {
       ...totales,
-      totalItems: seleccionados.length,
+      totalItems: itemsResumen.length,
       total: totales.subtotalServicios + totales.iva + totales.copago + totales.moderador + totales.pagoCompartido - totales.descuento,
     };
   }, [factura, selectedItemId]);
@@ -153,15 +200,22 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
   if (!factura) return null;
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}>
       <div className="modal fvcd-modal" role="dialog" aria-modal="true" aria-labelledby="fvcd-title">
         <ModalHeader
           title="Detalle de factura"
           titleId="fvcd-title"
-          onClose={onClose}
+          onClose={handleClose}
         />
 
         <div className="modal-body">
+          {facturando && (
+            <div className="fvc-save-toast" role="status" aria-live="polite">
+              <LuCheck className="icon" aria-hidden="true" />
+              Factura marcada como facturada (simulado) — no persiste todavía en el servidor.
+            </div>
+          )}
+
           <div className="fvcd-identity-row">
             <div className="fvcd-factura-icon">
               <LuFileText className="icon" aria-hidden="true" />
@@ -191,6 +245,9 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
           </div>
 
           <div className="fvcd-compact-fields">
+            <Field label="Facturación">
+              <Badge tone={ESTADO_FACTURACION[factura.estadoFacturacion].tone} className="fvcd-badge">{ESTADO_FACTURACION[factura.estadoFacturacion].label}</Badge>
+            </Field>
             <Field label="Documento" value={factura.documento} />
             <Field label="Tipo Contrato" value={factura.tipoContrato} />
             <Field label="Tipo Factura" value={TIPO_LABEL[factura.tipo]} />
@@ -204,8 +261,9 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
 
             <div className="fvcd-compact-divider" aria-hidden="true" />
 
+            <Field label="C" value="0" />
             <Field label="F.Elect FE" value={factura.flagFE ? 'Sí' : 'No'} />
-            <Field label="Estado">
+            <Field label="Estado FE">
               <Badge tone={estadoFacturaBadge(factura).tone} className="fvcd-badge">{estadoFacturaBadge(factura).label}</Badge>
             </Field>
           </div>
@@ -245,7 +303,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
             <div className="fvcd-bottom-summary">
               <div className="fvcd-summary-card">
                 <div className="fvcd-summary-title">Resumen de factura</div>
-                {!selectedItemId && <div className="fvcd-summary-hint">Selecciona un ítem de la tabla para ver su resumen.</div>}
+                {selectedItemId && <div className="fvcd-summary-hint">Mostrando el ítem seleccionado. Volvé a hacer clic sobre él para ver el total de todos los ítems.</div>}
                 <div className="fvcd-summary-row"><span>Total ítems</span><span>{resumen.totalItems}</span></div>
                 <div className="fvcd-summary-row"><span>Subtotal servicios</span><span>{formatCOP(resumen.subtotalServicios)}</span></div>
                 <div className="fvcd-summary-row"><span>IVA</span><span>{formatCOP(resumen.iva)}</span></div>
@@ -269,7 +327,10 @@ export default function FacturaDetalleModalClasico({ factura, onClose }) {
         </div>
 
         <div className="modal-footer">
-          <Button variant="secondary" onClick={onClose}>Cerrar</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={facturando}>Cerrar</Button>
+          {factura.estadoFacturacion === 'pendiente' && (
+            <Button variant="primary" onClick={handleFacturar} disabled={facturando}>Facturar</Button>
+          )}
         </div>
       </div>
     </div>

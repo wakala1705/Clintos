@@ -10,7 +10,10 @@ import { LuCalendar, LuChevronDown } from 'react-icons/lu';
 // definidas en ../../shared/shared.css (reusa .filters-more-btn como base
 // visual del botón, ver esa hoja), mismo patrón self-contained (sin
 // legacy-app.js) que DateRangeFilter.jsx de AlertasEnfermeria/
-// DateRangeChips.jsx de Monitoreo en GestionEnfermeria. Sin CSS propio.
+// DateRangeChips.jsx de Monitoreo en GestionEnfermeria. Sin CSS propio salvo
+// .form-field-error (compartida con los modales de Agregar/Editar, ver
+// shared.css) para el aviso de rango inválido. "Aplicar" queda deshabilitado
+// si "Desde" > "Hasta" (ver rangoInvalido más abajo).
 export default function DateRangeFilter({ desde, hasta, onChange }) {
   const [open, setOpen] = useState(false);
   const [draftDesde, setDraftDesde] = useState(desde || '');
@@ -44,8 +47,12 @@ export default function DateRangeFilter({ desde, hasta, onChange }) {
 
   const active = !!(desde || hasta);
   const label = active ? `${desde || '…'} – ${hasta || '…'}` : 'Rango personalizado';
+  // "Desde" posterior a "Hasta" (encargo: validar el rango) -- deshabilita
+  // "Aplicar" en vez de dejar pasar un filtro que nunca matchea nada.
+  const rangoInvalido = !!(draftDesde && draftHasta && draftDesde > draftHasta);
 
   function aplicar() {
+    if (rangoInvalido) return;
     onChange({ desde: draftDesde, hasta: draftHasta });
     setOpen(false);
   }
@@ -83,9 +90,10 @@ export default function DateRangeFilter({ desde, hasta, onChange }) {
               <input id="fvc-rango-hasta" type="date" value={draftHasta} onChange={(e) => setDraftHasta(e.target.value)} />
             </div>
           </div>
+          {rangoInvalido && <div className="form-field-error">“Desde” no puede ser posterior a “Hasta”.</div>}
           <div className="fp-actions">
             <Button variant="secondary" onClick={limpiar}>Limpiar</Button>
-            <Button onClick={aplicar}>Aplicar</Button>
+            <Button onClick={aplicar} disabled={rangoInvalido}>Aplicar</Button>
           </div>
         </div>
       )}

@@ -8,7 +8,7 @@ import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
 } from '@/hooks/Facturacion/mockFacturasData';
 import DateRangeFilter from './DateRangeFilter/DateRangeFilter';
-import OtrosFiltrosPopover from './OtrosFiltrosPopover/OtrosFiltrosPopover';
+import TipoFacturaFilter from './TipoFacturaFilter/TipoFacturaFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
@@ -64,6 +64,10 @@ export default function FacturaVistaClasica() {
   // una factura "pendiente" -- FACTURAS es el dataset mock compartido (ver
   // mockFacturasData.js), no se muta directamente.
   const [estadoPEOverrides, setEstadoPEOverrides] = useState({});
+  // Override local de `estadoFacturacion` (id -> 'facturada'), aplicado por
+  // handleFacturar cuando se confirma la acción "Facturar" del modal de
+  // detalle -- mismo criterio que estadoPEOverrides de arriba.
+  const [estadoFacturacionOverrides, setEstadoFacturacionOverrides] = useState({});
   // Flujo de impresión disparado por el ícono de la columna Acciones (ver
   // onImprimir más abajo): null = sin flujo activo; 'loading' = modal de
   // carga simulada; 'viewer' = visor de PDF. Solo una factura a la vez.
@@ -81,21 +85,29 @@ export default function FacturaVistaClasica() {
     return () => clearTimeout(timer);
   }, [printFlow]);
 
-  const facturasConEstadoPE = useMemo(() => (
-    Object.keys(estadoPEOverrides).length === 0 ? FACTURAS : FACTURAS.map((f) => (
-      estadoPEOverrides[f.id] ? { ...f, estadoPE: estadoPEOverrides[f.id] } : f
-    ))
-  ), [estadoPEOverrides]);
+  const facturasConOverrides = useMemo(() => (
+    Object.keys(estadoPEOverrides).length === 0 && Object.keys(estadoFacturacionOverrides).length === 0
+      ? FACTURAS
+      : FACTURAS.map((f) => (
+        estadoPEOverrides[f.id] || estadoFacturacionOverrides[f.id]
+          ? {
+            ...f,
+            ...(estadoPEOverrides[f.id] ? { estadoPE: estadoPEOverrides[f.id] } : null),
+            ...(estadoFacturacionOverrides[f.id] ? { estadoFacturacion: estadoFacturacionOverrides[f.id] } : null),
+          }
+          : f
+      ))
+  ), [estadoPEOverrides, estadoFacturacionOverrides]);
 
   // Sin el filtro "pe" -- separado de `facturas` de abajo solo para no
   // repetir el resto de los filtros dos veces.
-  const facturasSinPe = useMemo(() => facturasConEstadoPE.filter((f) => {
+  const facturasSinPe = useMemo(() => facturasConOverrides.filter((f) => {
     if (filtros.clase !== 'todas' && f.clase !== filtros.clase) return false;
     if (filtros.tipo.length > 0 && !filtros.tipo.includes(f.tipo)) return false;
     if (filtros.desde && f.fecha < filtros.desde) return false;
     if (filtros.hasta && f.fecha > filtros.hasta) return false;
     return matchesQuery(f, query.trim());
-  }), [facturasConEstadoPE, query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
+  }), [facturasConOverrides, query, filtros.clase, filtros.tipo, filtros.desde, filtros.hasta]);
 
   const facturas = useMemo(() => (
     filtros.pe === 'todos' ? facturasSinPe : facturasSinPe.filter((f) => f.estadoPE === filtros.pe)
@@ -108,14 +120,12 @@ export default function FacturaVistaClasica() {
   const effectiveSelectedId = facturas.some((f) => f.id === selectedId) ? selectedId : (facturas[0]?.id ?? null);
   const selectedFactura = facturas.find((f) => f.id === effectiveSelectedId) ?? null;
 
-  // Badge de "Otros filtros" (Clase/Tipo Factura, ver OtrosFiltrosPopover) --
-  // 1 punto por control con un valor distinto al inicial, no por cantidad de
-  // tipos deseleccionados.
-  const otrosFiltrosCount = (filtros.clase !== 'todas' ? 1 : 0)
-    + (filtros.tipo.length !== TIPO_FACTURA_VALUES.length ? 1 : 0);
-
-  function handleLimpiarOtrosFiltros() {
-    setFiltros((f) => ({ ...f, clase: 'todas', tipo: TIPO_FACTURA_VALUES }));
+  // "Limpiar filtros" del empty state de FacturasGridClasica (encargo: sin
+  // resultados, la tabla quedaba vacía sin ningún mensaje) -- resetea todo
+  // lo que puede dejar la grilla sin filas: búsqueda + los 5 filtros.
+  function handleLimpiarTodosLosFiltros() {
+    setQuery('');
+    setFiltros(FILTROS_INICIALES);
   }
 
   // Ícono de imprimir (columna Acciones, ver FacturasGridClasica) -- si ya
@@ -124,6 +134,35 @@ export default function FacturaVistaClasica() {
   function handleImprimir(factura) {
     if (printFlow) return;
     setPrintFlow({ factura, stage: 'loading' });
+  }
+
+  // Acción "Facturar" del modal de detalle (encargo) -- pasa esa factura a
+  // 'facturada' vía estadoFacturacionOverrides, mismo criterio que
+  // handleImprimir/estadoPEOverrides.
+  function handleFacturar(id) {
+    setEstadoFacturacionOverrides((overrides) => ({ ...overrides, [id]: 'facturada' }));
+  }
+
+  // Botón "Refrescar" (encargo: antes sin onClick, parecía funcional pero no
+  // hacía nada) -- FACTURAS es un array mock estático, no hay backend real
+  // que refetchear todavía (ver mockFacturasData.js), así que "refrescar"
+  // vuelve el estado de la pantalla a su punto de partida: limpia
+  // búsqueda/filtros y descarta los overrides locales de estadoPE/
+  // estadoFacturacion aplicados por el flujo de impresión y "Facturar".
+  // Delay artificial corto + ícono girando (ver .fvc-refreshing en
+  // shared.css) para que el clic tenga feedback visible en vez de un cambio
+  // instantáneo indistinguible de "no pasó nada".
+  const [refreshing, setRefreshing] = useState(false);
+  function handleRefrescar() {
+    if (refreshing) return;
+    setRefreshing(true);
+    setTimeout(() => {
+      setQuery('');
+      setFiltros(FILTROS_INICIALES);
+      setEstadoPEOverrides({});
+      setEstadoFacturacionOverrides({});
+      setRefreshing(false);
+    }, 450);
   }
 
   return (
@@ -143,27 +182,42 @@ export default function FacturaVistaClasica() {
         <div className="filter-spacer" />
 
         <div className="fvc-filter-field">
+          <label htmlFor="fvc-clase">Clase:</label>
+          <FormSelect id="fvc-clase" value={filtros.clase} onChange={(v) => setFiltros((f) => ({ ...f, clase: v }))} options={CLASE_OPTIONS} />
+        </div>
+
+        <div className="fvc-filter-field">
+          <label htmlFor="fvc-tipo">Tipo:</label>
+          <TipoFacturaFilter
+            id="fvc-tipo"
+            ariaLabel="Tipo Factura"
+            value={filtros.tipo}
+            onChange={(v) => setFiltros((f) => ({ ...f, tipo: v }))}
+            options={TIPO_FACTURA_OPTIONS}
+          />
+        </div>
+
+        <div className="fvc-filter-field">
           <label htmlFor="fvc-pe">PE:</label>
           <FormSelect id="fvc-pe" value={filtros.pe} onChange={(v) => setFiltros((f) => ({ ...f, pe: v }))} options={PE_FILTROS} />
         </div>
 
-        <OtrosFiltrosPopover
-          clase={filtros.clase}
-          onChangeClase={(v) => setFiltros((f) => ({ ...f, clase: v }))}
-          claseOptions={CLASE_OPTIONS}
-          tipo={filtros.tipo}
-          onChangeTipo={(v) => setFiltros((f) => ({ ...f, tipo: v }))}
-          tipoOptions={TIPO_FACTURA_OPTIONS}
-          onLimpiar={handleLimpiarOtrosFiltros}
-          activeCount={otrosFiltrosCount}
-        />
         <DateRangeFilter
           desde={filtros.desde}
           hasta={filtros.hasta}
           onChange={({ desde, hasta }) => setFiltros((f) => ({ ...f, desde, hasta }))}
         />
 
-        <Button variant="secondary-accent" size="sm" icon={LuRefreshCw} className="fvc-refresh-btn">Refrescar</Button>
+        <Button
+          variant="secondary-accent"
+          size="sm"
+          icon={LuRefreshCw}
+          className={`fvc-refresh-btn${refreshing ? ' fvc-refreshing' : ''}`}
+          onClick={handleRefrescar}
+          disabled={refreshing}
+        >
+          Refrescar
+        </Button>
       </div>
 
       <FacturasGridClasica
@@ -173,11 +227,16 @@ export default function FacturaVistaClasica() {
         onVerDetalle={setDetalleFactura}
         onEditar={setEditFactura}
         onImprimir={handleImprimir}
+        onClearFilters={handleLimpiarTodosLosFiltros}
       />
 
       <FacturaDetalleClasico factura={selectedFactura} />
 
-      <FacturaDetalleModalClasico factura={detalleFactura} onClose={() => setDetalleFactura(null)} />
+      <FacturaDetalleModalClasico
+        factura={detalleFactura}
+        onClose={() => setDetalleFactura(null)}
+        onFacturar={handleFacturar}
+      />
 
       {editFactura && (
         <FacturaEditarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />

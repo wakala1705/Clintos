@@ -148,6 +148,12 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
   const estado = roll > 0.92 ? 'anulada' : (roll > 0.85 ? 'pendiente-electronica' : null);
   const peRoll = rand();
   const estadoPE = peRoll > 0.9 ? 'fe-pendiente' : (peRoll > 0.7 ? 'pendiente' : 'enviada');
+  // Columna "Facturación" de la grilla densa (encargo: primera columna de la
+  // tabla, antes "F" sin significado -- ver FacturasGridClasica.jsx) -- solo
+  // 2 estados, sin relación con `estado`/`estadoPE` (son 3 conceptos
+  // distintos del ciclo de una factura: anulación, envío electrónico, y
+  // esto).
+  const estadoFacturacion = rand() > 0.3 ? 'facturada' : 'pendiente';
   const cantidadItems = 1 + Math.floor(rand() * 16);
   const items = buildItems(rand, cantidadItems);
   const valorTotal = items.reduce((sum, it) => sum + it.valor, 0);
@@ -183,6 +189,7 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
     fechaVencimiento: fechaISO(vencimiento),
     flagFE: rand() > 0.88 ? 1 : 0,
     estadoPE,
+    estadoFacturacion,
     sedeCodigo: SEDE_CODIGOS[sede],
     impreso: 0,
     ...(estado === 'anulada' ? {

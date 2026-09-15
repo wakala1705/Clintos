@@ -9,7 +9,9 @@ import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/Ca
 import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
-import { LuFilePlus2, LuEye } from 'react-icons/lu';
+import {
+  LuFilePlus2, LuEye, LuCheck, LuTrash2, LuTriangleAlert,
+} from 'react-icons/lu';
 
 const TIPO_FACTURA_OPTIONS = [
   { value: 'normal', label: 'Normal' },
@@ -118,6 +120,22 @@ function setField(setForm, key) {
   return (value) => setForm((f) => ({ ...f, [key]: value }));
 }
 
+function toNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+// Campos monetarios validados en handleGuardar (encargo: "validar rango
+// no-negativo por campo y calcular Valor Factura en vivo") -- todos viven
+// bajo !isRestricted, mismo criterio que su progressive disclosure de arriba.
+const MONEY_FIELDS = [
+  { key: 'valorServicios', label: 'Valor Servicios' },
+  { key: 'valorCopago', label: 'Valor Copago' },
+  { key: 'valorPagoCompartido', label: 'Valor Pago Comp.' },
+  { key: 'valorModeradora', label: 'Valor Moderadora' },
+  { key: 'descuento', label: 'Descuento' },
+];
+
 // Modal disparado por el botón "Nueva factura" del header de Facturacion.jsx
 // -- réplica de los campos del formulario legacy "Agregando un Registro"
 // (encargo explícito, ver imagen de referencia), hermano de
@@ -129,8 +147,14 @@ function setField(setForm, key) {
 // (esa ya no aplicaba 1:1 con el chrome homologado).
 //
 // Solo pinta el front (encargo explícito: "creá la modal... y luego le
-// damos lógica"): "Guardar" no persiste nada todavía, solo cierra -- mismo
-// patrón que FacturaEditarModalClasico. Id Tercero y Administradora reusan
+// damos lógica"): "Guardar" sigue sin persistir nada en un backend real --
+// pero ahora valida (Fecha Vencimiento >= Fecha Factura, montos no
+// negativos), calcula Valor Factura en vivo, y muestra un aviso "Guardado
+// (simulado)" antes de cerrar en vez de un cierre silencioso indistinguible
+// de un guardado real (ver validate/handleGuardar más abajo). Cerrar con
+// cambios sin guardar (Cancelar/overlay/Escape/botón X) pide confirmación
+// primero (ver attemptClose/fvc-discard-modal, clases compartidas con
+// FacturaEditarModalClasico en shared.css). Id Tercero y Administradora reusan
 // el mismo CatalogoAseguradorasModal (ya existe, mismo componente que usa
 // FacturaEditarModalClasico -- encargo explícito: "administradora... me
 // debería abrir el mismo modal de id terceros", cada uno con su propio
@@ -157,14 +181,36 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   const [catalogoContratacionAbierto, setCatalogoContratacionAbierto] = useState(false);
   const [catalogoAdministradoraAbierto, setCatalogoAdministradoraAbierto] = useState(false);
   const [admisionPickerAbierto, setAdmisionPickerAbierto] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [confirmingClose, setConfirmingClose] = useState(false);
+
+  // Snapshot del form recién montado (mismo objeto que ya construyó
+  // useState(buildInitialForm) arriba) -- useState en vez de useRef porque
+  // isDirty lo lee durante el render (leer un ref en render rompe la regla
+  // react-hooks/refs); el setter nunca se usa, solo sirve de referencia fija
+  // para detectar cambios sin guardar antes de cerrar (ver attemptClose).
+  const [initialForm] = useState(form);
+  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm);
+
+  // Intercepta cualquier intento de cerrar (Cancelar/overlay/Escape/botón X
+  // de ModalHeader) -- si hay cambios sin guardar, pide confirmación en vez
+  // de cerrar directo; onClose real solo corre desde "Sí, descartar" o
+  // cuando no hay nada que perder. Ignorado mientras `saving` muestra el
+  // aviso de guardado simulado (ver handleGuardar).
+  function attemptClose() {
+    if (saving) return;
+    if (isDirty) setConfirmingClose(true);
+    else onClose();
+  }
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') attemptClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  });
 
   // Copago/Moderadora/Pago Compartido son tipos de factura "de un solo
   // valor" (encargo explícito, ver imágenes de referencia): autoseleccionan
@@ -220,19 +266,70 @@ export default function FacturaAgregarModalClasico({ onClose }) {
 
   function handleChangeFechaFactura(value) {
     setForm((f) => ({ ...f, fechaFactura: value, fechaVencimiento: addOneMonth(value) }));
+    setErrors((er) => (er.fechaVencimiento ? { ...er, fechaVencimiento: undefined } : er));
+  }
+
+  function handleChangeFechaVencimiento(value) {
+    setField(setForm, 'fechaVencimiento')(value);
+    setErrors((er) => (er.fechaVencimiento ? { ...er, fechaVencimiento: undefined } : er));
+  }
+
+  function handleChangeMoneyField(key) {
+    return (value) => {
+      setField(setForm, key)(value);
+      setErrors((er) => (er[key] ? { ...er, [key]: undefined } : er));
+    };
+  }
+
+  // Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento (mismo
+  // criterio que el comentario original del campo readOnly) -- calculado en
+  // vivo en el cliente; sigue sin persistir nada, ver handleGuardar.
+  const valorFactura = isRestricted ? 0 : (
+    toNumber(form.valorServicios) + toNumber(form.valorCopago)
+    + toNumber(form.valorPagoCompartido) + toNumber(form.valorModeradora)
+    - toNumber(form.descuento)
+  );
+
+  function validate() {
+    const errs = {};
+    if (form.fechaFactura && form.fechaVencimiento && form.fechaVencimiento < form.fechaFactura) {
+      errs.fechaVencimiento = 'No puede ser anterior a la Fecha Factura.';
+    }
+    if (!isRestricted) {
+      MONEY_FIELDS.forEach(({ key, label }) => {
+        if (toNumber(form[key]) < 0) errs[key] = `${label} no puede ser negativo.`;
+      });
+    }
+    return errs;
+  }
+
+  function handleGuardar() {
+    if (saving) return;
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setSaving(true);
+    setTimeout(onClose, 1100);
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
       <div className="modal fam-modal" role="dialog" aria-modal="true" aria-labelledby="fam-title">
         <ModalHeader
           icon={LuFilePlus2}
           title="Agregando un registro"
           titleId="fam-title"
-          onClose={onClose}
+          onClose={attemptClose}
         />
 
         <div className="modal-body">
+          {saving && (
+            <div className="fvc-save-toast" role="status" aria-live="polite">
+              <LuCheck className="icon" aria-hidden="true" />
+              Factura guardada (simulado) — no persiste todavía en el servidor.
+            </div>
+          )}
+
           <div className="fam-readonly-row">
             <span className="fam-readonly-item"><span className="fam-readonly-label">Compañía:</span> 02</span>
             <span className="fam-readonly-item"><span className="fam-readonly-label">Consecutivo:</span> {PROXIMO_CONSECUTIVO}</span>
@@ -292,15 +389,17 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                 required
               />
             </div>
-            <div className="form-field">
+            <div className={`form-field${errors.fechaVencimiento ? ' has-error' : ''}`}>
               <label htmlFor="fam-fecha-vencimiento">Fecha Vencimiento<span className="fam-required-mark">*</span></label>
               <input
                 id="fam-fecha-vencimiento"
                 type="date"
                 value={form.fechaVencimiento}
-                onChange={(e) => setField(setForm, 'fechaVencimiento')(e.target.value)}
+                onChange={(e) => handleChangeFechaVencimiento(e.target.value)}
                 required
+                aria-invalid={!!errors.fechaVencimiento}
               />
+              {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
             </div>
 
             <div className="form-field">
@@ -429,79 +528,89 @@ export default function FacturaAgregarModalClasico({ onClose }) {
             )}
 
             {!isRestricted && (
-              <div className="form-field">
+              <div className={`form-field${errors.valorServicios ? ' has-error' : ''}`}>
                 <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
                 <input
                   id="fam-valor-servicios"
                   type="number"
                   step="0.01"
                   value={form.valorServicios}
-                  onChange={(e) => setField(setForm, 'valorServicios')(e.target.value)}
+                  onChange={(e) => handleChangeMoneyField('valorServicios')(e.target.value)}
                   required
+                  aria-invalid={!!errors.valorServicios}
                 />
+                {errors.valorServicios && <span className="form-field-error">{errors.valorServicios}</span>}
               </div>
             )}
             {!isRestricted && (
-              <div className="form-field">
+              <div className={`form-field${errors.valorCopago ? ' has-error' : ''}`}>
                 <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
                 <input
                   id="fam-valor-copago"
                   type="number"
                   step="0.01"
                   value={form.valorCopago}
-                  onChange={(e) => setField(setForm, 'valorCopago')(e.target.value)}
+                  onChange={(e) => handleChangeMoneyField('valorCopago')(e.target.value)}
                   required
+                  aria-invalid={!!errors.valorCopago}
                 />
+                {errors.valorCopago && <span className="form-field-error">{errors.valorCopago}</span>}
               </div>
             )}
 
             {!isRestricted && (
-              <div className="form-field">
+              <div className={`form-field${errors.valorPagoCompartido ? ' has-error' : ''}`}>
                 <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
                 <input
                   id="fam-pago-compartido"
                   type="number"
                   step="0.01"
                   value={form.valorPagoCompartido}
-                  onChange={(e) => setField(setForm, 'valorPagoCompartido')(e.target.value)}
+                  onChange={(e) => handleChangeMoneyField('valorPagoCompartido')(e.target.value)}
                   required
+                  aria-invalid={!!errors.valorPagoCompartido}
                 />
+                {errors.valorPagoCompartido && <span className="form-field-error">{errors.valorPagoCompartido}</span>}
               </div>
             )}
             {!isRestricted && (
-              <div className="form-field">
+              <div className={`form-field${errors.valorModeradora ? ' has-error' : ''}`}>
                 <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
                 <input
                   id="fam-valor-moderadora"
                   type="number"
                   step="0.01"
                   value={form.valorModeradora}
-                  onChange={(e) => setField(setForm, 'valorModeradora')(e.target.value)}
+                  onChange={(e) => handleChangeMoneyField('valorModeradora')(e.target.value)}
                   required
+                  aria-invalid={!!errors.valorModeradora}
                 />
+                {errors.valorModeradora && <span className="form-field-error">{errors.valorModeradora}</span>}
               </div>
             )}
 
             {!isRestricted && (
-              <div className="form-field">
+              <div className={`form-field${errors.descuento ? ' has-error' : ''}`}>
                 <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
                 <input
                   id="fam-descuento"
                   type="number"
                   step="0.01"
                   value={form.descuento}
-                  onChange={(e) => setField(setForm, 'descuento')(e.target.value)}
+                  onChange={(e) => handleChangeMoneyField('descuento')(e.target.value)}
                   required
+                  aria-invalid={!!errors.descuento}
                 />
+                {errors.descuento && <span className="form-field-error">{errors.descuento}</span>}
               </div>
             )}
             {!isRestricted && (
               <div className="form-field">
                 {/* Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento,
-                    a calcular cuando se cablee la lógica real -- por ahora solo
-                    muestra el placeholder readonly del formulario legacy. */}
+                    calculada en vivo (ver valorFactura más arriba) -- sigue sin
+                    persistir, solo deja de ser el placeholder "0.00" fijo. */}
                 <label htmlFor="fam-valor-factura">Valor Factura</label>
-                <input id="fam-valor-factura" type="number" step="0.01" value="0.00" readOnly />
+                <input id="fam-valor-factura" type="number" step="0.01" value={valorFactura.toFixed(2)} readOnly />
               </div>
             )}
 
@@ -532,8 +641,8 @@ export default function FacturaAgregarModalClasico({ onClose }) {
         </div>
 
         <div className="modal-footer">
-          <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={onClose}>Guardar</Button>
+          <Button variant="secondary" onClick={attemptClose} disabled={saving}>Cancelar</Button>
+          <Button variant="primary" onClick={handleGuardar} disabled={saving}>Guardar</Button>
         </div>
       </div>
 
@@ -577,6 +686,20 @@ export default function FacturaAgregarModalClasico({ onClose }) {
           onSelect={handleSeleccionAdmision}
           onClose={() => setAdmisionPickerAbierto(false)}
         />
+      )}
+
+      {confirmingClose && (
+        <div className="modal-overlay" role="presentation">
+          <div className="fvc-discard-modal" role="alertdialog" aria-modal="true" aria-labelledby="fam-discard-title" aria-describedby="fam-discard-desc">
+            <div className="fvc-discard-icon"><LuTriangleAlert className="icon" aria-hidden="true" /></div>
+            <h3 id="fam-discard-title">¿Descartar los cambios?</h3>
+            <p id="fam-discard-desc">Vas a perder la información que ingresaste en este formulario. Esta acción no se puede deshacer.</p>
+            <div className="fvc-discard-actions">
+              <Button variant="secondary" onClick={() => setConfirmingClose(false)}>Seguir editando</Button>
+              <Button variant="danger-outline" icon={LuTrash2} onClick={onClose}>Sí, descartar</Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
