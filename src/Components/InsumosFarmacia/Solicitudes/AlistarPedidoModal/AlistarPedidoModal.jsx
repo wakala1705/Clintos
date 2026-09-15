@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
 import {
   LuPackage, LuRefreshCw, LuThumbsUp, LuSearch, LuCalendar, LuBoxes, LuTriangleAlert, LuChevronDown,
+  LuBuilding2, LuFileText,
 } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
@@ -12,6 +13,7 @@ import ArticulosItemsTable from './ArticulosItemsTable/ArticulosItemsTable';
 import LotesDisponiblesTable from './LotesDisponiblesTable/LotesDisponiblesTable';
 import ConfirmarAlistamientoModal from './ConfirmarAlistamientoModal/ConfirmarAlistamientoModal';
 import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
+import { useBodegaSeleccionada } from '@/hooks/Bodega/bodega';
 
 // Mismo mapa tono/label que MovimientosGrid.jsx (estado del movimiento
 // completo, no del ítem) -- se muestra junto al título en mig-alistar-identity,
@@ -21,6 +23,14 @@ const ESTADO_BADGE = {
   'sin-confirmar': { tone: 'warn', label: 'Sin Confirmar' },
   anulado: { tone: 'danger', label: 'Anulado' },
 };
+
+// "Tipo" del panel de identidad (encargo explícito, iteración visual "3
+// metadatos a la derecha: fecha solicitud/bodega/tipo") -- no existe como
+// campo en el mock (ver mockSolicitudesData.js), se deriva de `trns`. Hoy
+// esta pantalla solo lista movimientos 'sal' (FILTROS_INICIALES.trns en
+// Solicitudes.jsx), pero se cubre 'ent' también (ver TRNS_OPTIONS del mock)
+// por si ese filtro se habilita más adelante.
+const TRNS_TIPO_LABEL = { sal: 'Salida asistencial', ent: 'Entrada asistencial' };
 
 // Un movimiento "Sin Confirmar" todavía no entregó nada de verdad (encargo
 // explícito) -- aunque cantidadEntregada venga > 0 en el mock, se muestra
@@ -91,6 +101,10 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   // cantidades en la tabla de arriba), así que arranca oculta y el usuario
   // la abre solo cuando la necesita.
   const [resumenLoteAbierto, setResumenLoteAbierto] = useState(false);
+  // Metadato "Bodega" del panel de identidad (encargo explícito, iteración
+  // visual) -- la bodega elegida globalmente al entrar a esta pantalla (ver
+  // BodegaPickerButton.jsx), no un campo propio de `movimiento`.
+  const bodega = useBodegaSeleccionada();
 
   useEffect(() => {
     if (!movimiento) return undefined;
@@ -256,6 +270,7 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
   })) : [];
 
   const estadoBadge = ESTADO_BADGE[movimiento.estado];
+  const tipoLabel = TRNS_TIPO_LABEL[movimiento.trns] ?? movimiento.trns.toUpperCase();
 
   // Posición del artículo seleccionado dentro de la lista FILTRADA (no del
   // total del documento) -- si hay una búsqueda activa que la reduce a 2
@@ -309,9 +324,28 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
               </div>
               <div className="mig-alistar-identity-sub">{movimiento.solicitante}</div>
             </div>
-            <div className="mig-alistar-identity-meta">
-              <LuCalendar className="icon" aria-hidden="true" />
-              Fecha solicitud: <strong>{formatFecha(movimiento.fecha)} · {movimiento.hora}</strong>
+            <div className="mig-alistar-identity-meta-group">
+              <div className="mig-alistar-identity-meta">
+                <LuCalendar className="icon" aria-hidden="true" />
+                <div className="mig-alistar-identity-meta-text">
+                  <span className="mig-alistar-identity-meta-label">Fecha solicitud</span>
+                  <span className="mig-alistar-identity-meta-value">{formatFecha(movimiento.fecha)} · {movimiento.hora}</span>
+                </div>
+              </div>
+              <div className="mig-alistar-identity-meta">
+                <LuBuilding2 className="icon" aria-hidden="true" />
+                <div className="mig-alistar-identity-meta-text">
+                  <span className="mig-alistar-identity-meta-label">Bodega</span>
+                  <span className="mig-alistar-identity-meta-value">{bodega?.descripcion ?? '—'}</span>
+                </div>
+              </div>
+              <div className="mig-alistar-identity-meta">
+                <LuFileText className="icon" aria-hidden="true" />
+                <div className="mig-alistar-identity-meta-text">
+                  <span className="mig-alistar-identity-meta-label">Tipo</span>
+                  <span className="mig-alistar-identity-meta-value">{tipoLabel}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -438,6 +472,7 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
                       <div className="mig-summary-field"><span className="mig-summary-field-label">No.Documento</span><span className="mig-summary-field-value">{selectedLote?.noDocumento ?? '—'}</span></div>
                       <div className="mig-summary-field"><span className="mig-summary-field-label">Transacción</span><span className="mig-summary-field-value">{selectedLote?.trans ?? '—'}</span></div>
                       <div className="mig-summary-field"><span className="mig-summary-field-label">Genérico</span><span className="mig-summary-field-value">{selectedLote?.generico ?? '—'}</span></div>
+                      <div className="mig-summary-field"><span className="mig-summary-field-label">Ubicación</span><span className="mig-summary-field-value">{selectedLote?.ubicacion ?? '—'}</span></div>
                       <div className="mig-summary-field mig-summary-total"><span className="mig-summary-field-label">Id. Artículo</span><span className="mig-summary-field-value">{selectedLote?.generico ?? '—'}</span></div>
                     </div>
                   </>

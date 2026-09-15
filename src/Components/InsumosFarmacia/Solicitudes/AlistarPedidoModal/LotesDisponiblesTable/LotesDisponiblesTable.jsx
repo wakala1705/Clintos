@@ -30,10 +30,10 @@ function toneVencimiento(diasVence) {
 // existiendo como `i`/`i + 1` en el código (EditarLoteModal/LoteRowMenu/
 // aria-label de Cantidad la siguen usando), solo dejó de tener columna
 // visible propia. Orden de columnas también por encargo explícito:
-// Descripción primera; Lote Serie/Ubicación intercambiadas después (ahora
-// Lote Serie penúltima, Ubicación antepenúltima, justo antes de Acciones).
-// Id Sede/Id.Bdg/Id. Artículo/Genérico/Días Vence/Trans./
-// No.Documento se sacaron de esta tabla (encargo explícito) -- viven en
+// Descripción primera; Lote Serie penúltima, justo antes de Acciones.
+// Ubicación se sacó de esta tabla (encargo explícito "pasa el dato de la
+// columna de ubicación a la card del resumen") -- vive junto a Id Sede/
+// Id.Bdg/Id. Artículo/Genérico/Días Vence/Trans./No.Documento en
 // "Resumen de lote" (mig-lotes-summary, AlistarPedidoModal.jsx).
 // "Esperada" también se sacó (encargo explícito) -- es el mismo valor para
 // las 4 filas (la cantidad solicitada del ítem, no varía por lote), así que
@@ -96,7 +96,6 @@ export default function LotesDisponiblesTable({
               <th className="mig-num">Cantidad</th>
               <th>Vence</th>
               <th>Lote Serie</th>
-              <th>Ubicación</th>
               <th className="mig-lotes-acciones-th">Acciones</th>
             </tr>
           </thead>
@@ -128,7 +127,6 @@ export default function LotesDisponiblesTable({
                   <Badge tone={toneVencimiento(l.diasVence)}>{l.vence.replaceAll('-', '/')}</Badge>
                 </td>
                 <td>{l.loteSerie}</td>
-                <td className="mig-ellipsis" title={l.ubicacion}>{l.ubicacion}</td>
                 <td className="mig-lotes-acciones" onClick={(e) => e.stopPropagation()}>
                   <button
                     type="button"

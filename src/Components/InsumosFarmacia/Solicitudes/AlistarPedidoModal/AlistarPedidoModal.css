@@ -44,8 +44,17 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    detalle de facturas") -- mismo patrón que .fvcd-identity-row de
    FacturaDetalleModalClasico.css: ícono en círculo + título/badge/subtítulo.
    Reimplementado acá (no importado de Facturacion) porque los tokens de
-   color son por feature, ver AGENTS.md "Component organization". */
-.mig-alistar-identity{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+   color son por feature, ver AGENTS.md "Component organization".
+   Encapsulado como card propia (encargo explícito, iteración visual --
+   "todo encapsulado en un bloque") -- antes era una fila suelta sin fondo ni
+   borde propios; justify-content:space-between separa el bloque de
+   identidad (extremo izquierdo) del grupo de metadata (extremo derecho, ver
+   mig-alistar-identity-meta-group más abajo) en vez de que éste quede
+   pegado al texto por el gap del flex. */
+.mig-alistar-identity{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
 .mig-alistar-icon{
   flex-shrink:0;width:34px;height:34px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -56,18 +65,19 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 .mig-alistar-identity-name{display:flex;align-items:center;gap:8px;font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
 .mig-alistar-badge{align-self:flex-start;}
 .mig-alistar-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-/* Chip de "Fecha solicitud" (encargo explícito: iteración visual) -- único
-   dato complementario que se agregó a la identity card, porque es el único
-   que ya existe tal cual en `movimiento` (fecha+hora); Bodega/Tipo se
-   dejaron afuera a propósito (no están modelados en este objeto, ver
-   AlistarPedidoModal.jsx). */
-.mig-alistar-identity-meta{
-  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-sm);color:var(--ink-500);
-  padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
-}
-.mig-alistar-identity-meta .icon{width:15px;height:15px;color:var(--ink-400);}
-.mig-alistar-identity-meta strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* Grupo de 3 metadatos a la derecha (encargo explícito, iteración visual --
+   "Fecha solicitud/Bodega/Tipo") -- reemplaza el chip único de "Fecha
+   solicitud" (con su propio borde tipo pastilla) que existía antes; ahora
+   los 3 viven sueltos dentro del mismo card de mig-alistar-identity,
+   separados por un divisor vertical entre cada uno en vez de un borde
+   propio por metadato. */
+.mig-alistar-identity-meta-group{flex-shrink:0;display:flex;align-items:center;gap:20px;}
+.mig-alistar-identity-meta{display:flex;align-items:center;gap:8px;}
+.mig-alistar-identity-meta + .mig-alistar-identity-meta{padding-left:20px;border-left:1px solid var(--border);}
+.mig-alistar-identity-meta .icon{width:16px;height:16px;color:var(--ink-400);flex-shrink:0;}
+.mig-alistar-identity-meta-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mig-alistar-identity-meta-label{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+.mig-alistar-identity-meta-value{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;}
 
 /* Layout de 2 columnas (encargo explícito: "dividamos la pantalla en 2
    columnas asi como en la imagen") -- reemplaza el apilado vertical de
@@ -193,17 +203,27 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
 }
 .mig-summary-title .icon{width:16px;height:16px;color:var(--ink-500);}
+/* :hover (auditoría de craft visual, regla 11 "cada estado diseñado") --
+   faltaba: el resto de controles clicables del módulo (.filters-more-btn,
+   .mig-row-menu-btn, .mig-lotes-accion-btn) ya cubren hover+focus-visible,
+   este toggle solo tenía el segundo. */
+.mig-summary-title:hover{color:var(--primary);}
 .mig-summary-title:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .mig-summary-chevron{margin-left:auto;flex-shrink:0;transition:transform .15s ease;}
 .mig-summary-chevron.collapsed{transform:rotate(-90deg);}
 .mig-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:8px 0 0;}
 /* Grilla de 3 columnas (encargo explícito) -- antes 2 columnas (la imagen de
    referencia original mostraba pares label/valor en 2 columnas); el orden
-   de los 8 campos en el markup no se reordenó al pasar a 3, así que el fill
+   de los campos en el markup no se reordenó al pasar a 3, así que el fill
    por fila de grid-auto-flow ya no los empareja igual que en esa imagen
    vieja -- eso queda así hasta que se pida un reacomodo explícito. margin-top
    (antes vivía como margin-bottom en mig-summary-title, ver ahí) -- solo se
-   aplica cuando el panel está expandido, ya que colapsado ni se monta. */
+   aplica cuando el panel está expandido, ya que colapsado ni se monta.
+   "Ubicación" (encargo explícito "pasa el dato de la columna de ubicación a
+   la card del resumen") se agregó como 9no campo -- LotesDisponiblesTable.jsx
+   ya no tiene esa columna, ver ahí. Con 9 campos en una grilla de 4
+   columnas, la última fila queda con un solo campo (Id. Artículo) sin
+   completar la fila -- aceptado, no se fuerza a 3 columnas para evitarlo. */
 .mig-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 24px;margin-top:8px;}
 /* align-items:flex-start (no el stretch por default de un flex column) --
    sin esto el Badge de "Días para vencer" se estiraba a todo el ancho de

@@ -6,7 +6,6 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { useActiveModule } from '@/hooks/Session/session';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import BodegaPickerButton from '@/Components/BodegaPickerButton/BodegaPickerButton';
 import AreaFuncionalPickerButton from '@/Components/AreaFuncionalPickerButton/AreaFuncionalPickerButton';
 import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
 import AllModulesModal from '@/Components/Home/AllModulesModal/AllModulesModal';
@@ -232,7 +231,6 @@ export default function Home() {
       <div className="main">
 
         <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}>
-          {effectiveModule === 'contable' && <BodegaPickerButton />}
           {effectiveModule === 'asistencial' && <AreaFuncionalPickerButton />}
         </Topbar>
 

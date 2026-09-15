@@ -48,4 +48,8 @@
   font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
   background:var(--surface);
 }
+/* :hover (auditoría de craft visual, regla 11 "cada estado diseñado") --
+   faltaba: su gemelo funcional .mig-lotes-cantidad-input (LotesDisponiblesTable.css)
+   ya tenía este mismo tratamiento, este input solo cubría :focus-visible. */
+.mig-editar-lote-input:hover{border-color:var(--ink-400);}
 .mig-editar-lote-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

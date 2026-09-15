@@ -21,9 +21,10 @@ function normalizar(texto) {
     .toLowerCase();
 }
 
-// Picker app-wide porque lo disparan tanto BodegaPickerButton (gate
-// post-login de Home + meta-item "Bodega:" de Solicitudes) -- ver AGENTS.md
-// "Component organization". Scaffolding de overlay/modal propio
+// Picker app-wide porque lo dispara BodegaPickerButton (gate de entrada a
+// Solicitudes -- Salidas asistenciales -- + meta-item "Bodega:" ahí mismo)
+// -- ver AGENTS.md "Component organization". Scaffolding de overlay/modal
+// propio
 // (.bdg-overlay/.bdg-modal/.bdg-body/.bdg-footer), no el .modal-overlay/
 // .modal genérico de un shared.css por feature: al montarse desde 2+
 // features (Home, InsumosFarmacia) no hay garantía de que ese shared.css

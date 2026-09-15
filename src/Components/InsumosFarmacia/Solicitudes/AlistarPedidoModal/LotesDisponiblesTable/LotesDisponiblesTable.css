@@ -38,20 +38,19 @@ html[data-theme="dark"] .mig-lotes-table-inner::-webkit-scrollbar-thumb:hover{ba
 
 /* Anchos de columna (encargo explícito "démosle más espacio a Descripción",
    luego "eliminemos Item, Descripción primera, Ubicación antepenúltima",
-   luego "intercambia Ubicación por Lote Serie") -- table-layout:fixed + un
-   ancho fijo por columna, salvo Descripción (nth-child(1)), que se deja sin
-   ancho para que absorba el espacio restante. .mig-lotes-descripcion pisa
-   el max-width:220px de .mig-ellipsis (shared.css, pensado para columnas
-   angostas) -- acá el límite real ya lo da el ancho de columna fijo, no ese
-   tope. Columnas: Descripción/Stock/Cantidad/Vence/Lote Serie/Ubicación/
-   Acciones. */
+   luego "intercambia Ubicación por Lote Serie", luego "pasa Ubicación a la
+   card del resumen") -- table-layout:fixed + un ancho fijo por columna,
+   salvo Descripción (nth-child(1)), que se deja sin ancho para que absorba
+   el espacio restante. .mig-lotes-descripcion pisa el max-width:220px de
+   .mig-ellipsis (shared.css, pensado para columnas angostas) -- acá el
+   límite real ya lo da el ancho de columna fijo, no ese tope. Columnas:
+   Descripción/Stock/Cantidad/Vence/Lote Serie/Acciones. */
 .mig-lotes-grid{table-layout:fixed;}
 .mig-lotes-grid th:nth-child(2),.mig-lotes-grid td:nth-child(2){width:72px;}
 .mig-lotes-grid th:nth-child(3),.mig-lotes-grid td:nth-child(3){width:80px;}
 .mig-lotes-grid th:nth-child(4),.mig-lotes-grid td:nth-child(4){width:120px;}
 .mig-lotes-grid th:nth-child(5),.mig-lotes-grid td:nth-child(5){width:110px;}
-.mig-lotes-grid th:nth-child(6),.mig-lotes-grid td:nth-child(6){width:120px;}
-.mig-lotes-grid th:nth-child(7),.mig-lotes-grid td:nth-child(7){width:76px;}
+.mig-lotes-grid th:nth-child(6),.mig-lotes-grid td:nth-child(6){width:76px;}
 .mig-lotes-grid td.mig-lotes-descripcion{max-width:none;}
 
 /* Stock con más peso visual que el resto de columnas (encargo explícito) --
