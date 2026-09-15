@@ -9,8 +9,19 @@
    .mig-articulos-block en AlistarPedidoModal.css), así que puede ocupar
    toda la altura disponible de esa columna en vez de un tope fijo pensado
    para cuando compartía el modal con la sección de lotes debajo. */
+/* Sangrado horizontal (encargo explícito, iteración visual "sin el padding
+   del exterior del bloque, ajustados al borde propio del bloque general")
+   -- margin:-16px a los lados cancela el padding horizontal de
+   .mig-articulos-block (AlistarPedidoModal.css) para que la tabla llegue
+   hasta el borde de esa card; border-left/right se sacan a propósito (ese
+   borde ahora lo resuelve el borde de la card contenedora, no uno propio
+   "caja dentro de caja") -- solo quedan border-top/bottom para separarla
+   visualmente del buscador/botón de arriba. Sin border-radius: ya no es una
+   caja flotante con esquinas propias. */
 .mig-items-table-scroll{
-  flex:1;min-height:0;overflow:auto;border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;overflow:auto;
+  margin:0 -16px;border-radius:0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
   scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
 }
 /* Cuando las filas no llenan el alto disponible, la última fila queda

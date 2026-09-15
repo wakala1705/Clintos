@@ -24,7 +24,7 @@
    en ArticulosItemsTable/LotesDisponiblesTable de AlistarPedidoModal, que sí
    ya pasaban mig-num al <th> pero no se veía reflejado). */
 .mig-grid thead th.mig-num{text-align:right;}
-.mig-grid tbody td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.mig-grid tbody td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--ink-900);}
 .mig-grid tbody tr{cursor:pointer;background:var(--surface);}
 .mig-grid tbody tr:hover{background:var(--gray-bg);}
 .mig-grid tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}

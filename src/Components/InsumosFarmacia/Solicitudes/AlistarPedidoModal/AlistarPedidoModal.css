@@ -104,10 +104,19 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    angostarse en vez de forzar overflow horizontal del padre.
    overflow-y:auto es la red de seguridad de ESTA columna (antes lo era
    .mig-alistar-body para todo el modal) por si el contenido crece más que
-   el alto disponible. */
+   el alto disponible.
+   Encapsulado como card propia (encargo explícito, iteración visual --
+   "encapsulalos") -- mismo tratamiento que .mig-alistar-identity (border +
+   background:var(--bg), el gris de fondo de página, distinto del blanco de
+   .modal, sin box-shadow: es contenido en el mismo plano, no flotante,
+   mismo criterio de "un solo lenguaje de elevación" de la auditoría de
+   craft visual). El contenido interno (tabla, alerta ámbar) conserva su
+   propio borde/fondo -- quedan anidados un nivel más adentro, mismo patrón
+   que la card "Artículo seleccionado" ya anidada en mig-lotes-section. */
 .mig-articulos-block{
-  display:flex;flex-direction:column;gap:8px;
+  display:flex;flex-direction:column;gap:12px;
   flex:1 1 30%;min-width:0;overflow-y:auto;
+  padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
 }
 .mig-articulos-toolbar{display:flex;align-items:center;gap:10px;}
 /* Buscador único código/descripción (encargo explícito) -- `.search-field`
@@ -179,10 +188,13 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    referencia. ~58% de mig-alistar-columns (más que el 42% de la
    izquierda: acá vive la tabla de lotes + resumen, con más columnas que
    la lista de artículos). overflow-y:auto: red de seguridad propia de
-   esta columna, igual que mig-articulos-block. */
+   esta columna, igual que mig-articulos-block. Encapsulado como card
+   propia (encargo explícito, iteración visual "encapsulalos") -- mismo
+   tratamiento que mig-articulos-block, ver ese comentario. */
 .mig-lotes-section{
-  display:flex;flex-direction:column;gap:10px;
+  display:flex;flex-direction:column;gap:12px;
   flex:1 1 70%;min-width:0;overflow-y:auto;
+  padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
 }
 .mig-lotes-subtitle{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;flex-shrink:0;}
 

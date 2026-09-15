@@ -10,9 +10,17 @@
    con scroll interno si el ítem seleccionado tiene muchos lotes, y
    mig-lotes-summary siempre queda visible debajo sin competir por el
    mismo alto. */
+/* Sangrado horizontal (encargo explícito, iteración visual "sin el padding
+   del exterior del bloque, ajustados al borde propio del bloque general")
+   -- mismo criterio que .mig-items-table-scroll (ArticulosItemsTable.css):
+   margin:-16px a los lados cancela el padding horizontal de
+   mig-lotes-section (AlistarPedidoModal.css) para que la tabla llegue hasta
+   el borde de esa card; sin border-left/right/radius propios -- ese borde
+   ahora lo resuelve el de la card contenedora. */
 .mig-lotes-table-scroll{
   max-height:260px;flex-shrink:0;display:flex;flex-direction:column;
-  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  margin:0 -16px;overflow:hidden;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
 }
 /* Doble borde al final de la tabla (encargo explícito) -- el border-bottom
    de la última fila (.mig-grid tbody td, shared.css) caía justo sobre el

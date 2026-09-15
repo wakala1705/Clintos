@@ -1,6 +1,10 @@
 /* Mismo patrón que MovimientoRowMenu.css (ver AGENTS.md "Component
    organization") -- trigger "⋮" + dropdown con las 3 acciones agrupadas
-   (Sugerir/Movimiento/Borrar) de la columna Acciones. */
+   (Sugerir/Movimiento/Borrar) de la columna Acciones.
+   position:relative ya no lo necesita el dropdown (portado a document.body,
+   posicionado con position:fixed vía coordenadas de getBoundingClientRect,
+   ver LoteRowMenu.jsx) -- se deja igual por si algún día vuelve a
+   necesitarse un elemento posicionado relativo a este wrapper. */
 .mig-lote-row-menu{position:relative;flex-shrink:0;}
 .mig-lote-row-menu-btn{
   width:28px;height:28px;border-radius:7px;flex-shrink:0;
@@ -10,8 +14,17 @@
 .mig-lote-row-menu-btn .icon{width:17px;height:17px;}
 .mig-lote-row-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .mig-lote-row-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+/* position:fixed + z-index un paso por encima de --z-modal (encargo
+   explícito "revisa el dropdown que se corta") -- antes position:absolute
+   quedaba recortado por el overflow:hidden/auto de
+   .mig-lotes-table-scroll/.mig-lotes-table-inner (LotesDisponiblesTable.css),
+   cortando "Borrar" (el último ítem) apenas la fila quedaba cerca del borde
+   inferior de esa tabla. Portado a document.body (ver LoteRowMenu.jsx) --
+   var(--z-popover) se queda por debajo de --z-modal (ver Solicitudes.css),
+   así que necesita su propio nivel por encima del modal, no ese token
+   -- mismo criterio que MantenimientoRowActionsMenu.css de GestionCamas. */
 .mig-lote-row-menu-dropdown{
-  position:absolute;top:calc(100% + 4px);right:0;min-width:170px;z-index:var(--z-popover);
+  position:fixed;min-width:170px;z-index:calc(var(--z-modal) + 1);
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
 }
