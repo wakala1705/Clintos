@@ -70,10 +70,8 @@
   flex:1;min-height:0;overflow-y:auto;
   padding:20px 24px;display:flex;flex-direction:column;gap:20px;
 }
-/* Oculto (encargo explícito) -- se mantiene el markup en el .jsx (título +
-   subtítulo dinámico por tipo) por si se retoma más adelante, solo se
-   deja de pintar acá. */
-.fam-panel-heading{display:none;}
+.fam-panel-heading h4{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fam-panel-heading p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
 
 .fam-section{
   border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -135,18 +133,6 @@
 .fam-admision-banner-text{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-sm);}
 .fam-admision-banner-text .icon{width:16px;height:16px;flex-shrink:0;margin-top:2px;}
 .fam-admision-banner-text strong{font-weight:var(--fw-semibold);}
-
-/* Campo de solo lectura "Afiliado" (sección 2, bajo isRestricted) -- mismo
-   fondo que un input[readonly] (ver .form-field input[readonly] en
-   ../../shared/shared.css), apilado en 2 líneas (nombre + documento). */
-.fam-afiliado-display{
-  border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--gray-bg);padding:8px 10px;min-height:var(--input-md);
-  display:flex;flex-direction:column;justify-content:center;gap:1px;
-}
-.fam-afiliado-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
-.fam-afiliado-doc{font-size:var(--fs-xs);color:var(--ink-500);}
-.fam-afiliado-placeholder{font-size:var(--fs-sm);color:var(--ink-500);}
 
 /* Box "Total factura" (sección 4) -- reemplaza el <input readOnly> plano de
    antes; mismo valor/formato de siempre (toFixed(2), sin separador de miles

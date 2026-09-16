@@ -127,12 +127,11 @@ function buildInitialForm() {
     noReferencia: '',
     fechaFactura: today,
     fechaVencimiento: addOneMonth(today),
+    // Bajo isRestricted, este campo lo llena el nombre del afiliado de la
+    // admisión elegida (ver handleSeleccionAdmision) -- es la persona a
+    // facturar bajo Copago/Moderadora/Pago Compartido, no la
+    // aseguradora/administradora como en Normal.
     idTercero: '',
-    // Solo se llena bajo isRestricted al elegir una admisión (ver
-    // handleSeleccionAdmision) -- {nombre,documento} o null; antes esta
-    // info se pisaba encima de idTercero, ahora tiene su propio campo de
-    // solo lectura ("Afiliado", sección "Información del afiliado").
-    afiliado: null,
     regimen: '',
     modoFacturacion: 'contratacion',
     tipoContrato: '',
@@ -296,10 +295,11 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   // campos que quedan sin su vecino de fila bajo isRestricted
   // (Modo Facturación, Tipo Contrato) pasan a `fam-col-span-2` para no dejar
   // hueco en el grid. Fecha Factura/Fecha Vencimiento/No. Referencia/Tercero
-  // (Id Tercero)/Régimen/Concepto nunca se restringen ni se ocultan. Bajo
-  // isRestricted, "Administradora" se reemplaza por el campo de solo lectura
-  // "Afiliado" en la sección 2 (ver handleSeleccionAdmision), no se oculta
-  // sin más. "Normal" no oculta ni deshabilita nada.
+  // (Id Tercero)/Régimen/Concepto nunca se restringen ni se ocultan.
+  // "Administradora" se oculta bajo isRestricted sin reemplazo (encargo
+  // explícito): "Tercero / Administradora" pasa a ser la persona a facturar
+  // bajo esos tipos, ver handleSeleccionAdmision. "Normal" no oculta ni
+  // deshabilita nada.
   const isRestricted = RESTRICTED_TIPOS.includes(form.tipoFactura);
   // Listado de Origen habilitado para el Tipo Factura activo (encargo
   // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
@@ -319,26 +319,27 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   }
 
   // Bajo Copago/Moderadora/Pago Compartido (encargo explícito), elegir una
-  // admisión en AdmisionPickerModal también completa el campo de solo
-  // lectura "Afiliado" con documento + nombre del afiliado de esa admisión
-  // -- fuera de isRestricted el picker solo carga "No. Referencia", igual
-  // que antes. `admisionSeleccionada` (cualquier tipo) dispara el banner
-  // "Admisión encontrada" de la sección 1.
+  // admisión en AdmisionPickerModal carga el nombre del afiliado en
+  // "Tercero / Administradora" (`idTercero`) -- es la persona a la que se le
+  // factura bajo estos tipos, a diferencia de Normal donde ese campo es la
+  // aseguradora/administradora. Fuera de isRestricted el picker solo carga
+  // "No. Referencia", igual que antes. `admisionSeleccionada` (cualquier
+  // tipo) dispara el banner "Admisión encontrada" de la sección 1.
   function handleSeleccionAdmision(admision) {
     setAdmisionSeleccionada(admision);
     setForm((f) => ({
       ...f,
       noReferencia: admision.numeroAdmision,
-      afiliado: isRestricted ? { nombre: admision.nombreAfiliado, documento: admision.documento } : f.afiliado,
+      idTercero: isRestricted ? admision.nombreAfiliado : f.idTercero,
     }));
   }
 
   // Edición manual de "No. Referencia" (a diferencia de elegirla vía el
-  // picker de arriba) -- limpia la admisión confirmada y el Afiliado
-  // derivado de ella, porque el texto ya no representa esa admisión.
+  // picker de arriba) -- limpia la admisión confirmada, porque el texto ya
+  // no representa una admisión confirmada.
   function handleChangeNoReferencia(value) {
     setAdmisionSeleccionada(null);
-    setForm((f) => ({ ...f, noReferencia: value, afiliado: null }));
+    setField(setForm, 'noReferencia')(value);
   }
 
   function handleChangeFechaFactura(value) {
@@ -412,11 +413,6 @@ export default function FacturaAgregarModalClasico({ onClose }) {
               imagen de referencia) -- reemplaza el FormSelect de "Tipo
               Factura" que vivía en el grid de campos. */}
           <div className="fam-type-panel">
-            <div className="fam-left-meta">
-              <div className="fam-left-meta-item"><span>Compañía</span><strong>02</strong></div>
-              <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{PROXIMO_CONSECUTIVO}</strong></div>
-            </div>
-
             <p className="fam-type-panel-lead">Selecciona el tipo de factura para continuar.</p>
             <TipoFacturaSelector
               value={form.tipoFactura}
@@ -427,6 +423,11 @@ export default function FacturaAgregarModalClasico({ onClose }) {
             <div className="fam-type-info">
               <LuInfo className="icon" aria-hidden="true" />
               <p>El tipo de factura define los campos que debes completar. La información puede autocompletarse desde una admisión.</p>
+            </div>
+
+            <div className="fam-left-meta">
+              <div className="fam-left-meta-item"><span>Compañía</span><strong>02</strong></div>
+              <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{PROXIMO_CONSECUTIVO}</strong></div>
             </div>
           </div>
 
@@ -455,16 +456,27 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   subtitle="Datos básicos para identificar la factura."
                   trailing={<span className="fam-required-note">Los campos marcados con * son obligatorios</span>}
                 />
-                <div className="fam-fields fam-fields-4">
-                  <div className="form-field">
-                    <label htmlFor="fam-origen">Origen</label>
-                    <FormSelect
-                      id="fam-origen"
-                      value={form.origen}
-                      onChange={setField(setForm, 'origen')}
-                      options={origenOptions}
-                    />
-                  </div>
+                {/* 2x2 bajo isRestricted (Origen/No. Referencia/Fecha
+                    Factura/Fecha Vencimiento, encargo explícito) -- 3
+                    columnas en Normal, que no muestra "Origen" (ver más
+                    abajo) y queda con los 3 campos restantes en una sola
+                    fila. */}
+                <div className={`fam-fields ${isRestricted ? 'fam-fields-2' : 'fam-fields-3'}`}>
+                  {/* "Origen" no aplica a Normal (encargo explícito) -- solo
+                      tiene sentido para Copago/Moderadora/Pago Compartido,
+                      que son los únicos tipos con un listado propio en
+                      ORIGEN_OPTIONS_BY_TIPO. */}
+                  {form.tipoFactura !== 'normal' && (
+                    <div className="form-field">
+                      <label htmlFor="fam-origen">Origen</label>
+                      <FormSelect
+                        id="fam-origen"
+                        value={form.origen}
+                        onChange={setField(setForm, 'origen')}
+                        options={origenOptions}
+                      />
+                    </div>
+                  )}
 
                   <div className="form-field">
                     <label htmlFor="fam-no-referencia">No. Referencia<span className="fam-required-mark">*</span></label>
@@ -544,7 +556,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   title="2. Información del afiliado"
                   subtitle="Datos del tercero y régimen."
                 />
-                <div className="fam-fields fam-fields-3">
+                {/* 2 columnas bajo isRestricted (Tercero/Régimen, sin
+                    Administradora, encargo explícito) -- 3 en Normal, que sí
+                    suma "Administradora" como tercer campo. */}
+                <div className={`fam-fields ${isRestricted ? 'fam-fields-2' : 'fam-fields-3'}`}>
                   <div className="form-field">
                     <label htmlFor="fam-id-tercero">Tercero / Administradora<span className="fam-required-mark">*</span></label>
                     <div className="field-with-search">
@@ -590,24 +605,12 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                     </div>
                   </div>
 
-                  {/* Bajo isRestricted, "Afiliado" reemplaza el campo
-                      "Administradora" en esta fila (encargo explícito) --
-                      solo lectura, se llena vía handleSeleccionAdmision. */}
-                  {isRestricted ? (
-                    <div className="form-field">
-                      <label htmlFor="fam-afiliado">Afiliado</label>
-                      <div className="fam-afiliado-display" id="fam-afiliado">
-                        {form.afiliado ? (
-                          <>
-                            <span className="fam-afiliado-nombre">{form.afiliado.nombre}</span>
-                            <span className="fam-afiliado-doc">CC. {form.afiliado.documento}</span>
-                          </>
-                        ) : (
-                          <span className="fam-afiliado-placeholder">Selecciona una admisión para completar este dato.</span>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
+                  {/* "Administradora" no aplica a Copago/Moderadora/Pago
+                      Compartido (encargo explícito) -- bajo esos tipos
+                      "Tercero / Administradora" ya es la persona a facturar
+                      (ver handleSeleccionAdmision), no queda un campo
+                      "Afiliado" aparte. */}
+                  {!isRestricted && (
                     <div className="form-field">
                       <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
                       <div className="field-with-search">
@@ -806,6 +809,22 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                       {errors.descuento && <span className="form-field-error">{errors.descuento}</span>}
                     </div>
                   )}
+                  {/* Moneda va después de Descuento (encargo explícito: bloque
+                      de 3x2 -- Servicios/Copago, Pago Comp./Moderadora,
+                      Descuento/Moneda), ya no fam-col-span-full. */}
+                  {!isRestricted && (
+                    <div className="form-field">
+                      <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
+                      <FormSelect
+                        id="fam-moneda"
+                        value={form.moneda}
+                        onChange={setField(setForm, 'moneda')}
+                        options={MONEDA_OPTIONS}
+                        required
+                      />
+                    </div>
+                  )}
+
                   {!isRestricted && (
                     // Suma de Servicios + Copago + Pago Comp. + Moderadora -
                     // Descuento, calculada en vivo (ver valorFactura más
@@ -821,19 +840,6 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                           <span className="fam-total-value">{valorFactura.toFixed(2)}</span>
                         </span>
                       </div>
-                    </div>
-                  )}
-
-                  {!isRestricted && (
-                    <div className="form-field fam-col-span-full">
-                      <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
-                      <FormSelect
-                        id="fam-moneda"
-                        value={form.moneda}
-                        onChange={setField(setForm, 'moneda')}
-                        options={MONEDA_OPTIONS}
-                        required
-                      />
                     </div>
                   )}
 
