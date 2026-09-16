@@ -74,7 +74,11 @@ function Field({ label, value, children }) {
 // badge junto al número de factura es el de Facturación (ESTADO_FACTURACION)
 // -- el de PE (ESTADO_PE, "Estado de envío") vive dentro de
 // fvcd-compact-fields (entre F.Elect FE y Estado FE, mismo orden que la
-// grilla), no acá (encargo explícito).
+// grilla), no acá (encargo explícito). Valor Total (antes acá, en
+// fvcd-identity-row, y después probado en el footer de fvcd-items-card)
+// terminó de mudarse a fvcd-compact-fields como su propio grupo al final
+// (encargo explícito, ver ese bloque más abajo) -- mejor ubicado ahí,
+// junto al resto de los datos de la factura, que en un header/footer.
 //
 // La tabla de ítems y el resumen van en 2 columnas dentro de una sola fila
 // (fvcd-detail-row, encargo explícito: "ganamos
@@ -83,7 +87,7 @@ function Field({ label, value, children }) {
 // (la tarjeta de ítems, con Imprimir anexo/Anexo por prefijo/Capitados como
 // footer propio de esa tarjeta, .fvcd-items-footer -- trasladados acá desde
 // el footer de FacturaDetalleClasico, ya no se duplican en los dos lugares);
-// a la derecha fvcd-bottom-summary, 2 tarjetas
+// a la derecha de fvcd-detail-row va fvcd-bottom-summary, 2 tarjetas
 // apiladas -- "Resumen de factura" e "Información adicional" (Administradora
 // Afi/Usuario/Procedencia, encargo explícito: bajaron acá desde
 // fvcd-compact-fields -- por eso ya no se repiten ahí, ver ese bloque más
@@ -241,11 +245,6 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
               </div>
               <div className="fvcd-identity-sub">No. Admisión {factura.noAdmision}</div>
             </div>
-
-            <div className="fvcd-identity-total">
-              <span className="fvcd-field-label">Valor Total</span>
-              <span className="fvcd-total-value">{formatCOP(factura.valorTotal)}</span>
-            </div>
           </div>
 
           <div className="fvcd-compact-fields">
@@ -269,6 +268,12 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
             </Field>
             <Field label="Estado FE">
               <Badge tone={estadoFacturaBadge(factura).tone} className="fvcd-badge">{estadoFacturaBadge(factura).label}</Badge>
+            </Field>
+
+            <div className="fvcd-compact-divider" aria-hidden="true" />
+
+            <Field label="Valor Total">
+              <span className="fvcd-total-value">{formatCOP(factura.valorTotal)}</span>
             </Field>
           </div>
 

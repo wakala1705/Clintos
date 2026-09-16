@@ -162,10 +162,17 @@ export const FACTURAS = Array.from({ length: 60 }, (_, i) => {
   const fechaFactura = fechaISO(fecha);
   const vencimiento = new Date(fecha);
   vencimiento.setMonth(vencimiento.getMonth() + 1);
+  // Facturas "pendiente" (columna Facturación) todavía no tienen un No. de
+  // factura definitivo asignado (encargo explícito) -- en vez del prefijo
+  // "ONCP" (numeración ya asignada) muestran un código numérico de 10
+  // dígitos que arranca en "0200" (encargo explícito), + 6 dígitos al azar.
+  const noFactura = estadoFacturacion === 'pendiente'
+    ? `0200${String(Math.floor(rand() * 1000000)).padStart(6, '0')}`
+    : `ONCP${numero}`;
 
   return {
-    id: `ONCP${numero}`,
-    numero: `ONCP${numero}`,
+    id: noFactura,
+    numero: noFactura,
     terceroId: tercero.id,
     terceroRazonSocial: tercero.razonSocial,
     sede,
@@ -226,17 +233,22 @@ export function formatFechaClasica(iso) {
 }
 
 // Reutilizado por fetchFacturas() y por el filtro local (sin paginación) de
-// FacturaVistaClasica -- mismo criterio de búsqueda en ambas vistas, ahora
-// incluye documento/no. admisión (placeholder de esa vista: "Buscar por
-// factura, NIT, tercero, afiliado o admisión...").
+// FacturaVistaClasica -- mismo criterio de búsqueda en ambas vistas, incluye
+// documento. No incluye noAdmision (encargo explícito, bug real encontrado):
+// las 60 facturas del mock ya traían un noAdmision con formato "0200277xxx"
+// -- desde que el número de factura de las "pendiente" (columna
+// Facturación) también arranca en "0200" (encargo previo), buscar "0200"
+// matcheaba por noAdmision en todas las filas por igual y el buscador
+// "no filtraba" (siempre devolvía las 60). Placeholder de FacturaVistaClasica
+// ajustado a juego ("Buscar por factura, NIT, tercero o afiliado...", sin
+// "o admisión").
 export function matchesQuery(f, q) {
   if (!q) return true;
   const norm = normalize(q);
   return normalize(f.numero).includes(norm)
     || normalize(f.terceroRazonSocial).includes(norm)
     || normalize(f.nombreAfiliado).includes(norm)
-    || f.documento.includes(q)
-    || f.noAdmision.includes(q);
+    || f.documento.includes(q);
 }
 
 // Simula un endpoint server-side: filtra, ordena y pagina — mismo contrato

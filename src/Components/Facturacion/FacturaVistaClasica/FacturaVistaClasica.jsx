@@ -172,10 +172,10 @@ export default function FacturaVistaClasica() {
           <LuSearch className="icon" />
           <input
             type="text"
-            placeholder="Buscar por factura, NIT, tercero, afiliado o admisión..."
+            placeholder="Buscar por factura, NIT, tercero o afiliado..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Buscar por factura, NIT, tercero, afiliado o admisión"
+            aria-label="Buscar por factura, NIT, tercero o afiliado"
           />
         </div>
 

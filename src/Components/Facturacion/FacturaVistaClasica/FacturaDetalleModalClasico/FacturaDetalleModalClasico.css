@@ -30,8 +30,6 @@
   margin-left:8px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);
 }
 .fvcd-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-.fvcd-identity-total{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
-.fvcd-total-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--primary);}
 
 /* La tabla de ítems es lo importante del modal (encargo explícito) -- va en
    su propia tarjeta con borde (en vez del simple separador border-top de
@@ -94,8 +92,13 @@
    simple separador border-top de antes) en vez de los 5 bloques con título
    propio + grid de 3 columnas de la versión original -- separadores
    verticales finos agrupan por tema (Datos de factura/Fechas/Estado y
-   control/Gestión) sin el peso visual de un título + borde por grupo.
-   No. Admisión/Id. Afiliado ya no van acá, ver .fvcd-identity-id/-sub. */
+   control/Valor Total) sin el peso visual de un título + borde por grupo.
+   No. Admisión/Id. Afiliado ya no van acá, ver .fvcd-identity-id/-sub. Valor
+   Total (encargo explícito) cierra la tarjeta como su propio grupo -- ya no
+   en fvcd-identity-row ni en fvcd-items-footer (probado ahí antes), mismo
+   Field que el resto pero con .fvcd-total-value en vez de
+   .fvcd-field-value para que se distinga como el dato destacado de la
+   tarjeta. */
 .fvcd-compact-fields{
   display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px 24px;
   padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
@@ -107,6 +110,7 @@
 .fvcd-badge{align-self:flex-start;}
 .fvcd-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
 .fvcd-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}
+.fvcd-total-value{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--primary);}
 
 /* Bloque contextual "Factura anulada" (encargo explícito) -- solo se monta
    cuando factura.estado === 'anulada' (ver .jsx), así que nunca deja hueco
@@ -151,11 +155,10 @@
    explícito, ver comentario en .fvcd-items-card arriba): a la izquierda
    fvcd-detail-main (la tarjeta de ítems, con Imprimir anexo/Anexo por
    prefijo/Capitados como footer de esa misma tarjeta, ver
-   .fvcd-items-footer), a la derecha el resumen en ancho fijo -- mismo
-   criterio de "columna lateral de ancho fijo" que .fvcd-identity-total
-   arriba. flex-shrink:0 en la fila (mismo motivo que .fvcd-items-card) --
-   ninguno de sus 2 hijos directos tiene overflow:hidden propio, pero se deja
-   explícito para no depender del comportamiento por defecto de flexbox acá. */
+   .fvcd-items-footer), a la derecha el resumen en ancho fijo. flex-shrink:0
+   en la fila (mismo motivo que .fvcd-items-card) -- ninguno de sus 2 hijos
+   directos tiene overflow:hidden propio, pero se deja explícito para no
+   depender del comportamiento por defecto de flexbox acá. */
 .fvcd-detail-row{display:flex;align-items:flex-start;gap:16px;flex-shrink:0;}
 .fvcd-detail-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
 .fvcd-bottom-summary{display:flex;flex-direction:column;gap:12px;width:300px;flex-shrink:0;}

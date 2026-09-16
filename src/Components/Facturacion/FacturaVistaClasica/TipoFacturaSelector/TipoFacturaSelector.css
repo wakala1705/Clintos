@@ -1,0 +1,31 @@
+.tfs-list{display:flex;flex-direction:column;gap:10px;}
+
+.tfs-card{
+  display:flex;align-items:flex-start;gap:12px;width:100%;
+  padding:14px;border:1px solid var(--border);border-radius:var(--radius-lg);
+  background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;
+  transition:var(--btn-transition);
+}
+.tfs-card:hover{border-color:var(--primary-100);background:var(--primary-50);}
+.tfs-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.tfs-card.selected{border-color:var(--primary);background:var(--primary-50);}
+
+.tfs-icon{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:var(--gray-bg);color:var(--ink-700);
+  display:flex;align-items:center;justify-content:center;
+}
+.tfs-icon .icon{width:18px;height:18px;}
+.tfs-card.selected .tfs-icon{background:var(--primary-100);color:var(--primary-dark);}
+
+.tfs-body{flex:1;min-width:0;display:flex;flex-direction:column;}
+.tfs-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.tfs-desc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+
+.tfs-radio{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:2px;
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+}
+.tfs-card.selected .tfs-radio{border-color:var(--primary);}
+.tfs-card.selected .tfs-radio::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--primary);}

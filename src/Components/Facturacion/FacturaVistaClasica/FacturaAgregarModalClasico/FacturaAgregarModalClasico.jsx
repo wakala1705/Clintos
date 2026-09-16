@@ -9,16 +9,44 @@ import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/Ca
 import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
+import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
 import {
-  LuFilePlus2, LuEye, LuCheck, LuTrash2, LuTriangleAlert,
+  LuFilePlus2, LuEye, LuCheck, LuTrash2, LuTriangleAlert, LuFileText, LuUser,
+  LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
+  LuRefreshCw, LuChevronUp, LuChevronDown,
 } from 'react-icons/lu';
 
+// icon/description por opción (consumido por TipoFacturaSelector, panel
+// izquierdo) -- Normal se agrega como 4ta tarjeta (encargo explícito, ver
+// imagen de referencia), antes vivía como opción de un FormSelect sin
+// descripción.
 const TIPO_FACTURA_OPTIONS = [
-  { value: 'normal', label: 'Normal' },
-  { value: 'copago', label: 'Copago' },
-  { value: 'moderadora', label: 'Moderadora' },
-  { value: 'pago-compartido', label: 'Pago Compartido' },
+  {
+    value: 'normal',
+    label: 'Normal',
+    description: 'Factura estándar con contrato, administradora y valores completos.',
+    icon: LuFileText,
+  },
+  {
+    value: 'copago',
+    label: 'Copago',
+    description: 'Cobro fijo a cargo del afiliado por la prestación del servicio.',
+    icon: LuCoins,
+  },
+  {
+    value: 'moderadora',
+    label: 'Moderadora',
+    description: 'Cuota moderadora según el régimen y servicio.',
+    icon: LuCreditCard,
+  },
+  {
+    value: 'pago-compartido',
+    label: 'Pago Compartido',
+    description: 'Porcentaje del valor del servicio a cargo del afiliado.',
+    icon: LuChartPie,
+  },
 ];
+const TIPO_FACTURA_LABEL = Object.fromEntries(TIPO_FACTURA_OPTIONS.map((o) => [o.value, o.label]));
 
 // Tipos de factura que restringen el formulario a un único valor a cargar
 // (ver RESTRICTED_TIPOS/isRestricted más abajo) -- encargo explícito, ver
@@ -76,9 +104,10 @@ const MONEDA_OPTIONS = [
   { value: 'dolar', label: 'Dólar' },
 ];
 
-// Mismo valor que muestra el .fam-readonly-row de arriba (placeholder hasta
-// que haya lógica real de numeración) -- No. de Factura arranca precargado
-// con el consecutivo, como en la imagen de referencia.
+// Mismo valor que muestra el .fam-left-meta del panel izquierdo (placeholder
+// hasta que haya lógica real de numeración). "No. de Factura" se eliminó de
+// ese bloque (encargo explícito: era el mismo valor que Consecutivo, dato
+// duplicado) -- por eso ya no hay un campo `noFactura` separado en el form.
 const PROXIMO_CONSECUTIVO = '0200289592';
 
 // Fecha Vencimiento es siempre un mes después de Fecha Factura (encargo
@@ -96,10 +125,14 @@ function buildInitialForm() {
     tipoFactura: 'normal',
     origen: 'admisiones',
     noReferencia: '',
-    noFactura: PROXIMO_CONSECUTIVO,
     fechaFactura: today,
     fechaVencimiento: addOneMonth(today),
     idTercero: '',
+    // Solo se llena bajo isRestricted al elegir una admisión (ver
+    // handleSeleccionAdmision) -- {nombre,documento} o null; antes esta
+    // info se pisaba encima de idTercero, ahora tiene su propio campo de
+    // solo lectura ("Afiliado", sección "Información del afiliado").
+    afiliado: null,
     regimen: '',
     modoFacturacion: 'contratacion',
     tipoContrato: '',
@@ -136,15 +169,38 @@ const MONEY_FIELDS = [
   { key: 'descuento', label: 'Descuento' },
 ];
 
+// Header de cada una de las 4 secciones del panel derecho (ícono en círculo +
+// título + descripción + contenido final opcional) -- local a este archivo,
+// no un componente de @/Components/ porque está fuertemente acoplado a la
+// forma de estas 4 secciones puntuales (no se reusa en otro modal).
+function SectionHeader({
+  icon: Icon, title, subtitle, trailing,
+}) {
+  return (
+    <div className="fam-section-header">
+      <div className="fam-section-header-main">
+        {Icon && <div className="fam-section-icon"><Icon className="icon" aria-hidden="true" /></div>}
+        <div>
+          <h4>{title}</h4>
+          {subtitle && <p>{subtitle}</p>}
+        </div>
+      </div>
+      {trailing && <div className="fam-section-header-trailing">{trailing}</div>}
+    </div>
+  );
+}
+
 // Modal disparado por el botón "Nueva factura" del header de Facturacion.jsx
-// -- réplica de los campos del formulario legacy "Agregando un Registro"
-// (encargo explícito, ver imagen de referencia), hermano de
-// FacturaEditarModalClasico ("Cambiando un Registro"): mismo chrome
-// homologado del proyecto (ModalHeader/FormSelect, ver AGENTS.md "Modales"/
-// "Selects de formulario") en vez de la barra de título azul/fondo celeste
-// del original, mismo criterio de agrupar campos en un grid de 2 columnas
-// por afinidad de dominio en vez de replicar la posición exacta de la imagen
-// (esa ya no aplicaba 1:1 con el chrome homologado).
+// -- layout de 2 paneles (encargo explícito, ver imagen de referencia):
+// izquierdo `TipoFacturaSelector` (tarjetas Normal/Copago/Moderadora/Pago
+// Compartido) + Compañía/Consecutivo/No. de Factura, derecho el formulario
+// agrupado en 4 secciones con SectionHeader (ícono+título+descripción). El
+// único botón cerrar real vive en el `ModalHeader` homologado de arriba
+// (ver AGENTS.md "Modales") -- "Formulario de factura" dentro del panel
+// derecho es solo un heading de contenido, no repite esa fila de
+// título+cierre. Hermano de FacturaEditarModalClasico ("Cambiando un
+// Registro"), que sigue con el grid plano de 2 columnas anterior (este
+// rediseño de 2 paneles es solo para Agregar, no se propagó ahí).
 //
 // Solo pinta el front (encargo explícito: "creá la modal... y luego le
 // damos lógica"): "Guardar" sigue sin persistir nada en un backend real --
@@ -184,6 +240,15 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [confirmingClose, setConfirmingClose] = useState(false);
+  // Admisión confirmada vía AdmisionPickerModal (para cualquier tipo, no
+  // solo isRestricted) -- maneja el banner "Admisión encontrada"/"Cambiar
+  // admisión" de la sección 1. Se limpia si el usuario edita "No.
+  // Referencia" a mano (ver handleChangeNoReferencia), porque en ese caso
+  // el texto ya no refleja la admisión confirmada.
+  const [admisionSeleccionada, setAdmisionSeleccionada] = useState(null);
+  // Toggle "Contraer sección"/"Expandir sección" de "Información
+  // contractual" (encargo explícito, ver imagen de referencia).
+  const [contractSectionCollapsed, setContractSectionCollapsed] = useState(false);
 
   // Snapshot del form recién montado (mismo objeto que ya construyó
   // useState(buildInitialForm) arriba) -- useState en vez de useRef porque
@@ -217,9 +282,9 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   // Modo Facturación en "Manual" (queda seleccionable igual, no se
   // deshabilita -- encargo explícito). Progressive disclosure (encargo
   // explícito: "en vez de mostrar esos campos muertos ahi, vamos a
-  // ocultarlos"): No Contrato/Descuento/ID/Administradora/Valor Copago/
-  // Valor Pago Comp./Valor Moderadora/Valor Factura/Moneda se OCULTAN por
-  // completo (no solo se deshabilitan) cuando isRestricted -- los 4
+  // ocultarlos"): No Contrato/Descuento/ID/Valor Copago/Valor Pago Comp./
+  // Valor Moderadora/Valor Factura/Moneda se OCULTAN por completo (no solo
+  // se deshabilitan) cuando isRestricted -- los 4
   // "Valor X" quedan ocultos siempre bajo isRestricted, incluso el que
   // coincide con el tipo elegido (encargo explícito, ningún caso especial
   // por tipo). Tipo Contrato es la excepción: a diferencia de sus vecinos
@@ -229,10 +294,12 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   // tipos (encargo explícito, ver handleChangeTipoFactura; queda
   // seleccionable igual, el usuario puede cambiarlo a mano después). Los
   // campos que quedan sin su vecino de fila bajo isRestricted
-  // (Modo Facturación, Tipo Contrato) pasan a `fam-span-2` para no dejar
-  // hueco en el grid. Fecha Factura/Fecha Vencimiento/No. Referencia/Id
-  // Tercero/Régimen/Concepto nunca se restringen ni se ocultan. "Normal"
-  // no oculta ni deshabilita nada.
+  // (Modo Facturación, Tipo Contrato) pasan a `fam-col-span-2` para no dejar
+  // hueco en el grid. Fecha Factura/Fecha Vencimiento/No. Referencia/Tercero
+  // (Id Tercero)/Régimen/Concepto nunca se restringen ni se ocultan. Bajo
+  // isRestricted, "Administradora" se reemplaza por el campo de solo lectura
+  // "Afiliado" en la sección 2 (ver handleSeleccionAdmision), no se oculta
+  // sin más. "Normal" no oculta ni deshabilita nada.
   const isRestricted = RESTRICTED_TIPOS.includes(form.tipoFactura);
   // Listado de Origen habilitado para el Tipo Factura activo (encargo
   // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
@@ -252,16 +319,26 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   }
 
   // Bajo Copago/Moderadora/Pago Compartido (encargo explícito), elegir una
-  // admisión en AdmisionPickerModal también autocompleta "Id Tercero" con
-  // documento + nombre del afiliado de esa admisión (en vez de dejarlo para
-  // buscar aparte en CatalogoAseguradorasModal) -- fuera de isRestricted el
-  // picker solo carga "No. Referencia", igual que antes.
+  // admisión en AdmisionPickerModal también completa el campo de solo
+  // lectura "Afiliado" con documento + nombre del afiliado de esa admisión
+  // -- fuera de isRestricted el picker solo carga "No. Referencia", igual
+  // que antes. `admisionSeleccionada` (cualquier tipo) dispara el banner
+  // "Admisión encontrada" de la sección 1.
   function handleSeleccionAdmision(admision) {
+    setAdmisionSeleccionada(admision);
     setForm((f) => ({
       ...f,
       noReferencia: admision.numeroAdmision,
-      idTercero: isRestricted ? `${admision.documento} - ${admision.nombreAfiliado}` : f.idTercero,
+      afiliado: isRestricted ? { nombre: admision.nombreAfiliado, documento: admision.documento } : f.afiliado,
     }));
+  }
+
+  // Edición manual de "No. Referencia" (a diferencia de elegirla vía el
+  // picker de arriba) -- limpia la admisión confirmada y el Afiliado
+  // derivado de ella, porque el texto ya no representa esa admisión.
+  function handleChangeNoReferencia(value) {
+    setAdmisionSeleccionada(null);
+    setForm((f) => ({ ...f, noReferencia: value, afiliado: null }));
   }
 
   function handleChangeFechaFactura(value) {
@@ -317,325 +394,461 @@ export default function FacturaAgregarModalClasico({ onClose }) {
       <div className="modal fam-modal" role="dialog" aria-modal="true" aria-labelledby="fam-title">
         <ModalHeader
           icon={LuFilePlus2}
-          title="Agregando un registro"
+          title="Nueva factura"
           titleId="fam-title"
           onClose={attemptClose}
         />
 
-        <div className="modal-body">
-          {saving && (
-            <div className="fvc-save-toast" role="status" aria-live="polite">
-              <LuCheck className="icon" aria-hidden="true" />
-              Factura guardada (simulado) — no persiste todavía en el servidor.
+        {/* Layout de 2 paneles con riel izquierdo estilizado (encargo
+            explícito: bg + divider, mismo criterio visual que
+            .wizard-rail/.wizard-main de NuevaCitaFlow.css) -- reemplaza el
+            .modal-body genérico de shared.css (padding/scroll únicos) por
+            uno propio de este modal: cada panel maneja su propio padding y
+            scroll interno, igual que .wizard-rail/.wizard-content, para que
+            el fondo y el divider del riel corran toda la altura del modal
+            sin importar cuál panel tenga más contenido. */}
+        <div className="fam-body">
+          {/* Panel izquierdo: selector de tipo (encargo explícito, ver
+              imagen de referencia) -- reemplaza el FormSelect de "Tipo
+              Factura" que vivía en el grid de campos. */}
+          <div className="fam-type-panel">
+            <div className="fam-left-meta">
+              <div className="fam-left-meta-item"><span>Compañía</span><strong>02</strong></div>
+              <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{PROXIMO_CONSECUTIVO}</strong></div>
             </div>
-          )}
 
-          <div className="fam-readonly-row">
-            <span className="fam-readonly-item"><span className="fam-readonly-label">Compañía:</span> 02</span>
-            <span className="fam-readonly-item"><span className="fam-readonly-label">Consecutivo:</span> {PROXIMO_CONSECUTIVO}</span>
-            <span className="fam-readonly-item"><span className="fam-readonly-label">No. de Factura:</span> {form.noFactura}</span>
+            <p className="fam-type-panel-lead">Selecciona el tipo de factura para continuar.</p>
+            <TipoFacturaSelector
+              value={form.tipoFactura}
+              onChange={handleChangeTipoFactura}
+              options={TIPO_FACTURA_OPTIONS}
+            />
+
+            <div className="fam-type-info">
+              <LuInfo className="icon" aria-hidden="true" />
+              <p>El tipo de factura define los campos que debes completar. La información puede autocompletarse desde una admisión.</p>
+            </div>
           </div>
 
-          <div className="fam-grid">
-            <div className="form-field">
-              <label htmlFor="fam-tipo-factura">Tipo Factura</label>
-              <FormSelect
-                id="fam-tipo-factura"
-                value={form.tipoFactura}
-                onChange={handleChangeTipoFactura}
-                options={TIPO_FACTURA_OPTIONS}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="fam-origen">Origen</label>
-              <FormSelect
-                id="fam-origen"
-                value={form.origen}
-                onChange={setField(setForm, 'origen')}
-                options={origenOptions}
-              />
-            </div>
-
-            <div className="form-field fam-span-2">
-              <label htmlFor="fam-no-referencia">No. Referencia<span className="fam-required-mark">*</span></label>
-              <div className="field-with-search">
-                <input
-                  id="fam-no-referencia"
-                  type="text"
-                  value={form.noReferencia}
-                  onChange={(e) => setField(setForm, 'noReferencia')(e.target.value)}
-                  required
-                  placeholder="Ej. 0000277489"
-                />
-                <button
-                  type="button"
-                  className="search-btn"
-                  onClick={() => setAdmisionPickerAbierto(true)}
-                  aria-label="Buscar admisión de referencia"
-                  title="Buscar admisión de referencia"
-                >
-                  <LuEye className="icon" />
-                </button>
-              </div>
-            </div>
-
-            <div className="form-field">
-              <label htmlFor="fam-fecha-factura">Fecha Factura<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-fecha-factura"
-                type="date"
-                value={form.fechaFactura}
-                onChange={(e) => handleChangeFechaFactura(e.target.value)}
-                required
-              />
-            </div>
-            <div className={`form-field${errors.fechaVencimiento ? ' has-error' : ''}`}>
-              <label htmlFor="fam-fecha-vencimiento">Fecha Vencimiento<span className="fam-required-mark">*</span></label>
-              <input
-                id="fam-fecha-vencimiento"
-                type="date"
-                value={form.fechaVencimiento}
-                onChange={(e) => handleChangeFechaVencimiento(e.target.value)}
-                required
-                aria-invalid={!!errors.fechaVencimiento}
-              />
-              {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
-            </div>
-
-            <div className="form-field">
-              <label htmlFor="fam-id-tercero">Id Tercero<span className="fam-required-mark">*</span></label>
-              <div className="field-with-search">
-                <input
-                  id="fam-id-tercero"
-                  type="text"
-                  value={form.idTercero}
-                  onChange={(e) => setField(setForm, 'idTercero')(e.target.value)}
-                  required
-                  placeholder="Ej. Coosalud EPS-S"
-                />
-                <button
-                  type="button"
-                  className="search-btn"
-                  onClick={() => setCatalogoTerceroAbierto(true)}
-                  aria-label="Buscar tercero"
-                  title="Buscar tercero"
-                >
-                  <LuEye className="icon" />
-                </button>
-              </div>
-            </div>
-            <div className="form-field">
-              <label htmlFor="fam-regimen">Régimen<span className="fam-required-mark">*</span></label>
-              <div className="field-with-search">
-                <input
-                  id="fam-regimen"
-                  type="text"
-                  value={form.regimen}
-                  onChange={(e) => setField(setForm, 'regimen')(e.target.value)}
-                  required
-                  placeholder="Ej. Contributivo"
-                />
-                <button
-                  type="button"
-                  className="search-btn"
-                  onClick={() => setCatalogoRegimenAbierto(true)}
-                  aria-label="Buscar régimen"
-                  title="Buscar régimen"
-                >
-                  <LuEye className="icon" />
-                </button>
-              </div>
-            </div>
-
-            <div className={`form-field${isRestricted ? ' fam-span-2' : ''}`}>
-              <label htmlFor="fam-modo-facturacion">Modo Facturación</label>
-              <FormSelect
-                id="fam-modo-facturacion"
-                value={form.modoFacturacion}
-                onChange={setField(setForm, 'modoFacturacion')}
-                options={MODO_FACTURACION_OPTIONS}
-              />
-            </div>
-            {!isRestricted && (
-              <div className="form-field">
-                <label htmlFor="fam-no-contrato">No Contrato</label>
-                <div className="field-with-search">
-                  <input
-                    id="fam-no-contrato"
-                    type="text"
-                    value={form.noContrato}
-                    onChange={(e) => setField(setForm, 'noContrato')(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="search-btn"
-                    onClick={() => setCatalogoContratacionAbierto(true)}
-                    aria-label="Buscar contrato"
-                    title="Buscar contrato"
-                  >
-                    <LuEye className="icon" />
-                  </button>
+          <div className="fam-form-panel">
+            <div className="fam-form-scroll">
+              {saving && (
+                <div className="fvc-save-toast" role="status" aria-live="polite">
+                  <LuCheck className="icon" aria-hidden="true" />
+                  Factura guardada (simulado) — no persiste todavía en el servidor.
                 </div>
-              </div>
-            )}
+              )}
 
-            {!isRestricted && (
-              <div className="form-field">
-                <label htmlFor="fam-id-contrato">ID<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-id-contrato"
-                  type="number"
-                  value={form.idContrato}
-                  onChange={(e) => setField(setForm, 'idContrato')(e.target.value)}
-                  required
+              <div className="fam-panel-heading">
+                <h4>Formulario de factura</h4>
+                <p>
+                  {form.tipoFactura === 'normal'
+                    ? 'Completa la información para generar la factura.'
+                    : `Completa la información para generar la factura de ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`}
+                </p>
+              </div>
+
+              <section className="fam-section">
+                <SectionHeader
+                  icon={LuFileText}
+                  title="1. Información de la factura"
+                  subtitle="Datos básicos para identificar la factura."
+                  trailing={<span className="fam-required-note">Los campos marcados con * son obligatorios</span>}
                 />
-              </div>
-            )}
-            <div className={`form-field${isRestricted ? ' fam-span-2' : ''}`}>
-              <label htmlFor="fam-tipo-contrato">Tipo Contrato</label>
-              <FormSelect
-                id="fam-tipo-contrato"
-                value={form.tipoContrato}
-                onChange={setField(setForm, 'tipoContrato')}
-                options={TIPO_CONTRATO_OPTIONS}
-                placeholder="Selecciona una opción"
-              />
-            </div>
+                <div className="fam-fields fam-fields-4">
+                  <div className="form-field">
+                    <label htmlFor="fam-origen">Origen</label>
+                    <FormSelect
+                      id="fam-origen"
+                      value={form.origen}
+                      onChange={setField(setForm, 'origen')}
+                      options={origenOptions}
+                    />
+                  </div>
 
-            {!isRestricted && (
-              <div className="form-field fam-span-2">
-                <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
-                <div className="field-with-search">
-                  <input
-                    id="fam-administradora"
-                    type="text"
-                    value={form.administradora}
-                    onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
-                    required
-                    placeholder="Ej. Clintos"
-                  />
-                  <button
-                    type="button"
-                    className="search-btn"
-                    onClick={() => setCatalogoAdministradoraAbierto(true)}
-                    aria-label="Buscar administradora"
-                    title="Buscar administradora"
-                  >
-                    <LuEye className="icon" />
-                  </button>
+                  <div className="form-field">
+                    <label htmlFor="fam-no-referencia">No. Referencia<span className="fam-required-mark">*</span></label>
+                    <div className="field-with-search">
+                      <input
+                        id="fam-no-referencia"
+                        type="text"
+                        value={form.noReferencia}
+                        onChange={(e) => handleChangeNoReferencia(e.target.value)}
+                        required
+                        placeholder="Ej. 0000277489"
+                      />
+                      <button
+                        type="button"
+                        className="search-btn"
+                        onClick={() => setAdmisionPickerAbierto(true)}
+                        aria-label="Buscar admisión de referencia"
+                        title="Buscar admisión de referencia"
+                      >
+                        <LuEye className="icon" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="form-field">
+                    <label htmlFor="fam-fecha-factura">Fecha Factura<span className="fam-required-mark">*</span></label>
+                    <input
+                      id="fam-fecha-factura"
+                      type="date"
+                      value={form.fechaFactura}
+                      onChange={(e) => handleChangeFechaFactura(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className={`form-field${errors.fechaVencimiento ? ' has-error' : ''}`}>
+                    <label htmlFor="fam-fecha-vencimiento">Fecha Vencimiento<span className="fam-required-mark">*</span></label>
+                    <input
+                      id="fam-fecha-vencimiento"
+                      type="date"
+                      value={form.fechaVencimiento}
+                      onChange={(e) => handleChangeFechaVencimiento(e.target.value)}
+                      required
+                      aria-invalid={!!errors.fechaVencimiento}
+                    />
+                    {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
+                  </div>
+
+                  {/* Banner "Admisión encontrada" (encargo explícito, funcional
+                      para cualquier tipo) -- ver admisionSeleccionada/
+                      handleSeleccionAdmision/handleChangeNoReferencia arriba. */}
+                  {admisionSeleccionada && (
+                    <div className="fam-admision-banner fam-col-span-full">
+                      <span className="fam-admision-banner-text">
+                        <LuCheck className="icon" aria-hidden="true" />
+                        <span>
+                          <strong>Admisión encontrada</strong>
+                          <br />
+                          Se cargó la información del afiliado y del contrato.
+                        </span>
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        icon={LuRefreshCw}
+                        onClick={() => setAdmisionPickerAbierto(true)}
+                      >
+                        Cambiar admisión
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              </section>
 
-            {!isRestricted && (
-              <div className={`form-field${errors.valorServicios ? ' has-error' : ''}`}>
-                <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-valor-servicios"
-                  type="number"
-                  step="0.01"
-                  value={form.valorServicios}
-                  onChange={(e) => handleChangeMoneyField('valorServicios')(e.target.value)}
-                  required
-                  aria-invalid={!!errors.valorServicios}
+              <section className="fam-section">
+                <SectionHeader
+                  icon={LuUser}
+                  title="2. Información del afiliado"
+                  subtitle="Datos del tercero y régimen."
                 />
-                {errors.valorServicios && <span className="form-field-error">{errors.valorServicios}</span>}
-              </div>
-            )}
-            {!isRestricted && (
-              <div className={`form-field${errors.valorCopago ? ' has-error' : ''}`}>
-                <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-valor-copago"
-                  type="number"
-                  step="0.01"
-                  value={form.valorCopago}
-                  onChange={(e) => handleChangeMoneyField('valorCopago')(e.target.value)}
-                  required
-                  aria-invalid={!!errors.valorCopago}
-                />
-                {errors.valorCopago && <span className="form-field-error">{errors.valorCopago}</span>}
-              </div>
-            )}
+                <div className="fam-fields fam-fields-3">
+                  <div className="form-field">
+                    <label htmlFor="fam-id-tercero">Tercero / Administradora<span className="fam-required-mark">*</span></label>
+                    <div className="field-with-search">
+                      <input
+                        id="fam-id-tercero"
+                        type="text"
+                        value={form.idTercero}
+                        onChange={(e) => setField(setForm, 'idTercero')(e.target.value)}
+                        required
+                        placeholder="Ej. Coosalud EPS-S"
+                      />
+                      <button
+                        type="button"
+                        className="search-btn"
+                        onClick={() => setCatalogoTerceroAbierto(true)}
+                        aria-label="Buscar tercero"
+                        title="Buscar tercero"
+                      >
+                        <LuEye className="icon" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="fam-regimen">Régimen<span className="fam-required-mark">*</span></label>
+                    <div className="field-with-search">
+                      <input
+                        id="fam-regimen"
+                        type="text"
+                        value={form.regimen}
+                        onChange={(e) => setField(setForm, 'regimen')(e.target.value)}
+                        required
+                        placeholder="Ej. Contributivo"
+                      />
+                      <button
+                        type="button"
+                        className="search-btn"
+                        onClick={() => setCatalogoRegimenAbierto(true)}
+                        aria-label="Buscar régimen"
+                        title="Buscar régimen"
+                      >
+                        <LuEye className="icon" />
+                      </button>
+                    </div>
+                  </div>
 
-            {!isRestricted && (
-              <div className={`form-field${errors.valorPagoCompartido ? ' has-error' : ''}`}>
-                <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-pago-compartido"
-                  type="number"
-                  step="0.01"
-                  value={form.valorPagoCompartido}
-                  onChange={(e) => handleChangeMoneyField('valorPagoCompartido')(e.target.value)}
-                  required
-                  aria-invalid={!!errors.valorPagoCompartido}
-                />
-                {errors.valorPagoCompartido && <span className="form-field-error">{errors.valorPagoCompartido}</span>}
-              </div>
-            )}
-            {!isRestricted && (
-              <div className={`form-field${errors.valorModeradora ? ' has-error' : ''}`}>
-                <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-valor-moderadora"
-                  type="number"
-                  step="0.01"
-                  value={form.valorModeradora}
-                  onChange={(e) => handleChangeMoneyField('valorModeradora')(e.target.value)}
-                  required
-                  aria-invalid={!!errors.valorModeradora}
-                />
-                {errors.valorModeradora && <span className="form-field-error">{errors.valorModeradora}</span>}
-              </div>
-            )}
+                  {/* Bajo isRestricted, "Afiliado" reemplaza el campo
+                      "Administradora" en esta fila (encargo explícito) --
+                      solo lectura, se llena vía handleSeleccionAdmision. */}
+                  {isRestricted ? (
+                    <div className="form-field">
+                      <label htmlFor="fam-afiliado">Afiliado</label>
+                      <div className="fam-afiliado-display" id="fam-afiliado">
+                        {form.afiliado ? (
+                          <>
+                            <span className="fam-afiliado-nombre">{form.afiliado.nombre}</span>
+                            <span className="fam-afiliado-doc">CC. {form.afiliado.documento}</span>
+                          </>
+                        ) : (
+                          <span className="fam-afiliado-placeholder">Selecciona una admisión para completar este dato.</span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="form-field">
+                      <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
+                      <div className="field-with-search">
+                        <input
+                          id="fam-administradora"
+                          type="text"
+                          value={form.administradora}
+                          onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
+                          required
+                          placeholder="Ej. Clintos"
+                        />
+                        <button
+                          type="button"
+                          className="search-btn"
+                          onClick={() => setCatalogoAdministradoraAbierto(true)}
+                          aria-label="Buscar administradora"
+                          title="Buscar administradora"
+                        >
+                          <LuEye className="icon" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
 
-            {!isRestricted && (
-              <div className={`form-field${errors.descuento ? ' has-error' : ''}`}>
-                <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
-                <input
-                  id="fam-descuento"
-                  type="number"
-                  step="0.01"
-                  value={form.descuento}
-                  onChange={(e) => handleChangeMoneyField('descuento')(e.target.value)}
-                  required
-                  aria-invalid={!!errors.descuento}
+              <section className="fam-section">
+                <SectionHeader
+                  icon={LuClipboardList}
+                  title="3. Información contractual"
+                  subtitle="Datos relacionados con el contrato y la facturación."
+                  trailing={(
+                    <button
+                      type="button"
+                      className="fam-section-toggle"
+                      onClick={() => setContractSectionCollapsed((c) => !c)}
+                      aria-expanded={!contractSectionCollapsed}
+                    >
+                      {contractSectionCollapsed ? 'Expandir sección' : 'Contraer sección'}
+                      {contractSectionCollapsed
+                        ? <LuChevronDown className="icon" aria-hidden="true" />
+                        : <LuChevronUp className="icon" aria-hidden="true" />}
+                    </button>
+                  )}
                 />
-                {errors.descuento && <span className="form-field-error">{errors.descuento}</span>}
-              </div>
-            )}
-            {!isRestricted && (
-              <div className="form-field">
-                {/* Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento,
-                    calculada en vivo (ver valorFactura más arriba) -- sigue sin
-                    persistir, solo deja de ser el placeholder "0.00" fijo. */}
-                <label htmlFor="fam-valor-factura">Valor Factura</label>
-                <input id="fam-valor-factura" type="number" step="0.01" value={valorFactura.toFixed(2)} readOnly />
-              </div>
-            )}
+                {!contractSectionCollapsed && (
+                  <div className="fam-fields fam-fields-4">
+                    <div className={`form-field${isRestricted ? ' fam-col-span-2' : ''}`}>
+                      <label htmlFor="fam-modo-facturacion">Modo Facturación</label>
+                      <FormSelect
+                        id="fam-modo-facturacion"
+                        value={form.modoFacturacion}
+                        onChange={setField(setForm, 'modoFacturacion')}
+                        options={MODO_FACTURACION_OPTIONS}
+                      />
+                    </div>
+                    {!isRestricted && (
+                      <div className="form-field">
+                        <label htmlFor="fam-no-contrato">No Contrato</label>
+                        <div className="field-with-search">
+                          <input
+                            id="fam-no-contrato"
+                            type="text"
+                            value={form.noContrato}
+                            onChange={(e) => setField(setForm, 'noContrato')(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            className="search-btn"
+                            onClick={() => setCatalogoContratacionAbierto(true)}
+                            aria-label="Buscar contrato"
+                            title="Buscar contrato"
+                          >
+                            <LuEye className="icon" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {!isRestricted && (
+                      <div className="form-field">
+                        <label htmlFor="fam-id-contrato">ID<span className="fam-required-mark">*</span></label>
+                        <input
+                          id="fam-id-contrato"
+                          type="number"
+                          value={form.idContrato}
+                          onChange={(e) => setField(setForm, 'idContrato')(e.target.value)}
+                          required
+                        />
+                      </div>
+                    )}
+                    <div className={`form-field${isRestricted ? ' fam-col-span-2' : ''}`}>
+                      <label htmlFor="fam-tipo-contrato">Tipo Contrato</label>
+                      <FormSelect
+                        id="fam-tipo-contrato"
+                        value={form.tipoContrato}
+                        onChange={setField(setForm, 'tipoContrato')}
+                        options={TIPO_CONTRATO_OPTIONS}
+                        placeholder="Selecciona una opción"
+                      />
+                    </div>
+                  </div>
+                )}
+              </section>
 
-            {!isRestricted && (
-              <div className="form-field fam-span-2">
-                <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
-                <FormSelect
-                  id="fam-moneda"
-                  value={form.moneda}
-                  onChange={setField(setForm, 'moneda')}
-                  options={MONEDA_OPTIONS}
-                  required
+              <section className="fam-section">
+                <SectionHeader
+                  icon={LuCalculator}
+                  title="4. Detalle del cobro"
+                  subtitle={
+                    form.tipoFactura === 'normal'
+                      ? 'Ingresa los valores correspondientes a la factura.'
+                      : `Ingresa los valores correspondientes al ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`
+                  }
+                  trailing={!isRestricted && (
+                    <span className="fam-cobro-note">
+                      <LuInfo className="icon" aria-hidden="true" />
+                      El valor total se calcula automáticamente.
+                    </span>
+                  )}
                 />
-              </div>
-            )}
+                <div className="fam-fields fam-fields-2">
+                  {!isRestricted && (
+                    <div className={`form-field${errors.valorServicios ? ' has-error' : ''}`}>
+                      <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
+                      <input
+                        id="fam-valor-servicios"
+                        type="number"
+                        step="0.01"
+                        value={form.valorServicios}
+                        onChange={(e) => handleChangeMoneyField('valorServicios')(e.target.value)}
+                        required
+                        aria-invalid={!!errors.valorServicios}
+                      />
+                      {errors.valorServicios && <span className="form-field-error">{errors.valorServicios}</span>}
+                    </div>
+                  )}
+                  {!isRestricted && (
+                    <div className={`form-field${errors.valorCopago ? ' has-error' : ''}`}>
+                      <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
+                      <input
+                        id="fam-valor-copago"
+                        type="number"
+                        step="0.01"
+                        value={form.valorCopago}
+                        onChange={(e) => handleChangeMoneyField('valorCopago')(e.target.value)}
+                        required
+                        aria-invalid={!!errors.valorCopago}
+                      />
+                      {errors.valorCopago && <span className="form-field-error">{errors.valorCopago}</span>}
+                    </div>
+                  )}
 
-            <div className="form-field fam-span-2">
-              <label htmlFor="fam-concepto">Concepto<span className="fam-required-mark">*</span></label>
-              <textarea
-                id="fam-concepto"
-                value={form.concepto}
-                onChange={(e) => setField(setForm, 'concepto')(e.target.value)}
-                required
-                placeholder="Descripción del concepto de facturación"
-              />
+                  {!isRestricted && (
+                    <div className={`form-field${errors.valorPagoCompartido ? ' has-error' : ''}`}>
+                      <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
+                      <input
+                        id="fam-pago-compartido"
+                        type="number"
+                        step="0.01"
+                        value={form.valorPagoCompartido}
+                        onChange={(e) => handleChangeMoneyField('valorPagoCompartido')(e.target.value)}
+                        required
+                        aria-invalid={!!errors.valorPagoCompartido}
+                      />
+                      {errors.valorPagoCompartido && <span className="form-field-error">{errors.valorPagoCompartido}</span>}
+                    </div>
+                  )}
+                  {!isRestricted && (
+                    <div className={`form-field${errors.valorModeradora ? ' has-error' : ''}`}>
+                      <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
+                      <input
+                        id="fam-valor-moderadora"
+                        type="number"
+                        step="0.01"
+                        value={form.valorModeradora}
+                        onChange={(e) => handleChangeMoneyField('valorModeradora')(e.target.value)}
+                        required
+                        aria-invalid={!!errors.valorModeradora}
+                      />
+                      {errors.valorModeradora && <span className="form-field-error">{errors.valorModeradora}</span>}
+                    </div>
+                  )}
+
+                  {!isRestricted && (
+                    <div className={`form-field${errors.descuento ? ' has-error' : ''}`}>
+                      <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
+                      <input
+                        id="fam-descuento"
+                        type="number"
+                        step="0.01"
+                        value={form.descuento}
+                        onChange={(e) => handleChangeMoneyField('descuento')(e.target.value)}
+                        required
+                        aria-invalid={!!errors.descuento}
+                      />
+                      {errors.descuento && <span className="form-field-error">{errors.descuento}</span>}
+                    </div>
+                  )}
+                  {!isRestricted && (
+                    // Suma de Servicios + Copago + Pago Comp. + Moderadora -
+                    // Descuento, calculada en vivo (ver valorFactura más
+                    // arriba) -- antes un <input readOnly>, ahora el box
+                    // resaltado "Total factura" (encargo explícito, ver
+                    // imagen de referencia); mismo valor/formato de siempre
+                    // (sin separador de miles ni símbolo $, encargo explícito).
+                    <div className="fam-col-span-full">
+                      <div className="fam-total-box">
+                        <span className="fam-total-icon"><LuCalculator className="icon" aria-hidden="true" /></span>
+                        <span className="fam-total-copy">
+                          <span className="fam-total-label">Total factura</span>
+                          <span className="fam-total-value">{valorFactura.toFixed(2)}</span>
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isRestricted && (
+                    <div className="form-field fam-col-span-full">
+                      <label htmlFor="fam-moneda">Moneda<span className="fam-required-mark">*</span></label>
+                      <FormSelect
+                        id="fam-moneda"
+                        value={form.moneda}
+                        onChange={setField(setForm, 'moneda')}
+                        options={MONEDA_OPTIONS}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <div className="form-field fam-col-span-full">
+                    <label htmlFor="fam-concepto">Concepto<span className="fam-required-mark">*</span></label>
+                    <textarea
+                      id="fam-concepto"
+                      value={form.concepto}
+                      onChange={(e) => setField(setForm, 'concepto')(e.target.value)}
+                      required
+                      placeholder="Descripción del concepto de facturación"
+                    />
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </div>
