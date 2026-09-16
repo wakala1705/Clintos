@@ -71,17 +71,19 @@ function Field({ label, value, children }) {
 // a fvcd-identity-row con su propio ícono en círculo (.fvcd-factura-icon,
 // mismo patrón visual que .modal-header-icon), junto a la identificación del
 // afiliado (nombre/ID/No. Admisión) que ya vivía ahí (encargo explícito). El
-// badge junto al número de factura es el de PE (ESTADO_PE), no el de Estado
-// -- Estado (Anulada/Pendiente) sigue viviendo solo dentro de
-// fvcd-compact-fields (encargo explícito, ver imagen de referencia).
+// badge junto al número de factura es el de Facturación (ESTADO_FACTURACION)
+// -- el de PE (ESTADO_PE, "Estado de envío") vive dentro de
+// fvcd-compact-fields (entre F.Elect FE y Estado FE, mismo orden que la
+// grilla), no acá (encargo explícito).
 //
 // La tabla de ítems y el resumen van en 2 columnas dentro de una sola fila
 // (fvcd-detail-row, encargo explícito: "ganamos
 // espacio [al sacar columnas redundantes de la tabla], que quede en un solo
 // bloque en vez de alargar la modal") -- a la izquierda fvcd-detail-main
-// (la tarjeta de ítems + Imprimir anexo/Anexo por prefijo/Capitados debajo,
-// trasladados acá desde el footer de FacturaDetalleClasico, ya no se
-// duplican en los dos lugares); a la derecha fvcd-bottom-summary, 2 tarjetas
+// (la tarjeta de ítems, con Imprimir anexo/Anexo por prefijo/Capitados como
+// footer propio de esa tarjeta, .fvcd-items-footer -- trasladados acá desde
+// el footer de FacturaDetalleClasico, ya no se duplican en los dos lugares);
+// a la derecha fvcd-bottom-summary, 2 tarjetas
 // apiladas -- "Resumen de factura" e "Información adicional" (Administradora
 // Afi/Usuario/Procedencia, encargo explícito: bajaron acá desde
 // fvcd-compact-fields -- por eso ya no se repiten ahí, ver ese bloque más
@@ -91,20 +93,20 @@ function Field({ label, value, children }) {
 // mostraba la grilla ('0'), no hay un campo real de `factura` todavía. La
 // columna "F" ya no vive acá: volvió a la grilla con significado real
 // ("Facturación", ver ESTADO_FACTURACION arriba) -- este modal la refleja
-// como el primer campo de fvcd-compact-fields, mismo criterio que
-// Estado de envío/Estado FE (duplicados a propósito entre grilla y detalle).
+// como el badge junto al número de factura en fvcd-identity-row (no dentro
+// de fvcd-compact-fields), mismo criterio de duplicado a propósito entre
+// grilla y detalle que Estado de envío/Estado FE.
 //
 // Cada fila de la tabla de ítems es seleccionable (encargo explícito, clic o
 // Enter/Espacio, mismo patrón accesible que las filas de FacturasGridClasica).
-// "Resumen de factura" muestra por defecto el total agregado de TODOS los
-// ítems de la factura (encargo: "mostrar por defecto el resumen agregado...
-// que la selección de un ítem sea un detalle adicional, no el único camino
-// para ver totales") -- seleccionar un ítem acota `resumen` a ese ítem solo
-// (ver hint `fvcd-summary-hint`, visible únicamente con selección activa).
-// Selección por `id` estable del ítem (ver buildItems en
-// mockFacturasData.js), no por índice del array -- FacturaItemsTable ya lo
-// espera así independientemente de si hay algo más arriba filtrando `items`.
-// `factura` null = cerrado, mismo patrón que AdmisionDetalleModal.
+// El primer ítem viene seleccionado por defecto (encargo explícito) --
+// "Resumen de factura"/CCosto arrancan mostrando los datos de ese ítem, no
+// el agregado de todos; clic de nuevo sobre la fila seleccionada la
+// deselecciona y `resumen` vuelve a agregar TODOS los ítems (toggle, ver
+// `toggleSelectedItem`). Selección por `id` estable del ítem (ver buildItems
+// en mockFacturasData.js), no por índice del array -- FacturaItemsTable ya
+// lo espera así independientemente de si hay algo más arriba filtrando
+// `items`. `factura` null = cerrado, mismo patrón que AdmisionDetalleModal.
 //
 // fvcd-anulada-card (encargo explícito) -- solo cuando `factura.estado ===
 // 'anulada'`, entre fvcd-compact-fields y fvcd-detail-row (nunca deja hueco
@@ -122,7 +124,7 @@ function Field({ label, value, children }) {
 // absoluto si la factura ya está "Facturada" -- no es un botón
 // deshabilitado, se oculta del todo.
 export default function FacturaDetalleModalClasico({ factura, onClose, onFacturar }) {
-  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState(factura?.items[0]?.id ?? null);
   // Acción principal "Facturar" (encargo: solo visible con
   // `factura.estadoFacturacion === 'pendiente'`, ver footer más abajo) --
   // mismo patrón "toast + delay antes de cerrar" que Guardar en
@@ -155,13 +157,14 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
     return () => document.removeEventListener('keydown', handleKeyDown);
   });
 
-  // Reinicia la selección de ítems al cambiar de factura (o cerrar el modal)
-  // -- evita que quede una selección de la factura anterior aplicada
-  // silenciosamente la próxima vez que se abra este mismo modal.
+  // Selecciona el primer ítem por defecto al cambiar de factura (o cerrar el
+  // modal) -- evita que quede una selección de la factura anterior aplicada
+  // silenciosamente la próxima vez que se abra este mismo modal (encargo
+  // explícito: primer ítem seleccionado por defecto, no "sin selección").
   const [lastFacturaId, setLastFacturaId] = useState(factura?.id ?? null);
   if ((factura?.id ?? null) !== lastFacturaId) {
     setLastFacturaId(factura?.id ?? null);
-    if (selectedItemId) setSelectedItemId(null);
+    setSelectedItemId(factura?.items[0]?.id ?? null);
   }
 
   function toggleSelectedItem(id) {
@@ -173,8 +176,9 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
   // mismo criterio que "Resumen de factura" (sin ítem seleccionado, "—").
   const selectedItem = factura?.items.find((it) => it.id === selectedItemId) ?? null;
 
-  // "Resumen de factura" agrega TODOS los ítems por defecto; con un ítem
-  // seleccionado, se acota a ese único ítem (ver comentario del componente).
+  // Sin ítem seleccionado (deseleccionado a mano), agrega TODOS los ítems;
+  // con un ítem seleccionado (el primero, por defecto), se acota a ese único
+  // ítem (ver comentario del componente).
   const resumen = useMemo(() => {
     if (!factura) return null;
     const itemsResumen = selectedItemId
@@ -223,7 +227,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
             <div className="fvcd-identity-text">
               <div className="fvcd-identity-name">
                 Factura {factura.numero}
-                <Badge tone={ESTADO_PE[factura.estadoPE].tone} className="fvcd-badge">{ESTADO_PE[factura.estadoPE].label}</Badge>
+                <Badge tone={ESTADO_FACTURACION[factura.estadoFacturacion].tone} className="fvcd-badge">{ESTADO_FACTURACION[factura.estadoFacturacion].label}</Badge>
               </div>
               <div className="fvcd-identity-sub">{factura.terceroRazonSocial}</div>
             </div>
@@ -245,9 +249,6 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
           </div>
 
           <div className="fvcd-compact-fields">
-            <Field label="Facturación">
-              <Badge tone={ESTADO_FACTURACION[factura.estadoFacturacion].tone} className="fvcd-badge">{ESTADO_FACTURACION[factura.estadoFacturacion].label}</Badge>
-            </Field>
             <Field label="Documento" value={factura.documento} />
             <Field label="Tipo Contrato" value={factura.tipoContrato} />
             <Field label="Tipo Factura" value={TIPO_LABEL[factura.tipo]} />
@@ -263,6 +264,9 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
 
             <Field label="C" value="0" />
             <Field label="F.Elect FE" value={factura.flagFE ? 'Sí' : 'No'} />
+            <Field label="Estado de envío">
+              <Badge tone={ESTADO_PE[factura.estadoPE].tone} className="fvcd-badge">{ESTADO_PE[factura.estadoPE].label}</Badge>
+            </Field>
             <Field label="Estado FE">
               <Badge tone={estadoFacturaBadge(factura).tone} className="fvcd-badge">{estadoFacturaBadge(factura).label}</Badge>
             </Field>
@@ -287,23 +291,20 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
           <div className="fvcd-detail-row">
             <div className="fvcd-detail-main">
               <div className="fvcd-items-card">
-                <div className="fvcd-items-header">Ítems ({factura.items.length})</div>
                 <div className="fvcd-items-body">
                   <FacturaItemsTable items={factura.items} selectedId={selectedItemId} onSelect={toggleSelectedItem} />
                 </div>
-              </div>
-
-              <div className="fvcd-bottom-actions">
-                <Button variant="secondary-accent" size="sm" icon={LuPrinter}>Imprimir anexo</Button>
-                <Button variant="secondary-accent" size="sm" icon={LuFileText}>Anexo por prefijo</Button>
-                <Button variant="secondary-accent" size="sm" icon={LuBuilding2}>Capitados</Button>
+                <div className="fvcd-items-footer">
+                  <Button variant="secondary-accent" size="sm" icon={LuPrinter}>Imprimir anexo</Button>
+                  <Button variant="secondary-accent" size="sm" icon={LuFileText}>Anexo por prefijo</Button>
+                  <Button variant="secondary-accent" size="sm" icon={LuBuilding2}>Capitados</Button>
+                </div>
               </div>
             </div>
 
             <div className="fvcd-bottom-summary">
               <div className="fvcd-summary-card">
                 <div className="fvcd-summary-title">Resumen de factura</div>
-                {selectedItemId && <div className="fvcd-summary-hint">Mostrando el ítem seleccionado. Volvé a hacer clic sobre él para ver el total de todos los ítems.</div>}
                 <div className="fvcd-summary-row"><span>Total ítems</span><span>{resumen.totalItems}</span></div>
                 <div className="fvcd-summary-row"><span>Subtotal servicios</span><span>{formatCOP(resumen.subtotalServicios)}</span></div>
                 <div className="fvcd-summary-row"><span>IVA</span><span>{formatCOP(resumen.iva)}</span></div>

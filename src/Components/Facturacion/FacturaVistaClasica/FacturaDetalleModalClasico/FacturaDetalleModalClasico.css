@@ -35,15 +35,25 @@
 
 /* La tabla de ítems es lo importante del modal (encargo explícito) -- va en
    su propia tarjeta con borde (en vez del simple separador border-top de
-   .fvcd-compact-fields de abajo), dividida en 2 bloques: el header (título +
-   fondo tenue) y el body (la tabla). Imprimir anexo/Anexo por
-   prefijo/Capitados + el resumen ya no viven adentro de esta tarjeta, ver
-   .fvcd-detail-row más abajo (encargo explícito: tabla+resumen en un solo
-   bloque de 2 columnas en vez de apilados, para no alargar la modal ahora
-   que la tabla ganó ancho libre al sacarle las columnas redundantes con el
-   resumen). overflow:hidden recorta las esquinas rectas de FacturaItemsTable
-   a los bordes redondeados de la tarjeta. */
-/* flex-shrink:0 -- .fvcd-detail-main (su contenedor flex-column directo) es
+   .fvcd-compact-fields de abajo), dividida en 2 bloques: el body (la tabla)
+   y el footer (Imprimir anexo/Anexo por prefijo/Capitados, ver
+   .fvcd-items-footer -- sin header propio de título, encargo explícito). El
+   resumen no vive adentro de esta tarjeta, ver .fvcd-detail-row más abajo
+   (encargo explícito: tabla+resumen en un solo bloque de 2 columnas en vez
+   de apilados, para no alargar la modal ahora que la tabla ganó ancho libre
+   al sacarle las columnas redundantes con el resumen). overflow:hidden
+   recorta las esquinas rectas de FacturaItemsTable a los bordes redondeados
+   de la tarjeta. */
+/* Alto fijo (encargo explícito: "que el footer siempre quede fijo al fondo
+   de la tabla, para que no esté saltando la tabla") -- antes esta tarjeta
+   crecía/achicaba con la cantidad de ítems (16 vs 10 en dos facturas
+   distintas ya se veían con alturas distintas y el footer de acciones se
+   corría con ellas). Con height fija + .fvcd-items-body como flex:1 que
+   scrollea internamente (ver .fvc-items-scroll en FacturaDetalleClasico.css,
+   ya trae flex:1/min-height:0/overflow:auto), la tarjeta ocupa siempre el
+   mismo alto sin importar si la factura tiene 3 ítems o 30, y el footer
+   queda anclado a su fondo en vez de perseguir el alto de la tabla.
+   flex-shrink:0 -- .fvcd-detail-main (su contenedor flex-column directo) es
    la única sección con overflow:hidden; sin esto, su tamaño mínimo
    automático en flexbox pasa a ser 0 (spec: min-size auto solo aplica con
    overflow:visible) y, apenas el contenido total supera max-height:90vh del
@@ -54,10 +64,17 @@
    flex-columns viva esta tarjeta, por eso se repite acá). */
 .fvcd-items-card{
   flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  height:460px;display:flex;flex-direction:column;
 }
-.fvcd-items-header{
-  padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg);
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+.fvcd-items-body{flex:1;min-height:0;display:flex;flex-direction:column;}
+/* Imprimir anexo/Anexo por prefijo/Capitados como footer de la tarjeta de
+   ítems (encargo explícito) -- mismo tratamiento que .modal-footer (border-top
+   + padding), en vez del bloque suelto .fvcd-bottom-actions de antes debajo
+   de la tarjeta. flex-shrink:0 para que .fvcd-items-body (flex:1) sea la
+   única sección que ceda espacio y el footer no se comprima. */
+.fvcd-items-footer{
+  flex-shrink:0;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
 }
 /* FacturaItemsTable (.fvc-grid) pone border-right/border-bottom en cada
    celda (pensado para sus otros 2 usos sin tarjeta propia, ver
@@ -132,22 +149,18 @@
 
 /* Tabla de ítems + resumen en un solo bloque de 2 columnas (encargo
    explícito, ver comentario en .fvcd-items-card arriba): a la izquierda
-   fvcd-detail-main (la tarjeta de ítems + Imprimir anexo/Anexo por
-   prefijo/Capitados debajo), a la derecha el resumen en ancho fijo -- mismo
+   fvcd-detail-main (la tarjeta de ítems, con Imprimir anexo/Anexo por
+   prefijo/Capitados como footer de esa misma tarjeta, ver
+   .fvcd-items-footer), a la derecha el resumen en ancho fijo -- mismo
    criterio de "columna lateral de ancho fijo" que .fvcd-identity-total
    arriba. flex-shrink:0 en la fila (mismo motivo que .fvcd-items-card) --
    ninguno de sus 2 hijos directos tiene overflow:hidden propio, pero se deja
    explícito para no depender del comportamiento por defecto de flexbox acá. */
 .fvcd-detail-row{display:flex;align-items:flex-start;gap:16px;flex-shrink:0;}
 .fvcd-detail-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
-.fvcd-bottom-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .fvcd-bottom-summary{display:flex;flex-direction:column;gap:12px;width:300px;flex-shrink:0;}
 .fvcd-summary-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--surface);}
 .fvcd-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:10px;}
-/* Visible solo sin ítem seleccionado (encargo explícito: "resumen responde a
-   la selección", en cero por defecto) -- evita que unos totales en $0 lean
-   como un bug en vez de un estado "todavía sin elegir". */
-.fvcd-summary-hint{font-size:var(--fs-sm);color:var(--ink-500);margin:-4px 0 10px;}
 .fvcd-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:4px 0;}
 .fvcd-summary-row span:first-child{color:var(--ink-500);}
 .fvcd-summary-divider{height:1px;background:var(--border);margin:8px 0;}
