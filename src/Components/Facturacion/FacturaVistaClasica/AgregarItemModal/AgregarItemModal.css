@@ -1,0 +1,11 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer + .form-field/
+   .field-with-search/.search-btn: ver ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. .fam-total-box (Valor Total): ver
+   ../../shared/shared.css, mismo criterio que FacturaAgregarModalClasico.
+   Acá solo lo exclusivo de este modal. */
+.aim-modal{width:640px;max-width:95vw;}
+
+.aim-required-mark{color:var(--red);margin-left:2px;}
+
+.aim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+.aim-span-2{grid-column:1/-1;}

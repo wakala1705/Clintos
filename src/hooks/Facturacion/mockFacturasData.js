@@ -24,6 +24,13 @@ const SEDE_CODIGOS = { 'Sede 01': '01', 'Sede 02': '02', 'Sede 03': '03' };
 const PREFIJOS_ITEM = ['15', '43', '07'];
 const CCOSTOS = ['82', '07', '15'];
 
+// Exportados para AgregarItemModal (paso 2 "Ítems y servicios" de
+// FacturaAgregarModalClasico, encargo explícito) -- mismo dominio de
+// prefijo que ya usan los ítems mock de abajo (buildItems), para que un
+// ítem agregado a mano en Editar sea consistente con los que ya trae la
+// factura. `ITEMS_CATALOGO` es el picker de "Código" (CatalogoItemsModal).
+export const PREFIJO_OPTIONS = PREFIJOS_ITEM.map((p) => ({ value: p, label: p }));
+
 export const CLASE_OPTIONS = [
   { value: 'todas', label: 'Todas' },
   { value: 'salud', label: 'Salud' },
@@ -46,7 +53,10 @@ export const SORT_OPTIONS = [
   { value: 'valor-asc', label: 'Valor: menor a mayor' },
 ];
 
-const ITEMS_CATALOGO = [
+// Exportado para CatalogoItemsModal (picker de "Código" de AgregarItemModal,
+// encargo explícito) -- mismo dataset que ya usa buildItems() para poblar
+// los ítems mock de cada factura, sin duplicar la lista.
+export const ITEMS_CATALOGO = [
   { referencia: '903107C', descripcion: 'Ácido fórmico en orina' },
   { referencia: 'DM000360', descripcion: 'Jeringa 20 ml' },
   { referencia: 'MX0000005PBS', descripcion: 'Acetaminofén 500 mg tableta' },

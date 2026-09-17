@@ -395,3 +395,24 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 .fvc-discard-modal h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fvc-discard-modal p{margin:0 0 20px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.45;}
 .fvc-discard-actions{display:flex;justify-content:center;gap:10px;}
+
+/* Box de total resaltado (FacturaAgregarModalClasico "Total factura" de la
+   sección 4, y AgregarItemModal "Valor Total" por ítem -- 2+ consumidores,
+   ver AGENTS.md "Component organization"; vivía solo en
+   FacturaAgregarModalClasico.css cuando era el único consumidor). Valor con
+   separador de miles "."/decimales "," (toLocaleString('es-CO'), encargo
+   explícito), sin símbolo $. */
+.fam-total-box{
+  display:flex;align-items:center;gap:10px;
+  border:1px solid var(--primary-100);border-radius:var(--radius);
+  background:var(--primary-50);padding:10px 14px;
+}
+.fam-total-icon{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--primary-100);color:var(--primary-dark);
+  display:flex;align-items:center;justify-content:center;
+}
+.fam-total-icon .icon{width:16px;height:16px;}
+.fam-total-copy{display:flex;flex-direction:column;gap:1px;}
+.fam-total-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary-dark);text-transform:uppercase;letter-spacing:.03em;}
+.fam-total-value{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--primary-dark);}

@@ -7,7 +7,13 @@
    formulario en 4 secciones, encargo explícito, ver imagen de referencia),
    bastante más ancho que el viejo grid plano de 2 columnas de 640px que
    tenía el modal de Editar antes de unificarse acá. */
-.fam-modal{width:1060px;max-width:95vw;}
+/* height fijo (no solo max-height, que ya trae .modal de shared.css) --
+   encargo explícito: el paso 2 (grilla de ítems, contenido más corto que el
+   formulario del paso 1) hacía que el modal entero se achicara al cambiar de
+   paso. Con height:90vh fijo, .fam-body/.fam-form-scroll (flex:1,
+   overflow-y:auto) rellenan ese alto siempre, paso 1 y 2 quedan del mismo
+   tamaño. */
+.fam-modal{width:1060px;max-width:95vw;height:90vh;}
 
 .fam-required-mark{color:var(--red);margin-left:2px;}
 
@@ -35,41 +41,60 @@
 }
 .fam-type-panel-lead{font-size:var(--fs-sm);color:var(--ink-500);margin:0;}
 
-/* Segundo bloque del riel (info + Compañía/Consecutivo, encargo explícito:
-   separarlo de las tarjetas de tipo en dos bloques) -- `margin-top:auto`
-   lo empuja al fondo del panel cuando sobra alto (las tarjetas no llenan
-   el riel), dejando el espacio en blanco entre ambos bloques en vez de
-   pegado debajo de las tarjetas; `gap` propio porque el `gap` de
-   `.fam-type-panel` solo separa hijos directos, y este wrapper agrupa
-   `.fam-type-info` + `.fam-left-meta` en uno solo. */
-.fam-type-bottom{display:flex;flex-direction:column;gap:16px;margin-top:auto;}
+/* Resumen compacto de "Tipo de factura" en el paso 2 (encargo explícito:
+   "al pasar al paso 2 se colapsa") -- reemplaza las 4 tarjetas completas de
+   TipoFacturaSelector, que ya no hacen falta una vez elegido el tipo. Mismo
+   tono que .fam-left-meta-item (ink-500/ink-900), sin fondo propio -- es
+   texto, no una tarjeta. */
+.fam-type-summary{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 2px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.fam-type-summary .icon{width:18px;height:18px;color:var(--primary);flex-shrink:0;}
 
-/* Compañía/Consecutivo/No. de Factura (encargo explícito: antes vivían en
-   una fila arriba del formulario, ahora en el panel izquierdo) -- texto fijo
-   bajo Agregar (placeholder hasta que haya lógica real de numeración),
-   datos reales de la factura bajo Editar (ver isEditMode en el .jsx),
-   apilado vertical acá por el ancho angosto del panel. background
-   var(--surface) (no var(--bg), a diferencia de antes) para que se distinga
-   del fondo gris que ahora tiene .fam-type-panel. */
-.fam-left-meta{
+/* Nav de pasos del wizard (encargo explícito: "lo haría tipo steps") --
+   mismo lenguaje visual que .npw-rail-nav/.npw-rail-step de
+   NuevaProgramacionWizard.css, con clases propias (`fam-step-*`, no
+   `npw-*`) porque cada wizard React puro de este proyecto las define
+   propias, no hay un componente de stepper compartido todavía (mismo
+   criterio documentado en el comentario de NuevaProgramacionWizard.jsx). */
+.fam-step-nav{display:flex;flex-direction:column;gap:4px;}
+.fam-step-item{display:flex;flex-direction:column;}
+.fam-step{
+  display:flex;align-items:flex-start;gap:10px;width:100%;
+  border:none;background:transparent;border-radius:var(--radius);
+  padding:8px;text-align:left;cursor:pointer;font-family:inherit;
+}
+.fam-step:hover{background:var(--surface);}
+.fam-step:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.fam-step.active{background:var(--surface);}
+.fam-step-circle{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);
+  background:var(--border);color:var(--ink-500);
+}
+.fam-step-circle svg{width:13px;height:13px;}
+.fam-step.active .fam-step-circle{background:var(--primary);color:#fff;}
+.fam-step.done .fam-step-circle{background:var(--primary-100);color:var(--primary-dark);}
+.fam-step-text{display:flex;flex-direction:column;gap:1px;}
+.fam-step-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.fam-step.active .fam-step-title{color:var(--ink-900);}
+.fam-step-sub{font-size:var(--fs-xs);color:var(--ink-500);}
+
+/* Selector de Tipo de Factura, anidado bajo el paso 1 en vez de vivir por
+   encima del nav (encargo explícito: "quiero que la selección del tipo de
+   factura esté entre el paso 1 y el 2, dando a entender que eso hace parte
+   del paso 1") -- indentado al ancho de .fam-step-circle + gap (24px+10px)
+   para leerse como contenido anidado de "1. Datos de la factura", con un
+   borde izquierdo que conecta visualmente ambos pasos (misma idea que un
+   "rail" de sub-pasos). */
+.fam-step-subcontent{
+  margin:2px 0 4px 33px;padding:4px 0 8px 12px;
+  border-left:2px solid var(--border);
   display:flex;flex-direction:column;gap:8px;
-  border-top:1px solid var(--border);
-  padding:12px 14px;
 }
-.fam-left-meta-item{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-sm);}
-.fam-left-meta-item span{color:var(--ink-500);}
-.fam-left-meta-item strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 
-/* Callout informativo al pie del panel izquierdo -- mismo tono que
-   Badge tone="info" (--status-info-bg/--status-info-fg, ver AGENTS.md
-   "Badges"). */
-.fam-type-info{
-  display:flex;gap:10px;align-items:flex-start;
-  border-radius:var(--radius);padding:12px 14px;
-  background:var(--status-info-bg);color:var(--status-info-fg);
-}
-.fam-type-info .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
-.fam-type-info p{margin:0;font-size:var(--fs-sm);line-height:1.4;}
 
 /* ---------- Panel derecho: formulario ----------
    .fam-form-panel es solo el contenedor flex (sin padding propio, ver
@@ -81,8 +106,20 @@
   flex:1;min-height:0;overflow-y:auto;
   padding:20px 24px;display:flex;flex-direction:column;gap:20px;
 }
+/* Consecutivo al extremo derecho (encargo explícito) -- reemplaza el
+   `.fam-left-meta` que antes vivía en el panel izquierdo (ver arriba,
+   Compañía se ocultó sin reemplazo). `justify-content:space-between` separa
+   título+subtítulo (izquierda) de Consecutivo (derecha); `flex-shrink:0` en
+   el consecutivo para que nunca se comprima si el subtítulo es largo. */
+.fam-panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
 .fam-panel-heading h4{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fam-panel-heading p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+.fam-panel-heading-consecutivo{
+  display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;
+  font-size:var(--fs-sm);
+}
+.fam-panel-heading-consecutivo span{color:var(--ink-500);}
+.fam-panel-heading-consecutivo strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 .fam-section{
   border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -145,23 +182,24 @@
 .fam-admision-banner-text .icon{width:16px;height:16px;flex-shrink:0;margin-top:2px;}
 .fam-admision-banner-text strong{font-weight:var(--fw-semibold);}
 
-/* Box "Total factura" (sección 4) -- reemplaza el <input readOnly> plano de
-   antes; mismo valor/formato de siempre (toFixed(2), sin separador de miles
-   ni símbolo $, encargo explícito), solo cambia el contenedor. */
-.fam-total-box{
-  display:flex;align-items:center;gap:10px;
-  border:1px solid var(--primary-100);border-radius:var(--radius);
-  background:var(--primary-50);padding:10px 14px;
+/* .fam-total-box y compañía (box "Total factura" de la sección 4, también
+   reusado por AgregarItemModal para su "Valor Total" por ítem): ver
+   ../../shared/shared.css -- 2+ consumidores, ver AGENTS.md "Component
+   organization". */
+
+/* Paso 2 "Ítems y servicios" -- .fam-items-grid reusa .fvc-grid/.fvc-num/
+   .fvc-ellipsis de ../../shared/shared.css (mismo look que FacturaItemsTable,
+   ver AGENTS.md "Component organization"), acá solo el estado vacío (sin
+   ítems agregados todavía) y el ancho angosto de la columna de acciones
+   (botón "Quitar"). */
+.fam-items-empty{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:32px 16px;text-align:center;color:var(--ink-500);
 }
-.fam-total-icon{
-  width:32px;height:32px;border-radius:50%;flex-shrink:0;
-  background:var(--primary-100);color:var(--primary-dark);
-  display:flex;align-items:center;justify-content:center;
-}
-.fam-total-icon .icon{width:16px;height:16px;}
-.fam-total-copy{display:flex;flex-direction:column;gap:1px;}
-.fam-total-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary-dark);text-transform:uppercase;letter-spacing:.03em;}
-.fam-total-value{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--primary-dark);}
+.fam-items-empty .icon{width:28px;height:28px;color:var(--ink-400);}
+.fam-items-empty p{margin:0;font-size:var(--fs-sm);}
+.fam-items-grid tbody tr{cursor:default;}
+.fam-items-grid th:last-child,.fam-items-grid td:last-child{width:40px;}
 
 @media (max-width:1024px){
   /* Apilado, un solo scroll para todo el body (en vez de uno por panel) --

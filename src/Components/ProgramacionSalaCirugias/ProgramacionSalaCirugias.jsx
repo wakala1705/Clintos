@@ -4,13 +4,14 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuSearch } from 'react-icons/lu';
+import { LuSearch, LuList } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
+import Button from '@/Components/Button/Button';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import MiniCalendarCirugias from './MiniCalendarCirugias/MiniCalendarCirugias';
 import AgendaSemana from './AgendaSemana/AgendaSemana';
@@ -365,6 +366,7 @@ export default function ProgramacionSalaCirugias() {
                 mostrarFinesDeSemana={mostrarFinesDeSemana}
                 onToggleFinesDeSemana={setMostrarFinesDeSemana}
               />
+              <Button variant="secondary-accent" icon={LuList}>Listado de cirugías</Button>
             </div>
           </div>
 

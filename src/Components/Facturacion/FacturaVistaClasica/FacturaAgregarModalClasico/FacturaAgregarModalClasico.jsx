@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './FacturaAgregarModalClasico.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -11,10 +11,11 @@ import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTe
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
 import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
+import AgregarItemModal from '../AgregarItemModal/AgregarItemModal';
 import {
   LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuTriangleAlert, LuFileText, LuUser,
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
-  LuRefreshCw, LuChevronUp, LuChevronDown,
+  LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage,
 } from 'react-icons/lu';
 
 // icon/description por opción (consumido por TipoFacturaSelector, panel
@@ -123,6 +124,48 @@ const MONEDA_OPTIONS = [
 // duplicado) -- por eso ya no hay un campo `noFactura` separado en el form.
 const PROXIMO_CONSECUTIVO = '0200289592';
 
+// Wizard de 2 pasos (encargo explícito: "lo haría tipo steps") -- mismo
+// patrón de riel izquierdo + contenido dinámico que NuevaProgramacionWizard
+// (React puro, ver AGENTS.md "Modales"), con clases propias `fam-step-*` en
+// vez de reusar sus `npw-*` (mismo criterio: cada wizard React puro las
+// define propias, no hay un componente de stepper compartido todavía).
+const PASOS = [
+  { n: 1, titulo: 'Datos de la factura', sub: 'Tipo, tercero, contrato y valores.' },
+  { n: 2, titulo: 'Ítems y servicios', sub: 'Agrega los ítems o servicios a facturar.' },
+];
+
+// Precarga de ítems bajo isEditMode (encargo explícito, ver comentario del
+// componente) -- factura.items ya existe (mockFacturasData.js/buildItems),
+// pero con un shape más viejo (referencia/vlrUnidad/vlrCopago/vlrModerador/
+// vlrPagComp/ccosto/prefijo) que no cubre todos los campos de AgregarItemModal.
+// Solo se mapea lo que tiene equivalente directo y confiable -- prefijo (mismo
+// dominio, ver PREFIJO_OPTIONS) y los montos -- el resto (Centro Costo/Área
+// Funcional/Tipo Financiero/No Contrato/ID/Observaciones) queda en su
+// default en vez de forzar un valor que no existe en el registro legacy.
+function mapFacturaItemsToForm(facturaItems) {
+  if (!Array.isArray(facturaItems)) return [];
+  return facturaItems.map((it) => ({
+    id: it.id,
+    tipoFinanciero: 'contratacion',
+    centroCosto: '',
+    areaFuncional: '',
+    prefijo: it.prefijo ?? '',
+    noContrato: '',
+    idContrato: '0',
+    codigo: it.referencia ?? '',
+    descripcion: it.descripcion ?? '',
+    cantidad: String(it.cantidad ?? 1),
+    vlrItem: String(it.vlrUnidad ?? it.valor ?? 0),
+    porcentajeIva: '0.00',
+    vrCopagos: String(it.vlrCopago ?? 0),
+    valorModeradora: String(it.vlrModerador ?? 0),
+    vrPagoCompartido: String(it.vlrPagComp ?? 0),
+    observaciones: '',
+    valorIva: it.vlrIVA ?? 0,
+    valorTotal: it.valor ?? it.vlrUnidad ?? 0,
+  }));
+}
+
 // Fecha Vencimiento es siempre un mes después de Fecha Factura (encargo
 // explícito) -- se recalcula automáticamente cada vez que Fecha Factura
 // cambia, ver handleChangeFechaFactura más abajo.
@@ -226,6 +269,27 @@ const MONEY_FIELDS = [
   { key: 'descuento', label: 'Descuento' },
 ];
 
+// Heading de cada paso del panel derecho (título + descripción + Consecutivo
+// al extremo derecho, encargo explícito: "el dato de consecutivo
+// ubiquémoslo en fam-panel-heading al extremo derecho") -- reemplaza el
+// `.fam-left-meta` que antes vivía en el panel izquierdo (Compañía se ocultó
+// del todo, sin reemplazo, mismo encargo). Local a este archivo, mismo
+// criterio que SectionHeader de abajo (no se reusa fuera de este modal).
+function PanelHeading({ title, subtitle, consecutivo }) {
+  return (
+    <div className="fam-panel-heading">
+      <div>
+        <h4>{title}</h4>
+        <p>{subtitle}</p>
+      </div>
+      <div className="fam-panel-heading-consecutivo">
+        <span>Consecutivo</span>
+        <strong>{consecutivo}</strong>
+      </div>
+    </div>
+  );
+}
+
 // Header de cada una de las 4 secciones del panel derecho (ícono en círculo +
 // título + descripción + contenido final opcional) -- local a este archivo,
 // no un componente de @/Components/ porque está fuertemente acoplado a la
@@ -319,13 +383,32 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // contractual" (encargo explícito, ver imagen de referencia).
   const [contractSectionCollapsed, setContractSectionCollapsed] = useState(false);
 
-  // Snapshot del form recién montado (mismo objeto que ya construyó
-  // useState(buildInitialForm) arriba) -- useState en vez de useRef porque
-  // isDirty lo lee durante el render (leer un ref en render rompe la regla
-  // react-hooks/refs); el setter nunca se usa, solo sirve de referencia fija
-  // para detectar cambios sin guardar antes de cerrar (ver attemptClose).
+  // Paso del wizard (encargo explícito, ver PASOS arriba) -- 1 "Datos de la
+  // factura" (el formulario de siempre) / 2 "Ítems y servicios" (grilla +
+  // AgregarItemModal). Navegable libremente desde el riel, sin gating por
+  // validación (mismo criterio simple que el resto de este modal, que solo
+  // valida al Guardar, ver validate() más abajo).
+  const [paso, setPaso] = useState(1);
+  // Ítems agregados a la factura (paso 2) -- bajo isEditMode se precargan
+  // desde factura.items (ver mapFacturaItemsToForm arriba); bajo Agregar
+  // arranca vacío. Alimentan Valor Servicios/Copago/Moderadora/Pago
+  // Compartido del paso 1 (ver hasItems/itemsTotals/effectiveValues más
+  // abajo, encargo explícito: "el valor total debería ser la suma de todos
+  // los ítems").
+  const [items, setItems] = useState(() => (isEditMode ? mapFacturaItemsToForm(factura.items) : []));
+  const [agregarItemAbierto, setAgregarItemAbierto] = useState(false);
+
+  // Snapshot del form/items recién montados (mismo objeto que ya construyó
+  // useState(buildInitialForm)/useState(items) arriba) -- useState en vez de
+  // useRef porque isDirty los lee durante el render (leer un ref en render
+  // rompe la regla react-hooks/refs); el setter nunca se usa, solo sirve de
+  // referencia fija para detectar cambios sin guardar antes de cerrar (ver
+  // attemptClose). `items` entra a isDirty aparte de `form` porque vive en
+  // su propio estado, no dentro de `form`.
   const [initialForm] = useState(form);
-  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm);
+  const [initialItems] = useState(items);
+  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm)
+    || JSON.stringify(items) !== JSON.stringify(initialItems);
 
   // Intercepta cualquier intento de cerrar (Cancelar/overlay/Escape/botón X
   // de ModalHeader) -- si hay cambios sin guardar, pide confirmación en vez
@@ -371,6 +454,15 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // bajo esos tipos, ver handleSeleccionAdmision. "Normal" no oculta ni
   // deshabilita nada.
   const isRestricted = RESTRICTED_TIPOS.includes(form.tipoFactura);
+  // Tarjeta elegida en TIPO_FACTURA_OPTIONS (icon+label) -- alimenta el
+  // resumen compacto del riel en el paso 2 (ver .fam-type-summary más
+  // abajo, encargo explícito: "al pasar al paso 2 se colapsa").
+  const tipoFacturaSeleccionada = TIPO_FACTURA_OPTIONS.find((o) => o.value === form.tipoFactura);
+  // Consecutivo mostrado en PanelHeading (encargo explícito, ver ese
+  // componente) -- dato real de la factura bajo isEditMode, placeholder de
+  // "próximo consecutivo" bajo Agregar (mismo criterio que antes en
+  // `.fam-left-meta`, ver PROXIMO_CONSECUTIVO arriba).
+  const consecutivo = isEditMode ? factura.noAdmision : PROXIMO_CONSECUTIVO;
   // Listado de Origen habilitado para el Tipo Factura activo (encargo
   // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
   // Citas/Ambulatorio, Pago Compartido->Admisiones/Citas/Consulta Externa).
@@ -455,14 +547,50 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
     };
   }
 
+  // Rollup de ítems del paso 2 hacia Valor Servicios/Copago/Moderadora/Pago
+  // Compartido del paso 1 (encargo explícito: "el valor total debería ser
+  // la suma de todos los ítems") -- cada categoría suma la columna
+  // equivalente de todos los ítems, no un total plano único, para no perder
+  // el desglose que ya usan TIPO_FACTURA_LABEL/las secciones del formulario.
+  // Descuento no tiene equivalente en el ítem (el legado no lo trae ahí),
+  // sigue siendo siempre manual.
+  const hasItems = items.length > 0;
+  const itemsTotals = useMemo(() => items.reduce((acc, it) => ({
+    vlrItem: acc.vlrItem + toNumber(it.vlrItem),
+    copagos: acc.copagos + toNumber(it.vrCopagos),
+    moderadora: acc.moderadora + toNumber(it.valorModeradora),
+    pagoCompartido: acc.pagoCompartido + toNumber(it.vrPagoCompartido),
+  }), {
+    vlrItem: 0, copagos: 0, moderadora: 0, pagoCompartido: 0,
+  }), [items]);
+  // Valor mostrado/validado por campo: el cálculo de ítems en cuanto hay
+  // alguno cargado (ahí los 4 CurrencyInput pasan a `disabled`, ver sección
+  // 4 más abajo), el valor tipeado a mano mientras no haya ítems -- mismas
+  // keys que MONEY_FIELDS para que validate() los recorra sin casos
+  // especiales por campo.
+  const effectiveValues = {
+    valorServicios: hasItems ? itemsTotals.vlrItem.toFixed(2) : form.valorServicios,
+    valorCopago: hasItems ? itemsTotals.copagos.toFixed(2) : form.valorCopago,
+    valorPagoCompartido: hasItems ? itemsTotals.pagoCompartido.toFixed(2) : form.valorPagoCompartido,
+    valorModeradora: hasItems ? itemsTotals.moderadora.toFixed(2) : form.valorModeradora,
+    descuento: form.descuento,
+  };
+
   // Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento (mismo
   // criterio que el comentario original del campo readOnly) -- calculado en
   // vivo en el cliente; sigue sin persistir nada, ver handleGuardar.
   const valorFactura = isRestricted ? 0 : (
-    toNumber(form.valorServicios) + toNumber(form.valorCopago)
-    + toNumber(form.valorPagoCompartido) + toNumber(form.valorModeradora)
-    - toNumber(form.descuento)
+    toNumber(effectiveValues.valorServicios) + toNumber(effectiveValues.valorCopago)
+    + toNumber(effectiveValues.valorPagoCompartido) + toNumber(effectiveValues.valorModeradora)
+    - toNumber(effectiveValues.descuento)
   );
+
+  function handleAgregarItem(item) {
+    setItems((prev) => [...prev, item]);
+  }
+  function handleQuitarItem(id) {
+    setItems((prev) => prev.filter((it) => it.id !== id));
+  }
 
   function validate() {
     const errs = {};
@@ -471,7 +599,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
     }
     if (!isRestricted) {
       MONEY_FIELDS.forEach(({ key, label }) => {
-        if (toNumber(form[key]) < 0) errs[key] = `${label} no puede ser negativo.`;
+        if (toNumber(effectiveValues[key]) < 0) errs[key] = `${label} no puede ser negativo.`;
       });
     }
     return errs;
@@ -506,32 +634,61 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
             el fondo y el divider del riel corran toda la altura del modal
             sin importar cuál panel tenga más contenido. */}
         <div className="fam-body">
-          {/* Panel izquierdo: selector de tipo (encargo explícito, ver
-              imagen de referencia) -- reemplaza el FormSelect de "Tipo
-              Factura" que vivía en el grid de campos. */}
+          {/* Panel izquierdo: nav de pasos con el selector de tipo anidado
+              bajo el paso 1 (encargo explícito: "quiero que la selección del
+              tipo de factura esté entre el paso 1 y el 2, dando a entender
+              que eso hace parte del paso 1") -- reemplaza el FormSelect de
+              "Tipo Factura" que vivía en el grid de campos. El selector de
+              tarjetas completo solo se ve mientras el paso activo es el 1; en
+              el paso 2 se colapsa a `.fam-type-summary` (mismo criterio que
+              antes, solo que ahora vive dentro del nav en vez de encima). */}
           <div className="fam-type-panel">
-            <p className="fam-type-panel-lead">Selecciona el tipo de factura para continuar.</p>
-            <TipoFacturaSelector
-              value={form.tipoFactura}
-              onChange={handleChangeTipoFactura}
-              options={TIPO_FACTURA_OPTIONS}
-            />
-
-            <div className="fam-type-bottom">
-              <div className="fam-type-info">
-                <LuInfo className="icon" aria-hidden="true" />
-                <p>El tipo de factura define los campos que debes completar. La información puede autocompletarse desde una admisión.</p>
-              </div>
-
-              <div className="fam-left-meta">
-                {/* Bajo isEditMode, datos reales de la factura (mismo
-                    criterio que .fem-readonly-row del viejo
-                    FacturaEditarModalClasico) en vez del placeholder de
-                    "próximo consecutivo" de Agregar. */}
-                <div className="fam-left-meta-item"><span>Compañía</span><strong>{isEditMode ? factura.sedeCodigo : '02'}</strong></div>
-                <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{isEditMode ? factura.noAdmision : PROXIMO_CONSECUTIVO}</strong></div>
-              </div>
-            </div>
+            <nav className="fam-step-nav" aria-label="Pasos de la factura">
+              {PASOS.map((p) => {
+                const active = p.n === paso;
+                const done = p.n < paso;
+                return (
+                  <div key={p.n} className="fam-step-item">
+                    <button
+                      type="button"
+                      className={`fam-step${active ? ' active' : ''}${done ? ' done' : ''}`}
+                      onClick={() => setPaso(p.n)}
+                    >
+                      <span className="fam-step-circle">{done ? <LuCheck aria-hidden="true" /> : p.n}</span>
+                      <span className="fam-step-text">
+                        <span className="fam-step-title">{p.titulo}</span>
+                        <span className="fam-step-sub">{p.sub}</span>
+                      </span>
+                    </button>
+                    {/* Anidado bajo el paso 1 (no un ítem de nav propio) --
+                        indentado bajo `.fam-step-subcontent` para que se lea
+                        como parte de "1. Datos de la factura", no como un
+                        tercer paso. */}
+                    {p.n === 1 && (
+                      <div className="fam-step-subcontent">
+                        {paso === 1 ? (
+                          <>
+                            <p className="fam-type-panel-lead">Selecciona el tipo de factura para continuar.</p>
+                            <TipoFacturaSelector
+                              value={form.tipoFactura}
+                              onChange={handleChangeTipoFactura}
+                              options={TIPO_FACTURA_OPTIONS}
+                            />
+                          </>
+                        ) : (
+                          <div className="fam-type-summary">
+                            {tipoFacturaSeleccionada?.icon && (
+                              <tipoFacturaSeleccionada.icon className="icon" aria-hidden="true" />
+                            )}
+                            <span>{TIPO_FACTURA_LABEL[form.tipoFactura]}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
           </div>
 
           <div className="fam-form-panel">
@@ -545,14 +702,17 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                 </div>
               )}
 
-              <div className="fam-panel-heading">
-                <h4>Formulario de factura</h4>
-                <p>
-                  {form.tipoFactura === 'normal'
+              {paso === 1 && (
+              <>
+              <PanelHeading
+                title="Formulario de factura"
+                subtitle={
+                  form.tipoFactura === 'normal'
                     ? 'Completa la información para generar la factura.'
-                    : `Completa la información para generar la factura de ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`}
-                </p>
-              </div>
+                    : `Completa la información para generar la factura de ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`
+                }
+                consecutivo={consecutivo}
+              />
 
               <section className="fam-section">
                 <SectionHeader
@@ -864,7 +1024,9 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                   trailing={!isRestricted && (
                     <span className="fam-cobro-note">
                       <LuInfo className="icon" aria-hidden="true" />
-                      El valor total se calcula automáticamente.
+                      {hasItems
+                        ? 'Se calcula a partir de los ítems del paso 2.'
+                        : 'El valor total se calcula automáticamente.'}
                     </span>
                   )}
                 />
@@ -874,9 +1036,10 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                       <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
                       <CurrencyInput
                         id="fam-valor-servicios"
-                        value={form.valorServicios}
+                        value={effectiveValues.valorServicios}
                         onChange={handleChangeMoneyField('valorServicios')}
                         required
+                        disabled={hasItems}
                         aria-invalid={!!errors.valorServicios}
                       />
                       {errors.valorServicios && <span className="form-field-error">{errors.valorServicios}</span>}
@@ -887,9 +1050,10 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                       <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
                       <CurrencyInput
                         id="fam-valor-copago"
-                        value={form.valorCopago}
+                        value={effectiveValues.valorCopago}
                         onChange={handleChangeMoneyField('valorCopago')}
                         required
+                        disabled={hasItems}
                         aria-invalid={!!errors.valorCopago}
                       />
                       {errors.valorCopago && <span className="form-field-error">{errors.valorCopago}</span>}
@@ -901,9 +1065,10 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                       <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
                       <CurrencyInput
                         id="fam-pago-compartido"
-                        value={form.valorPagoCompartido}
+                        value={effectiveValues.valorPagoCompartido}
                         onChange={handleChangeMoneyField('valorPagoCompartido')}
                         required
+                        disabled={hasItems}
                         aria-invalid={!!errors.valorPagoCompartido}
                       />
                       {errors.valorPagoCompartido && <span className="form-field-error">{errors.valorPagoCompartido}</span>}
@@ -914,9 +1079,10 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                       <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
                       <CurrencyInput
                         id="fam-valor-moderadora"
-                        value={form.valorModeradora}
+                        value={effectiveValues.valorModeradora}
                         onChange={handleChangeMoneyField('valorModeradora')}
                         required
+                        disabled={hasItems}
                         aria-invalid={!!errors.valorModeradora}
                       />
                       {errors.valorModeradora && <span className="form-field-error">{errors.valorModeradora}</span>}
@@ -990,15 +1156,112 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                   </div>
                 </div>
               </section>
+              </>
+              )}
+
+              {/* Paso 2 "Ítems y servicios" (encargo explícito) -- grilla de
+                  ítems agregados + AgregarItemModal (réplica del formulario
+                  legacy "Agrega Item Factura", ver ese archivo). El total de
+                  cada categoría alimenta el paso 1 (ver hasItems/
+                  effectiveValues más arriba), por eso no hay un total propio
+                  acá: ya se ve reflejado en "Total factura" del paso 1. */}
+              {paso === 2 && (
+                <>
+                  <PanelHeading
+                    title="Ítems y servicios"
+                    subtitle="Agrega los ítems o servicios que componen esta factura."
+                    consecutivo={consecutivo}
+                  />
+
+                  <section className="fam-section">
+                    <SectionHeader
+                      icon={LuPackage}
+                      title="Ítems agregados"
+                      subtitle="Valor Servicios/Copago/Moderadora/Pago Comp. del paso 1 se calculan a partir de estos ítems."
+                      trailing={(
+                        <Button variant="primary" size="sm" icon={LuPlus} onClick={() => setAgregarItemAbierto(true)}>
+                          Agregar ítem
+                        </Button>
+                      )}
+                    />
+
+                    {items.length === 0 ? (
+                      <div className="fam-items-empty">
+                        <LuPackage className="icon" aria-hidden="true" />
+                        <p>Todavía no agregaste ítems o servicios a esta factura.</p>
+                      </div>
+                    ) : (
+                      <table className="fvc-grid fam-items-grid">
+                        <thead>
+                          <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Vlr Item</th>
+                            <th>Valor Total</th>
+                            <th aria-label="Acciones" />
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {items.map((it) => (
+                            <tr key={it.id}>
+                              <td className="fvc-num">{it.codigo}</td>
+                              <td className="fvc-ellipsis" title={it.descripcion}>{it.descripcion}</td>
+                              <td className="fvc-num">{it.cantidad}</td>
+                              <td className="fvc-num">
+                                {toNumber(it.vlrItem).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td className="fvc-num">
+                                {toNumber(it.valorTotal).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="search-btn"
+                                  onClick={() => handleQuitarItem(it.id)}
+                                  aria-label={`Quitar ítem ${it.codigo}`}
+                                  title="Quitar ítem"
+                                >
+                                  <LuTrash2 className="icon" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </section>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         <div className="modal-footer">
           <Button variant="secondary" onClick={attemptClose} disabled={saving}>Cancelar</Button>
-          <Button variant="primary" onClick={handleGuardar} disabled={saving}>Guardar</Button>
+          {paso === 2 && (
+            <Button variant="secondary" icon={LuChevronLeft} onClick={() => setPaso(1)} disabled={saving}>Atrás</Button>
+          )}
+          {paso === 1 ? (
+            // Sin ícono (a diferencia de "Atrás"): Button.jsx solo soporta
+            // ícono ANTES del texto (ver icon prop), y una flecha ">" antes
+            // de "Continuar" queda invertida -- mejor sin ícono que con uno
+            // en la dirección equivocada.
+            <Button variant="primary" onClick={() => setPaso(2)} disabled={saving}>Continuar</Button>
+          ) : (
+            <Button variant="primary" onClick={handleGuardar} disabled={saving}>Guardar</Button>
+          )}
         </div>
       </div>
+
+      {agregarItemAbierto && (
+        <AgregarItemModal
+          numeroFactura={isEditMode ? factura.numero : PROXIMO_CONSECUTIVO}
+          consecutivo={items.length + 1}
+          onSave={handleAgregarItem}
+          onClose={() => setAgregarItemAbierto(false)}
+        />
+      )}
 
       {catalogoTerceroAbierto && (
         <CatalogoAseguradorasModal
