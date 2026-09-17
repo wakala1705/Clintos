@@ -5,13 +5,14 @@ import './FacturaAgregarModalClasico.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import CurrencyInput from '@/Components/CurrencyInput/CurrencyInput';
 import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
 import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
 import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
 import {
-  LuFilePlus2, LuEye, LuCheck, LuTrash2, LuTriangleAlert, LuFileText, LuUser,
+  LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuTriangleAlert, LuFileText, LuUser,
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
   LuRefreshCw, LuChevronUp, LuChevronDown,
 } from 'react-icons/lu';
@@ -98,6 +99,18 @@ const TIPO_CONTRATO_OPTIONS = [
   { value: 'pgp', label: 'PGP' },
 ];
 
+// Reemplaza a "Tipo Contrato" cuando Modo Facturación es "Unión Temporal"
+// (encargo explícito, ver imagen de referencia) -- listado propio, no
+// reusa TIPO_CONTRATO_OPTIONS.
+const PROCEDENCIA_FACTURA_UT_OPTIONS = [
+  { value: 'salud', label: 'Salud' },
+  { value: 'citas', label: 'Citas' },
+  { value: 'autorizaciones-ce', label: 'Autorizaciones(CE)' },
+  { value: 'pgp', label: 'PGP' },
+  { value: 'capita', label: 'Capita' },
+  { value: 'manual', label: 'Manual' },
+];
+
 // Por defecto Pesos -- ver buildInitialForm más abajo.
 const MONEDA_OPTIONS = [
   { value: 'pesos', label: 'Pesos' },
@@ -119,26 +132,71 @@ function addOneMonth(dateStr) {
   return d.toISOString().slice(0, 10);
 }
 
-function buildInitialForm() {
+function buildInitialForm(factura) {
   const today = new Date().toISOString().slice(0, 10);
+
+  if (!factura) {
+    return {
+      tipoFactura: 'normal',
+      origen: 'admisiones',
+      noReferencia: '',
+      fechaFactura: today,
+      fechaVencimiento: addOneMonth(today),
+      // Bajo isRestricted, este campo lo llena el nombre del afiliado de la
+      // admisión elegida (ver handleSeleccionAdmision) -- es la persona a
+      // facturar bajo Copago/Moderadora/Pago Compartido, no la
+      // aseguradora/administradora como en Normal.
+      idTercero: '',
+      regimen: '',
+      modoFacturacion: 'contratacion',
+      tipoContrato: '',
+      noContrato: '',
+      idContrato: '0',
+      administradora: '',
+      procedenciaFacturaUT: '',
+      valorServicios: '0.00',
+      valorCopago: '0.00',
+      valorPagoCompartido: '0.00',
+      valorModeradora: '0.00',
+      descuento: '0.00',
+      moneda: 'pesos',
+      concepto: '',
+    };
+  }
+
+  // Modo edición (encargo explícito, ver comentario del componente más
+  // abajo) -- precarga desde una fila de mockFacturasData.js, un modelo más
+  // viejo que no cubre todos los campos de este formulario. `factura.tipo`
+  // ('individual'/'masiva'/'copago'/'moderadora'/'pago-compartido') no tiene
+  // 'individual'/'masiva' en TIPO_FACTURA_OPTIONS -- ambos caen a 'normal'.
+  const tipoFactura = TIPO_FACTURA_OPTIONS.some((o) => o.value === factura.tipo) ? factura.tipo : 'normal';
+  const isRestrictedTipo = RESTRICTED_TIPOS.includes(tipoFactura);
   return {
-    tipoFactura: 'normal',
-    origen: 'admisiones',
-    noReferencia: '',
-    fechaFactura: today,
-    fechaVencimiento: addOneMonth(today),
-    // Bajo isRestricted, este campo lo llena el nombre del afiliado de la
-    // admisión elegida (ver handleSeleccionAdmision) -- es la persona a
-    // facturar bajo Copago/Moderadora/Pago Compartido, no la
-    // aseguradora/administradora como en Normal.
-    idTercero: '',
+    tipoFactura,
+    origen: (ORIGEN_OPTIONS_BY_TIPO[tipoFactura] ?? ORIGEN_OPTIONS)[0].value,
+    noReferencia: factura.noAdmision ?? '',
+    fechaFactura: factura.fecha ?? today,
+    fechaVencimiento: factura.fechaVencimiento ?? addOneMonth(factura.fecha ?? today),
+    // Bajo isRestricted, la persona a facturar (mismo criterio que
+    // handleSeleccionAdmision) -- bajo Normal, la razón social del tercero
+    // (mismo campo que muestra el picker, ver selectField="razonSocial" en
+    // CatalogoAseguradorasModal más abajo).
+    idTercero: (isRestrictedTipo ? factura.nombreAfiliado : factura.terceroRazonSocial) ?? '',
     regimen: '',
-    modoFacturacion: 'contratacion',
-    tipoContrato: '',
+    // "Manual" (no "Contratación", el default de Agregar) porque el
+    // registro legacy trae Tipo Contrato/Administradora, no No Contrato/ID
+    // (ver showTipoContrato/showAdministradora más abajo) -- se puede
+    // cambiar a mano después, igual que bajo Agregar.
+    modoFacturacion: 'manual',
+    tipoContrato: factura.tipoContrato === 'Evento' ? 'evento' : '',
     noContrato: '',
     idContrato: '0',
-    administradora: '',
-    valorServicios: '0.00',
+    administradora: factura.administradora ?? '',
+    procedenciaFacturaUT: '',
+    // Sin desglose por concepto en el modelo legacy -- todo el valor
+    // conocido va a Servicios (Copago/Pago Comp./Moderadora/Descuento en
+    // 0), así Valor Factura calculado en vivo reproduce factura.valorTotal.
+    valorServicios: String(factura.valorTotal ?? 0),
     valorCopago: '0.00',
     valorPagoCompartido: '0.00',
     valorModeradora: '0.00',
@@ -197,9 +255,25 @@ function SectionHeader({
 // único botón cerrar real vive en el `ModalHeader` homologado de arriba
 // (ver AGENTS.md "Modales") -- "Formulario de factura" dentro del panel
 // derecho es solo un heading de contenido, no repite esa fila de
-// título+cierre. Hermano de FacturaEditarModalClasico ("Cambiando un
-// Registro"), que sigue con el grid plano de 2 columnas anterior (este
-// rediseño de 2 paneles es solo para Agregar, no se propagó ahí).
+// título+cierre.
+//
+// También cubre "Editar" (encargo explícito: "el modal de editar es un
+// modal antiguo, debería ser el mismo modal de creación pero en modo
+// edición") -- pasarle `factura` (fila de FacturasGridClasica/
+// mockFacturasData.js) activa `isEditMode`: cambia ícono/título/subtítulo
+// del header y Compañía/Consecutivo del panel izquierdo a los datos reales
+// de esa factura en vez de los de un registro nuevo, y precarga el
+// formulario (ver buildInitialForm). Reemplazó al viejo
+// FacturaEditarModalClasico ("Cambiando un Registro", grid plano de 2
+// columnas) -- ese componente y su .css se borraron, único consumidor era
+// FacturaVistaClasica.jsx. El modelo de mockFacturasData.js es más viejo y
+// no tiene equivalente para todos los campos de este formulario (viene de
+// la grilla "clásica", con su propio shape histórico) -- lo que no matchea
+// (Régimen, No Contrato/ID, Descuento, Moneda, Concepto...) queda en su
+// default de "Nueva factura" en vez de inventar un valor. `isEditMode` fija
+// Modo Facturación en "Manual" (el registro trae Tipo Contrato/
+// Administradora, no No Contrato/ID, ver Modo Facturación en la sección 3)
+// -- a diferencia de Agregar, sigue siendo editable a mano después.
 //
 // Solo pinta el front (encargo explícito: "creá la modal... y luego le
 // damos lógica"): "Guardar" sigue sin persistir nada en un backend real --
@@ -208,29 +282,25 @@ function SectionHeader({
 // (simulado)" antes de cerrar en vez de un cierre silencioso indistinguible
 // de un guardado real (ver validate/handleGuardar más abajo). Cerrar con
 // cambios sin guardar (Cancelar/overlay/Escape/botón X) pide confirmación
-// primero (ver attemptClose/fvc-discard-modal, clases compartidas con
-// FacturaEditarModalClasico en shared.css). Id Tercero y Administradora reusan
-// el mismo CatalogoAseguradorasModal (ya existe, mismo componente que usa
-// FacturaEditarModalClasico -- encargo explícito: "administradora... me
-// debería abrir el mismo modal de id terceros", cada uno con su propio
-// estado de apertura para no compartir instancia), Régimen reusa
-// ../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal, No Contrato reusa
-// ../CatalogoContratacionModal/CatalogoContratacionModal y No. Referencia
-// reusa ../AdmisionPickerModal/AdmisionPickerModal (los 3 nuevos, ver esos
-// archivos) -- este último trae el dataset mock de /admisiones adentro del
-// modal en vez de navegar a esa ruta, para no perder el formulario en curso.
+// primero (ver attemptClose/fvc-discard-modal, clases compartidas en
+// shared.css). Id Tercero y Administradora reusan el mismo
+// CatalogoAseguradorasModal (ya existe -- encargo explícito:
+// "administradora... me debería abrir el mismo modal de id terceros", cada
+// uno con su propio estado de apertura para no compartir instancia),
+// Régimen reusa ../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal, No
+// Contrato reusa ../CatalogoContratacionModal/CatalogoContratacionModal y
+// No. Referencia reusa ../AdmisionPickerModal/AdmisionPickerModal (los 3
+// nuevos, ver esos archivos) -- este último trae el dataset mock de
+// /admisiones adentro del modal en vez de navegar a esa ruta, para no
+// perder el formulario en curso.
 //
 // "Origen" (par de Tipo Factura, encargo explícito) no tiene equivalente en
 // el mock de facturas todavía -- placeholder hasta que haya lógica real
-// (mismo criterio que Compañía/Consecutivo). Ver isRestricted más abajo
-// para la lógica de Copago/Moderadora/Pago Compartido.
-//
-// No recibe `factura` -- a diferencia de Editar, es un registro nuevo desde
-// cero. Compañía/Consecutivo quedan como texto fijo (placeholder hasta que
-// haya lógica real de numeración), mismo criterio que
-// FacturaEditarModalClasico.fem-readonly-row.
-export default function FacturaAgregarModalClasico({ onClose }) {
-  const [form, setForm] = useState(buildInitialForm);
+// (mismo criterio que Compañía/Consecutivo bajo Agregar). Ver isRestricted
+// más abajo para la lógica de Copago/Moderadora/Pago Compartido.
+export default function FacturaAgregarModalClasico({ factura, onClose }) {
+  const isEditMode = Boolean(factura);
+  const [form, setForm] = useState(() => buildInitialForm(factura));
   const [catalogoTerceroAbierto, setCatalogoTerceroAbierto] = useState(false);
   const [catalogoRegimenAbierto, setCatalogoRegimenAbierto] = useState(false);
   const [catalogoContratacionAbierto, setCatalogoContratacionAbierto] = useState(false);
@@ -305,6 +375,32 @@ export default function FacturaAgregarModalClasico({ onClose }) {
   // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
   // Citas/Ambulatorio, Pago Compartido->Admisiones/Citas/Consulta Externa).
   const origenOptions = ORIGEN_OPTIONS_BY_TIPO[form.tipoFactura] ?? ORIGEN_OPTIONS;
+
+  // Visibilidad de "3. Información contractual" según Modo Facturación
+  // (encargo explícito, solo bajo Normal -- isRestricted mantiene su
+  // comportamiento de siempre: No Contrato/ID/Administradora/Procedencia UT
+  // ocultos, Tipo Contrato siempre visible, sin importar el modo elegido).
+  // - Manual: sin No Contrato/ID (no hay contrato que referenciar), con
+  //   Tipo Contrato y Administradora.
+  // - Contratación: con No Contrato/ID (el contrato es la fuente del tipo),
+  //   sin Tipo Contrato, con Administradora.
+  // - Unión Temporal: con No Contrato/ID, sin Tipo Contrato ni
+  //   Administradora -- en su lugar, "Procedencia Factura UT".
+  const showNoContratoEId = !isRestricted && form.modoFacturacion !== 'manual';
+  const showTipoContrato = isRestricted || form.modoFacturacion === 'manual';
+  const showAdministradora = !isRestricted && form.modoFacturacion !== 'union-temporal';
+  const showProcedenciaFacturaUT = !isRestricted && form.modoFacturacion === 'union-temporal';
+  // Grid de "3. Información contractual" por Modo Facturación (encargo
+  // explícito) -- Contratación pasa a 3 columnas (Modo Facturación/No
+  // Contrato/ID llenan la fila, Administradora baja a ocupar el ancho
+  // completo); Unión Temporal a 2x2 (fila 1 Modo Facturación/Procedencia
+  // Factura UT, fila 2 No Contrato/ID, ver reordenamiento del JSX más abajo).
+  // isRestricted y Manual siguen en 4 columnas, sin cambios.
+  const contractGridClass = !isRestricted && form.modoFacturacion === 'contratacion'
+    ? 'fam-fields-3'
+    : !isRestricted && form.modoFacturacion === 'union-temporal'
+      ? 'fam-fields-2'
+      : 'fam-fields-4';
 
   function handleChangeTipoFactura(value) {
     const nextOrigenOptions = ORIGEN_OPTIONS_BY_TIPO[value] ?? ORIGEN_OPTIONS;
@@ -394,9 +490,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
     <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
       <div className="modal fam-modal" role="dialog" aria-modal="true" aria-labelledby="fam-title">
         <ModalHeader
-          icon={LuFilePlus2}
-          title="Nueva factura"
+          icon={isEditMode ? LuFilePenLine : LuFilePlus2}
+          title={isEditMode ? 'Editar factura' : 'Nueva factura'}
           titleId="fam-title"
+          subtitle={isEditMode ? `Factura ${factura.numero}` : undefined}
           onClose={attemptClose}
         />
 
@@ -420,14 +517,20 @@ export default function FacturaAgregarModalClasico({ onClose }) {
               options={TIPO_FACTURA_OPTIONS}
             />
 
-            <div className="fam-type-info">
-              <LuInfo className="icon" aria-hidden="true" />
-              <p>El tipo de factura define los campos que debes completar. La información puede autocompletarse desde una admisión.</p>
-            </div>
+            <div className="fam-type-bottom">
+              <div className="fam-type-info">
+                <LuInfo className="icon" aria-hidden="true" />
+                <p>El tipo de factura define los campos que debes completar. La información puede autocompletarse desde una admisión.</p>
+              </div>
 
-            <div className="fam-left-meta">
-              <div className="fam-left-meta-item"><span>Compañía</span><strong>02</strong></div>
-              <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{PROXIMO_CONSECUTIVO}</strong></div>
+              <div className="fam-left-meta">
+                {/* Bajo isEditMode, datos reales de la factura (mismo
+                    criterio que .fem-readonly-row del viejo
+                    FacturaEditarModalClasico) en vez del placeholder de
+                    "próximo consecutivo" de Agregar. */}
+                <div className="fam-left-meta-item"><span>Compañía</span><strong>{isEditMode ? factura.sedeCodigo : '02'}</strong></div>
+                <div className="fam-left-meta-item"><span>Consecutivo</span><strong>{isEditMode ? factura.noAdmision : PROXIMO_CONSECUTIVO}</strong></div>
+              </div>
             </div>
           </div>
 
@@ -436,7 +539,9 @@ export default function FacturaAgregarModalClasico({ onClose }) {
               {saving && (
                 <div className="fvc-save-toast" role="status" aria-live="polite">
                   <LuCheck className="icon" aria-hidden="true" />
-                  Factura guardada (simulado) — no persiste todavía en el servidor.
+                  {isEditMode
+                    ? 'Cambios guardados (simulado) — no persiste todavía en el servidor.'
+                    : 'Factura guardada (simulado) — no persiste todavía en el servidor.'}
                 </div>
               )}
 
@@ -553,13 +658,17 @@ export default function FacturaAgregarModalClasico({ onClose }) {
               <section className="fam-section">
                 <SectionHeader
                   icon={LuUser}
-                  title="2. Información del afiliado"
+                  // "Info tercero" solo bajo Normal (encargo explícito) --
+                  // Copago/Moderadora/Pago Compartido conservan el label
+                  // original, ya que ahí "Tercero / Administradora" sigue
+                  // siendo el afiliado a facturar (ver handleSeleccionAdmision).
+                  title={form.tipoFactura === 'normal' ? '2. Info tercero' : '2. Información del afiliado'}
                   subtitle="Datos del tercero y régimen."
                 />
-                {/* 2 columnas bajo isRestricted (Tercero/Régimen, sin
-                    Administradora, encargo explícito) -- 3 en Normal, que sí
-                    suma "Administradora" como tercer campo. */}
-                <div className={`fam-fields ${isRestricted ? 'fam-fields-2' : 'fam-fields-3'}`}>
+                {/* Siempre 2 columnas (Tercero/Régimen) -- "Administradora"
+                    se movió a la sección 3 "Información contractual"
+                    (encargo explícito, solo aplica bajo Normal, ver abajo). */}
+                <div className="fam-fields fam-fields-2">
                   <div className="form-field">
                     <label htmlFor="fam-id-tercero">Tercero / Administradora<span className="fam-required-mark">*</span></label>
                     <div className="field-with-search">
@@ -604,36 +713,6 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                       </button>
                     </div>
                   </div>
-
-                  {/* "Administradora" no aplica a Copago/Moderadora/Pago
-                      Compartido (encargo explícito) -- bajo esos tipos
-                      "Tercero / Administradora" ya es la persona a facturar
-                      (ver handleSeleccionAdmision), no queda un campo
-                      "Afiliado" aparte. */}
-                  {!isRestricted && (
-                    <div className="form-field">
-                      <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
-                      <div className="field-with-search">
-                        <input
-                          id="fam-administradora"
-                          type="text"
-                          value={form.administradora}
-                          onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
-                          required
-                          placeholder="Ej. Clintos"
-                        />
-                        <button
-                          type="button"
-                          className="search-btn"
-                          onClick={() => setCatalogoAdministradoraAbierto(true)}
-                          aria-label="Buscar administradora"
-                          title="Buscar administradora"
-                        >
-                          <LuEye className="icon" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </section>
 
@@ -657,7 +736,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   )}
                 />
                 {!contractSectionCollapsed && (
-                  <div className="fam-fields fam-fields-4">
+                  <div className={`fam-fields ${contractGridClass}`}>
                     <div className={`form-field${isRestricted ? ' fam-col-span-2' : ''}`}>
                       <label htmlFor="fam-modo-facturacion">Modo Facturación</label>
                       <FormSelect
@@ -667,7 +746,27 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                         options={MODO_FACTURACION_OPTIONS}
                       />
                     </div>
-                    {!isRestricted && (
+
+                    {/* Solo bajo Modo Facturación "Unión Temporal" (encargo
+                        explícito, ver imagen de referencia) -- va justo
+                        después de Modo Facturación para que ambos compongan
+                        la fila 1 del grid 2x2 (No Contrato/ID quedan como
+                        fila 2, ver showNoContratoEId debajo). Toma el lugar
+                        de Tipo Contrato/Administradora, ambos ocultos bajo
+                        ese modo. */}
+                    {showProcedenciaFacturaUT && (
+                      <div className="form-field">
+                        <label htmlFor="fam-procedencia-factura-ut">Procedencia Factura UT</label>
+                        <FormSelect
+                          id="fam-procedencia-factura-ut"
+                          value={form.procedenciaFacturaUT}
+                          onChange={setField(setForm, 'procedenciaFacturaUT')}
+                          options={PROCEDENCIA_FACTURA_UT_OPTIONS}
+                          placeholder="Selecciona una opción"
+                        />
+                      </div>
+                    )}
+                    {showNoContratoEId && (
                       <div className="form-field">
                         <label htmlFor="fam-no-contrato">No Contrato</label>
                         <div className="field-with-search">
@@ -689,7 +788,7 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                         </div>
                       </div>
                     )}
-                    {!isRestricted && (
+                    {showNoContratoEId && (
                       <div className="form-field">
                         <label htmlFor="fam-id-contrato">ID<span className="fam-required-mark">*</span></label>
                         <input
@@ -701,16 +800,54 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                         />
                       </div>
                     )}
-                    <div className={`form-field${isRestricted ? ' fam-col-span-2' : ''}`}>
-                      <label htmlFor="fam-tipo-contrato">Tipo Contrato</label>
-                      <FormSelect
-                        id="fam-tipo-contrato"
-                        value={form.tipoContrato}
-                        onChange={setField(setForm, 'tipoContrato')}
-                        options={TIPO_CONTRATO_OPTIONS}
-                        placeholder="Selecciona una opción"
-                      />
-                    </div>
+                    {/* Oculto bajo Modo Facturación "Contratación"/"Unión
+                        Temporal" (encargo explícito) -- el contrato ya trae
+                        su propio tipo bajo esos modos. */}
+                    {showTipoContrato && (
+                      <div className={`form-field${isRestricted ? ' fam-col-span-2' : ''}`}>
+                        <label htmlFor="fam-tipo-contrato">Tipo Contrato</label>
+                        <FormSelect
+                          id="fam-tipo-contrato"
+                          value={form.tipoContrato}
+                          onChange={setField(setForm, 'tipoContrato')}
+                          options={TIPO_CONTRATO_OPTIONS}
+                          placeholder="Selecciona una opción"
+                        />
+                      </div>
+                    )}
+
+                    {/* Movida acá desde "2. Información del afiliado"
+                        (encargo explícito, solo bajo Normal) -- oculta bajo
+                        Modo Facturación "Unión Temporal" (reemplazada ahí por
+                        "Procedencia Factura UT" arriba). Bajo Contratación
+                        (grid de 3 columnas) ocupa el ancho completo del
+                        bloque en vez de compartir fila (encargo explícito);
+                        bajo Manual (grid de 4 columnas) sigue a media fila
+                        junto a Modo Facturación/Tipo Contrato. */}
+                    {showAdministradora && (
+                      <div className={`form-field${form.modoFacturacion === 'contratacion' ? ' fam-col-span-full' : ' fam-col-span-2'}`}>
+                        <label htmlFor="fam-administradora">Administradora<span className="fam-required-mark">*</span></label>
+                        <div className="field-with-search">
+                          <input
+                            id="fam-administradora"
+                            type="text"
+                            value={form.administradora}
+                            onChange={(e) => setField(setForm, 'administradora')(e.target.value)}
+                            required
+                            placeholder="Ej. Clintos"
+                          />
+                          <button
+                            type="button"
+                            className="search-btn"
+                            onClick={() => setCatalogoAdministradoraAbierto(true)}
+                            aria-label="Buscar administradora"
+                            title="Buscar administradora"
+                          >
+                            <LuEye className="icon" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </section>
@@ -735,12 +872,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   {!isRestricted && (
                     <div className={`form-field${errors.valorServicios ? ' has-error' : ''}`}>
                       <label htmlFor="fam-valor-servicios">Valor Servicios<span className="fam-required-mark">*</span></label>
-                      <input
+                      <CurrencyInput
                         id="fam-valor-servicios"
-                        type="number"
-                        step="0.01"
                         value={form.valorServicios}
-                        onChange={(e) => handleChangeMoneyField('valorServicios')(e.target.value)}
+                        onChange={handleChangeMoneyField('valorServicios')}
                         required
                         aria-invalid={!!errors.valorServicios}
                       />
@@ -750,12 +885,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   {!isRestricted && (
                     <div className={`form-field${errors.valorCopago ? ' has-error' : ''}`}>
                       <label htmlFor="fam-valor-copago">Valor Copago<span className="fam-required-mark">*</span></label>
-                      <input
+                      <CurrencyInput
                         id="fam-valor-copago"
-                        type="number"
-                        step="0.01"
                         value={form.valorCopago}
-                        onChange={(e) => handleChangeMoneyField('valorCopago')(e.target.value)}
+                        onChange={handleChangeMoneyField('valorCopago')}
                         required
                         aria-invalid={!!errors.valorCopago}
                       />
@@ -766,12 +899,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   {!isRestricted && (
                     <div className={`form-field${errors.valorPagoCompartido ? ' has-error' : ''}`}>
                       <label htmlFor="fam-pago-compartido">Valor Pago Comp.<span className="fam-required-mark">*</span></label>
-                      <input
+                      <CurrencyInput
                         id="fam-pago-compartido"
-                        type="number"
-                        step="0.01"
                         value={form.valorPagoCompartido}
-                        onChange={(e) => handleChangeMoneyField('valorPagoCompartido')(e.target.value)}
+                        onChange={handleChangeMoneyField('valorPagoCompartido')}
                         required
                         aria-invalid={!!errors.valorPagoCompartido}
                       />
@@ -781,12 +912,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   {!isRestricted && (
                     <div className={`form-field${errors.valorModeradora ? ' has-error' : ''}`}>
                       <label htmlFor="fam-valor-moderadora">Valor Moderadora<span className="fam-required-mark">*</span></label>
-                      <input
+                      <CurrencyInput
                         id="fam-valor-moderadora"
-                        type="number"
-                        step="0.01"
                         value={form.valorModeradora}
-                        onChange={(e) => handleChangeMoneyField('valorModeradora')(e.target.value)}
+                        onChange={handleChangeMoneyField('valorModeradora')}
                         required
                         aria-invalid={!!errors.valorModeradora}
                       />
@@ -797,12 +926,10 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                   {!isRestricted && (
                     <div className={`form-field${errors.descuento ? ' has-error' : ''}`}>
                       <label htmlFor="fam-descuento">Descuento<span className="fam-required-mark">*</span></label>
-                      <input
+                      <CurrencyInput
                         id="fam-descuento"
-                        type="number"
-                        step="0.01"
                         value={form.descuento}
-                        onChange={(e) => handleChangeMoneyField('descuento')(e.target.value)}
+                        onChange={handleChangeMoneyField('descuento')}
                         required
                         aria-invalid={!!errors.descuento}
                       />
@@ -830,14 +957,22 @@ export default function FacturaAgregarModalClasico({ onClose }) {
                     // Descuento, calculada en vivo (ver valorFactura más
                     // arriba) -- antes un <input readOnly>, ahora el box
                     // resaltado "Total factura" (encargo explícito, ver
-                    // imagen de referencia); mismo valor/formato de siempre
-                    // (sin separador de miles ni símbolo $, encargo explícito).
+                    // imagen de referencia). Mismo separador de miles "."/
+                    // decimales "," que los CurrencyInput de arriba (encargo
+                    // explícito: "aplicale el mismo tratamiento") -- sin
+                    // símbolo $, eso sigue sin pedirse. No es un
+                    // CurrencyInput (no es un input, es un <span> de solo
+                    // lectura) -- toLocaleString('es-CO') directo, forzando
+                    // 2 decimales (mismo criterio que formatCOP en
+                    // mockFacturasData.js).
                     <div className="fam-col-span-full">
                       <div className="fam-total-box">
                         <span className="fam-total-icon"><LuCalculator className="icon" aria-hidden="true" /></span>
                         <span className="fam-total-copy">
                           <span className="fam-total-label">Total factura</span>
-                          <span className="fam-total-value">{valorFactura.toFixed(2)}</span>
+                          <span className="fam-total-value">
+                            {valorFactura.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
                         </span>
                       </div>
                     </div>

@@ -3,7 +3,7 @@
    @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
    modal -- tabla de 7 columnas, más ancho que el resto de los modales de
    Facturación. */
-.ccm-modal{width:900px;max-width:95vw;}
+.ccm-modal{width:1200px;max-width:95vw;}
 
 /* Panel de contexto (Modo/Sede/Tercero/Fecha...) -- 4 columnas x 3 filas,
    con celdas vacías explícitas (<div/> sin contenido en Field) donde la

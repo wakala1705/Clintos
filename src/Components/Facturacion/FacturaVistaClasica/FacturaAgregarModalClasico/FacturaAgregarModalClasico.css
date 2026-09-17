@@ -2,10 +2,11 @@
    genérico de campo, incluido el resaltado ámbar de obligatorios): ver
    ../../shared/shared.css. Header de título+cerrar: ver
    @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
-   modal. Mucho más ancho que .fem-modal (FacturaEditarModalClasico, 640px,
-   sigue con el grid plano de 2 columnas) -- este modal pasó a un layout de
-   2 paneles (selector de tipo + formulario en 4 secciones, encargo
-   explícito, ver imagen de referencia). */
+   modal, que ahora cubre tanto Agregar como Editar (ver comentario del
+   componente en el .jsx) -- layout de 2 paneles (selector de tipo +
+   formulario en 4 secciones, encargo explícito, ver imagen de referencia),
+   bastante más ancho que el viejo grid plano de 2 columnas de 640px que
+   tenía el modal de Editar antes de unificarse acá. */
 .fam-modal{width:1060px;max-width:95vw;}
 
 .fam-required-mark{color:var(--red);margin-left:2px;}
@@ -34,16 +35,26 @@
 }
 .fam-type-panel-lead{font-size:var(--fs-sm);color:var(--ink-500);margin:0;}
 
+/* Segundo bloque del riel (info + Compañía/Consecutivo, encargo explícito:
+   separarlo de las tarjetas de tipo en dos bloques) -- `margin-top:auto`
+   lo empuja al fondo del panel cuando sobra alto (las tarjetas no llenan
+   el riel), dejando el espacio en blanco entre ambos bloques en vez de
+   pegado debajo de las tarjetas; `gap` propio porque el `gap` de
+   `.fam-type-panel` solo separa hijos directos, y este wrapper agrupa
+   `.fam-type-info` + `.fam-left-meta` en uno solo. */
+.fam-type-bottom{display:flex;flex-direction:column;gap:16px;margin-top:auto;}
+
 /* Compañía/Consecutivo/No. de Factura (encargo explícito: antes vivían en
-   una fila arriba del formulario, ahora en el panel izquierdo) -- mismo
-   patrón de placeholder fijo que .fem-readonly-row de
-   FacturaEditarModalClasico.css, apilado vertical acá por el ancho angosto
-   del panel. background var(--surface) (no var(--bg), a diferencia de antes)
-   para que se distinga del fondo gris que ahora tiene .fam-type-panel. */
+   una fila arriba del formulario, ahora en el panel izquierdo) -- texto fijo
+   bajo Agregar (placeholder hasta que haya lógica real de numeración),
+   datos reales de la factura bajo Editar (ver isEditMode en el .jsx),
+   apilado vertical acá por el ancho angosto del panel. background
+   var(--surface) (no var(--bg), a diferencia de antes) para que se distinga
+   del fondo gris que ahora tiene .fam-type-panel. */
 .fam-left-meta{
   display:flex;flex-direction:column;gap:8px;
-  border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--surface);padding:12px 14px;
+  border-top:1px solid var(--border);
+  padding:12px 14px;
 }
 .fam-left-meta-item{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-sm);}
 .fam-left-meta-item span{color:var(--ink-500);}

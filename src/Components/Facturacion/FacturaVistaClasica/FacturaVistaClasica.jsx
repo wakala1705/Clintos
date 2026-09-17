@@ -12,7 +12,7 @@ import TipoFacturaFilter from './TipoFacturaFilter/TipoFacturaFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
-import FacturaEditarModalClasico from './FacturaEditarModalClasico/FacturaEditarModalClasico';
+import FacturaAgregarModalClasico from './FacturaAgregarModalClasico/FacturaAgregarModalClasico';
 import PrintLoadingModal from './PrintLoadingModal/PrintLoadingModal';
 import FacturaPdfViewerModal from './FacturaPdfViewerModal/FacturaPdfViewerModal';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
@@ -239,7 +239,7 @@ export default function FacturaVistaClasica() {
       />
 
       {editFactura && (
-        <FacturaEditarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />
+        <FacturaAgregarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />
       )}
 
       {printFlow?.stage === 'loading' && (

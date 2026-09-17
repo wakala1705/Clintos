@@ -317,11 +317,10 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 
 /* Scaffolding genérico de campo de formulario + resaltado ámbar "obligatorio
    y vacío" (toggle "Resaltado de campos obligatorios" en Configuración >
-   Apariencia) -- reusado por FacturaEditarModalClasico y
-   FacturaAgregarModalClasico (2+ consumidores, ver AGENTS.md "Component
-   organization"; vivía duplicado en FacturaEditarModalClasico.css cuando
-   era el único form de la feature). Para un FormSelect (botón, sin
-   :required nativo) ver la regla equivalente basada en
+   Apariencia) -- reusado por FacturaAgregarModalClasico (Agregar/Editar,
+   ver comentario del componente) y los catálogos de esta feature (2+
+   consumidores, ver AGENTS.md "Component organization"). Para un FormSelect
+   (botón, sin :required nativo) ver la regla equivalente basada en
    `data-required-empty` en FormSelect.css. */
 .form-field{display:flex;flex-direction:column;gap:4px;}
 .form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
@@ -351,19 +350,20 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 }
 
 /* Validación inline (Fecha Vencimiento/montos) -- reusada por
-   FacturaAgregarModalClasico y FacturaEditarModalClasico (2+ consumidores,
-   ver AGENTS.md "Component organization"). Tono --red, distinto del ámbar
-   de "obligatorio y vacío" de arriba -- acá es un valor inválido, no un
-   campo sin completar. */
+   FacturaAgregarModalClasico (Agregar/Editar) y DateRangeFilter (2+
+   consumidores, ver AGENTS.md "Component organization"). Tono --red,
+   distinto del ámbar de "obligatorio y vacío" de arriba -- acá es un valor
+   inválido, no un campo sin completar. */
 .form-field-error{font-size:var(--fs-xs);color:var(--red);}
 .form-field.has-error input{border-color:var(--red);}
 .form-field.has-error input:focus{outline-color:var(--red);}
 
-/* Aviso "Guardado (simulado)" (mismos 2 modales) -- banner no bloqueante
-   dentro de .modal-body mientras "Guardar" muestra el resultado simulado
-   antes de cerrar (ver handleGuardar en ambos .jsx). Texto #0d7a3d sobre
-   --green-bg, misma convención que Badge tone="success" (ver AGENTS.md
-   "Badges"). */
+/* Aviso "Guardado (simulado)" (FacturaAgregarModalClasico -- Agregar/Editar
+   -- y FacturaDetalleModalClasico) -- banner no bloqueante dentro de
+   .modal-body mientras "Guardar"/"Facturar" muestra el resultado simulado
+   antes de cerrar (ver handleGuardar/equivalente en cada .jsx). Texto
+   #0d7a3d sobre --green-bg, misma convención que Badge tone="success" (ver
+   AGENTS.md "Badges"). */
 .fvc-save-toast{
   display:flex;align-items:center;gap:8px;
   padding:10px 14px;border-radius:var(--radius);
@@ -372,15 +372,15 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 }
 .fvc-save-toast .icon{width:16px;height:16px;flex-shrink:0;}
 
-/* Confirmación de cierre con cambios sin guardar (mismos 2 modales) -- mismo
-   patrón visual que .nc-discard-modal de NuevaCitaFlow.css (diálogo
-   centrado sin fila de header, ver AGENTS.md "Modales": está fuera del
-   alcance de ModalHeader/@/Components/ModalHeader), duplicado acá por
-   feature en vez de importado de ahí (mismo criterio de duplicación por
-   feature que el resto de este archivo). Se monta como último hijo del
-   .modal-overlay de cada modal -- mismo z-index que los catálogos anidados
-   (CatalogoAseguradorasModal, etc.), el orden en el DOM decide qué queda
-   encima. */
+/* Confirmación de cierre con cambios sin guardar (FacturaAgregarModalClasico,
+   Agregar/Editar) -- mismo patrón visual que .nc-discard-modal de
+   NuevaCitaFlow.css (diálogo centrado sin fila de header, ver AGENTS.md
+   "Modales": está fuera del alcance de ModalHeader/@/Components/ModalHeader),
+   duplicado acá por feature en vez de importado de ahí (mismo criterio de
+   duplicación por feature que el resto de este archivo). Se monta como
+   último hijo del .modal-overlay del modal -- mismo z-index que los
+   catálogos anidados (CatalogoAseguradorasModal, etc.), el orden en el DOM
+   decide qué queda encima. */
 .fvc-discard-modal{
   width:400px;max-width:100%;background:var(--surface-modal);
   border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(6,25,42,.28);

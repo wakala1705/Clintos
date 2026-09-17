@@ -1,0 +1,5 @@
+/* Sin reglas propias: renderiza un <input> plano dentro de .form-field, que
+   ya le da todo su estilo (borde/radio/alto/foco/resaltado ámbar de
+   obligatorio) vía la regla genérica de shared.css de cada feature -- ver
+   AGENTS.md "Component organization". Archivo presente solo para cumplir
+   "un componente = una carpeta con .jsx + .css". */
