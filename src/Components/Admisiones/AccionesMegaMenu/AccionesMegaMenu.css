@@ -1,0 +1,70 @@
+/* El header usa @/Components/ModalHeader/ModalHeader (homologado) — acá solo
+   lo propio del megamenú. position:fixed + top|bottom/left/max-height se
+   completan inline (ver AccionesMegaMenu.jsx): el panel se porta a
+   document.body y se ancla al botón que lo abrió. El ancho se resuelve acá
+   (no en JS) porque el alto natural que mide el JS depende de él. */
+.adm-mm{
+  position:fixed;z-index:100;
+  background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius-lg);
+  width:min(1040px, calc(100vw - 16px));
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+.adm-mm-body{
+  flex:1;min-height:0;overflow-y:auto;
+  display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));
+}
+
+/* --mm-fg (texto/ícono) y --mm-bg (franja) por tono. El verde de texto
+   sobre --green-bg usa #0d7a3d por contraste (mismo criterio que Badge,
+   ver AGENTS.md); en dark vuelve al --green claro del feature. */
+.adm-mm-col{--mm-fg:var(--ink-500);--mm-bg:var(--gray-bg);min-width:0;}
+.adm-mm-col.tone-primary{--mm-fg:var(--primary);--mm-bg:var(--primary-50);}
+.adm-mm-col.tone-success{--mm-fg:#0d7a3d;--mm-bg:var(--green-bg);}
+.adm-mm-col.tone-warning{--mm-fg:var(--amber);--mm-bg:var(--amber-bg);}
+html[data-theme="dark"] .adm-mm-col.tone-success{--mm-fg:var(--green);}
+.adm-mm-col + .adm-mm-col{border-left:1px solid var(--border);}
+
+.adm-mm-col-title{
+  margin:0;padding:8px 16px;
+  background:var(--mm-bg);color:var(--mm-fg);border-bottom:2px solid var(--mm-fg);
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.adm-mm-list{list-style:none;margin:0;padding:8px;display:flex;flex-direction:column;gap:2px;}
+.adm-mm-item{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:10px 8px;border:none;border-radius:var(--radius);background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-regular);
+  color:var(--ink-700);text-align:left;cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.adm-mm-item .icon{width:20px;height:20px;flex-shrink:0;color:var(--mm-fg);}
+.adm-mm-item:hover{background:var(--bg);color:var(--ink-900);}
+.adm-mm-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
+
+.adm-mm-footer{
+  display:flex;justify-content:flex-end;flex-shrink:0;
+  padding:14px 24px;border-top:1px solid var(--border);
+}
+.adm-mm-shortcuts{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 6px;border:none;border-radius:var(--radius);background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-regular);
+  color:var(--ink-700);cursor:pointer;
+  transition:background .15s;
+}
+.adm-mm-shortcuts .icon{width:16px;height:16px;color:var(--primary);}
+.adm-mm-shortcuts:hover{background:var(--bg);}
+.adm-mm-shortcuts:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Tablet (< --bp-desktop): 2 columnas. Teléfono (< --bp-tablet): 1. */
+@media (max-width:1024px){
+  .adm-mm-body{grid-template-columns:repeat(2, minmax(0, 1fr));}
+  .adm-mm-col:nth-child(odd){border-left:none;}
+  .adm-mm-col:nth-child(n+3){border-top:1px solid var(--border);}
+}
+@media (max-width:768px){
+  .adm-mm-body{grid-template-columns:minmax(0, 1fr);}
+  .adm-mm-col + .adm-mm-col{border-left:none;border-top:1px solid var(--border);}
+}

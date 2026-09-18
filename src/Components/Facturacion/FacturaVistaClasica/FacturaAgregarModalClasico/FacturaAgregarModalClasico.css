@@ -15,7 +15,7 @@
    tamaño. */
 .fam-modal{width:1060px;max-width:95vw;height:90vh;}
 
-.fam-required-mark{color:var(--red);margin-left:2px;}
+/* .fam-required-mark: ver ../../shared/shared.css. */
 
 /* ---------- Layout de 2 paneles ----------
    Reemplaza el .modal-body genérico de shared.css para este modal: acá cada
@@ -40,6 +40,23 @@
   display:flex;flex-direction:column;gap:16px;
 }
 .fam-type-panel-lead{font-size:var(--fs-sm);color:var(--ink-500);margin:0;}
+
+/* Título fijo del modal + Consecutivo, al tope del riel (encargo explícito:
+   "pueden vivir en el rail izquierdo", mismo lenguaje visual que
+   .wizard-rail-header de NuevaCitaFlow.css) -- sin botón cerrar (ese sigue
+   siendo el único del `ModalHeader` homologado, ahora en `.fam-form-panel`,
+   ver comentario del componente). Mismo ícono en círculo 34px que
+   ModalHeader (ver AGENTS.md "Modales") para que se lea como el mismo
+   lenguaje visual aunque no sea ese componente. */
+.fam-rail-header{display:flex;align-items:flex-start;gap:12px;}
+.fam-rail-header-icon{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.fam-rail-header-icon .icon{width:17px;height:17px;}
+.fam-rail-header h4{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fam-rail-header p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
 
 /* Resumen compacto de "Tipo de factura" en el paso 2 (encargo explícito:
    "al pasar al paso 2 se colapsa") -- reemplaza las 4 tarjetas completas de
@@ -102,45 +119,23 @@
    tiene el padding que antes vivía en .modal-body -- mismo split que
    .wizard-main/.wizard-content. */
 .fam-form-panel{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+/* "Atrás" al extremo izquierdo del .modal-footer (justify-content:flex-end en
+   shared.css) -- el auto-margin empuja el resto de acciones a la derecha. */
+.fam-footer-back{margin-right:auto;}
 .fam-form-scroll{
   flex:1;min-height:0;overflow-y:auto;
   padding:20px 24px;display:flex;flex-direction:column;gap:20px;
 }
-/* Consecutivo al extremo derecho (encargo explícito) -- reemplaza el
-   `.fam-left-meta` que antes vivía en el panel izquierdo (ver arriba,
-   Compañía se ocultó sin reemplazo). `justify-content:space-between` separa
-   título+subtítulo (izquierda) de Consecutivo (derecha); `flex-shrink:0` en
-   el consecutivo para que nunca se comprima si el subtítulo es largo. */
-.fam-panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
-.fam-panel-heading h4{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.fam-panel-heading p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
-.fam-panel-heading-consecutivo{
-  display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;
-  font-size:var(--fs-sm);
-}
-.fam-panel-heading-consecutivo span{color:var(--ink-500);}
-.fam-panel-heading-consecutivo strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
-
-.fam-section{
-  border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:16px;display:flex;flex-direction:column;gap:14px;
-}
-.fam-section-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
-.fam-section-header-main{display:flex;gap:10px;align-items:flex-start;}
-.fam-section-header h4{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.fam-section-header p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
-/* Mismo tamaño de ícono en círculo que ModalHeader (34px, ver AGENTS.md
-   "Modales") -- coherencia visual con el resto de headers del proyecto,
-   sin ser el mismo componente (este no tiene botón cerrar, no rige la
-   homologación de ModalHeader). */
-.fam-section-icon{
-  width:34px;height:34px;border-radius:50%;flex-shrink:0;
-  background:var(--primary-50);color:var(--primary);
-  display:flex;align-items:center;justify-content:center;
-}
-.fam-section-icon .icon{width:17px;height:17px;}
-
-.fam-required-note{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+/* .fam-panel-heading (título+descripción de cada paso, dentro de
+   .fam-form-scroll) se borró -- encargo explícito: "fam-panel-heading lo
+   reubicas en modal-header", ese contenido ahora es el title/subtitle del
+   `ModalHeader` homologado de esta columna (ver comentario del componente
+   más arriba). Consecutivo: pasó de .fam-panel-heading-consecutivo a un
+   `trailing` propio del ModalHeader, después a su subtítulo, y de ahí al
+   riel izquierdo (`.fam-rail-header`, ver arriba) -- ninguna clase propia
+   de este bloque sigue viva acá.
+   .fam-section, .fam-section-header, .fam-section-icon, .fam-required-note:
+   ver ../../shared/shared.css. */
 
 .fam-section-toggle{
   display:inline-flex;align-items:center;gap:4px;
@@ -159,16 +154,8 @@
 }
 .fam-cobro-note .icon{width:13px;height:13px;}
 
-/* Grillas de campos por sección -- cada sección define su propio número de
-   columnas (4/3/2) según cuántos campos comparten fila en la imagen de
-   referencia; `.fam-col-span-2`/`.fam-col-span-full` funcionan sobre
-   cualquiera de las tres (grid-column no depende del total de columnas). */
-.fam-fields{display:grid;gap:16px 20px;align-items:start;}
-.fam-fields-4{grid-template-columns:repeat(4,1fr);}
-.fam-fields-3{grid-template-columns:repeat(3,1fr);}
-.fam-fields-2{grid-template-columns:repeat(2,1fr);}
-.fam-col-span-2{grid-column:span 2;}
-.fam-col-span-full{grid-column:1/-1;}
+/* .fam-fields, .fam-fields-2/3/4, .fam-col-span-2/full: ver
+   ../../shared/shared.css. */
 
 /* Banner "Admisión encontrada" (sección 1, encargo explícito) -- mismo tono
    success que .fvc-save-toast (../../shared/shared.css), con un botón
@@ -190,16 +177,55 @@
 /* Paso 2 "Ítems y servicios" -- .fam-items-grid reusa .fvc-grid/.fvc-num/
    .fvc-ellipsis de ../../shared/shared.css (mismo look que FacturaItemsTable,
    ver AGENTS.md "Component organization"), acá solo el estado vacío (sin
-   ítems agregados todavía) y el ancho angosto de la columna de acciones
-   (botón "Quitar"). */
+   ítems agregados todavía) y la columna de acciones rápidas (Editar/Borrar,
+   encargo explícito). */
 .fam-items-empty{
   display:flex;flex-direction:column;align-items:center;gap:8px;
   padding:32px 16px;text-align:center;color:var(--ink-500);
 }
 .fam-items-empty .icon{width:28px;height:28px;color:var(--ink-400);}
 .fam-items-empty p{margin:0;font-size:var(--fs-sm);}
+/* La tabla no debe tomar el padding de `.fam-section` (16px, encargo
+   explícito) -- cancela ese padding a los lados/abajo con márgenes
+   negativos y recorta las esquinas inferiores con el mismo radio de la
+   sección, para que la tabla llegue a los bordes en vez de quedar
+   indentada como el resto del contenido de la sección. `border-top` propio
+   (encargo explícito) separa la tabla del header "Ítems agregados" de
+   arriba; la última fila pierde su `border-bottom` de `.fvc-grid` (encargo
+   explícito: "elimina el borde duplicado al final") porque, al llegar la
+   tabla hasta el borde inferior de la sección, esa línea quedaba pegada
+   justo encima del propio borde de `.fam-section` -- se veían como un doble
+   borde en vez de uno solo. */
+.fam-items-grid-wrap{
+  margin:0 -16px -16px;overflow:hidden;border-top:1px solid var(--border);
+  border-radius:0 0 var(--radius-lg) var(--radius-lg);
+}
 .fam-items-grid tbody tr{cursor:default;}
-.fam-items-grid th:last-child,.fam-items-grid td:last-child{width:40px;}
+.fam-items-grid tbody tr:last-child td{border-bottom:none;}
+.fam-items-grid th:last-child,.fam-items-grid td:last-child{width:76px;}
+
+/* Botones de Editar/Borrar por fila -- NO reusan `.search-btn` de
+   shared.css: ese botón es `position:absolute` (pensado para flotar dentro
+   de `.field-with-search`, un input relativo) y puesto directo en un `<td>`
+   sin ancestro posicionado quedaba anclado al viewport en vez de a la
+   celda -- bug real encontrado al agregar el segundo botón (el de "Quitar"
+   que ya existía se veía flotando fuera del modal, sobre la tabla de
+   facturas de fondo). Estos son botones normales en flujo, sin position.
+   Color propio por acción, no gris neutro (encargo explícito) -- Editar en
+   `--primary` (mismo azul que el resto de acciones de la grilla, ver
+   `.fvc-row-action-btn`), Borrar en `--red` vía `.danger`. */
+.fam-item-actions{display:flex;gap:4px;justify-content:flex-end;}
+.fam-item-action-btn{
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.fam-item-action-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.fam-item-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.fam-item-action-btn.danger{color:var(--red);}
+.fam-item-action-btn.danger:hover{background:var(--red-bg);color:var(--red);}
+.fam-item-action-btn .icon{width:16px;height:16px;}
 
 @media (max-width:1024px){
   /* Apilado, un solo scroll para todo el body (en vez de uno por panel) --
@@ -208,5 +234,6 @@
   .fam-body{flex-direction:column;overflow-y:auto;}
   .fam-type-panel{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow-y:visible;flex-shrink:0;}
   .fam-form-scroll{overflow-y:visible;}
-  .fam-fields-4,.fam-fields-3{grid-template-columns:repeat(2,1fr);}
+  /* .fam-fields-4/.fam-fields-3 collapse a 2 columnas: ver
+     ../../shared/shared.css. */
 }

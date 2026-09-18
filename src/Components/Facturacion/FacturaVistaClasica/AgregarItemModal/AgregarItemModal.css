@@ -1,11 +1,22 @@
-/* .modal-overlay/.modal/.modal-body/.modal-footer + .form-field/
-   .field-with-search/.search-btn: ver ../../shared/shared.css. Header: ver
-   @/Components/ModalHeader/ModalHeader. .fam-total-box (Valor Total): ver
-   ../../shared/shared.css, mismo criterio que FacturaAgregarModalClasico.
-   Acá solo lo exclusivo de este modal. */
-.aim-modal{width:640px;max-width:95vw;}
+/* .modal-overlay, .modal, .modal-body, .modal-footer, .form-field,
+   .field-with-search, .search-btn: ver ../../shared/shared.css.
+   Header (título + subtítulo "Factura {numeroFactura}"): ver
+   @/Components/ModalHeader/ModalHeader. .fam-section, .fam-section-header,
+   .fam-fields-2/3/4, .fam-col-span-2/full, .fam-total-box,
+   .fam-required-mark (secciones "Clasificación y ubicación"/"Liquidación y
+   valores", encargo explícito: restructurar el layout plano de 2 columnas
+   de este modal en secciones, ver imagen de referencia): ver
+   ../../shared/shared.css, mismo criterio que FacturaAgregarModalClasico
+   (2+ consumidores). "Observaciones" vive dentro de "Liquidación y
+   valores" (encargo explícito, ya no es una sección propia). Acá solo lo
+   exclusivo de este modal: el ancho propio. */
+.aim-modal{width:720px;max-width:95vw;}
 
-.aim-required-mark{color:var(--red);margin-left:2px;}
-
-.aim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
-.aim-span-2{grid-column:1/-1;}
+/* Fuerza el salto de fila en el grid de 3 columnas de "Clasificación y
+   ubicación" bajo Tipo Financiero "Contratación" (encargo explícito: fila 2
+   deja "Prefijo" solo, fila 3 pasa a 3 columnas "No Contrato"/"ID"/
+   "Código") -- sin esto, "No Contrato" (ya sin fam-col-span-2, ahora de 1
+   columna) caería auto-ubicado junto a "Prefijo" en la fila 2 en vez de
+   abrir una fila propia. Único consumidor hoy, no promovido a shared.css
+   (ver AGENTS.md "Component organization"). */
+.fam-col-start-1{grid-column:1;}

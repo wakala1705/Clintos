@@ -1,0 +1,47 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- catálogo con buscador de texto libre (id/descripción/centro de
+   costo, encargo explícito, ver imágenes de referencia "Tabla de AFU"),
+   mismo criterio que ../CatalogoCentroCostoModal/CatalogoCentroCostoModal.css
+   (sin paginación: el catálogo entero cabe en un solo scroll). */
+.cafm-modal{width:640px;max-width:95vw;}
+
+.cafm-search{position:relative;flex-shrink:0;}
+.cafm-search .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
+.cafm-search input{
+  width:100%;height:var(--input-md);padding:0 12px 0 34px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.cafm-search input::placeholder{color:var(--ink-400);}
+.cafm-search input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cafm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.cafm-row{
+  display:grid;grid-template-columns:130px 1fr 120px;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.cafm-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.cafm-list{max-height:320px;overflow-y:auto;}
+.cafm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.cafm-option:last-child{border-bottom:none;}
+.cafm-option:hover{background:var(--bg);}
+.cafm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cafm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.cafm-id{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}
+.cafm-descripcion{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cafm-centro-costo{font-size:var(--fs-sm);color:var(--ink-700);}
+
+.cafm-empty{padding:24px 12px;text-align:center;font-size:var(--fs-sm);color:var(--ink-500);}

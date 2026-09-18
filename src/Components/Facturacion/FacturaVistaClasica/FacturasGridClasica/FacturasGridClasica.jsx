@@ -5,7 +5,9 @@ import Badge from '@/Components/Badge/Badge';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import FacturasEmptyState from '../../FacturasEmptyState/FacturasEmptyState';
 import { formatCOP, formatFechaClasica } from '@/hooks/Facturacion/mockFacturasData';
-import { LuEye, LuPrinter } from 'react-icons/lu';
+import {
+  LuEye, LuPrinter, LuCircleCheck, LuBan,
+} from 'react-icons/lu';
 
 const COLUMNS = [
   { key: 'facturacion', label: 'Facturación' },
@@ -46,27 +48,27 @@ const ESTADO_PE = {
 // Columna "Facturación" (encargo: primera columna de la grilla, antes "F"
 // sin significado -- ver mismo campo duplicado en FacturaDetalleModalClasico
 // y su origen en mockFacturasData.js) -- 2 estados, sin relación con
-// `estado`/`estadoPE` de arriba.
+// `estado`/`estadoPE` de arriba. "Sin facturar" (no "Pendiente", encargo
+// explícito) para no confundirse con "Pendiente" de ESTADO_PE (columna
+// "Estado de envío", un concepto totalmente distinto).
 const ESTADO_FACTURACION = {
-  pendiente: { label: 'Pendiente', tone: 'warn' },
+  pendiente: { label: 'Sin facturar', tone: 'warn' },
   facturada: { label: 'Facturada', tone: 'success' },
 };
 
-// Columna "Estado FE" del formulario legacy (P/A, encargo explícito) --
-// deriva de `f.estado`, solo 2 estados (encargo: "solo debe manejar dos
-// estados: procesada/anulada"): 'anulada' -> Anulada, cualquier otro valor
-// (null/'pendiente-electronica') -> Procesada (tone="info" -- azul, mismo
-// `--status-info-bg`/`--status-info-fg` que ya usan otras features para
-// Badge tone="info" -- Facturación no los tenía declarados en su :root
-// todavía, se agregaron en shared.css para ese cambio, mismo bug ya
-// documentado antes para ModalHeader/--gray-bg). 'pendiente-electronica'
-// tuvo brevemente su propio badge "Pend. electrónica" acá -- revertido, esta
-// columna no distingue ese caso (el dato en sí sigue existiendo en el mock,
-// solo esta columna lo colapsa).
-function estadoFacturaBadge(f) {
+// Columna "Estado FE" del formulario legacy (P/A) -- deriva de `f.estado`,
+// solo 2 estados (encargo: "solo debe manejar dos estados: procesada/
+// anulada"). Se pinta como ícono, no Badge (encargo explícito: "cambiemos
+// los badges de 'procesada' por un icono check y 'anulada' por un icono que
+// represente el estado anulada") -- `LuBan` reusa el mismo ícono que ya
+// representa "Anular" en RowActionsMenu.jsx, misma feature. El color de
+// cada ícono conserva el que tenía su tone de Badge (`--status-info-fg`/
+// `--red`, ver .fvcg-estado-fe en FacturasGridClasica.css) para no perder
+// el significado semántico azul/rojo que tenía el badge.
+function EstadoFeIcon({ f }) {
   return f.estado === 'anulada'
-    ? { label: 'Anulada', tone: 'danger' }
-    : { label: 'Procesada', tone: 'info' };
+    ? <LuBan className="icon fvcg-estado-fe anulada" role="img" aria-label="Anulada" title="Anulada" />
+    : <LuCircleCheck className="icon fvcg-estado-fe procesada" role="img" aria-label="Procesada" title="Procesada" />;
 }
 
 // Réplica de la grilla densa del formulario legacy de Facturas (encargo
@@ -80,10 +82,15 @@ function estadoFacturaBadge(f) {
 // bajó a fvcd-compact-fields en ese mismo modal. Columna "F" (primera
 // columna, mismo lugar que antes) volvió con significado real: "Facturación"
 // (ESTADO_FACTURACION, ver arriba), reemplaza el placeholder "1" fijo que
-// tenía cuando también carecía de significado. Doble clic en la fila
-// (encargo explícito) abre ese mismo modal -- mismo `onVerDetalle` que
-// ya usa el ícono de ojo en Acciones, sin duplicar lógica; el clic simple
-// sigue solo seleccionando la fila (`onSelect`).
+// tenía cuando también carecía de significado. Doble clic en la fila abre un
+// modal distinto según ese mismo estado (encargo explícito): "Sin facturar"
+// (`estadoFacturacion === 'pendiente'`) abre modo edición (`onEditar`, mismo
+// que ya usa "Editar" en RowActionsMenu) en vez de "Ver detalle" -- una
+// factura sin facturar todavía no tiene nada que "ver", tiene que
+// completarse; "Facturada" sigue abriendo "Ver detalle" (`onVerDetalle`,
+// mismo que ya usa el ícono de ojo en Acciones), sin duplicar lógica en
+// ninguno de los dos casos. El clic simple sigue solo seleccionando la fila
+// (`onSelect`), sin importar el estado.
 export default function FacturasGridClasica({
   facturas, selectedId, onSelect, onVerDetalle, onEditar, onImprimir, onClearFilters,
 }) {
@@ -113,7 +120,7 @@ export default function FacturasGridClasica({
               key={f.id}
               className={f.id === selectedId ? 'selected' : ''}
               onClick={() => onSelect(f.id)}
-              onDoubleClick={() => onVerDetalle(f)}
+              onDoubleClick={() => (f.estadoFacturacion === 'pendiente' ? onEditar(f) : onVerDetalle(f))}
               tabIndex={0}
               aria-selected={f.id === selectedId}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(f.id); } }}
@@ -130,7 +137,7 @@ export default function FacturasGridClasica({
               <td className="fvc-num">{formatCOP(f.valorTotal)}</td>
               <td>{f.flagFE ? 'Sí' : 'No'}</td>
               <td><Badge tone={ESTADO_PE[f.estadoPE].tone}>{ESTADO_PE[f.estadoPE].label}</Badge></td>
-              <td><Badge tone={estadoFacturaBadge(f).tone}>{estadoFacturaBadge(f).label}</Badge></td>
+              <td><EstadoFeIcon f={f} /></td>
               <td className="fvc-actions-cell">
                 <div className="fvc-row-actions">
                   <button

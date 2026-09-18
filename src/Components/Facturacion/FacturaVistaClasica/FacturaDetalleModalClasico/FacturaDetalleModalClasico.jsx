@@ -88,14 +88,20 @@ function Field({ label, value, children }) {
 // footer propio de esa tarjeta, .fvcd-items-footer -- trasladados acá desde
 // el footer de FacturaDetalleClasico, ya no se duplican en los dos lugares);
 // a la derecha de fvcd-detail-row va fvcd-bottom-summary, 2 tarjetas
-// apiladas -- "Resumen de factura" e "Información adicional" (Administradora
-// Afi/Usuario/Procedencia, encargo explícito: bajaron acá desde
-// fvcd-compact-fields -- por eso ya no se repiten ahí, ver ese bloque más
-// abajo). La columna "C" de FacturasGridClasica (encargo explícito: su
-// significado todavía no está claro) bajó acá como "C" dentro de
-// fvcd-compact-fields en vez de quedar en la grilla -- mismo valor fijo que
-// mostraba la grilla ('0'), no hay un campo real de `factura` todavía. La
-// columna "F" ya no vive acá: volvió a la grilla con significado real
+// apiladas -- "Resumen de factura" e "Información adicional" (CCosto/Tabla
+// Origen/ID Item Prestación/FTRDID, encargo explícito: bajaron acá desde la
+// tabla de ítems -- FacturaItemsTable ya no las pinta como columna propia,
+// ver ese archivo -- los 4 son datos por ítem, no de la factura, así que
+// siguen la selección de la tabla igual que ya hacía CCosto, "—" sin ítem
+// seleccionado). "Administradora Afi" vivió acá -- encargo explícito la
+// ocultó del todo, sin reemplazo. Usuario/Procedencia vivieron acá en algún
+// momento -- encargo explícito los subió de vuelta a fvcd-compact-fields
+// (grupo de identificación, junto a Documento/Tipo Contrato/Tipo Factura/
+// Clase/Sede), así que ya no se repiten en esta tarjeta. La columna "C" de
+// FacturasGridClasica (su significado nunca quedó claro, sin campo real de
+// `factura` detrás, solo el valor fijo '0' que ya mostraba la grilla) vivió
+// brevemente acá como campo propio de fvcd-compact-fields -- se ocultó del
+// todo (encargo explícito), no hay reemplazo. La columna "F" ya no vive acá: volvió a la grilla con significado real
 // ("Facturación", ver ESTADO_FACTURACION arriba) -- este modal la refleja
 // como el badge junto al número de factura en fvcd-identity-row (no dentro
 // de fvcd-compact-fields), mismo criterio de duplicado a propósito entre
@@ -175,9 +181,10 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
     setSelectedItemId((cur) => (cur === id ? null : id));
   }
 
-  // CCosto es un dato por ítem (ver mockFacturasData.js), no de la factura --
-  // se muestra en "Información adicional" atado a la selección de la tabla,
-  // mismo criterio que "Resumen de factura" (sin ítem seleccionado, "—").
+  // CCosto/Tabla Origen/ID Item Prestación/FTRDID son datos por ítem (ver
+  // mockFacturasData.js), no de la factura -- se muestran en "Información
+  // adicional" atados a la selección de la tabla, mismo criterio que
+  // "Resumen de factura" (sin ítem seleccionado, "—").
   const selectedItem = factura?.items.find((it) => it.id === selectedItemId) ?? null;
 
   // Sin ítem seleccionado (deseleccionado a mano), agrega TODOS los ítems;
@@ -253,6 +260,8 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
             <Field label="Tipo Factura" value={TIPO_LABEL[factura.tipo]} />
             <Field label="Clase" value={CLASE_LABEL[factura.clase]} />
             <Field label="Sede" value={factura.sedeCodigo} />
+            <Field label="Usuario" value={factura.usuario} />
+            <Field label="Procedencia" value={factura.procedencia} />
 
             <div className="fvcd-compact-divider" aria-hidden="true" />
 
@@ -261,7 +270,6 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
 
             <div className="fvcd-compact-divider" aria-hidden="true" />
 
-            <Field label="C" value="0" />
             <Field label="F.Elect FE" value={factura.flagFE ? 'Sí' : 'No'} />
             <Field label="Estado de envío">
               <Badge tone={ESTADO_PE[factura.estadoPE].tone} className="fvcd-badge">{ESTADO_PE[factura.estadoPE].label}</Badge>
@@ -323,10 +331,10 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
 
               <div className="fvcd-summary-card">
                 <div className="fvcd-summary-title">Información adicional</div>
-                <div className="fvcd-summary-row"><span>Administradora Afi</span><span>{factura.terceroId}</span></div>
-                <div className="fvcd-summary-row"><span>Usuario</span><span>{factura.usuario}</span></div>
-                <div className="fvcd-summary-row"><span>Procedencia</span><span>{factura.procedencia}</span></div>
                 <div className="fvcd-summary-row"><span>CCosto</span><span>{selectedItem?.ccosto ?? '—'}</span></div>
+                <div className="fvcd-summary-row"><span>Tabla Origen</span><span>{selectedItem?.tablaOrigen ?? '—'}</span></div>
+                <div className="fvcd-summary-row"><span>ID Item Prestación</span><span>{selectedItem ? selectedItem.idItemPrestacion.toLocaleString('es-CO') : '—'}</span></div>
+                <div className="fvcd-summary-row"><span>FTRDID</span><span>{selectedItem ? selectedItem.ftrdid.toLocaleString('es-CO') : '—'}</span></div>
               </div>
             </div>
           </div>

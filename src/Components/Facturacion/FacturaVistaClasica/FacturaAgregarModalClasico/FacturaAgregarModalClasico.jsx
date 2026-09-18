@@ -13,9 +13,9 @@ import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
 import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
 import AgregarItemModal from '../AgregarItemModal/AgregarItemModal';
 import {
-  LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuTriangleAlert, LuFileText, LuUser,
+  LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuPencil, LuTriangleAlert, LuFileText, LuUser,
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
-  LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage,
+  LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage, LuSave,
 } from 'react-icons/lu';
 
 // icon/description por opción (consumido por TipoFacturaSelector, panel
@@ -269,27 +269,6 @@ const MONEY_FIELDS = [
   { key: 'descuento', label: 'Descuento' },
 ];
 
-// Heading de cada paso del panel derecho (título + descripción + Consecutivo
-// al extremo derecho, encargo explícito: "el dato de consecutivo
-// ubiquémoslo en fam-panel-heading al extremo derecho") -- reemplaza el
-// `.fam-left-meta` que antes vivía en el panel izquierdo (Compañía se ocultó
-// del todo, sin reemplazo, mismo encargo). Local a este archivo, mismo
-// criterio que SectionHeader de abajo (no se reusa fuera de este modal).
-function PanelHeading({ title, subtitle, consecutivo }) {
-  return (
-    <div className="fam-panel-heading">
-      <div>
-        <h4>{title}</h4>
-        <p>{subtitle}</p>
-      </div>
-      <div className="fam-panel-heading-consecutivo">
-        <span>Consecutivo</span>
-        <strong>{consecutivo}</strong>
-      </div>
-    </div>
-  );
-}
-
 // Header de cada una de las 4 secciones del panel derecho (ícono en círculo +
 // título + descripción + contenido final opcional) -- local a este archivo,
 // no un componente de @/Components/ porque está fuertemente acoplado a la
@@ -316,18 +295,23 @@ function SectionHeader({
 // izquierdo `TipoFacturaSelector` (tarjetas Normal/Copago/Moderadora/Pago
 // Compartido) + Compañía/Consecutivo/No. de Factura, derecho el formulario
 // agrupado en 4 secciones con SectionHeader (ícono+título+descripción). El
-// único botón cerrar real vive en el `ModalHeader` homologado de arriba
-// (ver AGENTS.md "Modales") -- "Formulario de factura" dentro del panel
-// derecho es solo un heading de contenido, no repite esa fila de
-// título+cierre.
+// único botón cerrar real vive en el `ModalHeader` homologado (ver AGENTS.md
+// "Modales"), dentro de `.fam-form-panel` (columna derecha, no arriba de
+// las 2 columnas, encargo explícito: riel izquierdo a toda la altura del
+// modal, ver comentario de `.fam-body` más abajo) -- ese `ModalHeader`
+// muestra el título+descripción del PASO ACTIVO ("Formulario de factura"/
+// "Ítems y servicios", encargo explícito: "fam-panel-heading lo reubicas en
+// modal-header"), no un título fijo del modal: el título fijo ("Nueva
+// factura"/"Editar factura") + Consecutivo bajaron al riel izquierdo
+// (`.fam-rail-header`, mismo encargo, ver PASOS/fam-type-panel más abajo).
 //
 // También cubre "Editar" (encargo explícito: "el modal de editar es un
 // modal antiguo, debería ser el mismo modal de creación pero en modo
 // edición") -- pasarle `factura` (fila de FacturasGridClasica/
 // mockFacturasData.js) activa `isEditMode`: cambia ícono/título/subtítulo
-// del header y Compañía/Consecutivo del panel izquierdo a los datos reales
-// de esa factura en vez de los de un registro nuevo, y precarga el
-// formulario (ver buildInitialForm). Reemplazó al viejo
+// de `.fam-rail-header` y Compañía/Consecutivo del panel izquierdo a los
+// datos reales de esa factura en vez de los de un registro nuevo, y
+// precarga el formulario (ver buildInitialForm). Reemplazó al viejo
 // FacturaEditarModalClasico ("Cambiando un Registro", grid plano de 2
 // columnas) -- ese componente y su .css se borraron, único consumidor era
 // FacturaVistaClasica.jsx. El modelo de mockFacturasData.js es más viejo y
@@ -387,8 +371,14 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // factura" (el formulario de siempre) / 2 "Ítems y servicios" (grilla +
   // AgregarItemModal). Navegable libremente desde el riel, sin gating por
   // validación (mismo criterio simple que el resto de este modal, que solo
-  // valida al Guardar, ver validate() más abajo).
-  const [paso, setPaso] = useState(1);
+  // valida al Guardar, ver validate() más abajo). Arranca en el paso 2 bajo
+  // "Editar" de una factura "Sin facturar" (`estadoFacturacion ===
+  // 'pendiente'`, encargo explícito) -- ese es justo el dato que falta
+  // completar para poder facturarla; el resto de los casos de Editar (ya
+  // facturada) siguen arrancando en el paso 1, igual que Agregar.
+  const [paso, setPaso] = useState(() => (
+    isEditMode && factura.estadoFacturacion === 'pendiente' ? 2 : 1
+  ));
   // Ítems agregados a la factura (paso 2) -- bajo isEditMode se precargan
   // desde factura.items (ver mapFacturaItemsToForm arriba); bajo Agregar
   // arranca vacío. Alimentan Valor Servicios/Copago/Moderadora/Pago
@@ -397,6 +387,13 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // los ítems").
   const [items, setItems] = useState(() => (isEditMode ? mapFacturaItemsToForm(factura.items) : []));
   const [agregarItemAbierto, setAgregarItemAbierto] = useState(false);
+  // Ítem en edición (encargo explícito: acciones rápidas "Editar"/"Borrar"
+  // por fila en la grilla de ítems) -- null abre AgregarItemModal en modo
+  // "Agregar" (form vacío); una fila abre el mismo modal precargado con sus
+  // valores (ver item prop de AgregarItemModal). Se limpia al cerrar el
+  // modal por cualquier vía (Aceptar/Cancelar/X/Escape) para que "Agregar
+  // ítem" no reabra por error en modo edición.
+  const [itemEditando, setItemEditando] = useState(null);
 
   // Snapshot del form/items recién montados (mismo objeto que ya construyó
   // useState(buildInitialForm)/useState(items) arriba) -- useState en vez de
@@ -458,10 +455,14 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // resumen compacto del riel en el paso 2 (ver .fam-type-summary más
   // abajo, encargo explícito: "al pasar al paso 2 se colapsa").
   const tipoFacturaSeleccionada = TIPO_FACTURA_OPTIONS.find((o) => o.value === form.tipoFactura);
-  // Consecutivo mostrado en PanelHeading (encargo explícito, ver ese
-  // componente) -- dato real de la factura bajo isEditMode, placeholder de
-  // "próximo consecutivo" bajo Agregar (mismo criterio que antes en
-  // `.fam-left-meta`, ver PROXIMO_CONSECUTIVO arriba).
+  // Consecutivo mostrado en `.fam-rail-header` (encargo explícito: "el
+  // título de 'nueva factura' y consecutivo pueden vivir en el rail
+  // izquierdo") -- pasó por PanelHeading, luego por el subtítulo del
+  // ModalHeader de la columna derecha antes de terminar acá; el ModalHeader
+  // de esa columna ahora muestra el título del paso activo en su lugar (ver
+  // PASOS/paso más abajo). Dato real de la factura bajo isEditMode,
+  // placeholder de "próximo consecutivo" bajo Agregar (mismo criterio que
+  // antes en `.fam-left-meta`, ver PROXIMO_CONSECUTIVO arriba).
   const consecutivo = isEditMode ? factura.noAdmision : PROXIMO_CONSECUTIVO;
   // Listado de Origen habilitado para el Tipo Factura activo (encargo
   // explícito: Copago->Admisiones/Consulta Externa, Moderadora->Admisiones/
@@ -585,8 +586,17 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
     - toNumber(effectiveValues.descuento)
   );
 
-  function handleAgregarItem(item) {
-    setItems((prev) => [...prev, item]);
+  // Sirve para ambos modos de AgregarItemModal (encargo explícito: acciones
+  // rápidas "Editar"/"Borrar" por fila) -- AgregarItemModal siempre conserva
+  // el `id` original al editar (ver item/handleAceptar en ese archivo), así
+  // que alcanza con reemplazar por id si ya existe o agregar si es nuevo, sin
+  // un flag `isEditMode` propio acá.
+  function handleGuardarItem(item) {
+    setItems((prev) => (
+      prev.some((it) => it.id === item.id)
+        ? prev.map((it) => (it.id === item.id ? item : it))
+        : [...prev, item]
+    ));
   }
   function handleQuitarItem(id) {
     setItems((prev) => prev.filter((it) => it.id !== id));
@@ -617,22 +627,18 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   return (
     <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
       <div className="modal fam-modal" role="dialog" aria-modal="true" aria-labelledby="fam-title">
-        <ModalHeader
-          icon={isEditMode ? LuFilePenLine : LuFilePlus2}
-          title={isEditMode ? 'Editar factura' : 'Nueva factura'}
-          titleId="fam-title"
-          subtitle={isEditMode ? `Factura ${factura.numero}` : undefined}
-          onClose={attemptClose}
-        />
-
-        {/* Layout de 2 paneles con riel izquierdo estilizado (encargo
-            explícito: bg + divider, mismo criterio visual que
-            .wizard-rail/.wizard-main de NuevaCitaFlow.css) -- reemplaza el
-            .modal-body genérico de shared.css (padding/scroll únicos) por
-            uno propio de este modal: cada panel maneja su propio padding y
-            scroll interno, igual que .wizard-rail/.wizard-content, para que
-            el fondo y el divider del riel corran toda la altura del modal
-            sin importar cuál panel tenga más contenido. */}
+        {/* 2 columnas, riel izquierdo a toda la altura del modal (encargo
+            explícito: "el modal debería estar compuesto de dos columnas: 1
+            rail izquierdo, 2 contenido main (header-contenido dinámico-
+            footer)", igual que .wizard-body/.wizard-rail/.wizard-main de
+            NuevaCitaFlow.jsx/.css) -- `.fam-body` es ahora el único hijo
+            directo de `.fam-modal` (antes ModalHeader/modal-footer vivían
+            afuera, sandwicheando `.fam-body` y acotando el riel a la altura
+            del medio, sin cubrir las filas de header/footer); ModalHeader y
+            `.modal-footer` se movieron adentro de `.fam-form-panel` (la
+            columna derecha, ver más abajo) para que el riel izquierdo
+            corra de punta a punta sin que ninguna fila de ancho completo lo
+            interrumpa arriba ni abajo. */}
         <div className="fam-body">
           {/* Panel izquierdo: nav de pasos con el selector de tipo anidado
               bajo el paso 1 (encargo explícito: "quiero que la selección del
@@ -643,6 +649,23 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
               el paso 2 se colapsa a `.fam-type-summary` (mismo criterio que
               antes, solo que ahora vive dentro del nav en vez de encima). */}
           <div className="fam-type-panel">
+            {/* Título+Consecutivo del modal (encargo explícito: "pueden vivir
+                en el rail izquierdo") -- mismo contenido que antes mostraba
+                el `ModalHeader` de la columna derecha (ver comentario de
+                `.fam-body` más arriba), ahora reubicado acá como bloque
+                propio sin botón cerrar (el único cierre real sigue viviendo
+                en el `ModalHeader` de `.fam-form-panel`, que ahora muestra
+                el título del paso activo en su lugar). */}
+            <div className="fam-rail-header">
+              <div className="fam-rail-header-icon">
+                {isEditMode ? <LuFilePenLine className="icon" aria-hidden="true" /> : <LuFilePlus2 className="icon" aria-hidden="true" />}
+              </div>
+              <div>
+                <h4>{isEditMode ? 'Editar factura' : 'Nueva factura'}</h4>
+                <p>Consecutivo {consecutivo}</p>
+              </div>
+            </div>
+
             <nav className="fam-step-nav" aria-label="Pasos de la factura">
               {PASOS.map((p) => {
                 const active = p.n === paso;
@@ -692,6 +715,19 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
           </div>
 
           <div className="fam-form-panel">
+            <ModalHeader
+              title={paso === 1 ? 'Formulario de factura' : 'Ítems y servicios'}
+              titleId="fam-title"
+              subtitle={
+                paso === 1
+                  ? (form.tipoFactura === 'normal'
+                    ? 'Completa la información para generar la factura.'
+                    : `Completa la información para generar la factura de ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`)
+                  : 'Agrega los ítems o servicios que componen esta factura.'
+              }
+              onClose={attemptClose}
+            />
+
             <div className="fam-form-scroll">
               {saving && (
                 <div className="fvc-save-toast" role="status" aria-live="polite">
@@ -704,16 +740,6 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
 
               {paso === 1 && (
               <>
-              <PanelHeading
-                title="Formulario de factura"
-                subtitle={
-                  form.tipoFactura === 'normal'
-                    ? 'Completa la información para generar la factura.'
-                    : `Completa la información para generar la factura de ${TIPO_FACTURA_LABEL[form.tipoFactura].toLowerCase()}.`
-                }
-                consecutivo={consecutivo}
-              />
-
               <section className="fam-section">
                 <SectionHeader
                   icon={LuFileText}
@@ -1167,19 +1193,17 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                   acá: ya se ve reflejado en "Total factura" del paso 1. */}
               {paso === 2 && (
                 <>
-                  <PanelHeading
-                    title="Ítems y servicios"
-                    subtitle="Agrega los ítems o servicios que componen esta factura."
-                    consecutivo={consecutivo}
-                  />
-
                   <section className="fam-section">
                     <SectionHeader
                       icon={LuPackage}
                       title="Ítems agregados"
-                      subtitle="Valor Servicios/Copago/Moderadora/Pago Comp. del paso 1 se calculan a partir de estos ítems."
                       trailing={(
-                        <Button variant="primary" size="sm" icon={LuPlus} onClick={() => setAgregarItemAbierto(true)}>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          icon={LuPlus}
+                          onClick={() => { setItemEditando(null); setAgregarItemAbierto(true); }}
+                        >
                           Agregar ítem
                         </Button>
                       )}
@@ -1191,75 +1215,106 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                         <p>Todavía no agregaste ítems o servicios a esta factura.</p>
                       </div>
                     ) : (
-                      <table className="fvc-grid fam-items-grid">
-                        <thead>
-                          <tr>
-                            <th>Código</th>
-                            <th>Descripción</th>
-                            <th>Cantidad</th>
-                            <th>Vlr Item</th>
-                            <th>Valor Total</th>
-                            <th aria-label="Acciones" />
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {items.map((it) => (
-                            <tr key={it.id}>
-                              <td className="fvc-num">{it.codigo}</td>
-                              <td className="fvc-ellipsis" title={it.descripcion}>{it.descripcion}</td>
-                              <td className="fvc-num">{it.cantidad}</td>
-                              <td className="fvc-num">
-                                {toNumber(it.vlrItem).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </td>
-                              <td className="fvc-num">
-                                {toNumber(it.valorTotal).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="search-btn"
-                                  onClick={() => handleQuitarItem(it.id)}
-                                  aria-label={`Quitar ítem ${it.codigo}`}
-                                  title="Quitar ítem"
-                                >
-                                  <LuTrash2 className="icon" />
-                                </button>
-                              </td>
+                      <div className="fam-items-grid-wrap">
+                        <table className="fvc-grid fam-items-grid">
+                          <thead>
+                            <tr>
+                              <th>Código</th>
+                              <th>Descripción</th>
+                              <th>Cantidad</th>
+                              <th>Vlr Item</th>
+                              <th>Valor Total</th>
+                              <th aria-label="Acciones" />
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {items.map((it) => (
+                              <tr key={it.id}>
+                                <td className="fvc-num">{it.codigo}</td>
+                                <td className="fvc-ellipsis" title={it.descripcion}>{it.descripcion}</td>
+                                <td>{it.cantidad}</td>
+                                <td>
+                                  {toNumber(it.vlrItem).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td>
+                                  {toNumber(it.valorTotal).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td>
+                                  <div className="fam-item-actions">
+                                    <button
+                                      type="button"
+                                      className="fam-item-action-btn"
+                                      onClick={() => { setItemEditando(it); setAgregarItemAbierto(true); }}
+                                      aria-label={`Editar ítem ${it.codigo}`}
+                                      title="Editar ítem"
+                                    >
+                                      <LuPencil className="icon" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="fam-item-action-btn danger"
+                                      onClick={() => handleQuitarItem(it.id)}
+                                      aria-label={`Quitar ítem ${it.codigo}`}
+                                      title="Quitar ítem"
+                                    >
+                                      <LuTrash2 className="icon" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </section>
                 </>
               )}
             </div>
-          </div>
-        </div>
 
-        <div className="modal-footer">
-          <Button variant="secondary" onClick={attemptClose} disabled={saving}>Cancelar</Button>
-          {paso === 2 && (
-            <Button variant="secondary" icon={LuChevronLeft} onClick={() => setPaso(1)} disabled={saving}>Atrás</Button>
-          )}
-          {paso === 1 ? (
-            // Sin ícono (a diferencia de "Atrás"): Button.jsx solo soporta
-            // ícono ANTES del texto (ver icon prop), y una flecha ">" antes
-            // de "Continuar" queda invertida -- mejor sin ícono que con uno
-            // en la dirección equivocada.
-            <Button variant="primary" onClick={() => setPaso(2)} disabled={saving}>Continuar</Button>
-          ) : (
-            <Button variant="primary" onClick={handleGuardar} disabled={saving}>Guardar</Button>
-          )}
+            <div className="modal-footer">
+              {/* "Atrás" al extremo izquierdo del footer (encargo explícito) --
+                  `.fam-footer-back` le da margin-right:auto para separarlo del
+                  resto de acciones, que quedan a la derecha. */}
+              {paso === 2 && (
+                <Button
+                  variant="secondary"
+                  icon={LuChevronLeft}
+                  className="fam-footer-back"
+                  onClick={() => setPaso(1)}
+                  disabled={saving}
+                >
+                  Atrás
+                </Button>
+              )}
+              <Button variant="secondary" onClick={attemptClose} disabled={saving}>Cancelar</Button>
+              {paso === 1 ? (
+                // Sin ícono (a diferencia de "Atrás"): Button.jsx solo
+                // soporta ícono ANTES del texto (ver icon prop), y una
+                // flecha ">" antes de "Continuar" queda invertida -- mejor
+                // sin ícono que con uno en la dirección equivocada.
+                <Button variant="primary" onClick={() => setPaso(2)} disabled={saving}>Continuar</Button>
+              ) : (
+                <>
+                  <Button variant="secondary-accent" icon={LuSave} onClick={handleGuardar} disabled={saving}>Guardar</Button>
+                  {/* Solo pinta el front (mismo criterio que el resto del
+                      modal, ver comentario del componente) -- sin lógica de
+                      facturación todavía. */}
+                  <Button variant="primary" disabled={saving}>Facturar</Button>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {agregarItemAbierto && (
         <AgregarItemModal
           numeroFactura={isEditMode ? factura.numero : PROXIMO_CONSECUTIVO}
-          consecutivo={items.length + 1}
-          onSave={handleAgregarItem}
-          onClose={() => setAgregarItemAbierto(false)}
+          modoFacturacion={form.modoFacturacion}
+          item={itemEditando}
+          onSave={handleGuardarItem}
+          onClose={() => { setAgregarItemAbierto(false); setItemEditando(null); }}
         />
       )}
 

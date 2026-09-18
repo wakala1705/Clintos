@@ -231,7 +231,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fvc-grid{border-collapse:collapse;width:100%;font-size:var(--fs-sm);white-space:nowrap;}
 .fvc-grid thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
-  background:var(--table-header-bg);color:var(--ink-900);font-weight:var(--fw-semibold);
+  background:var(--table-header-bg);color:var(--ink-700);font-weight:var(--fw-semibold);
   text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
 }
 .fvc-grid tbody td{
@@ -243,7 +243,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fvc-grid tbody tr.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 
 .fvc-strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
-.fvc-num{text-align:right;}
+.fvc-num{text-align:left;}
 .fvc-ellipsis{max-width:260px;overflow:hidden;text-overflow:ellipsis;}
 /* Tercero Razón Social en mayúsculas (encargo) -- solo transformación
    visual, el dato (`f.terceroRazonSocial`, ver mockFacturasData.js) sigue en
@@ -323,7 +323,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    (botón, sin :required nativo) ver la regla equivalente basada en
    `data-required-empty` en FormSelect.css. */
 .form-field{display:flex;flex-direction:column;gap:4px;}
-.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
@@ -395,6 +395,61 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 .fvc-discard-modal h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fvc-discard-modal p{margin:0 0 20px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.45;}
 .fvc-discard-actions{display:flex;justify-content:center;gap:10px;}
+
+/* Label accesible sin representación visual (ej. "Observaciones" de
+   AgregarItemModal, cuyo título ya lo da el `.fam-section-header` que lo
+   contiene) -- mismo valor que `.sr-only` ya usado en otras features del
+   proyecto (GestionEnfermeria/shared/shared.css, etc.), duplicado acá por
+   feature (ver AGENTS.md "Component organization"). */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Encabezado de sección de formulario (ícono en círculo opcional + título +
+   descripción) + grillas de campos por sección -- 2+ consumidores
+   (FacturaAgregarModalClasico y AgregarItemModal, ver AGENTS.md "Component
+   organization"; vivían solo en FacturaAgregarModalClasico.css cuando ese
+   modal era el único consumidor). `.fam-section-toggle`/`.fam-cobro-note`
+   (el link "Contraer sección" y el aviso "se calcula a partir de los
+   ítems") siguen siendo exclusivos de FacturaAgregarModalClasico.css: nadie
+   más los usa todavía. */
+.fam-required-mark{color:var(--red);margin-left:2px;}
+
+.fam-section{
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;display:flex;flex-direction:column;gap:14px;
+}
+.fam-section-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.fam-section-header-main{display:flex;gap:10px;align-items:center;}
+.fam-section-header h4{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fam-section-header p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+/* Mismo tamaño de ícono en círculo que ModalHeader (34px, ver AGENTS.md
+   "Modales") -- coherencia visual con el resto de headers del proyecto,
+   sin ser el mismo componente (este no tiene botón cerrar, no rige la
+   homologación de ModalHeader). */
+.fam-section-icon{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.fam-section-icon .icon{width:17px;height:17px;}
+
+.fam-required-note{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+
+/* Cada sección define su propio número de columnas (4/3/2) según cuántos
+   campos comparten fila; `.fam-col-span-2`/`.fam-col-span-full` funcionan
+   sobre cualquiera de las tres (grid-column no depende del total de
+   columnas). */
+.fam-fields{display:grid;gap:16px 20px;align-items:start;}
+.fam-fields-4{grid-template-columns:repeat(4,1fr);}
+.fam-fields-3{grid-template-columns:repeat(3,1fr);}
+.fam-fields-2{grid-template-columns:repeat(2,1fr);}
+.fam-col-span-2{grid-column:span 2;}
+.fam-col-span-full{grid-column:1/-1;}
+@media (max-width:1024px){
+  .fam-fields-4,.fam-fields-3{grid-template-columns:repeat(2,1fr);}
+}
 
 /* Box de total resaltado (FacturaAgregarModalClasico "Total factura" de la
    sección 4, y AgregarItemModal "Valor Total" por ítem -- 2+ consumidores,

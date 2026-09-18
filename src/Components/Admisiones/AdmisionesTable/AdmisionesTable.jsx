@@ -4,9 +4,22 @@ import { useState } from 'react';
 import './AdmisionesTable.css';
 import TriageBadge from './TriageBadge/TriageBadge';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
+import RowMoreMenu from './RowMoreMenu/RowMoreMenu';
 import { ESTADO_LABEL } from '@/hooks/Admisiones/mockAdmisionesData';
 import { LuEye, LuPencil } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import Badge from '@/Components/Badge/Badge';
+
+// Estado de la admisión → tono de <Badge>. "Triage" no tiene tono propio en
+// Badge (es violeta desde antes de migrar), así que lleva una clase extra que
+// pisa los colores — ver .adm-estado-triage en AdmisionesTable.css.
+const ESTADO_BADGE = {
+  admitido: { tone: 'info' },
+  'pendiente-triage': { tone: 'warn' },
+  triage: { tone: 'neutral', className: 'adm-estado-badge adm-estado-triage' },
+  'alta-medica': { tone: 'success' },
+  'alta-administrativa': { tone: 'neutral' },
+};
 
 // Tabla de escritorio/tablet + tarjetas de mobile del mismo dataset — se
 // renderizan ambas y la CSS decide cuál mostrar según el ancho bajo 768px
@@ -15,10 +28,14 @@ import Button from '@/Components/Button/Button';
 // "acción de abrir" por doble clic porque el detalle ya tiene su propio
 // botón directo (columna "Detalles"), así que un solo clic ya cubre la
 // única interacción de fila que hace falta.
-export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onRegistrarTriage, onAltaMedica, onAltaAdministrativa, onVerHistoria }) {
+export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAccion }) {
   const [selectedId, setSelectedId] = useState(null);
 
   function handleRowKeyDown(e, id) {
+    // Solo cuando el foco está en la fila misma: los botones/menús de adentro
+    // (y sus listados portados, que burbujean por el árbol de React) manejan
+    // su propio Enter/Espacio, y un preventDefault acá cancelaría su clic.
+    if (e.target !== e.currentTarget) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
     setSelectedId(id);
@@ -27,10 +44,7 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onReg
   function rowActionsProps(a) {
     return {
       nombre: a.nombreAfiliado,
-      onRegistrarTriage: () => onRegistrarTriage(a),
-      onAltaMedica: () => onAltaMedica(a),
-      onAltaAdministrativa: () => onAltaAdministrativa(a),
-      onVerHistoria: () => onVerHistoria(a),
+      onAction: (item) => onAccion(a, item),
     };
   }
 
@@ -51,9 +65,9 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onReg
               <th>Administradora</th>
               <th>Tipo de contrato</th>
               <th>Tipo de admisión</th>
+              <th>Cama</th>
               <th className="col-acciones"><span className="sr-only">Acciones</span></th>
-              <th className="col-acciones"><span className="sr-only">Editar</span></th>
-              <th className="col-acciones"><span className="sr-only">Detalles</span></th>
+              <th className="col-acciones"><span className="sr-only">Más opciones</span></th>
             </tr>
           </thead>
           <tbody>
@@ -66,29 +80,23 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onReg
                 onClick={() => setSelectedId(a.id)}
                 onKeyDown={(e) => handleRowKeyDown(e, a.id)}
               >
-                <td className="cell-primary">{a.numeroAdmision}</td>
+                <td className="cell-admision">{a.numeroAdmision}</td>
                 <td className="cell-muted">{a.fecha}</td>
                 <td className="cell-muted">{a.hora}</td>
                 <td><TriageBadge level={a.triage} /></td>
-                <td><span className={`adm-estado adm-estado-${a.estado}`}>{ESTADO_LABEL[a.estado]}</span></td>
+                <td><Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge></td>
                 <td className="cell-muted">{a.documento}</td>
                 <td className="cell-primary">{a.nombreAfiliado}</td>
                 <td><span className={a.atendido ? 'adm-atendido-si' : 'adm-atendido-no'}>{a.atendido ? 'SI' : 'NO'}</span></td>
                 <td className="cell-muted">{a.administradora}</td>
                 <td className="cell-muted">{a.tipoContrato}</td>
                 <td className="cell-muted">{a.tipoAdmision}</td>
+                <td className="cell-muted">{a.cama ?? '—'}</td>
                 <td className="col-acciones" onClick={(e) => e.stopPropagation()}>
                   <RowActionsMenu {...rowActionsProps(a)} />
                 </td>
-                <td className="col-acciones">
-                  <button type="button" className="adm-icon-btn" onClick={(e) => { e.stopPropagation(); onEditar(a); }} aria-label={`Editar admisión de ${a.nombreAfiliado}`} title="Editar">
-                    <LuPencil className="icon" />
-                  </button>
-                </td>
-                <td className="col-acciones">
-                  <button type="button" className="adm-icon-btn" onClick={(e) => { e.stopPropagation(); onDetalle(a); }} aria-label={`Ver detalles de ${a.nombreAfiliado}`} title="Detalles">
-                    <LuEye className="icon" />
-                  </button>
+                <td className="col-acciones" onClick={(e) => e.stopPropagation()}>
+                  <RowMoreMenu nombre={a.nombreAfiliado} onDetalle={() => onDetalle(a)} onEditar={() => onEditar(a)} />
                 </td>
               </tr>
             ))}
@@ -112,7 +120,7 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onReg
                 <div className="adm-card-name">{a.nombreAfiliado}</div>
                 <div className="adm-card-doc">{a.numeroAdmision} · Doc. {a.documento}</div>
               </div>
-              <span className={`adm-estado adm-estado-${a.estado}`}>{ESTADO_LABEL[a.estado]}</span>
+              <Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge>
             </div>
             <div className="adm-card-meta">
               <span>{a.fecha} · {a.hora} · Atendido: {a.atendido ? 'SI' : 'NO'}</span>

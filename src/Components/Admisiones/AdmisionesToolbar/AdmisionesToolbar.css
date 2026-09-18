@@ -20,3 +20,7 @@
 }
 .adm-search-field input:focus{outline:none;}
 .adm-search-field input::placeholder{color:var(--ink-400);}
+
+/* Filtro de estado: FormSelect (ver @/Components/FormSelect) ocupa el 100%
+   de su contenedor, así que el ancho se fija acá. */
+.adm-estado-select{width:200px;flex-shrink:0;}

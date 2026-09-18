@@ -1,0 +1,77 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- franja de contexto + tabs de búsqueda + tabla de 5 columnas
+   (encargo explícito, ver imagen de referencia "SERVICIOS CONTRATADOS POR
+   AREA..."), más ancho que CatalogoItemsModal (el picker angosto de 2
+   columnas que este reemplaza) por la quinta columna CUPS. Prefijo "csam"
+   (no "ccm"/"cim", ya usados por otros Catalogo*Modal de esta feature). */
+.csam-modal{width:1200px;max-width:95vw;}
+
+.csam-info-panel{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:10px 20px;
+  padding:12px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--bg);
+}
+.csam-field{display:flex;gap:6px;font-size:var(--fs-sm);}
+.csam-field-label{color:var(--ink-500);}
+.csam-field-value{color:var(--ink-900);font-weight:var(--fw-medium);}
+
+/* Barra de búsqueda única con selector de alcance (encargo explícito: "que
+   la barra de búsqueda sea una sola con esos tipos de búsqueda", reemplaza
+   el tab bar `.csam-tabs`/`.csam-tab` que tenía antes este modal, uno arriba
+   del otro) -- un FormSelect angosto (ver .csam-search-scope, reusa
+   @/Components/FormSelect ya estandarizado en el proyecto en vez de armar un
+   dropdown propio) pegado al input de texto dentro de un único contenedor
+   con borde, para que se lea como un solo control compuesto en vez de dos
+   piezas sueltas. */
+.csam-search{
+  display:flex;align-items:stretch;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);overflow:hidden;
+}
+.csam-search:focus-within{outline:2px solid var(--primary);outline-offset:1px;}
+
+.csam-search-scope{width:200px;flex-shrink:0;height:var(--input-md);}
+.csam-search-scope .form-select{height:100%;}
+/* Se le quita el borde propio del trigger de FormSelect (ya lo pone el
+   contenedor .csam-search) -- solo queda el divisor vertical hacia el
+   input. */
+.csam-search-scope .form-select-trigger{
+  height:100%;border:none;border-radius:0;border-right:1px solid var(--border);
+  background:var(--bg);
+}
+
+.csam-search-input{position:relative;flex:1;min-width:0;}
+.csam-search-input .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
+.csam-search-input input{
+  width:100%;height:var(--input-md);padding:0 12px 0 34px;border:none;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:transparent;
+}
+.csam-search-input input::placeholder{color:var(--ink-400);}
+.csam-search-input input:focus{outline:none;}
+
+.csam-table{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.csam-row{
+  display:grid;grid-template-columns:110px 1fr 90px 130px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.csam-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.csam-list{max-height:280px;overflow-y:auto;}
+.csam-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.csam-option:last-child{border-bottom:none;}
+.csam-option:hover{background:var(--bg);}
+.csam-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.csam-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.csam-id{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.csam-descripcion{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.csam-empty{padding:24px 12px;text-align:center;font-size:var(--fs-sm);color:var(--ink-500);}

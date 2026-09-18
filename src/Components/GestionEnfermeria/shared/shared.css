@@ -702,7 +702,7 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 
 .form-field{display:flex;flex-direction:column;gap:4px;}
 .form-field.full{grid-column:1 / -1;}
-.form-field label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.form-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
 .form-field input, .form-field select, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;

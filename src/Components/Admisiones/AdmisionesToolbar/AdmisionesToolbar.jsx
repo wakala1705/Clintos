@@ -1,7 +1,7 @@
 import './AdmisionesToolbar.css';
-import EstadoChipGroup from './EstadoChipGroup/EstadoChipGroup';
 import SearchFieldSelect from './SearchFieldSelect/SearchFieldSelect';
-import { SEARCH_FIELD_OPTIONS } from '@/hooks/Admisiones/mockAdmisionesData';
+import FormSelect from '@/Components/FormSelect/FormSelect';
+import { ESTADO_FILTER_OPTIONS, SEARCH_FIELD_OPTIONS } from '@/hooks/Admisiones/mockAdmisionesData';
 import { LuSearch } from 'react-icons/lu';
 
 // Los CTA principales ("Nueva"/"Pre ingreso") viven en adm-page-header (ver
@@ -31,7 +31,15 @@ export default function AdmisionesToolbar({
         />
       </div>
 
-      <EstadoChipGroup value={estado} onChange={onChangeEstado} />
+      <div className="adm-estado-select">
+        <FormSelect
+          id="adm-estado-filter"
+          ariaLabel="Filtrar por estado"
+          value={estado}
+          onChange={onChangeEstado}
+          options={ESTADO_FILTER_OPTIONS}
+        />
+      </div>
     </div>
   );
 }

@@ -110,17 +110,14 @@ export default function Admisiones() {
   function handleEditar(admision) {
     showToast(`Editar admisión de ${admision.nombreAfiliado} (en desarrollo).`);
   }
-  function handleRegistrarTriage(admision) {
-    showToast(`Registrar triage de ${admision.nombreAfiliado} (en desarrollo).`);
-  }
-  function handleAltaMedica(admision) {
-    showToast(`Alta médica de ${admision.nombreAfiliado} (en desarrollo).`);
-  }
-  function handleAltaAdministrativa(admision) {
-    showToast(`Alta administrativa de ${admision.nombreAfiliado} (en desarrollo).`);
-  }
-  function handleVerHistoria(admision) {
-    showToast(`Historia clínica de ${admision.nombreAfiliado} (en desarrollo).`);
+  // Todas las acciones del megamenú "⋯" (ver AccionesMegaMenu) siguen en
+  // desarrollo: mismo toast para cada una, con el label del ítem elegido.
+  function handleAccion(admision, item) {
+    if (item.id === 'atajos') {
+      showToast('Atajos de la pantalla (en desarrollo).');
+      return;
+    }
+    showToast(`${item.label} de ${admision.nombreAfiliado} (en desarrollo).`);
   }
   function handleNueva() {
     showToast('Nueva admisión (en desarrollo).');
@@ -183,10 +180,7 @@ export default function Admisiones() {
                 admisiones={admisiones}
                 onEditar={handleEditar}
                 onDetalle={setSelectedAdmision}
-                onRegistrarTriage={handleRegistrarTriage}
-                onAltaMedica={handleAltaMedica}
-                onAltaAdministrativa={handleAltaAdministrativa}
-                onVerHistoria={handleVerHistoria}
+                onAccion={handleAccion}
               />
             )}
           </div>

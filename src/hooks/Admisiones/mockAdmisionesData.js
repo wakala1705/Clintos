@@ -75,6 +75,29 @@ export function formatFechaCorta(iso) {
 
 const rand = seededRandom(7);
 
+// Generador aparte para la cama: pedirle números a `rand` en medio de cada
+// registro desplazaría toda la secuencia y cambiaría nombres/documentos/
+// fechas ya conocidos del mock.
+const randCama = seededRandom(23);
+
+// Cama asignada según el tipo de admisión — Urgencias: camilla del servicio
+// (URG-05); Hospitalización: habitación + letra de cama (302-B). Ambulatorio
+// y "Pendiente de triage" todavía no ocupan cama, de ahí el null (la tabla
+// muestra "—").
+function buildCama(record) {
+  if (record.estado === 'pendiente-triage') return null;
+  if (record.tipoAdmision === 'URGENCIAS') {
+    return `URG-${String(1 + Math.floor(randCama() * 20)).padStart(2, '0')}`;
+  }
+  if (record.tipoAdmision === 'HOSPITALIZACIÓN') {
+    const piso = 2 + Math.floor(randCama() * 4);
+    const habitacion = 1 + Math.floor(randCama() * 12);
+    const letra = 'AB'[Math.floor(randCama() * 2)];
+    return `${piso}${String(habitacion).padStart(2, '0')}-${letra}`;
+  }
+  return null;
+}
+
 // Admisiones más recientes primero (mismo orden que la referencia): el
 // consecutivo y la fecha bajan juntos a medida que se generan más filas.
 let consecutivo = 277489;
@@ -111,11 +134,14 @@ export const ADMISIONES = Array.from({ length: 60 }, (_, i) => {
     estado,
     documento,
     nombreAfiliado: nombre,
-    atendido: estado === 'alta-medica' || estado === 'alta-administrativa',
+    // "Admitido" ya implica que el paciente fue atendido (ingresó al
+    // servicio), igual que quienes ya tienen alta.
+    atendido: estado === 'admitido' || estado === 'alta-medica' || estado === 'alta-administrativa',
     administradora: pick(ADMINISTRADORAS, rand),
     tipoContrato: pick(TIPO_CONTRATO_LIST, rand),
     tipoAdmision: pick(TIPO_ADMISION_LIST, rand),
   };
+  record.cama = buildCama(record);
 
   consecutivo -= 1;
   // Salto de minutos/horas variable hacia atrás en el tiempo, con algún

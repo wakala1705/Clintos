@@ -7,6 +7,12 @@ import { formatCOP } from '@/hooks/Facturacion/mockFacturasData';
 // muestra "Resumen de factura" (Subtotal servicios/IVA/Copago/Moderador/
 // Pago compartido/Descuento, ver FacturaDetalleModalClasico.jsx) apenas se
 // selecciona un ítem; mostrarlas repetidas en la tabla era redundante.
+// CCosto/Tabla Origen/ID Item Prestación/FTRDID (encargo explícito: primero
+// se agregaron acá, después se reubicaron) siguen el mismo criterio: viven
+// en la tarjeta "Información adicional" de FacturaDetalleModalClasico.jsx,
+// atadas a la fila seleccionada -- el dato en sí sigue existiendo por ítem
+// (ver buildItems en mockFacturasData.js), solo esta tabla no lo pinta como
+// columna propia.
 const ITEM_COLUMNS = [
   'Item', 'Prefijo', 'Referencia', 'Descripción', 'Cantidad', 'Vlr. Unidad', 'Vlr. Total',
 ];
@@ -28,6 +34,12 @@ const ITEM_COLUMNS = [
 // llamador: acá solo se compara contra `item.id` (id estable por posición,
 // ver buildItems en mockFacturasData.js -- sobrevive a que el llamador filtre
 // `items` por búsqueda, a diferencia de un índice del array renderizado).
+//
+// "Vlr. Total" usa `item.vlrServicio` (Vlr. Unidad × Cantidad), no
+// `item.vlrUnidad` repetido -- bug real encontrado al replicar una factura
+// de referencia con cantidades > 1 (Jeringa cantidad 5, Vlr. Total debía
+// ser 2.500, no 500): pasaba inadvertido porque buildItems() siempre generó
+// `cantidad: 1`, caso en el que ambos campos coinciden por coincidencia.
 export default function FacturaItemsTable({ items, selectedId, onSelect }) {
   return (
     <div className="fvc-items-scroll">
@@ -51,7 +63,7 @@ export default function FacturaItemsTable({ items, selectedId, onSelect }) {
               <td className="fvc-ellipsis" title={item.descripcion}>{item.descripcion}</td>
               <td className="fvc-num">{item.cantidad}</td>
               <td className="fvc-num">{formatCOP(item.vlrUnidad)}</td>
-              <td className="fvc-num">{formatCOP(item.vlrUnidad)}</td>
+              <td className="fvc-num">{formatCOP(item.vlrServicio)}</td>
             </tr>
           ))}
         </tbody>

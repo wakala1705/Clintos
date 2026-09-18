@@ -14,3 +14,10 @@
 .fvc-row-action-btn .icon{width:17px;height:17px;}
 .fvc-row-action-btn:hover{background:var(--primary-50);}
 .fvc-row-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Columna "Estado FE" -- ícono en vez de Badge (encargo explícito), conserva
+   el color que tenía cada tone de Badge (info/danger) para no perder el
+   significado semántico azul/rojo. */
+.fvcg-estado-fe{width:18px;height:18px;display:block;}
+.fvcg-estado-fe.procesada{color:var(--status-info-fg);}
+.fvcg-estado-fe.anulada{color:var(--red);}

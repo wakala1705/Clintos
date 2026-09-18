@@ -1,0 +1,47 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- catálogo con buscador de texto libre (prefijo/descripción,
+   encargo explícito, ver imágenes de referencia), mismo criterio que
+   ../CatalogoCentroCostoModal/CatalogoCentroCostoModal.css (sin
+   paginación: el catálogo entero cabe en un solo scroll), acá de 2
+   columnas (sin un tercer dato propio como "Estado"/"Centro de costo"). */
+.cpfm-modal{width:640px;max-width:95vw;}
+
+.cpfm-search{position:relative;flex-shrink:0;}
+.cpfm-search .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
+.cpfm-search input{
+  width:100%;height:var(--input-md);padding:0 12px 0 34px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.cpfm-search input::placeholder{color:var(--ink-400);}
+.cpfm-search input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cpfm-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.cpfm-row{
+  display:grid;grid-template-columns:90px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.cpfm-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+}
+
+.cpfm-list{max-height:320px;overflow-y:auto;}
+.cpfm-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.cpfm-option:last-child{border-bottom:none;}
+.cpfm-option:hover{background:var(--bg);}
+.cpfm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cpfm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.cpfm-prefijo{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}
+.cpfm-descripcion{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.cpfm-empty{padding:24px 12px;text-align:center;font-size:var(--fs-sm);color:var(--ink-500);}
