@@ -203,6 +203,18 @@
 .fam-items-grid tbody tr{cursor:default;}
 .fam-items-grid tbody tr:last-child td{border-bottom:none;}
 .fam-items-grid th:last-child,.fam-items-grid td:last-child{width:76px;}
+/* Columna única Descripción+Código (encargo explícito: "agrupa en una
+   columna la descripción + código, dándole más jerarquía a la descripción
+   que al código") -- reemplaza las 2 columnas `Código`/`Descripción`
+   separadas: la descripción manda (fs-base/ink-900), el código queda como
+   dato secundario debajo (fs-xs/ink-500), mismo criterio de jerarquía que
+   `.cm-patient-name`/`.cm-patient-doc` (CargosModal.css). */
+/* `.fvc-ellipsis` (shared.css) trunca vía `overflow`/`text-overflow` en el
+   propio elemento con texto -- no baja a hijos de un contenedor flex, por
+   eso cada línea repite esos 3 valores acá en vez de heredarlos del `<td>`. */
+.fam-item-desc{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.fam-item-desc-main{font-size:var(--fs-base);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fam-item-desc-code{font-size:var(--fs-xs);color:var(--ink-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* Botones de Editar/Borrar por fila -- NO reusan `.search-btn` de
    shared.css: ese botón es `position:absolute` (pensado para flotar dentro
@@ -211,17 +223,17 @@
    celda -- bug real encontrado al agregar el segundo botón (el de "Quitar"
    que ya existía se veía flotando fuera del modal, sobre la tabla de
    facturas de fondo). Estos son botones normales en flujo, sin position.
-   Color propio por acción, no gris neutro (encargo explícito) -- Editar en
-   `--primary` (mismo azul que el resto de acciones de la grilla, ver
-   `.fvc-row-action-btn`), Borrar en `--red` vía `.danger`. */
+   Editar en `--ink-500` neutro (encargo explícito -- ya no `--primary`,
+   para no competir visualmente con las acciones primarias de la grilla),
+   Borrar sigue en `--red` vía `.danger`. */
 .fam-item-actions{display:flex;gap:4px;justify-content:flex-end;}
 .fam-item-action-btn{
   width:28px;height:28px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   border:none;border-radius:var(--radius);
-  background:transparent;color:var(--primary);cursor:pointer;
+  background:transparent;color:var(--ink-500);cursor:pointer;
 }
-.fam-item-action-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.fam-item-action-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
 .fam-item-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .fam-item-action-btn.danger{color:var(--red);}
 .fam-item-action-btn.danger:hover{background:var(--red-bg);color:var(--red);}

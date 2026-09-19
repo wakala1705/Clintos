@@ -6,7 +6,7 @@
 }
 .adm-search-select-trigger .chev{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
 .adm-search-select-dropdown{
-  position:absolute;top:calc(100% + 10px);left:-38px;min-width:190px;z-index:20;
+  position:absolute;top:calc(100% + 10px);left:-38px;min-width:190px;z-index:var(--z-dropdown);
   background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(16,24,39,.14);padding:4px;display:flex;flex-direction:column;gap:2px;
 }

@@ -1219,7 +1219,6 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                         <table className="fvc-grid fam-items-grid">
                           <thead>
                             <tr>
-                              <th>Código</th>
                               <th>Descripción</th>
                               <th>Cantidad</th>
                               <th>Vlr Item</th>
@@ -1230,8 +1229,12 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                           <tbody>
                             {items.map((it) => (
                               <tr key={it.id}>
-                                <td className="fvc-num">{it.codigo}</td>
-                                <td className="fvc-ellipsis" title={it.descripcion}>{it.descripcion}</td>
+                                <td className="fvc-ellipsis">
+                                  <div className="fam-item-desc" title={it.descripcion}>
+                                    <span className="fam-item-desc-main">{it.descripcion}</span>
+                                    <span className="fam-item-desc-code">{it.codigo}</span>
+                                  </div>
+                                </td>
                                 <td>{it.cantidad}</td>
                                 <td>
                                   {toNumber(it.vlrItem).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

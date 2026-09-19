@@ -11,7 +11,7 @@
 /* position:fixed + top/right se completan inline (ver RowMoreMenu.jsx): el
    listado se porta a document.body. z-index por encima de la tabla. */
 .adm-more-menu-dropdown{
-  position:fixed;min-width:160px;z-index:60;
+  position:fixed;min-width:160px;z-index:var(--z-popover);
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   box-shadow:0 4px 12px rgba(16,24,39,.14);padding:6px;
 }

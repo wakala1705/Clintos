@@ -4,7 +4,8 @@
    modales extragrandes del proyecto, Cargos debe ocupar el 90% real incluso
    en pantallas anchas) y el resto de reglas exclusivas de este modal. Header
    de título+badge+cerrar: ver @/Components/ModalHeader/ModalHeader, no se
-   redefine acá. */{width:95vw;height:95vh;max-width:none;max-height:95vh;overflow:hidden;display:flex;flex-direction:column;}
+   redefine acá. */
+.cm-modal{width:95vw;height:95vh;max-width:none;max-height:95vh;overflow:hidden;display:flex;flex-direction:column;}
 .cm-tipo-badge{align-self:center;}
 
 /* flex:1+overflow-y:auto (antes solo gap, altura por contenido) para que el
@@ -51,6 +52,7 @@
   cursor:pointer;transition:background .15s,border-color .15s;
 }
 .cm-icon-btn:hover{background:var(--gray-bg);}
+.cm-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cm-icon-btn .icon{width:15px;height:15px;}
 .cm-alergias-badge{flex-shrink:0;}
 
@@ -78,6 +80,7 @@
   cursor:pointer;transition:background .15s,border-color .15s;
 }
 .cm-banner-toggle:hover{background:var(--gray-bg);}
+.cm-banner-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cm-banner-toggle .icon{width:15px;height:15px;}
 
 /* ---------- Layout 50/50: cm-cargos-card / cm-detail-card ----------
@@ -106,12 +109,13 @@
    dentro, cm-totals-row queda fijo al fondo. */
 .cm-tabpanel{flex:1;min-height:0;display:flex;flex-direction:column;}
 .cm-tab{
-  padding:9px 14px;border:none;background:none;cursor:pointer;
+  padding:8px 16px;border:none;background:none;cursor:pointer;
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
   border-bottom:2px solid transparent;margin-bottom:-1px;
   transition:color .15s,border-color .15s;
 }
 .cm-tab:hover{color:var(--ink-900);}
+.cm-tab:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .cm-tab.active{color:var(--primary);font-weight:var(--fw-semibold);border-bottom-color:var(--primary);}
 
 /* ---------- Tabla de cargos + resumen de totales ---------- */
@@ -119,10 +123,10 @@
 .cm-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
 .cm-table th{
   position:sticky;top:0;background:var(--bg);text-align:left;white-space:nowrap;
-  padding:9px 12px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  padding:8px 12px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
   text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--border);
 }
-.cm-table td{padding:9px 12px;color:var(--ink-900);border-bottom:1px solid var(--border);white-space:nowrap;}
+.cm-table td{padding:8px 12px;color:var(--ink-900);border-bottom:1px solid var(--border);white-space:nowrap;}
 .cm-table tbody tr:last-child td{border-bottom:none;}
 .cm-empty-row td{text-align:center;color:var(--ink-500);padding:28px 12px;white-space:normal;}
 /* Fila preseleccionada de las sub-tablas de Cirugías (mock, replica el

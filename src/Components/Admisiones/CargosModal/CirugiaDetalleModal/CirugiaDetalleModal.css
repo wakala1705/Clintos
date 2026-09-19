@@ -49,12 +49,13 @@
 /* ---------- Tabs General / Contratación ---------- */
 .cdm-tabs{flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);}
 .cdm-tab{
-  padding:9px 14px;border:none;background:none;cursor:pointer;
+  padding:8px 16px;border:none;background:none;cursor:pointer;
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
   border-bottom:2px solid transparent;margin-bottom:-1px;
   transition:color .15s,border-color .15s;
 }
 .cdm-tab:hover{color:var(--ink-900);}
+.cdm-tab:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .cdm-tab.active{color:var(--primary);font-weight:var(--fw-semibold);border-bottom-color:var(--primary);}
 
 /* ---------- Filas del formulario ---------- */

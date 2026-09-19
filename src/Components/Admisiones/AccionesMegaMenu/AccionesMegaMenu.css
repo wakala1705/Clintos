@@ -4,7 +4,7 @@
    document.body y se ancla al botón que lo abrió. El ancho se resuelve acá
    (no en JS) porque el alto natural que mide el JS depende de él. */
 .adm-mm{
-  position:fixed;z-index:100;
+  position:fixed;z-index:var(--z-popover);
   background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius-lg);
   width:min(1040px, calc(100vw - 16px));
   display:flex;flex-direction:column;overflow:hidden;

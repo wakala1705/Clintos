@@ -34,6 +34,15 @@
   --radius:8px;
   --radius-lg:12px;
   --z-sticky:10;
+  /* Escala de z-index del feature (hallazgo de revisión de craft visual,
+     2026-09-19): antes cada popover/menú/modal traía su propio literal
+     suelto (20/60/100 repetidos sin relación declarada entre sí) — ver
+     AccionesMegaMenu.css/RowMoreMenu.css/SearchFieldSelect.css/
+     shared/shared.css, que ahora consumen estos tokens en vez de números a
+     mano. */
+  --z-dropdown:20;
+  --z-popover:60;
+  --z-modal:100;
 
   /* Variantes de tamaño para inputs/selects de una sola línea — ver mismo
      bloque en ProgramarCita.css/GestionEnfermeria/shared/shared.css. */
@@ -154,7 +163,7 @@ body{
   padding:12px 20px;border-radius:var(--radius);
   font-size:var(--fs-base);font-weight:var(--fw-semibold);
   opacity:0;pointer-events:none;
-  display:flex;align-items:center;gap:8px;z-index:60;
+  display:flex;align-items:center;gap:8px;z-index:var(--z-popover);
   transition:opacity .15s,transform .15s;
 }
 .adm-toast.show{opacity:1;transform:translate(-50%,0);}
