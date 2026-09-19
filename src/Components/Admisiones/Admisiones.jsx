@@ -15,6 +15,7 @@ import AdmisionesTableSkeleton from '@/Components/Admisiones/AdmisionesTableSkel
 import AdmisionesEmptyState from '@/Components/Admisiones/AdmisionesEmptyState/AdmisionesEmptyState';
 import AdmisionDetalleModal from '@/Components/Admisiones/AdmisionDetalleModal/AdmisionDetalleModal';
 import PreIngresoModal from '@/Components/Admisiones/PreIngresoModal/PreIngresoModal';
+import CargosModal from '@/Components/Admisiones/CargosModal/CargosModal';
 import Button from '@/Components/Button/Button';
 import { LuPlus, LuUserPlus } from 'react-icons/lu';
 
@@ -28,6 +29,7 @@ export default function Admisiones() {
   const [admisiones, setAdmisiones] = useState([]);
   const [selectedAdmision, setSelectedAdmision] = useState(null);
   const [preIngresoPatient, setPreIngresoPatient] = useState(null);
+  const [cargosAdmision, setCargosAdmision] = useState(null);
 
   // Toast local (mismo texto/temporizador que .pc-toast en ProgramarCita)
   // para las acciones propias de esta pantalla (Editar, Nueva, altas...).
@@ -117,6 +119,10 @@ export default function Admisiones() {
       showToast('Atajos de la pantalla (en desarrollo).');
       return;
     }
+    if (item.id === 'cargos') {
+      setCargosAdmision(admision);
+      return;
+    }
     showToast(`${item.label} de ${admision.nombreAfiliado} (en desarrollo).`);
   }
   function handleNueva() {
@@ -195,6 +201,7 @@ export default function Admisiones() {
           onSubmit={handlePreIngresoSubmit}
         />
       )}
+      <CargosModal admision={cargosAdmision} onClose={() => setCargosAdmision(null)} />
       <NuevaCitaFlow />
 
       <div className={`adm-toast${toast ? ' show' : ''}`}>

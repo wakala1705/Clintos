@@ -1,0 +1,189 @@
+/* .adm-modal-overlay/.adm-modal: scaffolding compartido de Admisiones (ver
+   shared/shared.css) — acá solo el override de ancho/alto (90% de la
+   pantalla, encargo explícito, sin tope de max-width: a diferencia de otros
+   modales extragrandes del proyecto, Cargos debe ocupar el 90% real incluso
+   en pantallas anchas) y el resto de reglas exclusivas de este modal. Header
+   de título+badge+cerrar: ver @/Components/ModalHeader/ModalHeader, no se
+   redefine acá. */{width:95vw;height:95vh;max-width:none;max-height:95vh;overflow:hidden;display:flex;flex-direction:column;}
+.cm-tipo-badge{align-self:center;}
+
+/* flex:1+overflow-y:auto (antes solo gap, altura por contenido) para que el
+   body ocupe el alto real que sobra dentro de los 90vh fijos del modal y
+   scrollee internamente — sin esto, con contenido más corto que 90vh, el
+   footer quedaría flotando a la mitad en vez de pegado abajo. */
+.cm-body{gap:14px;flex:1;min-height:0;overflow-y:auto;}
+
+/* ---------- Panel "Datos Afiliado" (identidad + grilla de campos) ----------
+   Antes N° Admisión/N° Contrato/ID Contrato/Fecha vivían en una barra propia
+   (.cm-admision-bar) separada de este panel — se plegaron adentro de
+   .cm-patient-fields (ver .jsx) porque ya son datos de la misma admisión/
+   afiliado que el resto de la grilla, así que no tiene sentido repetir un
+   segundo bloque con estructura de card propia solo para esos 4 campos. */
+.cm-patient-banner{
+  display:flex;flex-direction:column;gap:12px;
+  padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+/* Fila 1: identidad + datos clínicos en línea (encargo explícito, sin label
+   de grupo — ver .jsx). */
+.cm-patient-row{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+.cm-patient-identity{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.cm-patient-avatar{
+  flex-shrink:0;width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.cm-patient-avatar .icon{width:20px;height:20px;}
+/* Nombre (arriba) + tipo/n° de documento (abajo, "CC 2450854") en una sola
+   columna (encargo explícito) — reemplaza el Field aparte de Doc. Id./Tipo
+   en la grilla de abajo. */
+.cm-patient-info{display:flex;flex-direction:column;gap:2px;}
+.cm-patient-name{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cm-patient-doc{font-size:var(--fs-sm);color:var(--ink-500);}
+/* Estado/Ver paciente/Alergias al extremo derecho de la fila (encargo
+   explícito) — margin-left:auto los empuja ahí sin necesitar
+   justify-content:space-between en .cm-patient-row (que separaría también
+   la identidad de los campos clínicos del medio). */
+.cm-patient-badges{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.cm-estado-badge{flex-shrink:0;}
+.cm-icon-btn{
+  flex-shrink:0;width:26px;height:26px;border-radius:var(--radius);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-500);
+  cursor:pointer;transition:background .15s,border-color .15s;
+}
+.cm-icon-btn:hover{background:var(--gray-bg);}
+.cm-icon-btn .icon{width:15px;height:15px;}
+.cm-alergias-badge{flex-shrink:0;}
+
+/* Grilla densa de campos (Id. Afiliado/Doc. Id./Tipo/Sexo/Fecha Nac./Cama en
+   fila 1; N° Admisión/Fecha/Asegurador/Régimen/N° Contrato/ID Contrato en
+   fila 2) — mismo patrón Field label+value que FacturaDetalleModalClasico
+   (.fvcd-field), reimplementado acá porque esos tokens están scopeados por
+   feature (ver AGENTS.md). */
+.cm-patient-fields{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;flex:1;min-width:0;}
+.cm-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.cm-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
+.cm-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);white-space:nowrap;}
+
+/* Fila 2 (datos administrativos, ver .jsx): separador propio para
+   diferenciarla de la fila 1 (identidad + datos clínicos) sin label de
+   grupo — mismo border-top que ya usaba la grilla única antes de separarse
+   en 2 filas. Solo se monta con el banner expandido (el chevron que la
+   controla vive en la fila 1, no acá) — así, colapsado, el banner queda en
+   una sola fila en vez de dejar una franja aparte solo para el toggle. */
+.cm-patient-fields-admin{padding-top:12px;border-top:1px solid var(--border);}
+.cm-patient-fields-admin .cm-estado-badge{align-self:center;}
+.cm-banner-toggle{
+  flex-shrink:0;width:26px;height:26px;border-radius:var(--radius);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-500);
+  cursor:pointer;transition:background .15s,border-color .15s;
+}
+.cm-banner-toggle:hover{background:var(--gray-bg);}
+.cm-banner-toggle .icon{width:15px;height:15px;}
+
+/* ---------- Layout 50/50: cm-cargos-card / cm-detail-card ----------
+   Una arriba, otra abajo (encargo explícito — no en columnas lado a lado),
+   cada una ocupando la mitad del alto disponible. flex:1 en .cm-main-split
+   para tomar el alto restante de cm-body (flex:1 también, ver arriba) y
+   flex:1 en cada tarjeta para repartirlo 50/50 entre ambas. */
+.cm-main-split{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;}
+
+/* ---------- Bloque único: pestañas + tabla de cargos ----------
+   Antes 2 piezas separadas (cm-tabs suelto arriba de la tarjeta con borde
+   propio de la tabla) — encargo explícito: un solo bloque con un único
+   borde. Sin padding propio: cm-tabs/cm-totals-row ponen su propio padding
+   horizontal, cm-table-scroll queda a borde a borde del bloque (encargo
+   explícito: la tabla no toma el padding del bloque externo). flex column +
+   flex:1/min-height:0 para ocupar su mitad de .cm-main-split, con
+   cm-tabpanel/cm-table-scroll (ver abajo) estirándose y scrolleando dentro
+   de esa mitad en vez de desbordarla. */
+.cm-cargos-card{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.cm-tabs{flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 16px;border-bottom:1px solid var(--border);}
+/* Estira y scrollea dentro de la mitad de .cm-main-split que le toca a esta
+   tarjeta (ver arriba) — cm-table-scroll (abajo) es lo único que crece
+   dentro, cm-totals-row queda fijo al fondo. */
+.cm-tabpanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+.cm-tab{
+  padding:9px 14px;border:none;background:none;cursor:pointer;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;
+}
+.cm-tab:hover{color:var(--ink-900);}
+.cm-tab.active{color:var(--primary);font-weight:var(--fw-semibold);border-bottom-color:var(--primary);}
+
+/* ---------- Tabla de cargos + resumen de totales ---------- */
+.cm-table-scroll{flex:1;min-height:0;overflow:auto;}
+.cm-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
+.cm-table th{
+  position:sticky;top:0;background:var(--bg);text-align:left;white-space:nowrap;
+  padding:9px 12px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--border);
+}
+.cm-table td{padding:9px 12px;color:var(--ink-900);border-bottom:1px solid var(--border);white-space:nowrap;}
+.cm-table tbody tr:last-child td{border-bottom:none;}
+.cm-empty-row td{text-align:center;color:var(--ink-500);padding:28px 12px;white-space:normal;}
+/* Fila preseleccionada de las sub-tablas de Cirugías (mock, replica el
+   resaltado azul de la referencia legacy) — mismo token que .selected en
+   AdmisionesTable.css. */
+.cm-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+
+.cm-totals-row{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 16px;border-top:1px solid var(--border);background:var(--bg);
+}
+.cm-totals{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.cm-totals-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);}
+.cm-totals-value{font-weight:var(--fw-semibold);color:var(--primary);}
+.cm-totals-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* ---------- Tab "Cirugías": grilla 2x2 de sub-tablas ----------
+   Reemplaza tabla+cm-totals-row genérico de Cargos solo para este tab (ver
+   .jsx) — cada CirugiaPanel es una mini cm-cargos-card (mismo borde/
+   cm-table) con su propio título y fila de acciones al pie, replicando la
+   referencia legacy ("Catálogo de CARGOS" → pestaña Cirugías: Programación
+   Sala Cirugía / Cirugías / Recurso Humano / Insumos). flex:1/min-height:0
+   para ocupar el alto de .cm-tabpanel (ver arriba) y que cada panel
+   scrollee su propia tabla en vez de desbordar la grilla. */
+.cm-cirugia-grid{
+  flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:12px;padding:12px 16px;
+}
+.cm-cirugia-panel{
+  min-height:0;display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.cm-cirugia-panel-header{
+  flex-shrink:0;padding:8px 12px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);
+  border-bottom:1px solid var(--border);background:var(--bg);
+}
+.cm-cirugia-panel-actions{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 12px;border-top:1px solid var(--border);
+}
+
+@media (max-width:1280px){
+  .cm-cirugia-grid{grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(180px,1fr));overflow-y:auto;}
+}
+
+/* ---------- Tabla de detalle de la prestación seleccionada ---------- */
+.cm-detail-card{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+
+/* ---------- Footer: hint de selección + acciones de ítem + acciones rápidas ---------- */
+.cm-footer{border-top:1px solid var(--border);padding:12px 24px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+.cm-footer-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.cm-footer-hint{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);}
+.cm-footer-actions{display:flex;align-items:center;gap:8px;}
+.cm-footer-quick-actions{justify-content:flex-start;gap:8px;padding-top:10px;border-top:1px solid var(--border);}
+
+@media (max-width:1024px){
+  .cm-totals-row{flex-direction:column;align-items:flex-start;}
+  .cm-field-value{white-space:normal;}
+  .cm-patient-row{flex-direction:column;align-items:flex-start;gap:12px;}
+  .cm-patient-badges{margin-left:0;}
+}

@@ -63,9 +63,9 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAcc
               <th>Nombre del afiliado</th>
               <th>Atendido</th>
               <th>Administradora</th>
-              <th>Tipo de contrato</th>
-              <th>Tipo de admisión</th>
               <th>Cama</th>
+              <th>Tipo de admisión</th>
+              <th>Tipo de contrato</th>
               <th className="col-acciones"><span className="sr-only">Acciones</span></th>
               <th className="col-acciones"><span className="sr-only">Más opciones</span></th>
             </tr>
@@ -89,9 +89,9 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAcc
                 <td className="cell-primary">{a.nombreAfiliado}</td>
                 <td><span className={a.atendido ? 'adm-atendido-si' : 'adm-atendido-no'}>{a.atendido ? 'SI' : 'NO'}</span></td>
                 <td className="cell-muted">{a.administradora}</td>
-                <td className="cell-muted">{a.tipoContrato}</td>
+                <td className="adm-cell-cama">{a.cama ?? '—'}</td>
                 <td className="cell-muted">{a.tipoAdmision}</td>
-                <td className="cell-muted">{a.cama ?? '—'}</td>
+                <td className="cell-muted">{a.tipoContrato}</td>
                 <td className="col-acciones" onClick={(e) => e.stopPropagation()}>
                   <RowActionsMenu {...rowActionsProps(a)} />
                 </td>

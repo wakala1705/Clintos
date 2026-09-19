@@ -5,7 +5,6 @@ import './AtencionEnfermeria.css';
 import '@/Components/GestionEnfermeria/shared/shared.css';
 import { initGestionEnfermeria } from '@/hooks/GestionEnfermeria/legacy-app';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
-import Badge from '@/Components/Badge/Badge';
 import MedicamentosPanel from '@/Components/GestionEnfermeria/MedicamentosPanel/MedicamentosPanel';
 import OrdenesMedicasPanel from '@/Components/GestionEnfermeria/OrdenesMedicasPanel/OrdenesMedicasPanel';
 import PedidosPanel from '@/Components/GestionEnfermeria/PedidosPanel/PedidosPanel';
@@ -74,24 +73,32 @@ export default function AtencionEnfermeria({ id }) {
           nombre: 'Isabella Daniela Rodríguez Paternina',
           documento: '1234567890',
           edad: '34 años 10 meses 14 días',
+          fechaNacimiento: '05.NOV.1991 · 34 años 10 meses 14 días',
           sexo: 'Femenino',
           eps: 'Salud Total Entidad Promotora de Salud del Régimen Contributivo y del Régimen S',
           ciudad: 'Bogotá D.C.',
           direccion: 'Calle 134 # 45-12, Apto 601',
           telefono: '310 842 9173',
           email: 'isabella.rodriguez@example.com',
+          // Set fijo de campos de admisión homologado con CargosModal
+          // (Admisiones/Cargos, ver comentario en PatientBanner.jsx) — antes
+          // armados a mano en `secondRow` con un Badge inline para "Estado".
+          // Completo (fechaIngreso/idAfiliado/regimen, antes ausentes acá)
+          // para que la fila 2 se vea igual que en CargosModal en vez de
+          // saltarse esos campos por falta de dato.
+          numeroAdmision: '0200265899',
+          fechaIngreso: '15.SEP.2026 - 08:30',
+          idAfiliado: '1234567890',
+          regimen: 'Contributivo',
+          numeroContrato: '** No Especificado **',
+          idContrato: '197',
+          cama: '305',
           allergies: [
             { name: 'Penicilina', reaction: 'Reacción cutánea moderada' },
             { name: 'Mariscos', reaction: 'Anafilaxia leve' },
           ],
         }}
-        secondRow={[
-          { label: 'Admisión', value: '0200265899' },
-          { label: 'N° contrato', value: '** No Especificado **' },
-          { label: 'ID Contrato', value: '197' },
-          { label: 'Cama', value: '305' },
-          { label: 'Estado', value: <Badge tone="success" dot>Activo</Badge> },
-        ]}
+        statusBadge={{ label: 'Activo', tone: 'success' }}
       />
 
       {/* CARD: CRONOGRAMA (con tabs de módulo integradas) */}

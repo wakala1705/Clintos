@@ -11,10 +11,19 @@
 .patient-avatar{width:44px;height:44px;font-weight:var(--fw-medium);font-size:var(--fs-lg);}
 .patient-name-block{flex-shrink:0;}
 .patient-name-block .pname{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;}
-.patient-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;flex:1;font-size:var(--fs-base);color:var(--ink-700);}
-.patient-meta .pm-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
-.patient-meta .pm-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);}
-.patient-meta .pm-item b{color:var(--ink-900);font-weight:var(--fw-medium);}
+/* Documento bajo el nombre (encargo explícito, replicado desde CargosModal)
+   en vez de un chip "CC" suelto en .patient-meta. */
+.patient-name-block .pdoc{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
+.patient-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 28px;flex:1;font-size:var(--fs-base);color:var(--ink-700);}
+/* Label arriba/valor abajo (encargo explícito, homologado con CargosModal —
+   ver .cm-field/.cm-field-label/.cm-field-value) en vez de label+valor en
+   una sola línea. */
+.patient-meta .pm-item{display:flex;flex-direction:column;gap:3px;white-space:nowrap;}
+.patient-meta .pm-item .lbl{
+  color:var(--ink-500);font-weight:var(--fw-semibold);font-size:var(--fs-xs);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.patient-meta .pm-item b{color:var(--ink-900);font-weight:var(--fw-medium);font-size:var(--fs-base);}
 /* "Ver más" abre PatientDetailModal (ver PatientBanner.jsx) con el detalle
    completo del paciente — estilo de link-button, mismo criterio que
    .pc-link-btn en ProgramarCita/shared/shared.css. */
@@ -38,6 +47,12 @@
 .patient-banner-compact{padding:8px 20px;gap:12px;flex-wrap:nowrap;}
 .patient-banner-compact .patient-avatar{width:30px;height:30px;font-size:var(--fs-sm);}
 .patient-banner-compact .patient-name-block .pname{font-size:var(--fs-base);}
+/* Acá sí label+valor en una sola línea (a diferencia de .pm-item en la
+   variante normal, ver arriba) — esta variante existe justamente para
+   ocupar el mínimo alto posible (maximizar/PlantillaCrecimt2), así que no
+   hereda el apilado label-arriba/valor-abajo. */
+.patient-banner-compact .patient-meta .pm-item{flex-direction:row;align-items:center;gap:4px;}
+.patient-banner-compact .patient-meta .pm-item .lbl{font-size:inherit;text-transform:none;letter-spacing:normal;}
 /* Badge de estado: ver @/Components/Badge/Badge (ya migrado, no se
    redefine acá). */
 .close-x{
@@ -48,6 +63,17 @@
 }
 .close-x .icon{width:17px;height:17px;}
 .close-x:hover{background:var(--red-bg);color:var(--red);border-color:var(--red);}
+/* Toggle de ocultar/mostrar nombre+documento (encargo explícito, replicado
+   desde CargosModal) — mismo tamaño/forma que .close-x, sin su hover rojo
+   (esta acción no es destructiva). */
+.pb-icon-btn{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:1px solid var(--border);
+  background:var(--surface);flex-shrink:0;transition:background .15s,border-color .15s;
+}
+.pb-icon-btn:hover{background:var(--gray-bg);}
+.pb-icon-btn .icon{width:17px;height:17px;}
 .allergy-chip{
   display:inline-flex;align-items:center;gap:8px;background:var(--amber-bg);color:var(--amber-fg);
   font-size:var(--fs-base);font-weight:var(--fw-semibold);padding:8px 14px;border-radius:20px;border:1px solid #f4dfae;cursor:pointer;
@@ -68,11 +94,15 @@
 .pb-popover-row .k{color:var(--ink-700);font-weight:var(--fw-medium);}
 .pb-popover-row .v{color:var(--ink-900);text-align:right;}
 .admission-row{
-  width:100%;display:flex;align-items:center;flex-wrap:wrap;gap:6px 20px;
+  width:100%;display:flex;align-items:center;flex-wrap:wrap;gap:6px 28px;
   padding-top:10px;margin-top:2px;border-top:1px solid var(--border);font-size:var(--fs-base);color:var(--ink-700);
 }
-.admission-row .ar-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.02em;margin-right:4px;}
-.admission-row .ar-item b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+/* Label arriba/valor abajo (encargo explícito, homologado con CargosModal —
+   ver .cm-field/.cm-field-label/.cm-field-value), mismo criterio que
+   .pm-item de la fila 1. */
+.admission-row .ar-item{display:flex;flex-direction:column;gap:3px;}
+.admission-row .ar-item .lbl{color:var(--ink-500);font-weight:var(--fw-semibold);text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.03em;}
+.admission-row .ar-item b{color:var(--ink-900);font-weight:var(--fw-medium);font-size:var(--fs-base);}
 
 /* Chevron para contraer/expandir el banner completo a patient-banner-compact
    (ver PatientBanner.jsx) — vive al extremo derecho de admission-row cuando

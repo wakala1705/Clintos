@@ -1,0 +1,57 @@
+/* .adm-modal-overlay/.adm-modal/.adm-modal-body/.adm-modal-footer: scaffolding
+   compartido de Admisiones (ver ../../shared/shared.css) — acá solo el ancho
+   propio (más angosto que .cm-modal del padre: este es un formulario de alta,
+   no una vista de catálogo) y las reglas exclusivas de este formulario.
+   Header: @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+.pcm-modal{width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;}
+.pcm-body{overflow-y:auto;}
+
+/* Grilla 2 columnas (Consecutivo+checkbox / No. Admisión / resto de campos
+   emparejados) — mismo patrón .form-field/.field-with-search/.search-btn ya
+   establecido en ProgramacionSalaCirugias/shared/shared.css (Dx.
+   ingreso/Id. aseguradora), reimplementado acá porque esos tokens están
+   scopeados por feature (ver AGENTS.md "Component organization"). */
+.pcm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;}
+
+.form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.form-field.full{grid-column:1 / -1;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.form-field input{
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+  height:var(--input-md);width:100%;
+}
+.form-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.tf-readonly-value{
+  display:flex;align-items:center;height:var(--input-md);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  padding:0 10px;background:var(--bg);border-radius:var(--radius);
+}
+
+.field-with-search{position:relative;}
+.field-with-search input{padding-right:38px;}
+.search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn .icon{width:16px;height:16px;}
+
+/* Checkbox "Hoja de Gastos Única?" — alineado a la altura del campo
+   Consecutivo (su par en la grilla), por eso lleva el mismo padding-top que
+   compensa la label encima del input en .form-field. */
+.pcm-checkbox{
+  display:flex;align-items:center;gap:8px;padding-top:20px;
+  font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;
+}
+.pcm-checkbox input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+
+@media (max-width:768px){
+  .pcm-grid{grid-template-columns:1fr;}
+  .pcm-checkbox{padding-top:0;}
+}

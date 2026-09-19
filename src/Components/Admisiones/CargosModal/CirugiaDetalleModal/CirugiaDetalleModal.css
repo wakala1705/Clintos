@@ -1,0 +1,130 @@
+/* .adm-modal-overlay/.adm-modal/.adm-modal-body/.adm-modal-footer: scaffolding
+   compartido de Admisiones (ver ../../shared/shared.css). .form-field/
+   .field-with-search/.search-btn/.tf-readonly-value: mismo patrón ya
+   reimplementado en ../ProgramacionCirugiaModal/ProgramacionCirugiaModal.css
+   (scopeado por componente, ver AGENTS.md "Component organization" — no hay
+   shared.css en Admisiones todavía para este par de modales). Header:
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+.cdm-modal{width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;}
+.cdm-body{overflow-y:auto;gap:12px;}
+
+.form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.form-field input{
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+  height:var(--input-md);width:100%;
+}
+.form-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.tf-readonly-value{
+  display:flex;align-items:center;height:var(--input-md);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  padding:0 10px;background:var(--bg);border-radius:var(--radius);
+}
+
+.field-with-search{position:relative;}
+.field-with-search input{padding-right:38px;}
+.search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn .icon{width:16px;height:16px;}
+
+/* ---------- Barra "Usuario Liquidación / Consecutivo" ----------
+   Vive entre el header homologado y las tabs (encargo: replica la franja de
+   la referencia legacy, fuera de las tabs). */
+.cdm-topbar{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:10px 24px;border-bottom:1px solid var(--border);font-size:var(--fs-sm);color:var(--ink-700);
+}
+.cdm-usuario-liquidacion strong{color:var(--red);}
+.cdm-consecutivo strong{color:var(--ink-900);}
+
+/* ---------- Tabs General / Contratación ---------- */
+.cdm-tabs{flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);}
+.cdm-tab{
+  padding:9px 14px;border:none;background:none;cursor:pointer;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;
+}
+.cdm-tab:hover{color:var(--ink-900);}
+.cdm-tab.active{color:var(--primary);font-weight:var(--fw-semibold);border-bottom-color:var(--primary);}
+
+/* ---------- Filas del formulario ---------- */
+.cdm-row{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.cdm-row-top{align-items:center;justify-content:space-between;}
+.cdm-item-field{width:100px;flex-shrink:0;}
+.cdm-field-with-label{flex:1;min-width:220px;}
+.cdm-row .form-field{flex:1;min-width:180px;}
+.cdm-resolved-label{
+  align-self:center;padding-bottom:2px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.cdm-checkbox{
+  display:flex;align-items:center;gap:6px;padding-bottom:9px;
+  font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;white-space:nowrap;
+}
+.cdm-checkbox input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+.cdm-checkbox-inline{padding-bottom:0;align-self:center;}
+
+.cdm-contrato-btn{flex-shrink:0;}
+
+/* ---------- Grilla de tarifas por rol ---------- */
+.cdm-tarifa-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);margin-top:4px;}
+.cdm-tarifa-table th{
+  text-align:center;font-weight:var(--fw-semibold);color:var(--primary-dark);
+  padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.cdm-tarifa-table th[scope="row"]{
+  text-align:left;color:var(--primary-dark);padding-right:12px;white-space:nowrap;
+}
+.cdm-tarifa-table td{padding:6px;text-align:center;border-bottom:1px solid var(--border);}
+.cdm-tarifa-table tbody tr:last-child td, .cdm-tarifa-table tbody tr:last-child th{border-bottom:none;}
+.cdm-tarifa-table input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+.cdm-tarifa-cell-combo{display:flex;align-items:center;justify-content:center;gap:6px;}
+.cdm-tarifa-input{
+  width:64px;height:30px;border:1px solid var(--border);border-radius:var(--radius);
+  padding:0 8px;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:var(--surface);text-align:right;
+}
+.cdm-tarifa-input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* ---------- Fila "Vr. Manuales" ----------
+   Un campo por rol (mismo orden/ancho que las columnas de .cdm-tarifa-table
+   arriba) con su propia mini-label -- antes eran inputs sueltos sin
+   indicación de a qué rol correspondía cada valor. Estilo "solo lectura"
+   propio (no .tf-readonly-value: esa clase es para un <div>, aplicada a un
+   <input> dejaba el borde nativo del navegador sin resetear). */
+.cdm-manuales-row{
+  display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;
+  padding-top:12px;border-top:1px solid var(--border);
+}
+.cdm-manuales-label{
+  flex-shrink:0;align-self:center;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary-dark);
+}
+.cdm-manuales-field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:80px;}
+.cdm-manuales-field-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-500);
+  text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cdm-manuales-input{
+  width:100%;height:32px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--bg);color:var(--ink-700);font-family:inherit;font-size:var(--fs-sm);
+  font-variant-numeric:tabular-nums;text-align:right;padding:0 10px;cursor:default;
+}
+.cdm-manuales-input:focus{outline:none;}
+
+.cdm-placeholder{color:var(--ink-500);font-size:var(--fs-base);padding:24px 0;text-align:center;}
+
+@media (max-width:768px){
+  .cdm-row{align-items:stretch;}
+  .cdm-tarifa-table{font-size:var(--fs-xs);}
+  .cdm-manuales-row{flex-direction:column;align-items:stretch;}
+}

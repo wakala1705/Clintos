@@ -5,7 +5,18 @@ import './PatientBanner.css';
 import Badge from '@/Components/Badge/Badge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
-import { LuChevronDown, LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-icons/lu';
+import {
+  LuChevronDown, LuCircleAlert, LuEye, LuEyeOff, LuSearch, LuUserPlus, LuX,
+} from 'react-icons/lu';
+
+// Enmascara un valor manteniendo su longitud/espacios (mismo criterio que un
+// campo de contraseña) — mismo patrón que CargosModal.jsx (Admisiones), acá
+// reimplementado porque este componente es global y no puede importar de una
+// feature. El botón de ojo de patient-banner-right alterna esto sobre
+// nombre/documento en vez de navegar a ningún lado.
+function maskText(value) {
+  return String(value).replace(/\S/g, '•');
+}
 
 // Banner de identidad del paciente, compartido por /asignacion-citas y
 // /gestion-enfermeria (antes duplicado: uno como componente React estático en
@@ -38,10 +49,37 @@ import { LuChevronDown, LuCircleAlert, LuSearch, LuUserPlus, LuX } from 'react-i
 // bloque para volver a expandir. Es independiente del prop `compact` — este
 // último sigue siendo la variante fija sin admission-row/chevron que usa
 // PlantillaCrecimt2.
+// Nombre + documento van agrupados en una sola columna (`patient-name-block`
+// con `pname`/`pdoc`, encargo explícito replicado desde CargosModal —
+// Admisiones/Cargos) en vez de nombre en su propio bloque y CC como chip
+// suelto de `patient-meta`. El botón de ojo de `patient-banner-right`
+// enmascara/revela ambos (`dataHidden`, ver maskText arriba) — mismo patrón
+// que el toggle de un campo de contraseña, no navega a ningún lado.
+// `statusBadge` ahora se renderiza dentro de `admission-row` (fila 2, junto
+// al resto de chips) en vez de en `patient-banner-right` (encargo explícito,
+// mismo criterio que "Activo" bajó a la fila 2 en CargosModal) — Enfermería
+// ya pasaba su estado como parte de `secondRow` directamente, así que solo
+// afecta a Asignación de Citas (único consumidor de `statusBadge`).
+//
+// Estructura de 2 filas homologada con CargosModal.jsx (Admisiones/Cargos,
+// encargo explícito: "que sea el mismo componente global, con esa misma
+// estructura y los mismos datos") — fila 1 agrega FECHA NAC./ASEGURADOR
+// junto a SEXO (antes solo EDAD/SEXO/Aseg.); fila 2 agrega un set fijo de
+// campos de admisión (`patient.numeroAdmision/fechaIngreso/cama/idAfiliado/
+// regimen/numeroContrato/idContrato`, ver abajo) delante de `secondRow`.
+// Cada campo fijo es opcional y solo se renderiza si la pantalla que monta
+// el banner lo pasa en `patient` — así una pantalla sin admisión/contrato
+// (Asignación de Citas, Historia Clínica) no muestra nada de más, y una que
+// sí tiene esos datos (Enfermería) los consume directo en vez de armarlos a
+// mano en su propio `secondRow`. `secondRow` sigue existiendo como
+// extensión libre para datos propios de una pantalla que no encajan en este
+// set fijo (ciudad/teléfono/citas futuras en Asignación de Citas; cita/
+// servicio/tipo de cita en Historia Clínica).
 export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [dataHidden, setDataHidden] = useState(false);
   const allergyRef = useRef(null);
 
   useEffect(() => {
@@ -59,6 +97,9 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [allergyOpen]);
+
+  const nombreMostrado = patient && dataHidden ? maskText(patient.nombre) : patient?.nombre;
+  const documentoMostrado = patient && dataHidden ? maskText(patient.documento) : patient?.documento;
 
   if (!patient) {
     return (
@@ -88,9 +129,9 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
     return (
       <div className="patient-banner patient-banner-compact">
         <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
-        <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
+        <div className="patient-name-block"><div className="pname">{nombreMostrado}</div></div>
         <div className="patient-meta">
-          <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
+          <div className="pm-item"><span className="lbl">CC</span> <b>{documentoMostrado}</b></div>
           <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
           <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
           <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
@@ -103,9 +144,9 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
     return (
       <div className="patient-banner patient-banner-compact">
         <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
-        <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
+        <div className="patient-name-block"><div className="pname">{nombreMostrado}</div></div>
         <div className="patient-meta">
-          <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
+          <div className="pm-item"><span className="lbl">CC</span> <b>{documentoMostrado}</b></div>
           <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
           <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
           <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
@@ -127,15 +168,39 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
   return (
     <div className="patient-banner">
       <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
-      <div className="patient-name-block"><div className="pname">{patient.nombre}</div></div>
+      {/* Nombre + documento agrupados en una columna (encargo explícito,
+          replicado desde CargosModal) en vez de nombre solo + CC como chip
+          suelto de patient-meta. */}
+      <div className="patient-name-block">
+        <div className="pname">{nombreMostrado}</div>
+        <div className="pdoc">CC {documentoMostrado}</div>
+      </div>
       <div className="patient-meta">
-        <div className="pm-item"><span className="lbl">CC</span> <b>{patient.documento}</b></div>
-        <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
-        <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
-        <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
+        {patient.sexo && <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>}
+        {/* FECHA NAC. (encargo explícito, homologado con CargosModal) — si la
+            pantalla no tiene fecha de nacimiento real, sigue mostrando EDAD
+            (dato que sí existe hoy en los 3 mocks) en vez de perderlo. */}
+        {patient.fechaNacimiento ? (
+          <div className="pm-item"><span className="lbl">FECHA NAC.</span> <b>{patient.fechaNacimiento}</b></div>
+        ) : patient.edad && (
+          <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
+        )}
+        {patient.eps && <div className="pm-item"><span className="lbl">ASEGURADOR</span> <b>{patient.eps}</b></div>}
         <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
       </div>
       <div className="patient-banner-right">
+        {/* No navega (encargo explícito, replicado desde CargosModal):
+            enmascara/revela nombre y documento (dataHidden, ver maskText),
+            mismo patrón que el toggle de un campo de contraseña. */}
+        <button
+          type="button"
+          className="pb-icon-btn"
+          onClick={() => setDataHidden((v) => !v)}
+          aria-pressed={dataHidden}
+          aria-label={dataHidden ? 'Mostrar datos sensibles' : 'Ocultar datos sensibles'}
+        >
+          {dataHidden ? <LuEyeOff className="icon" aria-hidden="true" /> : <LuEye className="icon" aria-hidden="true" />}
+        </button>
         {patient.allergies && patient.allergies.length > 0 && (
           <div className="pb-popover-wrap" ref={allergyRef}>
             <button
@@ -161,16 +226,15 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
             )}
           </div>
         )}
-        {statusBadge && (
-          <Badge tone={statusBadge.tone} dot>{statusBadge.label}</Badge>
-        )}
         {onClose && (
           <button type="button" className="close-x" onClick={onClose} aria-label="Quitar paciente" title="Quitar paciente">
             <LuX className="icon" />
           </button>
         )}
       </div>
-      {((secondRow && secondRow.length > 0) || leadingSelect || secondRowButton) && (
+      {((secondRow && secondRow.length > 0) || leadingSelect || secondRowButton || statusBadge
+        || patient.numeroAdmision || patient.fechaIngreso || patient.cama || patient.idAfiliado
+        || patient.regimen || patient.numeroContrato || patient.idContrato) && (
         <div className="admission-row">
           {leadingSelect && (
             <div className="pb-select-wrap">
@@ -187,11 +251,40 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
               </select>
             </div>
           )}
+          {/* Set fijo de campos de admisión (encargo explícito, homologado
+              con CargosModal) — cada uno opcional, se omite si la pantalla
+              no lo pasa en `patient`. */}
+          {patient.numeroAdmision && (
+            <div className="ar-item"><span className="lbl">N° Admisión</span> <b>{patient.numeroAdmision}</b></div>
+          )}
+          {patient.fechaIngreso && (
+            <div className="ar-item"><span className="lbl">Fecha de ingreso</span> <b>{patient.fechaIngreso}</b></div>
+          )}
+          {patient.cama && (
+            <div className="ar-item"><span className="lbl">Cama</span> <b>{patient.cama}</b></div>
+          )}
+          {patient.idAfiliado && (
+            <div className="ar-item"><span className="lbl">Id. Afiliado</span> <b>{dataHidden ? maskText(patient.idAfiliado) : patient.idAfiliado}</b></div>
+          )}
+          {patient.regimen && (
+            <div className="ar-item"><span className="lbl">Régimen</span> <b>{patient.regimen}</b></div>
+          )}
+          {patient.numeroContrato && (
+            <div className="ar-item"><span className="lbl">N° Contrato</span> <b>{patient.numeroContrato}</b></div>
+          )}
+          {patient.idContrato && (
+            <div className="ar-item"><span className="lbl">ID Contrato</span> <b>{patient.idContrato}</b></div>
+          )}
           {secondRow?.map((item) => (
             <div className="ar-item" key={item.label}>
               <span className="lbl">{item.label}</span> <b>{item.value}</b>
             </div>
           ))}
+          {/* Encargo explícito (replicado desde CargosModal): el badge de
+              estado vive en la fila de admisión, no en patient-banner-right. */}
+          {statusBadge && (
+            <Badge tone={statusBadge.tone} dot>{statusBadge.label}</Badge>
+          )}
           {secondRowButton && (
             <button type="button" className="pb-row-btn" onClick={secondRowButton.onClick}>
               {secondRowButton.icon && <secondRowButton.icon className="icon" aria-hidden="true" />}
