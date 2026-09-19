@@ -16,6 +16,12 @@
 // Programar Cita, para que se sientan la misma base de datos en todo el
 // producto (ver NC_ESPECIALIDADES/NC_MEDICOS/NC_SLOTS más abajo).
 import { SPECIALTIES, DOCTORS } from '@/hooks/ProgramarCita/agendaMockData';
+// Buscador de pacientes (.ps-overlay, "Buscar afiliado") -- encargo
+// explícito: enlazar el mismo dataset de 46 pacientes que ya usa Lista de
+// Pacientes (src/app/lista-pacientes) en vez de la lista propia de 7 mocks
+// que tenía este módulo antes, para que ambas pantallas se sientan la misma
+// base de datos (mismo criterio que reusar SPECIALTIES/DOCTORS de arriba).
+import { PATIENTS as LISTA_PACIENTES, calcularEdad } from '@/hooks/ListaPacientes/mockPatientsData';
 
 export function initNuevaCita({
   getPatient = () => null, setPatient = () => {}, onAppointmentConfirmed,
@@ -42,16 +48,28 @@ export function initNuevaCita({
   onServiciosStepChange,
 } = {}) {
 
-  const PATIENTS = [
-    { iniciales:'LS', nombre:'Laura Sofía Martínez Gómez',   edad:34, sexo:'Femenino',  ciudad:'Bogotá D.C.',    documento:'1.032.847.291', telefono:'310 842 9173', eps:'Sura',       estado:'activo',     citasFuturas:2 },
-    { iniciales:'AF', nombre:'Andrés Felipe Herrera Rincón', edad:47, sexo:'Masculino', ciudad:'Medellín',       documento:'79.834.125',    telefono:'300 555 1234', eps:'Nueva EPS',  estado:'activo',     citasFuturas:0 },
-    { iniciales:'MI', nombre:'María Isabel Correa Patiño',   edad:58, sexo:'Femenino',  ciudad:'Cali',           documento:'43.729.381',    telefono:'301 555 2345', eps:'Compensar',  estado:'activo',     citasFuturas:1 },
-    { iniciales:'JL', nombre:'Jorge Luis Pedraza Mora',      edad:65, sexo:'Masculino', ciudad:'Barranquilla',   documento:'17.284.930',    telefono:'302 555 3456', eps:'Salud Total',estado:'inactivo',  citasFuturas:0 },
-    { iniciales:'VO', nombre:'Valentina Ospina Castaño',     edad:26, sexo:'Femenino',  ciudad:'Bucaramanga',    documento:'1.130.648.702', telefono:'303 555 4567', eps:'Colsanitas', estado:'activo',     citasFuturas:3 },
-    { iniciales:'CE', nombre:'Carlos Eduardo Ramírez Torres',edad:52, sexo:'Masculino', ciudad:'Bogotá D.C.',    documento:'80.124.478',    telefono:'304 555 5678', eps:'Famisanar',  estado:'suspendido',citasFuturas:0 },
-    { iniciales:'SM', nombre:'Sandra Milena Vargas Díaz',    edad:41, sexo:'Femenino',  ciudad:'Pereira',        documento:'52.483.917',    telefono:'305 555 6789', eps:'Coomeva',    estado:'activo',     citasFuturas:1 },
-  ];
-  const PATIENT_ESTADO_LABEL = { activo:'Activo', inactivo:'Inactivo', suspendido:'Suspendido' };
+  // Mapeo de forma (LISTA_PACIENTES -> shape que espera renderPatientTable
+  // más abajo): `edad` no viene precalculada en el dataset fuente (se
+  // deriva de `fechaNacimiento` con calcularEdad, misma función que usa
+  // Lista de Pacientes) y `telefono` es solo un alias de `celular`. El
+  // dataset fuente modela 2 estados (activo/inactivo) -- Suspendido/Datos
+  // incompletos (ver PATIENT_ESTADO_LABEL abajo) no tienen equivalente ahí
+  // todavía, así que ningún paciente enlazado cae en esos 2 por ahora.
+  const PATIENTS = LISTA_PACIENTES.map((p) => ({
+    iniciales: p.iniciales,
+    nombre: p.nombre,
+    edad: calcularEdad(p.fechaNacimiento),
+    sexo: p.sexo,
+    ciudad: p.ciudad,
+    documento: p.documento,
+    telefono: p.celular,
+    eps: p.eps,
+    estado: p.estado,
+    citasFuturas: p.citasFuturas,
+  }));
+  const PATIENT_ESTADO_LABEL = {
+    activo:'Activo', inactivo:'Inactivo', suspendido:'Suspendido', 'datos-incompletos':'Datos incompletos',
+  };
   // Nombre legal completo de la aseguradora para la columna "Aseguradora" de
   // la Lista de Pacientes — p.eps sigue siendo el nombre corto (usado tal
   // cual en el resto del flujo: badge de la agenda de AsignacionCitas,
@@ -81,6 +99,15 @@ export function initNuevaCita({
   });
 
   let psSelectedIdx = null;
+  // Paginación real del buscador (encargo explícito: "muéstrame solo los
+  // primeros 6 y los demás paginados") — antes mostraba la lista filtrada
+  // completa de una sola vez y el paginador de abajo era solo decorativo
+  // (Anterior/Siguiente siempre deshabilitados, ver comentario viejo de
+  // updatePsPaginationLabel). `psCurrentList` guarda el resultado del último
+  // filtro (simple o avanzado) para poder re-paginar sin re-filtrar.
+  const PS_PAGE_SIZE = 6;
+  let psCurrentList = [];
+  let psPage = 1;
   // true mientras el panel de búsqueda avanzada (4 campos de nombre) está
   // abierto en vez del campo único de documento -- ver
   // togglePsAdvancedSearch() más abajo. Se resetea a false cada vez que se
@@ -114,7 +141,7 @@ export function initNuevaCita({
       if(!qDigits) return true;
       return p.documento.replace(/\D/g,'').includes(qDigits);
     });
-    renderPatientTable(list);
+    setPsFilteredList(list);
   }
 
   // NFD descompone "í" en "i" + tilde combinante (rango U+0300-U+036F, todos
@@ -160,7 +187,7 @@ export function initNuevaCita({
       const matchApellido2 = !apellido2 || normalizarTexto(partes.apellido2).includes(apellido2);
       return matchNombre1 && matchNombre2 && matchApellido1 && matchApellido2;
     });
-    renderPatientTable(list);
+    setPsFilteredList(list);
   }
 
   const PS_ADV_FIELD_IDS = ['ps-adv-nombre1', 'ps-adv-nombre2', 'ps-adv-apellido1', 'ps-adv-apellido2'];
@@ -215,9 +242,45 @@ export function initNuevaCita({
     });
   }
 
+  // Guarda el resultado del filtro (simple o avanzado) y siempre vuelve a la
+  // página 1 -- un filtro nuevo invalida cualquier página en la que
+  // estuviera parado (ej. filtrar en página 3 y quedar en una página vacía).
+  function setPsFilteredList(list){
+    psCurrentList = list;
+    psPage = 1;
+    renderPsCurrentPage();
+  }
+
+  // Slice de `psCurrentList` según `psPage`/`PS_PAGE_SIZE` -- separado de
+  // filterPatients/filterPatientsAdvanced para que psPrevPage/psNextPage
+  // puedan re-renderizar solo la página sin volver a filtrar.
+  function renderPsCurrentPage(){
+    const total = psCurrentList.length;
+    const totalPages = Math.max(1, Math.ceil(total / PS_PAGE_SIZE));
+    if(psPage > totalPages) psPage = totalPages;
+    if(psPage < 1) psPage = 1;
+    const start = (psPage - 1) * PS_PAGE_SIZE;
+    const pageItems = psCurrentList.slice(start, start + PS_PAGE_SIZE);
+    renderPatientTable(pageItems);
+    updatePsPaginationLabel(total ? start + 1 : 0, Math.min(start + PS_PAGE_SIZE, total), total);
+    updatePsPageControls(psPage, totalPages);
+  }
+
+  function psPrevPage(){
+    if(psPage <= 1) return;
+    psPage--;
+    renderPsCurrentPage();
+  }
+
+  function psNextPage(){
+    const totalPages = Math.max(1, Math.ceil(psCurrentList.length / PS_PAGE_SIZE));
+    if(psPage >= totalPages) return;
+    psPage++;
+    renderPsCurrentPage();
+  }
+
   function renderPatientTable(list){
     const tbody = document.getElementById('ps-tbody');
-    updatePsPaginationLabel(list.length);
     if(!list.length){
       tbody.innerHTML = `<tr class="row-disabled"><td colspan="7" style="text-align:center;color:var(--ink-500);padding:24px;">No se encontraron pacientes</td></tr>`;
       return;
@@ -225,14 +288,15 @@ export function initNuevaCita({
     tbody.innerHTML = list.map(p=>{
       const idx = PATIENTS.indexOf(p);
       const selected = psSelectedIdx === idx;
-      // Un paciente Inactivo/Suspendido no puede agendarse (prevención de
-      // error, no solo informativo): antes la fila era clicable igual que
-      // una Activa, y el wizard completo se dejaba recorrer sin ninguna
-      // advertencia hasta el final, con el riesgo real de una cita agendada
-      // sobre una cobertura suspendida (auditoría heurística #5). Mismo
-      // patrón `row-disabled` sin onclick/ondblclick que ya usan las
-      // especialidades sin médicos disponibles (ver ncContentEspecialidad).
-      const disabled = p.estado !== 'activo';
+      // Solo un paciente Suspendido no puede agendarse (prevención de error,
+      // no solo informativo): el riesgo real es agendar sobre una cobertura
+      // suspendida (auditoría heurística #5). Inactivo y Datos incompletos
+      // (encargo explícito) sí quedan seleccionables — a diferencia de
+      // Suspendido, no bloquean el agendamiento, solo informan la condición
+      // del registro. Mismo patrón `row-disabled` sin onclick/ondblclick que
+      // ya usan las especialidades sin médicos disponibles (ver
+      // ncContentEspecialidad).
+      const disabled = p.estado === 'suspendido';
       const disabledTitle = disabled ? ` title="No se puede agendar: paciente ${PATIENT_ESTADO_LABEL[p.estado].toLowerCase()}. Reactiva el registro desde “Editar” para continuar."` : '';
       const aseguradora = PS_ASEGURADORA_LABEL[p.eps] || p.eps;
       return `<tr class="${selected?'selected':''} ${disabled?'row-disabled':''}" ${disabled?'':`tabindex="0" onclick="setPsSelected(${idx},this)" ondblclick="setPsSelected(${idx},this); confirmPatientSelection();"`}${disabledTitle}>
@@ -251,17 +315,28 @@ export function initNuevaCita({
     }).join('');
   }
 
-  // El paginador de la Lista de Pacientes es de demostración (7 pacientes
-  // mock, siempre entran en una sola página, ver Anterior/Siguiente
-  // deshabilitados en NuevaCitaFlow.jsx) — mismo criterio que VacPagination.
-  // Solo el conteo "Mostrando X de Y pacientes" se actualiza en vivo con el
-  // resultado filtrado de filterPatients().
-  function updatePsPaginationLabel(count){
+  // "Mostrando X–Y de Z pacientes" -- X/Y son el rango de la página actual
+  // dentro del total filtrado (Z), no el tamaño de página en sí.
+  function updatePsPaginationLabel(start, end, total){
     const label = document.getElementById('ps-pagination-label');
     if(!label) return;
-    label.innerHTML = count
-      ? `Mostrando <b>1–${count}</b> de <b>${count}</b> pacientes`
+    label.innerHTML = total
+      ? `Mostrando <b>${start}–${end}</b> de <b>${total}</b> pacientes`
       : `Mostrando <b>0</b> de <b>0</b> pacientes`;
+  }
+
+  // "Página X de Y" + habilitado de Anterior/Siguiente -- sin `disabled`
+  // como prop estática de React en los botones (ver el comentario de
+  // ps-accept-btn en NuevaCitaFlow.jsx, mismo motivo): estos botones también
+  // llevan onClick de React, así que su estado deshabilitado se controla acá
+  // por id, nunca desde el JSX.
+  function updatePsPageControls(page, totalPages){
+    const pageLabel = document.getElementById('ps-pagination-page');
+    if(pageLabel) pageLabel.textContent = `Página ${page} de ${totalPages}`;
+    const prevBtn = document.getElementById('ps-prev-btn');
+    const nextBtn = document.getElementById('ps-next-btn');
+    if(prevBtn) prevBtn.disabled = page <= 1;
+    if(nextBtn) nextBtn.disabled = page >= totalPages;
   }
 
   /* ---- Menú contextual de fila (Editar / Historial / Desactivar) ---- */
@@ -1559,7 +1634,7 @@ export function initNuevaCita({
   // que todo lo que el HTML generado necesita llamar vive en `window`.
   const exported = {
     openPatientSearch, closePatientSearch, filterPatients, filterPatientsAdvanced,
-    togglePsAdvancedSearch, setPsSelected,
+    togglePsAdvancedSearch, setPsSelected, psPrevPage, psNextPage,
     togglePsRowMenu, psAccionEditar, psAccionHistorial, psAccionDesactivar,
     confirmPatientSelection,
     ncOpen, ncClose, ncCancelDiscard, ncConfirmDiscard, ncBack, ncGoTo, ncSelectRegimen, ncSelectEspecialidad,

@@ -48,7 +48,7 @@ html[data-theme="dark"] .density-step-btn:hover{background:#20283a;}
   width:44px;min-width:44px;max-width:44px;text-align:center;
   border-right:1px solid var(--border);
 }
-.check-col-head{background:#f7f8fb;border-bottom:1px solid var(--border);z-index:calc(var(--z-sticky) + 5);}
+.check-col-head{background:var(--table-header-bg);border-bottom:1px solid var(--border);z-index:calc(var(--z-sticky) + 5);}
 .check-col-cell{border-bottom:1px solid #eef0f4;vertical-align:middle;}
 input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
   width:16px;height:16px;accent-color:var(--primary);cursor:pointer;vertical-align:middle;
@@ -59,17 +59,19 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
   width:300px;min-width:300px;max-width:300px;
   border-right:1px solid var(--border);
 }
+/* background homologado a --table-header-bg (auditoría de headers) — antes
+   un hex hardcodeado (#f7f8fb) distinto del token que usa el resto de
+   headers de tabla del proyecto. */
 .hour-head{
   width:var(--hour-col-width, 52px);min-width:var(--hour-col-width, 52px);text-align:center;
-  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:10px 0;border-bottom:1px solid var(--border);
-  background:#f7f8fb;white-space:nowrap;
+  background:var(--table-header-bg);white-space:nowrap;
 }
 .med-col-head{
-  text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;
+  text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:10px 20px;border-bottom:1px solid var(--border);
-  background:#f7f8fb;z-index:calc(var(--z-sticky) + 4);
+  background:var(--table-header-bg);z-index:calc(var(--z-sticky) + 4);
 }
 .timeline-table thead th{position:sticky;top:0;z-index:calc(var(--z-sticky) + 1);}
 .timeline-table thead .med-col-head{z-index:calc(var(--z-sticky) + 4);}

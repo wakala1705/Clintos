@@ -26,8 +26,8 @@
 }
 .bp-table-wrap table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .bp-table-wrap thead th{
-  position:sticky;top:0;text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.02em;padding:10px 14px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  position:sticky;top:0;text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding:10px 14px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
 }
 .bp-table-wrap tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink-900);}
 .bp-table-wrap tbody tr{cursor:pointer;transition:background .1s;}

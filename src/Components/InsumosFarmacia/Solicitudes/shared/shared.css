@@ -11,10 +11,13 @@
 }
 
 .mig-grid{border-collapse:collapse;width:100%;font-size:var(--fs-sm);white-space:nowrap;}
+/* font-weight homologado a --fw-semibold (auditoría de headers) — era
+   --fw-bold, el único de la app con un label de header más negrita que el
+   resto (fw-semibold es el peso estándar de thead th en todo el proyecto). */
 .mig-grid thead th{
   text-align:left;padding:8px 12px;background:var(--table-header-bg);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  border-bottom:1px solid var(--border);
   position:sticky;top:0;
 }
 /* `.mig-grid thead th` (arriba) le gana a `.mig-num` en un <th> por

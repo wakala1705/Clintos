@@ -91,8 +91,8 @@
 }
 .vac-matrix{border-collapse:separate;border-spacing:0;min-width:940px;width:100%;font-size:var(--fs-sm);}
 .vac-matrix thead th{
-  background:var(--table-header-bg);color:var(--ink-500);
-  font-weight:var(--fw-semibold);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;
+  background:var(--table-header-bg);color:var(--ink-700);
+  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
   padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 .vac-matrix-corner{position:sticky;left:0;z-index:1;text-align:left;}

@@ -40,8 +40,7 @@
 .pas-area-table thead th{
   position:sticky;top:0;z-index:1;
   text-align:left;background:var(--table-header-bg);
-  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:10px 14px;border-bottom:1px solid var(--border);
 }
 .pas-area-table tbody tr{cursor:pointer;transition:background .1s;}

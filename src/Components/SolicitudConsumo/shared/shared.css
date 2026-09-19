@@ -50,7 +50,7 @@ html[data-theme="dark"] .btn-danger-outline:hover{background:#2a1620;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 thead th{
   position:sticky;top:0;z-index:1;background:var(--table-header-bg);text-align:left;
-  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:8px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 thead th.center{text-align:center;}

@@ -22,10 +22,14 @@
    .mig-confirmar-table-wrap, así que el thead puede pegarse arriba sin
    solaparse con ninguna otra. */
 .mig-confirmar-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);white-space:nowrap;}
+/* Homologado a la receta de thead th del resto del proyecto (auditoría de
+   headers) — usaba --fw-bold (único de la app) y var(--gray-bg) en vez del
+   token --table-header-bg que usa el resto de tablas de la feature
+   (.mig-grid, ver ../../shared/shared.css). */
 .mig-confirmar-table thead th{
-  position:sticky;top:0;background:var(--gray-bg);
-  text-align:left;padding:10px 12px;color:var(--ink-500);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.03em;
+  position:sticky;top:0;background:var(--table-header-bg);
+  text-align:left;padding:10px 12px;color:var(--ink-700);
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);
   border-bottom:1px solid var(--border);
 }
 .mig-confirmar-table th.mig-num{text-align:right;}

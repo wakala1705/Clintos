@@ -36,9 +36,13 @@
 .catalog-chip.active .c-count{background:rgba(0,101,205,.14);}
 .catalog-table-wrap{flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);}
 .catalog-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+/* Homologado a la receta de thead th del resto del proyecto (auditoría de
+   headers) — usaba --fw-bold (único de la app) y un hex hardcodeado en vez
+   de --table-header-bg (por eso necesitaba su propio override de dark mode
+   más abajo; --table-header-bg ya resuelve solo vía --bg). */
 .catalog-table thead th{
-  position:sticky;top:0;background:#f7f8fb;color:var(--ink-500);font-size:var(--fs-xs);
-  font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:.03em;
+  position:sticky;top:0;background:var(--table-header-bg);color:var(--ink-700);font-size:var(--fs-sm);
+  font-weight:var(--fw-semibold);
   padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;
 }
 .catalog-table thead th.center{text-align:center;}
@@ -105,6 +109,7 @@
   padding:var(--space-3) var(--space-4);border-top:1px solid var(--border);flex-shrink:0;
   font-size:var(--fs-sm);color:var(--ink-700);display:flex;flex-direction:column;gap:2px;
 }
-html[data-theme="dark"] .catalog-table thead th,
+/* .catalog-table thead th ya no necesita override acá — su fondo pasó a
+   var(--table-header-bg) (ver arriba), que resuelve solo vía --bg. */
 html[data-theme="dark"] .catalog-side{background:#161c2b;}
 html[data-theme="dark"] .catalog-table tbody tr:hover{background:#1a2130;}

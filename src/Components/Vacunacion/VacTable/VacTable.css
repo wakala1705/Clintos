@@ -2,13 +2,12 @@
 .vac-table{width:100%;border-collapse:collapse;}
 .vac-table thead th{
   position:sticky;top:0;z-index:1;background:var(--table-header-bg);
-  text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;
+  text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:0;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 .vac-th-sort-btn{
   display:inline-flex;align-items:center;gap:4px;width:100%;
-  font-family:inherit;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:inherit;text-transform:inherit;letter-spacing:inherit;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:inherit;
   background:none;border:none;cursor:pointer;padding:12px 16px;
 }
 .vac-th-sort-btn:hover{color:var(--ink-900);}

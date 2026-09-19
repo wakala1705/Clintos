@@ -65,7 +65,16 @@ const GENERO_ICONO = { femenino: Venus, masculino: Mars };
 // reserva/motivo/inicio de limpieza) es la única parte que cambia según
 // `cama.estado`, el resto de la tarjeta (header, ubicación, tipo, menú) es
 // el mismo esqueleto para los 6 estados.
-function ContenidoPorEstado({ cama, etaTimestamp, now }) {
+//
+// Restyle "footer de 2 columnas" (encargo explícito, referencia visual
+// aportada): la línea principal (nombre de paciente / texto de situación /
+// "reservada para") sigue siendo lo primero que se lee, igual que antes;
+// la metadata secundaria (última limpieza, edad·estancia, motivo, tipo) se
+// separó a un footer con divisor propio (ver `entradasFooter` +
+// `.cb-card-footer` en BedCard.css) en vez de apilarse como líneas sueltas
+// — mismos datos de siempre, sin inventar campos nuevos ni quitar
+// información.
+function ContenidoPrincipal({ cama, etaTimestamp, now }) {
   if (cama.estado === 'ocupada' && cama.paciente) {
     // Indicador de población (encargo explícito) — naranja/LuBaby pediátrico
     // (edad < 18, prioridad sobre `genero`). Femenino/masculino ya no llevan
@@ -83,97 +92,82 @@ function ContenidoPorEstado({ cama, etaTimestamp, now }) {
     // renderiza nada (= "neutral", nunca un ícono inventado).
     const IconoGenero = GENERO_ICONO[cama.paciente.genero];
     return (
-      <>
-        <div className="cb-card-paciente">
-          {!ocultarIcono && (
-            <IconoPaciente
-              className={`icon${categoria ? ` cb-card-paciente-icon-${categoria}` : ''}`}
-              aria-hidden="true"
-            />
-          )}
-          <div>
-            <div className="cb-card-paciente-nombre">
-              {cama.paciente.nombre}
-              {IconoGenero && (
-                <IconoGenero className="icon cb-card-gender-icon" role="img" aria-label={cama.paciente.genero} />
-              )}
-            </div>
+      <div className="cb-card-paciente">
+        {!ocultarIcono && (
+          <IconoPaciente
+            className={`icon${categoria ? ` cb-card-paciente-icon-${categoria}` : ''}`}
+            aria-hidden="true"
+          />
+        )}
+        <div>
+          <div className="cb-card-paciente-nombre">
+            {cama.paciente.nombre}
+            {IconoGenero && (
+              <IconoGenero className="icon cb-card-gender-icon" role="img" aria-label={cama.paciente.genero} />
+            )}
           </div>
         </div>
-        {/* Sin HC/ID acá (encargo explícito) — "Edad · días de estancia"
-            (encargo previo) ya reemplazó a la línea de Ingreso que mostraba
-            esta tarjeta antes; el HC queda solo en el detalle de la cama
-            (BedDetailModal, misma clase .cb-card-paciente-hc pero JSX
-            propio, ver bitácora — no se toca acá). */}
-        <InfoLine label="Edad · estancia" value={formatEdadEstancia(cama.paciente)} />
-      </>
+      </div>
     );
   }
   if (cama.estado === 'libre') {
-    return (
-      <>
-        {/* Texto de situación (encargo: "comunicar claramente la condición
-            operativa") — mismo rol que el nombre del paciente en Ocupada:
-            lo primero que se lee después del header. Reutilizable tal cual
-            para futuros sub-estados de Libre (Pendiente de limpieza, En
-            preparación, ver .cb-card-status-text en BedCard.css) sin romper
-            esta jerarquía. */}
-        <div className="cb-card-status-text">Disponible para asignación</div>
-        <InfoLine label="Última limpieza" value={cama.ultimaLimpieza ? `Hoy · ${cama.ultimaLimpieza}` : null} />
-      </>
-    );
+    // Texto de situación (encargo: "comunicar claramente la condición
+    // operativa") — mismo rol que el nombre del paciente en Ocupada: lo
+    // primero que se lee después del header.
+    return <div className="cb-card-status-text">Disponible para asignación</div>;
   }
   if (cama.estado === 'reservada' && cama.reserva) {
-    const ventana = formatVentanaReserva(cama.reserva.fechaInicio, cama.reserva.fechaVencimiento);
-    const valor = ventana ? `${cama.reserva.motivo} · ${ventana}` : cama.reserva.motivo;
-    return (
-      <>
-        {cama.reserva.paciente && <div className="cb-card-contexto">{cama.reserva.paciente}</div>}
-        <InfoLine label="Reservada para" value={valor} />
-        <InfoLine label="Última limpieza" value={cama.ultimaLimpieza ? `Hoy · ${cama.ultimaLimpieza}` : null} />
-      </>
-    );
+    return cama.reserva.paciente
+      ? <div className="cb-card-contexto">{cama.reserva.paciente}</div>
+      : <div className="cb-card-status-text">Reservada</div>;
   }
   if (cama.estado === 'limpieza') {
     const { label, valor } = infoLimpieza(cama, etaTimestamp, now);
-    return <InfoLine label={label} value={valor} />;
+    return <div className="cb-card-status-text">{label ? `${label}${valor ? ` · ${valor}` : ''}` : 'En proceso de limpieza'}</div>;
   }
-  if (cama.estado === 'mantenimiento') {
-    return (
-      <>
-        {/* Copy corto (encargo explícito: "No disponible" para estados sin
-            paciente) — mismo rol que .cb-card-status-text de Libre; a
-            Mantenimiento/Bloqueada les faltaba una 1ra línea legible antes
-            de la metadata (a diferencia de Reservada/Limpieza, que ya
-            tenían "para quién"/"en progreso" como encabezado natural). */}
-        <div className="cb-card-status-text">No disponible</div>
-        <InfoLine label="Mantenimiento" value={cama.mantenimientoTipo} />
-      </>
-    );
-  }
-  if (cama.estado === 'bloqueada') {
-    return (
-      <>
-        <div className="cb-card-status-text">No disponible</div>
-        <InfoLine label="Motivo" value={cama.motivo} />
-      </>
-    );
+  if (cama.estado === 'mantenimiento' || cama.estado === 'bloqueada') {
+    // Copy corto (encargo explícito: "No disponible" para estados sin
+    // paciente) — a Mantenimiento/Bloqueada les faltaba una 1ra línea
+    // legible antes de la metadata (a diferencia de Reservada/Limpieza, que
+    // ya tenían "para quién"/"en progreso" como encabezado natural).
+    return <div className="cb-card-status-text">No disponible</div>;
   }
   return null;
 }
 
-// Metadata secundaria del panel derecho (encargo explícito: "tipo de
-// habitación") — `cama.tipo` es el código crudo TIPO de CWEB.HABCAMA (01-11,
-// ver TIPOS en mockCamasData.js), sin traducción inventada, mismo formato
-// literal "Tipo NN" que ya usa BedDetailModal.jsx. Ausente en las camas del
-// mock de GestionEnfermeria (BedBoardModal reusa BedCard con un objeto cama
-// más simple) — InfoLine ya omite la fila cuando el valor es null.
-function BloqueContextual(props) {
+// Metadata secundaria (encargo explícito: "tipo de habitación" + el resto de
+// datos por estado) — `cama.tipo` es el código crudo TIPO de CWEB.HABCAMA
+// (01-11, ver TIPOS en mockCamasData.js), sin traducción inventada, mismo
+// formato literal "Tipo NN" que ya usa BedDetailModal.jsx. Ausente en las
+// camas del mock de GestionEnfermeria (BedBoardModal reusa BedCard con un
+// objeto cama más simple) — InfoLine ya omite la fila cuando el valor es
+// null, así que un array con entradas `null` no rompe el grid del footer.
+function entradasFooter(cama, etaTimestamp, now) {
+  const entradas = [];
+  if (cama.estado === 'ocupada' && cama.paciente) {
+    entradas.push({ label: 'Edad · estancia', value: formatEdadEstancia(cama.paciente) });
+  } else if (cama.estado === 'libre') {
+    entradas.push({ label: 'Última limpieza', value: cama.ultimaLimpieza ? `Hoy · ${cama.ultimaLimpieza}` : null });
+  } else if (cama.estado === 'reservada' && cama.reserva) {
+    const ventana = formatVentanaReserva(cama.reserva.fechaInicio, cama.reserva.fechaVencimiento);
+    entradas.push({ label: 'Reservada para', value: ventana ? `${cama.reserva.motivo} · ${ventana}` : cama.reserva.motivo });
+    entradas.push({ label: 'Última limpieza', value: cama.ultimaLimpieza ? `Hoy · ${cama.ultimaLimpieza}` : null });
+  } else if (cama.estado === 'mantenimiento') {
+    entradas.push({ label: 'Mantenimiento', value: cama.mantenimientoTipo });
+  } else if (cama.estado === 'bloqueada') {
+    entradas.push({ label: 'Motivo', value: cama.motivo });
+  }
+  entradas.push({ label: 'Tipo', value: cama.tipo ? `Tipo ${cama.tipo}` : null });
+  return entradas;
+}
+
+function CardFooter({ cama, etaTimestamp, now }) {
+  const entradas = entradasFooter(cama, etaTimestamp, now).filter((e) => e.value);
+  if (entradas.length === 0) return null;
   return (
-    <>
-      <ContenidoPorEstado {...props} />
-      <InfoLine label="Tipo" value={props.cama.tipo ? `Tipo ${props.cama.tipo}` : null} />
-    </>
+    <div className="cb-card-footer">
+      {entradas.map((e) => <InfoLine key={e.label} label={e.label} value={e.value} />)}
+    </div>
   );
 }
 
@@ -233,7 +227,8 @@ export default function BedCard({
 
       <div className="cb-card-body">
         <span className="cb-card-estado-label">{ESTADO_LABEL_CARD[cama.estado]}</span>
-        <BloqueContextual cama={cama} etaTimestamp={etaTimestamp} now={now} />
+        <ContenidoPrincipal cama={cama} etaTimestamp={etaTimestamp} now={now} />
+        <CardFooter cama={cama} etaTimestamp={etaTimestamp} now={now} />
       </div>
     </div>
   );

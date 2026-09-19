@@ -81,7 +81,7 @@ html[data-theme="dark"][data-contrast="high"]{
 
 html,body{margin:0;padding:0;}
 body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  font-family:var(--font-inter),system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
   background:var(--bg);
 }
 html[data-theme="dark"] body{background:var(--bg);}
@@ -229,9 +229,17 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    FacturaDetalleClasico, FacturaVistaClasica) — ver AGENTS.md "Component
    organization". */
 .fvc-grid{border-collapse:collapse;width:100%;font-size:var(--fs-sm);white-space:nowrap;}
+/* Tipografía del label homologada al resto de `thead th` del proyecto
+   (color/mayúsculas/tamaño/letter-spacing, ver GestionEnfermeria/shared/
+   shared.css) — antes tenía texto en Título (no mayúsculas) y más grande/
+   oscuro que cualquier otra tabla de la app (auditoría de homologación de
+   headers). El `border-right`/padding denso sí se conservan: son del look
+   "grilla clásica" deliberado de esta vista (ver comentario de la clase
+   arriba), no parte del label en sí. */
 .fvc-grid thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
   background:var(--table-header-bg);color:var(--ink-700);font-weight:var(--fw-semibold);
+  font-size:var(--fs-sm);
   text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
 }
 .fvc-grid tbody td{

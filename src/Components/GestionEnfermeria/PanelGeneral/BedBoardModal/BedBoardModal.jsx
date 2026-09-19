@@ -35,7 +35,7 @@ const SECTOR_LABEL = Object.fromEntries(
 // reusar BedTable de Gestión de Camas tal cual: esa tabla tiene columnas
 // Sede/Área/Piso/Sector/Tipo que este mock más simple (CAMAS_PISO) no
 // modela, así que reusar BedTable dejaría 5 columnas en blanco. Mismo
-// patrón que BloqueContextual en BedCard.jsx: sub-componente local no
+// patrón que ContenidoPrincipal en BedCard.jsx: sub-componente local no
 // exportado, solo para este archivo.
 function BedListView({ camas, onAction }) {
   return (

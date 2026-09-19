@@ -1,34 +1,55 @@
-/* Referencia de estilo (encargo: rediseño "tenue") — sin panel sólido: toda
-   la tarjeta lleva el tinte suave del hue como fondo único (mismos tokens
-   --clinical-status-*-bg/-fg que antes pintaban el panel derecho). El color
-   (hue) NO es 1:1 con `cama.estado`: para Ocupada depende de la población
-   del paciente — ver `cardHue`, hooks/GestionCamas/bedContextFormat.js. Por
-   eso las reglas de color de acá están en `.cb-card-hue-<hue>`, no en
-   `.cb-card-<estado>` (esa clase sigue en el JSX solo como hook semántico,
-   sin estilos propios). */
+/* Referencia de estilo (encargo: rediseño "tenue", restyle posterior con
+   referencia visual aportada) — sin panel sólido: toda la tarjeta lleva el
+   tinte suave del hue como fondo único (mismos tokens
+   --clinical-status-*-bg/-fg que antes pintaban el panel derecho), y ahora
+   también un borde tintado al mismo hue (antes era `var(--border)` neutro
+   para los 6 estados) para que la tarjeta se lea de un vistazo sin depender
+   solo del fondo. El color (hue) NO es 1:1 con `cama.estado`: para Ocupada
+   depende de la población del paciente — ver `cardHue`,
+   hooks/GestionCamas/bedContextFormat.js. Por eso las reglas de color de acá
+   están en `.cb-card-hue-<hue>`, no en `.cb-card-<estado>` (esa clase sigue
+   en el JSX solo como hook semántico, sin estilos propios). */
 .cb-card{
   display:flex;flex-direction:column;gap:6px;min-width:0;
   border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:12px 14px;
-  transition:box-shadow .15s ease,border-color .15s ease,transform .15s ease;
+  transition:box-shadow .15s ease,transform .15s ease;
 }
 /* Hover discreto (encargo: "elevar ligeramente", "reforzar que es
-   interactiva sin generar ruido") — solo sombra+borde, sin crecer ni sumar
-   contenido nuevo. */
+   interactiva sin generar ruido") — solo sombra, sin tocar el borde
+   (ahora es la seña de color del hue, no algo que deba virar a primary en
+   hover) ni sumar contenido nuevo. */
 .cb-card:hover, .cb-card:focus-within{
-  border-color:var(--primary-100);box-shadow:0 4px 14px rgba(16,24,39,.10);transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(16,24,39,.10);transform:translateY(-1px);
 }
 
 /* ---------- Fila superior: ícono de estado + número + menú ---------- */
 .cb-card-top{display:flex;align-items:center;gap:8px;}
 .cb-card-estado-icon{width:18px;height:18px;flex-shrink:0;}
+/* Número siempre en tinta neutra (referencia visual aportada) — a
+   diferencia del ícono/label, que sí toman el color del hue (ver
+   ".cb-card-hue-* .cb-card-numero" más abajo, removido de esa lista), el
+   número de cama funciona como identificador fijo y se lee igual sin
+   importar el estado. */
 .cb-card-numero{
   flex:1;min-width:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);
   line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--ink-900);
 }
 
 /* ---------- Cuerpo: label de estado + contexto ---------- */
-.cb-card-body{display:flex;flex-direction:column;gap:6px;}
+.cb-card-body{display:flex;flex-direction:column;gap:4px;}
+
+/* ---------- Footer de metadata (última limpieza/edad·estancia/motivo +
+   tipo) — referencia visual aportada: 2 columnas separadas del contenido
+   principal por un divisor propio, en vez de líneas sueltas apiladas.
+   `InfoLine` ya se salta las entradas sin valor (ver InfoLine.jsx), así que
+   una sola entrada visible simplemente ocupa la 1ra columna del grid. */
+.cb-card-footer{
+  display:grid;grid-template-columns:1fr 1fr;column-gap:10px;row-gap:4px;
+  margin-top:6px;padding-top:8px;border-top:1px solid var(--border);
+}
+.cb-card-footer .cb-card-info{margin:0;}
 
 /* Sin nowrap/ellipsis a propósito: la grilla de Mapa de camas fija 6
    columnas (~192px de card, ver .cb-grid en BedBoardModal.css, "encargo
@@ -58,65 +79,94 @@
    porque BedDetailModal reusa el mismo bloque "Estado actual" que esta
    tarjeta. */
 
-/* ---------- Color por clinical-status (tinte único, sin panel sólido) ----------
+/* ---------- Color por clinical-status (tinte + borde, sin panel sólido) ----------
    8 estados en 2 grupos (encargo explícito) — Ocupada se separa en 3 según
    población del paciente (`cardHue`, bedContextFormat.js resuelve cuál de
    los 3 aplica); los otros 5 estados llevan una clave fija 1:1. Todos leen
    los tokens --clinical-status-*-bg/-fg (GestionCamas.css/shared.css): -bg
-   pinta toda la tarjeta, -fg pinta ícono+número+label — ya están pensados
-   para pasar contraste entre sí (antes -fg ya se usaba sobre -bg para el
-   label del panel derecho), así que no hace falta una excepción de
-   contraste por hue como antes (Limpieza incluida). */
+   pinta toda la tarjeta, -fg pinta ícono+label+nombre de paciente — ya están
+   pensados para pasar contraste entre sí, así que no hace falta una
+   excepción de contraste por hue como antes (Limpieza incluida). El número
+   de cama (.cb-card-numero) queda deliberadamente fuera de esta lista
+   (referencia visual aportada) — es un identificador fijo, se lee en tinta
+   neutra (--ink-900) sin importar el estado. El borde usa `color-mix` sobre
+   el mismo -fg al 35% (mismo patrón `color-mix` ya usado en el resto del
+   proyecto, ver Badge/EstadoCamaBadge) en vez de un token nuevo — un tinte
+   de borde más marcado que el fondo, sin declarar una variable extra por
+   estado. */
 
 /* Grupo 1 — estados clínicos (cama↔paciente) */
-.cb-card-hue-occupied-male{background:var(--clinical-status-occupied-male-bg);}
+.cb-card-hue-occupied-male{
+  background:var(--clinical-status-occupied-male-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-occupied-male-fg) 35%, transparent);
+}
 .cb-card-hue-occupied-male .cb-card-estado-icon,
-.cb-card-hue-occupied-male .cb-card-numero,
-.cb-card-hue-occupied-male .cb-card-estado-label{color:var(--clinical-status-occupied-male-fg);}
+.cb-card-hue-occupied-male .cb-card-estado-label,
+.cb-card-hue-occupied-male .cb-card-paciente-nombre{color:var(--clinical-status-occupied-male-fg);}
 
-.cb-card-hue-occupied-female{background:var(--clinical-status-occupied-female-bg);}
+.cb-card-hue-occupied-female{
+  background:var(--clinical-status-occupied-female-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-occupied-female-fg) 35%, transparent);
+}
 .cb-card-hue-occupied-female .cb-card-estado-icon,
-.cb-card-hue-occupied-female .cb-card-numero,
-.cb-card-hue-occupied-female .cb-card-estado-label{color:var(--clinical-status-occupied-female-fg);}
+.cb-card-hue-occupied-female .cb-card-estado-label,
+.cb-card-hue-occupied-female .cb-card-paciente-nombre{color:var(--clinical-status-occupied-female-fg);}
 
-.cb-card-hue-occupied-pediatric{background:var(--clinical-status-occupied-pediatric-bg);}
+.cb-card-hue-occupied-pediatric{
+  background:var(--clinical-status-occupied-pediatric-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-occupied-pediatric-fg) 35%, transparent);
+}
 .cb-card-hue-occupied-pediatric .cb-card-estado-icon,
-.cb-card-hue-occupied-pediatric .cb-card-numero,
-.cb-card-hue-occupied-pediatric .cb-card-estado-label{color:var(--clinical-status-occupied-pediatric-fg);}
+.cb-card-hue-occupied-pediatric .cb-card-estado-label,
+.cb-card-hue-occupied-pediatric .cb-card-paciente-nombre{color:var(--clinical-status-occupied-pediatric-fg);}
 
-.cb-card-hue-available{background:var(--clinical-status-available-bg);}
+.cb-card-hue-available{
+  background:var(--clinical-status-available-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-available-fg) 35%, transparent);
+}
 .cb-card-hue-available .cb-card-estado-icon,
-.cb-card-hue-available .cb-card-numero,
 .cb-card-hue-available .cb-card-estado-label{color:var(--clinical-status-available-fg);}
 
-.cb-card-hue-reserved{background:var(--clinical-status-reserved-bg);}
+.cb-card-hue-reserved{
+  background:var(--clinical-status-reserved-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-reserved-fg) 35%, transparent);
+}
 .cb-card-hue-reserved .cb-card-estado-icon,
-.cb-card-hue-reserved .cb-card-numero,
-.cb-card-hue-reserved .cb-card-estado-label{color:var(--clinical-status-reserved-fg);}
+.cb-card-hue-reserved .cb-card-estado-label,
+.cb-card-hue-reserved .cb-card-contexto{color:var(--clinical-status-reserved-fg);}
 
 /* Grupo 2 — estados administrativos (cama como recurso físico, sin paciente) */
-.cb-card-hue-maintenance{background:var(--clinical-status-maintenance-bg);}
+.cb-card-hue-maintenance{
+  background:var(--clinical-status-maintenance-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-maintenance-fg) 35%, transparent);
+}
 .cb-card-hue-maintenance .cb-card-estado-icon,
-.cb-card-hue-maintenance .cb-card-numero,
 .cb-card-hue-maintenance .cb-card-estado-label{color:var(--clinical-status-maintenance-fg);}
 
-.cb-card-hue-out-of-service{background:var(--clinical-status-out-of-service-bg);}
+.cb-card-hue-out-of-service{
+  background:var(--clinical-status-out-of-service-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-out-of-service-fg) 35%, transparent);
+}
 .cb-card-hue-out-of-service .cb-card-estado-icon,
-.cb-card-hue-out-of-service .cb-card-numero,
 .cb-card-hue-out-of-service .cb-card-estado-label{color:var(--clinical-status-out-of-service-fg);}
 
-.cb-card-hue-cleaning{background:var(--clinical-status-cleaning-bg);}
+.cb-card-hue-cleaning{
+  background:var(--clinical-status-cleaning-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-cleaning-fg) 35%, transparent);
+}
 .cb-card-hue-cleaning .cb-card-estado-icon,
-.cb-card-hue-cleaning .cb-card-numero,
 .cb-card-hue-cleaning .cb-card-estado-label{color:var(--clinical-status-cleaning-fg);}
 
 /* Fallback "Ocupada sin datos de población" (sin género ni edad
    registrados) — no forma parte de la tabla de 8 estados del encargo, ver
    --clinical-status-unknown. */
-.cb-card-hue-unknown{background:var(--clinical-status-unknown-bg);}
+.cb-card-hue-unknown{
+  background:var(--clinical-status-unknown-bg);
+  border-color:color-mix(in srgb, var(--clinical-status-unknown-fg) 35%, transparent);
+}
 .cb-card-hue-unknown .cb-card-estado-icon,
-.cb-card-hue-unknown .cb-card-numero,
-.cb-card-hue-unknown .cb-card-estado-label{color:var(--clinical-status-unknown-fg);}
+.cb-card-hue-unknown .cb-card-estado-label,
+.cb-card-hue-unknown .cb-card-paciente-nombre{color:var(--clinical-status-unknown-fg);}
 
 /* Indicador de población pediátrica (encargo explícito) — el ÍCONO LuBaby se
    colorea con el mismo tono que el panel pediátrico, especificidad 0-3-0

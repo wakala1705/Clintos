@@ -27,7 +27,7 @@ import {
 // charts instalada, ver package.json) sobre un viewBox fijo 640×160 con
 // escala 0–100 (los 3 indicadores intercambiables son todos porcentajes,
 // mismo eje sin importar cuál esté activo). Componente local, solo lo usa
-// esta pantalla (mismo criterio que BloqueContextual en BedCard.jsx).
+// esta pantalla (mismo criterio que ContenidoPrincipal en BedCard.jsx).
 function TrendChart({ data, field, metaPct }) {
   const width = 640;
   const height = 160;

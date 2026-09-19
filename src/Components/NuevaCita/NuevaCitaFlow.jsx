@@ -62,7 +62,7 @@ export default function NuevaCitaFlow() {
         <div className="ps-modal">
           <div className="ps-header">
             <div className="ps-header-title">
-              Lista de Pacientes
+              Buscar afiliado
             </div>
             <button className="wizard-close" onClick={() => window.closePatientSearch()} aria-label="Cerrar" title="Cerrar">
               <LuX className="icon" />
@@ -109,7 +109,7 @@ export default function NuevaCitaFlow() {
               <div className="ps-table-scroll">
                 <table>
                   <thead><tr>
-                    <th style={{width:'130px'}}>Documento</th><th>Paciente</th><th style={{width:'90px'}}>Sexo</th><th style={{width:'210px'}}>Aseguradora</th><th style={{width:'110px'}}>Ciudad</th><th style={{width:'110px'}}>Estado</th><th style={{width:'44px'}}></th>
+                    <th style={{width:'130px'}}>Documento</th><th>Paciente</th><th style={{width:'100px'}}>Sexo</th><th style={{width:'320px'}}>Aseguradora</th><th style={{width:'110px'}}>Ciudad</th><th style={{width:'170px'}}>Estado</th><th style={{width:'44px'}}></th>
                   </tr></thead>
                   <tbody id="ps-tbody"></tbody>
                 </table>
@@ -126,18 +126,17 @@ export default function NuevaCitaFlow() {
               <span className="ps-pagination-label" id="ps-pagination-label">
                 Mostrando <b>0</b> de <b>0</b> pacientes
               </span>
+              {/* Sin `disabled` literal en los 2 botones a propósito (mismo
+                  motivo que #ps-accept-btn más abajo, ver ese comentario):
+                  psPrevPage/psNextPage (legacy-nueva-cita.js) mutan
+                  el.disabled directamente por id en cada cambio de página,
+                  fuera de React. */}
               <div className="ps-pagination-controls">
-                <button type="button" className="icon-btn-circle" aria-label="Página anterior" disabled>
+                <button type="button" id="ps-prev-btn" className="icon-btn-circle" aria-label="Página anterior" onClick={() => window.psPrevPage()}>
                   <LuChevronLeft className="icon" />
                 </button>
-                <span className="ps-pagination-page">Página 1 de 1</span>
-                <button
-                  type="button"
-                  className="icon-btn-circle"
-                  aria-label="Página siguiente"
-                  title="Vista de demostración: no hay más páginas cargadas"
-                  disabled
-                >
+                <span className="ps-pagination-page" id="ps-pagination-page">Página 1 de 1</span>
+                <button type="button" id="ps-next-btn" className="icon-btn-circle" aria-label="Página siguiente" onClick={() => window.psNextPage()}>
                   <LuChevronRight className="icon" />
                 </button>
               </div>

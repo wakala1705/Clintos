@@ -4,8 +4,7 @@
 .fp-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .fp-table-wrap table{width:100%;border-collapse:collapse;}
 .fp-table-wrap thead th{
-  text-align:left;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;
+  text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:10px 14px;border-bottom:1px solid var(--border);background:var(--table-header-bg);white-space:nowrap;
 }
 .fp-table-wrap tbody td{

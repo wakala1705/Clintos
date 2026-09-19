@@ -9,12 +9,15 @@
 
 .adm-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
 .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+/* Receta canónica de label de thead th (ver GestionEnfermeria/shared/
+   shared.css) — sin mayúsculas, fw-semibold, fs-sm, sin letter-spacing,
+   color ink-700. */
 .data-table thead th{
-  position:sticky;top:0;z-index:1;background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);letter-spacing:.03em;
-  padding:10px 8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
+  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;
 }
-.data-table td{padding:4px 8px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);white-space:nowrap;}
+.data-table td{padding:10px 10px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);white-space:nowrap;}
 .data-table tbody tr{cursor:pointer;}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:var(--bg);}

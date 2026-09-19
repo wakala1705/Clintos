@@ -26,8 +26,8 @@
    Después, mismo lenguaje que .data-table pero compacta dentro del modal. */
 .cbau-valores-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .cbau-valores-table th{
-  text-align:left;padding:6px 8px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border);
+  text-align:left;padding:6px 8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  border-bottom:1px solid var(--border);
 }
 .cbau-valores-table td{padding:8px;border-bottom:1px solid #eef0f4;color:var(--ink-900);}
 .cbau-valores-table tr:last-child td{border-bottom:none;}
