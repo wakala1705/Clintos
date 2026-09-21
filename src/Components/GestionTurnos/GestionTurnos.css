@@ -318,7 +318,7 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .data-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
   font-weight:var(--fw-semibold);font-size:var(--fs-sm);
-  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+  padding:10px 10px;text-align:left;border-bottom:1px solid var(--border);
 }
 .data-table td{padding:10px 10px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
 .data-table tbody tr:last-child td{border-bottom:none;}

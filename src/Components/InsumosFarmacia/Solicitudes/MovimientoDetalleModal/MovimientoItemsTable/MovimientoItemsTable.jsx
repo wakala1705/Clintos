@@ -10,6 +10,10 @@ const COLUMNS = [
   'Costo Total Unidad', 'Costo Total Desc.', 'Costo Total Neto',
   'IVA %', 'IVA Unitario', 'IVA Total',
 ];
+// Desde 'Cant. Solicitada' todas las columnas son numéricas: el <th> lleva
+// .mig-num igual que sus <td> para que el encabezado quede alineado a la
+// derecha con los valores (ver shared.css: .mig-grid thead th.mig-num).
+const NUM_FROM = COLUMNS.indexOf('Cant. Solicitada');
 
 // Tabla de artículos del movimiento seleccionado -- reusa el mismo esqueleto
 // .mig-grid/.mig-num que MovimientosGrid (ver Solicitudes/shared/shared.css)
@@ -34,7 +38,7 @@ export default function MovimientoItemsTable({ articulos }) {
     <div className="mig-items-scroll">
       <table className="mig-grid mig-items-grid">
         <thead>
-          <tr>{COLUMNS.map((c) => <th key={c}>{c}</th>)}</tr>
+          <tr>{COLUMNS.map((c, i) => <th key={c} className={i >= NUM_FROM ? 'mig-num' : undefined}>{c}</th>)}</tr>
         </thead>
         <tbody>
           {articulos.map((a) => (

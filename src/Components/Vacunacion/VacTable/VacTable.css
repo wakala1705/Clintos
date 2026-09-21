@@ -1,7 +1,7 @@
 .vac-table-wrap{flex:1;min-height:0;overflow:auto;}
 .vac-table{width:100%;border-collapse:collapse;}
 .vac-table thead th{
-  position:sticky;top:0;z-index:1;background:var(--table-header-bg);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);
   text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:0;border-bottom:1px solid var(--border);white-space:nowrap;
 }

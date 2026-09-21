@@ -38,7 +38,7 @@
 }
 .pas-area-table table{width:100%;border-collapse:collapse;}
 .pas-area-table thead th{
-  position:sticky;top:0;z-index:1;
+  position:sticky;top:0;z-index:var(--z-sticky);
   text-align:left;background:var(--table-header-bg);
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:10px 14px;border-bottom:1px solid var(--border);

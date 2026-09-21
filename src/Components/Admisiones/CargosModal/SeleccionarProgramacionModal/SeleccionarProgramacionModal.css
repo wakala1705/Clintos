@@ -1,0 +1,87 @@
+/* .adm-modal-overlay/.adm-modal/.adm-modal-body/.adm-modal-footer: scaffolding
+   compartido de Admisiones (ver ../../shared/shared.css) — acá solo el ancho
+   propio (vista de catálogo, más ancha que el formulario de
+   ProgramacionCirugiaModal) y las reglas exclusivas de este modal. Header:
+   @/Components/ModalHeader/ModalHeader, no se redefine acá. */
+.spm-modal{
+  width:100%;max-width:1200px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;
+  --spm-scroll-thumb:color-mix(in srgb,var(--ink-400) 45%,transparent);
+  --spm-scroll-thumb-hover:color-mix(in srgb,var(--ink-400) 75%,transparent);
+}
+.spm-body{flex:1;min-height:0;overflow:hidden;}
+
+/* ---------- Barra de búsqueda/filtro ---------- */
+.spm-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;flex-shrink:0;}
+.spm-control{display:flex;align-items:center;gap:8px;}
+.spm-label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);white-space:nowrap;}
+/* FormSelect ocupa el 100% de su contenedor (ver @/Components/FormSelect),
+   así que el ancho se fija acá. */
+.spm-buscar-select{width:200px;}
+.spm-estado-select{width:160px;}
+
+/* Barra de búsqueda: input + (X de limpiar) + botón de lupa integrado al
+   borde derecho. El padding-right del input reserva el lugar de los 2
+   botones (mismo patrón .field-with-search/.search-btn del resto de
+   Admisiones). */
+.spm-search{position:relative;flex:1;min-width:220px;}
+.spm-search input{
+  width:100%;height:var(--input-md);padding:0 68px 0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+}
+.spm-search input::placeholder{color:var(--ink-400);}
+.spm-search input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.spm-clear-btn{
+  position:absolute;top:50%;right:36px;transform:translateY(-50%);
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);background:transparent;color:var(--ink-500);cursor:pointer;
+}
+.spm-clear-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.spm-clear-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.spm-clear-btn .icon{width:15px;height:15px;}
+.spm-search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);background:transparent;color:var(--primary);cursor:pointer;
+}
+.spm-search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.spm-search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.spm-search-btn .icon{width:16px;height:16px;}
+
+/* ---------- Tabla ---------- */
+/* Tarjeta con borde propio: la tabla scrollea arriba y el footer con el
+   conteo queda fijo abajo. Alto mínimo para que el modal no se colapse con
+   pocos resultados (la referencia muestra 1 sola fila sobre un cuerpo alto). */
+.spm-table-card{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.spm-table-scroll{flex:1;min-height:340px;overflow:auto;}
+.spm-table-footer{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-top:1px solid var(--border);background:var(--bg);
+}
+.spm-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.spm-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);text-align:left;white-space:nowrap;
+  padding:10px 12px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  border-bottom:1px solid var(--border);
+}
+.spm-table td{padding:10px 12px;color:var(--ink-900);white-space:nowrap;border-bottom:1px solid var(--border);}
+.spm-table tbody tr:last-child td{border-bottom:none;}
+.spm-num-prog{font-weight:var(--fw-semibold);}
+.spm-table tbody tr:not(.spm-empty-row){cursor:pointer;}
+.spm-table tbody tr:not(.spm-empty-row):not(.selected):hover td{background:var(--gray-bg);}
+.spm-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+.spm-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.spm-empty-row td{text-align:center;color:var(--ink-500);padding:40px 12px;white-space:normal;border-bottom:none;}
+
+/* Scrollbars finos (mismo criterio que CargosModal.css: color derivado de
+   --ink-400 para que siga el tema oscuro/alto contraste sin overrides). */
+.spm-table-scroll{scrollbar-width:thin;scrollbar-color:var(--spm-scroll-thumb) transparent;}
+.spm-table-scroll::-webkit-scrollbar{width:10px;height:10px;}
+.spm-table-scroll::-webkit-scrollbar-track,.spm-table-scroll::-webkit-scrollbar-corner{background:transparent;}
+.spm-table-scroll::-webkit-scrollbar-thumb{
+  background:var(--spm-scroll-thumb);background-clip:padding-box;border:2px solid transparent;border-radius:10px;
+}
+.spm-table-scroll::-webkit-scrollbar-thumb:hover{background:var(--spm-scroll-thumb-hover);background-clip:padding-box;}

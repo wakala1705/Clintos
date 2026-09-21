@@ -6,6 +6,29 @@
    de título+badge+cerrar: ver @/Components/ModalHeader/ModalHeader, no se
    redefine acá. */
 .cm-modal{width:95vw;height:95vh;max-width:none;max-height:95vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ---------- Scrollbars ----------
+   Finos y discretos en todo lo que scrollea dentro del modal (cuerpo, tablas,
+   grilla de Cirugías). Mismo patrón que AreaFuncionalPickerModal/Sidebar
+   (scrollbar-width:thin + ::-webkit-scrollbar), pero el color sale de
+   --ink-400 mezclado con transparente en vez de un hex fijo — así sigue solo
+   el tema oscuro/alto contraste sin overrides por tema. */
+.cm-modal{
+  --cm-scroll-thumb:color-mix(in srgb,var(--ink-400) 45%,transparent);
+  --cm-scroll-thumb-hover:color-mix(in srgb,var(--ink-400) 75%,transparent);
+}
+.cm-body,.cm-table-scroll,.cm-cirugia-grid{scrollbar-width:thin;scrollbar-color:var(--cm-scroll-thumb) transparent;}
+.cm-body::-webkit-scrollbar,.cm-table-scroll::-webkit-scrollbar,.cm-cirugia-grid::-webkit-scrollbar{width:10px;height:10px;}
+.cm-body::-webkit-scrollbar-track,.cm-table-scroll::-webkit-scrollbar-track,.cm-cirugia-grid::-webkit-scrollbar-track,
+.cm-body::-webkit-scrollbar-corner,.cm-table-scroll::-webkit-scrollbar-corner,.cm-cirugia-grid::-webkit-scrollbar-corner{background:transparent;}
+/* Borde transparente + background-clip: el pulgar queda más fino que el
+   carril y separado del borde de la tabla. */
+.cm-body::-webkit-scrollbar-thumb,.cm-table-scroll::-webkit-scrollbar-thumb,.cm-cirugia-grid::-webkit-scrollbar-thumb{
+  background:var(--cm-scroll-thumb);background-clip:padding-box;border:2px solid transparent;border-radius:10px;
+}
+.cm-body::-webkit-scrollbar-thumb:hover,.cm-table-scroll::-webkit-scrollbar-thumb:hover,.cm-cirugia-grid::-webkit-scrollbar-thumb:hover{
+  background:var(--cm-scroll-thumb-hover);background-clip:padding-box;
+}
 .cm-tipo-badge{align-self:center;}
 
 /* flex:1+overflow-y:auto (antes solo gap, altura por contenido) para que el
@@ -55,6 +78,14 @@
 .cm-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cm-icon-btn .icon{width:15px;height:15px;}
 .cm-alergias-badge{flex-shrink:0;}
+/* Variante destructiva (borrar ítem): hover en rojo en vez del gris neutro. */
+.cm-icon-btn-danger:hover{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+
+/* Columna de acciones rápidas del detalle: ancho justo para los 2 botones,
+   pegada al borde derecho de la tabla. */
+.cm-table .cm-row-actions-col{width:1%;text-align:right;}
+.cm-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+.cm-table td.cm-row-actions-col{padding-top:4px;padding-bottom:4px;}
 
 /* Grilla densa de campos (Id. Afiliado/Doc. Id./Tipo/Sexo/Fecha Nac./Cama en
    fila 1; N° Admisión/Fecha/Asegurador/Régimen/N° Contrato/ID Contrato en
@@ -122,9 +153,9 @@
 .cm-table-scroll{flex:1;min-height:0;overflow:auto;}
 .cm-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
 .cm-table th{
-  position:sticky;top:0;background:var(--bg);text-align:left;white-space:nowrap;
-  padding:8px 12px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);text-align:left;white-space:nowrap;
+  padding:8px 12px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  border-bottom:1px solid var(--border);
 }
 .cm-table td{padding:8px 12px;color:var(--ink-900);border-bottom:1px solid var(--border);white-space:nowrap;}
 .cm-table tbody tr:last-child td{border-bottom:none;}
@@ -133,6 +164,13 @@
    resaltado azul de la referencia legacy) — mismo token que .selected en
    AdmisionesTable.css. */
 .cm-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+/* Filas seleccionables (ver SelectableRow en el .jsx): la fila vacía no. */
+.cm-table tbody tr:not(.cm-empty-row){cursor:pointer;}
+.cm-table tbody tr:not(.cm-empty-row):not(.selected):hover td{background:var(--gray-bg);}
+.cm-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+/* Columnas de montos/cantidades: alineadas a la derecha con cifras
+   tabulares para que los miles queden en columna. */
+.cm-table .cm-num{text-align:right;font-variant-numeric:tabular-nums;}
 
 .cm-totals-row{
   flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -178,12 +216,19 @@
   border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
 }
 
-/* ---------- Footer: hint de selección + acciones de ítem + acciones rápidas ---------- */
+/* Footer de la tarjeta de detalle: hint de selección + acciones del ítem
+   (mismo look que .cm-totals-row de la tarjeta de cargos). */
+.cm-detail-footer{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:10px 12px;border-top:1px solid var(--border);background:var(--bg);
+}
+
+/* ---------- Footer del modal: acciones rápidas ---------- */
 .cm-footer{border-top:1px solid var(--border);padding:12px 24px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
 .cm-footer-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .cm-footer-hint{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);}
 .cm-footer-actions{display:flex;align-items:center;gap:8px;}
-.cm-footer-quick-actions{justify-content:flex-start;gap:8px;padding-top:10px;border-top:1px solid var(--border);}
+.cm-footer-quick-actions{justify-content:flex-start;gap:8px;}
 
 @media (max-width:1024px){
   .cm-totals-row{flex-direction:column;align-items:flex-start;}

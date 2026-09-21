@@ -49,7 +49,7 @@ html[data-theme="dark"] .btn-danger-outline:hover{background:#2a1620;}
 .table-wrap{border-top:1px solid var(--border);flex:1;min-height:200px;overflow-y:auto;overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 thead th{
-  position:sticky;top:0;z-index:1;background:var(--table-header-bg);text-align:left;
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);text-align:left;
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
   padding:8px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
 }

@@ -7,9 +7,11 @@ import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import ProgramacionCirugiaModal from './ProgramacionCirugiaModal/ProgramacionCirugiaModal';
 import CirugiaDetalleModal from './CirugiaDetalleModal/CirugiaDetalleModal';
+import SeleccionarProgramacionModal from './SeleccionarProgramacionModal/SeleccionarProgramacionModal';
+import { CARGOS_ROWS, CARGOS_TOTALS, DETALLE_BY_PRESTACION } from '@/hooks/Admisiones/mockCargosData';
 import {
-  LuBan, LuCalculator, LuChevronDown, LuChevronUp, LuEye, LuEyeOff, LuFileText,
-  LuFlaskConical, LuFolderDown, LuInfo, LuPackage, LuPencil, LuPill, LuPlus,
+  LuBan, LuBriefcaseMedical, LuCalculator, LuChevronDown, LuChevronUp, LuEye, LuEyeOff, LuFileText,
+  LuFlaskConical, LuFolderDown, LuInfo, LuLayers, LuPackage, LuPencil, LuPill, LuPlus,
   LuPrinter, LuRefreshCw, LuRotateCcw, LuScan, LuShieldAlert, LuTrash2,
   LuTriangleAlert, LuUndo2, LuUser,
 } from 'react-icons/lu';
@@ -25,10 +27,34 @@ const TABS = [
 // del megamenú de Acciones (ver AccionesMegaMenu.jsx). Cada pestaña comparte
 // la misma tabla vacía, solo cambia el texto del estado vacío.
 const CARGOS_COLUMNS = [
-  'Servicios', 'Prefijo', 'Fecha y Hora', 'N° de prestación', 'Área', 'NA',
-  'Valor total', 'Valor copago', 'Valor P. Comp.', 'Valor excedente', 'Usuario',
+  'Servicios', 'Prefijo', 'Nombre del Prefijo', 'Fecha y Hora', 'N° de prestación', 'Área', 'NA',
+  'Valor total', 'Valor copago', 'V. Moderadora', 'Valor P. Comp.', 'Valor excedente', 'Usuario',
 ];
-const DETALLE_COLUMNS = ['Servicio', 'Cant.', 'Vlr. Unitario', 'Vlr. Unit. IVA', 'Vlr Total', 'Copago'];
+const DETALLE_COLUMNS = [
+  'Item', 'ID. Servicio', 'Descripción', 'Cantidad', 'Valor Uni.', 'Valor Uni. IVA',
+  'Valor Uni. + IVA', 'Total Servicios', 'Valor Copago', 'V. Moderadora',
+];
+
+// Columna "Acciones" (editar/borrar por fila) de la tabla de detalle — oculta
+// por ahora (encargo explícito): esas acciones viven en el footer de la
+// tarjeta. Poner en true para volver a mostrarla.
+const DETALLE_ROW_ACTIONS = false;
+
+// Columnas numéricas (alineadas a la derecha, ver .cm-num en CargosModal.css).
+const CARGOS_NUMERIC = new Set([
+  'NA', 'Valor total', 'Valor copago', 'V. Moderadora', 'Valor P. Comp.', 'Valor excedente',
+]);
+const DETALLE_NUMERIC = new Set([
+  'Cantidad', 'Valor Uni.', 'Valor Uni. IVA', 'Valor Uni. + IVA', 'Total Servicios', 'Valor Copago', 'V. Moderadora',
+]);
+
+// Mock de la pestaña Cargos (referencia legacy "Catálogo de CARGOS"): 13
+// prestaciones con el detalle de cada una — ver @/hooks/Admisiones/
+// mockCargosData. Al elegir un cargo la tabla de detalle muestra sus ítems;
+// como en las sub-tablas de Cirugías, la primera fila de cada tabla va
+// preseleccionada.
+const NUMERO_COL = CARGOS_COLUMNS.indexOf('N° de prestación');
+const PRIMER_CARGO = CARGOS_ROWS[0][NUMERO_COL];
 
 const EMPTY_LABEL = {
   cargos: 'No hay cargos registrados.',
@@ -72,9 +98,39 @@ const INSUMOS_ROWS = [
   ['DM000153', 'CATETER INTRAVENOSO # 20G', '2.000000', '2.000000', '0.000000', '0.000000'],
 ];
 
+// Fila seleccionable de cualquier .cm-table: click o Enter/Espacio (foco por
+// teclado) la marcan; el resaltado es la clase `selected` (ver
+// CargosModal.css).
+function SelectableRow({ selected, onSelect, children }) {
+  function handleKeyDown(e) {
+    // Enter/Espacio sobre un botón de la fila (ver acciones rápidas del
+    // detalle) es de ese botón, no una selección de la fila.
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect();
+    }
+  }
+  return (
+    <tr
+      className={selected ? 'selected' : undefined}
+      aria-selected={selected}
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={handleKeyDown}
+    >
+      {children}
+    </tr>
+  );
+}
+
 function CirugiaPanel({
   title, columns, rows, emptyLabel, actions,
 }) {
+  // Cada panel lleva su propia selección (por su primera columna, única en
+  // los mocks); arranca en la primera fila, como el resaltado de la
+  // referencia legacy.
+  const [selectedKey, setSelectedKey] = useState(rows[0]?.[0]);
   return (
     <div className="cm-cirugia-panel">
       <div className="cm-cirugia-panel-header">{title}</div>
@@ -86,10 +142,10 @@ function CirugiaPanel({
             </tr>
           </thead>
           <tbody>
-            {rows.length ? rows.map((row, i) => (
-              <tr key={row[0]} className={i === 0 ? 'selected' : undefined}>
+            {rows.length ? rows.map((row) => (
+              <SelectableRow key={row[0]} selected={row[0] === selectedKey} onSelect={() => setSelectedKey(row[0])}>
                 {row.map((cell, j) => <td key={columns[j]}>{cell}</td>)}
-              </tr>
+              </SelectableRow>
             )) : (
               <tr className="cm-empty-row">
                 <td colSpan={columns.length}>{emptyLabel}</td>
@@ -150,11 +206,33 @@ export default function CargosModal({ admision, onClose }) {
   // Modal "Cambiando un Registro de QXPCXD" del panel Cirugías (ver
   // CirugiaDetalleModal.jsx) — mismo patrón anidado que nuevaProgramacionOpen.
   const [nuevaCirugiaOpen, setNuevaCirugiaOpen] = useState(false);
+  // Modal "Seleccionar Programación de Cirugía" del botón "Traer de Prog."
+  // del panel Programación Sala Cirugía (ver SeleccionarProgramacionModal.jsx)
+  // — mismo patrón anidado que los 2 anteriores.
+  const [traerProgOpen, setTraerProgOpen] = useState(false);
+  // Fila seleccionada de la tabla de cargos (por N° de prestación) y de la de
+  // detalle (por Item) — arrancan en la primera fila, como la referencia.
+  const [cargoSel, setCargoSel] = useState(PRIMER_CARGO);
+  const [detalleSel, setDetalleSel] = useState(DETALLE_BY_PRESTACION[PRIMER_CARGO][0][0]);
 
   if (!admision) return null;
 
   const documentoMostrado = dataHidden ? maskValue(admision.documento) : admision.documento;
   const nombreMostrado = dataHidden ? maskName(admision.nombreAfiliado) : admision.nombreAfiliado;
+
+  // Solo la pestaña Cargos tiene mock (ver CARGOS_ROWS); Recién nacidos sigue
+  // vacía, con totales en cero.
+  // Cambiar de cargo cambia el detalle mostrado, así que su selección
+  // vuelve al primer ítem del nuevo cargo.
+  function selectCargo(numero) {
+    setCargoSel(numero);
+    setDetalleSel(DETALLE_BY_PRESTACION[numero]?.[0]?.[0]);
+  }
+
+  const isCargos = activeTab === 'cargos';
+  const cargosRows = isCargos ? CARGOS_ROWS : [];
+  const detalleRows = isCargos ? DETALLE_BY_PRESTACION[cargoSel] ?? [] : [];
+  const totals = isCargos ? CARGOS_TOTALS : CARGOS_TOTALS.map(([label]) => [label, '0.00']);
 
   return (
     <div className="adm-modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -289,7 +367,7 @@ export default function CargosModal({ admision, onClose }) {
                       emptyLabel="No hay programaciones registradas."
                       actions={(
                         <>
-                          <Button variant="secondary" size="sm" icon={LuFolderDown}>Traer de Prog.</Button>
+                          <Button variant="secondary" size="sm" icon={LuFolderDown} onClick={() => setTraerProgOpen(true)}>Traer de Prog.</Button>
                           <Button variant="primary" size="sm" icon={LuPlus} onClick={() => setNuevaProgramacionOpen(true)}>Nuevo</Button>
                           <Button variant="secondary" size="sm" icon={LuPencil}>Editar</Button>
                           <Button variant="danger-outline" size="sm" icon={LuTrash2}>Borrar</Button>
@@ -346,22 +424,33 @@ export default function CargosModal({ admision, onClose }) {
                       <table className="cm-table">
                         <thead>
                           <tr>
-                            {CARGOS_COLUMNS.map((c) => <th key={c}>{c}</th>)}
+                            {CARGOS_COLUMNS.map((c) => <th key={c} className={CARGOS_NUMERIC.has(c) ? 'cm-num' : undefined}>{c}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="cm-empty-row">
-                            <td colSpan={CARGOS_COLUMNS.length}>{EMPTY_LABEL[activeTab]}</td>
-                          </tr>
+                          {cargosRows.length ? cargosRows.map((row) => (
+                            <SelectableRow
+                              key={row[NUMERO_COL]}
+                              selected={row[NUMERO_COL] === cargoSel}
+                              onSelect={() => selectCargo(row[NUMERO_COL])}
+                            >
+                              {row.map((cell, j) => (
+                                <td key={CARGOS_COLUMNS[j]} className={CARGOS_NUMERIC.has(CARGOS_COLUMNS[j]) ? 'cm-num' : undefined}>{cell}</td>
+                              ))}
+                            </SelectableRow>
+                          )) : (
+                            <tr className="cm-empty-row">
+                              <td colSpan={CARGOS_COLUMNS.length}>{EMPTY_LABEL[activeTab]}</td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
                     <div className="cm-totals-row">
                       <div className="cm-totals">
-                        <div className="cm-totals-item"><span>Vr. Prestaciones</span><span className="cm-totals-value">0,00</span></div>
-                        <div className="cm-totals-item"><span>Vr. Copago</span><span className="cm-totals-value">0,00</span></div>
-                        <div className="cm-totals-item"><span>Vr. Pago Com:</span><span className="cm-totals-value">0,00</span></div>
-                        <div className="cm-totals-item"><span>Vr. Administradora:</span><span className="cm-totals-value">0,00</span></div>
+                        {totals.map(([label, value]) => (
+                          <div className="cm-totals-item" key={label}><span>{label}</span><span className="cm-totals-value">{value}</span></div>
+                        ))}
                       </div>
                       <div className="cm-totals-actions">
                         <Button variant="secondary" size="sm" icon={LuRefreshCw}>Actualizar</Button>
@@ -382,15 +471,57 @@ export default function CargosModal({ admision, onClose }) {
                   <table className="cm-table">
                     <thead>
                       <tr>
-                        {DETALLE_COLUMNS.map((c) => <th key={c}>{c}</th>)}
+                        {DETALLE_COLUMNS.map((c) => <th key={c} className={DETALLE_NUMERIC.has(c) ? 'cm-num' : undefined}>{c}</th>)}
+                        {DETALLE_ROW_ACTIONS && <th className="cm-row-actions-col">Acciones</th>}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="cm-empty-row">
-                        <td colSpan={DETALLE_COLUMNS.length}>No hay detalles para esta prestación.</td>
-                      </tr>
+                      {detalleRows.length ? detalleRows.map((row) => (
+                        <SelectableRow key={row[0]} selected={row[0] === detalleSel} onSelect={() => setDetalleSel(row[0])}>
+                          {row.map((cell, j) => (
+                            <td key={DETALLE_COLUMNS[j]} className={DETALLE_NUMERIC.has(DETALLE_COLUMNS[j]) ? 'cm-num' : undefined}>{cell}</td>
+                          ))}
+                          {/* Acciones rápidas del ítem — solo visuales, sin
+                              handlers (igual que el resto de botones mock). */}
+                          {DETALLE_ROW_ACTIONS && (
+                            <td className="cm-row-actions-col">
+                              <div className="cm-row-actions">
+                                <button type="button" className="cm-icon-btn" aria-label={`Editar ítem ${row[0]}`} title="Editar">
+                                  <LuPencil className="icon" aria-hidden="true" />
+                                </button>
+                                <button type="button" className="cm-icon-btn cm-icon-btn-danger" aria-label={`Borrar ítem ${row[0]}`} title="Borrar">
+                                  <LuTrash2 className="icon" aria-hidden="true" />
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </SelectableRow>
+                      )) : (
+                        <tr className="cm-empty-row">
+                          <td colSpan={DETALLE_COLUMNS.length + (DETALLE_ROW_ACTIONS ? 1 : 0)}>No hay detalles para esta prestación.</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
+                </div>
+                {/* Hint + acciones del ítem de detalle: antes fila del
+                    footer del modal (cm-footer), ahora al pie de esta tarjeta
+                    (encargo explícito) porque actúan sobre la tabla de
+                    detalle. */}
+                <div className="cm-detail-footer">
+                  <div className="cm-footer-actions">
+                    <Button variant="secondary-accent" size="sm" icon={LuPrinter}>Paciente</Button>
+                    <Button variant="secondary-accent" size="sm" icon={LuShieldAlert}>Proceso especial</Button>
+                    <span className="cm-footer-hint">
+                      <LuInfo className="icon" aria-hidden="true" />
+                      Seleccione un detalle...
+                    </span>
+                  </div>
+                  <div className="cm-footer-actions">
+                    <Button variant="secondary" size="sm" icon={LuPlus} disabled>Nuevo</Button>
+                    <Button variant="secondary" size="sm" icon={LuPencil} disabled>Editar</Button>
+                    <Button variant="danger-outline" size="sm" icon={LuTrash2} disabled>Eliminar Item</Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -398,25 +529,26 @@ export default function CargosModal({ admision, onClose }) {
         </div>
 
         <div className="cm-footer">
-          <div className="cm-footer-row">
-            <span className="cm-footer-hint">
-              <LuInfo className="icon" aria-hidden="true" />
-              Seleccione un detalle...
-            </span>
-            <div className="cm-footer-actions">
-              <Button variant="secondary" size="sm" icon={LuPlus} disabled>Nuevo</Button>
-              <Button variant="secondary" size="sm" icon={LuPencil} disabled>Editar</Button>
-              <Button variant="danger-outline" size="sm" icon={LuTrash2} disabled>Eliminar Item</Button>
-            </div>
-          </div>
+          {/* Acciones rápidas según la pestaña activa: Cirugías tiene las
+              suyas (encargo explícito, referencia legacy), Cargos y Recién
+              nacidos comparten las de cobro/pedidos. */}
           <div className="cm-footer-row cm-footer-quick-actions">
-            <Button variant="secondary-accent" size="sm" icon={LuUser}>Paciente</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuFileText}>Justificación NO POS</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuShieldAlert}>Proceso especial</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuBan}>No cobrar</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuPill}>Pedir a farmacia</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuFlaskConical}>Pedir a laboratorio</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuScan}>Enviar a imagenología</Button>
+            {activeTab === 'cirugias' ? (
+              <>
+                <Button variant="secondary-accent" size="sm" icon={LuLayers}>Desglose Paquete</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuBriefcaseMedical}>Equipos</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuEye}>Partograma</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuPrinter}>Canasta Cirugía</Button>
+              </>
+            ) : (
+              <>
+                <Button variant="secondary-accent" size="sm" icon={LuFileText}>Justificación NO POS</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuBan}>No cobrar</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuPill}>Pedir a farmacia</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuFlaskConical}>Pedir a laboratorio</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuScan}>Enviar a imagenología</Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -426,6 +558,11 @@ export default function CargosModal({ admision, onClose }) {
       )}
       {nuevaCirugiaOpen && (
         <CirugiaDetalleModal admision={admision} onClose={() => setNuevaCirugiaOpen(false)} />
+      )}
+      {traerProgOpen && (
+        // Mock: traer la programación elegida solo cierra el modal (la tabla
+        // "Programación Sala Cirugía" es estática todavía).
+        <SeleccionarProgramacionModal onClose={() => setTraerProgOpen(false)} onTraer={() => setTraerProgOpen(false)} />
       )}
     </div>
   );

@@ -11,12 +11,12 @@
 /* Escopado a .hc-table-wrap (y no a .data-table sola): la cabecera de una
    sola fila de PlantillaModal (mismo .data-table, ver shared.css) es a la
    vez :first-child y :last-child, así que sin este scope heredaba el
-   top:33px pensado para la segunda fila de ESTA tabla — el th sticky se
+   top:var(--th-row-height) pensado para la segunda fila de ESTA tabla — el th sticky se
    despegaba 33px y tapaba la primera fila del catálogo (bug visible solo
    cuando esta hoja ya estaba cargada por una navegación previa a
    /historia-clinica en la misma sesión; un refresh la descartaba). */
-.hc-table-wrap .data-table thead tr:first-child th{top:0;}
-.hc-table-wrap .data-table thead tr:last-child th{top:33px;}
+.hc-table-wrap .data-table thead tr:first-child th{top:0;height:var(--th-row-height);box-sizing:border-box;}
+.hc-table-wrap .data-table thead tr:last-child th{top:var(--th-row-height);}
 .data-table thead th.group-head{text-align:center;border-bottom:1px solid var(--border);}
 /* Continúa la línea de cada grupo de columnas (Hora / Id.-Nombre-Servicio-
    Descripción / Primera vez / Tipo cita) desde el header hasta el cuerpo, en

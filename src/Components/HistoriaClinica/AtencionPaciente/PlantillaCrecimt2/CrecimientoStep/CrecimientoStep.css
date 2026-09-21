@@ -63,11 +63,11 @@
 .gc-hist-table{min-width:1360px;}
 
 /* Cabecera agrupada de 2 filas ("Resultados por áreas" / "Crecimiento") —
-   mismo mecanismo sticky de 2 niveles que AgendaTable.css (top:33px en la
-   2ª fila = alto real de la 1ª, mismo padding/font-size heredados de
+   mismo mecanismo sticky de 2 niveles que AgendaTable.css (top:var(--th-row-height) en la
+   2ª fila = alto de la 1ª, mismo padding/font-size heredados de
    .data-table thead th en shared.css). */
-.gc-hist-table thead tr:first-child th{top:0;}
-.gc-hist-table thead tr:last-child th{top:33px;}
+.gc-hist-table thead tr:first-child th{top:0;height:var(--th-row-height);box-sizing:border-box;}
+.gc-hist-table thead tr:last-child th{top:var(--th-row-height);}
 .gc-hist-table thead th.gc-group-head{text-align:center;border-bottom:1px solid var(--border);}
 .gc-hist-table th.gc-group-divider,
 .gc-hist-table td.gc-group-divider{border-left:1px solid var(--border);}

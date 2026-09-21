@@ -216,7 +216,7 @@ paralela.
 
   | Token | Valor | Uso |
   |---|---|---|
-  | `--fs-xs` | 11px | badges/contadores mínimos, etiquetas uppercase, meta, kickers de tabla |
+  | `--fs-xs` | 11px | badges/contadores mínimos, etiquetas uppercase, meta |
   | `--fs-sm` | 12px | texto secundario, hints, captions |
   | `--fs-base` | 14px | **base**: botones, inputs, labels, tabla, párrafos, `body` |
   | `--fs-lg` | 16px | CTAs primarios, valor destacado pequeño |
@@ -253,6 +253,29 @@ paralela.
   tamaño, no el peso). `--fw-bold` queda reservado para cifras/valores
   destacados (KPIs, resultados numéricos) que necesitan distinguirse de los
   títulos que los rodean, no para headings en sí.
+
+# Encabezados de tabla
+
+Todo `<th>` de una tabla de datos usa un solo tratamiento — no un "kicker"
+en `--fs-xs` mayúsculas. Antes de homologarlo, 2 de ~40 tablas
+(`CargosModal`, `SeleccionarProgramacionModal`) habían divergido a uppercase.
+
+- **Tipografía**: `font-size:var(--fs-sm)`, `font-weight:var(--fw-semibold)`,
+  sentence case (sin `text-transform`), `color:var(--ink-700)`.
+- **Fondo**: `background:var(--table-header-bg)` (nunca `var(--bg)` directo).
+- **Borde**: `border-bottom:1px solid var(--border)`; sin sombra.
+- **Sticky**: `position:sticky; top:0; z-index:var(--z-sticky)` (token global,
+  no un `z-index:1`/`2` suelto). Un thead de 2 niveles pone el 2º nivel en
+  `top:var(--th-row-height)`, no en un px hardcodeado. La columna fija que
+  cruza con el thead sube a `calc(var(--z-sticky) + 1)`.
+- **Padding horizontal del `th` = el del `td` de esa misma tabla**, para que el
+  texto del encabezado quede alineado con el de sus celdas. El vertical sí
+  puede diferir (el encabezado es más alto que una fila densa).
+- **Columnas numéricas**: el `<th>` lleva la misma clase de alineación que sus
+  celdas (`mig-num`, `col-right`, `cm-num`...). Un `<th>` sin ella deja el
+  encabezado a la izquierda de números alineados a la derecha.
+- **Color de rol** (`--primary-dark`, `--red`) no va en un encabezado: `--red` se
+  reserva para error/peligro.
 
 # Botones
 

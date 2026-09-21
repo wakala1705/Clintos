@@ -58,6 +58,16 @@
   --btn-focus-outline: 2px;
   --btn-focus-offset: 2px;
   --btn-transition: background .15s, border-color .15s, color .15s, opacity .15s;
+
+  /* Encabezados de tabla (ver AGENTS.md "Encabezados de tabla"). --z-sticky
+     ya lo declaraban 8 features con este mismo valor; se sube acá para que
+     las que no lo declaran (asignación de citas, ListaPacientes, Vacunación,
+     SolicitudConsumo, NuevaCita...) dejen de escribir z-index:1 suelto.
+     --th-row-height es la altura de la 1ª fila de un thead de 2 niveles
+     (AgendaTable, CrecimientoStep): el th sticky de la 2ª fila usa
+     top:var(--th-row-height) en vez de un 33px que dependía del padding. */
+  --z-sticky: 10;
+  --th-row-height: 33px;
 }
 
 @media (prefers-color-scheme: dark) {

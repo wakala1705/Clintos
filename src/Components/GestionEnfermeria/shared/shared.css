@@ -317,7 +317,7 @@ body{
 .lote-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
   font-weight:var(--fw-semibold);font-size:var(--fs-sm);
-  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+  padding:10px 10px;text-align:left;border-bottom:1px solid var(--border);
 }
 .lote-table th.col-radio{width:36px;}
 .lote-table th.col-estado{width:96px;}
