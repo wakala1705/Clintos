@@ -820,7 +820,7 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:#fafbfd;}
-.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-medium);margin-top:2px;}
 .data-table .cell-muted{color:var(--ink-500);}
 .data-table tr.filtered-out{display:none;}

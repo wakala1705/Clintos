@@ -85,7 +85,7 @@
 }
 .data-table td{padding:10px 10px;border-bottom:1px solid var(--gray-bg);vertical-align:middle;color:var(--ink-700);white-space:nowrap;}
 .data-table tbody tr:last-child td{border-bottom:none;}
-.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .data-table .cell-muted{color:var(--ink-500);}
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;

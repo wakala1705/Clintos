@@ -175,7 +175,7 @@ html[data-theme="dark"][data-contrast="high"]{
 .data-table tbody tr{cursor:pointer;}
 .data-table tbody tr:hover{background:#fafbfd;}
 .data-table tbody tr.selected{background:var(--interactive-selected-bg);}
-.data-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .data-table .cell-muted{color:var(--ink-500);}
 
 /* ---------- MODAL scaffolding ----------
