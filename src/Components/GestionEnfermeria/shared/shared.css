@@ -315,8 +315,8 @@ body{
    apretado que el resto de tablas de la feature (.data-table thead th,
    línea 802 de este mismo archivo). */
 .lote-table thead th{
-  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
   padding:10px 10px;text-align:left;border-bottom:1px solid var(--border);
 }
 .lote-table th.col-radio{width:36px;}
@@ -812,8 +812,8 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
    .rv-paciente-table/.vac-matrix, más los `thead th` "bare" de
    SolicitudConsumo/ListaPacientes/asignacion-citas/NuevaCitaFlow). */
 .data-table thead th{
-  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
   padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);border-top:1px solid var(--border);
 }
 .data-table th.col-right, .data-table td.col-right{text-align:right;}
@@ -885,7 +885,7 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 /* color homologado a --ink-500 (auditoría de headers) — era --ink-700, más
    oscuro/contrastado que el label de cualquier otro thead th del proyecto. */
 .detail-table thead th{
-  background:var(--table-header-bg);color:var(--ink-700);font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  background:var(--table-header-bg);color:var(--th-color);font-weight:var(--th-fw);font-size:var(--th-fs);
   padding:9px 14px;text-align:left;
   border-bottom:1px solid var(--border);
 }
@@ -915,7 +915,7 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .dev-header-row{
   display:grid;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-4);
   background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 .dev-header-row .col-actions{text-align:right;}
 

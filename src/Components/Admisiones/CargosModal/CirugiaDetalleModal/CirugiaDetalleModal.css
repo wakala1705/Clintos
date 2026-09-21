@@ -97,12 +97,12 @@
 .cdm-tarifa-table tbody tr:last-child th,.cdm-tarifa-table tbody tr:last-child td{border-bottom:none;}
 .cdm-tarifa-table thead th{
   padding:8px 6px;text-align:center;white-space:nowrap;background:var(--table-header-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
 }
 .cdm-tarifa-table thead th.cdm-tarifa-concepto{text-align:left;padding-left:10px;}
 .cdm-tarifa-table tbody th{
   text-align:left;padding:6px 10px;white-space:nowrap;background:var(--table-header-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
 }
 .cdm-tarifa-table td{padding:4px 6px;text-align:center;}
 .cdm-tarifa-table input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;vertical-align:middle;}

@@ -316,8 +316,8 @@ html[data-theme="dark"] .day-nav-btn:hover{background:#20283a;border-color:#333e
 .data-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
 .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .data-table thead th{
-  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
   padding:10px 10px;text-align:left;border-bottom:1px solid var(--border);
 }
 .data-table td{padding:10px 10px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}

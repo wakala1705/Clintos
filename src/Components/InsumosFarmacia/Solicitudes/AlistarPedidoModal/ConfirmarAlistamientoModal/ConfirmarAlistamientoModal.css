@@ -28,8 +28,8 @@
    (.mig-grid, ver ../../shared/shared.css). */
 .mig-confirmar-table thead th{
   position:sticky;top:0;background:var(--table-header-bg);
-  text-align:left;padding:10px 12px;color:var(--ink-700);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  text-align:left;padding:10px 12px;color:var(--th-color);
+  font-size:var(--th-fs);font-weight:var(--th-fw);
   border-bottom:1px solid var(--border);
 }
 .mig-confirmar-table th.mig-num{text-align:right;}

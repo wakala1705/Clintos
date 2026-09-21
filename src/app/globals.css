@@ -68,6 +68,23 @@
      top:var(--th-row-height) en vez de un 33px que dependía del padding. */
   --z-sticky: 10;
   --th-row-height: 33px;
+
+  /* Variantes de encabezado de tabla (ver AGENTS.md "Encabezados de tabla").
+     No tienen variante de tema propia: los colores referencian --ink-700/
+     --ink-500, que ya cambian con html[data-theme]/[data-contrast] (esas
+     reglas viven en el mismo <html>, así que estos alias resuelven al valor
+     del tema activo). Un <th> real usa la principal; el encabezado de una
+     lista/grid hecha con <div> (modales de selección, catálogos) la
+     secundaria. */
+  --th-fs: var(--fs-sm);
+  --th-fw: var(--fw-semibold);
+  --th-color: var(--ink-700);
+
+  --th-secondary-fs: var(--fs-xs);
+  --th-secondary-fw: var(--fw-semibold);
+  --th-secondary-color: var(--ink-500);
+  --th-secondary-tt: uppercase;
+  --th-secondary-ls: .02em;
 }
 
 @media (prefers-color-scheme: dark) {

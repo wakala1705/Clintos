@@ -27,7 +27,7 @@
 }
 .cafm-row-head{
   background:var(--bg);border-bottom:1px solid var(--border);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 
 .cafm-list{max-height:320px;overflow-y:auto;}

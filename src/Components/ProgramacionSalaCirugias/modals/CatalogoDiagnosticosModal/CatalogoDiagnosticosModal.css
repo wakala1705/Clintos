@@ -36,7 +36,7 @@
 }
 .cdm-row-head{
   background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 html[data-theme="dark"] .cdm-row-head{background:#1c2333;}
 

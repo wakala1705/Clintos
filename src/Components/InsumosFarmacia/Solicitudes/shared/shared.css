@@ -16,9 +16,9 @@
    resto (fw-semibold es el peso estándar de thead th en todo el proyecto). */
 .mig-grid thead th{
   text-align:left;padding:8px 10px;background:var(--table-header-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   border-bottom:1px solid var(--border);
-  position:sticky;top:0;
+  position:sticky;top:0;z-index:var(--z-sticky);
 }
 /* `.mig-grid thead th` (arriba) le gana a `.mig-num` en un <th> por
    especificidad (1 clase+2 elementos vs. 1 clase sola) aunque el th ya

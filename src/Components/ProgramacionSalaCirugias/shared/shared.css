@@ -167,7 +167,7 @@ html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px so
    .pst-table/.dcp-proc-table, mismo recipe en sus respectivos .css). */
 .ncw-insumos-table th{
   text-align:left;padding:12px 8px;background:var(--table-header-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   border-bottom:1px solid var(--border);white-space:nowrap;
 }
 .ncw-insumos-table td{padding:4px 8px;border-bottom:1px solid var(--bg);color:var(--ink-700);}

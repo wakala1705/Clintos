@@ -2,7 +2,7 @@
 .vac-table{width:100%;border-collapse:collapse;}
 .vac-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);
-  text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  text-align:left;font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   padding:0;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 .vac-th-sort-btn{

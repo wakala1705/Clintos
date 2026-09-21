@@ -239,7 +239,7 @@
   .wiz-table-wrap > table > thead > tr > th{
     position:sticky;top:0;z-index:var(--z-sticky);
     background:var(--table-header-bg);text-align:left;
-    font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+    font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
     padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
   }
   .wiz-table-wrap > table > tbody > tr:not(.wiz-detail-row) > td{
@@ -267,7 +267,7 @@
   .wiz-detail-inner{padding:4px 16px 12px 48px;}
   .wiz-detail-inner table{width:100%;border-collapse:collapse;}
   .wiz-detail-inner th{
-    text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+    text-align:left;font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
     padding:8px 12px;
   }
   .wiz-detail-inner td{
@@ -560,7 +560,7 @@
   .ps-table-wrap thead th{
     position:sticky;top:0;z-index:var(--z-sticky);
     background:var(--table-header-bg);text-align:left;
-    font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+    font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
     padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap;
   }
   .ps-table-wrap tbody td{

@@ -41,8 +41,8 @@
    de --table-header-bg (por eso necesitaba su propio override de dark mode
    más abajo; --table-header-bg ya resuelve solo vía --bg). */
 .catalog-table thead th{
-  position:sticky;top:0;background:var(--table-header-bg);color:var(--ink-700);font-size:var(--fs-sm);
-  font-weight:var(--fw-semibold);
+  position:sticky;top:0;background:var(--table-header-bg);color:var(--th-color);font-size:var(--th-fs);
+  font-weight:var(--th-fw);
   padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;
 }
 .catalog-table thead th.center{text-align:center;}

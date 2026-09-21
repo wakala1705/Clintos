@@ -123,7 +123,7 @@
 .npw-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
   text-align:left;background:var(--table-header-bg);
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   padding:10px 14px;border-bottom:1px solid var(--border);
 }
 .npw-table td{padding:8px 14px;vertical-align:middle;}

@@ -47,7 +47,7 @@
 }
 .bdg-row-head{
   background:var(--bg);border-bottom:1px solid var(--border);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 
 /* Scrollbar propia (no una regla global "*", ver GestionCamas.css/
@@ -76,4 +76,4 @@ html[data-theme="dark"] .bdg-list::-webkit-scrollbar-thumb:hover{background:#454
 .bdg-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 
 .bdg-id{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
-.bdg-descripcion{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bdg-descripcion{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}

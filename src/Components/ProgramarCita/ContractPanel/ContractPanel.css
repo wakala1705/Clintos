@@ -43,8 +43,8 @@
 
 .pc-contract-services-head{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;flex-shrink:0;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);
+  text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);margin-bottom:8px;flex-shrink:0;
 }
 .pc-count-badge{background:var(--gray-bg);color:var(--gray-fg);border-radius:20px;padding:1px 8px;font-size:var(--fs-xs);font-weight:var(--fw-bold);border:1px solid color-mix(in srgb, currentColor 45%, transparent);}
 

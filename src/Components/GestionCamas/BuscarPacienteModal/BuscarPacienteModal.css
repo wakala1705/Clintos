@@ -26,7 +26,7 @@
 }
 .bp-table-wrap table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
 .bp-table-wrap thead th{
-  position:sticky;top:0;text-align:left;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  position:sticky;top:0;text-align:left;font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   padding:10px 14px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
 }
 .bp-table-wrap tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink-900);}

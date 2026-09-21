@@ -12,8 +12,8 @@
 .tc-col-day{width:160px;min-width:160px;}
 
 .tc-table thead th{
-  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
   text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);
 }
 .tc-table thead th.tc-col-day{text-align:center;}

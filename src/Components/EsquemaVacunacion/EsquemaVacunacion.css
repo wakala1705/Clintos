@@ -91,8 +91,8 @@
 }
 .vac-matrix{border-collapse:separate;border-spacing:0;min-width:940px;width:100%;font-size:var(--fs-sm);}
 .vac-matrix thead th{
-  background:var(--table-header-bg);color:var(--ink-700);
-  font-weight:var(--fw-semibold);font-size:var(--fs-sm);
+  background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
   padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;
 }
 .vac-matrix-corner{position:sticky;left:0;z-index:1;text-align:left;}
@@ -167,7 +167,7 @@
 .vac-otras-list{display:flex;flex-direction:column;gap:8px;margin:16px 0 12px;}
 .vac-otras-col-labels{
   display:grid;grid-template-columns:1fr 200px 34px;gap:12px;
-  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
   padding:0 2px 2px;
 }
 .vac-otra-row{display:grid;grid-template-columns:1fr 200px 34px;gap:12px;align-items:start;}

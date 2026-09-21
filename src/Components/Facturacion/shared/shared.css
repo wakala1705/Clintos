@@ -238,8 +238,8 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    arriba), no parte del label en sí. */
 .fvc-grid thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
-  background:var(--table-header-bg);color:var(--ink-700);font-weight:var(--fw-semibold);
-  font-size:var(--fs-sm);
+  background:var(--table-header-bg);color:var(--th-color);font-weight:var(--th-fw);
+  font-size:var(--th-fs);
   text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
 }
 .fvc-grid tbody td{

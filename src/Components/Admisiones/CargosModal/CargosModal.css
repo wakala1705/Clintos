@@ -154,7 +154,7 @@
 .cm-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
 .cm-table th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);text-align:left;white-space:nowrap;
-  padding:8px 12px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding:8px 12px;font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   border-bottom:1px solid var(--border);
 }
 .cm-table td{padding:8px 12px;color:var(--ink-900);border-bottom:1px solid var(--border);white-space:nowrap;}

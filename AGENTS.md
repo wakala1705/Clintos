@@ -256,12 +256,31 @@ paralela.
 
 # Encabezados de tabla
 
-Todo `<th>` de una tabla de datos usa un solo tratamiento — no un "kicker"
-en `--fs-xs` mayúsculas. Antes de homologarlo, 2 de ~40 tablas
-(`CargosModal`, `SeleccionarProgramacionModal`) habían divergido a uppercase.
+Hay **dos variantes** de encabezado, cada una con sus tokens en el `:root` de
+`globals.css` (no se duplican por feature: sus colores son alias de
+`--ink-700`/`--ink-500`, que ya cambian con el tema). Nunca escribir los
+valores a mano — consumir el token.
 
-- **Tipografía**: `font-size:var(--fs-sm)`, `font-weight:var(--fw-semibold)`,
-  sentence case (sin `text-transform`), `color:var(--ink-700)`.
+| | Principal | Secundaria |
+|---|---|---|
+| Se usa en | el `<th>` de una `<table>` | el encabezado de una lista/grid hecha con `<div>` (modales de selección y catálogos: `.afp-row-head`, `.cam-row-head`, `.bdg-row-head`, `.ome-header-row`...) |
+| `font-size` | `var(--th-fs)` (= `--fs-sm`) | `var(--th-secondary-fs)` (= `--fs-xs`) |
+| `font-weight` | `var(--th-fw)` (= `--fw-semibold`) | `var(--th-secondary-fw)` (= `--fw-semibold`) |
+| `color` | `var(--th-color)` (= `--ink-700`) | `var(--th-secondary-color)` (= `--ink-500`) |
+| `text-transform` | ninguno (sentence case) | `var(--th-secondary-tt)` (= `uppercase`) |
+| `letter-spacing` | ninguno | `var(--th-secondary-ls)` (= `.02em`) |
+
+Una tabla nueva usa la principal; la secundaria es solo para los encabezados
+de lista de segundo plano. No mezclar: un `<th>` no lleva mayúsculas. Antes de
+homologarlo, 2 de ~40 tablas (`CargosModal`, `SeleccionarProgramacionModal`)
+habían divergido a uppercase por su cuenta, y los ~23 encabezados de lista
+repetían el mismo bloque a mano con `--fw-bold` y tres `letter-spacing`
+distintos (`.02em`/`.03em`/`.04em`).
+
+Las **etiquetas de campo** y los **títulos de sección** en mayúsculas
+(`.fp-section-title`, `.cm-field-label`, `.filter-label`...) no son
+encabezados de tabla: quedan fuera de estos tokens.
+
 - **Fondo**: `background:var(--table-header-bg)` (nunca `var(--bg)` directo).
 - **Borde**: `border-bottom:1px solid var(--border)`; sin sombra.
 - **Sticky**: `position:sticky; top:0; z-index:var(--z-sticky)` (token global,

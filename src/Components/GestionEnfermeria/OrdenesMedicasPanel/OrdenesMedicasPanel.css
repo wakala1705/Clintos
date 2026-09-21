@@ -57,7 +57,7 @@
 .ome-header-row{
   display:grid;gap:var(--space-3);align-items:center;justify-items:start;padding:var(--space-2) var(--space-4);
   background:#f7f8fb;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:var(--z-sticky);
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 .ome-header-row .col-actions{text-align:right;justify-self:end;}
 .ome-order{border-bottom:1px solid var(--border);flex-shrink:0;}
