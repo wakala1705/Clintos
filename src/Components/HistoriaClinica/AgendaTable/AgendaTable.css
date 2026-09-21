@@ -88,7 +88,8 @@
 .hc-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .hc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .hc-card-id{min-width:0;}
-.hc-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);}
+.hc-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);text-transform:uppercase;}
+.hc-cell-nombre{text-transform:uppercase;}
 .hc-card-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .hc-card-times{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:var(--fs-sm);color:var(--ink-700);}
 .hc-card-times b{color:var(--ink-500);font-weight:var(--fw-semibold);margin-right:4px;}

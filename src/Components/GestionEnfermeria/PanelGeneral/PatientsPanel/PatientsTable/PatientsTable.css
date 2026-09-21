@@ -57,7 +57,8 @@ html[data-theme="dark"] .pg-med-badge.pg-med-al-dia{color:var(--green);}
 .pg-card:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .pg-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .pg-card-id{min-width:0;}
-.pg-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);}
+.pg-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);text-transform:uppercase;}
+.pg-cell-nombre{text-transform:uppercase;}
 .pg-card-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .pg-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);color:var(--ink-700);}
 .pg-card-actions{display:flex;justify-content:flex-end;}

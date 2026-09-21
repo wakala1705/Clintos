@@ -10,7 +10,7 @@
    el tamaño/tipografía propios de este banner. */
 .patient-avatar{width:44px;height:44px;font-weight:var(--fw-medium);font-size:var(--fs-lg);}
 .patient-name-block{flex-shrink:0;}
-.patient-name-block .pname{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;}
+.patient-name-block .pname{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;text-transform:capitalize;}
 /* Documento bajo el nombre (encargo explícito, replicado desde CargosModal)
    en vez de un chip "CC" suelto en .patient-meta. */
 .patient-name-block .pdoc{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}

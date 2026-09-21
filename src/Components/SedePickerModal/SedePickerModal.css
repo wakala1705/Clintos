@@ -1,0 +1,73 @@
+/* Scaffolding de modal propio (.sp-overlay/.sp-modal/.sp-body/.sp-footer) --
+   copia de AreaFuncionalPickerModal.css con prefijo propio (mismo criterio
+   que BodegaPickerModal vs. AreaFuncionalPickerModal: cada picker es dueño
+   de su chrome). Fallback inline (var(--token, valor)) en los tokens que no
+   todas las features declaran todavía. Header de título+cerrar: ver
+   @/Components/ModalHeader/ModalHeader. */
+.sp-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal,50);
+  background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.sp-modal{
+  width:600px;max-width:95vw;max-height:90vh;overflow:hidden;
+  background:var(--surface-modal,#fff);border-radius:var(--radius-lg,12px);
+  display:flex;flex-direction:column;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+.sp-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;min-height:0;}
+.sp-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}
+
+.sp-search{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md,36px);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius,8px);background:var(--bg);
+}
+.sp-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.sp-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.sp-search input::placeholder{color:var(--ink-400);}
+
+.sp-table{
+  border:1px solid var(--border);border-radius:var(--radius,8px);
+  overflow:hidden;
+}
+.sp-row{
+  display:grid;grid-template-columns:70px 1fr;align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.sp-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+
+/* Scrollbar propia -- mismo criterio y mismos valores que
+   BodegaPickerModal.css (ver ese comentario para el detalle). */
+.sp-list{
+  max-height:260px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;
+}
+.sp-list::-webkit-scrollbar{width:6px;}
+.sp-list::-webkit-scrollbar-track{background:transparent;}
+.sp-list::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+.sp-list::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] .sp-list{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] .sp-list::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] .sp-list::-webkit-scrollbar-thumb:hover{background:#454e60;}
+.sp-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;
+}
+.sp-option:last-child{border-bottom:none;}
+.sp-option:hover{background:var(--bg);}
+.sp-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.sp-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+.sp-id{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.sp-descripcion{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sp-empty{padding:24px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

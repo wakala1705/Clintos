@@ -68,7 +68,7 @@ export default function AgendaTable({ items, onOpenAtencion }) {
                 <td className="cell-muted">{a.inicioHora || '—'}</td>
                 <td className="cell-muted">{a.finalHora || '—'}</td>
                 <td className="group-divider">{a.idAfiliado}</td>
-                <td className="cell-primary">{a.nombreAfiliado}</td>
+                <td className="cell-primary hc-cell-nombre">{a.nombreAfiliado}</td>
                 <td className="col-descripcion">{a.descripcionServicio}</td>
                 <td className="cell-muted group-divider">{a.primeraVez?.anio ?? '-'}</td>
                 <td className="cell-muted">{a.primeraVez?.ips ?? '-'}</td>

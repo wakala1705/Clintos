@@ -6,7 +6,6 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { useActiveModule } from '@/hooks/Session/session';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import AreaFuncionalPickerButton from '@/Components/AreaFuncionalPickerButton/AreaFuncionalPickerButton';
 import ModuleCard from '@/Components/Home/ModuleCard/ModuleCard';
 import AllModulesModal from '@/Components/Home/AllModulesModal/AllModulesModal';
 import PillTabs from '@/Components/Home/PillTabs/PillTabs';
@@ -143,7 +142,8 @@ const MODULE_GROUPS = [
         title: 'Historia clínica',
         description: 'Diagnósticos, evolución clínica e historial médico del paciente.',
         icon: LuFileText,
-        enabled: false,
+        href: '/hospitalizacion/historia-clinica',
+        enabled: true,
       },
       {
         title: 'Programación sala de cirugías',
@@ -230,9 +230,11 @@ export default function Home() {
 
       <div className="main">
 
-        <Topbar page="Inicio" user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}>
-          {effectiveModule === 'asistencial' && <AreaFuncionalPickerButton />}
-        </Topbar>
+        <Topbar
+          page="Inicio"
+          user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
+          pickers={effectiveModule === 'asistencial'}
+        />
 
         <div className="content home-content">
           <div className="home-inner">

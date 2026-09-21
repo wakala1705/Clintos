@@ -10,7 +10,7 @@ import Badge from '@/Components/Badge/Badge';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import FiltroPickerModal from '@/Components/AsignacionCitas/FiltroPickerModal/FiltroPickerModal';
 import { ESPECIALIDADES, MEDICOS } from '@/hooks/AsignacionCitas/filtrosData';
-import { LuCalendarClock, LuCalendarX, LuChevronDown, LuChevronLeft, LuChevronRight, LuCheck, LuEye, LuFile, LuFileText, LuHistory, LuMapPin, LuPencil, LuPlus, LuPrinter, LuSearch } from 'react-icons/lu';
+import { LuCalendarClock, LuCalendarX, LuChevronDown, LuChevronLeft, LuChevronRight, LuCheck, LuEye, LuFile, LuFileText, LuHistory, LuPencil, LuPlus, LuPrinter, LuSearch } from 'react-icons/lu';
 
 // activo/inactivo/suspendido son los valores de estado que usa PATIENTS en
 // legacy-app.js; se traducen a los tonos que soporta PatientBanner
@@ -110,10 +110,6 @@ export default function AsignacionCitasPage() {
       <div className="meta-item">
         <LuFile className="icon" />
         <span className="lbl">Especialidad:</span> <b>Medicina General</b>
-      </div>
-      <div className="meta-item">
-        <LuMapPin className="icon" />
-        <span className="lbl">Sede:</span> <b>Sede Norte — Piso 2</b>
       </div>
     </Topbar>
 

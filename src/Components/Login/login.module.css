@@ -348,6 +348,27 @@
     font-size: var(--fs-lg);
 }
 
+/* Estado de carga: sin el atenuado de .btn[disabled] (Button.module.css) para
+   que el spinner y el texto se lean; el cursor comunica que no es clickeable. */
+.submitButton.loading[disabled] {
+    opacity: 1;
+    cursor: progress;
+}
+
+.spinner {
+    width: var(--btn-icon-size);
+    height: var(--btn-icon-size);
+    animation: login-spin 0.8s linear infinite;
+}
+
+@keyframes login-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2s; }
+}
+
 .forgotLink {
     display: block;
     padding: 4px;

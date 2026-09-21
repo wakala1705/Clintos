@@ -1,0 +1,285 @@
+/* Reglas reutilizadas por 2+ componentes de Historia Clínica — Hospitalización
+   (tablero del médico sobre los pacientes hospitalizados). Importado una sola
+   vez desde HistoriaClinicaHospitalizacion.jsx — ver AGENTS.md, mismo criterio
+   que GestionEnfermeria/shared/shared.css y HistoriaClinica/shared/shared.css.
+   Reglas usadas por un solo componente viven en el .css propio de ese
+   componente, no aquí. */
+
+/* ---------- DESIGN TOKENS ----------
+   Copia del set de GestionEnfermeria/shared/shared.css (cada feature de nivel
+   superior es dueña de su propia copia, ver AGENTS.md), sin los tokens
+   `--clinical-status-*` de BedCard: esta pantalla no monta el mapa de camas. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99; /* ~3.5:1 sobre --surface blanco — 1.4.11 (chevrons, separadores) */
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
+  --amber:#e08a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --violet-bg:#f1ecff;
+  --violet-fg:#6d3fd6;
+  /* Centro de Alertas: prioridad "Media" necesita distinguirse de "Alta"
+     (ámbar/naranja) — el sistema de tonos no tenía un amarillo propio hasta
+     ahora, se agrega acá con el mismo criterio de duplicación por feature
+     que el resto de este :root. */
+  --yellow:#b58900;
+  --yellow-bg:#fdf6e0;
+  --yellow-fg:#8a6a00;
+  /* Tonos azul/naranja/cian — deliberadamente NO reusan --primary (ya
+     significa "CTA primario/tab activo"). --blue-bg/--blue-fg los consume
+     KpiCard (variant="info") y el tono de "Resultado nuevo". */
+  --blue:#0284c7;
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
+  --orange:#e8720c;
+  --orange-bg:#fdead9;
+  --orange-fg:#a6520a;
+  --cyan:#0e7490;
+  --cyan-bg:#e0fbfc;
+  --cyan-fg:#0e7490;
+  --radius:8px;
+  --radius-lg:12px;
+
+  /* Variantes de tamaño para inputs/selects de una sola línea (no aplica a
+     textareas, cuya altura depende de `rows`). Reemplazan los altos ad hoc
+     que existían por feature (30-46px según el padding de cada uno) —
+     mismo criterio de "cada ruta duplica sus tokens" que el resto de este
+     :root. Se aplican como `height` + `padding-top/bottom:0` sobre el
+     selector de cada input/select existente, nunca como clase nueva en el
+     JSX. */
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+
+  /* Semantic accent roles — all derived from the --primary blue family above,
+     kept as distinct names so each usage (selection state, single tint of
+     status, link text) can be restyled independently instead of every
+     consumer reaching for --primary/--primary-50 directly. See
+     ajustes-acento-color-ordenes-medicas.md for the rationale. */
+  --interactive-selected-bg:var(--primary-100);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
+  --link-text:var(--primary);
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394; /* ~4.5:1 sobre --surface oscuro — 1.4.11 */
+  --border:#2a3242;
+  --surface:#161c2b;
+  /* Un tono más claro que --surface: en modo oscuro un modal en --surface se
+     confunde con el fondo atenuado detrás (el overlay solo oscurece un 45%),
+     así que las cards de modal usan este tono propio para separarse
+     visualmente. Mismo valor que ya usaba .catalog-side/thead sticky. */
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --amber:#f5b942;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --violet-bg:rgba(109,63,214,.24);
+  --violet-fg:#b79bf7;
+  --yellow:#e0c341;
+  --yellow-bg:rgba(181,137,0,.20);
+  --yellow-fg:#e0c341;
+  --blue:#38bdf8;
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
+  --orange:#f5975a;
+  --orange-bg:rgba(232,114,12,.20);
+  --orange-fg:#f5975a;
+  --cyan:#22d3ee;
+  --cyan-bg:rgba(14,116,144,.22);
+  --cyan-fg:#67e8f9;
+}
+
+/* Alto contraste (Configuración > Apariencia, ver ConfigModal.jsx) — mismo
+   patrón de duplicación por feature que html[data-theme="dark"] arriba (ver
+   AGENTS.md): sube --border/--ink-500/--ink-400, sin tocar --ink-900/
+   --ink-700 (texto principal, ya cumple AA). El grosor de borde de inputs
+   vive en src/app/globals.css (único CSS que carga en toda ruta), no acá. */
+html[data-contrast="high"]{
+  --border:#94a3b8;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+
+/* ---------- SPACING TOKENS ----------
+   Consumed via var(--space-N) across most of the grid-based rows/headers below
+   (.dev-header-row, .ome-header-row, modal chip/field gaps, etc). Missing
+   after the gestion-enfermeria.css split — grids collapsed to 0 gap/padding
+   without a fallback. Keep this the single definition; components must not
+   hardcode their own px value "just in case" the var is unset. */
+:root{
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+}
+
+/* ---------- Z-INDEX SCALE ----------
+   Documented stacking layers, low to high, with room between each to insert
+   a new layer later without renumbering. --z-sticky anchors the table sticky
+   headers/columns (relative offsets of +1..+5 preserve their internal
+   corner-stacking order); the rest are single flat layers. */
+:root{
+  --z-sticky:10;
+  --z-popover:20;
+  --z-dose-popover:30;
+  --z-toast:40;
+  --z-modal:50;
+  --z-catalog:60;
+}
+
+/* ---------- RESET + APP SHELL (sidebar + topbar + content wrapper) ---------- */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.app{display:flex;height:100vh;min-width:768px;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+.content{
+  padding:16px;
+  display:flex;flex-direction:column;
+  gap:16px;
+  flex:1;
+  min-height:0;
+  overflow-y:hidden;
+}
+
+/* ---------- CARD ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;
+}
+
+/* Base icon sizing/alignment — todo "<X className='icon'>" (y Sidebar) se
+   apoya en esto; cada componente solo pisa width/height localmente. */
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+/* ---------- SCROLLBARS ---------- */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* ---------- FILTER BAR (búsqueda + chips segmentados) ---------- */
+.filter-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
+  flex-shrink:0;border-bottom:1px solid var(--border);
+}
+.search-field{position:relative;width:320px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);background:var(--bg);color:var(--ink-900);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
+
+.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.chip-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+.chip-filter:hover{background:var(--gray-bg);border-color:var(--border);}
+.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
+.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
+.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+/* Segmented control: los chips viven en una única píldora, la opción activa
+   se distingue con fondo elevado (surface + sombra), no con relleno azul. */
+.chip-group.segmented{
+  display:inline-flex;align-items:center;gap:2px;
+  background:var(--bg);border:1px solid var(--border);border-radius:999px;
+  padding:3px;
+}
+.chip-group.segmented .chip-filter{
+  border:1px solid transparent;background:transparent;box-shadow:none;
+}
+.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.chip-group.segmented .chip-filter.active{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
+html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;border-color:#333e54;}
+
+.filter-spacer{flex:1;}
+
+/* ---------- DATA TABLE ---------- */
+.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.data-table thead th{
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);color:var(--th-color);
+  font-weight:var(--th-fw);font-size:var(--th-fs);
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);border-top:1px solid var(--border);
+}
+.data-table th.col-right, .data-table td.col-right{text-align:right;}
+.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink-900);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover{background:var(--bg);}
+.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-medium);margin-top:2px;}
+.data-table .cell-muted{color:var(--ink-500);}

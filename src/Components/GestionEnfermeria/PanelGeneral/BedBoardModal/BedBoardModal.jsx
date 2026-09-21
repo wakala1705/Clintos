@@ -62,7 +62,7 @@ function BedListView({ camas, onAction }) {
                   <td>
                     {c.paciente ? (
                       <>
-                        {c.paciente.nombre}
+                        <span className="bb-paciente-nombre">{c.paciente.nombre}</span>
                         <span className="cell-sub">{c.paciente.hc}</span>
                       </>
                     ) : <span className="cell-muted">—</span>}

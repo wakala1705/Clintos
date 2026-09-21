@@ -75,7 +75,7 @@ export default function AlertTable({ alertas, selectedId, onSelect, onAccionPrim
                       <span className="cell-sub">{a.detalle}</span>
                     </span>
                   </td>
-                  <td className={a.paciente ? undefined : 'cell-muted'}>{a.paciente ?? 'Sin paciente'}</td>
+                  <td className={a.paciente ? 'alert-col-paciente' : 'cell-muted'}>{a.paciente ?? 'Sin paciente'}</td>
                   <td className="alert-col-ubicacion">
                     <span className={a.cama ? 'cell-primary' : 'cell-primary cell-muted'}>{ubicacionCama(a)}</span>
                     <span className="cell-sub">{AREA_LABEL[a.area]}</span>
@@ -133,7 +133,7 @@ export default function AlertTable({ alertas, selectedId, onSelect, onAccionPrim
               <span className="cell-primary">{a.titulo}</span>
               <span className="cell-sub">{a.detalle}</span>
               <div className="alert-card-meta">
-                <span>{a.paciente ?? 'Sin paciente'}</span>
+                <span className={a.paciente ? 'alert-col-paciente' : undefined}>{a.paciente ?? 'Sin paciente'}</span>
                 <span>{ubicacionCama(a)} · {AREA_LABEL[a.area]}</span>
                 <span className="alert-hace"><LuClock className="icon" aria-hidden="true" />{a.hace}{sub ? ` · ${sub}` : ''}</span>
               </div>

@@ -1,0 +1,27 @@
+/* .app/.main/.content/.card (base shell): definidas en ./shared/shared.css —
+   acá solo el layout propio de este tablero. */
+
+/* Selector compuesto (.content.hh-content), no solo .hh-content: pisa a
+   .content (misma clase reutilizada por otras features) y su prioridad no
+   puede depender del orden de inyección de <style> en navegación
+   client-side — mismo criterio que .content.ge-shell-content en
+   GestionEnfermeria/shared/shared.css. */
+.content.hh-content{padding:16px;gap:16px;flex-direction:column;overflow-y:hidden;}
+
+.hh-header{flex-shrink:0;}
+.hh-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hh-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+.hh-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex-shrink:0;}
+
+/* 2 columnas ~70% / ~30% — flex-basis en vez de % fijo para que ambas sigan
+   repartiendo el espacio sobrante. min-height:0 para que .card
+   (flex:1 min-height:0) scrollee su propio contenido en vez de empujar el
+   alto de .content. */
+.hh-main-row{display:flex;gap:16px;flex:1;min-height:0;}
+.hh-main-row .hh-patients-card{flex:7 1 0;min-width:0;}
+.hh-main-row .hh-pendientes-card{flex:3 1 0;min-width:280px;}
+
+@media (max-width:1280px){
+  .hh-kpi-row{grid-template-columns:repeat(3,1fr);}
+}

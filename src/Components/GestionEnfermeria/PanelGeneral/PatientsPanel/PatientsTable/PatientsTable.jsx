@@ -76,7 +76,7 @@ export default function PatientsTable({ pacientes, onOpenAtencion }) {
                       <span className="cell-sub">{p.diasEstancia} días</span>
                     )}
                   </td>
-                  <td className="cell-primary">{p.paciente}</td>
+                  <td className="cell-primary pg-cell-nombre">{p.paciente}</td>
                   <td className="pg-col-diagnostico">{p.diagnostico}</td>
                   <td className="col-right cell-muted">{p.edad}</td>
                   <td>

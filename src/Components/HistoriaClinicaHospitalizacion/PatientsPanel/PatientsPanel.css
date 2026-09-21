@@ -1,0 +1,9 @@
+/* .card/.filter-bar/.search-field/.filter-spacer/.chip-group.segmented:
+   definidas en ../shared/shared.css — acá solo el layout propio de esta
+   card. */
+.hh-patients-toolbar .search-field{width:280px;}
+/* Sin border-bottom propio: el encabezado sticky de la tabla ya trae su
+   border-top (.data-table thead th, shared.css) — con los dos se dibujaba
+   una doble línea entre la barra de filtros y la tabla. Selector compuesto
+   para no depender del orden de inyección respecto a .filter-bar. */
+.filter-bar.hh-patients-toolbar{border-bottom:none;}

@@ -23,7 +23,7 @@ import CerrarParcialModal from '@/Components/GestionEnfermeria/modals/CerrarParc
 import OrdenDetalleModal from '@/Components/GestionEnfermeria/modals/OrdenDetalleModal/OrdenDetalleModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuMapPin, LuPill } from 'react-icons/lu';
+import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuPill } from 'react-icons/lu';
 
 // Atención de enfermería a UN paciente (Medicamentos/Órdenes/Pedidos, ver
 // tabs abajo) — vivía en /gestion-enfermeria a secas; ahora que esa ruta es
@@ -59,10 +59,6 @@ export default function AtencionEnfermeria({ id }) {
       <div className="meta-item">
         <LuFile className="icon" />
         <span className="lbl">Especialidad:</span> <b>Oncología</b>
-      </div>
-      <div className="meta-item">
-        <LuMapPin className="icon" />
-        <span className="lbl">Área:</span> <b>02-Hospitalización</b>
       </div>
     </Topbar>
 

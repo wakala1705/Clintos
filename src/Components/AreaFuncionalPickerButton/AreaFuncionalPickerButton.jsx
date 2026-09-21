@@ -11,10 +11,14 @@ import { setAreaFuncionalSeleccionada, useAreaFuncionalSeleccionada } from '@/ho
 // al módulo: sin área seleccionada todavía, el modal se abre solo y no hay
 // forma de cerrarlo sin elegir una (ver comentario de BodegaPickerButton
 // para el detalle de por qué `abierto` no necesita un flag aparte).
-export default function AreaFuncionalPickerButton() {
+//
+// `obligatorio` (default true) es el gate de arriba; con false (administrador,
+// que no pasa por el picker de login, ver Topbar.jsx) el modal solo se abre a
+// pedido y se puede cerrar sin elegir.
+export default function AreaFuncionalPickerButton({ obligatorio = true }) {
   const area = useAreaFuncionalSeleccionada();
   const [abiertoManual, setAbiertoManual] = useState(false);
-  const abierto = !area || abiertoManual;
+  const abierto = (obligatorio && !area) || abiertoManual;
 
   return (
     <>

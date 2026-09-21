@@ -48,6 +48,7 @@
 .bb-table-outer .data-table-wrap{flex:1;min-height:0;}
 .bb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
 .bb-table-actions{display:inline-flex;align-items:center;gap:4px;}
+.bb-paciente-nombre{text-transform:uppercase;}
 
 .cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 

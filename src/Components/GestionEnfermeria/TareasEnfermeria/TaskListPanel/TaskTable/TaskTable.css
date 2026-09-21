@@ -14,6 +14,7 @@
    no perder el auto-layout que ya reparte el resto de forma razonable. */
 .task-col-tarea{min-width:200px;}
 .task-col-ubicacion{min-width:190px;color:var(--ink-700);}
+.task-paciente{text-transform:uppercase;}
 .col-acciones{width:1%;white-space:nowrap;text-align:right;}
 
 .task-row-actions{display:inline-flex;align-items:center;gap:6px;}

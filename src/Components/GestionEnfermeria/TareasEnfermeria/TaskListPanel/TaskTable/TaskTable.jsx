@@ -21,6 +21,18 @@ function metadataDeTarea(t) {
   return t.categoria === 'operativa' ? 'Tarea operativa' : `Cuidado asistencial · ${TIPO_LABEL[t.tipo]}`;
 }
 
+// Mismo texto que ubicacionDeTarea(), pero con el nombre del paciente en su
+// propio <span> para poder ponerlo en mayúsculas sin afectar "Hab." ni las
+// ubicaciones de las tareas operativas.
+function UbicacionTarea({ t }) {
+  if (t.categoria !== 'asistencial') return ubicacionDeTarea(t);
+  return (
+    <>
+      <span className="task-paciente">{t.paciente}</span> · Hab. {t.cama}
+    </>
+  );
+}
+
 const PROGRAMACION_ICONO = {
   'vence-pronto': LuClockAlert,
   vencida: LuClockAlert,
@@ -106,7 +118,7 @@ export default function TaskTable({
                     <span className="cell-primary">{t.nombre}</span>
                     <span className="cell-sub">{metadataDeTarea(t)}</span>
                   </td>
-                  <td className="task-col-ubicacion">{ubicacionDeTarea(t)}</td>
+                  <td className="task-col-ubicacion"><UbicacionTarea t={t} /></td>
                   <td><ProgramacionCell programacion={t.programacion} /></td>
                   <td className={t.responsable ? undefined : 'cell-muted'}>{t.responsable ?? 'Sin asignar'}</td>
                   <td><StatusBadge estado={t.estado} /></td>
@@ -172,7 +184,7 @@ export default function TaskTable({
                 <span className="cell-sub">{metadataDeTarea(t)}</span>
               </div>
               <div className="task-card-meta">
-                <span>{ubicacionDeTarea(t)}</span>
+                <span><UbicacionTarea t={t} /></span>
                 <span className={t.responsable ? undefined : 'cell-muted'}>{t.responsable ?? 'Sin asignar'}</span>
                 <ProgramacionCell programacion={t.programacion} />
               </div>

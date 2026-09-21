@@ -23,7 +23,7 @@ tbody tr:last-child td{border-bottom:none;}
 /* Color/forma vienen de .patient-avatar-badge (PatientAvatar.css) — acá solo
    el tamaño/tipografía propios de esta tabla. */
 .lp-avatar{width:32px;height:32px;font-weight:var(--fw-medium);font-size:var(--fs-sm);}
-.lp-pname{font-weight:var(--fw-medium);color:var(--ink-900);}
+.lp-pname{font-weight:var(--fw-medium);color:var(--ink-900);text-transform:uppercase;}
 
 .lp-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px;}
 .lp-row-action-btn{

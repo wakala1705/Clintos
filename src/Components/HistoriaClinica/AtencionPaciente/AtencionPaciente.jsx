@@ -16,6 +16,7 @@ import PlantillaModal from './PlantillaModal/PlantillaModal';
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
 import { getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
 import { getRegistrosGrupos } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
+import { getHospitalizadoData } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
 import {
   LuCalendarOff,
   LuCircleAlert,
@@ -41,8 +42,48 @@ const TABS = [
   { id: 'archivos', label: 'Archivos', icon: LuPaperclip, enabled: false },
 ];
 
-export default function AtencionPaciente({ id }) {
+// Variantes de la pantalla — la misma atención (banner + pestañas) se monta
+// bajo 2 rutas: la cita de Consulta Externa (/historia-clinica/atencion/[id])
+// y el paciente hospitalizado (/hospitalizacion/historia-clinica/[id], ver
+// HistoriaClinicaHospitalizacion). Las pestañas (TABS) son las mismas; lo que
+// cambia es de dónde salen los datos, el breadcrumb, la segunda fila del
+// banner y a dónde vuelve el estado "no encontrado".
+const VARIANTES = {
+  'consulta-externa': {
+    fetchData: getAtencionData,
+    section: ['Consulta Externa', { label: 'Historias Clínicas', href: '/historia-clinica' }],
+    volverHref: '/historia-clinica',
+    volverLabel: 'Volver a la agenda',
+    notFound: {
+      title: 'No encontramos esta cita',
+      subtitle: 'Puede que el enlace esté vencido o la cita ya no exista en la agenda del día.',
+    },
+    secondRow: (data) => [
+      { label: 'Cita', value: data.cita.citaHora },
+      { label: 'Servicio', value: `${data.cita.idServicio} · ${data.cita.descripcionServicio}` },
+      { label: 'Tipo cita', value: <TipoBadge tipo={data.cita.tipoCita} /> },
+    ],
+  },
+  hospitalizacion: {
+    fetchData: getHospitalizadoData,
+    section: ['Hospitalización', { label: 'Historia Clínica', href: '/hospitalizacion/historia-clinica' }],
+    volverHref: '/hospitalizacion/historia-clinica',
+    volverLabel: 'Volver a mis pacientes',
+    notFound: {
+      title: 'No encontramos este paciente',
+      subtitle: 'Puede que el enlace esté vencido o el paciente ya no esté hospitalizado.',
+    },
+    secondRow: (data) => [
+      { label: 'Diagnóstico', value: data.hospitalizacion.diagnostico },
+      { label: 'Ingreso', value: `${data.hospitalizacion.admision} · ${data.hospitalizacion.diasEstancia} días` },
+      { label: 'Médico tratante', value: data.hospitalizacion.medico },
+    ],
+  },
+};
+
+export default function AtencionPaciente({ id, variante = 'consulta-externa' }) {
   const router = useRouter();
+  const cfg = VARIANTES[variante];
   const [status, setStatus] = useState('loading'); // loading | ready | not-found
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState('historia-clinica');
@@ -134,14 +175,14 @@ export default function AtencionPaciente({ id }) {
 
   useEffect(() => {
     let cancelled = false;
-    getAtencionData(id).then((result) => {
+    VARIANTES[variante].fetchData(id).then((result) => {
       if (cancelled) return;
       if (!result) { setStatus('not-found'); return; }
       setData(result);
       setStatus('ready');
     });
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, variante]);
 
   return (
     <div className="app">
@@ -149,7 +190,7 @@ export default function AtencionPaciente({ id }) {
 
       <div className="main">
         <Topbar
-          section={['Consulta Externa', { label: 'Historias Clínicas', href: '/historia-clinica' }]}
+          section={cfg.section}
           page="Atención del paciente"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
@@ -170,11 +211,11 @@ export default function AtencionPaciente({ id }) {
                 <div className="ap-not-found">
                   <AgendaEmptyState
                     icon={LuFileText}
-                    title="No encontramos esta cita"
-                    subtitle="Puede que el enlace esté vencido o la cita ya no exista en la agenda del día."
+                    title={cfg.notFound.title}
+                    subtitle={cfg.notFound.subtitle}
                   />
-                  <button type="button" className="btn btn-primary" onClick={() => router.push('/historia-clinica')}>
-                    Volver a la agenda
+                  <button type="button" className="btn btn-primary" onClick={() => router.push(cfg.volverHref)}>
+                    {cfg.volverLabel}
                   </button>
                 </div>
               )}
@@ -186,11 +227,7 @@ export default function AtencionPaciente({ id }) {
               <PatientBanner
                 patient={data.patient}
                 compact={plantillaActiva === 'crecimt2' && plantillaMaximizada}
-                secondRow={[
-                  { label: 'Cita', value: data.cita.citaHora },
-                  { label: 'Servicio', value: `${data.cita.idServicio} · ${data.cita.descripcionServicio}` },
-                  { label: 'Tipo cita', value: <TipoBadge tipo={data.cita.tipoCita} /> },
-                ]}
+                secondRow={cfg.secondRow(data)}
               />
 
               <div className="card">

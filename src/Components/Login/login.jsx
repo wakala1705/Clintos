@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LuChevronDown, LuEye, LuEyeOff, LuBuilding2, LuMapPin,
-  LuArrowLeft, LuStethoscope, LuLandmark, LuUsers, LuUserCog,
+  LuArrowLeft, LuStethoscope, LuLandmark, LuUsers, LuUserCog, LuLoaderCircle,
 } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 import AreaFuncionalPickerModal from '@/Components/AreaFuncionalPickerModal/AreaFuncionalPickerModal';
@@ -55,6 +55,10 @@ const ADMIN_MODULE = {
   route: '/home',
 };
 
+// Simulación de la latencia de autenticación: el botón queda en estado de
+// carga este tiempo antes de abrir el picker de área funcional / navegar.
+const LOGIN_DELAY_MS = 1200;
+
 export default function Login() {
   const router = useRouter();
   const [step, setStep] = useState('module');
@@ -68,6 +72,10 @@ export default function Login() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [areaPickerAbierto, setAreaPickerAbierto] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const loginTimerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(loginTimerRef.current), []);
 
   const handleSelectModule = (moduleItem) => {
     if (!moduleItem.available) return;
@@ -84,6 +92,8 @@ export default function Login() {
   };
 
   const handleBack = () => {
+    clearTimeout(loginTimerRef.current);
+    setLoading(false);
     setStep('module');
     setSelectedModule(null);
     setError('');
@@ -104,6 +114,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (loading) return;
 
     if (!form.company || !form.name || !form.password || !form.area) {
       setError('Completa todos los campos para continuar.');
@@ -124,8 +135,16 @@ export default function Login() {
     // asistenciales, tanto en usuario contable como administrador"; antes
     // se disparaba acá mismo, en el login, antes de llegar a Home siquiera
     // -- ver BodegaPickerButton.jsx).
-    if (moduleId === 'asistencial') setAreaPickerAbierto(true);
-    else router.push(selectedModule?.route ?? '/home');
+    setLoading(true);
+    loginTimerRef.current = setTimeout(() => {
+      if (moduleId === 'asistencial') {
+        setLoading(false);
+        setAreaPickerAbierto(true);
+      } else {
+        // Se mantiene el estado de carga hasta que la ruta nueva desmonte login.
+        router.push(selectedModule?.route ?? '/home');
+      }
+    }, LOGIN_DELAY_MS);
   };
 
   const handleAreaSeleccionada = (area) => {
@@ -268,7 +287,15 @@ export default function Login() {
                 </div>
 
                 <div className={styles['block-cta']}>
-                  <Button type="submit" className={styles.submitButton}>Iniciar sesión</Button>
+                  <Button
+                    type="submit"
+                    className={`${styles.submitButton} ${loading ? styles.loading : ''}`}
+                    disabled={loading}
+                    aria-busy={loading}
+                  >
+                    {loading && <LuLoaderCircle className={styles.spinner} aria-hidden="true" />}
+                    {loading ? 'Iniciando sesión…' : 'Iniciar sesión'}
+                  </Button>
                   <a href="#" className={styles.forgotLink}>¿Olvidaste tu contraseña?</a>
                 </div>
               </form>

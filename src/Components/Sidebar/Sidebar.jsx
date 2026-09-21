@@ -59,7 +59,8 @@ export default function Sidebar() {
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
   const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias;
+  const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp;
   const isFacturas = pathname === '/facturas';
   const isFinanzas = isFacturas;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
@@ -102,6 +103,7 @@ export default function Sidebar() {
           <LuChevronDown className="icon chev" />
         </div>
         <div className="nav-body">
+          <Link href="/hospitalizacion/historia-clinica" className={`nav-subitem${isHistoriaClinicaHosp ? ' active' : ''}`}><LuFileText className="icon" />Historia Clínica</Link>
           <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
           <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
           <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
