@@ -119,7 +119,6 @@
 .ar-toggle:hover{background:var(--gray-bg);color:var(--ink-900);}
 .ar-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .ar-toggle .icon{width:16px;height:16px;}
-.ar-toggle.collapsed{transform:rotate(-90deg);}
 
 /* leadingSelect (ver PatientBanner.jsx) — mismo lenguaje visual que
    .pc-select-wrap/.pc-picker-trigger de ProgramarCita/AgendaToolbar.css

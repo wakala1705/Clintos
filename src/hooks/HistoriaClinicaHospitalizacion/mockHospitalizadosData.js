@@ -150,8 +150,10 @@ export function pendientesOrdenados(pacientes) {
 // mockAgendaData.js, su equivalente para citas de Consulta Externa) a partir
 // del paciente del piso. `documento` es un CC ficticio derivado del id de
 // historia (no hay documento real en PACIENTES_PISO), y no coincide con
-// ningún documento de mockHistoriaClinicaRecords.js — la pestaña "Historia
-// clínica" muestra su estado vacío para estos pacientes.
+// ningún documento de mockHistoriaClinicaRecords.js — por eso la pestaña
+// "Historia clínica" no busca por documento acá: AtencionPaciente usa
+// getRegistrosGruposHospitalizacion() (mismo set de registros de ejemplo que
+// Consulta Externa) para todos los hospitalizados.
 // Con nombre completo de 4 palabras (2 nombres + 2 apellidos) las iniciales
 // son primer nombre + primer apellido (la 1ª y la 3ª), no las dos primeras
 // palabras (que serían los dos nombres de pila).
@@ -159,6 +161,24 @@ function iniciales(nombre) {
   const partes = nombre.split(' ').filter(Boolean);
   const elegidas = partes.length >= 4 ? [partes[0], partes[2]] : partes.slice(0, 2);
   return elegidas.map((w) => w[0]).join('').toUpperCase();
+}
+
+// Alergias de ejemplo por paciente — solo María Fernanda tiene, para ver el
+// chip "Alergias" de PatientBanner; el resto no muestra el chip. Mismo shape
+// que `allergies` en mockAgendaData.js.
+const ALERGIAS_POR_PACIENTE = {
+  'HC-48291': [
+    { name: 'Penicilina', reaction: 'Reacción cutánea moderada' },
+    { name: 'Ibuprofeno', reaction: 'Broncoespasmo leve' },
+  ],
+};
+
+// '12 Ago' (formato de PACIENTES_PISO) → '12.AGO.2026', el formato de fecha
+// de los registros de Historia Clínica (ver mockHistoriaClinicaRecords.js).
+// Año fijo 2026: las fechas de ingreso del piso están ancladas a ese año.
+function fechaIngresoLarga(admision) {
+  const [dia, mes] = admision.split(' ');
+  return `${dia}.${mes.toUpperCase()}.2026`;
 }
 
 export function getHospitalizadoData(id) {
@@ -176,10 +196,18 @@ export function getHospitalizadoData(id) {
       iniciales: iniciales(p.paciente),
       nombre: p.paciente,
       documento: `10${p.id.replace(/\D/g, '')}`,
+      // N° de admisión ficticio (10 dígitos como los de Admisiones), derivado
+      // del id de historia para que sea estable por paciente.
+      numeroAdmision: `02012${p.id.replace(/\D/g, '')}`,
+      // Campo fijo de PatientBanner (fila 2, entre N° Admisión y Cama).
+      fechaIngreso: `${fechaIngresoLarga(p.admision)} (${p.diasEstancia} días)`,
       edad: `${p.edad} años`,
       sexo: p.genero === 'femenino' ? 'Femenino' : 'Masculino',
       eps: 'Salud Total EPS',
       cama: p.cama,
+      diagnostico: p.diagnostico,
+      medicoTratante: `Dr. ${DOCTOR.nombre}`,
+      allergies: ALERGIAS_POR_PACIENTE[p.id],
     },
   });
 }

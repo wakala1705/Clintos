@@ -24,7 +24,7 @@ function renderDetalle(registro) {
   );
 }
 
-export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNuevaAtencion }) {
+export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNuevaAtencion, usuarioActual }) {
   const [selectedRegistro, setSelectedRegistro] = useState(null);
 
   return (
@@ -33,6 +33,7 @@ export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNueva
         grupos={grupos}
         nuevaAtencionLabel={nuevaAtencionLabel}
         onNuevaAtencion={onNuevaAtencion}
+        usuarioActual={usuarioActual}
         selectedRegistroId={selectedRegistro?.id}
         onSelectRegistro={setSelectedRegistro}
       />

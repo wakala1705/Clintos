@@ -1,0 +1,58 @@
+.op-preview{padding:20px 24px;display:flex;flex-direction:column;gap:20px;min-width:0;}
+
+.op-header{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.op-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-regular);color:var(--ink-900);min-width:0;}
+.op-title-tipo{font-weight:var(--fw-semibold);color:var(--primary);}
+
+.op-section{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.op-section-head{display:flex;align-items:center;gap:10px;}
+.op-section-icon{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.op-section-icon .icon{width:18px;height:18px;}
+/* Tono del círculo por tipo de servicio: medicamentos azul, consultas verde,
+   laboratorios naranja (par bg/fg ya existente en cada feature). */
+.op-section-icon.verde{background:var(--green-bg);color:#0d7a3d;}
+.op-section-icon.naranja{background:var(--amber-bg);color:var(--amber-fg);}
+.op-section-title{
+  margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  text-transform:uppercase;letter-spacing:.02em;
+}
+/* Empuja el contador al extremo derecho de la fila de la sección. */
+.op-count{margin-left:auto;}
+
+/* Scroll horizontal propio: la tabla tiene 11 columnas y el panel derecho
+   (junto a los 360px de la lista) no siempre las aloja. */
+.op-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;}
+.op-table{width:100%;min-width:1100px;border-collapse:collapse;font-size:var(--fs-sm);}
+.op-table th{
+  position:sticky;top:0;background:var(--table-header-bg);color:var(--th-color);
+  font-size:var(--th-fs);font-weight:var(--th-fw);text-align:left;
+  padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.op-table td{padding:10px 12px;color:var(--ink-700);vertical-align:middle;border-top:1px solid var(--border);}
+.op-table tbody tr:first-child td{border-top:none;}
+.op-table tbody tr:hover{background:var(--gray-bg);}
+
+/* Las descripciones de laboratorio son largas: la columna no baja de 280px y el texto envuelve. */
+.op-table td:first-child{min-width:280px;}
+.op-desc{color:var(--ink-900);font-weight:var(--fw-medium);}
+/* Campo que no aplica al tipo de servicio (dosis en una consulta, etc.): "-" sobre fondo gris. */
+.op-table td.op-na{background:var(--gray-bg);color:var(--ink-400);}
+.op-contrato{display:flex;align-items:center;gap:4px;margin-top:2px;font-size:var(--fs-sm);}
+.op-contrato .icon{width:14px;height:14px;flex-shrink:0;}
+.op-contrato.ok{color:#0d7a3d;}
+.op-contrato.no{color:var(--red);}
+
+.op-acciones{display:flex;align-items:center;gap:4px;}
+.op-action-btn{
+  width:24px;height:24px;border-radius:6px;border:none;background:none;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+}
+.op-action-btn .icon{width:16px;height:16px;}
+.op-action-btn:hover{background:rgba(16,24,39,.08);}
+.op-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+html[data-theme="dark"] .op-action-btn:hover{background:rgba(255,255,255,.08);}

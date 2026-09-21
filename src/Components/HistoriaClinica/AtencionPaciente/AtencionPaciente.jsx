@@ -12,10 +12,13 @@ import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import TipoBadge from '../TipoBadge/TipoBadge';
 import AgendaEmptyState from '../AgendaEmptyState/AgendaEmptyState';
 import HistoriaClinicaTab from './HistoriaClinicaTab/HistoriaClinicaTab';
+import OrdenesMedicasTab from './OrdenesMedicasTab/OrdenesMedicasTab';
 import PlantillaModal from './PlantillaModal/PlantillaModal';
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
-import { getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
-import { getRegistrosGrupos } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
+import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
+import { getRegistrosGrupos, getRegistrosGruposHospitalizacion } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
+import { getOrdenesMedicas } from '@/hooks/HistoriaClinica/mockOrdenesMedicas';
+import { PLANTILLAS, PLANTILLAS_HOSPITALIZACION } from '@/hooks/HistoriaClinica/mockPlantillas';
 import { getHospitalizadoData } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
 import {
   LuCalendarOff,
@@ -28,12 +31,12 @@ import {
   LuTriangleAlert,
 } from 'react-icons/lu';
 
-// Pestañas de la atención — solo "Historia clínica" tiene contenido hoy; el
-// resto queda deshabilitada con "Próximamente", mismo patrón que Monitoreo/
+// Pestañas de la atención — "Historia clínica" y "Órdenes médicas" tienen
+// contenido hoy; el resto queda deshabilitada con "Próximamente", mismo patrón que Monitoreo/
 // Notas de enfermería en GestionEnfermeria (ver AGENTS.md).
 const TABS = [
   { id: 'historia-clinica', label: 'Historia clínica', icon: LuFileText, enabled: true },
-  { id: 'ordenes-medicas', label: 'Órdenes médicas', icon: LuClipboardList, enabled: false },
+  { id: 'ordenes-medicas', label: 'Órdenes médicas', icon: LuClipboardList, enabled: true },
   { id: 'incapacidades', label: 'Incapacidades', icon: LuCalendarOff, enabled: false },
   { id: 'consentimiento-informado', label: 'Consentimiento informado', icon: LuFileCheck, enabled: false },
   { id: 'resultados', label: 'Resultados', icon: LuFlaskConical, enabled: false },
@@ -51,6 +54,9 @@ const TABS = [
 const VARIANTES = {
   'consulta-externa': {
     fetchData: getAtencionData,
+    getRegistros: (data) => getRegistrosGrupos(data.patient.documento),
+    plantillas: PLANTILLAS,
+    plantillasConSexo: false,
     section: ['Consulta Externa', { label: 'Historias Clínicas', href: '/historia-clinica' }],
     volverHref: '/historia-clinica',
     volverLabel: 'Volver a la agenda',
@@ -66,6 +72,9 @@ const VARIANTES = {
   },
   hospitalizacion: {
     fetchData: getHospitalizadoData,
+    getRegistros: getRegistrosGruposHospitalizacion,
+    plantillas: PLANTILLAS_HOSPITALIZACION,
+    plantillasConSexo: true,
     section: ['Hospitalización', { label: 'Historia Clínica', href: '/hospitalizacion/historia-clinica' }],
     volverHref: '/hospitalizacion/historia-clinica',
     volverLabel: 'Volver a mis pacientes',
@@ -73,10 +82,12 @@ const VARIANTES = {
       title: 'No encontramos este paciente',
       subtitle: 'Puede que el enlace esté vencido o el paciente ya no esté hospitalizado.',
     },
+    // Orden de la fila 2: N° Admisión, Fecha de ingreso y Cama son campos
+    // fijos de PatientBanner (`patient.numeroAdmision/fechaIngreso/cama`, en
+    // ese orden); acá van solo los dos que siguen.
     secondRow: (data) => [
-      { label: 'Diagnóstico', value: data.hospitalizacion.diagnostico },
-      { label: 'Ingreso', value: `${data.hospitalizacion.admision} · ${data.hospitalizacion.diasEstancia} días` },
       { label: 'Médico tratante', value: data.hospitalizacion.medico },
+      { label: 'Diagnóstico', value: data.hospitalizacion.diagnostico },
     ],
   },
 };
@@ -119,8 +130,8 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   // Patrón ARIA APG de tablist: el roving tabIndex ya deja Tab llegar a la
   // pestaña activa, pero dentro del tablist las flechas deben moverse entre
   // pestañas habilitadas (WCAG 4.1.2 / expectativa estándar del patrón). Hoy
-  // solo hay una pestaña enabled, así que esto queda listo para cuando se
-  // habiliten más (ver TABS más arriba) sin volver a tocar este handler.
+  // hay dos pestañas enabled; el handler ya cubre las que se habiliten (ver
+  // TABS más arriba) sin volver a tocarlo.
   function handleTabsKeyDown(e) {
     const enabledTabs = TABS.filter((t) => t.enabled);
     if (enabledTabs.length <= 1) return;
@@ -161,7 +172,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   useEffect(() => {
     function handleKeyDown(e) {
       if (!(e.key === '+' || e.key === '=')) return;
-      if (status !== 'ready' || plantillaActiva !== null || plantillaModalOpen) return;
+      if (status !== 'ready' || activeTab !== 'historia-clinica' || plantillaActiva !== null || plantillaModalOpen) return;
       const target = e.target;
       const isEditable = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA'
         || target?.tagName === 'SELECT' || target?.isContentEditable;
@@ -171,7 +182,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [status, plantillaActiva, plantillaModalOpen]);
+  }, [status, activeTab, plantillaActiva, plantillaModalOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -262,12 +273,20 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                       ))}
                     </div>
 
-                    <div className="ap-tab-panel" role="tabpanel" id="panel-historia-clinica">
+                    <div className="ap-tab-panel" role="tabpanel" id={`panel-${activeTab}`}>
                       {activeTab === 'historia-clinica' && (
                         <HistoriaClinicaTab
-                          grupos={getRegistrosGrupos(data.patient.documento)}
+                          grupos={cfg.getRegistros(data)}
+                          usuarioActual={DOCTOR.nombre}
                           nuevaAtencionLabel="Nueva atención"
                           onNuevaAtencion={openPlantillaModal}
+                        />
+                      )}
+                      {activeTab === 'ordenes-medicas' && (
+                        <OrdenesMedicasTab
+                          ordenes={getOrdenesMedicas()}
+                          usuarioActual={DOCTOR.nombre}
+                          onNuevaOrden={() => window.ncToast?.('Nueva orden médica (flujo en desarrollo).')}
                         />
                       )}
                     </div>
@@ -282,6 +301,8 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
       <PlantillaModal
         open={plantillaModalOpen}
         onClose={closePlantillaModal}
+        plantillas={cfg.plantillas}
+        conSexo={cfg.plantillasConSexo}
         onElegir={(plantilla) => {
           closePlantillaModal();
           if (plantilla.codigo === 'CRECIMT2') {

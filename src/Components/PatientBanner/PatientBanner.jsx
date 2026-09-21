@@ -6,7 +6,7 @@ import Badge from '@/Components/Badge/Badge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
 import {
-  LuChevronDown, LuCircleAlert, LuEye, LuEyeOff, LuSearch, LuUserPlus, LuX,
+  LuChevronDown, LuChevronUp, LuCircleAlert, LuEye, LuEyeOff, LuSearch, LuUserPlus, LuX,
 } from 'react-icons/lu';
 
 // Enmascara un valor manteniendo su longitud/espacios (mismo criterio que un
@@ -43,12 +43,13 @@ function maskText(value) {
 // Asignación de Citas para "Historial de citas", ver asignacion-citas/
 // page.jsx): { label, icon: Icon, onClick }.
 // El chevron al extremo derecho de admission-row es un toggle interno
-// (`collapsed`, no un prop): al accionarlo el banner se re-renderiza con el
-// mismo markup/clases que la variante `compact` de arriba (name/sexo/edad,
-// clase `patient-banner-compact`), con el chevron reaparece dentro de ese
-// bloque para volver a expandir. Es independiente del prop `compact` — este
-// último sigue siendo la variante fija sin admission-row/chevron que usa
-// PlantillaCrecimt2.
+// (`collapsed`, no un prop): al accionarlo el banner oculta la fila 2
+// (admission-row), quita ASEGURADOR de la fila 1 y agrega Cama/Diagnóstico
+// (`patient.cama`/`diagnostico`/`medicoTratante`, opcionales) en columnas label
+// arriba/valor abajo; el chevron para volver a expandir pasa a
+// patient-banner-right. Es independiente del prop `compact` — este último
+// sigue siendo la variante fija de una línea, sin admission-row/chevron, que
+// usa PlantillaCrecimt2.
 // Nombre + documento van agrupados en una sola columna (`patient-name-block`
 // con `pname`/`pdoc`, encargo explícito replicado desde CargosModal —
 // Admisiones/Cargos) en vez de nombre en su propio bloque y CC como chip
@@ -140,30 +141,15 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
     );
   }
 
-  if (collapsed) {
-    return (
-      <div className="patient-banner patient-banner-compact">
-        <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
-        <div className="patient-name-block"><div className="pname">{nombreMostrado}</div></div>
-        <div className="patient-meta">
-          <div className="pm-item"><span className="lbl">CC</span> <b>{documentoMostrado}</b></div>
-          <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
-          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
-          <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
-        </div>
-        <button
-          type="button"
-          className="ar-toggle collapsed"
-          onClick={() => setCollapsed(false)}
-          aria-expanded="false"
-          aria-label="Expandir banner"
-          title="Expandir banner"
-        >
-          <LuChevronDown className="icon" aria-hidden="true" />
-        </button>
-      </div>
-    );
-  }
+  // Colapsado = la misma fila 1 del banner expandido con la fila 2
+  // (admission-row) oculta: sin ASEGURADOR y con Cama/Diagnóstico
+  // (`patient.cama`/`diagnostico`/`medicoTratante`, opcionales) en columnas label
+  // arriba/valor abajo, igual que el resto de pm-item.
+  const mostrarSegundaFila = !collapsed && Boolean(
+    (secondRow && secondRow.length > 0) || leadingSelect || secondRowButton || statusBadge
+    || patient.numeroAdmision || patient.fechaIngreso || patient.cama || patient.idAfiliado
+    || patient.regimen || patient.numeroContrato || patient.idContrato,
+  );
 
   return (
     <div className="patient-banner">
@@ -185,7 +171,10 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
         ) : patient.edad && (
           <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
         )}
-        {patient.eps && <div className="pm-item"><span className="lbl">ASEGURADOR</span> <b>{patient.eps}</b></div>}
+        {!collapsed && patient.eps && <div className="pm-item"><span className="lbl">ASEGURADOR</span> <b>{patient.eps}</b></div>}
+        {collapsed && patient.cama && <div className="pm-item"><span className="lbl">CAMA</span> <b>{patient.cama}</b></div>}
+        {collapsed && patient.diagnostico && <div className="pm-item"><span className="lbl">DIAGNÓSTICO</span> <b>{patient.diagnostico}</b></div>}
+        {collapsed && patient.medicoTratante && <div className="pm-item"><span className="lbl">MÉDICO TRATANTE</span> <b>{patient.medicoTratante}</b></div>}
         <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
       </div>
       <div className="patient-banner-right">
@@ -226,15 +215,25 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
             )}
           </div>
         )}
+        {collapsed && (
+          <button
+            type="button"
+            className="ar-toggle"
+            onClick={() => setCollapsed(false)}
+            aria-expanded="false"
+            aria-label="Expandir banner"
+            title="Expandir banner"
+          >
+            <LuChevronDown className="icon" aria-hidden="true" />
+          </button>
+        )}
         {onClose && (
           <button type="button" className="close-x" onClick={onClose} aria-label="Quitar paciente" title="Quitar paciente">
             <LuX className="icon" />
           </button>
         )}
       </div>
-      {((secondRow && secondRow.length > 0) || leadingSelect || secondRowButton || statusBadge
-        || patient.numeroAdmision || patient.fechaIngreso || patient.cama || patient.idAfiliado
-        || patient.regimen || patient.numeroContrato || patient.idContrato) && (
+      {mostrarSegundaFila && (
         <div className="admission-row">
           {leadingSelect && (
             <div className="pb-select-wrap">
@@ -299,7 +298,7 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
             aria-label="Contraer banner"
             title="Contraer banner"
           >
-            <LuChevronDown className="icon" aria-hidden="true" />
+            <LuChevronUp className="icon" aria-hidden="true" />
           </button>
         </div>
       )}

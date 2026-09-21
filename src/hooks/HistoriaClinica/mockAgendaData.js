@@ -4,7 +4,7 @@
 // hay backend real. fetchAgenda() resuelve tras un pequeño delay para poder
 // ejercitar el estado de carga (skeleton) al cambiar de día o de filtro KPI.
 
-export const DOCTOR = { nombre: 'Manuel Hernández' };
+export const DOCTOR = { nombre: 'Camilo Grondona' };
 
 const DOW_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 

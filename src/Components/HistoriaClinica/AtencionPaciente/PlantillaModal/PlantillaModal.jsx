@@ -16,7 +16,12 @@ const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled
 // atención" en RegistrosPanel. Elegir una plantilla es, por ahora, el final
 // del flujo (onElegir queda como hook listo, ver AtencionPaciente.jsx): el
 // editor de la nota a partir de la plantilla todavía no está definido.
-export default function PlantillaModal({ open, onClose, onElegir }) {
+//
+// `plantillas` es el catálogo a mostrar (Consulta Externa por defecto;
+// Hospitalización pasa el suyo, ver PLANTILLAS_HOSPITALIZACION). `conSexo`
+// activa el formato del catálogo de Hospitalización: columnas Código/Nombre/
+// Sexo en vez de Clase plantilla/Descripción plantilla.
+export default function PlantillaModal({ open, onClose, onElegir, plantillas = PLANTILLAS, conSexo = false }) {
   const [query, setQuery] = useState('');
   const [selectedCodigo, setSelectedCodigo] = useState(null);
   const cardRef = useRef(null);
@@ -50,13 +55,13 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PLANTILLAS;
-    return PLANTILLAS.filter((p) => p.codigo.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return plantillas;
+    return plantillas.filter((p) => p.codigo.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q));
+  }, [query, plantillas]);
 
   if (!open) return null;
 
-  const selected = PLANTILLAS.find((p) => p.codigo === selectedCodigo) ?? null;
+  const selected = plantillas.find((p) => p.codigo === selectedCodigo) ?? null;
 
   function handleClose() {
     setQuery('');
@@ -107,8 +112,9 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th className="pm-col-codigo">Clase plantilla</th>
-                  <th>Descripción plantilla</th>
+                  <th className="pm-col-codigo">{conSexo ? 'Código' : 'Clase plantilla'}</th>
+                  <th>{conSexo ? 'Nombre' : 'Descripción plantilla'}</th>
+                  {conSexo && <th className="pm-col-sexo">Sexo</th>}
                 </tr>
               </thead>
               <tbody>
@@ -135,12 +141,13 @@ export default function PlantillaModal({ open, onClose, onElegir }) {
                     >
                       <td className="pm-cell-codigo">{p.codigo}</td>
                       <td className="pm-cell-desc">{p.descripcion}</td>
+                      {conSexo && <td className="pm-cell-sexo">{p.sexo}</td>}
                     </tr>
                   );
                 })}
                 {filtered.length === 0 && (
                   <tr className="pm-empty-row">
-                    <td colSpan={2} className="pm-empty-cell">No encontramos plantillas que coincidan con tu búsqueda.</td>
+                    <td colSpan={conSexo ? 3 : 2} className="pm-empty-cell">No encontramos plantillas que coincidan con tu búsqueda.</td>
                   </tr>
                 )}
               </tbody>

@@ -1,5 +1,5 @@
 .rg-panel{
-  width:340px;flex-shrink:0;
+  width:360px;flex-shrink:0;
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   min-height:0;overflow-y:auto;
@@ -12,7 +12,7 @@
    HistoriaClinica.css. .rg-nueva-atencion-label agrupa ícono+label con su
    propio gap para que ese par se lea junto y no se separe con el resto del
    espacio libre que reparte space-between. */
-.rg-nueva-atencion-btn{width:100%;justify-content:space-between;}
+.rg-nueva-atencion-btn{width:100%;height:38px;justify-content:space-between;}
 .rg-nueva-atencion-label{display:inline-flex;align-items:center;gap:8px;}
 /* Atajo "+" (ver AtencionPaciente.jsx) representado como un badge tipo
    "kbd" -- mismo par translúcido blanco-sobre-primario que ya usa el proyecto
@@ -27,12 +27,37 @@
 }
 
 .rg-header{border-bottom:1px solid var(--border);flex-shrink:0;}
+.rg-header-row{display:flex;align-items:center;}
 .rg-header-btn{
-  width:100%;display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;background:none;border:none;cursor:pointer;font-family:inherit;
+  flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px 10px 8px;background:none;border:none;cursor:pointer;font-family:inherit;
 }
+.rg-header-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+/* Botón de filtro a la izquierda del título (hermano, no hijo, de
+   .rg-header-btn: un <button> dentro de otro <button> es HTML inválido). */
+.rg-filter-btn{
+  width:28px;height:28px;margin-left:12px;border-radius:8px;border:none;background:none;color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;
+}
+.rg-filter-btn .icon{width:16px;height:16px;}
+.rg-filter-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.rg-filter-btn.active{color:var(--primary);background:var(--primary-50);}
+.rg-filter-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+/* Opciones del filtro: se expanden en línea bajo el header (no un popover
+   absoluto) porque .rg-panel tiene overflow-y:auto y lo recortaría. */
+.rg-filter-options{display:flex;flex-direction:column;padding:4px 0;border-top:1px solid var(--border);}
+.rg-filter-option{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 16px;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;
+  font-size:var(--fs-base);color:var(--ink-700);
+}
+.rg-filter-option:hover{background:var(--gray-bg);}
+.rg-filter-option.selected{color:var(--primary);font-weight:var(--fw-medium);}
+.rg-filter-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.rg-filter-option .icon{width:16px;height:16px;flex-shrink:0;}
 .rg-header-btn:hover{background:var(--gray-bg);}
-.rg-header-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* El título muestra el filtro activo (ver FILTROS en RegistrosPanel.jsx); ellipsis por si una opción larga no entra junto al chevron. */
+.rg-header-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .rg-header-chevron{width:16px;height:16px;color:var(--ink-500);transition:transform .15s;}
 .rg-header-chevron.open{transform:rotate(90deg);}
 
@@ -73,20 +98,39 @@
 .rg-group-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
 .rg-subrows{display:flex;flex-direction:column;}
-.rg-subrow{
-  display:flex;flex-direction:column;gap:2px;
-  padding:8px 16px 8px 32px;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;
-  border-top:1px solid #eef0f4;
-}
+.rg-subrow{position:relative;border-top:1px solid #eef0f4;}
 .rg-subrow:first-child{border-top:none;}
 .rg-subrow:hover{background:var(--gray-bg);}
 .rg-subrow.selected{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
-.rg-subrow:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.rg-subrow-main{
+  width:100%;display:flex;flex-direction:column;gap:4px;
+  padding:8px 16px 8px 32px;background:none;border:none;text-align:left;cursor:pointer;font-family:inherit;
+}
+.rg-subrow-main:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+/* Vista de lista plana (sin grupo que indentar): card a ancho completo. */
+.rg-subrows.plana .rg-subrow-main{padding-top:10px;padding-bottom:10px;padding-left:16px;}
+/* Seleccionada: se reserva una columna a la derecha para los botones
+   imprimir/editar (.rg-subrow-actions), así el ámbito no queda tapado. */
+.rg-subrow.selected .rg-subrow-main{padding-right:44px;}
+.rg-subrow-actions{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:4px;
+}
+.rg-subrow-action-btn{
+  width:24px;height:24px;border-radius:6px;border:none;background:none;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+}
+.rg-subrow-action-btn .icon{width:18px;height:18px;}
+.rg-subrow-action-btn:hover{background:rgba(16,24,39,.08);}
+.rg-subrow-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.rg-subrow-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.rg-subrow-ambito{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
 .rg-subrow-datetime{font-size:var(--fs-base);color:var(--ink-500);}
 .rg-subrow-title{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 .rg-subrow-author{font-size:var(--fs-base);color:var(--ink-700);}
-.rg-subrow-role{font-size:var(--fs-base);color:var(--ink-500);}
+.rg-subrow-role{font-size:var(--fs-sm);color:var(--ink-500);}
 
 html[data-theme="dark"] .rg-group{border-color:#242c3d;}
 html[data-theme="dark"] .rg-subrow{border-color:#242c3d;}
-html[data-theme="dark"] .rg-group-action-btn:hover{background:rgba(255,255,255,.08);}
+html[data-theme="dark"] .rg-group-action-btn:hover,
+html[data-theme="dark"] .rg-subrow-action-btn:hover{background:rgba(255,255,255,.08);}

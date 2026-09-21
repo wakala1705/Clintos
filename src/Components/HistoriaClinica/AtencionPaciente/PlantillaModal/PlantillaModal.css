@@ -6,13 +6,18 @@
    bug ya visto con .pf-checklist.pf-grid-4 en PlantillaCrecimt2.css). */
 .modal-card.pm-card{width:720px;}
 .pm-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
-.pm-search{width:100%;}
+/* Compuesto (0,2,0) a propósito: .search-field (HistoriaClinica.css) fija
+   width:320px con la misma especificidad que ".pm-search" solo, y cuál
+   gana dependía del orden de inyección de las hojas — mismo motivo que
+   .modal-card.pm-card arriba. */
+.search-field.pm-search{width:100%;}
 
 .pm-table-wrap{
   border:1px solid var(--border);border-radius:var(--radius);
   max-height:360px;overflow:auto;
 }
 .pm-col-codigo{width:150px;}
+.pm-col-sexo{width:100px;}
 /* Jerarquía propia de este catálogo: la descripción es el dato que el
    usuario realmente lee para elegir, así que pesa más que el código — al
    revés del énfasis por defecto de .cell-primary en shared.css (pensado
@@ -22,7 +27,8 @@
    inyección de cada hoja — un solo ".pm-cell-desc" (0,1,0) perdía ahí
    justo el font-weight. */
 .pm-table-wrap .pm-cell-codigo{font-weight:var(--fw-regular);color:var(--primary);}
-.pm-table-wrap .pm-cell-desc{font-weight:var(--fw-medium);color:var(--ink-900);}
+.pm-table-wrap .pm-cell-desc{font-weight:var(--fw-regular);color:var(--ink-900);}
+.pm-table-wrap .pm-cell-sexo{color:var(--ink-700);}
 /* Las filas son enfocables (tabIndex, ver PlantillaModal.jsx) para elegir
    plantilla con Enter sin mouse — .data-table no trae :focus-visible propio
    porque hasta ahora ninguna fila de otras tablas del proyecto era
