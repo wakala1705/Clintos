@@ -1,0 +1,48 @@
+/* Reglas reutilizadas por los 4 Steps de esta plantilla (Información
+   general/Antecedentes/Examen físico/Plan de tratamiento) — importado una
+   sola vez desde PlantillaIngresoHospitalizacion.jsx (ver AGENTS.md,
+   "Component organization"). No se reutiliza .pf-* de PlantillaCrecimt2.css:
+   esa hoja está explícitamente scopeada a su propio subárbol (wizard de 13
+   pasos + densidad de input configurable) y esta plantilla es una pantalla
+   de navegación libre mucho más simple — si en el futuro ambas plantillas
+   terminan necesitando exactamente las mismas primitivas de formulario, ese
+   es el momento de promoverlas a un shared.css de AtencionPaciente, no
+   antes. */
+
+.pih-section-title{margin:0 0 4px 0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pih-section-desc{margin:0 0 20px 0;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* Subtítulo intermedio dentro de una sección (ej. "Signos vitales" vs
+   "Examen físico por sistemas" en Examen físico) — un peldaño más chico que
+   .pih-section-title, mismo criterio de jerarquía por tamaño de "Tipografía"
+   en AGENTS.md (semibold en ambos, el tamaño marca el nivel). */
+.pih-subsection-title{
+  margin:24px 0 12px 0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  padding-top:16px;border-top:1px solid var(--border);
+}
+.pih-subsection-title:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+
+.pih-fields{display:flex;flex-direction:column;gap:16px;}
+
+/* Grupo booleano (Sí/No) + su textarea de observaciones opcional (ver
+   AntecedentesStep.jsx) — el select ocupa una columna angosta, la
+   observación queda debajo a ancho completo dentro del mismo grupo. */
+.pih-campo-grupo{display:flex;flex-direction:column;gap:12px;}
+.pih-campo-grupo .form-field:first-child{max-width:280px;}
+
+.pih-grid-3{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;}
+
+.form-field{display:flex;flex-direction:column;gap:6px;}
+.form-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
+.form-field input, .form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input{height:var(--input-md);}
+.form-field textarea{min-height:80px;resize:vertical;}
+.form-field input:focus, .form-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.form-field input::placeholder, .form-field textarea::placeholder{color:var(--ink-400);}
+
+@media (max-width:1024px){
+  .pih-grid-3{grid-template-columns:repeat(2, 1fr);}
+}

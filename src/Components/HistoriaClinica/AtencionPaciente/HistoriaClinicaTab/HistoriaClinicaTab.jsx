@@ -80,7 +80,7 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen) {
   );
 }
 
-export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNuevaAtencion, usuarioActual }) {
+export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual }) {
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   // null | 'loading' | 'ready' — se resetea al cambiar de registro
   // seleccionado (ver handleSelectRegistro) para que el resumen de uno no
@@ -104,6 +104,7 @@ export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNueva
         grupos={grupos}
         nuevaAtencionLabel={nuevaAtencionLabel}
         onNuevaAtencion={onNuevaAtencion}
+        onAgregarRegistro={onAgregarRegistro}
         usuarioActual={usuarioActual}
         selectedRegistroId={selectedRegistro?.id}
         onSelectRegistro={handleSelectRegistro}

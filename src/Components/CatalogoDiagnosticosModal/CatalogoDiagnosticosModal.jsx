@@ -1,12 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './CatalogoDiagnosticosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
-import { DIAGNOSTICOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { DIAGNOSTICOS_CATALOGO } from '@/hooks/CatalogoDiagnosticosModal/mockDiagnosticosData';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -16,9 +15,8 @@ const SEXO_OPTIONS = [
   { value: 'Masculino', label: 'Masculino' },
 ];
 
-// Quita tildes -- mismo helper que CatalogoSalasModal.jsx (no compartido
-// entre ambos para no acoplar dos modales de catálogo por un util, ver
-// AGENTS.md "Component organization").
+// Quita tildes -- mismo helper que CatalogoAseguradorasModal.jsx (no
+// compartido entre features, ver AGENTS.md "Component organization").
 function normalizar(texto) {
   return Array.from(texto.normalize('NFD'))
     .filter((ch) => {
@@ -43,20 +41,27 @@ function rangoPaginas(page, totalPages) {
   return rango;
 }
 
-// Ventana de búsqueda de "Dx. ingreso" (encargo explícito, ver onBuscar en
-// InformacionGeneralStep.jsx) -- mismo look que CatalogoSalasModal
-// (buscador + tabla con borde + fila-botón seleccionable + footer
-// Cancelar/Confirmar), con 2 buscadores (Descripción/Código) + filtro de
-// sexo y paginación real sobre DIAGNOSTICOS_CATALOGO en vez del "12423
-// registros" fijo de la captura de referencia -- ver comentario del
-// catálogo en mockCirugiaData.js.
+// Picker de diagnóstico (CIE-10) -- componente app-wide (ver AGENTS.md
+// "Component organization": "App-wide components... viven directamente bajo
+// src/Components/<ComponentName>/", no anidados en una sola feature). Nació
+// en ProgramacionSalaCirugias (Dx. ingreso de NuevaCirugiaWizard) y se
+// promovió acá cuando el buscador CIE-10 de Historia Clínica → Ingreso a
+// hospitalización (DiagnosticosPanel.jsx) empezó a necesitar exactamente el
+// mismo catálogo/modal (encargo explícito: "el buscador del cie10 debería
+// abrir el modal de cie10 que ya tenemos diseñado" en vez de duplicarlo con
+// su propio catálogo mock). Mismo criterio de chrome autocontenido que
+// CatalogoAseguradorasModal.jsx (.cdm-overlay/.cdm-modal/.cdm-body/
+// .cdm-footer propios, NO el `.modal-card` de ProgramacionSalaCirugias ni el
+// `.modal-overlay` de HistoriaClinica -- esas clases divergen de nombre/look
+// entre features) -- solo consume tokens de color ya declarados por cada
+// feature en su :root (mismo contrato que ModalHeader), y sin focus trap por
+// el mismo motivo que CatalogoAseguradorasModal (hook propio de
+// ProgramacionSalaCirugias, ningún consumidor lo necesitaba).
 //
 // El filtro de sexo es inclusivo: eligiendo "Femenino"/"Masculino" muestra
 // ese sexo + los diagnósticos "Ambos" (no excluye los genéricos), igual que
 // un filtro de aplicabilidad clínica esperaría comportarse.
 export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
-  const modalRef = useRef(null);
-  useModalFocusTrap(modalRef);
   const [queryDescripcion, setQueryDescripcion] = useState('');
   const [queryCodigo, setQueryCodigo] = useState('');
   const [sexo, setSexo] = useState('');
@@ -104,15 +109,15 @@ export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
   }
 
   return (
-    <div className="modal-overlay open">
-      <div ref={modalRef} className="modal-card cdm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cdm-title">
+    <div className="cdm-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="cdm-modal" role="dialog" aria-modal="true" aria-labelledby="cdm-title">
         <ModalHeader
           title="Seleccionar diagnóstico"
           titleId="cdm-title"
           onClose={onClose}
           closeLabel="Cerrar búsqueda de diagnóstico"
         />
-        <div className="modal-body cdm-body">
+        <div className="cdm-body">
           <div className="cdm-search-row">
             <div className="cdm-search">
               <LuSearch className="icon" aria-hidden="true" />
@@ -220,7 +225,7 @@ export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
             </div>
           )}
         </div>
-        <div className="modal-footer">
+        <div className="cdm-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
         </div>

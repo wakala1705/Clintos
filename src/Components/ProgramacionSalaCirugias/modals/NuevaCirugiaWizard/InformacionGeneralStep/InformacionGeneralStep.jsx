@@ -4,7 +4,7 @@ import { useState } from 'react';
 import './InformacionGeneralStep.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DuracionInput from '../../../DuracionInput/DuracionInput';
-import CatalogoDiagnosticosModal from '../../CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
+import CatalogoDiagnosticosModal from '@/Components/CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
 import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
 import {
   ASA_CATALOGO,

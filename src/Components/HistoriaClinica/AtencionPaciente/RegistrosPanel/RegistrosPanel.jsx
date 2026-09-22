@@ -48,6 +48,7 @@ export default function RegistrosPanel({
   grupos,
   nuevaAtencionLabel = 'Nueva atención',
   onNuevaAtencion,
+  onAgregarRegistro,
   selectedRegistroId,
   onSelectRegistro,
   usuarioActual,
@@ -224,7 +225,13 @@ export default function RegistrosPanel({
                           <LuPrinter className="icon" />
                         </button>
                       )}
-                      <button type="button" className="rg-group-action-btn" aria-label={`Agregar registro de ${grupo.tipo}`} title="Agregar">
+                      <button
+                        type="button"
+                        className="rg-group-action-btn"
+                        aria-label={`Agregar registro de ${grupo.tipo}`}
+                        title="Agregar"
+                        onClick={() => onAgregarRegistro?.(grupo.tipo)}
+                      >
                         <LuPlus className="icon" />
                       </button>
                     </div>

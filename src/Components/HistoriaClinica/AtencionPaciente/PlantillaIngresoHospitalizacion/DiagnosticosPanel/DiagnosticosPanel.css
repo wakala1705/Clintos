@@ -1,0 +1,35 @@
+/* .form-field/.pih-fields/.pih-section-title: definidas en
+   ../shared/shared.css. Acá solo el layout propio del título con ícono y del
+   picker de CIE-10 (abre CatalogoDiagnosticosModal, ver
+   DiagnosticosPanel.jsx). */
+
+/* Mismo criterio que .pf-card-header-icon/.pf-block-icon de PlantillaCrecimt2
+   (círculo de 32px con el ícono en tono primary) -- no reutilizado directo:
+   esas clases están scopeadas a su propio feature (ver AGENTS.md "Component
+   organization"). */
+.dxp-title-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.dxp-title-icon{
+  width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.dxp-title-icon .icon{width:17px;height:17px;}
+.dxp-title{margin:0;}
+
+/* Picker de CIE-10 como texto plano, no una caja de input (mismo criterio
+   que .meta-item.picker-btn del Topbar -- ver AreaFuncionalPickerButton.jsx
+   -- encargo explícito: "dejalo como texto plano, no dentro de un input").
+   El nombre del diagnóstico solo se elige desde CatalogoDiagnosticosModal
+   (nunca se tipea a mano), así que no hace falta un control editable: al no
+   estar encajonado en una línea de altura fija, el texto envuelve libre con
+   el ancho de la columna (320px, ver .pih-aside) en vez de cortarse. */
+.dxp-diag-picker{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;width:100%;
+  border:none;background:none;padding:0;font-family:inherit;text-align:left;cursor:pointer;
+}
+.dxp-diag-picker:hover .dxp-diag-value,
+.dxp-diag-picker:hover .dxp-diag-placeholder{color:var(--primary-dark);}
+.dxp-diag-picker:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.dxp-diag-picker .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;margin-top:1px;}
+.dxp-diag-value{font-size:var(--fs-base);color:var(--ink-900);font-weight:var(--fw-medium);}
+.dxp-diag-placeholder{font-size:var(--fs-base);color:var(--ink-400);}

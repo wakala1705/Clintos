@@ -134,6 +134,38 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
     setPlantillaMaximizada(false);
   }
 
+  // Extraído de lo que antes vivía inline en el onElegir de PlantillaModal —
+  // ahora también lo usa el botón "+" de un agrupador (ver
+  // handleAgregarRegistro abajo), que necesita la misma lógica de ruteo
+  // sin pasar por el catálogo.
+  function handleElegirPlantilla(plantilla) {
+    if (plantilla.codigo === 'CRECIMT2') {
+      setPlantillaActiva('crecimt2');
+      return;
+    }
+    if (plantilla.codigo === 'INGHOSP') {
+      setPlantillaActiva('inghosp');
+      return;
+    }
+    window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
+  }
+
+  // Botón "+" de un agrupador en RegistrosPanel (encargo explícito): abre
+  // directo la plantilla cuyo `codigo` coincide con el `tipo` del agrupador,
+  // sin pasar por PlantillaModal. No todo `tipo` tiene hoy un `codigo` que le
+  // calce exacto en el catálogo (ej. HCURG, NOTAS DE ENFERMERÍA) — en ese
+  // caso se avisa que no hay plantilla asociada, distinto del toast de
+  // handleElegirPlantilla (ese es para plantillas que sí existen en el
+  // catálogo pero cuyo formulario todavía no está construido).
+  function handleAgregarRegistro(tipo) {
+    const plantilla = cfg.plantillas.find((p) => p.codigo === tipo);
+    if (!plantilla) {
+      window.ncToast?.(`No hay una plantilla asociada a "${tipo}" todavía.`);
+      return;
+    }
+    handleElegirPlantilla(plantilla);
+  }
+
   // Patrón ARIA APG de tablist: el roving tabIndex ya deja Tab llegar a la
   // pestaña activa, pero dentro del tablist las flechas deben moverse entre
   // pestañas habilitadas (WCAG 4.1.2 / expectativa estándar del patrón). Hoy
@@ -290,6 +322,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                           usuarioActual={DOCTOR.nombre}
                           nuevaAtencionLabel="Nueva atención"
                           onNuevaAtencion={openPlantillaModal}
+                          onAgregarRegistro={handleAgregarRegistro}
                         />
                       )}
                       {activeTab === 'ordenes-medicas' && (
@@ -314,19 +347,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
         conSexo={cfg.plantillasConSexo}
         onElegir={(plantilla) => {
           closePlantillaModal();
-          if (plantilla.codigo === 'CRECIMT2') {
-            setPlantillaActiva('crecimt2');
-            return;
-          }
-          // Disparador de "Ingreso a hospitalización" (encargo explícito):
-          // por ahora solo habilita la pantalla (ver
-          // PlantillaIngresoHospitalizacion.jsx) — el formulario real queda
-          // pendiente de definir.
-          if (plantilla.codigo === 'INGHOSP') {
-            setPlantillaActiva('inghosp');
-            return;
-          }
-          window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
+          handleElegirPlantilla(plantilla);
         }}
       />
     </div>
