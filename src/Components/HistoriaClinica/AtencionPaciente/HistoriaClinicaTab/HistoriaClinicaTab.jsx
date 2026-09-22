@@ -5,7 +5,7 @@ import './HistoriaClinicaTab.css';
 import RegistrosPanel from '../RegistrosPanel/RegistrosPanel';
 import AgendaEmptyState from '../../AgendaEmptyState/AgendaEmptyState';
 import Button from '@/Components/Button/Button';
-import { LuFileText, LuLoaderCircle, LuSparkles } from 'react-icons/lu';
+import { LuEye, LuFileText, LuLoaderCircle, LuPencil, LuPrinter, LuSparkles } from 'react-icons/lu';
 
 // Sin backend/IA real (mock: "solo pinta el front"), "generar" el resumen es
 // un delay simulado (mismo criterio que PRINT_LOADING_DELAY_MS en
@@ -14,11 +14,16 @@ const RESUMEN_DELAY_MS = 1200;
 
 // Placeholder de detalle — el diseño interno de cada tipo de nota (EVO,
 // notas de enfermería...) todavía no está definido (ver prompt de esta
-// pantalla). Por ahora título + fecha + autor + el botón "Resumen" (solo si
-// el registro trae `resumen` — hoy únicamente HCURG, ver
-// mockHistoriaClinicaRecords.js), para que un futuro renderDetalle
-// específico por tipo de nota lo reemplace sin tocar el resto del layout de
-// la pestaña.
+// pantalla). Por ahora título + fecha + autor + una fila de acciones
+// (Resumen/Imprimir/Editar/Ver detalle, variante secondary-accent) para que
+// un futuro renderDetalle específico por tipo de nota lo reemplace sin tocar
+// el resto del layout de la pestaña. Las 4 acciones se muestran para
+// cualquier tipo de registro (encargo explícito), pero solo "Resumen"
+// funciona hoy, y únicamente cuando el registro trae `resumen` (hoy solo
+// HCURG, ver mockHistoriaClinicaRecords.js) — en el resto queda con
+// `onClick` sin asignar, mismo criterio ya usado en "Imprimir"
+// (`registro.archivoUrl`) y "Editar"/"Ver detalle" (sin flujo aún, solo
+// visual).
 function renderDetalle(registro, resumenStatus, onGenerarResumen) {
   return (
     <div className="hct-detalle">
@@ -32,18 +37,34 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen) {
           </div>
         </div>
 
-        {registro.resumen && resumenStatus !== 'ready' && (
+        <div className="hct-detalle-actions">
+          {resumenStatus !== 'ready' && (
+            <Button
+              variant="secondary-accent"
+              size="sm"
+              icon={resumenStatus === 'loading' ? LuLoaderCircle : LuSparkles}
+              disabled={resumenStatus === 'loading'}
+              onClick={registro.resumen ? onGenerarResumen : undefined}
+              className={`hct-resumen-btn${resumenStatus === 'loading' ? ' loading' : ''}`}
+            >
+              {resumenStatus === 'loading' ? 'Generando resumen…' : 'Resumen'}
+            </Button>
+          )}
           <Button
-            variant="secondary"
+            variant="secondary-accent"
             size="sm"
-            icon={resumenStatus === 'loading' ? LuLoaderCircle : LuSparkles}
-            disabled={resumenStatus === 'loading'}
-            onClick={onGenerarResumen}
-            className={`hct-resumen-btn${resumenStatus === 'loading' ? ' loading' : ''}`}
+            icon={LuPrinter}
+            onClick={registro.archivoUrl ? () => window.open(registro.archivoUrl, '_blank') : undefined}
           >
-            {resumenStatus === 'loading' ? 'Generando resumen…' : 'Resumen'}
+            Imprimir
           </Button>
-        )}
+          <Button variant="secondary-accent" size="sm" icon={LuPencil}>
+            Editar
+          </Button>
+          <Button variant="secondary-accent" size="sm" icon={LuEye}>
+            Ver detalle
+          </Button>
+        </div>
       </div>
 
       {resumenStatus === 'ready' && registro.resumen && (

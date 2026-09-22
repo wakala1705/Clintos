@@ -15,6 +15,7 @@ import HistoriaClinicaTab from './HistoriaClinicaTab/HistoriaClinicaTab';
 import OrdenesMedicasTab from './OrdenesMedicasTab/OrdenesMedicasTab';
 import PlantillaModal from './PlantillaModal/PlantillaModal';
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
+import PlantillaIngresoHospitalizacion from './PlantillaIngresoHospitalizacion/PlantillaIngresoHospitalizacion';
 import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
 import { getRegistrosGrupos, getRegistrosGruposHospitalizacion } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
 import { getOrdenesMedicas } from '@/hooks/HistoriaClinica/mockOrdenesMedicas';
@@ -106,7 +107,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   const [activeTab, setActiveTab] = useState('historia-clinica');
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
-  const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2'
+  const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
   // "Maximizar" (ver ViewSettingsMenu.jsx, dentro de PlantillaCrecimt2): vive
   // acá porque también compacta PatientBanner, hermano de la card, no solo
   // algo interno a PlantillaCrecimt2. Se resetea al salir de la plantilla
@@ -256,6 +257,8 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                     onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
                     patient={data.patient}
                   />
+                ) : plantillaActiva === 'inghosp' ? (
+                  <PlantillaIngresoHospitalizacion onSalir={handleSalirPlantilla} />
                 ) : (
                   <>
                     <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>
@@ -313,6 +316,14 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           closePlantillaModal();
           if (plantilla.codigo === 'CRECIMT2') {
             setPlantillaActiva('crecimt2');
+            return;
+          }
+          // Disparador de "Ingreso a hospitalización" (encargo explícito):
+          // por ahora solo habilita la pantalla (ver
+          // PlantillaIngresoHospitalizacion.jsx) — el formulario real queda
+          // pendiente de definir.
+          if (plantilla.codigo === 'INGHOSP') {
+            setPlantillaActiva('inghosp');
             return;
           }
           window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);

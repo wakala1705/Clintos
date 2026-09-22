@@ -1,0 +1,22 @@
+/* Shell mínimo mientras el formulario real no está definido (ver comentario
+   en el .jsx) — llena la `.card` de AtencionPaciente.jsx igual que
+   .pf-titlebar/.pf-body de PlantillaCrecimt2 (flex column, flex:1
+   min-height:0), pero con clases propias: no se reutilizan las .pf-* de esa
+   plantilla porque hoy solo esta pantalla las necesita (ver "Component
+   organization" en AGENTS.md) — si el formulario real termina compartiendo
+   esta estructura con otra plantilla, ese es el momento de extraerla a un
+   shared.css de AtencionPaciente, no antes.
+*/
+.pih-titlebar{
+  flex-shrink:0;display:flex;align-items:center;gap:10px;
+  padding:16px 24px;border-bottom:1px solid var(--border);
+}
+.pih-titlebar-back{
+  width:32px;height:32px;border-radius:50%;border:none;background:transparent;color:var(--ink-500);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-family:inherit;
+}
+.pih-titlebar-back:hover{background:var(--gray-bg);color:var(--ink-900);}
+.pih-titlebar-back .icon{width:17px;height:17px;}
+.pih-titlebar-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.pih-body{flex:1;min-height:0;display:flex;overflow-y:auto;}

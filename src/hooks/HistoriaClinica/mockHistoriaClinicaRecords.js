@@ -52,16 +52,62 @@ export function getRegistrosGrupos(documento) {
 // hasta que haya registros reales por paciente. Todos los registros llevan
 // `numero` (folio, ver .rg-subrow-numero en RegistrosPanel.jsx) — encargo
 // explícito de sumarlo al resto de las cards, no solo a HCURG.
+//
+// Orden final (ver getRegistrosGruposHospitalizacion): EVO, HCURG, INFOQX
+// (encargo explícito de ubicar ambos justo después de EVO, en ese orden,
+// antes que el resto de grupos compartidos con Consulta Externa), NOTAS DE
+// ENFERMERÍA, EVONU, EVOPSI, INGHOSP, HIC, ERICK.
 const EVO_HOSPITALIZACION = {
   id: 'evo-h1', fecha: '18.SEP.2026', hora: '10:19 AM', numero: '0201295607', tituloNota: 'EVOLUCION',
   autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'EVO',
+};
+
+// HCURG e INFOQX (historia clínica de cirugía) van separados de
+// GRUPOS_HOSPITALIZACION_EXTRA porque van justo después de EVO, no al final
+// (ver getRegistrosGruposHospitalizacion).
+const GRUPO_HCURG = {
+  tipo: 'HCURG',
+  registros: [
+    {
+      id: 'hcurg-1', fecha: '21.SEP.2026', hora: '04:37 PM', numero: '0201295619', tituloNota: 'HISTORIA CLINICA DE URGENCIAS',
+      autor: 'PASTRANA JUAN ESTEBAN', rol: 'Médico', especialidad: 'CARDIOLOGÍA', ambito: 'QX', plantilla: 'HCURG',
+      archivoUrl: '/mock/historia-clinica-urgencias-hcurg.pdf',
+      // Texto fijo que muestra el botón "Resumen" del panel de detalle (ver
+      // HistoriaClinicaTab.jsx) -- sin IA real, la "generación" es un delay
+      // simulado que revela este mismo texto (mismo criterio que el resto
+      // del mock: "solo pinta el front"). Condensa el detalle del PDF de
+      // origen (motivo de consulta, antecedentes, hallazgos al examen
+      // físico y plan de tratamiento). Único registro con este campo hoy —
+      // el botón solo aparece cuando `registro.resumen` existe.
+      resumen: 'Paciente con antecedente de resección anterior de recto + ileostomía (04/03/2026) y adenocarcinoma de la unión rectosigmoidea en manejo con QT adyuvante (CAPEOX, 2do ciclo 04/06/2026), que ingresa por sus propios medios acompañado de familiar por cuadro de 3 días de evolución de retracción del estoma de la ileostomía con ausencia de salida de materia fecal. Examen físico sin hallazgos agudos: abdomen blando y depresible con ileostomía sin débito, sin signos de compromiso neurológico (Glasgow 15/15) ni de perfusión distal. No trae ayudas diagnósticas previas. Sin reingreso reciente ni antecedentes familiares relevantes (niega). Plan de tratamiento registrado: "vom".',
+    },
+  ],
+};
+
+const GRUPO_INFOQX = {
+  tipo: 'INFOQX',
+  registros: [
+    { id: 'infoqx-1', fecha: '21.SEP.2026', hora: '08:54 AM', numero: '0201295610', tituloNota: 'INFORME QUIRURGICO', autor: 'LOBATON RAMIREZ JOSE FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'INFOQX' },
+  ],
 };
 
 const GRUPOS_HOSPITALIZACION_EXTRA = [
   {
     tipo: 'INGHOSP',
     registros: [
-      { id: 'inghosp-1', fecha: '21.SEP.2026', hora: '03:35 PM', numero: '0201295608', tituloNota: 'INGRESO A HOSPITALIZACION', autor: 'MEDICO3 MEDICO4 MEDICO1 MEDICO2', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'INGHOSP' },
+      {
+        id: 'inghosp-1', fecha: '21.SEP.2026', hora: '03:35 PM', numero: '0201295608', tituloNota: 'INGRESO A HOSPITALIZACION',
+        autor: 'GUZMAN OSPINA RICARDO ANDRES', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'INGHOSP',
+        archivoUrl: '/mock/ingreso-hospitalizacion-inghosp.pdf',
+        // Mismo criterio que `resumen` en HCURG (ver arriba): texto fijo que
+        // revela el botón "Resumen" tras el delay simulado. A diferencia de
+        // HCURG, el PDF de origen de este ingreso trae motivo de
+        // consulta/enfermedad actual/antecedentes sociales sin diligenciar
+        // (quedaron como plantilla con "___" y bloques de revisión por
+        // sistema repetidos) — el resumen refleja eso tal cual, sin inventar
+        // hallazgos que el documento no trae.
+        resumen: 'Paciente femenina de 65 años, ingresada con diagnóstico presuntivo de fiebre paratifoidea A (EPS Salud Total, régimen contributivo). El motivo de consulta y la enfermedad actual quedaron registrados como plantilla sin diligenciar. Niega reingreso reciente, así como antecedentes tóxicos, patológicos, oncológicos, quirúrgicos, farmacológicos, transfusionales, alérgicos y familiares. Antecedentes gineco-obstétricos y antecedentes social/económico sin diligenciar. La revisión por sistemas y la inspección general se registraron con el mismo texto de plantilla en todas las secciones, sin hallazgos específicos consignados.',
+      },
     ],
   },
   {
@@ -71,33 +117,9 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
     ],
   },
   {
-    tipo: 'INFOQX',
-    registros: [
-      { id: 'infoqx-1', fecha: '21.SEP.2026', hora: '08:54 AM', numero: '0201295610', tituloNota: 'INFORME QUIRURGICO', autor: 'LOBATON RAMIREZ JOSE FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'INFOQX' },
-    ],
-  },
-  {
     tipo: 'ERICK',
     registros: [
       { id: 'erick-1', fecha: '18.SEP.2026', hora: '10:20 AM', numero: '0201295611', tituloNota: 'HISTORIA CLINICA-PRUEBAS', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'ERICK' },
-    ],
-  },
-  {
-    tipo: 'HCURG',
-    registros: [
-      {
-        id: 'hcurg-1', fecha: '21.SEP.2026', hora: '04:37 PM', numero: '0201295619', tituloNota: 'HISTORIA CLINICA DE URGENCIAS',
-        autor: 'PASTRANA JUAN ESTEBAN', rol: 'Médico', especialidad: 'CARDIOLOGÍA', ambito: 'QX', plantilla: 'HCURG',
-        archivoUrl: '/mock/historia-clinica-urgencias-hcurg.pdf',
-        // Texto fijo que muestra el botón "Resumen" del panel de detalle (ver
-        // HistoriaClinicaTab.jsx) -- sin IA real, la "generación" es un delay
-        // simulado que revela este mismo texto (mismo criterio que el resto
-        // del mock: "solo pinta el front"). Condensa el detalle del PDF de
-        // origen (motivo de consulta, antecedentes, hallazgos al examen
-        // físico y plan de tratamiento). Único registro con este campo hoy —
-        // el botón solo aparece cuando `registro.resumen` existe.
-        resumen: 'Paciente con antecedente de resección anterior de recto + ileostomía (04/03/2026) y adenocarcinoma de la unión rectosigmoidea en manejo con QT adyuvante (CAPEOX, 2do ciclo 04/06/2026), que ingresa por sus propios medios acompañado de familiar por cuadro de 3 días de evolución de retracción del estoma de la ileostomía con ausencia de salida de materia fecal. Examen físico sin hallazgos agudos: abdomen blando y depresible con ileostomía sin débito, sin signos de compromiso neurológico (Glasgow 15/15) ni de perfusión distal. No trae ayudas diagnósticas previas. Sin reingreso reciente ni antecedentes familiares relevantes (niega). Plan de tratamiento registrado: "vom".',
-      },
     ],
   },
 ];
@@ -106,5 +128,8 @@ export function getRegistrosGruposHospitalizacion() {
   const base = REGISTROS_BY_DOCUMENTO['1234567890'].map((grupo) => (
     grupo.tipo === 'EVO' ? { ...grupo, registros: [EVO_HOSPITALIZACION, ...grupo.registros] } : grupo
   ));
-  return [...base, ...GRUPOS_HOSPITALIZACION_EXTRA];
+  // HCURG e INFOQX van justo después de EVO, no al final con el resto de
+  // GRUPOS_HOSPITALIZACION_EXTRA (encargo explícito).
+  const [evoGrupo, ...restoBase] = base;
+  return [evoGrupo, GRUPO_HCURG, GRUPO_INFOQX, ...restoBase, ...GRUPOS_HOSPITALIZACION_EXTRA];
 }

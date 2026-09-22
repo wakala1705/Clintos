@@ -189,50 +189,58 @@ export default function RegistrosPanel({
         )}
       </div>
 
-      {gruposVisibles.length === 0 ? (
-        <AgendaEmptyState icon={LuFolderOpen} title="Sin registros" compact />
-      ) : vistaPlana ? (
-        <div className="rg-subrows plana">
-          {registrosPlanos.map(renderRegistro)}
-        </div>
-      ) : (
-        <div className="rg-groups">
-          {gruposVisibles.map((grupo) => {
-            const isOpen = expandedTipos.has(grupo.tipo);
-            return (
-              <div className="rg-group" key={grupo.tipo}>
-                <div className={`rg-group-row${isOpen ? ' expanded' : ''}`}>
-                  <button
-                    type="button"
-                    className="rg-group-row-btn"
-                    onClick={() => toggleGroup(grupo.tipo)}
-                    aria-expanded={isOpen}
-                  >
-                    <LuChevronRight className={`icon rg-group-chevron${isOpen ? ' open' : ''}`} />
-                    <span className="rg-group-count">{grupo.registros.length}</span>
-                    <span className="rg-group-name">{grupo.tipo}</span>
-                    {grupo.estado && <span className="rg-badge-activa">{grupo.estado}</span>}
-                  </button>
-                  <div className="rg-group-actions">
-                    <button type="button" className="rg-group-action-btn" aria-label={`Imprimir ${grupo.tipo}`} title="Imprimir">
-                      <LuPrinter className="icon" />
+      {/* rg-top/rg-header quedan fijos (encargo explícito): solo este
+          wrapper hace scroll, no todo .rg-panel. */}
+      <div className="rg-list">
+        {gruposVisibles.length === 0 ? (
+          <AgendaEmptyState icon={LuFolderOpen} title="Sin registros" compact />
+        ) : vistaPlana ? (
+          <div className="rg-subrows plana">
+            {registrosPlanos.map(renderRegistro)}
+          </div>
+        ) : (
+          <div className="rg-groups">
+            {gruposVisibles.map((grupo) => {
+              const isOpen = expandedTipos.has(grupo.tipo);
+              return (
+                <div className="rg-group" key={grupo.tipo}>
+                  <div className={`rg-group-row${isOpen ? ' expanded' : ''}`}>
+                    <button
+                      type="button"
+                      className="rg-group-row-btn"
+                      onClick={() => toggleGroup(grupo.tipo)}
+                      aria-expanded={isOpen}
+                    >
+                      <LuChevronRight className={`icon rg-group-chevron${isOpen ? ' open' : ''}`} />
+                      <span className="rg-group-count">{grupo.registros.length}</span>
+                      <span className="rg-group-name">{grupo.tipo}</span>
+                      {grupo.estado && <span className="rg-badge-activa">{grupo.estado}</span>}
                     </button>
-                    <button type="button" className="rg-group-action-btn" aria-label={`Agregar registro de ${grupo.tipo}`} title="Agregar">
-                      <LuPlus className="icon" />
-                    </button>
+                    <div className="rg-group-actions">
+                      {/* Imprimir del agrupador: solo EVO lo trae (encargo
+                          explícito) — el resto de tipos queda solo con "+". */}
+                      {grupo.tipo === 'EVO' && (
+                        <button type="button" className="rg-group-action-btn" aria-label={`Imprimir ${grupo.tipo}`} title="Imprimir">
+                          <LuPrinter className="icon" />
+                        </button>
+                      )}
+                      <button type="button" className="rg-group-action-btn" aria-label={`Agregar registro de ${grupo.tipo}`} title="Agregar">
+                        <LuPlus className="icon" />
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                {isOpen && (
-                  <div className="rg-subrows">
-                    {grupo.registros.map(renderRegistro)}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  {isOpen && (
+                    <div className="rg-subrows">
+                      {grupo.registros.map(renderRegistro)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

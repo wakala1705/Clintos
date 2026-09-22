@@ -7,7 +7,7 @@
 .hct-detalle-meta{display:flex;align-items:center;gap:8px;font-size:var(--fs-base);color:var(--ink-500);}
 .hct-detalle-sep{color:var(--ink-400);}
 
-.hct-resumen-btn{flex-shrink:0;}
+.hct-detalle-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .hct-resumen-btn.loading svg{animation:hct-resumen-spin .8s linear infinite;}
 @keyframes hct-resumen-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 @media (prefers-reduced-motion:reduce){.hct-resumen-btn.loading svg{animation-duration:2.4s;}}
