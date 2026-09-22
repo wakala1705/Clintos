@@ -53,3 +53,19 @@
 @media (max-width:1024px){
   .pih-grid-3{grid-template-columns:repeat(2, 1fr);}
 }
+
+/* "Diseño de columna" = 2 columnas (ver ViewSettingsMenu.jsx, dropdown de
+   Configuración de vista) -- .pih-content agrega esta clase al elegir la
+   opción. Reorganiza TODO el formulario en una grilla de 2 columnas (encargo
+   explícito), no solo angosta con espacio libre: .pih-fields pasa de pila
+   vertical (flex-column, el default de arriba) a grid de 2 columnas, y cada
+   hijo directo (.form-field suelto, .pih-campo-grupo) ocupa una celda. Los
+   subtítulos de sección (.pih-subsection-title) y .pih-grid-3 cruzan las 2
+   columnas completas -- .pih-grid-3 en sí también pasa a 2 columnas (mismo
+   valor que ya usaba el breakpoint tablet de abajo, reutilizado acá en vez
+   de un tercer valor nuevo) en lugar de quedar comprimido en una sola celda
+   angosta de 2. */
+.pih-cols-2 .pih-fields{display:grid;grid-template-columns:repeat(2, 1fr);gap:16px 24px;align-items:start;}
+.pih-cols-2 .pih-fields > .pih-subsection-title,
+.pih-cols-2 .pih-fields > .pih-grid-3{grid-column:1 / -1;}
+.pih-cols-2 .pih-grid-3{grid-template-columns:repeat(2, 1fr);}

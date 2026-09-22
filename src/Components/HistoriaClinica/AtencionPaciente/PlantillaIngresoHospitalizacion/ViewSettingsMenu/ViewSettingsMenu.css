@@ -1,0 +1,27 @@
+/* .pih-titlebar-icon-btn: definida en ../PlantillaIngresoHospitalizacion.css
+   (shared del feature, mismo botón redondo que el back/expandir). */
+.vsm-root{position:relative;flex-shrink:0;}
+.vsm-trigger[aria-expanded="true"]{background:var(--gray-bg);color:var(--ink-900);}
+
+.vsm-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:280px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:12px;
+}
+.vsm-section-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;margin:0 0 10px;}
+
+/* Cards de "Compacto"/"Flexible" -- referencia visual: ícono de 3 columnas +
+   label debajo, la opción activa se resalta con borde/fondo primario (mismo
+   criterio de selección que .pf-toggle-btn.active, PlantillaCrecimt2.css). */
+.vsm-colsize-group{display:flex;gap:10px;}
+.vsm-colsize-option{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 10px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+}
+.vsm-colsize-option:hover{border-color:var(--ink-400);}
+.vsm-colsize-option.active{border-color:var(--primary);background:var(--primary-50);color:var(--primary);}
+
+.vsm-colsize-icon{display:flex;align-items:center;gap:4px;height:28px;}
+.vsm-colsize-icon span{width:8px;height:22px;border-radius:2px;background:var(--ink-400);}
+.vsm-colsize-option.active .vsm-colsize-icon span{background:var(--primary);}

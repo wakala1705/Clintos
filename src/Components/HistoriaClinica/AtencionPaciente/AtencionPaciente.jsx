@@ -14,6 +14,7 @@ import AgendaEmptyState from '../AgendaEmptyState/AgendaEmptyState';
 import HistoriaClinicaTab from './HistoriaClinicaTab/HistoriaClinicaTab';
 import OrdenesMedicasTab from './OrdenesMedicasTab/OrdenesMedicasTab';
 import PlantillaModal from './PlantillaModal/PlantillaModal';
+import CreandoPlantillaModal from './CreandoPlantillaModal/CreandoPlantillaModal';
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
 import PlantillaIngresoHospitalizacion from './PlantillaIngresoHospitalizacion/PlantillaIngresoHospitalizacion';
 import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
@@ -31,6 +32,10 @@ import {
   LuPaperclip,
   LuTriangleAlert,
 } from 'react-icons/lu';
+
+// Delay simulado al elegir/crear una plantilla (ver handleElegirPlantilla) —
+// mismo criterio que PRINT_LOADING_DELAY_MS en FacturaVistaClasica.jsx.
+const CREAR_PLANTILLA_DELAY_MS = 1200;
 
 // Pestañas de la atención — "Historia clínica" y "Órdenes médicas" tienen
 // contenido hoy; el resto queda deshabilitada con "Próximamente", mismo patrón que Monitoreo/
@@ -108,9 +113,11 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
-  // "Maximizar" (ver ViewSettingsMenu.jsx, dentro de PlantillaCrecimt2): vive
-  // acá porque también compacta PatientBanner, hermano de la card, no solo
-  // algo interno a PlantillaCrecimt2. Se resetea al salir de la plantilla
+  // "Maximizar"/"Expandir pantalla" (ver ViewSettingsMenu.jsx dentro de
+  // PlantillaCrecimt2, y el botón homólogo en PlantillaIngresoHospitalizacion.jsx):
+  // vive acá porque también compacta PatientBanner, hermano de la card, no
+  // solo algo interno a cada plantilla — mismo estado reusado por ambas en
+  // vez de que cada una lleve el suyo. Se resetea al salir de la plantilla
   // (ver handleSalirPlantilla) para no dejar el banner compacto en la vista
   // de pestañas normal.
   const [plantillaMaximizada, setPlantillaMaximizada] = useState(false);
@@ -118,6 +125,18 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   // plantillas, para devolvérselo al cerrar (PlantillaModal no lo sabe: solo
   // conoce su propio contenido, no quién lo disparó — WCAG 2.1.2/2.4.3).
   const plantillaTriggerRef = useRef(null);
+  // Plantilla en curso de "creación" (delay simulado antes de montarla, ver
+  // handleElegirPlantilla) -- null cuando no hay ninguna en vuelo. Guarda el
+  // objeto entero (no solo un booleano) para que CreandoPlantillaModal pueda
+  // mostrar su descripción.
+  const [creandoPlantilla, setCreandoPlantilla] = useState(null);
+  const creandoPlantillaTimeoutRef = useRef(null);
+
+  // El timeout sobrevive a un cambio de pestaña/desmontaje de este árbol
+  // (navegación fuera de la atención) si no se limpia acá.
+  useEffect(() => () => {
+    if (creandoPlantillaTimeoutRef.current) clearTimeout(creandoPlantillaTimeoutRef.current);
+  }, []);
 
   function openPlantillaModal() {
     plantillaTriggerRef.current = document.activeElement;
@@ -134,20 +153,25 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
     setPlantillaMaximizada(false);
   }
 
-  // Extraído de lo que antes vivía inline en el onElegir de PlantillaModal —
-  // ahora también lo usa el botón "+" de un agrupador (ver
-  // handleAgregarRegistro abajo), que necesita la misma lógica de ruteo
-  // sin pasar por el catálogo.
+  // Sin backend real (mock: "solo pinta el front"), crear la plantilla
+  // elegida es un delay simulado (mismo criterio que PRINT_LOADING_DELAY_MS
+  // en FacturaVistaClasica.jsx) antes de montarla, con CreandoPlantillaModal
+  // como feedback mientras dura (encargo explícito: "utiliza el pequeño
+  // modal de carga que utilizamos al imprimir una factura"). Extraído de lo
+  // que antes vivía inline en el onElegir de PlantillaModal — un único punto
+  // de delay/loading acá porque también lo dispara el botón "+" de un
+  // agrupador (ver handleAgregarRegistro abajo), que no pasa por el
+  // catálogo.
   function handleElegirPlantilla(plantilla) {
-    if (plantilla.codigo === 'CRECIMT2') {
-      setPlantillaActiva('crecimt2');
+    if (plantilla.codigo !== 'CRECIMT2' && plantilla.codigo !== 'INGHOSP') {
+      window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
       return;
     }
-    if (plantilla.codigo === 'INGHOSP') {
-      setPlantillaActiva('inghosp');
-      return;
-    }
-    window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
+    setCreandoPlantilla(plantilla);
+    creandoPlantillaTimeoutRef.current = setTimeout(() => {
+      setPlantillaActiva(plantilla.codigo === 'CRECIMT2' ? 'crecimt2' : 'inghosp');
+      setCreandoPlantilla(null);
+    }, CREAR_PLANTILLA_DELAY_MS);
   }
 
   // Botón "+" de un agrupador en RegistrosPanel (encargo explícito): abre
@@ -276,7 +300,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
             <>
               <PatientBanner
                 patient={data.patient}
-                compact={plantillaActiva === 'crecimt2' && plantillaMaximizada}
+                compact={plantillaActiva !== null && plantillaMaximizada}
                 defaultCollapsed={cfg.bannerCollapsed}
                 secondRow={cfg.secondRow(data)}
               />
@@ -290,7 +314,11 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                     patient={data.patient}
                   />
                 ) : plantillaActiva === 'inghosp' ? (
-                  <PlantillaIngresoHospitalizacion onSalir={handleSalirPlantilla} />
+                  <PlantillaIngresoHospitalizacion
+                    onSalir={handleSalirPlantilla}
+                    maximizada={plantillaMaximizada}
+                    onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                  />
                 ) : (
                   <>
                     <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>
@@ -350,6 +378,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           handleElegirPlantilla(plantilla);
         }}
       />
+      {creandoPlantilla && <CreandoPlantillaModal plantilla={creandoPlantilla} />}
     </div>
   );
 }

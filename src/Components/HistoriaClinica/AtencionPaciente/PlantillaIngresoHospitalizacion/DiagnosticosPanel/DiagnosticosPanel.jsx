@@ -87,7 +87,7 @@ export default function DiagnosticosPanel() {
         {/* Solo el botón por ahora (encargo explícito) -- agregar la fila de
             diagnóstico relacionado que dispara es un paso aparte, todavía no
             pedido. */}
-        <Button type="button" variant="secondary" size="sm" icon={LuPlus} className="dxp-add-relacionado">
+        <Button type="button" variant="secondary-accent" size="sm" icon={LuPlus} className="dxp-add-relacionado">
           Agregar diagnóstico relacionado
         </Button>
       </div>

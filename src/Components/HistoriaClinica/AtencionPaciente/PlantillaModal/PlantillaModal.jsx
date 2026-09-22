@@ -16,6 +16,11 @@ const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled
 // atención" en RegistrosPanel. Elegir una plantilla es, por ahora, el final
 // del flujo (onElegir queda como hook listo, ver AtencionPaciente.jsx): el
 // editor de la nota a partir de la plantilla todavía no está definido.
+// `onElegir` cierra este catálogo de inmediato -- el delay simulado +
+// CreandoPlantillaModal viven en AtencionPaciente.jsx (encargo explícito:
+// ese mismo modal de carga también dispara desde la acción rápida "+" de un
+// agrupador, que no pasa por este catálogo -- un solo punto de delay/loading
+// en el padre común en vez de que cada disparador simule el suyo).
 //
 // `plantillas` es el catálogo a mostrar (Consulta Externa por defecto;
 // Hospitalización pasa el suyo, ver PLANTILLAS_HOSPITALIZACION). `conSexo`

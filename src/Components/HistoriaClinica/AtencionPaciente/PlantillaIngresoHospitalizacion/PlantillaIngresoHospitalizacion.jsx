@@ -11,7 +11,8 @@ import AntecedentesStep from './AntecedentesStep/AntecedentesStep';
 import ExamenFisicoStep from './ExamenFisicoStep/ExamenFisicoStep';
 import PlanTratamientoStep from './PlanTratamientoStep/PlanTratamientoStep';
 import DiagnosticosPanel from './DiagnosticosPanel/DiagnosticosPanel';
-import { LuArrowLeft } from 'react-icons/lu';
+import ViewSettingsMenu from './ViewSettingsMenu/ViewSettingsMenu';
+import { LuArrowLeft, LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 
 const PLANTILLA_NOMBRE = 'Ingreso a hospitalización';
 
@@ -61,9 +62,10 @@ const SECCIONES = [
 
 const SCROLL_OFFSET = 32; // px desde el techo del panel que cuenta como "sección activa"
 
-export default function PlantillaIngresoHospitalizacion({ onSalir }) {
+export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, onToggleMaximizar }) {
   const [activeSeccion, setActiveSeccion] = useState(SECCIONES[0].id);
   const [creadaEn] = useState(() => new Date());
+  const [columnLayout, setColumnLayout] = useState('flexible');
   const panelRef = useRef(null);
   const sectionRefs = useRef([]);
 
@@ -109,13 +111,31 @@ export default function PlantillaIngresoHospitalizacion({ onSalir }) {
   return (
     <>
       <div className="pih-titlebar">
-        <button type="button" className="pih-titlebar-back" onClick={onSalir} aria-label="Salir de la plantilla">
+        <button type="button" className="pih-titlebar-icon-btn" onClick={onSalir} aria-label="Salir de la plantilla">
           <LuArrowLeft className="icon" aria-hidden="true" />
         </button>
         <div className="pih-titlebar-info">
-          <Badge tone="info">Nuevo registro</Badge>
+          <span className="pih-titlebar-label">PLANTILLA:</span>
           <span className="pih-titlebar-title">{PLANTILLA_NOMBRE}</span>
           <span className="pih-titlebar-meta">{formatFechaHoraCreacion(creadaEn)}</span>
+          <Badge tone="success">Nuevo registro</Badge>
+        </div>
+
+        <div className="pih-titlebar-actions">
+          <ViewSettingsMenu columnLayout={columnLayout} onColumnLayoutChange={setColumnLayout} />
+          <button
+            type="button"
+            className="pih-titlebar-icon-btn"
+            onClick={onToggleMaximizar}
+            aria-label={maximizada ? 'Restaurar pantalla' : 'Expandir pantalla'}
+            title={maximizada ? 'Restaurar pantalla' : 'Expandir pantalla'}
+          >
+            {maximizada ? (
+              <LuMinimize2 className="icon" aria-hidden="true" />
+            ) : (
+              <LuMaximize2 className="icon" aria-hidden="true" />
+            )}
+          </button>
         </div>
       </div>
 
@@ -126,7 +146,11 @@ export default function PlantillaIngresoHospitalizacion({ onSalir }) {
           onSelectSeccion={handleSelectSeccion}
         />
 
-        <form className="pih-content" ref={panelRef} onSubmit={(e) => e.preventDefault()}>
+        <form
+          className={`pih-content${columnLayout === 'dos-columnas' ? ' pih-cols-2' : ''}`}
+          ref={panelRef}
+          onSubmit={(e) => e.preventDefault()}
+        >
           <div id="pih-informacion-general" ref={(el) => { sectionRefs.current[0] = el; }} className="pih-section-block">
             <InformacionGeneralStep />
           </div>

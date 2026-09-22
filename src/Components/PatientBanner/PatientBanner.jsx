@@ -29,8 +29,11 @@ function maskText(value) {
 // `onClose` (Asignación de Citas permite quitar el paciente seleccionado),
 // y `empty` (Asignación de Citas arranca sin paciente hasta que se busca uno;
 // Enfermería siempre entra con un paciente ya admitido). `compact` (usado por
-// PlantillaCrecimt2 al maximizar, ver ViewSettingsMenu.jsx) reduce el banner
-// a una sola línea con nombre/CC/edad/sexo/aseguradora — ignora secondRow/
+// PlantillaCrecimt2 y PlantillaIngresoHospitalizacion al maximizar, ver
+// ViewSettingsMenu.jsx / botón "Expandir pantalla" homólogo) reduce el
+// banner a una sola línea con nombre/edad/cama/diagnóstico (sin CC/sexo/
+// aseguradora — encargo explícito, mismo criterio que ASEGURADOR desaparece
+// al colapsar la fila 2 de la variante normal) — ignora secondRow/
 // statusBadge/onClose/alergias para dejar sitio real a la card que crece
 // por encima.
 // `leadingSelect` (un <select> nativo antes del primer chip de secondRow —
@@ -137,10 +140,9 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
         <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
         <div className="patient-name-block"><div className="pname">{nombreMostrado}</div></div>
         <div className="patient-meta">
-          <div className="pm-item"><span className="lbl">CC</span> <b>{documentoMostrado}</b></div>
           <div className="pm-item"><span className="lbl">EDAD</span> <b>{patient.edad}</b></div>
-          <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>
-          <div className="pm-item"><span className="lbl">Aseg.</span> <b>{patient.eps}</b></div>
+          {patient.cama && <div className="pm-item"><span className="lbl">CAMA</span> <b>{patient.cama}</b></div>}
+          {patient.diagnostico && <div className="pm-item"><span className="lbl">DIAGNÓSTICO</span> <b>{patient.diagnostico}</b></div>}
         </div>
       </div>
     );

@@ -1,0 +1,11 @@
+/* Mismo diseño que .fvc-print-loading-modal (PrintLoadingModal.css,
+   Facturación) sobre .modal-card de HistoriaClinica en vez de .modal de esa
+   feature -- ver comentario de CreandoPlantillaModal.jsx. .modal-card ya es
+   flex column por defecto (shared.css), por eso alcanza con pisarle el
+   width/alineación. */
+.cpm-card{width:280px;align-items:center;text-align:center;padding:32px 24px;gap:12px;}
+.cpm-spinner{width:32px;height:32px;color:var(--primary);animation:cpm-spin .8s linear infinite;}
+.cpm-text{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cpm-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+@keyframes cpm-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){.cpm-spinner{animation-duration:2.4s;}}

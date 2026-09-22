@@ -41,18 +41,20 @@
    variante normal, solo con padding/gap/tamaño de avatar reducidos.
    flex-wrap:nowrap es sobre el flex externo (avatar/nombre/meta/toggle no
    pasan a una segunda línea entre sí); .patient-meta conserva su propio
-   flex-wrap:wrap (heredado de la regla base), así que si CC/EDAD/SEXO/Aseg.
-   no entran en una sola línea, esos chips wrappean dentro de su propia caja
-   en vez de desbordar el banner. */
+   flex-wrap:wrap (heredado de la regla base), así que si CC/EDAD/SEXO/
+   DIAGNÓSTICO no entran en una sola línea, esos chips wrappean dentro de su
+   propia caja en vez de desbordar el banner. */
 .patient-banner-compact{padding:8px 20px;gap:12px;flex-wrap:nowrap;}
 .patient-banner-compact .patient-avatar{width:30px;height:30px;font-size:var(--fs-sm);}
 .patient-banner-compact .patient-name-block .pname{font-size:var(--fs-base);}
 /* Acá sí label+valor en una sola línea (a diferencia de .pm-item en la
    variante normal, ver arriba) — esta variante existe justamente para
    ocupar el mínimo alto posible (maximizar/PlantillaCrecimt2), así que no
-   hereda el apilado label-arriba/valor-abajo. */
+   hereda el apilado label-arriba/valor-abajo. El propio `.lbl` (tamaño/
+   mayúsculas/letter-spacing) SÍ es el mismo que la variante normal (encargo
+   explícito: "utiliza el mismo estilo de labels que tiene patient-banner")
+   — ya no se pisa acá, solo cambia el layout de la fila.*/
 .patient-banner-compact .patient-meta .pm-item{flex-direction:row;align-items:center;gap:4px;}
-.patient-banner-compact .patient-meta .pm-item .lbl{font-size:inherit;text-transform:none;letter-spacing:normal;}
 /* Badge de estado: ver @/Components/Badge/Badge (ya migrado, no se
    redefine acá). */
 .close-x{
