@@ -12,8 +12,10 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // rangos de kg de forma ascendente (1-5/6-10/11-15/>15): el legado los
 // mostraba en un orden alfabético-de-string inconsistente, artefacto de
 // cómo ordenaba las opciones esa pantalla, no un orden intencional a
-// replicar. Se mantiene SIEMPRE montado (`hidden`, ver
-// PlantillaIngresoHospitalizacion.jsx).
+// replicar. Las 4 secciones de la plantilla son un solo formulario continuo
+// (encargo explícito, ver PlantillaIngresoHospitalizacion.jsx) — este Step
+// ya no se oculta con `hidden`, el nav lateral hace scroll hasta acá en vez
+// de mostrar/ocultar.
 const PERDIDA_PESO_OPTIONS = [
   { value: 'no', label: 'No' },
   { value: 'si', label: 'Sí' },
@@ -32,7 +34,7 @@ const SI_NO_OPTIONS = [
   { value: 'si', label: 'Sí' },
 ];
 
-export default function PlanTratamientoStep({ hidden }) {
+export default function PlanTratamientoStep() {
   const [analisisClinico, setAnalisisClinico] = useState('');
   const [opinionPlanTratamiento, setOpinionPlanTratamiento] = useState('');
   const [perdidaPeso, setPerdidaPeso] = useState('');
@@ -40,7 +42,7 @@ export default function PlanTratamientoStep({ hidden }) {
   const [comidoMenos, setComidoMenos] = useState('');
 
   return (
-    <div style={hidden ? { display: 'none' } : undefined}>
+    <div>
       <h3 className="pih-section-title">Plan de tratamiento</h3>
       <p className="pih-section-desc">Análisis clínico, opinión del plan de tratamiento y tamizaje nutricional.</p>
 

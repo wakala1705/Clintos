@@ -1,6 +1,6 @@
 /* .form-field/.pih-fields/.pih-section-title: definidas en
-   ../shared/shared.css. Acá solo el layout propio del título con ícono y del
-   picker de CIE-10 (abre CatalogoDiagnosticosModal, ver
+   ../shared/shared.css. Acá solo el layout propio del título con ícono y de
+   los selectpicker CIE-10/CIE-11 (ambos abren CatalogoDiagnosticosModal, ver
    DiagnosticosPanel.jsx). */
 
 /* Mismo criterio que .pf-card-header-icon/.pf-block-icon de PlantillaCrecimt2
@@ -16,10 +16,11 @@
 .dxp-title-icon .icon{width:17px;height:17px;}
 .dxp-title{margin:0;}
 
-/* Picker de CIE-10 como texto plano, no una caja de input (mismo criterio
-   que .meta-item.picker-btn del Topbar -- ver AreaFuncionalPickerButton.jsx
-   -- encargo explícito: "dejalo como texto plano, no dentro de un input").
-   El nombre del diagnóstico solo se elige desde CatalogoDiagnosticosModal
+/* Selectpicker CIE-10/CIE-11: texto plano + ícono de lupa, no una caja de
+   input (mismo criterio que .meta-item.picker-btn del Topbar -- ver
+   AreaFuncionalPickerButton.jsx -- encargo explícito: "dejalo como texto
+   plano, no dentro de un input" + "mismo criterio de búsqueda" para ambos
+   campos). El diagnóstico solo se elige desde CatalogoDiagnosticosModal
    (nunca se tipea a mano), así que no hace falta un control editable: al no
    estar encajonado en una línea de altura fija, el texto envuelve libre con
    el ancho de la columna (320px, ver .pih-aside) en vez de cortarse. */
@@ -33,3 +34,8 @@
 .dxp-diag-picker .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;margin-top:1px;}
 .dxp-diag-value{font-size:var(--fs-base);color:var(--ink-900);font-weight:var(--fw-medium);}
 .dxp-diag-placeholder{font-size:var(--fs-base);color:var(--ink-400);}
+
+/* Ancho completo de la columna, como el resto de los campos de .pih-fields
+   -- <Button> por defecto es solo tan ancho como su contenido (ver
+   Button.module.css), acá tiene que alinearse con los form-field de arriba. */
+.dxp-add-relacionado{width:100%;justify-content:center;}

@@ -4,11 +4,14 @@ import './IngresoHospitalizacionNav.css';
 
 // Nav lateral de las 4 secciones del formulario — mismo patrón estructural
 // que AntecedentesNav.jsx (PlantillaCrecimt2: rail izquierdo + contenido a
-// la derecha, ver PlantillaIngresoHospitalizacion.jsx), simplificado sin
-// numeración/checkmarks de completado ni subsecciones: esta plantilla no
-// tiene navegación bloqueante ni scrollspy, cada sección es una card plana
-// (ver AGENTS.md, encargo explícito de replicar "el mismo patrón que en las
-// plantillas de consulta externa").
+// la derecha), simplificado sin numeración/checkmarks de completado ni
+// subsecciones: esta plantilla no tiene navegación bloqueante (sin
+// validación entre secciones), pero sí es scrollspy -- `onSelectSeccion`
+// hace scroll hasta la sección elegida y `activeSeccion` se resalta solo
+// según cuál sección cruzó el techo del panel al scrollear a mano (ver
+// PlantillaIngresoHospitalizacion.jsx, encargo explícito: "un solo
+// formulario" con las 4 secciones siempre visibles en vez de mostrar/ocultar
+// una a la vez).
 export default function IngresoHospitalizacionNav({ secciones, activeSeccion, onSelectSeccion }) {
   return (
     <nav className="pihn-nav" aria-label="Secciones del ingreso a hospitalización">

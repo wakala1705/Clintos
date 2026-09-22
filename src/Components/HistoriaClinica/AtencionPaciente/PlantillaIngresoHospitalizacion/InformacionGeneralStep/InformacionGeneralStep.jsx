@@ -6,22 +6,23 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // Transcrito de la sección "ANAMNESIS" de la captura del sistema legado
 // (INGHOSP) — motivo/enfermedad/revisión por sistema quedan como campos
 // libres (el legado los trae con texto de plantilla sin diligenciar, ver
-// mockHistoriaClinicaRecords.js) y Reingreso como Sí/No. Se mantiene SIEMPRE
-// montado (el padre lo oculta con `hidden`, ver PlantillaIngresoHospitalizacion.jsx)
-// para no perder lo ya diligenciado al cambiar de sección.
+// mockHistoriaClinicaRecords.js) y Reingreso como Sí/No. Las 4 secciones de
+// la plantilla son un solo formulario continuo (encargo explícito, ver
+// PlantillaIngresoHospitalizacion.jsx) — este Step ya no se oculta con
+// `hidden`, el nav lateral hace scroll hasta acá en vez de mostrar/ocultar.
 const SI_NO_OPTIONS = [
   { value: 'no', label: 'No' },
   { value: 'si', label: 'Sí' },
 ];
 
-export default function InformacionGeneralStep({ hidden }) {
+export default function InformacionGeneralStep() {
   const [motivoConsulta, setMotivoConsulta] = useState('');
   const [enfermedadActual, setEnfermedadActual] = useState('');
   const [revisionPorSistema, setRevisionPorSistema] = useState('');
   const [reingreso, setReingreso] = useState('');
 
   return (
-    <div style={hidden ? { display: 'none' } : undefined}>
+    <div>
       <h3 className="pih-section-title">Información general</h3>
       <p className="pih-section-desc">Motivo de la consulta, enfermedad actual y revisión por sistema del ingreso.</p>
 

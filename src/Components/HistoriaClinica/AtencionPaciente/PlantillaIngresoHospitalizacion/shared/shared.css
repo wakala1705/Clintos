@@ -34,6 +34,13 @@
 
 .form-field{display:flex;flex-direction:column;gap:6px;}
 .form-field label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
+/* Asterisco de campo obligatorio -- mismo patrón que .req en el resto del
+   proyecto (PlantillaCrecimt2.css, NuevaCitaFlow.css, PreIngresoModal.css:
+   `<span className="req">*</span>` justo después del texto del label), no
+   duplicado por feature en shared/global porque su color es un alias directo
+   de --red (mismo criterio de duplicación por feature que el resto de
+   tokens de color, ver AGENTS.md "Component organization"). */
+.req{color:var(--red);margin-left:2px;}
 .form-field input, .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;

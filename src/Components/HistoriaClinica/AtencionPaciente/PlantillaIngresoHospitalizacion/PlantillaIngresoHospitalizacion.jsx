@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './shared/shared.css';
 import './PlantillaIngresoHospitalizacion.css';
 import Button from '@/Components/Button/Button';
@@ -44,10 +44,14 @@ function formatFechaHoraCreacion(date) {
 // ver IngresoHospitalizacionNav.jsx) — a diferencia de esa plantilla (wizard
 // de 13 pasos con navegación bloqueante en el paso 1), acá las 4 secciones
 // son de navegación libre: el legado las muestra como anclas simples en una
-// sola página, no como un wizard con validación, así que el nav no trae
-// numeración/checkmarks de completado ni subsecciones. Los 4 pasos quedan
-// SIEMPRE montados (ocultos con `hidden`, mismo criterio que
-// PlantillaCrecimt2) para no perder lo diligenciado al cambiar de sección.
+// sola página, no como un wizard con validación. Un solo formulario continuo
+// (encargo explícito) con las 4 secciones siempre visibles en vez de
+// mostrar/ocultar una a la vez — el nav lateral pasa a ser scrollspy: hace
+// scroll hasta la sección elegida (`handleSelectSeccion`) y se resalta solo
+// según cuál sección cruzó el techo del panel al scrollear a mano (mismo
+// patrón SCROLL_OFFSET/computeActive/requestAnimationFrame que
+// ExamenFisicoStep.jsx de PlantillaCrecimt2, aplicado acá a las 4 secciones
+// de nivel superior en vez de a las subsecciones de un solo step).
 const SECCIONES = [
   { id: 'informacion-general', label: 'Información general' },
   { id: 'antecedentes', label: 'Antecedentes' },
@@ -55,19 +59,44 @@ const SECCIONES = [
   { id: 'plan-tratamiento', label: 'Plan de tratamiento' },
 ];
 
+const SCROLL_OFFSET = 32; // px desde el techo del panel que cuenta como "sección activa"
+
 export default function PlantillaIngresoHospitalizacion({ onSalir }) {
   const [activeSeccion, setActiveSeccion] = useState(SECCIONES[0].id);
   const [creadaEn] = useState(() => new Date());
   const panelRef = useRef(null);
+  const sectionRefs = useRef([]);
 
-  // Al cambiar de sección, la nueva vuelve a mostrarse desde arriba (mismo
-  // criterio que goToStep en PlantillaCrecimt2.jsx) — sin esto, el panel
-  // conserva el scrollTop de la sección anterior y la sección recién
-  // seleccionada puede aparecer a mitad de scroll.
   function handleSelectSeccion(id) {
     setActiveSeccion(id);
-    panelRef.current?.scrollTo({ top: 0 });
+    const index = SECCIONES.findIndex((s) => s.id === id);
+    sectionRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+
+    let ticking = false;
+    function computeActive() {
+      ticking = false;
+      const containerTop = el.getBoundingClientRect().top;
+      let next = SECCIONES[0].id;
+      sectionRefs.current.forEach((node, i) => {
+        if (!node) return;
+        const top = node.getBoundingClientRect().top - containerTop;
+        if (top <= SCROLL_OFFSET) next = SECCIONES[i].id;
+      });
+      setActiveSeccion(next);
+    }
+    function handleScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(computeActive);
+    }
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Sin backend real (mock: "solo pinta el front"), Guardar y salir solo
   // confirma la acción por toast y vuelve a la vista de pestañas — mismo
@@ -97,21 +126,29 @@ export default function PlantillaIngresoHospitalizacion({ onSalir }) {
           onSelectSeccion={handleSelectSeccion}
         />
 
-        <div className="pih-content" ref={panelRef}>
-          <InformacionGeneralStep hidden={activeSeccion !== 'informacion-general'} />
-          <AntecedentesStep hidden={activeSeccion !== 'antecedentes'} />
-          <ExamenFisicoStep hidden={activeSeccion !== 'examen-fisico'} />
-          <PlanTratamientoStep hidden={activeSeccion !== 'plan-tratamiento'} />
-        </div>
+        <form className="pih-content" ref={panelRef} onSubmit={(e) => e.preventDefault()}>
+          <div id="pih-informacion-general" ref={(el) => { sectionRefs.current[0] = el; }} className="pih-section-block">
+            <InformacionGeneralStep />
+          </div>
+          <div id="pih-antecedentes" ref={(el) => { sectionRefs.current[1] = el; }} className="pih-section-block">
+            <AntecedentesStep />
+          </div>
+          <div id="pih-examen-fisico" ref={(el) => { sectionRefs.current[2] = el; }} className="pih-section-block">
+            <ExamenFisicoStep />
+          </div>
+          <div id="pih-plan-tratamiento" ref={(el) => { sectionRefs.current[3] = el; }} className="pih-section-block">
+            <PlanTratamientoStep />
+          </div>
+
+          <div className="pih-footer">
+            <Button type="button" variant="secondary" onClick={onSalir}>Cancelar</Button>
+            <Button type="button" variant="primary" onClick={handleGuardarSalir}>Guardar y salir</Button>
+          </div>
+        </form>
 
         <aside className="pih-aside">
           <DiagnosticosPanel />
         </aside>
-      </div>
-
-      <div className="pih-footer">
-        <Button variant="secondary" onClick={onSalir}>Cancelar</Button>
-        <Button variant="primary" onClick={handleGuardarSalir}>Guardar y salir</Button>
       </div>
     </>
   );

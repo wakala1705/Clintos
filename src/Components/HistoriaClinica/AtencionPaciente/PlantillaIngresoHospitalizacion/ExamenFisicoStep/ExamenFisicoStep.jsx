@@ -9,8 +9,11 @@ import { useState } from 'react';
 // acá se representan como subtítulos, no como campos. Tensión arterial se
 // deja como un solo campo de texto (ej. "120/80"), igual que el legado — no
 // se divide en sistólica/diastólica como en PlantillaCrecimt2/ExamenFisicoStep
-// (esa plantilla es una fuente distinta, con su propio formulario). Se
-// mantiene SIEMPRE montado (`hidden`, ver PlantillaIngresoHospitalizacion.jsx).
+// (esa plantilla es una fuente distinta, con su propio formulario). Las 4
+// secciones de la plantilla son un solo formulario continuo (encargo
+// explícito, ver PlantillaIngresoHospitalizacion.jsx) — este Step ya no se
+// oculta con `hidden`, el nav lateral hace scroll hasta acá en vez de
+// mostrar/ocultar.
 const SISTEMAS = [
   { key: 'cabezaOjosOrl', label: 'Cabeza / Ojos / ORL' },
   { key: 'cuello', label: 'Cuello' },
@@ -28,7 +31,7 @@ function estadoInicialSistemas() {
   return Object.fromEntries(SISTEMAS.map((s) => [s.key, '']));
 }
 
-export default function ExamenFisicoStep({ hidden }) {
+export default function ExamenFisicoStep() {
   const [inspeccionGeneral, setInspeccionGeneral] = useState('');
   const [signosVitales, setSignosVitales] = useState({
     frecuenciaCardiaca: '', frecuenciaRespiratoria: '', tensionArterial: '', temperatura: '', peso: '', talla: '',
@@ -44,7 +47,7 @@ export default function ExamenFisicoStep({ hidden }) {
   }
 
   return (
-    <div style={hidden ? { display: 'none' } : undefined}>
+    <div>
       <h3 className="pih-section-title">Examen físico</h3>
       <p className="pih-section-desc">Inspección general, signos vitales y examen físico por sistemas.</p>
 

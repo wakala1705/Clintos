@@ -20,6 +20,13 @@
 
 .pih-body{flex:1;min-height:0;display:flex;}
 .pih-content{flex:1;min-width:0;min-height:0;overflow-y:auto;padding:24px;}
+/* Separador entre las 4 secciones del formulario único (encargo explícito:
+   "todos los 4 bloques deberían ser un solo formulario") -- mismo criterio
+   visual que .pih-subsection-title (border-top + spacing, ver shared.css),
+   el primer bloque no lleva línea/margen de más arriba. */
+.pih-section-block + .pih-section-block{
+  margin-top:32px;padding-top:32px;border-top:1px solid var(--border);
+}
 .pih-aside{
   width:320px;flex-shrink:0;overflow-y:auto;padding:12px;
   background:var(--surface);border-left:1px solid var(--border);
@@ -30,7 +37,21 @@
   .pih-aside{width:100%;border-left:none;border-top:1px solid var(--border);}
 }
 
+/* Vive dentro de .pih-content (encargo explícito) en vez de ser una barra
+   fija al pie de la card entera -- por eso ya no cruza el ancho del aside,
+   solo el de .pih-content. `position:sticky` (encargo explícito: "fijo al
+   final del contenido") lo mantiene pegado abajo del viewport visible de
+   .pih-content mientras se scrollea el step activo, en vez de scrollear con
+   él. `bottom:-24px` + márgenes negativos cancelan el padding:24px de
+   .pih-content (el sticky de por sí respeta ese padding y dejaría un hueco
+   debajo/a los costados) y la propia `padding` del footer lo restablece
+   visualmente alineado con el resto del contenido de arriba. Fondo opaco +
+   `--z-sticky` (mismo token que los thead sticky, ver AGENTS.md
+   "Encabezados de tabla") para que tape el texto que sigue scrolleando
+   detrás. */
 .pih-footer{
-  flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:10px;
-  padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);
+  position:sticky;bottom:-24px;z-index:var(--z-sticky);
+  margin:24px -24px -24px;padding:16px 24px;
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  background:var(--surface);border-top:1px solid var(--border);
 }

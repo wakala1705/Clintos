@@ -8,8 +8,10 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // observaciones, más "Antecedentes familiares" (sin observaciones — el
 // legado no trae ese campo para él, ver mockHistoriaClinicaRecords.js) y los
 // campos sueltos de cierre de la sección (gineco-obstétricos, urológicos,
-// social/económico). Se mantiene SIEMPRE montado (`hidden`, ver
-// PlantillaIngresoHospitalizacion.jsx).
+// social/económico). Las 4 secciones de la plantilla son un solo formulario
+// continuo (encargo explícito, ver PlantillaIngresoHospitalizacion.jsx) —
+// este Step ya no se oculta con `hidden`, el nav lateral hace scroll hasta
+// acá en vez de mostrar/ocultar.
 const SI_NO_OPTIONS = [
   { value: 'no', label: 'No' },
   { value: 'si', label: 'Sí' },
@@ -30,7 +32,7 @@ function estadoInicialBooleanos() {
   return Object.fromEntries(CAMPOS_BOOLEANOS.map((c) => [c.key, { valor: '', observaciones: '' }]));
 }
 
-export default function AntecedentesStep({ hidden }) {
+export default function AntecedentesStep() {
   const [booleanos, setBooleanos] = useState(estadoInicialBooleanos);
   const [ginecoObstetricos, setGinecoObstetricos] = useState('');
   const [menarquia, setMenarquia] = useState('');
@@ -44,7 +46,7 @@ export default function AntecedentesStep({ hidden }) {
   }
 
   return (
-    <div style={hidden ? { display: 'none' } : undefined}>
+    <div>
       <h3 className="pih-section-title">Antecedentes</h3>
       <p className="pih-section-desc">Antecedentes personales, gineco-obstétricos y social/económicos del paciente.</p>
 
