@@ -98,7 +98,10 @@ export default function RegistrosPanel({
           onClick={() => onSelectRegistro(registro)}
           aria-selected={isSelected}
         >
-          <span className="rg-subrow-datetime">{registro.fecha} · {registro.hora}</span>
+          <span className="rg-subrow-head">
+            <span className="rg-subrow-datetime">{registro.fecha} · {registro.hora}</span>
+            {registro.numero && <span className="rg-subrow-numero">{registro.numero}</span>}
+          </span>
           <span className="rg-subrow-title">{registro.tituloNota}</span>
           <span className="rg-subrow-author">{registro.autor}</span>
           <span className="rg-subrow-meta">
@@ -109,7 +112,13 @@ export default function RegistrosPanel({
 
         {isSelected && (
           <div className="rg-subrow-actions">
-            <button type="button" className="rg-subrow-action-btn" aria-label={`Imprimir ${registro.tituloNota}`} title="Imprimir">
+            <button
+              type="button"
+              className="rg-subrow-action-btn"
+              aria-label={`Imprimir ${registro.tituloNota}`}
+              title="Imprimir"
+              onClick={registro.archivoUrl ? () => window.open(registro.archivoUrl, '_blank') : undefined}
+            >
               <LuPrinter className="icon" />
             </button>
             <button type="button" className="rg-subrow-action-btn" aria-label={`Editar ${registro.tituloNota}`} title="Editar">

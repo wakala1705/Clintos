@@ -123,6 +123,11 @@
 .rg-subrow-action-btn .icon{width:18px;height:18px;}
 .rg-subrow-action-btn:hover{background:rgba(16,24,39,.08);}
 .rg-subrow-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+/* .rg-subrow-head: mismo layout que .rg-subrow-meta (izquierda/derecha) --
+   `numero` es opcional (ver registro.numero en RegistrosPanel.jsx), solo lo
+   traen algunos tipos de registro (ej. HISTORIA CLINICA DE URGENCIAS). */
+.rg-subrow-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.rg-subrow-numero{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
 .rg-subrow-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
 .rg-subrow-ambito{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
 .rg-subrow-datetime{font-size:var(--fs-sm);color:var(--ink-500);}

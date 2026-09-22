@@ -13,27 +13,27 @@ const REGISTROS_BY_DOCUMENTO = {
       tipo: 'EVO',
       estado: 'Activa',
       registros: [
-        { id: 'evo-1', fecha: '17.ABR.2026', hora: '08:35 AM', tituloNota: 'NOTA DE EVOLUCIÓN', autor: 'CAMILO GRONDONA', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'EVO' },
-        { id: 'evo-2', fecha: '16.ABR.2026', hora: '02:10 PM', tituloNota: 'NOTA DE EVOLUCIÓN', autor: 'CAMILO GRONDONA', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'EVO' },
+        { id: 'evo-1', fecha: '17.ABR.2026', hora: '08:35 AM', numero: '0201295601', tituloNota: 'NOTA DE EVOLUCIÓN', autor: 'CAMILO GRONDONA', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'EVO' },
+        { id: 'evo-2', fecha: '16.ABR.2026', hora: '02:10 PM', numero: '0201295602', tituloNota: 'NOTA DE EVOLUCIÓN', autor: 'CAMILO GRONDONA', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'EVO' },
       ],
     },
     {
       tipo: 'NOTAS DE ENFERMERÍA',
       registros: [
-        { id: 'ne-1', fecha: '17.ABR.2026', hora: '08:35 AM', tituloNota: 'NOTA DE ENFERMERÍA', autor: 'Lopéz Pérez Carmen', rol: 'Enfermera', especialidad: 'ENFERMERÍA', ambito: 'QX' },
-        { id: 'ne-2', fecha: '17.ABR.2026', hora: '04:13 AM', tituloNota: 'NOTA DE ENFERMERÍA', autor: 'Lopéz Pérez Carmen', rol: 'Enfermera', especialidad: 'ENFERMERÍA', ambito: 'QX' },
+        { id: 'ne-1', fecha: '17.ABR.2026', hora: '08:35 AM', numero: '0201295603', tituloNota: 'NOTA DE ENFERMERÍA', autor: 'Lopéz Pérez Carmen', rol: 'Enfermera', especialidad: 'ENFERMERÍA', ambito: 'QX' },
+        { id: 'ne-2', fecha: '17.ABR.2026', hora: '04:13 AM', numero: '0201295604', tituloNota: 'NOTA DE ENFERMERÍA', autor: 'Lopéz Pérez Carmen', rol: 'Enfermera', especialidad: 'ENFERMERÍA', ambito: 'QX' },
       ],
     },
     {
       tipo: 'EVONU',
       registros: [
-        { id: 'evonu-1', fecha: '15.ABR.2026', hora: '10:20 AM', tituloNota: 'NOTA DE EVOLUCIÓN NUTRICIONAL', autor: 'Katherine Ospina', rol: 'Nutricionista', especialidad: 'NUTRICIÓN', ambito: 'QX', plantilla: 'EVONU' },
+        { id: 'evonu-1', fecha: '15.ABR.2026', hora: '10:20 AM', numero: '0201295605', tituloNota: 'NOTA DE EVOLUCIÓN NUTRICIONAL', autor: 'Katherine Ospina', rol: 'Nutricionista', especialidad: 'NUTRICIÓN', ambito: 'QX', plantilla: 'EVONU' },
       ],
     },
     {
       tipo: 'EVOPSI',
       registros: [
-        { id: 'evopsi-1', fecha: '14.ABR.2026', hora: '09:00 AM', tituloNota: 'NOTA DE EVOLUCIÓN PSICOLÓGICA', autor: 'Andrés Felipe Rojas', rol: 'Psicólogo', especialidad: 'PSICOLOGÍA', ambito: 'QX', plantilla: 'EVOPSI' },
+        { id: 'evopsi-1', fecha: '14.ABR.2026', hora: '09:00 AM', numero: '0201295606', tituloNota: 'NOTA DE EVOLUCIÓN PSICOLÓGICA', autor: 'Andrés Felipe Rojas', rol: 'Psicólogo', especialidad: 'PSICOLOGÍA', ambito: 'QX', plantilla: 'EVOPSI' },
       ],
     },
   ],
@@ -48,10 +48,12 @@ export function getRegistrosGrupos(documento) {
 // que todos muestran el mismo set de registros de ejemplo de Isabella
 // (EVO, NOTAS DE ENFERMERÍA, EVONU, EVOPSI) — igual que Consulta Externa —
 // más los registros de plantillas de Hospitalización tomados de la captura
-// del sistema legado (INGHOSP, HIC, INFOQX, ERICK y una EVO más), hasta que
-// haya registros reales por paciente.
+// del sistema legado (INGHOSP, HIC, INFOQX, ERICK, HCURG y una EVO más),
+// hasta que haya registros reales por paciente. Todos los registros llevan
+// `numero` (folio, ver .rg-subrow-numero en RegistrosPanel.jsx) — encargo
+// explícito de sumarlo al resto de las cards, no solo a HCURG.
 const EVO_HOSPITALIZACION = {
-  id: 'evo-h1', fecha: '18.SEP.2026', hora: '10:19 AM', tituloNota: 'EVOLUCION',
+  id: 'evo-h1', fecha: '18.SEP.2026', hora: '10:19 AM', numero: '0201295607', tituloNota: 'EVOLUCION',
   autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'EVO',
 };
 
@@ -59,25 +61,43 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
   {
     tipo: 'INGHOSP',
     registros: [
-      { id: 'inghosp-1', fecha: '21.SEP.2026', hora: '03:35 PM', tituloNota: 'INGRESO A HOSPITALIZACION', autor: 'MEDICO3 MEDICO4 MEDICO1 MEDICO2', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'INGHOSP' },
+      { id: 'inghosp-1', fecha: '21.SEP.2026', hora: '03:35 PM', numero: '0201295608', tituloNota: 'INGRESO A HOSPITALIZACION', autor: 'MEDICO3 MEDICO4 MEDICO1 MEDICO2', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'INGHOSP' },
     ],
   },
   {
     tipo: 'HIC',
     registros: [
-      { id: 'hic-1', fecha: '21.SEP.2026', hora: '09:31 AM', tituloNota: 'HISTORIA CLINICA DE INTERCONSULTA', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'HIC' },
+      { id: 'hic-1', fecha: '21.SEP.2026', hora: '09:31 AM', numero: '0201295609', tituloNota: 'HISTORIA CLINICA DE INTERCONSULTA', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'HIC' },
     ],
   },
   {
     tipo: 'INFOQX',
     registros: [
-      { id: 'infoqx-1', fecha: '21.SEP.2026', hora: '08:54 AM', tituloNota: 'INFORME QUIRURGICO', autor: 'LOBATON RAMIREZ JOSE FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'INFOQX' },
+      { id: 'infoqx-1', fecha: '21.SEP.2026', hora: '08:54 AM', numero: '0201295610', tituloNota: 'INFORME QUIRURGICO', autor: 'LOBATON RAMIREZ JOSE FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'INFOQX' },
     ],
   },
   {
     tipo: 'ERICK',
     registros: [
-      { id: 'erick-1', fecha: '18.SEP.2026', hora: '10:20 AM', tituloNota: 'HISTORIA CLINICA-PRUEBAS', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'ERICK' },
+      { id: 'erick-1', fecha: '18.SEP.2026', hora: '10:20 AM', numero: '0201295611', tituloNota: 'HISTORIA CLINICA-PRUEBAS', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'ERICK' },
+    ],
+  },
+  {
+    tipo: 'HCURG',
+    registros: [
+      {
+        id: 'hcurg-1', fecha: '21.SEP.2026', hora: '04:37 PM', numero: '0201295619', tituloNota: 'HISTORIA CLINICA DE URGENCIAS',
+        autor: 'PASTRANA JUAN ESTEBAN', rol: 'Médico', especialidad: 'CARDIOLOGÍA', ambito: 'QX', plantilla: 'HCURG',
+        archivoUrl: '/mock/historia-clinica-urgencias-hcurg.pdf',
+        // Texto fijo que muestra el botón "Resumen" del panel de detalle (ver
+        // HistoriaClinicaTab.jsx) -- sin IA real, la "generación" es un delay
+        // simulado que revela este mismo texto (mismo criterio que el resto
+        // del mock: "solo pinta el front"). Condensa el detalle del PDF de
+        // origen (motivo de consulta, antecedentes, hallazgos al examen
+        // físico y plan de tratamiento). Único registro con este campo hoy —
+        // el botón solo aparece cuando `registro.resumen` existe.
+        resumen: 'Paciente con antecedente de resección anterior de recto + ileostomía (04/03/2026) y adenocarcinoma de la unión rectosigmoidea en manejo con QT adyuvante (CAPEOX, 2do ciclo 04/06/2026), que ingresa por sus propios medios acompañado de familiar por cuadro de 3 días de evolución de retracción del estoma de la ileostomía con ausencia de salida de materia fecal. Examen físico sin hallazgos agudos: abdomen blando y depresible con ileostomía sin débito, sin signos de compromiso neurológico (Glasgow 15/15) ni de perfusión distal. No trae ayudas diagnósticas previas. Sin reingreso reciente ni antecedentes familiares relevantes (niega). Plan de tratamiento registrado: "vom".',
+      },
     ],
   },
 ];

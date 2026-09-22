@@ -43,7 +43,12 @@ function maskText(value) {
 // Asignación de Citas para "Historial de citas", ver asignacion-citas/
 // page.jsx): { label, icon: Icon, onClick }.
 // El chevron al extremo derecho de admission-row es un toggle interno
-// (`collapsed`, no un prop): al accionarlo el banner oculta la fila 2
+// (`collapsed`, con estado propio) que arranca en `defaultCollapsed` (default
+// false) — las 2 variantes de AtencionPaciente (Historias Clínicas y
+// Hospitalización) entran con el banner ya contraído (ver
+// AtencionPaciente.jsx); el resto de pantallas (Asignación de Citas,
+// Enfermería) no pasa esta prop y conserva el comportamiento expandido de
+// siempre: al accionarlo el banner oculta la fila 2
 // (admission-row), quita ASEGURADOR de la fila 1 y agrega Cama/Diagnóstico
 // (`patient.cama`/`diagnostico`/`medicoTratante`, opcionales) en columnas label
 // arriba/valor abajo; el chevron para volver a expandir pasa a
@@ -76,10 +81,10 @@ function maskText(value) {
 // extensión libre para datos propios de una pantalla que no encajan en este
 // set fijo (ciudad/teléfono/citas futuras en Asignación de Citas; cita/
 // servicio/tipo de cita en Historia Clínica).
-export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact }) {
+export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed = false }) {
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
   const [dataHidden, setDataHidden] = useState(false);
   const allergyRef = useRef(null);
 

@@ -3,25 +3,35 @@
   padding:14px;overflow-y:auto;
 }
 
-/* Base de .form-field: único consumidor de este par label/input dentro de
-   OrdenesMedicasTab (ver AGENTS.md "Component organization" — se duplica acá
-   en vez de importarse de PlantillaCrecimt2.css, que pertenece a otra
-   feature/carpeta). */
-.form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
-.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
-.form-field .req{color:var(--red);margin-left:2px;}
-.form-field input,
-.form-field textarea{
+/* Base de .form-field, escopada a .ifp-panel (no ".form-field input" a
+   secas): AtencionPaciente.jsx importa PlantillaCrecimt2 sin condición (aun
+   con la plantilla sin montar, ver PlantillaCrecimt2.jsx), así que
+   PlantillaCrecimt2.css siempre está cargado en esta misma página y define
+   su PROPIO ".form-field input{height:var(--pf-input-height);...}" con
+   idéntica especificidad (0,1,1) que la de acá -- `--pf-input-height` no
+   existe fuera de `.pf-content`, así que en este árbol cae a `auto` (~19px)
+   y esa regla ganaba por orden de carga del bundle, dejando el input mucho
+   más bajo que su FormSelect vecino. Mismo bug de colisión de clases ya
+   documentado en el proyecto para `.content` -- la resolución acá es la
+   misma: subir la especificidad prefijando con `.ifp-panel` en vez de
+   confiar en el orden de carga. */
+.ifp-panel .form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.ifp-panel .form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.ifp-panel .form-field .req{color:var(--red);margin-left:2px;}
+.ifp-panel .form-field input,
+.ifp-panel .form-field textarea{
   border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
   font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
 }
-.form-field input{height:var(--input-md);padding-top:0;padding-bottom:0;}
-.form-field input:focus,
-.form-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
-.form-field input[aria-invalid="true"]{border-color:var(--red);}
+.ifp-panel .form-field input{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.ifp-panel .form-field input:focus,
+.ifp-panel .form-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.ifp-panel .form-field input[aria-invalid="true"]{border-color:var(--red);}
 
 .ifp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .ifp-field-split{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;}
+
+.ifp-search-wrap{display:flex;flex-direction:column;gap:8px;}
 
 .ifp-search{
   display:flex;align-items:center;gap:8px;height:var(--input-md);padding:0 10px;
@@ -35,27 +45,48 @@
 }
 .ifp-search input:disabled{color:var(--ink-400);}
 
-.ifp-suggestions{
-  list-style:none;margin:-8px 0 0;padding:4px;border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--surface);box-shadow:0 4px 12px rgba(16,24,39,.1);max-height:220px;overflow-y:auto;
+/* Listado del buscador (encargo explícito, ver referencia): abre apenas se
+   enfoca el input -- no en overlay flotante, sino reemplazando el resto del
+   formulario mientras está abierto (ver `!dropdownOpen` en
+   ItemFormPanel.jsx) -- por eso vive en flujo normal, sin position:absolute
+   ni box-shadow de dropdown flotante. */
+.ifp-results{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden;}
+.ifp-results-list{list-style:none;margin:0;padding:4px;max-height:260px;overflow-y:auto;}
+.ifp-results-list button{
+  display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:8px 10px;
+  border:none;background:none;border-radius:6px;cursor:pointer;font-family:inherit;
 }
-.ifp-suggestions button{
-  display:block;width:100%;text-align:left;padding:8px 10px;border:none;background:none;border-radius:6px;
-  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);cursor:pointer;
+.ifp-results-list button:hover{background:var(--gray-bg);}
+.ifp-result-nombre{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);}
+.ifp-result-codigo{font-size:var(--fs-xs);color:var(--ink-500);}
+.ifp-results-empty{padding:10px;font-size:var(--fs-sm);color:var(--ink-500);}
+.ifp-results-footer{
+  padding:8px 10px;text-align:right;font-size:var(--fs-xs);color:var(--ink-500);
+  border-top:1px solid var(--border);background:var(--bg);
 }
-.ifp-suggestions button:hover{background:var(--gray-bg);color:var(--ink-900);}
 
+/* Banner de selección: 2 estados según `servicioContratado` del catálogo
+   (encargo explícito) -- mismos pares bg/fg que Badge/OrdenPreview usan para
+   "contratado" (verde, texto #0d7a3d sobre --green-bg, ver AGENTS.md
+   "Badges") y "no contratado" (ámbar, --amber-bg/--amber-fg). */
 .ifp-chip{
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:9px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--gray-bg);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+  padding:10px 12px;border-radius:var(--radius);
 }
-.ifp-chip span{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ifp-chip button{
+.ifp-chip.contratado{background:var(--green-bg);}
+.ifp-chip.no-contratado{background:var(--amber-bg);}
+.ifp-chip-info{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.ifp-chip-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.ifp-chip-estado{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:var(--fw-medium);}
+.ifp-chip.contratado .ifp-chip-estado{color:#0d7a3d;}
+.ifp-chip.no-contratado .ifp-chip-estado{color:var(--amber-fg);}
+.ifp-chip-estado .icon{width:14px;height:14px;flex-shrink:0;}
+.ifp-chip > button{
   display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;
   border:none;border-radius:6px;background:none;color:var(--ink-500);cursor:pointer;padding:0;
 }
-.ifp-chip button:hover{background:var(--border);color:var(--ink-900);}
-.ifp-chip .icon{width:14px;height:14px;}
+.ifp-chip > button:hover{background:rgba(16,24,39,.08);color:var(--ink-900);}
+.ifp-chip > button .icon{width:14px;height:14px;}
 
 .ifp-row-cantidad{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;}
 .ifp-cantidad{width:100px;flex-shrink:0;}

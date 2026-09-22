@@ -60,6 +60,9 @@ const VARIANTES = {
     section: ['Consulta Externa', { label: 'Historias Clínicas', href: '/historia-clinica' }],
     volverHref: '/historia-clinica',
     volverLabel: 'Volver a la agenda',
+    // Encargo explícito: al entrar desde Historias Clínicas, el banner abre
+    // ya contraído (ver `defaultCollapsed` en PatientBanner.jsx).
+    bannerCollapsed: true,
     notFound: {
       title: 'No encontramos esta cita',
       subtitle: 'Puede que el enlace esté vencido o la cita ya no exista en la agenda del día.',
@@ -78,6 +81,9 @@ const VARIANTES = {
     section: ['Hospitalización', { label: 'Historia Clínica', href: '/hospitalizacion/historia-clinica' }],
     volverHref: '/hospitalizacion/historia-clinica',
     volverLabel: 'Volver a mis pacientes',
+    // Mismo criterio que consulta-externa (ver comentario arriba): abre con
+    // el banner ya contraído.
+    bannerCollapsed: true,
     notFound: {
       title: 'No encontramos este paciente',
       subtitle: 'Puede que el enlace esté vencido o el paciente ya no esté hospitalizado.',
@@ -238,6 +244,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
               <PatientBanner
                 patient={data.patient}
                 compact={plantillaActiva === 'crecimt2' && plantillaMaximizada}
+                defaultCollapsed={cfg.bannerCollapsed}
                 secondRow={cfg.secondRow(data)}
               />
 

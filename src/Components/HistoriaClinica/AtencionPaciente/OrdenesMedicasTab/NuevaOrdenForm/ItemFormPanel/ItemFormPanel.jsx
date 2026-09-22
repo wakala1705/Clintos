@@ -1,6 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import './ItemFormPanel.css';
 import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
 import FormSelect from '@/Components/FormSelect/FormSelect';
@@ -8,7 +10,9 @@ import Button from '@/Components/Button/Button';
 import {
   getCatalogoCategoria, PRESENTACIONES, UNIDADES_MEDIDA, UNIDADES_TIEMPO, VIAS_ADMINISTRACION,
 } from '@/hooks/HistoriaClinica/mockCatalogoOrdenes';
-import { LuMic, LuPlus, LuSearch, LuX } from 'react-icons/lu';
+import {
+  LuCircleCheck, LuInfo, LuMic, LuPlus, LuSearch, LuX,
+} from 'react-icons/lu';
 
 function unidadTiempoLabel(value) {
   return UNIDADES_TIEMPO.find((u) => u.value === value)?.label.toLowerCase() ?? '';
@@ -24,15 +28,25 @@ function unidadTiempoLabel(value) {
 // existen cuando `categoria.formulario === 'completo'` (Medicamentos/
 // Medicamentos de investigación, ver ../../shared/ordenSecciones.js) — el
 // resto de categorías solo pide Cantidad/Prioritario/Única dosis/
-// Observaciones. El buscador filtra el catálogo mock de la categoría activa;
-// elegir una sugerencia la deja como chip removible y, si la categoría es de
-// formulario completo, precarga dosis/unidad/presentación/vía desde el
-// catálogo (editable después).
+// Observaciones.
+//
+// El buscador (encargo explícito, ver captura de referencia) abre un listado
+// completo del catálogo mock de la categoría activa apenas se enfoca —no
+// hace falta escribir para verlo— que se va filtrando a medida que se
+// escribe; mientras ese listado está abierto reemplaza al resto del
+// formulario (Dosis...Observaciones quedan ocultos, ver `!dropdownOpen` más
+// abajo), igual que en la referencia. Elegir un resultado lo deja como un
+// banner de 2 estados según `servicioContratado` del catálogo (verde
+// "Servicio contratado" / ámbar "Servicio no contratado", mismos tokens que
+// Badge/OrdenPreview) y cierra el listado, dejando ver el resto del
+// formulario de nuevo — precargado con dosis/unidad/presentación/vía si la
+// categoría es de formulario completo.
 export default function ItemFormPanel({ categoria, onAgregar }) {
   const esCompleto = categoria.formulario === 'completo';
   const catalogo = useMemo(() => getCatalogoCategoria(categoria.clave), [categoria.clave]);
 
   const [busqueda, setBusqueda] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [dosis, setDosis] = useState('');
   const [unidad, setUnidad] = useState('');
@@ -48,13 +62,32 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
   const [observaciones, setObservaciones] = useState('');
   const [errors, setErrors] = useState({});
 
-  const sugerencias = !itemSeleccionado && busqueda.trim()
-    ? catalogo.filter((i) => i.nombre.toLowerCase().includes(busqueda.trim().toLowerCase())).slice(0, 8)
-    : [];
+  const searchWrapRef = useRef(null);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClickOutside(e) {
+      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target)) setDropdownOpen(false);
+    }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') setDropdownOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dropdownOpen]);
+
+  const filtradas = busqueda.trim()
+    ? catalogo.filter((i) => i.nombre.toLowerCase().includes(busqueda.trim().toLowerCase()))
+    : catalogo;
 
   function handleSeleccionar(item) {
     setItemSeleccionado(item);
     setBusqueda('');
+    setDropdownOpen(false);
     if (esCompleto) {
       setDosis(item.dosis ?? '');
       setUnidad(item.unidad ?? '');
@@ -70,6 +103,7 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
   function resetFormulario() {
     setItemSeleccionado(null);
     setBusqueda('');
+    setDropdownOpen(false);
     setDosis('');
     setUnidad('');
     setPresentacion('');
@@ -111,7 +145,7 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
     onAgregar({
       id: `${categoria.clave}-${itemSeleccionado?.id ?? 'custom'}-${Date.now()}`,
       descripcion: nombre,
-      servicioContratado: true,
+      servicioContratado: itemSeleccionado?.servicioContratado ?? true,
       dosis: esCompleto ? dosis.trim() : '',
       unidad: esCompleto ? unidad : '',
       presentacion: esCompleto ? presentacion : '',
@@ -127,158 +161,181 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
 
   return (
     <div className="ifp-panel">
-      <div className={`ifp-search${errors.nombre ? ' error' : ''}`}>
-        <LuSearch className="icon" aria-hidden="true" />
-        <input
-          type="text"
-          placeholder="Buscar"
-          value={itemSeleccionado ? '' : busqueda}
-          disabled={!!itemSeleccionado}
-          aria-label={`Buscar en ${categoria.titulo}`}
-          onChange={(e) => { setBusqueda(e.target.value); clearError('nombre'); }}
-        />
+      <div className="ifp-search-wrap" ref={searchWrapRef}>
+        <div className={`ifp-search${errors.nombre ? ' error' : ''}`}>
+          <LuSearch className="icon" aria-hidden="true" />
+          <input
+            type="text"
+            placeholder="Buscar"
+            value={itemSeleccionado ? '' : busqueda}
+            disabled={!!itemSeleccionado}
+            aria-label={`Buscar en ${categoria.titulo}`}
+            onFocus={() => setDropdownOpen(true)}
+            onChange={(e) => { setBusqueda(e.target.value); setDropdownOpen(true); clearError('nombre'); }}
+          />
+        </div>
+
+        {dropdownOpen && !itemSeleccionado && (
+          <div className="ifp-results">
+            <ul className="ifp-results-list">
+              {filtradas.length === 0 ? (
+                <li className="ifp-results-empty">Sin resultados{busqueda.trim() ? ` para "${busqueda.trim()}"` : ''}.</li>
+              ) : filtradas.map((item) => (
+                <li key={item.id}>
+                  <button type="button" onClick={() => handleSeleccionar(item)}>
+                    <span className="ifp-result-nombre">{item.nombre}</span>
+                    <span className="ifp-result-codigo">{item.codigo}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="ifp-results-footer">{filtradas.length} de {catalogo.length} servicios</div>
+          </div>
+        )}
       </div>
 
-      {sugerencias.length > 0 && (
-        <ul className="ifp-suggestions">
-          {sugerencias.map((item) => (
-            <li key={item.id}>
-              <button type="button" onClick={() => handleSeleccionar(item)}>{item.nombre}</button>
-            </li>
-          ))}
-        </ul>
-      )}
-
       {itemSeleccionado && (
-        <div className="ifp-chip">
-          <span>{itemSeleccionado.nombre}</span>
+        <div className={`ifp-chip${itemSeleccionado.servicioContratado ? ' contratado' : ' no-contratado'}`}>
+          <div className="ifp-chip-info">
+            <span className="ifp-chip-nombre">{itemSeleccionado.nombre}</span>
+            <span className="ifp-chip-estado">
+              {itemSeleccionado.servicioContratado
+                ? <LuCircleCheck className="icon" aria-hidden="true" />
+                : <LuInfo className="icon" aria-hidden="true" />}
+              {itemSeleccionado.servicioContratado ? 'Servicio contratado' : 'Servicio no contratado'}
+            </span>
+          </div>
           <button type="button" onClick={() => setItemSeleccionado(null)} aria-label="Quitar selección">
             <LuX className="icon" aria-hidden="true" />
           </button>
         </div>
       )}
 
-      {esCompleto && (
+      {!dropdownOpen && (
         <>
-          <div className="ifp-row">
-            <div className="form-field">
-              <label htmlFor="ifp-dosis">Dosis<span className="req">*</span></label>
+          {esCompleto && (
+            <>
+              <div className="ifp-row">
+                <div className="form-field">
+                  <label htmlFor="ifp-dosis">Dosis<span className="req">*</span></label>
+                  <input
+                    id="ifp-dosis"
+                    type="text"
+                    value={dosis}
+                    aria-invalid={errors.dosis ? 'true' : undefined}
+                    onChange={(e) => { setDosis(e.target.value); clearError('dosis'); }}
+                  />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="ifp-unidad">Unidad de medida<span className="req">*</span></label>
+                  <FormSelect
+                    id="ifp-unidad"
+                    value={unidad}
+                    options={UNIDADES_MEDIDA}
+                    placeholder="Seleccione unidad de medida"
+                    required
+                    onChange={(v) => { setUnidad(v); clearError('unidad'); }}
+                  />
+                </div>
+              </div>
+
+              <div className="ifp-row">
+                <div className="form-field">
+                  <label htmlFor="ifp-presentacion">Presentación<span className="req">*</span></label>
+                  <FormSelect
+                    id="ifp-presentacion"
+                    value={presentacion}
+                    options={PRESENTACIONES}
+                    placeholder="Seleccione"
+                    required
+                    onChange={(v) => { setPresentacion(v); clearError('presentacion'); }}
+                  />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="ifp-via">Vía<span className="req">*</span></label>
+                  <FormSelect
+                    id="ifp-via"
+                    value={via}
+                    options={VIAS_ADMINISTRACION}
+                    placeholder="Seleccione"
+                    required
+                    onChange={(v) => { setVia(v); clearError('via'); }}
+                  />
+                </div>
+              </div>
+
+              <div className="ifp-row">
+                <div className="form-field">
+                  <label htmlFor="ifp-frecuencia">Frecuencia</label>
+                  <div className="ifp-field-split">
+                    <input
+                      id="ifp-frecuencia"
+                      type="number"
+                      min="0"
+                      value={frecuenciaValor}
+                      onChange={(e) => setFrecuenciaValor(e.target.value)}
+                    />
+                    <FormSelect
+                      id="ifp-frecuencia-unidad"
+                      value={frecuenciaUnidad}
+                      options={UNIDADES_TIEMPO}
+                      placeholder="Seleccione"
+                      ariaLabel="Unidad de frecuencia"
+                      onChange={setFrecuenciaUnidad}
+                    />
+                  </div>
+                </div>
+                <div className="form-field">
+                  <label htmlFor="ifp-duracion">Duración</label>
+                  <div className="ifp-field-split">
+                    <input
+                      id="ifp-duracion"
+                      type="number"
+                      min="0"
+                      value={duracionValor}
+                      onChange={(e) => setDuracionValor(e.target.value)}
+                    />
+                    <FormSelect
+                      id="ifp-duracion-unidad"
+                      value={duracionUnidad}
+                      options={UNIDADES_TIEMPO}
+                      placeholder="Seleccione"
+                      ariaLabel="Unidad de duración"
+                      onChange={setDuracionUnidad}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="ifp-row-cantidad">
+            <div className="form-field ifp-cantidad">
+              <label htmlFor="ifp-cantidad">Cantidad</label>
               <input
-                id="ifp-dosis"
-                type="text"
-                value={dosis}
-                aria-invalid={errors.dosis ? 'true' : undefined}
-                onChange={(e) => { setDosis(e.target.value); clearError('dosis'); }}
+                id="ifp-cantidad"
+                type="number"
+                min="0"
+                value={cantidad}
+                onChange={(e) => setCantidad(e.target.value)}
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="ifp-unidad">Unidad de medida<span className="req">*</span></label>
-              <FormSelect
-                id="ifp-unidad"
-                value={unidad}
-                options={UNIDADES_MEDIDA}
-                placeholder="Seleccione unidad de medida"
-                required
-                onChange={(v) => { setUnidad(v); clearError('unidad'); }}
-              />
-            </div>
+            <ToggleSwitch label="Prioritario" checked={prioritario} onChange={setPrioritario} />
+            <ToggleSwitch label="Única dosis" checked={unicaDosis} onChange={setUnicaDosis} />
           </div>
 
-          <div className="ifp-row">
-            <div className="form-field">
-              <label htmlFor="ifp-presentacion">Presentación<span className="req">*</span></label>
-              <FormSelect
-                id="ifp-presentacion"
-                value={presentacion}
-                options={PRESENTACIONES}
-                placeholder="Seleccione"
-                required
-                onChange={(v) => { setPresentacion(v); clearError('presentacion'); }}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="ifp-via">Vía<span className="req">*</span></label>
-              <FormSelect
-                id="ifp-via"
-                value={via}
-                options={VIAS_ADMINISTRACION}
-                placeholder="Seleccione"
-                required
-                onChange={(v) => { setVia(v); clearError('via'); }}
-              />
-            </div>
-          </div>
-
-          <div className="ifp-row">
-            <div className="form-field">
-              <label htmlFor="ifp-frecuencia">Frecuencia</label>
-              <div className="ifp-field-split">
-                <input
-                  id="ifp-frecuencia"
-                  type="number"
-                  min="0"
-                  value={frecuenciaValor}
-                  onChange={(e) => setFrecuenciaValor(e.target.value)}
-                />
-                <FormSelect
-                  id="ifp-frecuencia-unidad"
-                  value={frecuenciaUnidad}
-                  options={UNIDADES_TIEMPO}
-                  placeholder="Seleccione"
-                  ariaLabel="Unidad de frecuencia"
-                  onChange={setFrecuenciaUnidad}
-                />
-              </div>
-            </div>
-            <div className="form-field">
-              <label htmlFor="ifp-duracion">Duración</label>
-              <div className="ifp-field-split">
-                <input
-                  id="ifp-duracion"
-                  type="number"
-                  min="0"
-                  value={duracionValor}
-                  onChange={(e) => setDuracionValor(e.target.value)}
-                />
-                <FormSelect
-                  id="ifp-duracion-unidad"
-                  value={duracionUnidad}
-                  options={UNIDADES_TIEMPO}
-                  placeholder="Seleccione"
-                  ariaLabel="Unidad de duración"
-                  onChange={setDuracionUnidad}
-                />
-              </div>
-            </div>
+          <div className="form-field">
+            <label htmlFor="ifp-observaciones">Observaciones</label>
+            <textarea
+              id="ifp-observaciones"
+              rows={3}
+              placeholder="Presione F2 para ver sugerencias, F3 para ver resumen"
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+            />
           </div>
         </>
       )}
-
-      <div className="ifp-row-cantidad">
-        <div className="form-field ifp-cantidad">
-          <label htmlFor="ifp-cantidad">Cantidad</label>
-          <input
-            id="ifp-cantidad"
-            type="number"
-            min="0"
-            value={cantidad}
-            onChange={(e) => setCantidad(e.target.value)}
-          />
-        </div>
-        <ToggleSwitch label="Prioritario" checked={prioritario} onChange={setPrioritario} />
-        <ToggleSwitch label="Única dosis" checked={unicaDosis} onChange={setUnicaDosis} />
-      </div>
-
-      <div className="form-field">
-        <label htmlFor="ifp-observaciones">Observaciones</label>
-        <textarea
-          id="ifp-observaciones"
-          rows={3}
-          placeholder="Presione F2 para ver sugerencias, F3 para ver resumen"
-          value={observaciones}
-          onChange={(e) => setObservaciones(e.target.value)}
-        />
-      </div>
 
       <div className="ifp-actions">
         <Button variant="outline" icon={LuMic} onClick={() => window.ncToast?.('Recetario por voz (flujo en desarrollo).')}>

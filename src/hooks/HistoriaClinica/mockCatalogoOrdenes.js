@@ -4,60 +4,86 @@
 // (ordenSecciones.js) trae una lista corta de ítems buscables; varios
 // reutilizan las mismas descripciones que ya existen en mockOrdenesMedicas.js
 // (LOSARTAN, DIPIRONA, HEMOGRAMA...) para que una orden armada acá luzca
-// consistente con las órdenes de ejemplo ya guardadas.
+// consistente con las órdenes de ejemplo ya guardadas. Cada ítem lleva
+// `codigo` (línea secundaria del resultado de búsqueda, ver ItemFormPanel.jsx)
+// y `servicioContratado` (contratado/no contratado — ambos estados alternan
+// dentro de cada categoría a propósito, para que el banner de selección
+// muestre las dos variantes sin tener que cambiar de categoría, encargo
+// explícito).
+let contadorCodigo = 0;
+function nuevoCodigo() {
+  contadorCodigo += 1;
+  const interno = String(20000000 + contadorCodigo * 733).padStart(8, '0');
+  const sufijo = String(contadorCodigo).padStart(2, '0');
+  const externo = String(contadorCodigo).padStart(7, '0');
+  return `${interno}-01-0${sufijo}PBS - MX${externo}PBS`;
+}
+
+function mkItem(id, nombre, extra = {}) {
+  return {
+    id,
+    nombre,
+    codigo: nuevoCodigo(),
+    servicioContratado: contadorCodigo % 2 === 1,
+    ...extra,
+  };
+}
+
 const CATALOGO = {
   medicamentos: [
-    { id: 'cat-med-1', nombre: 'LOSARTAN POTASICO 50 MG TABLETA', dosis: '50', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' },
-    { id: 'cat-med-2', nombre: 'DIPIRONA 1 G SOLUCION INYECTABLE', dosis: '1', unidad: 'gramo(s)', presentacion: 'SOLUCION INYECTABLE', via: 'INTRAVENOSA' },
-    { id: 'cat-med-3', nombre: 'ACETAMINOFEN 500 MG TABLETA', dosis: '500', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' },
-    { id: 'cat-med-4', nombre: 'OMEPRAZOL 20 MG CAPSULA', dosis: '20', unidad: 'miligramo(s)', presentacion: 'CAPSULA', via: 'ORAL' },
-    { id: 'cat-med-5', nombre: 'METOPROLOL 50 MG TABLETA', dosis: '50', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' },
-    { id: 'cat-med-6', nombre: 'FUROSEMIDA 40 MG TABLETA', dosis: '40', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' },
-    { id: 'cat-med-7', nombre: 'ACICLOVIR 200 MG TABLETA', dosis: '200', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' },
+    mkItem('cat-med-1', 'LOSARTAN POTASICO 50 MG TABLETA', { dosis: '50', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' }),
+    mkItem('cat-med-2', 'DIPIRONA 1 G SOLUCION INYECTABLE', { dosis: '1', unidad: 'gramo(s)', presentacion: 'SOLUCION INYECTABLE', via: 'INTRAVENOSA' }),
+    mkItem('cat-med-3', 'ACETAMINOFEN 500 MG TABLETA', { dosis: '500', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' }),
+    mkItem('cat-med-4', 'OMEPRAZOL 20 MG CAPSULA', { dosis: '20', unidad: 'miligramo(s)', presentacion: 'CAPSULA', via: 'ORAL' }),
+    mkItem('cat-med-5', 'METOPROLOL 50 MG TABLETA', { dosis: '50', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' }),
+    mkItem('cat-med-6', 'FUROSEMIDA 40 MG TABLETA', { dosis: '40', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' }),
+    mkItem('cat-med-7', 'ACICLOVIR 200 MG TABLETA', { dosis: '200', unidad: 'miligramo(s)', presentacion: 'TABLETA', via: 'ORAL' }),
+    mkItem('cat-med-8', 'ACIDO VALPROICO 500 MG SOLUCION INYECTABLE', { dosis: '500', unidad: 'miligramo(s)', presentacion: 'SOLUCION INYECTABLE', via: 'INTRAVENOSA' }),
+    mkItem('cat-med-9', 'ABCIXIMAB 10 MG SOLUCION INYECTABLE', { dosis: '10', unidad: 'miligramo(s)', presentacion: 'SOLUCION INYECTABLE', via: 'INTRAVENOSA' }),
   ],
   laboratorios: [
-    { id: 'cat-lab-1', nombre: 'HEMOGRAMA IV AUTOMATIZADO' },
-    { id: 'cat-lab-2', nombre: 'ACIDO HOMOGENTESICO EN ORINA' },
-    { id: 'cat-lab-3', nombre: 'ACETILCOLINA RECEPTORES ANTICUERPOS' },
-    { id: 'cat-lab-4', nombre: 'PARCIAL DE ORINA' },
-    { id: 'cat-lab-5', nombre: 'GLICEMIA BASAL' },
+    mkItem('cat-lab-1', 'HEMOGRAMA IV AUTOMATIZADO'),
+    mkItem('cat-lab-2', 'ACIDO HOMOGENTESICO EN ORINA'),
+    mkItem('cat-lab-3', 'ACETILCOLINA RECEPTORES ANTICUERPOS'),
+    mkItem('cat-lab-4', 'PARCIAL DE ORINA'),
+    mkItem('cat-lab-5', 'GLICEMIA BASAL'),
   ],
   procedimientosQuimioterapias: [
-    { id: 'cat-pq-1', nombre: 'APLICACION DE QUIMIOTERAPIA AMBULATORIA' },
-    { id: 'cat-pq-2', nombre: 'PROCEDIMIENTO DE INFUSION CONTINUA' },
-    { id: 'cat-pq-3', nombre: 'COLOCACION DE CATETER PARA QUIMIOTERAPIA' },
+    mkItem('cat-pq-1', 'APLICACION DE QUIMIOTERAPIA AMBULATORIA'),
+    mkItem('cat-pq-2', 'PROCEDIMIENTO DE INFUSION CONTINUA'),
+    mkItem('cat-pq-3', 'COLOCACION DE CATETER PARA QUIMIOTERAPIA'),
   ],
   imagenologias: [
-    { id: 'cat-img-1', nombre: 'RADIOGRAFIA DE TORAX' },
-    { id: 'cat-img-2', nombre: 'ECOGRAFIA ABDOMINAL TOTAL' },
-    { id: 'cat-img-3', nombre: 'TOMOGRAFIA DE CRANEO SIMPLE' },
+    mkItem('cat-img-1', 'RADIOGRAFIA DE TORAX'),
+    mkItem('cat-img-2', 'ECOGRAFIA ABDOMINAL TOTAL'),
+    mkItem('cat-img-3', 'TOMOGRAFIA DE CRANEO SIMPLE'),
   ],
   cirugias: [
-    { id: 'cat-cir-1', nombre: 'COLECISTECTOMIA LAPAROSCOPICA' },
-    { id: 'cat-cir-2', nombre: 'APENDICECTOMIA' },
-    { id: 'cat-cir-3', nombre: 'HERNIORRAFIA INGUINAL' },
+    mkItem('cat-cir-1', 'COLECISTECTOMIA LAPAROSCOPICA'),
+    mkItem('cat-cir-2', 'APENDICECTOMIA'),
+    mkItem('cat-cir-3', 'HERNIORRAFIA INGUINAL'),
   ],
   consultas: [
-    { id: 'cat-con-1', nombre: 'INTERCONSULTA POR CIRUGIA DE LA MANO' },
-    { id: 'cat-con-2', nombre: 'INTERCONSULTA POR CARDIOLOGIA' },
-    { id: 'cat-con-3', nombre: 'INTERCONSULTA POR NUTRICION' },
+    mkItem('cat-con-1', 'INTERCONSULTA POR CIRUGIA DE LA MANO'),
+    mkItem('cat-con-2', 'INTERCONSULTA POR CARDIOLOGIA'),
+    mkItem('cat-con-3', 'INTERCONSULTA POR NUTRICION'),
   ],
   ordenesGenerales: [
-    { id: 'cat-og-1', nombre: 'ORDEN GENERAL' },
-    { id: 'cat-og-2', nombre: 'DIETA HOSPITALARIA' },
-    { id: 'cat-og-3', nombre: 'CUIDADOS DE ENFERMERIA' },
+    mkItem('cat-og-1', 'ORDEN GENERAL'),
+    mkItem('cat-og-2', 'DIETA HOSPITALARIA'),
+    mkItem('cat-og-3', 'CUIDADOS DE ENFERMERIA'),
   ],
   radioterapiaBraquiterapia: [
-    { id: 'cat-rt-1', nombre: 'RADIOTERAPIA EXTERNA CONFORMADA' },
-    { id: 'cat-rt-2', nombre: 'BRAQUITERAPIA DE ALTA TASA' },
+    mkItem('cat-rt-1', 'RADIOTERAPIA EXTERNA CONFORMADA'),
+    mkItem('cat-rt-2', 'BRAQUITERAPIA DE ALTA TASA'),
   ],
   medicamentosInvestigacion: [
-    { id: 'cat-mi-1', nombre: 'MEDICAMENTO EN FASE III - PROTOCOLO A', dosis: '', unidad: '', presentacion: '', via: '' },
-    { id: 'cat-mi-2', nombre: 'MEDICAMENTO EN FASE II - PROTOCOLO B', dosis: '', unidad: '', presentacion: '', via: '' },
+    mkItem('cat-mi-1', 'MEDICAMENTO EN FASE III - PROTOCOLO A', { dosis: '', unidad: '', presentacion: '', via: '' }),
+    mkItem('cat-mi-2', 'MEDICAMENTO EN FASE II - PROTOCOLO B', { dosis: '', unidad: '', presentacion: '', via: '' }),
   ],
   medicinaNuclear: [
-    { id: 'cat-mn-1', nombre: 'GAMMAGRAFIA OSEA' },
-    { id: 'cat-mn-2', nombre: 'PET-CT DE CUERPO ENTERO' },
+    mkItem('cat-mn-1', 'GAMMAGRAFIA OSEA'),
+    mkItem('cat-mn-2', 'PET-CT DE CUERPO ENTERO'),
   ],
 };
 
