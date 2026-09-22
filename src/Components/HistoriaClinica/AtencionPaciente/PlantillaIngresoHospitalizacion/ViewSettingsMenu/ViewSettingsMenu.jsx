@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ViewSettingsMenu.css';
-import { LuSettings2 } from 'react-icons/lu';
+import { LuSettings2, LuColumns2, LuStretchHorizontal } from 'react-icons/lu';
 
 // Dropdown de "Configuración de vista" del pih-titlebar (ver
 // PlantillaIngresoHospitalizacion.jsx). A diferencia del ViewSettingsMenu de
@@ -14,12 +14,16 @@ import { LuSettings2 } from 'react-icons/lu';
 // en grilla, ver .pih-cols-2 en shared.css): Flexible es el comportamiento
 // actual (pila vertical de ancho completo / grid de 3 columnas en
 // .pih-grid-3), "2 columnas" reparte TODOS los campos del formulario
-// (incluidos los de .pih-grid-3) en una grilla de 2 columnas. Mismo patrón de
-// click-outside/Escape que UserMenu.jsx/ViewSettingsMenu.jsx
-// (PlantillaCrecimt2).
+// (incluidos los de .pih-grid-3) en una grilla de 2 columnas. Cada opción
+// lleva su propio ícono de Lucide en vez del genérico de 3 barras (encargo
+// explícito): `LuColumns2` (2 columnas verticales) para "2 columnas",
+// `LuStretchHorizontal` (estirar a lo ancho) para "Flexible" -- mismo
+// criterio que AGENTS.md "Icons": el ícono más cercano de react-icons/lu en
+// vez de dibujar el SVG a mano. Mismo patrón de click-outside/Escape que
+// UserMenu.jsx/ViewSettingsMenu.jsx (PlantillaCrecimt2).
 const COLUMN_LAYOUTS = [
-  { value: 'dos-columnas', label: '2 columnas' },
-  { value: 'flexible', label: 'Flexible' },
+  { value: 'dos-columnas', label: '2 columnas', icon: LuColumns2 },
+  { value: 'flexible', label: 'Flexible', icon: LuStretchHorizontal },
 ];
 
 export default function ViewSettingsMenu({ columnLayout, onColumnLayoutChange }) {
@@ -68,9 +72,7 @@ export default function ViewSettingsMenu({ columnLayout, onColumnLayoutChange })
                 aria-pressed={columnLayout === c.value}
                 onClick={() => onColumnLayoutChange?.(c.value)}
               >
-                <span className="vsm-colsize-icon" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </span>
+                <c.icon className="vsm-colsize-icon" aria-hidden="true" />
                 {c.label}
               </button>
             ))}
