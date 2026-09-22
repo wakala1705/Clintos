@@ -1,0 +1,12 @@
+.cr-rail{
+  width:44px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:12px 6px;border-right:1px solid var(--border);overflow-y:auto;
+}
+.cr-item{
+  width:32px;height:32px;border-radius:var(--radius);border:1px solid transparent;background:none;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;flex-shrink:0;padding:0;
+}
+.cr-item:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cr-item.active{background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);}
+.cr-item .icon{width:18px;height:18px;}
+.cr-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}

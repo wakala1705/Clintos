@@ -1,0 +1,13 @@
+.ts-wrap{display:inline-flex;align-items:center;gap:8px;cursor:pointer;}
+.ts-label{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);}
+.ts-track{
+  width:34px;height:20px;border-radius:999px;border:none;background:var(--border);
+  position:relative;flex-shrink:0;cursor:pointer;transition:background .15s ease;padding:0;
+}
+.ts-track.checked{background:var(--primary);}
+.ts-thumb{
+  position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);
+  transition:transform .15s ease;box-shadow:0 1px 2px rgba(16,24,39,.25);
+}
+.ts-track.checked .ts-thumb{transform:translateX(14px);}
+.ts-track:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}

@@ -1,0 +1,47 @@
+.obt-panel{padding:20px 24px;display:flex;flex-direction:column;gap:20px;min-width:0;flex:1;overflow-y:auto;}
+.obt-header{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.obt-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--primary);}
+.obt-empty{color:var(--ink-500);font-size:var(--fs-base);margin:0;}
+
+.obt-section{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.obt-section-head{display:flex;align-items:center;gap:10px;}
+.obt-section-icon{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.obt-section-icon .icon{width:18px;height:18px;}
+/* Mismos 6 tonos que .op-section-icon.* en OrdenPreview.css — criterio de
+   duplicación por componente ya establecido en el proyecto (ver
+   ../../shared/ordenSecciones.js). */
+.obt-section-icon.verde{background:var(--green-bg);color:#0d7a3d;}
+.obt-section-icon.naranja{background:var(--amber-bg);color:var(--amber-fg);}
+.obt-section-icon.violeta{background:var(--violet-bg);color:var(--violet-fg);}
+.obt-section-icon.rojo{background:var(--red-bg);color:var(--red);}
+.obt-section-icon.gris{background:var(--gray-bg);color:var(--gray-fg);}
+.obt-section-title{
+  margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  text-transform:uppercase;letter-spacing:.02em;
+}
+.obt-count{margin-left:auto;}
+
+.obt-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;}
+.obt-table{width:100%;min-width:1000px;border-collapse:collapse;font-size:var(--fs-sm);}
+.obt-table th{
+  background:var(--table-header-bg);color:var(--th-color);font-size:var(--th-fs);font-weight:var(--th-fw);
+  text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.obt-table td{padding:10px 12px;color:var(--ink-700);vertical-align:middle;border-top:1px solid var(--border);}
+.obt-table tbody tr:first-child td{border-top:none;}
+.obt-table tbody tr:hover{background:var(--gray-bg);}
+.obt-table td:first-child{min-width:220px;}
+.obt-desc{color:var(--ink-900);font-weight:var(--fw-medium);}
+.obt-table td.obt-na{background:var(--gray-bg);color:var(--ink-400);}
+
+.obt-quitar-btn{
+  width:24px;height:24px;border-radius:6px;border:none;background:none;color:var(--red);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+}
+.obt-quitar-btn .icon{width:16px;height:16px;}
+.obt-quitar-btn:hover{background:var(--red-bg);}
+.obt-quitar-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

@@ -12,10 +12,15 @@
   background:var(--primary-50);color:var(--primary);
 }
 .op-section-icon .icon{width:18px;height:18px;}
-/* Tono del círculo por tipo de servicio: medicamentos azul, consultas verde,
-   laboratorios naranja (par bg/fg ya existente en cada feature). */
+/* Tono del círculo por tipo de servicio (ver SECCIONES_ORDEN en
+   ../shared/ordenSecciones.js, mismos 6 tonos duplicados en
+   NuevaOrdenForm/OrdenBuilderTabla/OrdenBuilderTabla.css — par bg/fg ya
+   existente en cada feature). */
 .op-section-icon.verde{background:var(--green-bg);color:#0d7a3d;}
 .op-section-icon.naranja{background:var(--amber-bg);color:var(--amber-fg);}
+.op-section-icon.violeta{background:var(--violet-bg);color:var(--violet-fg);}
+.op-section-icon.rojo{background:var(--red-bg);color:var(--red);}
+.op-section-icon.gris{background:var(--gray-bg);color:var(--gray-fg);}
 .op-section-title{
   margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
   text-transform:uppercase;letter-spacing:.02em;

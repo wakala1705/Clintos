@@ -62,7 +62,7 @@
 /* Seleccionada: se reserva una columna a la derecha para imprimir/editar. */
 .om-item.selected .om-item-main{padding-right:44px;}
 .om-item-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
-.om-item-datetime{font-size:var(--fs-base);color:var(--ink-500);}
+.om-item-datetime{font-size:var(--fs-sm);color:var(--ink-500);}
 .om-item-numero{font-size:var(--fs-base);color:var(--ink-700);flex-shrink:0;}
 .om-item-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .om-item-author{font-size:var(--fs-base);color:var(--ink-700);}

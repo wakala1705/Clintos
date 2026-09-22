@@ -1,0 +1,63 @@
+.ifp-panel{
+  flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;
+  padding:14px;overflow-y:auto;
+}
+
+/* Base de .form-field: único consumidor de este par label/input dentro de
+   OrdenesMedicasTab (ver AGENTS.md "Component organization" — se duplica acá
+   en vez de importarse de PlantillaCrecimt2.css, que pertenece a otra
+   feature/carpeta). */
+.form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.form-field .req{color:var(--red);margin-left:2px;}
+.form-field input,
+.form-field textarea{
+  border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.form-field input:focus,
+.form-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.form-field input[aria-invalid="true"]{border-color:var(--red);}
+
+.ifp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ifp-field-split{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;}
+
+.ifp-search{
+  display:flex;align-items:center;gap:8px;height:var(--input-md);padding:0 10px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+.ifp-search.error{border-color:var(--red);}
+.ifp-search .icon{width:16px;height:16px;color:var(--ink-400);flex-shrink:0;}
+.ifp-search input{
+  flex:1;min-width:0;border:none;outline:none;background:none;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+}
+.ifp-search input:disabled{color:var(--ink-400);}
+
+.ifp-suggestions{
+  list-style:none;margin:-8px 0 0;padding:4px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);box-shadow:0 4px 12px rgba(16,24,39,.1);max-height:220px;overflow-y:auto;
+}
+.ifp-suggestions button{
+  display:block;width:100%;text-align:left;padding:8px 10px;border:none;background:none;border-radius:6px;
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);cursor:pointer;
+}
+.ifp-suggestions button:hover{background:var(--gray-bg);color:var(--ink-900);}
+
+.ifp-chip{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--gray-bg);
+}
+.ifp-chip span{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ifp-chip button{
+  display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;
+  border:none;border-radius:6px;background:none;color:var(--ink-500);cursor:pointer;padding:0;
+}
+.ifp-chip button:hover{background:var(--border);color:var(--ink-900);}
+.ifp-chip .icon{width:14px;height:14px;}
+
+.ifp-row-cantidad{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+.ifp-cantidad{width:100px;flex-shrink:0;}
+
+.ifp-actions{display:flex;flex-direction:column;gap:8px;padding-top:6px;border-top:1px solid var(--border);}

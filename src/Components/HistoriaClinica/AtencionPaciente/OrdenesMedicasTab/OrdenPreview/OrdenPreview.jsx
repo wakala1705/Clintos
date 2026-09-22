@@ -3,8 +3,9 @@
 import './OrdenPreview.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
+import { SECCIONES_ORDEN } from '../shared/ordenSecciones';
 import {
-  LuCircleCheck, LuClipboardList, LuCopy, LuMicroscope, LuPencil, LuPill, LuUserCheck, LuX,
+  LuCircleCheck, LuClipboardList, LuCopy, LuPencil, LuX,
 } from 'react-icons/lu';
 
 const COLUMNAS = [
@@ -15,16 +16,6 @@ const COLUMNAS = [
 // Columnas de dosificación: en consultas y laboratorios no aplican y se
 // muestran como "-" sombreado (ver .op-na).
 const CAMPOS_DOSIS = ['dosis', 'unidad', 'presentacion', 'via', 'frecuencia', 'duracion'];
-
-// Una orden puede traer varios tipos de servicio; cada uno es una sección
-// con su tabla (`clave` = propiedad de la orden en mockOrdenesMedicas.js).
-// Solo se renderizan las que tengan ítems. `tono` colorea el círculo del
-// ícono (ver .op-section-icon.*).
-const SECCIONES = [
-  { clave: 'medicamentos', titulo: 'Medicamentos', icon: LuPill, tono: 'azul' },
-  { clave: 'consultas', titulo: 'Consultas', icon: LuUserCheck, tono: 'verde' },
-  { clave: 'laboratorios', titulo: 'Laboratorios', icon: LuMicroscope, tono: 'naranja' },
-];
 
 function proximamente(accion) {
   window.ncToast?.(`${accion} (flujo en desarrollo).`);
@@ -89,7 +80,7 @@ function SeccionServicios({ titulo, icon: Icon, tono, items }) {
 // y una sección por cada tipo de servicio que tenga la orden. Copiar/editar/
 // detalle todavía no hacen nada (flujo en desarrollo) — solo avisan con toast.
 export default function OrdenPreview({ orden }) {
-  const secciones = SECCIONES.filter((s) => orden[s.clave]?.length > 0);
+  const secciones = SECCIONES_ORDEN.filter((s) => orden[s.clave]?.length > 0);
 
   return (
     <div className="op-preview">

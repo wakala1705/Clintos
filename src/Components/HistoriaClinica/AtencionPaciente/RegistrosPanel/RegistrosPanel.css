@@ -125,7 +125,7 @@
 .rg-subrow-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .rg-subrow-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
 .rg-subrow-ambito{font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
-.rg-subrow-datetime{font-size:var(--fs-base);color:var(--ink-500);}
+.rg-subrow-datetime{font-size:var(--fs-sm);color:var(--ink-500);}
 .rg-subrow-title{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 .rg-subrow-author{font-size:var(--fs-base);color:var(--ink-700);}
 .rg-subrow-role{font-size:var(--fs-sm);color:var(--ink-500);}

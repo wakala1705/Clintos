@@ -286,7 +286,6 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                         <OrdenesMedicasTab
                           ordenes={getOrdenesMedicas()}
                           usuarioActual={DOCTOR.nombre}
-                          onNuevaOrden={() => window.ncToast?.('Nueva orden médica (flujo en desarrollo).')}
                         />
                       )}
                     </div>

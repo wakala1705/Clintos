@@ -629,7 +629,7 @@
   .pf-grid.cols-4{grid-template-columns:repeat(4,1fr);}
 
   .pf-field label{
-    display:block;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+    display:block;font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);
     margin-bottom:6px;
   }
   .pf-field label .req{color:var(--red);margin-left:2px;}
