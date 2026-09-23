@@ -268,6 +268,19 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   // al que volver, toda la pantalla es sobre este paciente — ver el guard de
   // ContextChip.jsx que oculta el botón "✕" cuando no se lo pasan.
   const clintosPaciente = variante === 'hospitalizacion' ? getPacienteHospitalizado(id) : null;
+  const clintosAIRef = useRef(null);
+
+  // Botón "Resumen" de un registro (HistoriaClinicaTab.jsx, encargo
+  // explícito): en vez de mostrar el resultado inline en el registro, lo
+  // empuja al panel de Clintos AI como una pregunta+respuesta más de la
+  // conversación — `registro.resumen` es el mismo texto ya mockeado que
+  // antes se mostraba ahí (HCURG, ver mockHistoriaClinicaRecords.js), nunca
+  // se inventa contenido nuevo. Solo se pasa a HistoriaClinicaTab cuando hay
+  // `clintosPaciente` (variante "hospitalizacion"): sin eso <ClintosAI/> ni
+  // se monta, así que no hay panel al que enviarlo.
+  function handleResumenRegistro(registro) {
+    clintosAIRef.current?.askExternal(`Resumen de "${registro.tituloNota}"`, registro.resumen);
+  }
 
   return (
     <div className="app">
@@ -363,6 +376,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
                             nuevaAtencionLabel="Nueva atención"
                             onNuevaAtencion={openPlantillaModal}
                             onAgregarRegistro={handleAgregarRegistro}
+                            onResumenRegistro={clintosPaciente ? handleResumenRegistro : undefined}
                           />
                         )}
                         {activeTab === 'ordenes-medicas' && (
@@ -381,6 +395,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
 
           {clintosPaciente && (
             <ClintosAI
+              ref={clintosAIRef}
               pacientes={[clintosPaciente]}
               userFirstName="Camilo"
               onOpenHistoria={(pacienteId) => router.push(`/hospitalizacion/historia-clinica/${pacienteId}`)}

@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {
+  forwardRef, useEffect, useImperativeHandle, useState,
+} from 'react';
 import './shared/shared.css';
 import ClintosAITrigger from './ClintosAITrigger/ClintosAITrigger';
 import ClintosAIPanel from './ClintosAIPanel/ClintosAIPanel';
@@ -39,13 +41,24 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // `effectiveLayoutMode` en ClintosAIPanel.jsx. Apenas la ventana vuelve a
 // ensanchar, "Barra lateral" se renderiza como tal de nuevo sin que el
 // usuario tenga que volver a elegirla.
-export default function ClintosAI({
+//
+// `forwardRef`/`askExternal` (encargo explícito): el botón "Resumen" de un
+// registro en HistoriaClinicaTab.jsx vive fuera de este árbol (es hermano de
+// <ClintosAI/>, no hijo — ver AtencionPaciente.jsx), así que necesita una
+// forma de empujarle una pregunta+respuesta desde afuera. `open` vive acá
+// (no en ClintosAIPanel), así que abrir el panel Y encolarle la pregunta
+// tienen que pasar por el mismo componente: `externalAsk` viaja como prop
+// hacia ClintosAIPanel (que la consume en un efecto, ver
+// pushTurnWithAnswer/onExternalAskHandled ahí) sin importar si el panel ya
+// estaba abierto o si este método lo abre recién ahora.
+const ClintosAI = forwardRef(function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
   onClearPaciente, hideFaq,
-}) {
+}, ref) {
   const [open, setOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState('sidebar');
   const [narrowViewport, setNarrowViewport] = useState(false);
+  const [externalAsk, setExternalAsk] = useState(null);
 
   useEffect(() => {
     const mql = window.matchMedia(NARROW_SIDEBAR_BREAKPOINT);
@@ -54,6 +67,13 @@ export default function ClintosAI({
     mql.addEventListener('change', update);
     return () => mql.removeEventListener('change', update);
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    askExternal(prompt, response) {
+      setExternalAsk({ prompt, response });
+      setOpen(true);
+    },
+  }), []);
 
   if (!open) {
     return <ClintosAITrigger onOpen={() => setOpen(true)} />;
@@ -74,6 +94,10 @@ export default function ClintosAI({
       screenLabel={screenLabel}
       onClearPaciente={onClearPaciente}
       hideFaq={hideFaq}
+      externalAsk={externalAsk}
+      onExternalAskHandled={() => setExternalAsk(null)}
     />
   );
-}
+});
+
+export default ClintosAI;

@@ -24,7 +24,17 @@ const RESUMEN_DELAY_MS = 1200;
 // `onClick` sin asignar, mismo criterio ya usado en "Imprimir"
 // (`registro.archivoUrl`) y "Editar"/"Ver detalle" (sin flujo aún, solo
 // visual).
-function renderDetalle(registro, resumenStatus, onGenerarResumen) {
+//
+// "Resumen" con `onResumenRegistro` (encargo explícito, variante
+// "hospitalizacion" con Clintos AI montado — ver AtencionPaciente.jsx): el
+// resultado ya no aparece inline acá, viaja al panel de Clintos AI como una
+// pregunta+respuesta de la conversación, así que `resumenStatus` nunca pasa
+// de `null` en ese camino (nunca se llama `onGenerarResumen`) y el bloque
+// "Resumen generado"/el spinner de abajo quedan sin usarse — ver el fallback
+// de "consulta-externa" (sin `onResumenRegistro`, sin Clintos AI todavía),
+// que sigue mostrando el resultado inline como antes.
+function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegistro) {
+  const handleResumenClick = onResumenRegistro ? () => onResumenRegistro(registro) : onGenerarResumen;
   return (
     <div className="hct-detalle">
       <div className="hct-detalle-header">
@@ -44,7 +54,7 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen) {
               size="sm"
               icon={resumenStatus === 'loading' ? LuLoaderCircle : LuSparkles}
               disabled={resumenStatus === 'loading'}
-              onClick={registro.resumen ? onGenerarResumen : undefined}
+              onClick={registro.resumen ? handleResumenClick : undefined}
               className={`hct-resumen-btn${resumenStatus === 'loading' ? ' loading' : ''}`}
             >
               {resumenStatus === 'loading' ? 'Generando resumen…' : 'Resumen'}
@@ -80,7 +90,9 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen) {
   );
 }
 
-export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual }) {
+export default function HistoriaClinicaTab({
+  grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual, onResumenRegistro,
+}) {
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   // null | 'loading' | 'ready' — se resetea al cambiar de registro
   // seleccionado (ver handleSelectRegistro) para que el resumen de uno no
@@ -111,7 +123,7 @@ export default function HistoriaClinicaTab({ grupos, nuevaAtencionLabel, onNueva
       />
 
       <div className="hct-detail">
-        {selectedRegistro ? renderDetalle(selectedRegistro, resumenStatus, () => setResumenStatus('loading')) : (
+        {selectedRegistro ? renderDetalle(selectedRegistro, resumenStatus, () => setResumenStatus('loading'), onResumenRegistro) : (
           <AgendaEmptyState
             icon={LuFileText}
             title="Aún no hay historia clínica registrada"

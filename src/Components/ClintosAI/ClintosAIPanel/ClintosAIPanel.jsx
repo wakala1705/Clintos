@@ -22,7 +22,7 @@ const THINKING_DELAY_MS = 550;
 // estado nunca se puede quedar mostrando dos respuestas para una pregunta.
 export default function ClintosAIPanel({
   onClose, userFirstName, pacientes, areaLabel, onOpenHistoria, onNavigate, layoutMode, onLayoutModeChange,
-  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, hideFaq,
+  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, hideFaq, externalAsk, onExternalAskHandled,
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
@@ -43,20 +43,54 @@ export default function ClintosAIPanel({
     return nextId.current;
   }
 
-  function ask(promptText) {
+  // Compartida por ask() (calcula la respuesta con el motor mock) y el efecto
+  // de `externalAsk` de abajo (ya trae la respuesta calculada afuera) — mismo
+  // camino pushUserTurn -> "escribiendo..." -> reemplazo por la respuesta
+  // real para las dos vías, así ninguna se puede quedar mostrando dos
+  // respuestas para una pregunta.
+  function pushTurnWithAnswer(promptText, getResponse) {
     const userTurn = { id: newId(), role: 'user', payload: { text: promptText } };
     const typingTurn = { id: newId(), role: 'assistant', typing: true, payload: { kind: 'text' } };
     setTurns((prev) => [...prev, userTurn, typingTurn]);
     setThinking(true);
 
     setTimeout(() => {
-      const response = answerPrompt(promptText, { pacientes, areaLabel, selectedPaciente });
+      const response = getResponse();
       setTurns((prev) => prev.map((t) => (t.id === typingTurn.id
         ? { id: typingTurn.id, role: 'assistant', payload: response }
         : t)));
       setThinking(false);
     }, THINKING_DELAY_MS);
   }
+
+  function ask(promptText) {
+    pushTurnWithAnswer(promptText, () => answerPrompt(promptText, { pacientes, areaLabel, selectedPaciente }));
+  }
+
+  // Botón "Resumen" de un registro en HistoriaClinicaTab.jsx (encargo
+  // explícito: ese resumen ahora aparece acá en vez de inline en el
+  // registro) — `externalAsk` ya trae la pregunta Y la respuesta calculadas
+  // afuera (el texto real de `registro.resumen`, nunca inventado), así que
+  // reusa pushTurnWithAnswer con una respuesta fija en vez de pasar por
+  // answerPrompt. Avisa al padre (ClintosAI.jsx) que ya la consumió para que
+  // no la vuelva a disparar en el próximo render.
+  //
+  // `handledExternalAskRef`: cuando `askExternal` abre el panel recién ahora
+  // (estaba cerrado), ClintosAIPanel monta con `externalAsk` ya seteado en
+  // las props — un efecto que corre al montar, y React StrictMode
+  // (desarrollo) invoca dos veces todo efecto de montaje para detectar
+  // justo este tipo de caso: sin esta guarda, la pregunta+respuesta se
+  // duplicaba en la conversación (encontrado al verificar con Playwright).
+  // La guarda hace el efecto idempotente por valor de `externalAsk`, no un
+  // parche solo para StrictMode.
+  const handledExternalAskRef = useRef(null);
+  useEffect(() => {
+    if (!externalAsk || externalAsk === handledExternalAskRef.current) return;
+    handledExternalAskRef.current = externalAsk;
+    pushTurnWithAnswer(externalAsk.prompt, () => ({ kind: 'text', text: externalAsk.response }));
+    onExternalAskHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalAsk]);
 
   function handleSend(text) {
     setComposerValue('');
