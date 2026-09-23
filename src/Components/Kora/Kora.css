@@ -1,0 +1,129 @@
+/* Tokens + reset del shell (sidebar + topbar + content wrapper) duplicados
+   aquí siguiendo el mismo criterio que Home.css / Utilitarios.css (cada
+   feature de nivel superior es dueña de su propia copia) — ver AGENTS.md.
+   A diferencia de esas dos, esta pantalla monta <ClintosAI/> como contenido
+   completo (no una tabla propia), así que el :root también trae los tokens
+   que el panel necesita y que Home/Utilitarios no declaran: --amber-bg/
+   --amber-fg/--green/--green-bg (ConfirmActionCard/DraftCard),
+   --interactive-selected-bg/--text (LayoutSwitcher), --link-text
+   (PatientSummaryCard) y --z-popover/--z-toast (panel flotante/pantalla
+   completa) — mismos valores que HistoriaClinicaHospitalizacion/shared/shared.css. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --amber:#e08a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --radius:8px;
+  --radius-lg:12px;
+  --interactive-selected-bg:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+  --link-text:var(--primary);
+  /* Badge tone="info" (ver Badge.module.css) — usado por el "BETA" del
+     header del panel (PanelHeader.jsx). Sin este token el badge queda sin
+     fondo/color propio (mismo bug documentado en AGENTS.md "Badges" para
+     SolicitudConsumo/--gray-bg y encontrado acá al montar Kora). */
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+}
+
+html[data-contrast="high"]{
+  --border:#cbd3dd;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+/* Escala de z-index del panel (mismos valores que HistoriaClinicaHospitalizacion/
+   shared/shared.css) — sin ella el trigger flotante/panel de Pantalla completa
+   caen a z-index:auto (bug real ya encontrado una vez al montar Kora sin este
+   token, ver HistoriaClinica/shared/shared.css). */
+:root{
+  --z-popover:20;
+  --z-toast:40;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-inter),system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+/* Input de archivo oculto del composer (Composer.jsx) — sin esta clase
+   renderiza como el picker nativo del navegador ("Seleccionar archivo /
+   Ningún archivo seleccionado") en vez del botón con ícono de clip; bug real
+   encontrado al faltar acá (todo :root de feature la declara, ver
+   HistoriaClinicaHospitalizacion/shared/shared.css). */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+
+/* Fila del cuerpo bajo el Topbar fijo — mismo patrón que .hh-body-row/
+   .ap-body-row (ver HistoriaClinicaHospitalizacion.css/AtencionPaciente.css):
+   <ClintosAI/> necesita un ancestro position:relative con alto acotado para
+   que su modo "Pantalla completa" (position:absolute;inset:0) cubra
+   exactamente este espacio, sin taparse con el Topbar de arriba. Acá no hay
+   `.content` hermano (Kora es el único contenido de esta pantalla, a
+   diferencia de esas dos donde <ClintosAI/> conviene una tabla). */
+.kora-body-row{display:flex;flex:1;min-height:0;position:relative;}

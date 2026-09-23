@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import './Composer.css';
 import {
-  LuMic, LuPaperclip, LuSendHorizontal, LuX,
+  LuArrowUp, LuMic, LuPaperclip, LuX,
 } from 'react-icons/lu';
 
 // Composer del panel — visible siempre en la parte inferior (brief "El input
@@ -91,7 +91,7 @@ export default function Composer({
             onClick={handleSend}
             aria-label="Enviar"
           >
-            <LuSendHorizontal className="icon" aria-hidden="true" />
+            <LuArrowUp className="icon" aria-hidden="true" />
           </button>
         </div>
       </div>

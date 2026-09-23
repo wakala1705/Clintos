@@ -29,6 +29,7 @@ import {
   LuSettings,
   LuShoppingCart,
   LuSiren,
+  LuSparkles,
   LuSquarePlus,
   LuStethoscope,
   LuSun,
@@ -67,6 +68,7 @@ export default function Sidebar() {
   const isInsumosFarmacia = isSolicitudesInsumosFarmacia;
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
+  const isKora = pathname === '/kora';
   const isContable = activeModule === 'contable';
   const isInventario = activeModule === 'inventario';
 
@@ -256,6 +258,20 @@ export default function Sidebar() {
                 <LuChevronDown className="icon chev" />
               </div>
               <div className="nav-body"></div>
+            </div>
+
+            <div className="sidebar-divider"></div>
+
+            {/* Tercer punto de entrada a Kora (ver Kora.jsx) — mismo
+                comportamiento de navegación que el resto de módulos (Link
+                normal en la misma pestaña, sidebar colapsa a riel de íconos
+                al entrar, ver `startCollapsed:true` en Kora.jsx), encargo
+                explícito: nada de pestaña nueva. */}
+            <div className="nav-group">
+              <Link href="/kora" className={`nav-head nav-link${isKora ? ' active' : ''}`}>
+                <LuSparkles className="icon nav-icon" />
+                <span className="label">Kora</span>
+              </Link>
             </div>
           </>
         )}

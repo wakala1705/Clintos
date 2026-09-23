@@ -19,8 +19,14 @@
 .cai-fs-avatar{width:44px;height:44px;margin-bottom:16px;}
 .cai-fs-avatar .icon{width:22px;height:22px;}
 
-.cai-fs-greeting{margin:0 0 6px;font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cai-fs-lead{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.cai-fs-greeting{margin:0 0 6px;font-size:var(--fs-4xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* margin-bottom:22px por defecto (mismo espaciado que ya daba el chip antes
+   del composer); cuando el chip SÍ se renderiza (pantallas contextuales) se
+   anula acá y el espaciado lo sigue dando .cai-context-chip de abajo, sin
+   duplicar el gap. Sin esto, `generalContext` (@/Components/Kora/Kora, sin
+   chip) dejaba el saludo pegado directo al composer. */
+.cai-fs-lead{margin:0 0 22px;font-size:var(--fs-base);color:var(--ink-500);}
+.cai-fs-lead:has(+ .cai-context-chip){margin-bottom:0;}
 .cai-fs-center .cai-context-chip{margin-bottom:22px;}
 
 .cai-fs-composer{width:100%;margin-bottom:28px;}

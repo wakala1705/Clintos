@@ -3,7 +3,12 @@
   padding:16px 20px;border-bottom:1px solid var(--border);
 }
 .cai-header-titles{display:flex;align-items:center;gap:10px;min-width:0;}
-.cai-header-icon{width:32px;height:32px;}
+/* Mismo degradado que .cai-trigger (ClintosAITrigger.css) — el círculo del
+   header hereda el fondo plano --primary-50/--primary de .cai-icon-circle
+   (shared.css, compartido con el avatar de respuestas en la conversación);
+   acá se pisa puntualmente para que el header se lea como el mismo agente
+   que el botón flotante. */
+.cai-header-icon{width:32px;height:32px;background:linear-gradient(135deg, var(--primary), var(--accent-teal));color:#fff;}
 .cai-header-icon .icon{width:17px;height:17px;}
 .cai-header h3{
   margin:0;display:flex;align-items:center;gap:8px;

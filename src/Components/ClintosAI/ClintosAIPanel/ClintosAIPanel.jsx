@@ -22,7 +22,7 @@ const THINKING_DELAY_MS = 550;
 // estado nunca se puede quedar mostrando dos respuestas para una pregunta.
 export default function ClintosAIPanel({
   onClose, userFirstName, pacientes, areaLabel, onOpenHistoria, onNavigate, layoutMode, onLayoutModeChange,
-  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, externalAsk, onExternalAskHandled,
+  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, generalContext, externalAsk, onExternalAskHandled,
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
@@ -184,7 +184,17 @@ export default function ClintosAIPanel({
   // un prop aparte que cada pantalla tenga que calcular) para que reaccione
   // solo al seleccionar/deseleccionar una fila (HistoriaClinicaHospitalizacion.jsx)
   // y quede oculto siempre en pantallas de contexto fijo (AtencionPaciente.jsx).
-  const hideFaq = Boolean(selectedPaciente);
+  // También se oculta en `generalContext` (@/Components/Kora/Kora, sin piso ni
+  // paciente): son las mismas 3 preguntas de piso, no aplican ahí.
+  const hideFaq = Boolean(selectedPaciente) || Boolean(generalContext);
+  // "Acciones sugeridas" (SUGGESTIONS/PATIENT_SUGGESTIONS, ver suggestions.js)
+  // son 100% de piso/paciente ("Resumir pacientes con pendientes", "Ver
+  // órdenes pendientes"...) — sin contexto real detrás (Kora general, sin
+  // pacientes) mostrarlas sería una card que aparenta funcionar pero
+  // responde sobre datos que no existen ahí. A diferencia de `hideFaq`, esto
+  // NO se activa con `selectedPaciente` solo (ese caso sigue mostrando
+  // PATIENT_SUGGESTIONS, sí contextual).
+  const hideSuggestions = Boolean(generalContext);
 
   return (
     <section className={`cai-panel cai-panel--${effectiveLayoutMode}`} role="dialog" aria-labelledby="clintos-ai-title">
@@ -208,6 +218,8 @@ export default function ClintosAIPanel({
           screenLabel={screenLabel}
           onClearPaciente={onClearPaciente}
           hideFaq={hideFaq}
+          hideSuggestions={hideSuggestions}
+          generalContext={generalContext}
         />
       ) : (
         <>
@@ -219,8 +231,9 @@ export default function ClintosAIPanel({
                   selectedPaciente={selectedPaciente}
                   screenLabel={screenLabel}
                   onClearPaciente={onClearPaciente}
+                  generalContext={generalContext}
                 />
-                <SuggestionsSection onSelect={ask} items={suggestionItems} />
+                {!hideSuggestions && <SuggestionsSection onSelect={ask} items={suggestionItems} />}
                 {!hideFaq && <FaqSection onSelect={ask} />}
               </>
             )}

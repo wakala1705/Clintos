@@ -6,7 +6,7 @@
    .cai-composer-row en vez del border-top. */
 .cai-composer--centered{padding:0;border-top:none;background:transparent;}
 .cai-composer--centered .cai-composer-row{box-shadow:0 4px 16px rgba(16,24,39,.12);}
-.cai-composer--centered .cai-composer-input{font-size:var(--fs-lg);}
+
 
 .cai-attachment-chip{
   display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;
@@ -21,9 +21,19 @@
    en vez de los tres en una sola fila — de ahí el alto mayor del box. */
 .cai-composer-row{
   display:flex;flex-direction:column;gap:4px;height:104px;
-  padding:10px 10px 8px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+  padding:12px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
 }
-.cai-composer-row:focus-within{border-color:var(--primary);}
+/* Borde degradado al enfocar (encargo explícito, mismo tratamiento que
+   .cai-suggestion-card:hover/button.kora-topbar-secondary-btn:hover) — doble
+   background (padding-box + border-box) en vez de border-image, así respeta
+   el border-radius:var(--radius-lg) del box; padding-box usa var(--bg) (el
+   fondo propio de esta fila, no --surface) para no cambiarle el color. */
+.cai-composer-row:focus-within{
+  border-color:transparent;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    linear-gradient(135deg, var(--primary), var(--accent-teal)) border-box;
+}
 
 /* flex:1 para que ocupe el espacio libre del alto fijo de arriba (104px)
    por encima de .cai-composer-controls, en vez de quedar pegado a su
@@ -38,7 +48,7 @@
 .cai-composer-controls{display:flex;align-items:center;justify-content:space-between;gap:4px;}
 
 .cai-composer-attach, .cai-composer-mic, .cai-composer-send{
-  flex-shrink:0;width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;
+  flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;font-family:inherit;
 }
 .cai-composer-attach, .cai-composer-mic{background:transparent;color:var(--ink-500);}

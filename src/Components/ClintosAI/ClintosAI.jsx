@@ -54,12 +54,22 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // hacia ClintosAIPanel (que la consume en un efecto, ver
 // pushTurnWithAnswer/onExternalAskHandled ahí) sin importar si el panel ya
 // estaba abierto o si este método lo abre recién ahora.
+//
+// `autoOpen`/`generalContext` (encargo explícito): tercer punto de entrada,
+// @/Components/Kora/Kora — a diferencia de las 2 pantallas contextuales
+// (piso/paciente), ahí Kora es el contenido ENTERO de la pestaña, no un panel
+// que se abre sobre una tabla — `autoOpen` arranca el panel ya abierto en
+// Pantalla completa en vez de mostrar primero el trigger flotante (solo
+// afecta el estado inicial, useState no vuelve a leerlo tras el montaje).
+// `generalContext` viaja sin tocar hasta ClintosAIPanel.jsx (oculta
+// "Acciones sugeridas"/"Pregúntame", 100% preguntas de piso/paciente que no
+// aplican sin ese contexto, y cambia el saludo) — ver ese archivo.
 const ClintosAI = forwardRef(function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
-  onClearPaciente,
+  onClearPaciente, autoOpen = false, generalContext = false,
 }, ref) {
-  const [open, setOpen] = useState(false);
-  const [layoutMode, setLayoutMode] = useState('sidebar');
+  const [open, setOpen] = useState(autoOpen);
+  const [layoutMode, setLayoutMode] = useState(autoOpen ? 'fullscreen' : 'sidebar');
   const [narrowViewport, setNarrowViewport] = useState(false);
   const [externalAsk, setExternalAsk] = useState(null);
 
@@ -115,6 +125,7 @@ const ClintosAI = forwardRef(function ClintosAI({
       selectedPaciente={selectedPaciente}
       screenLabel={screenLabel}
       onClearPaciente={onClearPaciente}
+      generalContext={generalContext}
       externalAsk={externalAsk}
       onExternalAskHandled={() => setExternalAsk(null)}
     />
