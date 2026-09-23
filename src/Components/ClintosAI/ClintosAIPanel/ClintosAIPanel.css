@@ -1,0 +1,31 @@
+.cai-panel{
+  width:420px;flex-shrink:0;height:100%;
+  display:flex;flex-direction:column;
+  background:var(--surface);border-left:1px solid var(--border);
+  box-shadow:-2px 0 12px rgba(16,24,39,.06);
+}
+
+/* Barra lateral (default): el bloque de arriba ya es este modo — hermano en
+   flujo de .content.hh-content dentro de .hh-body-row (ver
+   HistoriaClinicaHospitalizacion.jsx/css), encoge la tabla. */
+
+/* Flotante: sale del flujo -> .content.hh-content vuelve a 100% de ancho.
+   Tarjeta ancla en la esquina inferior derecha, alto acotado (no ocupa todo
+   el alto del contenido) — sin arrastre, ver AGENTS.md/decisión de este
+   ajuste. */
+.cai-panel.cai-panel--floating{
+  position:fixed;right:24px;bottom:24px;z-index:var(--z-toast);
+  width:420px;height:640px;max-height:calc(100vh - 48px);
+  border-radius:var(--radius-lg);border:1px solid var(--border);
+  box-shadow:0 12px 32px rgba(16,24,39,.20);
+}
+
+/* Pantalla completa: cubre todo .hh-body-row (que declara position:relative,
+   ver HistoriaClinicaHospitalizacion.css) — tapa la tabla, pero el Topbar
+   sigue fijo arriba porque queda fuera de este wrapper. */
+.cai-panel.cai-panel--fullscreen{
+  position:absolute;inset:0;z-index:var(--z-popover);
+  width:100%;height:100%;border-left:none;
+}
+
+.cai-body{flex:1;min-height:0;overflow-y:auto;}

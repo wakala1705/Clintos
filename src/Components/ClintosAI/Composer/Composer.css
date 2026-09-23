@@ -1,0 +1,45 @@
+.cai-composer{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);}
+
+/* Variante centrada (FullscreenWelcome.jsx): barra de búsqueda elevada en
+   medio de la pantalla, no footer fijo — sin borde superior/fondo de panel,
+   la elevación la da la sombra de .cai-composer-row en vez del border-top. */
+.cai-composer--centered{padding:0;border-top:none;background:transparent;}
+.cai-composer--centered .cai-composer-row{
+  border-radius:999px;box-shadow:0 4px 16px rgba(16,24,39,.12);
+}
+.cai-composer--centered .cai-composer-input{font-size:var(--fs-lg);}
+
+.cai-attachment-chip{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;
+  padding:4px 8px;border-radius:20px;background:var(--gray-bg);color:var(--ink-700);
+  font-size:var(--fs-xs);font-weight:var(--fw-medium);
+}
+.cai-attachment-chip button{background:none;border:none;padding:0;display:flex;cursor:pointer;color:var(--ink-500);}
+.cai-attachment-chip .icon{width:12px;height:12px;}
+
+.cai-composer-row{
+  display:flex;align-items:flex-end;gap:8px;
+  padding:8px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+}
+.cai-composer-row:focus-within{border-color:var(--primary);}
+
+.cai-composer-attach, .cai-composer-send{
+  flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;
+}
+.cai-composer-attach{background:transparent;color:var(--ink-500);}
+.cai-composer-attach:hover{background:var(--gray-bg);}
+.cai-composer-attach .icon{width:18px;height:18px;}
+
+.cai-composer-send{background:var(--primary);color:#fff;}
+.cai-composer-send:hover:not(:disabled){background:var(--primary-dark);}
+.cai-composer-send:disabled{background:var(--gray-bg);color:var(--ink-400);cursor:not-allowed;}
+.cai-composer-send .icon{width:16px;height:16px;}
+.cai-composer-attach:focus-visible, .cai-composer-send:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cai-composer-input{
+  flex:1;min-width:0;max-height:110px;resize:none;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);line-height:1.4;
+  padding:6px 2px;outline:none;
+}
+.cai-composer-input::placeholder{color:var(--ink-400);}

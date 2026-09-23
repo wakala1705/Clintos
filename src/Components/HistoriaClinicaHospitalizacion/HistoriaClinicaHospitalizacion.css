@@ -1,6 +1,16 @@
 /* .app/.main/.content/.card (base shell): definidas en ./shared/shared.css —
    acá solo el layout propio de este tablero. */
 
+/* Envuelve .content.hh-content + <ClintosAI/> debajo del Topbar (que queda
+   fuera de este wrapper, ver HistoriaClinicaHospitalizacion.jsx) — así el
+   panel de Clintos AI solo ocupa el alto del contenido (100% de
+   .hh-body-row), no el 100vh de .app/.main, y el Topbar queda fijo cruzando
+   por arriba de la tabla y del panel. */
+/* position:relative: ancla al panel en modo "Pantalla completa"
+   (.cai-panel--fullscreen{position:absolute;inset:0}), ver
+   ClintosAIPanel.css. */
+.hh-body-row{display:flex;flex:1;min-height:0;position:relative;}
+
 /* Selector compuesto (.content.hh-content), no solo .hh-content: pisa a
    .content (misma clase reutilizada por otras features) y su prioridad no
    puede depender del orden de inyección de <style> en navegación

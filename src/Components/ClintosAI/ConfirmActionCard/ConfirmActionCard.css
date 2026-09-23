@@ -1,0 +1,9 @@
+.cai-confirm{
+  margin-top:8px;padding:14px;border:1px solid var(--amber-bg);border-radius:var(--radius-lg);background:var(--amber-bg);
+}
+.cai-confirm-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.cai-confirm-icon{width:26px;height:26px;background:var(--surface);color:var(--amber-fg);}
+.cai-confirm-icon .icon{width:14px;height:14px;}
+.cai-confirm-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cai-confirm-desc{margin:0 0 8px;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.5;}
+.cai-confirm-items{margin:0 0 4px;padding-left:16px;font-size:var(--fs-sm);color:var(--ink-900);line-height:1.6;}

@@ -1,0 +1,13 @@
+.cai-result-list{list-style:none;margin:10px 0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.cai-result-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+.cai-result-item-main{
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left;
+}
+.cai-result-item-main:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.cai-result-nombre{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cai-result-meta{font-size:var(--fs-xs);color:var(--ink-500);}
+.cai-result-followup{margin-top:8px;}

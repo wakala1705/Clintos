@@ -1,0 +1,5 @@
+.cai-conversation{padding:16px 20px;display:flex;flex-direction:column;}
+.cai-assistant-row{display:flex;gap:10px;margin:0 0 18px;}
+.cai-assistant-avatar{width:26px;height:26px;margin-top:1px;}
+.cai-assistant-avatar .icon{width:14px;height:14px;}
+.cai-assistant-content{flex:1;min-width:0;}

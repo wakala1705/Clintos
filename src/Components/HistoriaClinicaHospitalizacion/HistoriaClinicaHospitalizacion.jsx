@@ -8,6 +8,7 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
+import ClintosAI from '@/Components/ClintosAI/ClintosAI';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import PendientesPanel from './PendientesPanel/PendientesPanel';
 import {
@@ -56,6 +57,7 @@ export default function HistoriaClinicaHospitalizacion() {
   ), [areaOperativa]);
 
   const pendientes = useMemo(() => pendientesOrdenados(pacientesFiltrados), [pacientesFiltrados]);
+  const areaLabel = AREAS_OPERATIVAS.find((a) => a.value === areaOperativa)?.label;
 
   const kpis = useMemo(() => ({
     total: pacientesFiltrados.length,
@@ -77,70 +79,80 @@ export default function HistoriaClinicaHospitalizacion() {
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content hh-content">
-          <div className="hh-header">
-            <h1>Historia Clínica - Hospitalización</h1>
-            <p>Mis pacientes hospitalizados y pendientes clínicos</p>
-          </div>
+        <div className="hh-body-row">
+          <div className="content hh-content">
+            <div className="hh-header">
+              <h1>Historia Clínica - Hospitalización</h1>
+              <p>Mis pacientes hospitalizados y pendientes clínicos</p>
+            </div>
 
-          <div className="hh-kpi-row">
-            <KpiCard
-              icon={LuUsers}
-              label="Mis pacientes"
-              value={kpis.total}
-              description="En piso"
-              variant="neutral"
-            />
-            <KpiCard
-              icon={LuFilePen}
-              label="Evolución pendiente"
-              value={kpis.evolucionPendiente}
-              description="Sin nota del día"
-              variant="warning"
-            />
-            <KpiCard
-              icon={LuClipboardList}
-              label="Órdenes por firmar"
-              value={kpis.ordenesPorFirmar}
-              description="Órdenes pendientes"
-              variant="warning"
-            />
-            <KpiCard
-              icon={LuFlaskConical}
-              label="Resultados nuevos"
-              value={kpis.resultadosNuevos}
-              description={kpis.resultadosCriticos > 0
-                ? `${kpis.resultadosCriticos} ${kpis.resultadosCriticos === 1 ? 'crítico' : 'críticos'}`
-                : 'Sin críticos'}
-              variant={kpis.resultadosCriticos > 0 ? 'danger' : 'info'}
-            />
-            <KpiCard
-              icon={LuLogOut}
-              label="Altas probables"
-              value={kpis.altasProbables}
-              description="Egreso hoy o mañana"
-              variant="success"
-            />
-          </div>
-
-          <div className="hh-main-row">
-            <PatientsPanel
-              pacientes={pacientesFiltrados}
-              onOpenHistoria={goToHistoria}
-              filtro={filtro}
-              onFiltroChange={setFiltro}
-              areaOperativa={areaOperativa}
-              onAreaOperativaChange={setAreaOperativa}
-              areaOptions={AREAS_OPERATIVAS}
-            />
-            {MOSTRAR_PENDIENTES && (
-              <PendientesPanel
-                pendientes={pendientes}
-                onOpenHistoria={goToHistoria}
-                onVerPacientesConPendientes={() => setFiltro('pendientes')}
+            <div className="hh-kpi-row">
+              <KpiCard
+                icon={LuUsers}
+                label="Mis pacientes"
+                value={kpis.total}
+                description="En piso"
+                variant="neutral"
               />
-            )}
+              <KpiCard
+                icon={LuFilePen}
+                label="Evolución pendiente"
+                value={kpis.evolucionPendiente}
+                description="Sin nota del día"
+                variant="warning"
+              />
+              <KpiCard
+                icon={LuClipboardList}
+                label="Órdenes por firmar"
+                value={kpis.ordenesPorFirmar}
+                description="Órdenes pendientes"
+                variant="warning"
+              />
+              <KpiCard
+                icon={LuFlaskConical}
+                label="Resultados nuevos"
+                value={kpis.resultadosNuevos}
+                description={kpis.resultadosCriticos > 0
+                  ? `${kpis.resultadosCriticos} ${kpis.resultadosCriticos === 1 ? 'crítico' : 'críticos'}`
+                  : 'Sin críticos'}
+                variant={kpis.resultadosCriticos > 0 ? 'danger' : 'info'}
+              />
+              <KpiCard
+                icon={LuLogOut}
+                label="Altas probables"
+                value={kpis.altasProbables}
+                description="Egreso hoy o mañana"
+                variant="success"
+              />
+            </div>
+
+            <div className="hh-main-row">
+              <PatientsPanel
+                pacientes={pacientesFiltrados}
+                onOpenHistoria={goToHistoria}
+                filtro={filtro}
+                onFiltroChange={setFiltro}
+                areaOperativa={areaOperativa}
+                onAreaOperativaChange={setAreaOperativa}
+                areaOptions={AREAS_OPERATIVAS}
+              />
+              {MOSTRAR_PENDIENTES && (
+                <PendientesPanel
+                  pendientes={pendientes}
+                  onOpenHistoria={goToHistoria}
+                  onVerPacientesConPendientes={() => setFiltro('pendientes')}
+                />
+              )}
+            </div>
           </div>
+
+          <ClintosAI
+            pacientes={pacientesFiltrados}
+            areaLabel={areaLabel}
+            userFirstName="Camilo"
+            onOpenHistoria={goToHistoria}
+            onNavigate={router.push}
+          />
         </div>
       </div>
     </div>

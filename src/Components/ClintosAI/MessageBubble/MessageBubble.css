@@ -1,0 +1,18 @@
+.cai-msg-user{
+  align-self:flex-end;max-width:88%;margin:0 0 12px;
+  padding:8px 12px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--ink-700);line-height:1.45;
+}
+.cai-msg-assistant{
+  margin:0;font-size:var(--fs-base);color:var(--ink-900);line-height:1.5;
+}
+.cai-msg-assistant.tone-success{color:var(--green);}
+
+.cai-msg-typing{margin:0;display:flex;align-items:center;gap:4px;height:20px;}
+.cai-typing-dot{width:5px;height:5px;border-radius:50%;background:var(--ink-400);animation:cai-typing-pulse 1.1s infinite ease-in-out;}
+.cai-typing-dot:nth-child(2){animation-delay:.15s;}
+.cai-typing-dot:nth-child(3){animation-delay:.3s;}
+@keyframes cai-typing-pulse{
+  0%, 60%, 100%{opacity:.3;transform:translateY(0);}
+  30%{opacity:1;transform:translateY(-2px);}
+}

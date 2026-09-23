@@ -1,0 +1,24 @@
+.cai-suggestions{padding:16px 20px;border-bottom:1px solid var(--border);}
+.cai-suggestions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* Fila centrada (bienvenida de Pantalla completa, ver FullscreenWelcome.jsx)
+   — sin borde inferior propio (esa vista no tiene la línea divisoria entre
+   secciones que sí tiene la barra lateral). */
+.cai-fs-center .cai-suggestions{border-bottom:none;padding:0;}
+.cai-suggestions-grid--row{
+  grid-template-columns:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+}
+.cai-suggestions-grid--row .cai-suggestion-card{width:190px;flex:0 0 190px;}
+
+/* Card compacta 2x2 (a diferencia de la fila horizontal de .cai-card-btn en
+   FaqSection): ícono arriba, texto debajo — .cai-card-icon se reusa desde
+   shared.css, solo cambia el layout del botón que lo contiene. */
+.cai-suggestion-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  padding:10px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);color:var(--ink-900);cursor:pointer;font-family:inherit;text-align:left;
+  transition:var(--btn-transition);
+}
+.cai-suggestion-card:hover{background:var(--bg);border-color:var(--ink-400);}
+.cai-suggestion-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-suggestion-card .cai-card-label{font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.35;}

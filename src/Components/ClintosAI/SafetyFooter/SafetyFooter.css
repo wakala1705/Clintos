@@ -1,0 +1,9 @@
+.cai-safety-footer{
+  flex-shrink:0;margin:0;padding:8px 16px 12px;
+  font-size:var(--fs-xs);color:var(--ink-500);line-height:1.5;text-align:center;
+}
+.cai-safety-link{
+  background:none;border:none;padding:0;cursor:pointer;font-family:inherit;
+  font-size:inherit;color:var(--link-text);text-decoration:underline;
+}
+.cai-safety-link:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}

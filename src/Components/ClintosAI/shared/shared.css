@@ -1,0 +1,48 @@
+/* Reglas reutilizadas por 2+ componentes del panel Clintos AI — importado
+   una sola vez desde ClintosAI.jsx (punto de montaje único de esta
+   sub-feature), mismo criterio que el resto de `shared.css` del proyecto
+   (ver AGENTS.md "Component organization"). Consume los tokens de color del
+   :root de HistoriaClinicaHospitalizacion (único lugar donde este panel se
+   monta hoy) — no declara ninguno propio, mismo contrato que ModalHeader. */
+
+/* Círculo del ícono de IA — reusado por el header del panel y por cada
+   respuesta del asistente en la conversación, mismo criterio de icon-circle
+   que .modal-header-icon pero sin acoplarse a ese componente (este es un
+   panel lateral, no un modal, ver AGENTS.md "Modales" > Fuera de este
+   componente). */
+.cai-icon-circle{
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;background:var(--primary-50);color:var(--primary);
+}
+
+.cai-section-title{
+  margin:0 0 10px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.02em;
+}
+
+/* Card base para sugerencias/preguntas frecuentes/resultados de paciente —
+   botón de ancho completo, sin estética de burbuja de chat (encargo
+   explícito del brief: nada de "interfaces tipo ChatGPT genérico"). */
+.cai-card-btn{
+  width:100%;display:flex;align-items:center;gap:10px;text-align:left;
+  padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);color:var(--ink-900);cursor:pointer;font-family:inherit;
+  transition:var(--btn-transition);
+}
+.cai-card-btn:hover{background:var(--bg);border-color:var(--ink-400);}
+.cai-card-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+.cai-card-btn .cai-card-icon{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.cai-card-btn .cai-card-icon .icon{width:16px;height:16px;}
+
+.cai-card-btn .cai-card-label{flex:1;min-width:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.cai-card-btn .cai-card-chevron{flex-shrink:0;width:16px;height:16px;color:var(--ink-400);}
+
+/* Fila de <Button> (confirmar/cancelar, accesos de navegación) dentro de la
+   conversación — solo layout, los botones en sí son <Button> (ver AGENTS.md
+   "Botones"), nunca una clase .btn propia. */
+.cai-inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}

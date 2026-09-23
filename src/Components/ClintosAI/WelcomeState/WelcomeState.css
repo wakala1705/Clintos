@@ -1,0 +1,4 @@
+.cai-welcome{padding:20px 20px 4px;}
+.cai-welcome-greeting{margin:0 0 4px;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cai-welcome-lead{margin:0 0 8px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);}
+.cai-welcome-support{margin:0;font-size:var(--fs-sm);color:var(--ink-500);line-height:1.5;}

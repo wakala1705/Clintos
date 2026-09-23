@@ -1,0 +1,28 @@
+.cai-fs-welcome{
+  flex:1;min-height:0;overflow-y:auto;
+  display:flex;align-items:center;justify-content:center;padding:32px 20px;
+}
+.cai-fs-center{width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+
+.cai-fs-avatar{width:44px;height:44px;margin-bottom:16px;}
+.cai-fs-avatar .icon{width:22px;height:22px;}
+
+.cai-fs-greeting{margin:0 0 6px;font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cai-fs-lead{margin:0 0 24px;font-size:var(--fs-base);color:var(--ink-500);}
+
+.cai-fs-composer{width:100%;margin-bottom:28px;}
+
+/* SuggestionsSection/FaqSection reusados tal cual — acá solo se pisa el
+   ancho (ocupan todo .cai-fs-center) y el padding lateral (el centrado ya lo
+   da el wrapper, no hace falta el mismo padding que en la barra lateral). */
+.cai-fs-center .cai-suggestions{width:100%;}
+.cai-fs-center .cai-faq{width:100%;padding:8px 0 0;}
+
+.cai-fs-more-toggle{
+  display:flex;align-items:center;gap:4px;margin-top:18px;
+  background:none;border:none;padding:4px 8px;cursor:pointer;font-family:inherit;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);
+}
+.cai-fs-more-toggle:hover{color:var(--ink-700);}
+.cai-fs-more-toggle .icon{width:14px;height:14px;}
+.cai-fs-more-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
