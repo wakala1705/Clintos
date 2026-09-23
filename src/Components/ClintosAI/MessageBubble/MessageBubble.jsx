@@ -10,7 +10,7 @@ export default function MessageBubble({ role, text, tone, typing = false }) {
   }
   if (typing) {
     return (
-      <p className="cai-msg-typing" aria-live="polite" aria-label="Clintos AI está escribiendo">
+      <p className="cai-msg-typing" aria-live="polite" aria-label="Kora está escribiendo">
         <span className="cai-typing-dot" />
         <span className="cai-typing-dot" />
         <span className="cai-typing-dot" />

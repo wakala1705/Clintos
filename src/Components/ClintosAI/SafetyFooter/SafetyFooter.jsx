@@ -12,7 +12,7 @@ import './SafetyFooter.css';
 export default function SafetyFooter() {
   return (
     <p className="cai-safety-footer">
-      Clintos AI puede cometer errores. Verifica siempre la información clínica.{' '}
+      Kora puede cometer errores. Verifica siempre la información clínica.{' '}
       <span className="cai-safety-more">Más información</span>
     </p>
   );

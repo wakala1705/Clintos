@@ -15,9 +15,13 @@ import {
 //
 // Segunda iteración: con conversación activa se antepone un botón "←" al
 // bloque título (mismo efecto que "Nuevo chat": reinicia a la bienvenida),
-// el título "Clintos AI" queda siempre visible. El acceso directo a Pantalla
+// el título "Kora" queda siempre visible. El acceso directo a Pantalla
 // completa se retiró (encargo explícito: ya vive en LayoutSwitcher, que
 // ofrece los 3 modos — no duplicarlo acá).
+//
+// "Kora": nombre visible del agente (encargo explícito) — el id
+// `clintos-ai-title`/las clases `cai-*` quedan igual, son el nombre técnico
+// del módulo, no lo que ve el usuario (ver ClintosAITrigger.jsx).
 export default function PanelHeader({
   onClose, layoutMode, onLayoutModeChange, onNewChat, hasConversation,
 }) {
@@ -33,7 +37,7 @@ export default function PanelHeader({
           <LuSparkles className="icon" aria-hidden="true" />
         </div>
         <h3 id="clintos-ai-title">
-          Clintos AI
+          Kora
           <Badge tone="info" className="cai-beta-badge">BETA</Badge>
         </h3>
       </div>
@@ -49,7 +53,7 @@ export default function PanelHeader({
           <LuSquarePen className="icon" aria-hidden="true" />
         </button>
         <LayoutSwitcher mode={layoutMode} onChange={onLayoutModeChange} />
-        <button type="button" className="cai-close-btn" onClick={onClose} aria-label="Cerrar Clintos AI">
+        <button type="button" className="cai-close-btn" onClick={onClose} aria-label="Cerrar Kora">
           <LuX className="icon" aria-hidden="true" />
         </button>
       </div>

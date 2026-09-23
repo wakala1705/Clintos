@@ -58,7 +58,7 @@ export default function Composer({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          aria-label="Escribe tu pregunta o solicita una tarea para Clintos AI"
+          aria-label="Escribe tu pregunta o solicita una tarea para Kora"
         />
         <div className="cai-composer-controls">
           <button

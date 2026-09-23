@@ -34,7 +34,7 @@ export default function FullscreenWelcome({
           <LuSparkles className="icon" aria-hidden="true" />
         </span>
         <h2 className="cai-fs-greeting">Hola, {userFirstName} 👋</h2>
-        <p className="cai-fs-lead">Soy Clintos AI, tu asistente en hospitalización.</p>
+        <p className="cai-fs-lead">Soy Kora, tu asistente en hospitalización.</p>
         <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} onClear={onClearPaciente} />
 
         <div className="cai-fs-composer">

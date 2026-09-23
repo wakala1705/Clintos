@@ -1,0 +1,17 @@
+/* Mismo degradado que .cai-trigger (ClintosAITrigger.css), tamaño reducido
+   para convivir con el resto de .topbar-right (picker de sede/área, divider,
+   UserMenu) en vez del padding/font-size del trigger flotante. */
+.kora-topbar-btn{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border:none;border-radius:999px;
+  background:linear-gradient(135deg, var(--primary), var(--accent-teal));color:#fff;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  cursor:pointer;transition:var(--btn-transition), box-shadow .15s;
+  box-shadow:0 2px 8px rgba(16,24,39,.12);
+}
+.kora-topbar-btn .icon{width:15px;height:15px;}
+.kora-topbar-btn:hover{
+  background:linear-gradient(135deg, var(--primary-dark), var(--accent-teal));
+  box-shadow:0 4px 12px rgba(16,24,39,.16);
+}
+.kora-topbar-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}

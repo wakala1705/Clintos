@@ -10,6 +10,7 @@ import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import ClintosAI from '@/Components/ClintosAI/ClintosAI';
+import KoraTopbarButton from '@/Components/ClintosAI/KoraTopbarButton/KoraTopbarButton';
 import TipoBadge from '../TipoBadge/TipoBadge';
 import AgendaEmptyState from '../AgendaEmptyState/AgendaEmptyState';
 import HistoriaClinicaTab from './HistoriaClinicaTab/HistoriaClinicaTab';
@@ -291,7 +292,9 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           section={cfg.section}
           page="Atención del paciente"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
-        />
+        >
+          {clintosPaciente && <KoraTopbarButton onClick={() => clintosAIRef.current?.open()} />}
+        </Topbar>
 
         <div className="ap-body-row">
           <div className="content hc-content">

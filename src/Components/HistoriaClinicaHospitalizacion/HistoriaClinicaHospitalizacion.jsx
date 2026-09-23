@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import './HistoriaClinicaHospitalizacion.css';
 import './shared/shared.css';
@@ -9,6 +11,7 @@ import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import ClintosAI from '@/Components/ClintosAI/ClintosAI';
+import KoraTopbarButton from '@/Components/ClintosAI/KoraTopbarButton/KoraTopbarButton';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import PendientesPanel from './PendientesPanel/PendientesPanel';
 import {
@@ -40,6 +43,10 @@ export default function HistoriaClinicaHospitalizacion() {
   // necesita saber qué paciente está seleccionado para volverse contextual
   // (brief "Contexto dinámico", ver <ClintosAI selectedPaciente=.../> abajo).
   const [selectedPacienteId, setSelectedPacienteId] = useState(null);
+  // Segundo punto de entrada a Kora desde el Topbar (KoraTopbarButton, ver
+  // AGENTS.md-style comentario ahí) — necesita abrir el mismo <ClintosAI/>
+  // de más abajo, que vive fuera del Topbar.
+  const clintosAIRef = useRef(null);
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar — mismo init que
   // PanelGeneral.jsx/HistoriaClinica.jsx: sin este efecto los onClick de
@@ -85,7 +92,9 @@ export default function HistoriaClinicaHospitalizacion() {
           section="Hospitalización"
           page="Historia Clínica"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
-        />
+        >
+          <KoraTopbarButton onClick={() => clintosAIRef.current?.open()} />
+        </Topbar>
 
         <div className="hh-body-row">
           <div className="content hh-content">
@@ -157,6 +166,7 @@ export default function HistoriaClinicaHospitalizacion() {
           </div>
 
           <ClintosAI
+            ref={clintosAIRef}
             pacientes={pacientesFiltrados}
             areaLabel={areaLabel}
             userFirstName="Camilo"

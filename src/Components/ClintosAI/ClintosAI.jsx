@@ -69,6 +69,12 @@ const ClintosAI = forwardRef(function ClintosAI({
   }, []);
 
   useImperativeHandle(ref, () => ({
+    // Consumido por KoraTopbarButton.jsx (segundo punto de entrada, ver
+    // AtencionPaciente.jsx/HistoriaClinicaHospitalizacion.jsx) — solo abre,
+    // idempotente si ya estaba abierto.
+    open() {
+      setOpen(true);
+    },
     askExternal(prompt, response) {
       setExternalAsk({ prompt, response });
       setOpen(true);

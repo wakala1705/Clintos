@@ -12,7 +12,7 @@ export default function WelcomeState({
   return (
     <div className="cai-welcome">
       <p className="cai-welcome-greeting">Hola, {userFirstName} 👋</p>
-      <p className="cai-welcome-lead">Soy Clintos AI, tu asistente en hospitalización.</p>
+      <p className="cai-welcome-lead">Soy Kora, tu asistente en hospitalización.</p>
       <p className="cai-welcome-support">
         Te ayudo a consultar información, entender datos y realizar tareas dentro de Clintos.
       </p>
