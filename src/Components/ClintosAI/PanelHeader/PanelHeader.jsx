@@ -4,7 +4,7 @@ import './PanelHeader.css';
 import Badge from '@/Components/Badge/Badge';
 import LayoutSwitcher from '../LayoutSwitcher/LayoutSwitcher';
 import {
-  LuArrowLeft, LuMaximize2, LuMinimize2, LuSparkles, LuSquarePen, LuX,
+  LuArrowLeft, LuSparkles, LuSquarePen, LuX,
 } from 'react-icons/lu';
 
 // Header propio del panel (no <ModalHeader>: este es un panel lateral
@@ -13,33 +13,30 @@ import {
 // mismo lenguaje visual (ícono en círculo, botón cerrar 30px/radio 8px con
 // hover --gray-bg) para que se sienta parte del mismo sistema.
 //
-// Segunda iteración: con conversación activa, el bloque título se reemplaza
-// por "← Volver" (brief STATE 03) — mismo efecto que "Nuevo chat" (reinicia
-// a la bienvenida), pero el lápiz se conserva igual a la derecha (encargo
-// explícito: las dos vías conviven). "Expandir" es un acceso directo a
-// Pantalla completa aparte del LayoutSwitcher (que sigue ofreciendo los 3
-// modos) — ver ClintosAIPanel.jsx para `expanded`/`onToggleExpand`.
+// Segunda iteración: con conversación activa se antepone un botón "←" al
+// bloque título (mismo efecto que "Nuevo chat": reinicia a la bienvenida),
+// el título "Clintos AI" queda siempre visible. El acceso directo a Pantalla
+// completa se retiró (encargo explícito: ya vive en LayoutSwitcher, que
+// ofrece los 3 modos — no duplicarlo acá).
 export default function PanelHeader({
-  onClose, layoutMode, onLayoutModeChange, onNewChat, hasConversation, expanded, onToggleExpand,
+  onClose, layoutMode, onLayoutModeChange, onNewChat, hasConversation,
 }) {
   return (
     <div className="cai-header">
-      {hasConversation ? (
-        <button type="button" className="cai-back-btn" onClick={onNewChat}>
-          <LuArrowLeft className="icon" aria-hidden="true" />
-          Volver
-        </button>
-      ) : (
-        <div className="cai-header-titles">
-          <div className="cai-icon-circle cai-header-icon">
-            <LuSparkles className="icon" aria-hidden="true" />
-          </div>
-          <h3 id="clintos-ai-title">
-            Clintos AI
-            <Badge tone="info" className="cai-beta-badge">BETA</Badge>
-          </h3>
+      <div className="cai-header-titles">
+        {hasConversation && (
+          <button type="button" className="cai-back-btn" onClick={onNewChat} aria-label="Volver">
+            <LuArrowLeft className="icon" aria-hidden="true" />
+          </button>
+        )}
+        <div className="cai-icon-circle cai-header-icon">
+          <LuSparkles className="icon" aria-hidden="true" />
         </div>
-      )}
+        <h3 id="clintos-ai-title">
+          Clintos AI
+          <Badge tone="info" className="cai-beta-badge">BETA</Badge>
+        </h3>
+      </div>
       <div className="cai-header-end">
         <button
           type="button"
@@ -50,18 +47,6 @@ export default function PanelHeader({
           title="Nuevo chat"
         >
           <LuSquarePen className="icon" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          className="cai-expand-btn"
-          onClick={onToggleExpand}
-          aria-label={expanded ? 'Contraer Clintos AI' : 'Expandir Clintos AI'}
-          title={expanded ? 'Contraer' : 'Expandir'}
-          aria-pressed={expanded}
-        >
-          {expanded
-            ? <LuMinimize2 className="icon" aria-hidden="true" />
-            : <LuMaximize2 className="icon" aria-hidden="true" />}
         </button>
         <LayoutSwitcher mode={layoutMode} onChange={onLayoutModeChange} />
         <button type="button" className="cai-close-btn" onClick={onClose} aria-label="Cerrar Clintos AI">

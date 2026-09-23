@@ -2,7 +2,9 @@
 
 import { useRef, useState } from 'react';
 import './Composer.css';
-import { LuPaperclip, LuSendHorizontal, LuX } from 'react-icons/lu';
+import {
+  LuMic, LuPaperclip, LuSendHorizontal, LuX,
+} from 'react-icons/lu';
 
 // Composer del panel — visible siempre en la parte inferior (brief "El input
 // debe permanecer visualmente accesible en todo momento"). El adjunto es
@@ -12,6 +14,12 @@ import { LuPaperclip, LuSendHorizontal, LuX } from 'react-icons/lu';
 // `variant="centered"` (solo lo usa FullscreenWelcome.jsx, bienvenida de
 // Pantalla completa): mismo componente/lógica, look de barra de búsqueda
 // elevada en vez de footer fijo — ver Composer.css.
+//
+// Botón de mic: placeholder deshabilitado para dictado por voz (encargo
+// explícito, funcionalidad futura) — a diferencia del adjunto, este no tiene
+// NINGÚN comportamiento simulado (ni chip ni estado local), así no aparenta
+// estar activo cuando no lo está (mismo criterio de "sin afordancias muertas
+// que parezcan vivas" ya aplicado al resto del panel).
 export default function Composer({
   value, onChange, onSend, disabled, variant = 'bar',
 }) {
@@ -43,20 +51,6 @@ export default function Composer({
         </div>
       )}
       <div className="cai-composer-row">
-        <button
-          type="button"
-          className="cai-composer-attach"
-          aria-label="Adjuntar archivo"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <LuPaperclip className="icon" aria-hidden="true" />
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="sr-only"
-          onChange={(e) => setAttachment(e.target.files?.[0]?.name ?? null)}
-        />
         <textarea
           className="cai-composer-input"
           placeholder="Escribe tu pregunta o solicita una tarea..."
@@ -66,15 +60,40 @@ export default function Composer({
           onKeyDown={handleKeyDown}
           aria-label="Escribe tu pregunta o solicita una tarea para Clintos AI"
         />
-        <button
-          type="button"
-          className="cai-composer-send"
-          disabled={!canSend}
-          onClick={handleSend}
-          aria-label="Enviar"
-        >
-          <LuSendHorizontal className="icon" aria-hidden="true" />
-        </button>
+        <div className="cai-composer-controls">
+          <button
+            type="button"
+            className="cai-composer-attach"
+            aria-label="Adjuntar archivo"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <LuPaperclip className="icon" aria-hidden="true" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="sr-only"
+            onChange={(e) => setAttachment(e.target.files?.[0]?.name ?? null)}
+          />
+          <button
+            type="button"
+            className="cai-composer-mic"
+            disabled
+            aria-label="Dictado por voz (próximamente)"
+            title="Dictado por voz (próximamente)"
+          >
+            <LuMic className="icon" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="cai-composer-send"
+            disabled={!canSend}
+            onClick={handleSend}
+            aria-label="Enviar"
+          >
+            <LuSendHorizontal className="icon" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

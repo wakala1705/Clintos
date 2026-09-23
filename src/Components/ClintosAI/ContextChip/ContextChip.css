@@ -16,3 +16,22 @@
 }
 .cai-context-value strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cai-context-sub{color:var(--ink-500);font-size:var(--fs-xs);}
+
+.cai-context-clear{
+  flex-shrink:0;width:22px;height:22px;border-radius:6px;border:none;background:none;
+  display:flex;align-items:center;justify-content:center;color:var(--primary-dark);cursor:pointer;font-family:inherit;
+}
+.cai-context-clear .icon{width:14px;height:14px;}
+.cai-context-clear:hover{background:var(--primary-100);}
+.cai-context-clear:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Barra lateral/Flotante (encargo explícito, ver WelcomeState.jsx → .cai-welcome,
+   único lugar donde se monta ese layout): LABEL + botón de limpiar quedan en
+   la fila de arriba, el nombre del paciente pasa a su propia fila debajo —
+   mismo componente/JSX, solo reordenado vía `order` + `flex-basis`, sin
+   duplicar markup. Pantalla completa (.cai-fs-center) conserva la fila única
+   ya validada: ahí sí sobra ancho para label+nombre+cama+botón juntos. */
+.cai-welcome .cai-context-chip--paciente{flex-wrap:wrap;row-gap:4px;}
+.cai-welcome .cai-context-chip--paciente .cai-context-label{order:1;}
+.cai-welcome .cai-context-chip--paciente .cai-context-clear{order:2;margin-left:auto;}
+.cai-welcome .cai-context-chip--paciente .cai-context-value{order:3;flex:0 0 100%;}

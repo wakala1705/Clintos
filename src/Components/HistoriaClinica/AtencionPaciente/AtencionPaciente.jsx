@@ -9,6 +9,7 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
+import ClintosAI from '@/Components/ClintosAI/ClintosAI';
 import TipoBadge from '../TipoBadge/TipoBadge';
 import AgendaEmptyState from '../AgendaEmptyState/AgendaEmptyState';
 import HistoriaClinicaTab from './HistoriaClinicaTab/HistoriaClinicaTab';
@@ -21,7 +22,7 @@ import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData'
 import { getRegistrosGrupos, getRegistrosGruposHospitalizacion } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
 import { getOrdenesMedicas } from '@/hooks/HistoriaClinica/mockOrdenesMedicas';
 import { PLANTILLAS, PLANTILLAS_HOSPITALIZACION } from '@/hooks/HistoriaClinica/mockPlantillas';
-import { getHospitalizadoData } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
+import { getHospitalizadoData, getPacienteHospitalizado } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
 import {
   LuCalendarOff,
   LuCircleAlert,
@@ -258,6 +259,16 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
     return () => { cancelled = true; };
   }, [id, variante]);
 
+  // Clintos AI, contextual a ESTE paciente (encargo explícito) — solo en la
+  // variante "hospitalizacion": es la única con el shape de paciente que
+  // clintosAiEngine.js sabe leer (pendientes/evolucionPendiente/etc., ver
+  // getPacienteHospitalizado en mockHospitalizadosData.js); "consulta-externa"
+  // no tiene ese shape todavía. Sin `onClearPaciente` (a diferencia de
+  // HistoriaClinicaHospitalizacion.jsx): acá no hay un "resto de la pantalla"
+  // al que volver, toda la pantalla es sobre este paciente — ver el guard de
+  // ContextChip.jsx que oculta el botón "✕" cuando no se lo pasan.
+  const clintosPaciente = variante === 'hospitalizacion' ? getPacienteHospitalizado(id) : null;
+
   return (
     <div className="app">
       <Sidebar />
@@ -269,101 +280,115 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
-        <div className="content hc-content">
-          {/* aria-live: sin esto, un lector de pantalla que ya leyó "Cargando
-              atención…" no se entera cuando ese estado cambia a "no
-              encontramos esta cita" — no hay foco ni anuncio que lo avise
-              (WCAG 4.1.3). Solo se monta mientras status !== 'ready': una
-              vez listo, el contenido real se encuentra con la lectura normal
-              de la página y este wrapper no debe seguir ocupando flex:1
-              junto a él (ver .ap-status-live en AtencionPaciente.css). */}
-          {status !== 'ready' && (
-            <div className="ap-status-live" aria-live="polite">
-              {status === 'loading' && <div className="ap-loading">Cargando atención…</div>}
+        <div className="ap-body-row">
+          <div className="content hc-content">
+            {/* aria-live: sin esto, un lector de pantalla que ya leyó "Cargando
+                atención…" no se entera cuando ese estado cambia a "no
+                encontramos esta cita" — no hay foco ni anuncio que lo avise
+                (WCAG 4.1.3). Solo se monta mientras status !== 'ready': una
+                vez listo, el contenido real se encuentra con la lectura normal
+                de la página y este wrapper no debe seguir ocupando flex:1
+                junto a él (ver .ap-status-live en AtencionPaciente.css). */}
+            {status !== 'ready' && (
+              <div className="ap-status-live" aria-live="polite">
+                {status === 'loading' && <div className="ap-loading">Cargando atención…</div>}
 
-              {status === 'not-found' && (
-                <div className="ap-not-found">
-                  <AgendaEmptyState
-                    icon={LuFileText}
-                    title={cfg.notFound.title}
-                    subtitle={cfg.notFound.subtitle}
-                  />
-                  <button type="button" className="btn btn-primary" onClick={() => router.push(cfg.volverHref)}>
-                    {cfg.volverLabel}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {status === 'ready' && data && (
-            <>
-              <PatientBanner
-                patient={data.patient}
-                compact={plantillaActiva !== null && plantillaMaximizada}
-                defaultCollapsed={cfg.bannerCollapsed}
-                secondRow={cfg.secondRow(data)}
-              />
-
-              <div className="card">
-                {plantillaActiva === 'crecimt2' ? (
-                  <PlantillaCrecimt2
-                    onSalir={handleSalirPlantilla}
-                    maximizada={plantillaMaximizada}
-                    onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
-                    patient={data.patient}
-                  />
-                ) : plantillaActiva === 'inghosp' ? (
-                  <PlantillaIngresoHospitalizacion
-                    onSalir={handleSalirPlantilla}
-                    maximizada={plantillaMaximizada}
-                    onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
-                  />
-                ) : (
-                  <>
-                    <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>
-                      {TABS.map((tab) => (
-                        <button
-                          key={tab.id}
-                          ref={(el) => { if (el) tabRefs.current.set(tab.id, el); else tabRefs.current.delete(tab.id); }}
-                          type="button"
-                          className={`card-tab${activeTab === tab.id ? ' active' : ''}`}
-                          role="tab"
-                          aria-selected={activeTab === tab.id}
-                          aria-controls={`panel-${tab.id}`}
-                          tabIndex={activeTab === tab.id ? 0 : -1}
-                          disabled={!tab.enabled}
-                          aria-disabled={!tab.enabled}
-                          title={!tab.enabled ? 'Próximamente' : undefined}
-                          onClick={() => tab.enabled && setActiveTab(tab.id)}
-                        >
-                          <tab.icon className="icon" aria-hidden="true" />
-                          {tab.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="ap-tab-panel" role="tabpanel" id={`panel-${activeTab}`}>
-                      {activeTab === 'historia-clinica' && (
-                        <HistoriaClinicaTab
-                          grupos={cfg.getRegistros(data)}
-                          usuarioActual={DOCTOR.nombre}
-                          nuevaAtencionLabel="Nueva atención"
-                          onNuevaAtencion={openPlantillaModal}
-                          onAgregarRegistro={handleAgregarRegistro}
-                        />
-                      )}
-                      {activeTab === 'ordenes-medicas' && (
-                        <OrdenesMedicasTab
-                          ordenes={getOrdenesMedicas()}
-                          usuarioActual={DOCTOR.nombre}
-                        />
-                      )}
-                    </div>
-                  </>
+                {status === 'not-found' && (
+                  <div className="ap-not-found">
+                    <AgendaEmptyState
+                      icon={LuFileText}
+                      title={cfg.notFound.title}
+                      subtitle={cfg.notFound.subtitle}
+                    />
+                    <button type="button" className="btn btn-primary" onClick={() => router.push(cfg.volverHref)}>
+                      {cfg.volverLabel}
+                    </button>
+                  </div>
                 )}
               </div>
-            </>
+            )}
+
+            {status === 'ready' && data && (
+              <>
+                <PatientBanner
+                  patient={data.patient}
+                  compact={plantillaActiva !== null && plantillaMaximizada}
+                  defaultCollapsed={cfg.bannerCollapsed}
+                  secondRow={cfg.secondRow(data)}
+                />
+
+                <div className="card">
+                  {plantillaActiva === 'crecimt2' ? (
+                    <PlantillaCrecimt2
+                      onSalir={handleSalirPlantilla}
+                      maximizada={plantillaMaximizada}
+                      onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                      patient={data.patient}
+                    />
+                  ) : plantillaActiva === 'inghosp' ? (
+                    <PlantillaIngresoHospitalizacion
+                      onSalir={handleSalirPlantilla}
+                      maximizada={plantillaMaximizada}
+                      onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                    />
+                  ) : (
+                    <>
+                      <div className="card-tabs-bar" role="tablist" aria-label="Secciones de la atención" onKeyDown={handleTabsKeyDown}>
+                        {TABS.map((tab) => (
+                          <button
+                            key={tab.id}
+                            ref={(el) => { if (el) tabRefs.current.set(tab.id, el); else tabRefs.current.delete(tab.id); }}
+                            type="button"
+                            className={`card-tab${activeTab === tab.id ? ' active' : ''}`}
+                            role="tab"
+                            aria-selected={activeTab === tab.id}
+                            aria-controls={`panel-${tab.id}`}
+                            tabIndex={activeTab === tab.id ? 0 : -1}
+                            disabled={!tab.enabled}
+                            aria-disabled={!tab.enabled}
+                            title={!tab.enabled ? 'Próximamente' : undefined}
+                            onClick={() => tab.enabled && setActiveTab(tab.id)}
+                          >
+                            <tab.icon className="icon" aria-hidden="true" />
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="ap-tab-panel" role="tabpanel" id={`panel-${activeTab}`}>
+                        {activeTab === 'historia-clinica' && (
+                          <HistoriaClinicaTab
+                            grupos={cfg.getRegistros(data)}
+                            usuarioActual={DOCTOR.nombre}
+                            nuevaAtencionLabel="Nueva atención"
+                            onNuevaAtencion={openPlantillaModal}
+                            onAgregarRegistro={handleAgregarRegistro}
+                          />
+                        )}
+                        {activeTab === 'ordenes-medicas' && (
+                          <OrdenesMedicasTab
+                            ordenes={getOrdenesMedicas()}
+                            usuarioActual={DOCTOR.nombre}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {clintosPaciente && (
+            <ClintosAI
+              pacientes={[clintosPaciente]}
+              userFirstName="Camilo"
+              onOpenHistoria={(pacienteId) => router.push(`/hospitalizacion/historia-clinica/${pacienteId}`)}
+              onNavigate={router.push}
+              selectedPaciente={clintosPaciente}
+              screenLabel="Hospitalización · Atención del paciente"
+              hideFaq
+            />
           )}
         </div>
       </div>

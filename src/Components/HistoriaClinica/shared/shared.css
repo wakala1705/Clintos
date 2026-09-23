@@ -71,6 +71,13 @@
 
   --z-sticky:10;
   --z-popover:20;
+  /* Consumido por ClintosAI (trigger flotante + modo "Flotante" del panel,
+     ver ClintosAITrigger.css/ClintosAIPanel.css) — mismo valor que
+     HistoriaClinicaHospitalizacion/shared/shared.css y
+     GestionEnfermeria/shared/shared.css, único lugar donde faltaba (Clintos
+     AI se monta acá por primera vez en AtencionPaciente.jsx). Sin este token
+     el trigger/panel flotante caen a z-index:auto. */
+  --z-toast:40;
   --z-modal:50;
 }
 html[data-theme="dark"]{

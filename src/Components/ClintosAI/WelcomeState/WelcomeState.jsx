@@ -6,7 +6,9 @@ import ContextChip from '../ContextChip/ContextChip';
 // en la página) para que se sienta contextual desde el primer segundo. El
 // chip de contexto (STATE 02/08, brief "Contexto dinámico") deja explícito
 // si Clintos AI está mirando toda la pantalla o un paciente puntual.
-export default function WelcomeState({ userFirstName, selectedPaciente, screenLabel }) {
+export default function WelcomeState({
+  userFirstName, selectedPaciente, screenLabel, onClearPaciente,
+}) {
   return (
     <div className="cai-welcome">
       <p className="cai-welcome-greeting">Hola, {userFirstName} 👋</p>
@@ -14,7 +16,7 @@ export default function WelcomeState({ userFirstName, selectedPaciente, screenLa
       <p className="cai-welcome-support">
         Te ayudo a consultar información, entender datos y realizar tareas dentro de Clintos.
       </p>
-      <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} />
+      <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} onClear={onClearPaciente} />
     </div>
   );
 }

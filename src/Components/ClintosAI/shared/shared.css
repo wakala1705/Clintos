@@ -43,7 +43,7 @@
 }
 .cai-card-btn .cai-card-icon .icon{width:18px;height:18px;}
 
-.cai-card-btn .cai-card-label{flex:1;min-width:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.cai-card-btn .cai-card-label{flex:1;min-width:0;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-900);}
 .cai-card-btn .cai-card-chevron{flex-shrink:0;width:16px;height:16px;color:var(--ink-400);}
 
 /* Fila de <Button> (confirmar/cancelar, accesos de navegación) dentro de la

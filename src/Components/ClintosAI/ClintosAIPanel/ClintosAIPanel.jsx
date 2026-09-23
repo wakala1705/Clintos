@@ -22,18 +22,13 @@ const THINKING_DELAY_MS = 550;
 // estado nunca se puede quedar mostrando dos respuestas para una pregunta.
 export default function ClintosAIPanel({
   onClose, userFirstName, pacientes, areaLabel, onOpenHistoria, onNavigate, layoutMode, onLayoutModeChange,
-  narrowViewport, selectedPaciente, screenLabel,
+  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, hideFaq,
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
   const [thinking, setThinking] = useState(false);
   const nextId = useRef(0);
   const bodyRef = useRef(null);
-  // "Expandir" recuerda el modo previo para poder volver a él al contraer
-  // (ver PanelHeader.jsx) — vive acá, no en ClintosAI.jsx, porque solo
-  // importa mientras el panel está montado; se reinicia sin costo al
-  // cerrar/reabrir.
-  const previousModeRef = useRef('sidebar');
 
   // Solo baja el scroll una vez que hay conversación — sin el guard,
   // este efecto también corre al montar con `turns` vacío y empuja el
@@ -135,18 +130,6 @@ export default function ClintosAIPanel({
     setThinking(false);
   }
 
-  // "Expandir": atajo directo a Pantalla completa (aparte del LayoutSwitcher,
-  // que sigue ofreciendo los 3 modos) — recuerda el modo anterior para
-  // devolverlo al contraer, en vez de caer siempre en "Barra lateral".
-  function handleToggleExpand() {
-    if (layoutMode === 'fullscreen') {
-      onLayoutModeChange(previousModeRef.current);
-    } else {
-      previousModeRef.current = layoutMode;
-      onLayoutModeChange('fullscreen');
-    }
-  }
-
   const hasConversation = turns.length > 0;
   // Bienvenida centrada tipo "chats tradicionales" (encargo explícito, solo
   // Pantalla completa) — apenas hay conversación se vuelve al layout normal
@@ -170,8 +153,6 @@ export default function ClintosAIPanel({
         onLayoutModeChange={onLayoutModeChange}
         onNewChat={handleNewChat}
         hasConversation={hasConversation}
-        expanded={layoutMode === 'fullscreen'}
-        onToggleExpand={handleToggleExpand}
       />
 
       {isFullscreenWelcome ? (
@@ -184,15 +165,22 @@ export default function ClintosAIPanel({
           onSuggestionSelect={ask}
           selectedPaciente={selectedPaciente}
           screenLabel={screenLabel}
+          onClearPaciente={onClearPaciente}
+          hideFaq={hideFaq}
         />
       ) : (
         <>
           <div className="cai-body" ref={bodyRef}>
             {!hasConversation && (
               <>
-                <WelcomeState userFirstName={userFirstName} selectedPaciente={selectedPaciente} screenLabel={screenLabel} />
+                <WelcomeState
+                  userFirstName={userFirstName}
+                  selectedPaciente={selectedPaciente}
+                  screenLabel={screenLabel}
+                  onClearPaciente={onClearPaciente}
+                />
                 <SuggestionsSection onSelect={ask} items={suggestionItems} />
-                <FaqSection onSelect={ask} />
+                {!hideFaq && <FaqSection onSelect={ask} />}
               </>
             )}
             {hasConversation && (

@@ -38,8 +38,10 @@ function EvolucionBadge({ p }) {
     : <Badge tone="success" dot>Al día</Badge>;
 }
 
-// Fila = un paciente. Clic selecciona (resalta), doble clic abre su historia
-// clínica — mismo patrón clic-selecciona/doble-clic-abre que
+// Fila = un paciente. Clic selecciona (resalta) / clic de nuevo sobre la fila
+// ya seleccionada deselecciona (vuelve Clintos AI al contexto de pantalla
+// completa, ver AGENTS.md-style comentario en ContextChip.jsx), doble clic
+// abre su historia clínica — mismo patrón clic-selecciona/doble-clic-abre que
 // PatientsTable.jsx de Enfermería y AgendaTable.jsx; el botón "Historia" de
 // cada fila es la vía alterna sin depender del doble clic.
 //
@@ -50,6 +52,10 @@ function EvolucionBadge({ p }) {
 export default function PatientsTable({
   pacientes, onOpenHistoria, selectedId, onSelectRow,
 }) {
+  function toggleSelectRow(id) {
+    onSelectRow(selectedId === id ? null : id);
+  }
+
   function handleRowKeyDown(e, id) {
     if (e.target !== e.currentTarget) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -91,7 +97,7 @@ export default function PatientsTable({
                 className={selectedId === p.id ? 'selected' : undefined}
                 aria-selected={selectedId === p.id}
                 tabIndex={0}
-                onClick={() => onSelectRow(p.id)}
+                onClick={() => toggleSelectRow(p.id)}
                 onKeyDown={(e) => handleRowKeyDown(e, p.id)}
                 onDoubleClick={() => onOpenHistoria(p.id)}
               >
@@ -134,7 +140,7 @@ export default function PatientsTable({
             key={p.id}
             tabIndex={0}
             aria-selected={selectedId === p.id}
-            onClick={() => onSelectRow(p.id)}
+            onClick={() => toggleSelectRow(p.id)}
             onKeyDown={(e) => handleRowKeyDown(e, p.id)}
             onDoubleClick={() => onOpenHistoria(p.id)}
           >

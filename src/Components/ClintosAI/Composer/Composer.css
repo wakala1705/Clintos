@@ -1,12 +1,11 @@
 .cai-composer{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);}
 
-/* Variante centrada (FullscreenWelcome.jsx): barra de búsqueda elevada en
-   medio de la pantalla, no footer fijo — sin borde superior/fondo de panel,
-   la elevación la da la sombra de .cai-composer-row en vez del border-top. */
+/* Variante centrada (FullscreenWelcome.jsx): misma estructura apilada de
+   abajo, elevada en medio de la pantalla en vez de footer fijo — sin borde
+   superior/fondo de panel, la elevación la da la sombra de
+   .cai-composer-row en vez del border-top. */
 .cai-composer--centered{padding:0;border-top:none;background:transparent;}
-.cai-composer--centered .cai-composer-row{
-  border-radius:999px;box-shadow:0 4px 16px rgba(16,24,39,.12);
-}
+.cai-composer--centered .cai-composer-row{box-shadow:0 4px 16px rgba(16,24,39,.12);}
 .cai-composer--centered .cai-composer-input{font-size:var(--fs-lg);}
 
 .cai-attachment-chip{
@@ -17,29 +16,47 @@
 .cai-attachment-chip button{background:none;border:none;padding:0;display:flex;cursor:pointer;color:var(--ink-500);}
 .cai-attachment-chip .icon{width:12px;height:12px;}
 
+/* Estructura apilada (encargo explícito, referencia: composer de Rovo) —
+   input arriba en su propia fila, fila de controles (adjuntar/enviar) debajo,
+   en vez de los tres en una sola fila — de ahí el alto mayor del box. */
 .cai-composer-row{
-  display:flex;align-items:flex-end;gap:8px;
-  padding:8px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+  display:flex;flex-direction:column;gap:4px;height:104px;
+  padding:10px 10px 8px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
 }
 .cai-composer-row:focus-within{border-color:var(--primary);}
 
-.cai-composer-attach, .cai-composer-send{
-  flex-shrink:0;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;
+/* flex:1 para que ocupe el espacio libre del alto fijo de arriba (104px)
+   por encima de .cai-composer-controls, en vez de quedar pegado a su
+   min-height y dejar aire vacío antes de la fila de botones. */
+.cai-composer-input{
+  width:100%;flex:1;min-height:0;resize:none;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);line-height:1.4;
+  padding:2px;outline:none;
+}
+.cai-composer-input::placeholder{color:var(--ink-400);}
+
+.cai-composer-controls{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+
+.cai-composer-attach, .cai-composer-mic, .cai-composer-send{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;font-family:inherit;
 }
-.cai-composer-attach{background:transparent;color:var(--ink-500);}
-.cai-composer-attach:hover{background:var(--gray-bg);}
-.cai-composer-attach .icon{width:18px;height:18px;}
+.cai-composer-attach, .cai-composer-mic{background:transparent;color:var(--ink-500);}
+.cai-composer-attach:hover, .cai-composer-mic:hover:not(:disabled){background:var(--gray-bg);}
+.cai-composer-attach .icon, .cai-composer-mic .icon{width:18px;height:18px;}
+/* margin-left:auto acá (no en .cai-composer-send) para que el mic quede
+   pegado a "Enviar" en el extremo derecho — "Adjuntar" solo a la izquierda,
+   mic+enviar agrupados a la derecha (encargo explícito). */
+.cai-composer-mic{margin-left:auto;}
+/* Placeholder deshabilitado (ver Composer.jsx) — mismo tratamiento visual
+   que cualquier otro control inactivo del panel (--btn-disabled-opacity),
+   nunca un ícono "vivo" a color completo que aparente funcionar hoy. */
+.cai-composer-mic:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
 
 .cai-composer-send{background:var(--primary);color:#fff;}
 .cai-composer-send:hover:not(:disabled){background:var(--primary-dark);}
 .cai-composer-send:disabled{background:var(--gray-bg);color:var(--ink-400);cursor:not-allowed;}
 .cai-composer-send .icon{width:16px;height:16px;}
-.cai-composer-attach:focus-visible, .cai-composer-send:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-
-.cai-composer-input{
-  flex:1;min-width:0;max-height:110px;resize:none;border:none;background:transparent;
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);line-height:1.4;
-  padding:6px 2px;outline:none;
+.cai-composer-attach:focus-visible, .cai-composer-mic:focus-visible, .cai-composer-send:focus-visible{
+  outline:2px solid var(--primary);outline-offset:1px;
 }
-.cai-composer-input::placeholder{color:var(--ink-400);}

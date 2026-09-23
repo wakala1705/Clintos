@@ -164,6 +164,7 @@ export default function HistoriaClinicaHospitalizacion() {
             onNavigate={router.push}
             selectedPaciente={selectedPaciente}
             screenLabel="Hospitalización · Historia Clínica"
+            onClearPaciente={() => setSelectedPacienteId(null)}
           />
         </div>
       </div>

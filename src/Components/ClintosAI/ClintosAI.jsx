@@ -13,13 +13,20 @@ import ClintosAIPanel from './ClintosAIPanel/ClintosAIPanel';
 // tabla de pacientes casi inusable y el sistema no se adaptaba.
 const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 
-// Punto de montaje único de Clintos AI (ver AGENTS.md "Component
-// organization" / "Hooks organization" — hoy solo se monta desde
-// HistoriaClinicaHospitalizacion.jsx, contextual a esa pantalla). Cerrado:
-// trigger flotante (STATE 01). Abierto: panel que se agrega como hermano
-// flex de `.content.hh-content` dentro de `.hh-body-row` (debajo del Topbar,
-// que queda fijo — ver HistoriaClinicaHospitalizacion.css), así lo encoge en
-// vez de taparlo en su modo "Barra lateral" (default).
+// Componente de Clintos AI (ver AGENTS.md "Component organization" /
+// "Hooks organization"), montado en 2 pantallas hoy: HistoriaClinicaHospitalizacion.jsx
+// (lista de pacientes del piso) y AtencionPaciente.jsx en su variante
+// "hospitalizacion" (un paciente puntual, contexto fijo — ver
+// `hideFaq`/`selectedPaciente` sin `onClearPaciente` ahí). Cerrado: trigger
+// flotante (STATE 01). Abierto: panel que se agrega como hermano flex de
+// `.content` dentro de una fila propia de cada pantalla (`.hh-body-row`/
+// `.ap-body-row`, debajo del Topbar que queda fijo), así lo encoge en vez de
+// taparlo en su modo "Barra lateral" (default).
+//
+// `hideFaq`: oculta "Pregúntame" (preguntas generales, no acotadas a un
+// paciente) cuando el contexto es fijo a un único paciente — esas preguntas
+// (ej. "¿Cuántos pacientes hay?") no tienen sentido en esa pantalla. Ver
+// FaqSection en ClintosAIPanel.jsx/FullscreenWelcome.jsx.
 //
 // `layoutMode` vive acá (no en ClintosAIPanel) para que sobreviva a
 // cerrar/reabrir el panel: cerrar desmonta ClintosAIPanel, pero este
@@ -34,6 +41,7 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // usuario tenga que volver a elegirla.
 export default function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
+  onClearPaciente, hideFaq,
 }) {
   const [open, setOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState('sidebar');
@@ -64,6 +72,8 @@ export default function ClintosAI({
       narrowViewport={narrowViewport}
       selectedPaciente={selectedPaciente}
       screenLabel={screenLabel}
+      onClearPaciente={onClearPaciente}
+      hideFaq={hideFaq}
     />
   );
 }

@@ -5,10 +5,12 @@
    — sin borde inferior propio (esa vista no tiene la línea divisoria entre
    secciones que sí tiene la barra lateral). */
 .cai-fs-center .cai-suggestions{border-bottom:none;padding:0;}
-.cai-suggestions-grid--row{
-  grid-template-columns:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-}
-.cai-suggestions-grid--row .cai-suggestion-card{width:190px;flex:0 0 190px;}
+/* 4 columnas fijas en vez del flex-wrap anterior (que con 4 cards de 190px
+   en los 640px de .cai-fs-center desbordaba a 3+1) — encargo explícito de
+   pantalla completa, ver el ancho ampliado de .cai-fs-center en
+   FullscreenWelcome.css que hace lugar a las 4 sin achicarlas demasiado. */
+.cai-suggestions-grid--row{grid-template-columns:repeat(4, 1fr);gap:10px;}
+.cai-suggestions-grid--row .cai-suggestion-card{width:auto;}
 
 /* Card compacta 2x2 (a diferencia de la fila horizontal de .cai-card-btn en
    FaqSection): ícono arriba, texto debajo. Acá el ícono SÍ lleva contenedor

@@ -181,6 +181,17 @@ function fechaIngresoLarga(admision) {
   return `${dia}.${mes.toUpperCase()}.2026`;
 }
 
+// Fila completa de PACIENTES_HOSPITALIZADOS (pendientes/evolucionPendiente/
+// ordenesPorFirmar/resultadosNuevos incluidos) para UN paciente por id — a
+// diferencia de getHospitalizadoData() de abajo, que arma el shape distinto
+// que espera PatientBanner (patient.nombre, no .paciente). Consumida por
+// AtencionPaciente.jsx para darle a <ClintosAI/> el mismo shape de paciente
+// que ya usa clintosAiEngine.js (answerForSelectedPatient/buildDraftText),
+// en vez de traducir entre los dos shapes.
+export function getPacienteHospitalizado(id) {
+  return PACIENTES_HOSPITALIZADOS.find((p) => p.id === id) ?? null;
+}
+
 export function getHospitalizadoData(id) {
   const p = PACIENTES_HOSPITALIZADOS.find((x) => x.id === id);
   if (!p) return Promise.resolve(null);

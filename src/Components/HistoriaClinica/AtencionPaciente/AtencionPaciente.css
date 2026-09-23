@@ -1,3 +1,11 @@
+/* Envuelve .content.hc-content + <ClintosAI/> debajo del Topbar (que queda
+   fuera de este wrapper) — mismo patrón que .hh-body-row en
+   HistoriaClinicaHospitalizacion.css: así el panel de Clintos AI solo ocupa
+   el alto del contenido, no el 100vh de .app/.main, y el Topbar queda fijo
+   cruzando por arriba. position:relative ancla el modo "Pantalla completa"
+   del panel (.cai-panel--fullscreen{position:absolute;inset:0}). */
+.ap-body-row{display:flex;flex:1;min-height:0;position:relative;}
+
 /* ---------- CARD + TABS ----------
    Mismo patrón que .card/.card-tabs-bar/.card-tab de
    src/Components/GestionEnfermeria/gestion-enfermeria.css — se copia acá en

@@ -23,7 +23,7 @@ import { PATIENT_SUGGESTIONS } from '@/hooks/ClintosAI/suggestions';
 // nueva a la izquierda de .cai-fs-center, sin tocar el resto de esta vista.
 export default function FullscreenWelcome({
   userFirstName, composerValue, onComposerChange, onSend, thinking, onSuggestionSelect,
-  selectedPaciente, screenLabel,
+  selectedPaciente, screenLabel, onClearPaciente, hideFaq,
 }) {
   const [showFaq, setShowFaq] = useState(false);
 
@@ -35,7 +35,7 @@ export default function FullscreenWelcome({
         </span>
         <h2 className="cai-fs-greeting">Hola, {userFirstName} 👋</h2>
         <p className="cai-fs-lead">Soy Clintos AI, tu asistente en hospitalización.</p>
-        <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} />
+        <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} onClear={onClearPaciente} />
 
         <div className="cai-fs-composer">
           <Composer
@@ -53,13 +53,15 @@ export default function FullscreenWelcome({
           items={selectedPaciente ? PATIENT_SUGGESTIONS : undefined}
         />
 
-        <button type="button" className="cai-fs-more-toggle" onClick={() => setShowFaq((v) => !v)}>
-          Más sugerencias
-          {showFaq
-            ? <LuChevronUp className="icon" aria-hidden="true" />
-            : <LuChevronDown className="icon" aria-hidden="true" />}
-        </button>
-        {showFaq && <FaqSection onSelect={onSuggestionSelect} />}
+        {!hideFaq && (
+          <button type="button" className="cai-fs-more-toggle" onClick={() => setShowFaq((v) => !v)}>
+            Más sugerencias
+            {showFaq
+              ? <LuChevronUp className="icon" aria-hidden="true" />
+              : <LuChevronDown className="icon" aria-hidden="true" />}
+          </button>
+        )}
+        {!hideFaq && showFaq && <FaqSection onSelect={onSuggestionSelect} />}
       </div>
     </div>
   );
