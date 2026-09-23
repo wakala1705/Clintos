@@ -1,4 +1,4 @@
-.cai-composer{flex-shrink:0;padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);}
+.cai-composer{flex-shrink:0;padding:12px 16px;background:var(--surface);}
 
 /* Variante centrada (FullscreenWelcome.jsx): misma estructura apilada de
    abajo, elevada en medio de la pantalla en vez de footer fijo — sin borde

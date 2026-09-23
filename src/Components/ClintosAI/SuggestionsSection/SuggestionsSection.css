@@ -1,4 +1,4 @@
-.cai-suggestions{padding:16px 20px;border-bottom:1px solid var(--border);}
+.cai-suggestions{padding:16px 20px;}
 .cai-suggestions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
 /* Fila centrada (bienvenida de Pantalla completa, ver FullscreenWelcome.jsx)
@@ -24,7 +24,17 @@
   background:var(--surface);color:var(--ink-900);cursor:pointer;font-family:inherit;text-align:left;
   transition:var(--btn-transition);
 }
-.cai-suggestion-card:hover{background:var(--bg);border-color:var(--ink-400);}
+/* Borde degradado en hover (encargo explícito, referencia: mismo azul
+   primary/--accent-teal del trigger/botón de Kora) — técnica de "doble
+   background" (padding-box + border-box) en vez de border-image: así el
+   `border-radius:var(--radius)` de la card sigue redondeando la esquina del
+   degradado, cosa que border-image no respeta. */
+.cai-suggestion-card:hover{
+  border-color:transparent;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    linear-gradient(135deg, var(--primary), var(--accent-teal)) border-box;
+}
 .cai-suggestion-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cai-suggestion-card .cai-card-icon{
   width:30px;height:30px;border-radius:8px;

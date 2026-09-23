@@ -27,10 +27,14 @@ export const SUGGESTIONS = [
 // la segunda iteración. `clintosAiEngine.js` sigue pudiendo responder ambas
 // si alguien las escribe en el composer — solo se quitan de la lista
 // sugerida.
+//
+// Recortado a 3 (encargo explícito, "solo preguntas de ejemplo"): se quitó
+// "¿Qué órdenes están pendientes por firmar?" — `clintosAiEngine.js` sigue
+// respondiéndola igual si se escribe en el composer, solo deja de ser una
+// card sugerida.
 export const FAQ_PROMPTS = [
   { id: 'evolucion-pendiente', icon: LuActivity, label: 'Muéstrame los pacientes con evolución pendiente' },
   { id: 'criticos-hoy', icon: LuFlaskConical, label: '¿Qué resultados críticos hay hoy?' },
-  { id: 'ordenes-firmar', icon: LuClipboardList, label: '¿Qué órdenes están pendientes por firmar?' },
   { id: 'estado-paciente', icon: LuStethoscope, label: 'Explícame el estado de un paciente' },
 ];
 

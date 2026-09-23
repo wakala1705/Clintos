@@ -19,11 +19,21 @@ import Button from '@/Components/Button/Button';
 //   del proyecto (ver AGENTS.md "Botones" — nunca una clase `.btn` a mano),
 //   mismo estilo que usan "Resumen"/"Imprimir"/etc. en HistoriaClinicaTab —
 //   más discreto, se funde con el resto de controles del Topbar en vez de
-//   destacarse con color propio.
+//   destacarse con color propio. `className="kora-topbar-secondary-btn"`
+//   (ver KoraTopbarButton.css) solo pisa su :hover con el mismo borde
+//   degradado que .cai-suggestion-card — no se toca Button.module.css
+//   directo: ese variant lo usan 46+ botones del proyecto (ver AGENTS.md
+//   "Botones"), este acento es una decisión puntual de este botón.
 export default function KoraTopbarButton({ onClick, variant = 'gradient' }) {
   if (variant === 'secondary-accent') {
     return (
-      <Button variant="secondary-accent" size="sm" icon={LuSparkles} onClick={onClick}>
+      <Button
+        variant="secondary-accent"
+        size="sm"
+        icon={LuSparkles}
+        onClick={onClick}
+        className="kora-topbar-secondary-btn"
+      >
         Preguntar a Kora
       </Button>
     );

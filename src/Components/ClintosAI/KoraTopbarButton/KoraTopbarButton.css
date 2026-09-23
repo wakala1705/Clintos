@@ -15,3 +15,18 @@
   box-shadow:0 4px 12px rgba(16,24,39,.16);
 }
 .kora-topbar-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+/* Variante "secondary-accent" (ver KoraTopbarButton.jsx): mismo borde
+   degradado en hover que .cai-suggestion-card (SuggestionsSection.css) —
+   técnica de doble background (padding-box + border-box) en vez de
+   border-image, así respeta el border-radius del botón. `button.` (no solo
+   la clase) sube la especificidad por encima de `.secondaryAccent:hover`
+   de Button.module.css sin depender del orden de import entre los dos CSS
+   ni tocar ese archivo (ver AGENTS.md "Botones": ese variant es compartido
+   por 46+ botones del proyecto, este acento es puntual de este botón). */
+button.kora-topbar-secondary-btn:hover{
+  border-color:transparent;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    linear-gradient(135deg, var(--primary), var(--accent-teal)) border-box;
+}
