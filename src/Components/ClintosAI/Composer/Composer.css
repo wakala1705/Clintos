@@ -8,21 +8,50 @@
 .cai-composer--centered .cai-composer-row{box-shadow:0 4px 16px rgba(16,24,39,.12);}
 
 
-.cai-attachment-chip{
-  display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;
-  padding:4px 8px;border-radius:20px;background:var(--gray-bg);color:var(--ink-700);
-  font-size:var(--fs-xs);font-weight:var(--fw-medium);
-}
-.cai-attachment-chip button{background:none;border:none;padding:0;display:flex;cursor:pointer;color:var(--ink-500);}
-.cai-attachment-chip .icon{width:12px;height:12px;}
-
 /* Estructura apilada (encargo explícito, referencia: composer de Rovo) —
    input arriba en su propia fila, fila de controles (adjuntar/enviar) debajo,
-   en vez de los tres en una sola fila — de ahí el alto mayor del box. */
+   en vez de los tres en una sola fila — de ahí el alto mayor del box.
+   min-height (no height fijo) — con un archivo adjunto, la card de arriba
+   (.cai-attachment-chip) suma alto real al box, mismo criterio que otros
+   agentes de referencia (adjunto DENTRO del composer, no como chip flotando
+   encima, encargo explícito) — sin `min-height`, un archivo adjunto haría
+   que el textarea se comprima para seguir cabiendo en los 104px fijos. */
 .cai-composer-row{
-  display:flex;flex-direction:column;gap:4px;height:104px;
+  display:flex;flex-direction:column;gap:8px;min-height:104px;
   padding:12px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
 }
+
+/* Card de archivo adjunto (encargo explícito, referencia: composer de otros
+   agentes) — ícono+nombre+tipo en vez del chip-píldora anterior, mismo
+   criterio visual que una tarjeta de preview de archivo. `--surface` (no
+   `--bg`, el fondo de la fila que la contiene) para que se distinga del
+   box que la envuelve. */
+.cai-attachment-chip{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);
+}
+.cai-attachment-chip-icon{
+  flex-shrink:0;width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.cai-attachment-chip-icon .icon{width:15px;height:15px;}
+/* text-align:left explícito — la variante centrada (FullscreenWelcome.jsx)
+   hereda text-align:center de .cai-fs-center, que sin esto centraba el
+   nombre/tipo del archivo en vez de alinearlos junto al ícono. */
+.cai-attachment-chip-info{display:flex;flex-direction:column;min-width:0;flex:1;text-align:left;}
+.cai-attachment-chip-name{
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cai-attachment-chip-type{font-size:var(--fs-xs);color:var(--ink-500);}
+.cai-attachment-chip-remove{
+  flex-shrink:0;width:22px;height:22px;border-radius:50%;border:none;background:var(--gray-bg);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-500);
+}
+.cai-attachment-chip-remove:hover{background:var(--border);}
+.cai-attachment-chip-remove:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-attachment-chip-remove .icon{width:12px;height:12px;}
 /* Borde degradado al enfocar (encargo explícito, mismo tratamiento que
    .cai-suggestion-card:hover/button.kora-topbar-secondary-btn:hover) — doble
    background (padding-box + border-box) en vez de border-image, así respeta

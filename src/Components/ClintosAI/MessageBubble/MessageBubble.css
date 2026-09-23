@@ -8,6 +8,36 @@
 }
 .cai-msg-assistant.tone-success{color:var(--green);}
 
+/* Estilos de Markdown (react-markdown+remark-gfm, ver MessageBubble.jsx) —
+   solo los elementos que el motor mock genera hoy (informe gerencial de
+   ejemplo, ver buildInformeGerencial en clintosAiEngine.js): encabezados,
+   negritas, listas, tablas y líneas. Tokens del panel, no un reset de
+   markdown genérico — encabezados siempre --fw-semibold, nunca --fw-bold
+   (ver AGENTS.md "Tipografía"). `:where()` para que estas reglas no le
+   ganen especificidad a un override puntual futuro sin querer. */
+.cai-msg-assistant :where(h1, h2, h3){
+  margin:18px 0 8px;font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.3;
+}
+.cai-msg-assistant :where(h1, h2, h3):first-child{margin-top:0;}
+.cai-msg-assistant h1{font-size:var(--fs-xl);}
+.cai-msg-assistant h2{font-size:var(--fs-lg);}
+.cai-msg-assistant h3{font-size:var(--fs-base);}
+.cai-msg-assistant p{margin:0 0 10px;}
+.cai-msg-assistant p:last-child{margin-bottom:0;}
+.cai-msg-assistant strong{font-weight:var(--fw-semibold);}
+.cai-msg-assistant :where(ul, ol){margin:0 0 10px;padding-left:20px;}
+.cai-msg-assistant li{margin-bottom:2px;}
+.cai-msg-assistant li:last-child{margin-bottom:0;}
+.cai-msg-assistant hr{border:none;border-top:1px solid var(--border);margin:16px 0;}
+/* display:block+overflow-x:auto directo en <table> (sin wrapper propio: los
+   componentes por defecto de react-markdown ya renderizan <table> tal cual)
+   — evita que una tabla ancha desborde el panel en modo Barra lateral. */
+.cai-msg-assistant table{
+  display:block;overflow-x:auto;width:100%;border-collapse:collapse;margin:0 0 12px;font-size:var(--fs-sm);
+}
+.cai-msg-assistant :where(th, td){padding:6px 10px;border:1px solid var(--border);text-align:left;}
+.cai-msg-assistant th{background:var(--table-header-bg);font-weight:var(--fw-semibold);color:var(--ink-700);white-space:nowrap;}
+
 .cai-msg-typing{margin:0;display:flex;align-items:center;gap:4px;height:20px;}
 .cai-typing-dot{width:5px;height:5px;border-radius:50%;background:var(--ink-400);animation:cai-typing-pulse 1.1s infinite ease-in-out;}
 .cai-typing-dot:nth-child(2){animation-delay:.15s;}

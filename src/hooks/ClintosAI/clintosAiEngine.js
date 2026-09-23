@@ -151,6 +151,264 @@ export function buildDraftText(p) {
     + `Pendiente: ${pendienteEvolucion ? 'completar valoración y firmar nota del turno' : 'sin pendientes adicionales de evolución'}.`;
 }
 
+// Delay de "escribiendo..." de este informe puntual (encargo explícito, "dale
+// un delay mas largo") — bastante mayor que THINKING_DELAY_MS (550ms, ver
+// ClintosAIPanel.jsx) para que un informe largo se sienta "generado", no
+// devuelto al instante como una consulta simple. Viaja en el propio payload
+// de la respuesta (`thinkingMs`) en vez de ser un parámetro de ask(), porque
+// solo se conoce una vez que el motor decidió qué responder — pushTurnWithAnswer
+// lo lee ahí y cae a THINKING_DELAY_MS si no viene (el resto de las
+// respuestas del motor no lo trae).
+const INFORME_GERENCIAL_THINKING_MS = 2600;
+
+// Contenido Markdown real (encargo explícito) — renderizado por
+// react-markdown+remark-gfm en MessageBubble.jsx (encabezados/negritas/
+// tablas/líneas), no como texto plano. Ejemplo fijo de "resultados
+// operativos" (no depende de `pacientes`/mock del piso): mismo criterio
+// honesto que el resto del motor — nunca pretende ser un análisis real del
+// archivo adjunto, ver el disclaimer que antecede este texto en
+// buildInformeGerencial más abajo.
+const INFORME_GERENCIAL_MD = `# Informe Gerencial
+
+### Resultados Operativos — Septiembre 2026
+
+**Periodo:** 1–30 de septiembre de 2026
+**Documento analizado:** Informe Operativo — Septiembre 2026
+
+---
+
+## Resumen ejecutivo
+
+Durante septiembre de 2026, la institución registró un **crecimiento del 8,4 % en el volumen total de atenciones**, pasando de 11.518 a 12.486 atenciones frente al mes anterior.
+
+Este crecimiento estuvo acompañado por una **mayor utilización de la capacidad operativa**. La ocupación promedio de las agendas pasó del 87 % al 91 %, mientras que el tiempo promedio de espera aumentó de **31 a 38 minutos**.
+
+El comportamiento indica que el incremento de la demanda está generando presión sobre la capacidad disponible, especialmente en determinadas especialidades.
+
+Al mismo tiempo, las cancelaciones e inasistencias aumentaron de 6,9 % a 7,8 %. En hospitalización, la ocupación pasó del 84 % al 86 %, con 412 ingresos y 397 egresos durante el periodo.
+
+La satisfacción general del paciente se mantuvo estable en un nivel de **4,3/5**, aunque el tiempo de espera aparece entre los principales temas mencionados en los comentarios recibidos.
+
+### En una frase
+
+**La institución está atendiendo más pacientes, pero el crecimiento está acompañado por una mayor presión sobre agendas y tiempos de espera.**
+
+---
+
+## 1. Indicadores clave
+
+| Indicador                     | Agosto | Septiembre |   Variación |
+| ----------------------------- | -----: | ---------: | ----------: |
+| Atenciones realizadas         | 11.518 |     12.486 |  **+8,4 %** |
+| Consultas externas            |  8.214 |      8.963 |  **+9,1 %** |
+| Ocupación de agenda           |   87 % |       91 % |   **+4 pp** |
+| Tiempo promedio de espera     | 31 min |     38 min | **+22,6 %** |
+| Cancelaciones / inasistencias |  6,9 % |      7,8 % | **+0,9 pp** |
+| Ocupación hospitalaria        |   84 % |       86 % |   **+2 pp** |
+| Satisfacción del paciente     |  4,2/5 |      4,3/5 |    **+0,1** |
+
+---
+
+# 2. Hallazgos principales
+
+### 01 — Crecimiento de la demanda
+
+El volumen total de atenciones aumentó **8,4 %** durante septiembre.
+
+El crecimiento se concentró principalmente en consultas externas, que pasaron de 8.214 a 8.963 atenciones.
+
+Esto representa un aumento significativo de actividad que debe analizarse junto con la capacidad disponible.
+
+---
+
+### 02 — Aumento de los tiempos de espera
+
+El tiempo promedio de espera pasó de **31 a 38 minutos**, un incremento del 22,6 %.
+
+El comportamiento es especialmente relevante porque ocurre simultáneamente con una ocupación de agenda del 91 %.
+
+Las especialidades con mayores tiempos registrados fueron:
+
+* **Cardiología:** 46 minutos
+* **Ginecología:** 43 minutos
+* **Medicina interna:** 41 minutos
+* **Ortopedia:** 39 minutos
+
+Estos datos sugieren que el problema no está distribuido de manera uniforme entre las especialidades.
+
+---
+
+### 03 — Mayor utilización de las agendas
+
+La ocupación promedio de agenda aumentó de **87 % a 91 %**.
+
+Cardiología presentó la mayor ocupación registrada, con **96 %**, seguida de Ginecología con 94 % y Medicina general con 93 %.
+
+Una ocupación elevada puede contribuir a una menor capacidad de absorción de variaciones en la demanda y retrasos durante la jornada.
+
+---
+
+### 04 — Incremento de cancelaciones e inasistencias
+
+Las cancelaciones e inasistencias pasaron de 6,9 % a 7,8 %.
+
+Durante septiembre se registraron:
+
+* **524 cancelaciones**
+* **512 inasistencias**
+
+Además, el área de agenda reportó un aumento de solicitudes de reprogramación durante las últimas dos semanas del periodo.
+
+Este comportamiento representa una oportunidad para revisar los procesos de confirmación, recordatorio y reprogramación de citas.
+
+---
+
+### 05 — Hospitalización mantiene una ocupación elevada
+
+La ocupación hospitalaria pasó de 84 % a 86 %.
+
+Durante septiembre se registraron:
+
+* **146 camas habilitadas**
+* **412 ingresos**
+* **397 egresos**
+* **3,9 días de estancia promedio**
+
+Aunque la capacidad se mantuvo estable, el incremento de ocupación debe seguirse junto con los indicadores de ingresos, egresos y disponibilidad de camas.
+
+---
+
+# 3. Análisis de experiencia del paciente
+
+Se recibieron **1.842 respuestas** de encuestas durante septiembre, con una satisfacción promedio de **4,3/5**.
+
+Los principales temas identificados fueron:
+
+| Tema                   | Menciones |
+| ---------------------- | --------: |
+| Atención del personal  |       612 |
+| Facilidad para agendar |       384 |
+| Tiempo de espera       |       341 |
+| Información recibida   |       279 |
+| Instalaciones          |       226 |
+
+Aunque la valoración general es positiva, el **tiempo de espera representa el tercer tema con mayor número de menciones**.
+
+Esto resulta relevante al analizarlo conjuntamente con el incremento de 31 a 38 minutos registrado durante el periodo.
+
+---
+
+# 4. Riesgos identificados
+
+### 🔴 Incremento de tiempos de espera
+
+El indicador presenta un aumento significativo frente al mes anterior y coincide con una ocupación elevada de agenda.
+
+### 🟠 Saturación de determinadas especialidades
+
+Cardiología, Ginecología y Medicina interna presentan simultáneamente niveles elevados de ocupación y tiempos de espera.
+
+### 🟠 Incremento de inasistencias
+
+El crecimiento de cancelaciones e inasistencias reduce la utilización efectiva de los espacios disponibles y puede generar mayor necesidad de reprogramación.
+
+### 🟡 Presión futura sobre hospitalización
+
+La ocupación hospitalaria aumentó 2 puntos porcentuales. Si la tendencia continúa, podría requerirse seguimiento más frecuente de disponibilidad de camas.
+
+---
+
+# 5. Recomendaciones
+
+## Prioridad 1 — Analizar tiempos de espera
+
+Desagregar el indicador por:
+
+**sede → especialidad → profesional → franja horaria**
+
+El objetivo es identificar dónde se concentra el incremento y determinar si corresponde a demanda, distribución de agenda o retrasos operativos.
+
+---
+
+## Prioridad 2 — Revisar capacidad de las especialidades con mayor presión
+
+Analizar especialmente:
+
+* Cardiología
+* Ginecología
+* Medicina interna
+* Ortopedia
+
+Se recomienda comparar demanda, capacidad disponible, duración de consulta y comportamiento de las agendas antes de definir ajustes operativos.
+
+---
+
+## Prioridad 3 — Fortalecer la gestión de citas
+
+Evaluar mecanismos de:
+
+* Confirmación automática.
+* Recordatorios.
+* Reprogramación.
+* Liberación anticipada de espacios.
+* Seguimiento de pacientes con antecedentes de inasistencia.
+
+---
+
+## Prioridad 4 — Crear seguimiento gerencial semanal
+
+Se recomienda consolidar un tablero con:
+
+**Volumen de atención · Ocupación de agenda · Tiempo de espera · Cancelaciones · Inasistencias · Ocupación hospitalaria · Disponibilidad de camas · Satisfacción**
+
+Esto permitiría identificar cambios antes del cierre mensual.
+
+---
+
+# 6. Próximos pasos sugeridos
+
+| Acción                                                | Responsable sugerido | Horizonte   |
+| ----------------------------------------------------- | --------------------- | ----------- |
+| Analizar tiempos de espera por especialidad y horario | Operaciones           | 1 semana    |
+| Revisar agendas de especialidades con mayor ocupación | Coordinación médica   | 1–2 semanas |
+| Analizar causas de cancelaciones e inasistencias      | Experiencia / Agenda  | 2 semanas   |
+| Crear tablero de seguimiento semanal                  | Operaciones / BI      | 2–3 semanas |
+| Revisar evolución de indicadores                      | Dirección             | Mensual     |
+
+---
+
+## Conclusión
+
+Septiembre presenta un **crecimiento importante de la actividad asistencial**, pero también evidencia una mayor presión sobre la capacidad operativa.
+
+El principal punto de seguimiento es el incremento del tiempo promedio de espera, particularmente en especialidades con ocupaciones superiores al 90 %.
+
+Antes de plantear una ampliación de capacidad, se recomienda analizar la distribución actual de la demanda, la configuración de agendas y los factores que están generando retrasos.
+
+**La información disponible permite identificar dónde profundizar el análisis, pero no determina por sí sola la causa raíz de los incrementos observados.**
+
+---
+
+### Indicadores que Kora recomienda monitorear
+
+**Tiempo de espera · Ocupación de agenda · Inasistencias · Reprogramaciones · Ocupación hospitalaria · Disponibilidad de camas · Satisfacción del paciente**`;
+
+// Demo de "contexto general" (@/Components/Kora/Kora, sin piso ni paciente) —
+// encargo explícito: mostrar cómo respondería Kora a una tarea de oficina
+// (generar un informe a partir de un documento adjunto), no acotada a datos
+// clínicos. El disclaimer antecede al informe (no al final: el usuario debe
+// saber que es ilustrativo ANTES de leer las cifras, no después) — mismo
+// criterio honesto que "⚠ Revisar antes de guardar" en DraftCard/
+// buildDraftText, nunca se presenta contenido simulado como si fuera un
+// análisis real del archivo adjunto.
+function buildInformeGerencial(attachmentName) {
+  return {
+    kind: 'text',
+    thinkingMs: INFORME_GERENCIAL_THINKING_MS,
+    text: `*Ejemplo ilustrativo generado a partir de "${attachmentName}" — Kora todavía no tiene un motor de lectura de documentos conectado, así que esto no es un análisis real de ese archivo.*\n\n${INFORME_GERENCIAL_MD}`,
+  };
+}
+
 const NAV_OPTIONS = [
   { label: 'Lista de Pacientes', href: '/lista-pacientes' },
   { label: 'Gestión de Camas', href: '/gestion-camas' },
@@ -199,8 +457,26 @@ function answerForSelectedPatient(text, p) {
 }
 
 export function answerPrompt(rawText, context) {
-  const { pacientes, areaLabel, selectedPaciente } = context;
+  const {
+    pacientes, areaLabel, selectedPaciente, attachmentName,
+  } = context;
   const text = normalize(rawText);
+
+  // "Informe gerencial" (demo de `generalContext`, ver
+  // @/Components/Kora/Kora) — sin card de sugerencia propia (encargo
+  // explícito: oculta), solo se llega escribiéndolo en el composer. Antes que
+  // el resto del matching: sin documento adjunto, Kora pide el insumo que le
+  // falta en vez de inventar un informe sin fuente (mismo criterio honesto
+  // que el resto del motor, nunca fabrica algo que no tiene de dónde sacar).
+  if (includesAll(text, 'informe', 'gerencial') || includesAll(text, 'reporte', 'gerencial')) {
+    if (!attachmentName) {
+      return {
+        kind: 'text',
+        text: 'Para generar el informe gerencial necesito un documento de referencia. Adjúntalo con el ícono 📎 y vuelve a pedírmelo.',
+      };
+    }
+    return buildInformeGerencial(attachmentName);
+  }
 
   if (selectedPaciente) {
     const respuesta = answerForSelectedPatient(text, selectedPaciente);

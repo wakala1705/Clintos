@@ -7,7 +7,6 @@ import Composer from '../Composer/Composer';
 import SuggestionsSection from '../SuggestionsSection/SuggestionsSection';
 import FaqSection from '../FaqSection/FaqSection';
 import ContextChip from '../ContextChip/ContextChip';
-import { PATIENT_SUGGESTIONS } from '@/hooks/ClintosAI/suggestions';
 
 // Bienvenida de "Pantalla completa" — layout centrado tipo chat tradicional
 // (encargo explícito, referencia: Home de Rovo): saludo + composer grande
@@ -22,8 +21,9 @@ import { PATIENT_SUGGESTIONS } from '@/hooks/ClintosAI/suggestions';
 // descartado se guarda en una lista, ese riel se agrega acá como una columna
 // nueva a la izquierda de .cai-fs-center, sin tocar el resto de esta vista.
 export default function FullscreenWelcome({
-  userFirstName, composerValue, onComposerChange, onSend, thinking, onSuggestionSelect,
-  selectedPaciente, screenLabel, onClearPaciente, hideFaq, hideSuggestions, generalContext,
+  userFirstName, composerValue, onComposerChange, attachment, onAttachmentChange, onSend, thinking,
+  onSuggestionSelect, suggestionItems, selectedPaciente, screenLabel, onClearPaciente, hideFaq, hideSuggestions,
+  generalContext,
 }) {
   const [showFaq, setShowFaq] = useState(false);
 
@@ -49,6 +49,8 @@ export default function FullscreenWelcome({
           <Composer
             value={composerValue}
             onChange={onComposerChange}
+            attachment={attachment}
+            onAttachmentChange={onAttachmentChange}
             onSend={onSend}
             disabled={thinking}
             variant="centered"
@@ -56,11 +58,7 @@ export default function FullscreenWelcome({
         </div>
 
         {!hideSuggestions && (
-          <SuggestionsSection
-            onSelect={onSuggestionSelect}
-            layout="row"
-            items={selectedPaciente ? PATIENT_SUGGESTIONS : undefined}
-          />
+          <SuggestionsSection onSelect={onSuggestionSelect} layout="row" items={suggestionItems} />
         )}
 
         {!hideFaq && (

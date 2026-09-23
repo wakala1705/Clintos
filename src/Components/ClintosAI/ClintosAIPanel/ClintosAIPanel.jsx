@@ -26,6 +26,7 @@ export default function ClintosAIPanel({
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
+  const [attachment, setAttachment] = useState(null);
   const [thinking, setThinking] = useState(false);
   const nextId = useRef(0);
   const bodyRef = useRef(null);
@@ -48,23 +49,40 @@ export default function ClintosAIPanel({
   // camino pushUserTurn -> "escribiendo..." -> reemplazo por la respuesta
   // real para las dos vías, así ninguna se puede quedar mostrando dos
   // respuestas para una pregunta.
+  //
+  // `getResponse()` se llama ya acá (no dentro del setTimeout) — es una
+  // función mock pura, sin motivo real para diferirla, y así se puede leer
+  // `response.thinkingMs` (encargo explícito, "dale un delay mas largo" para
+  // el informe gerencial de ejemplo, ver buildInformeGerencial en
+  // clintosAiEngine.js) ANTES de decidir cuánto dura el "escribiendo...". El
+  // resto de las respuestas del motor no trae ese campo y usa
+  // THINKING_DELAY_MS de siempre.
   function pushTurnWithAnswer(promptText, getResponse) {
+    const response = getResponse();
     const userTurn = { id: newId(), role: 'user', payload: { text: promptText } };
     const typingTurn = { id: newId(), role: 'assistant', typing: true, payload: { kind: 'text' } };
     setTurns((prev) => [...prev, userTurn, typingTurn]);
     setThinking(true);
 
     setTimeout(() => {
-      const response = getResponse();
       setTurns((prev) => prev.map((t) => (t.id === typingTurn.id
         ? { id: typingTurn.id, role: 'assistant', payload: response }
         : t)));
       setThinking(false);
-    }, THINKING_DELAY_MS);
+    }, response.thinkingMs ?? THINKING_DELAY_MS);
   }
 
+  // `attachment` viaja al motor (Generar informe gerencial, ver
+  // GENERAL_SUGGESTIONS/buildInformeGerencial) y se limpia acá, no en
+  // Composer.jsx — así cubre las dos formas de disparar `ask` (escribir y
+  // enviar, o hacer click en una card de sugerencia), no solo el envío desde
+  // el composer. Se limpia siempre, la haya usado esa pregunta o no (mismo
+  // criterio que ya tenía cuando el adjunto era solo decorativo).
   function ask(promptText) {
-    pushTurnWithAnswer(promptText, () => answerPrompt(promptText, { pacientes, areaLabel, selectedPaciente }));
+    pushTurnWithAnswer(promptText, () => answerPrompt(promptText, {
+      pacientes, areaLabel, selectedPaciente, attachmentName: attachment,
+    }));
+    setAttachment(null);
   }
 
   // Botón "Resumen" de un registro en HistoriaClinicaTab.jsx (encargo
@@ -184,16 +202,13 @@ export default function ClintosAIPanel({
   // un prop aparte que cada pantalla tenga que calcular) para que reaccione
   // solo al seleccionar/deseleccionar una fila (HistoriaClinicaHospitalizacion.jsx)
   // y quede oculto siempre en pantallas de contexto fijo (AtencionPaciente.jsx).
-  // También se oculta en `generalContext` (@/Components/Kora/Kora, sin piso ni
-  // paciente): son las mismas 3 preguntas de piso, no aplican ahí.
+  // También se oculta en `generalContext` (@/Components/Kora/Kora): son las
+  // mismas 3 preguntas de piso, no aplican ahí.
   const hideFaq = Boolean(selectedPaciente) || Boolean(generalContext);
-  // "Acciones sugeridas" (SUGGESTIONS/PATIENT_SUGGESTIONS, ver suggestions.js)
-  // son 100% de piso/paciente ("Resumir pacientes con pendientes", "Ver
-  // órdenes pendientes"...) — sin contexto real detrás (Kora general, sin
-  // pacientes) mostrarlas sería una card que aparenta funcionar pero
-  // responde sobre datos que no existen ahí. A diferencia de `hideFaq`, esto
-  // NO se activa con `selectedPaciente` solo (ese caso sigue mostrando
-  // PATIENT_SUGGESTIONS, sí contextual).
+  // "Acciones sugeridas" también se oculta en `generalContext` (encargo
+  // explícito) — GENERAL_SUGGESTIONS sigue existiendo y clintosAiEngine sigue
+  // reconociendo "informe gerencial" si se escribe en el composer (ver
+  // buildInformeGerencial), solo deja de ser una card visible.
   const hideSuggestions = Boolean(generalContext);
 
   return (
@@ -211,9 +226,12 @@ export default function ClintosAIPanel({
           userFirstName={userFirstName}
           composerValue={composerValue}
           onComposerChange={setComposerValue}
+          attachment={attachment}
+          onAttachmentChange={setAttachment}
           onSend={handleSend}
           thinking={thinking}
           onSuggestionSelect={ask}
+          suggestionItems={suggestionItems}
           selectedPaciente={selectedPaciente}
           screenLabel={screenLabel}
           onClearPaciente={onClearPaciente}
@@ -251,7 +269,14 @@ export default function ClintosAIPanel({
             )}
           </div>
 
-          <Composer value={composerValue} onChange={setComposerValue} onSend={handleSend} disabled={thinking} />
+          <Composer
+            value={composerValue}
+            onChange={setComposerValue}
+            attachment={attachment}
+            onAttachmentChange={setAttachment}
+            onSend={handleSend}
+            disabled={thinking}
+          />
         </>
       )}
 
