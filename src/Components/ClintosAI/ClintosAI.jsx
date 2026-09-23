@@ -19,16 +19,19 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // "Hooks organization"), montado en 2 pantallas hoy: HistoriaClinicaHospitalizacion.jsx
 // (lista de pacientes del piso) y AtencionPaciente.jsx en su variante
 // "hospitalizacion" (un paciente puntual, contexto fijo — ver
-// `hideFaq`/`selectedPaciente` sin `onClearPaciente` ahí). Cerrado: trigger
-// flotante (STATE 01). Abierto: panel que se agrega como hermano flex de
-// `.content` dentro de una fila propia de cada pantalla (`.hh-body-row`/
-// `.ap-body-row`, debajo del Topbar que queda fijo), así lo encoge en vez de
-// taparlo en su modo "Barra lateral" (default).
+// `selectedPaciente` sin `onClearPaciente` ahí). Cerrado: trigger flotante
+// (STATE 01). Abierto: panel que se agrega como hermano flex de `.content`
+// dentro de una fila propia de cada pantalla (`.hh-body-row`/`.ap-body-row`,
+// debajo del Topbar que queda fijo), así lo encoge en vez de taparlo en su
+// modo "Barra lateral" (default).
 //
-// `hideFaq`: oculta "Pregúntame" (preguntas generales, no acotadas a un
-// paciente) cuando el contexto es fijo a un único paciente — esas preguntas
-// (ej. "¿Cuántos pacientes hay?") no tienen sentido en esa pantalla. Ver
-// FaqSection en ClintosAIPanel.jsx/FullscreenWelcome.jsx.
+// "Pregúntame" (preguntas generales, no acotadas a un paciente) se oculta
+// apenas hay `selectedPaciente` — encargo explícito: es un bloque general,
+// no tiene sentido con el agente ya contextual. Esa lógica vive en
+// ClintosAIPanel.jsx (deriva `hideFaq` directo de `selectedPaciente`, no un
+// prop aparte acá), así que reacciona sola tanto al contexto dinámico de
+// HistoriaClinicaHospitalizacion.jsx (seleccionar/deseleccionar una fila)
+// como al contexto fijo de AtencionPaciente.jsx.
 //
 // `layoutMode` vive acá (no en ClintosAIPanel) para que sobreviva a
 // cerrar/reabrir el panel: cerrar desmonta ClintosAIPanel, pero este
@@ -53,7 +56,7 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // estaba abierto o si este método lo abre recién ahora.
 const ClintosAI = forwardRef(function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
-  onClearPaciente, hideFaq,
+  onClearPaciente,
 }, ref) {
   const [open, setOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState('sidebar');
@@ -70,9 +73,12 @@ const ClintosAI = forwardRef(function ClintosAI({
 
   useImperativeHandle(ref, () => ({
     // Consumido por KoraTopbarButton.jsx (segundo punto de entrada, ver
-    // AtencionPaciente.jsx/HistoriaClinicaHospitalizacion.jsx) — solo abre,
-    // idempotente si ya estaba abierto.
+    // AtencionPaciente.jsx/HistoriaClinicaHospitalizacion.jsx) — fuerza
+    // "Barra lateral" (encargo explícito: cada entrada tiene su propio modo
+    // por defecto, ver también el trigger flotante más abajo), sin importar
+    // en qué modo haya quedado la última vez.
     open() {
+      setLayoutMode('sidebar');
       setOpen(true);
     },
     askExternal(prompt, response) {
@@ -82,7 +88,17 @@ const ClintosAI = forwardRef(function ClintosAI({
   }), []);
 
   if (!open) {
-    return <ClintosAITrigger onOpen={() => setOpen(true)} />;
+    // Trigger flotante: fuerza "Flotante" (mismo criterio que `open()` de
+    // arriba, cada entrada define su propio modo por defecto) — el usuario
+    // sigue pudiendo cambiarlo desde LayoutSwitcher una vez abierto.
+    return (
+      <ClintosAITrigger
+        onOpen={() => {
+          setLayoutMode('floating');
+          setOpen(true);
+        }}
+      />
+    );
   }
 
   return (
@@ -99,7 +115,6 @@ const ClintosAI = forwardRef(function ClintosAI({
       selectedPaciente={selectedPaciente}
       screenLabel={screenLabel}
       onClearPaciente={onClearPaciente}
-      hideFaq={hideFaq}
       externalAsk={externalAsk}
       onExternalAskHandled={() => setExternalAsk(null)}
     />

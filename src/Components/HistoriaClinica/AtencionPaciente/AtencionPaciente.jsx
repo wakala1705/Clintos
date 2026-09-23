@@ -293,7 +293,9 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           page="Atención del paciente"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         >
-          {clintosPaciente && <KoraTopbarButton onClick={() => clintosAIRef.current?.open()} />}
+          {clintosPaciente && (
+            <KoraTopbarButton variant="secondary-accent" onClick={() => clintosAIRef.current?.open()} />
+          )}
         </Topbar>
 
         <div className="ap-body-row">
@@ -405,7 +407,6 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
               onNavigate={router.push}
               selectedPaciente={clintosPaciente}
               screenLabel="Hospitalización · Atención del paciente"
-              hideFaq
             />
           )}
         </div>

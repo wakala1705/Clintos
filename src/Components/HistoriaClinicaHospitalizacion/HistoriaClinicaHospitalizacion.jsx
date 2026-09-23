@@ -93,7 +93,7 @@ export default function HistoriaClinicaHospitalizacion() {
           page="Historia Clínica"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         >
-          <KoraTopbarButton onClick={() => clintosAIRef.current?.open()} />
+          <KoraTopbarButton variant="secondary-accent" onClick={() => clintosAIRef.current?.open()} />
         </Topbar>
 
         <div className="hh-body-row">

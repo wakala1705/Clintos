@@ -22,7 +22,7 @@ const THINKING_DELAY_MS = 550;
 // estado nunca se puede quedar mostrando dos respuestas para una pregunta.
 export default function ClintosAIPanel({
   onClose, userFirstName, pacientes, areaLabel, onOpenHistoria, onNavigate, layoutMode, onLayoutModeChange,
-  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, hideFaq, externalAsk, onExternalAskHandled,
+  narrowViewport, selectedPaciente, screenLabel, onClearPaciente, externalAsk, onExternalAskHandled,
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
@@ -178,6 +178,13 @@ export default function ClintosAIPanel({
   // Contexto dinámico (brief sección 12): con un paciente seleccionado en la
   // tabla, "Acciones sugeridas" pasa a las 4 acciones sobre ESE paciente.
   const suggestionItems = selectedPaciente ? PATIENT_SUGGESTIONS : undefined;
+  // "Pregúntame" es un bloque general (preguntas de piso/pantalla completa,
+  // no de un paciente puntual) — encargo explícito: se oculta apenas el
+  // agente se vuelve contextual, derivado directo de `selectedPaciente` (no
+  // un prop aparte que cada pantalla tenga que calcular) para que reaccione
+  // solo al seleccionar/deseleccionar una fila (HistoriaClinicaHospitalizacion.jsx)
+  // y quede oculto siempre en pantallas de contexto fijo (AtencionPaciente.jsx).
+  const hideFaq = Boolean(selectedPaciente);
 
   return (
     <section className={`cai-panel cai-panel--${effectiveLayoutMode}`} role="dialog" aria-labelledby="clintos-ai-title">
