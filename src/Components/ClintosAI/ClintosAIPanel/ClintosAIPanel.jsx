@@ -10,23 +10,30 @@ import FullscreenWelcome from '../FullscreenWelcome/FullscreenWelcome';
 import ConversationView from '../ConversationView/ConversationView';
 import Composer from '../Composer/Composer';
 import SafetyFooter from '../SafetyFooter/SafetyFooter';
-import { answerPrompt, confirmResultPayload } from '@/hooks/ClintosAI/clintosAiEngine';
+import { answerPrompt, buildDraftText, nombreVisible } from '@/hooks/ClintosAI/clintosAiEngine';
+import { PATIENT_SUGGESTIONS } from '@/hooks/ClintosAI/suggestions';
 
 const THINKING_DELAY_MS = 550;
 
-// Panel abierto de Clintos AI (STATE 02-06). Dueño de toda la conversación:
+// Panel abierto de Clintos AI (STATE 02-07). Dueño de toda la conversación:
 // cada pregunta (sugerencia, FAQ, texto libre o click en un paciente de un
 // resultado) pasa por el mismo camino — pushUserTurn -> "escribiendo..." ->
 // reemplazo por la respuesta real de clintosAiEngine.answerPrompt — así el
 // estado nunca se puede quedar mostrando dos respuestas para una pregunta.
 export default function ClintosAIPanel({
   onClose, userFirstName, pacientes, areaLabel, onOpenHistoria, onNavigate, layoutMode, onLayoutModeChange,
+  narrowViewport, selectedPaciente, screenLabel,
 }) {
   const [turns, setTurns] = useState([]);
   const [composerValue, setComposerValue] = useState('');
   const [thinking, setThinking] = useState(false);
   const nextId = useRef(0);
   const bodyRef = useRef(null);
+  // "Expandir" recuerda el modo previo para poder volver a él al contraer
+  // (ver PanelHeader.jsx) — vive acá, no en ClintosAI.jsx, porque solo
+  // importa mientras el panel está montado; se reinicia sin costo al
+  // cerrar/reabrir.
+  const previousModeRef = useRef('sidebar');
 
   // Solo baja el scroll una vez que hay conversación — sin el guard,
   // este efecto también corre al montar con `turns` vacío y empuja el
@@ -48,7 +55,7 @@ export default function ClintosAIPanel({
     setThinking(true);
 
     setTimeout(() => {
-      const response = answerPrompt(promptText, { pacientes, areaLabel });
+      const response = answerPrompt(promptText, { pacientes, areaLabel, selectedPaciente });
       setTurns((prev) => prev.map((t) => (t.id === typingTurn.id
         ? { id: typingTurn.id, role: 'assistant', payload: response }
         : t)));
@@ -61,30 +68,83 @@ export default function ClintosAIPanel({
     ask(text);
   }
 
+  // Nombre corto ("María González", no "María Fernanda González Restrepo")
+  // en el turno de "usuario" — un click no es lo mismo que escribir una
+  // pregunta larga (hallazgo de la auditoría UX, heurística 2).
   function handleSelectPatient(_id, nombre) {
-    ask(`Resumen de ${nombre}`);
+    ask(`Resumen de ${nombreVisible(nombre)}`);
   }
 
-  function handleConfirmAction(turnId, count) {
-    setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, resolved: true } : t)));
-    setTurns((prev) => [...prev, { id: newId(), role: 'assistant', payload: confirmResultPayload(count) }]);
-  }
-
-  function handleCancelAction(turnId) {
-    setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, resolved: true } : t)));
+  // `resolved` guarda el desenlace ('confirmed'/'cancelled'), no solo un
+  // booleano — ConfirmActionCard lo usa para mostrar un estado final
+  // distinto al de "esperando tu decisión" (mismo tono ámbar para ambos era
+  // un hallazgo de la auditoría UX, heurística 1: visibilidad del estado del
+  // sistema).
+  //
+  // Al confirmar, genera un borrador por paciente (STATE 07) — `items` ya
+  // trae los pacientes completos (ver clintosAiEngine.confirmEvolucionesPayload),
+  // así que buildDraftText tiene diagnóstico/pendientes reales para trabajar,
+  // nunca inventa un dato que el mock no modele.
+  function handleConfirmAction(turnId, items) {
+    setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, resolved: 'confirmed' } : t)));
+    const drafts = items.map((p) => ({
+      id: p.id, nombre: p.paciente, cama: p.cama, texto: buildDraftText(p), saved: false,
+    }));
     setTurns((prev) => [...prev, {
-      id: newId(), role: 'assistant', payload: { kind: 'text', text: 'Entendido, no se creó ningún borrador.' },
+      id: newId(),
+      role: 'assistant',
+      payload: {
+        kind: 'draft-list',
+        intro: `Preparé ${drafts.length} ${drafts.length === 1 ? 'borrador' : 'borradores'} de evolución. Revísalos antes de guardarlos.`,
+        drafts,
+      },
     }]);
   }
 
-  // "Nuevo chat": descarta la conversación actual y vuelve a STATE 02
-  // (bienvenida + sugerencias) — no hay historial persistente que guardar
-  // todavía (ver PanelHeader.jsx), así que reiniciar es simplemente vaciar
-  // el estado local.
+  function handleCancelAction(turnId) {
+    setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, resolved: 'cancelled' } : t)));
+    setTurns((prev) => [...prev, {
+      id: newId(), role: 'assistant', payload: { kind: 'text', text: 'Entendido, no se preparó ningún borrador.' },
+    }]);
+  }
+
+  // Edición/guardado de un borrador puntual dentro de un turno 'draft-list'
+  // — cada borrador guarda su propio estado (texto editado, guardado),
+  // mismo criterio por-ítem que `resolved` en ConfirmActionCard.
+  function handleChangeDraftText(turnId, draftId, texto) {
+    setTurns((prev) => prev.map((t) => (t.id !== turnId ? t : {
+      ...t,
+      payload: { ...t.payload, drafts: t.payload.drafts.map((d) => (d.id === draftId ? { ...d, texto } : d)) },
+    })));
+  }
+
+  function handleSaveDraft(turnId, draftId) {
+    setTurns((prev) => prev.map((t) => (t.id !== turnId ? t : {
+      ...t,
+      payload: { ...t.payload, drafts: t.payload.drafts.map((d) => (d.id === draftId ? { ...d, saved: true } : d)) },
+    })));
+  }
+
+  // "Nuevo chat" / "← Volver": descarta la conversación actual y vuelve a
+  // STATE 02 (bienvenida + sugerencias) — no hay historial persistente que
+  // guardar todavía (ver PanelHeader.jsx), así que reiniciar es simplemente
+  // vaciar el estado local. Los dos controles del header disparan lo mismo.
   function handleNewChat() {
     setTurns([]);
     setComposerValue('');
     setThinking(false);
+  }
+
+  // "Expandir": atajo directo a Pantalla completa (aparte del LayoutSwitcher,
+  // que sigue ofreciendo los 3 modos) — recuerda el modo anterior para
+  // devolverlo al contraer, en vez de caer siempre en "Barra lateral".
+  function handleToggleExpand() {
+    if (layoutMode === 'fullscreen') {
+      onLayoutModeChange(previousModeRef.current);
+    } else {
+      previousModeRef.current = layoutMode;
+      onLayoutModeChange('fullscreen');
+    }
   }
 
   const hasConversation = turns.length > 0;
@@ -93,15 +153,25 @@ export default function ClintosAIPanel({
   // en los 3 modos (ConversationView + composer fijo abajo), ver
   // FullscreenWelcome.jsx.
   const isFullscreenWelcome = layoutMode === 'fullscreen' && !hasConversation;
+  // "Barra lateral" se renderiza como "Flotante" en viewports angostos (ver
+  // ClintosAI.jsx) — `layoutMode` (la elección real del usuario) sigue
+  // viajando sin tocar hacia PanelHeader/LayoutSwitcher, así el check del
+  // dropdown no miente sobre qué eligió.
+  const effectiveLayoutMode = layoutMode === 'sidebar' && narrowViewport ? 'floating' : layoutMode;
+  // Contexto dinámico (brief sección 12): con un paciente seleccionado en la
+  // tabla, "Acciones sugeridas" pasa a las 4 acciones sobre ESE paciente.
+  const suggestionItems = selectedPaciente ? PATIENT_SUGGESTIONS : undefined;
 
   return (
-    <section className={`cai-panel cai-panel--${layoutMode}`} role="dialog" aria-labelledby="clintos-ai-title">
+    <section className={`cai-panel cai-panel--${effectiveLayoutMode}`} role="dialog" aria-labelledby="clintos-ai-title">
       <PanelHeader
         onClose={onClose}
         layoutMode={layoutMode}
         onLayoutModeChange={onLayoutModeChange}
         onNewChat={handleNewChat}
         hasConversation={hasConversation}
+        expanded={layoutMode === 'fullscreen'}
+        onToggleExpand={handleToggleExpand}
       />
 
       {isFullscreenWelcome ? (
@@ -112,14 +182,16 @@ export default function ClintosAIPanel({
           onSend={handleSend}
           thinking={thinking}
           onSuggestionSelect={ask}
+          selectedPaciente={selectedPaciente}
+          screenLabel={screenLabel}
         />
       ) : (
         <>
           <div className="cai-body" ref={bodyRef}>
             {!hasConversation && (
               <>
-                <WelcomeState userFirstName={userFirstName} />
-                <SuggestionsSection onSelect={ask} />
+                <WelcomeState userFirstName={userFirstName} selectedPaciente={selectedPaciente} screenLabel={screenLabel} />
+                <SuggestionsSection onSelect={ask} items={suggestionItems} />
                 <FaqSection onSelect={ask} />
               </>
             )}
@@ -131,6 +203,8 @@ export default function ClintosAIPanel({
                 onConfirmAction={handleConfirmAction}
                 onCancelAction={handleCancelAction}
                 onNavigate={onNavigate}
+                onChangeDraftText={handleChangeDraftText}
+                onSaveDraft={handleSaveDraft}
               />
             )}
           </div>

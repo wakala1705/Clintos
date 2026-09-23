@@ -1,0 +1,17 @@
+.cai-sources{margin-top:4px;}
+
+.cai-sources-toggle{
+  width:100%;display:flex;align-items:center;gap:6px;
+  background:none;border:none;padding:2px;cursor:pointer;font-family:inherit;text-align:left;
+  font-size:var(--fs-xs);color:var(--ink-500);
+}
+.cai-sources-toggle:hover{color:var(--ink-700);}
+.cai-sources-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-sources-toggle .icon{width:13px;height:13px;flex-shrink:0;}
+.cai-sources-toggle span{flex:1;min-width:0;}
+.cai-sources-chevron{margin-left:auto;}
+
+.cai-sources-list{
+  margin:6px 0 0;padding:8px 10px;border-radius:var(--radius);background:var(--bg);
+  list-style:none;font-size:var(--fs-xs);color:var(--ink-500);line-height:1.7;
+}

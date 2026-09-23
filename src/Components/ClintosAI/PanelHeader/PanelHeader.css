@@ -11,16 +11,29 @@
 }
 .cai-beta-badge{text-transform:uppercase;letter-spacing:.02em;}
 
+/* "← Volver" (con conversación activa) ocupa el mismo lugar que el bloque
+   título — mismo tamaño/peso de fuente que .cai-header h3 para que el
+   header no cambie de alto al alternar. */
+.cai-back-btn{
+  display:flex;align-items:center;gap:6px;min-width:0;
+  background:none;border:none;padding:4px 6px 4px 2px;margin-left:-2px;border-radius:6px;cursor:pointer;font-family:inherit;
+  font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.cai-back-btn:hover{background:var(--gray-bg);}
+.cai-back-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-back-btn .icon{width:18px;height:18px;color:var(--ink-500);}
+
 .cai-header-end{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 
-.cai-newchat-btn{
+.cai-newchat-btn, .cai-expand-btn{
   width:30px;height:30px;border-radius:8px;border:none;background:transparent;
   color:var(--ink-500);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;
 }
-.cai-newchat-btn .icon{width:17px;height:17px;}
-.cai-newchat-btn:hover:not(:disabled){background:var(--gray-bg);}
-.cai-newchat-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-newchat-btn .icon, .cai-expand-btn .icon{width:17px;height:17px;}
+.cai-newchat-btn:hover:not(:disabled), .cai-expand-btn:hover{background:var(--gray-bg);}
+.cai-newchat-btn:focus-visible, .cai-expand-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cai-newchat-btn:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
+.cai-expand-btn[aria-pressed="true"]{background:var(--primary-50);color:var(--primary);}
 
 .cai-close-btn{
   flex-shrink:0;width:30px;height:30px;border-radius:8px;border:none;background:transparent;

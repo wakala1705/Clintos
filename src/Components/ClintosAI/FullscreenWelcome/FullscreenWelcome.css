@@ -1,14 +1,27 @@
+/* Sin justify-content/align-items:center acá (bug real de Flexbox: centrar
+   un contenedor con overflow-y:auto hace que el contenido que excede el alto
+   se renderice fuera del área de scroll en vez de quedar scrolleable —
+   con "Más sugerencias" expandido, el último ítem del FAQ terminaba
+   solapado con SafetyFooter, fuera de este contenedor. Hallazgo de la
+   auditoría UX de este panel, heurística 8). El centrado (vertical cuando
+   el contenido entra, y siempre horizontal) se logra con `margin:auto` en
+   .cai-fs-center en vez de en el contenedor — mismo patrón que la técnica
+   estándar "flexbox centering that also scrolls". */
 .cai-fs-welcome{
   flex:1;min-height:0;overflow-y:auto;
-  display:flex;align-items:center;justify-content:center;padding:32px 20px;
+  display:flex;padding:32px 20px 40px;
 }
-.cai-fs-center{width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.cai-fs-center{
+  width:100%;max-width:640px;margin:auto;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
 
 .cai-fs-avatar{width:44px;height:44px;margin-bottom:16px;}
 .cai-fs-avatar .icon{width:22px;height:22px;}
 
 .cai-fs-greeting{margin:0 0 6px;font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cai-fs-lead{margin:0 0 24px;font-size:var(--fs-base);color:var(--ink-500);}
+.cai-fs-lead{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.cai-fs-center .cai-context-chip{margin-bottom:22px;}
 
 .cai-fs-composer{width:100%;margin-bottom:28px;}
 

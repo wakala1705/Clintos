@@ -6,6 +6,8 @@ import { LuChevronDown, LuChevronUp, LuSparkles } from 'react-icons/lu';
 import Composer from '../Composer/Composer';
 import SuggestionsSection from '../SuggestionsSection/SuggestionsSection';
 import FaqSection from '../FaqSection/FaqSection';
+import ContextChip from '../ContextChip/ContextChip';
+import { PATIENT_SUGGESTIONS } from '@/hooks/ClintosAI/suggestions';
 
 // Bienvenida de "Pantalla completa" — layout centrado tipo chat tradicional
 // (encargo explícito, referencia: Home de Rovo): saludo + composer grande
@@ -21,6 +23,7 @@ import FaqSection from '../FaqSection/FaqSection';
 // nueva a la izquierda de .cai-fs-center, sin tocar el resto de esta vista.
 export default function FullscreenWelcome({
   userFirstName, composerValue, onComposerChange, onSend, thinking, onSuggestionSelect,
+  selectedPaciente, screenLabel,
 }) {
   const [showFaq, setShowFaq] = useState(false);
 
@@ -32,6 +35,7 @@ export default function FullscreenWelcome({
         </span>
         <h2 className="cai-fs-greeting">Hola, {userFirstName} 👋</h2>
         <p className="cai-fs-lead">Soy Clintos AI, tu asistente en hospitalización.</p>
+        <ContextChip selectedPaciente={selectedPaciente} screenLabel={screenLabel} />
 
         <div className="cai-fs-composer">
           <Composer
@@ -43,7 +47,11 @@ export default function FullscreenWelcome({
           />
         </div>
 
-        <SuggestionsSection onSelect={onSuggestionSelect} layout="row" />
+        <SuggestionsSection
+          onSelect={onSuggestionSelect}
+          layout="row"
+          items={selectedPaciente ? PATIENT_SUGGESTIONS : undefined}
+        />
 
         <button type="button" className="cai-fs-more-toggle" onClick={() => setShowFaq((v) => !v)}>
           Más sugerencias

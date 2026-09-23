@@ -5,6 +5,7 @@ import PatientResultList from '../PatientResultList/PatientResultList';
 import PatientSummaryCard from '../PatientSummaryCard/PatientSummaryCard';
 import ConfirmActionCard from '../ConfirmActionCard/ConfirmActionCard';
 import NavOptionsCard from '../NavOptionsCard/NavOptionsCard';
+import DraftList from '../DraftList/DraftList';
 
 // Cuerpo de la conversación (STATE 03-06): cada turno de Clintos AI se arma
 // con el mismo avatar (icon-circle), y el `kind` que devolvió
@@ -12,6 +13,7 @@ import NavOptionsCard from '../NavOptionsCard/NavOptionsCard';
 // punto de ramificación en vez de repetir el switch en cada turno.
 export default function ConversationView({
   turns, onSelectPatient, onOpenHistoria, onConfirmAction, onCancelAction, onNavigate,
+  onChangeDraftText, onSaveDraft,
 }) {
   return (
     <div className="cai-conversation">
@@ -44,6 +46,7 @@ export default function ConversationView({
               {!turn.typing && payload.kind === 'patient-summary' && (
                 <PatientSummaryCard
                   nombre={payload.nombre}
+                  cama={payload.cama}
                   estado={payload.estado}
                   diagnostico={payload.diagnostico}
                   resumen={payload.resumen}
@@ -56,13 +59,22 @@ export default function ConversationView({
               {!turn.typing && payload.kind === 'confirm-action' && (
                 <ConfirmActionCard
                   title={payload.title}
-                  description={payload.description}
+                  lines={payload.lines}
                   items={payload.items}
                   confirmLabel={payload.confirmLabel}
                   cancelLabel={payload.cancelLabel}
                   resolved={turn.resolved}
-                  onConfirm={() => onConfirmAction(turn.id, payload.items.length)}
+                  onConfirm={() => onConfirmAction(turn.id, payload.items)}
                   onCancel={() => onCancelAction(turn.id)}
+                />
+              )}
+
+              {!turn.typing && payload.kind === 'draft-list' && (
+                <DraftList
+                  intro={payload.intro}
+                  drafts={payload.drafts}
+                  onChangeDraftText={(draftId, texto) => onChangeDraftText(turn.id, draftId, texto)}
+                  onSaveDraft={(draftId) => onSaveDraft(turn.id, draftId)}
                 />
               )}
 

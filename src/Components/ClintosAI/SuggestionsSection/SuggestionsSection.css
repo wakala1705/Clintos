@@ -11,8 +11,11 @@
 .cai-suggestions-grid--row .cai-suggestion-card{width:190px;flex:0 0 190px;}
 
 /* Card compacta 2x2 (a diferencia de la fila horizontal de .cai-card-btn en
-   FaqSection): ícono arriba, texto debajo — .cai-card-icon se reusa desde
-   shared.css, solo cambia el layout del botón que lo contiene. */
+   FaqSection): ícono arriba, texto debajo. Acá el ícono SÍ lleva contenedor
+   azul sutil (encargo explícito) — "Acciones sugeridas" son tareas que
+   Clintos AI puede EJECUTAR, se distinguen visualmente de las preguntas de
+   solo consulta de "Pregúntame" (ver .cai-card-btn .cai-card-icon en
+   shared.css, sin recuadro). */
 .cai-suggestion-card{
   display:flex;flex-direction:column;align-items:flex-start;gap:8px;
   padding:10px;border:1px solid var(--border);border-radius:var(--radius);
@@ -21,4 +24,10 @@
 }
 .cai-suggestion-card:hover{background:var(--bg);border-color:var(--ink-400);}
 .cai-suggestion-card:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cai-suggestion-card .cai-card-icon{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.cai-suggestion-card .cai-card-icon .icon{width:16px;height:16px;}
 .cai-suggestion-card .cai-card-label{font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.35;}

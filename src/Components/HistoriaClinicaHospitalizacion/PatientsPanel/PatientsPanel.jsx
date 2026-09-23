@@ -27,6 +27,7 @@ function matchesFiltro(p, filtro) {
 // porque el panel lateral de pendientes también puede activarlo.
 export default function PatientsPanel({
   pacientes, onOpenHistoria, filtro, onFiltroChange, areaOperativa, onAreaOperativaChange, areaOptions,
+  selectedId, onSelectRow,
 }) {
   const [query, setQuery] = useState('');
 
@@ -73,7 +74,12 @@ export default function PatientsPanel({
         <AreaSelector options={areaOptions} value={areaOperativa} onChange={onAreaOperativaChange} />
       </div>
 
-      <PatientsTable pacientes={filteredPacientes} onOpenHistoria={onOpenHistoria} />
+      <PatientsTable
+        pacientes={filteredPacientes}
+        onOpenHistoria={onOpenHistoria}
+        selectedId={selectedId}
+        onSelectRow={onSelectRow}
+      />
     </section>
   );
 }

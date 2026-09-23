@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import './PatientsTable.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -43,15 +42,20 @@ function EvolucionBadge({ p }) {
 // clínica — mismo patrón clic-selecciona/doble-clic-abre que
 // PatientsTable.jsx de Enfermería y AgendaTable.jsx; el botón "Historia" de
 // cada fila es la vía alterna sin depender del doble clic.
-export default function PatientsTable({ pacientes, onOpenHistoria }) {
-  const [selectedId, setSelectedId] = useState(null);
-
+//
+// `selectedId`/`onSelectRow` controlados desde HistoriaClinicaHospitalizacion.jsx
+// (antes vivía local acá) — Clintos AI necesita leer qué paciente está
+// seleccionado para volverse contextual (brief "Contexto dinámico"), así que
+// la selección ya no puede quedar atrapada dentro de esta tabla.
+export default function PatientsTable({
+  pacientes, onOpenHistoria, selectedId, onSelectRow,
+}) {
   function handleRowKeyDown(e, id) {
     if (e.target !== e.currentTarget) return;
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
     if (selectedId === id) onOpenHistoria(id);
-    else setSelectedId(id);
+    else onSelectRow(id);
   }
 
   if (pacientes.length === 0) {
@@ -87,7 +91,7 @@ export default function PatientsTable({ pacientes, onOpenHistoria }) {
                 className={selectedId === p.id ? 'selected' : undefined}
                 aria-selected={selectedId === p.id}
                 tabIndex={0}
-                onClick={() => setSelectedId(p.id)}
+                onClick={() => onSelectRow(p.id)}
                 onKeyDown={(e) => handleRowKeyDown(e, p.id)}
                 onDoubleClick={() => onOpenHistoria(p.id)}
               >
@@ -130,7 +134,7 @@ export default function PatientsTable({ pacientes, onOpenHistoria }) {
             key={p.id}
             tabIndex={0}
             aria-selected={selectedId === p.id}
-            onClick={() => setSelectedId(p.id)}
+            onClick={() => onSelectRow(p.id)}
             onKeyDown={(e) => handleRowKeyDown(e, p.id)}
             onDoubleClick={() => onOpenHistoria(p.id)}
           >

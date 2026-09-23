@@ -36,6 +36,10 @@ export default function HistoriaClinicaHospitalizacion() {
   const router = useRouter();
   const [areaOperativa, setAreaOperativa] = useState('todo');
   const [filtro, setFiltro] = useState('todos');
+  // Levantado desde PatientsTable.jsx (antes vivía local ahí) — Clintos AI
+  // necesita saber qué paciente está seleccionado para volverse contextual
+  // (brief "Contexto dinámico", ver <ClintosAI selectedPaciente=.../> abajo).
+  const [selectedPacienteId, setSelectedPacienteId] = useState(null);
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar — mismo init que
   // PanelGeneral.jsx/HistoriaClinica.jsx: sin este efecto los onClick de
@@ -58,6 +62,10 @@ export default function HistoriaClinicaHospitalizacion() {
 
   const pendientes = useMemo(() => pendientesOrdenados(pacientesFiltrados), [pacientesFiltrados]);
   const areaLabel = AREAS_OPERATIVAS.find((a) => a.value === areaOperativa)?.label;
+  // Si el paciente seleccionado queda fuera del filtro de área activo, la
+  // búsqueda no lo encuentra y el contexto de Clintos AI vuelve solo a
+  // pantalla — nunca queda "seleccionado" un paciente que ya no se ve.
+  const selectedPaciente = pacientesFiltrados.find((p) => p.id === selectedPacienteId);
 
   const kpis = useMemo(() => ({
     total: pacientesFiltrados.length,
@@ -135,6 +143,8 @@ export default function HistoriaClinicaHospitalizacion() {
                 areaOperativa={areaOperativa}
                 onAreaOperativaChange={setAreaOperativa}
                 areaOptions={AREAS_OPERATIVAS}
+                selectedId={selectedPacienteId}
+                onSelectRow={setSelectedPacienteId}
               />
               {MOSTRAR_PENDIENTES && (
                 <PendientesPanel
@@ -152,6 +162,8 @@ export default function HistoriaClinicaHospitalizacion() {
             userFirstName="Camilo"
             onOpenHistoria={goToHistoria}
             onNavigate={router.push}
+            selectedPaciente={selectedPaciente}
+            screenLabel="Hospitalización · Historia Clínica"
           />
         </div>
       </div>

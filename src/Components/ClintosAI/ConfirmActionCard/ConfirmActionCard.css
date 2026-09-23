@@ -7,3 +7,12 @@
 .cai-confirm-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cai-confirm-desc{margin:0 0 8px;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.5;}
 .cai-confirm-items{margin:0 0 4px;padding-left:16px;font-size:var(--fs-sm);color:var(--ink-900);line-height:1.6;}
+
+/* Estado final (ver comentario en ConfirmActionCard.jsx): fondo/borde
+   neutros en vez del ámbar de "pendiente de decisión" — "cancelled" además
+   atenúa el texto, ya que esos ítems no se van a crear. */
+.cai-confirm--confirmed, .cai-confirm--cancelled{background:var(--gray-bg);border-color:var(--border);}
+.cai-confirm--confirmed .cai-confirm-icon{background:var(--green-bg);color:var(--green);}
+.cai-confirm--cancelled .cai-confirm-icon{background:var(--surface);color:var(--ink-500);}
+.cai-confirm--cancelled .cai-confirm-desc,
+.cai-confirm--cancelled .cai-confirm-items{color:var(--ink-500);text-decoration:line-through;text-decoration-color:var(--ink-400);}
