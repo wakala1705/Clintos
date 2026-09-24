@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import './DiagnosticoField.css';
-import { LuSearch } from 'react-icons/lu';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
+import { LuCheck, LuSearch } from 'react-icons/lu';
 import { CIE_MOCK } from '../proximasCitasData';
 
 // Una fila de diagnóstico (ver ProximasCitasStep.jsx, 4 reusos: principal +
@@ -79,17 +80,18 @@ export default function DiagnosticoField({
         </div>
 
         {open && (
-          <ul className="pcs-diag-listbox" role="listbox">
-            {filtered.length === 0 && <li className="pcs-diag-empty">Sin resultados</li>}
+          <ul className={`pcs-diag-listbox ${panel.panel}`} role="listbox">
+            {filtered.length === 0 && <li className={panel.empty}>Sin resultados</li>}
             {filtered.map((d) => (
               <li key={d.codigo} role="option" aria-selected={d.codigo === codigo}>
                 <button
                   type="button"
-                  className={`pcs-diag-option${d.codigo === codigo ? ' active' : ''}`}
+                  className={[panel.item, 'pcs-diag-option', d.codigo === codigo && panel.selected].filter(Boolean).join(' ')}
                   onClick={() => pick(d)}
                 >
                   <span className="pcs-diag-option-texto">{d.texto}</span>
                   <span className="pcs-diag-option-codigo">{d.codigo}</span>
+                  {d.codigo === codigo && <LuCheck className={panel.check} aria-hidden="true" />}
                 </button>
               </li>
             ))}

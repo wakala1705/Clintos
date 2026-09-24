@@ -30,15 +30,6 @@
 .pc-nc-chev{transition:transform .15s ease;}
 .pc-nc-toggle[aria-expanded="true"] .pc-nc-chev{transform:rotate(180deg);}
 
-.pc-nc-menu{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:400;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
-  display:flex;flex-direction:column;gap:1px;
-}
-.pc-nc-option{
-  padding:9px 10px;border-radius:8px;text-align:left;
-  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
-  background:none;border:none;font-family:inherit;width:100%;
-}
-.pc-nc-option:hover{background:var(--bg);}
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición. */
+.pc-nc-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:400;min-width:0;}

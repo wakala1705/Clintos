@@ -65,13 +65,9 @@
 
 /* Envoltorio del menú "⋯" — solo corta la propagación del click/teclado
    para que abrir el menú no dispare `onOpenDetail` de la tarjeta completa
-   (ver BedCard.jsx). Tamaño reducido de 28px a 22px (override local) —
-   .cb-actions-menu-btn por default es 28px (BedActionsMenu.css) para su
-   otro consumidor, la fila de una tabla ancha, sin la presión de espacio de
-   esta tarjeta de 192px (grilla de 6 columnas fijas, ver arriba). */
+   (ver BedCard.jsx). El tamaño reducido (22px) lo da BedActionsMenu
+   size="sm" → DropdownMenu, sin override local. */
 .cb-card-menu-wrap{display:flex;flex-shrink:0;}
-.cb-card-menu-wrap .cb-actions-menu-btn{width:22px;height:22px;}
-.cb-card-menu-wrap .cb-actions-menu-btn .icon{width:14px;height:14px;}
 
 /* Bloque contextual paciente/reserva/motivo (.cb-card-paciente,
    .cb-card-status-text, .cb-card-contexto) e InfoLine (.cb-card-info, ver

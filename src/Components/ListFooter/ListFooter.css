@@ -1,0 +1,19 @@
+/* Tokens de color (--border, --ink-*, --primary, --primary-50) desde el
+   :root de la feature donde se monta. La card contenedora es flex column:
+   el footer no se encoge y la tabla (flex:1) toma el resto del alto. */
+.list-footer{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:12px 20px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.list-footer b{font-weight:var(--fw-semibold);color:var(--ink-700);}
+.list-footer-sep{color:var(--ink-400);}
+.list-footer-refresh{
+  display:inline-flex;align-items:center;gap:4px;margin-left:4px;padding:2px 6px;
+  border:none;border-radius:6px;background:none;cursor:pointer;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--primary);
+}
+.list-footer-refresh .icon{width:14px;height:14px;}
+.list-footer-refresh:hover{background:var(--primary-50);}
+.list-footer-refresh:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:1px;}
+.list-footer-refresh:disabled{opacity:var(--btn-disabled-opacity);cursor:default;background:none;}

@@ -5,6 +5,8 @@
 // cambiar el cuerpo de esta función, no la pantalla.
 // TODO: reemplazar por la llamada real al backend.
 
+import { AREAS_FUNCIONALES, datosAdministrativos } from '@/hooks/DetalleAdmision/datosAdministrativos';
+
 const NOMBRES = ['Diomedes', 'Tony Carlo', 'Hector Luis', 'Angelica Maria', 'Zuly Marcela', 'Jorge Eliser', 'Fabrizio Seguundo', 'Lina Maria', 'River', 'Camila', 'Andrés Felipe', 'Sofía', 'Julián', 'Mariana', 'Esteban', 'Valentina', 'Ricardo', 'Catalina', 'David', 'Natalia'];
 const APELLIDOS = ['Diaz', 'Pertuz Ramos', 'Amaris Bivanque', 'Maruy', 'Garcia Garcia', 'Jaramillo Villar', 'Martelo', 'Gomez Gomez', 'Aponte', 'Guarin Guarin', 'Montiel Montiel', 'Rodríguez Paternina', 'Zuluaga Restrepo', 'Cárdenas Ruiz', 'Bermúdez Cano'];
 const ADMINISTRADORAS = ['NUEVA EPS', 'ENTIDAD PROMOTORA DE SALUD SANITAS S A S', 'SURA EPS', 'COMPENSAR EPS', 'SALUD TOTAL', 'FAMISANAR'];
@@ -169,4 +171,62 @@ export function fetchAdmisiones({ query = '', searchField = 'numeroAdmision', es
       resolve({ items, total: items.length });
     }, FETCH_DELAY_MS);
   });
+}
+
+// ---------- Detalle de admisión (modal "Detalles") ----------
+// Registro de ADMISIONES → shape de @/Components/DetalleAdmisionModal
+// (compartido con HC Hospitalización, ver getDetalleAdmision en
+// mockHospitalizadosData.js). Lo que este mock no modela (acompañante,
+// médico/usuario de ingreso, régimen) sale de datosAdministrativos, estable
+// por N° de admisión. Sin diagnóstico/edad/sexo/estancia: este mock no los
+// tiene, así que el modal no los pinta (campos `undefined`).
+const ESTADO_TONE = {
+  admitido: 'success',
+  'pendiente-triage': 'warn',
+  triage: 'warn',
+  'alta-medica': 'neutral',
+  'alta-administrativa': 'neutral',
+};
+
+const AREA_POR_TIPO = {
+  URGENCIAS: AREAS_FUNCIONALES.urgencias,
+  AMBULATORIO: AREAS_FUNCIONALES.ambulatorio,
+  'HOSPITALIZACIÓN': AREAS_FUNCIONALES.hospitalizacion,
+};
+
+// El nombre del mock va apellidos primero: "PERTUZ RAMOS TONY CARLO" → "PT"
+// (primer apellido + primer nombre, 1ª y 3ª palabra); con menos de 4
+// palabras, 1ª + última ("DIAZ DIOMEDES" → "DD").
+function inicialesAfiliado(nombre) {
+  const partes = nombre.split(' ').filter(Boolean);
+  const segunda = partes.length >= 4 ? partes[2] : partes[partes.length - 1];
+  return `${partes[0][0]}${segunda[0]}`.toUpperCase();
+}
+
+export function detalleDesdeAdmision(a) {
+  const admin = datosAdministrativos(Number(a.numeroAdmision));
+  const area = AREA_POR_TIPO[a.tipoAdmision] ?? null;
+  const conAlta = a.estado === 'alta-medica' || a.estado === 'alta-administrativa';
+  return {
+    id: a.id,
+    iniciales: inicialesAfiliado(a.nombreAfiliado),
+    nombre: a.nombreAfiliado,
+    documento: a.documento,
+    numeroAdmision: a.numeroAdmision,
+    estado: { label: ESTADO_LABEL[a.estado], tone: ESTADO_TONE[a.estado] ?? 'neutral' },
+    fechaIngreso: a.fecha,
+    horaIngreso: a.hora,
+    cama: a.cama ?? null,
+    tipoAdmision: a.tipoAdmision,
+    triage: TRIAGE_LABEL[a.triage ?? 'none'],
+    areaIngreso: area,
+    areaActual: area,
+    contratante: a.administradora,
+    tipoContrato: a.tipoContrato,
+    regimen: admin.regimen,
+    medicoIngreso: admin.medicoIngreso,
+    acompanante: admin.acompanante,
+    usuarioIngresa: admin.usuarioIngresa,
+    usuarioAlta: conAlta ? admin.usuarioAlta : null,
+  };
 }

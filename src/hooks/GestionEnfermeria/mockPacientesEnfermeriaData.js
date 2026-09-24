@@ -18,20 +18,21 @@ const TIPO_CONTRATO_LIST = ['Evento', 'Capitado'];
 // un paciente en resucitación no estaría en un piso general.
 const TRIAGE_LIST = [2, 3, 3, 4, 2, 3, 5];
 
-// '12 Ago' → { iso: '2026-08-12', fecha: '12.AGO.2026' } — las admisiones de
-// PACIENTES_PISO están ancladas a 2026 (ver diasEstancia en ese mock).
-function fechaDe(admision) {
-  const [dia, mes] = admision.split(' ');
-  const mesNum = MESES.indexOf(mes) + 1;
+// `ingreso` (Date de PACIENTES_PISO, relativo a hoy — ver ingresoHace en ese
+// mock) → { iso: '2026-08-12', fecha: '12.AGO.2026' }, con el año real.
+function fechaDe(ingreso) {
+  const dia = String(ingreso.getDate()).padStart(2, '0');
+  const mes = ingreso.getMonth();
+  const anio = ingreso.getFullYear();
   return {
-    iso: `2026-${String(mesNum).padStart(2, '0')}-${dia.padStart(2, '0')}`,
-    fecha: `${dia.padStart(2, '0')}.${mes.toUpperCase()}.2026`,
+    iso: `${anio}-${String(mes + 1).padStart(2, '0')}-${dia}`,
+    fecha: `${dia}.${MESES[mes].toUpperCase()}.${anio}`,
   };
 }
 
 export const ADMISIONES_PISO = PACIENTES_PISO.map((p, i) => {
   const n = Number(p.id.replace(/\D/g, ''));
-  const { iso, fecha } = fechaDe(p.admision);
+  const { iso, fecha } = fechaDe(p.ingreso);
   return {
     id: p.id,
     numeroAdmision: numeroAdmisionDe(p.id),

@@ -66,7 +66,7 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // aplican sin ese contexto, y cambia el saludo) — ver ese archivo.
 const ClintosAI = forwardRef(function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
-  onClearPaciente, autoOpen = false, generalContext = false,
+  onClearPaciente, autoOpen = false, generalContext = false, onOpenChange,
 }, ref) {
   const [open, setOpen] = useState(autoOpen);
   const [layoutMode, setLayoutMode] = useState(autoOpen ? 'fullscreen' : 'sidebar');
@@ -81,6 +81,14 @@ const ClintosAI = forwardRef(function ClintosAI({
     return () => mql.removeEventListener('change', update);
   }, []);
 
+  // Avisa al padre cada vez que el panel se abre o se cierra, sin importar
+  // desde dónde (botón del Topbar, trigger flotante, ✕ del panel,
+  // askExternal) — KoraTopbarButton lo usa como estado `active` del switch,
+  // así nunca queda "activo" con el panel ya cerrado.
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [open, onOpenChange]);
+
   useImperativeHandle(ref, () => ({
     // Consumido por KoraTopbarButton.jsx (segundo punto de entrada, ver
     // AtencionPaciente.jsx/HistoriaClinicaHospitalizacion.jsx) — fuerza
@@ -90,6 +98,10 @@ const ClintosAI = forwardRef(function ClintosAI({
     open() {
       setLayoutMode('sidebar');
       setOpen(true);
+    },
+    // Segundo clic del switch de KoraTopbarButton.
+    close() {
+      setOpen(false);
     },
     askExternal(prompt, response) {
       setExternalAsk({ prompt, response });

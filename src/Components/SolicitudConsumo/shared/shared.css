@@ -71,34 +71,23 @@ tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
 /* Badges de estado: ver @/Components/Badge/Badge (ya migrado, no se
    redefine acá). */
 
-.row-actions{position:relative;display:inline-flex;align-items:center;gap:8px;}
+.row-actions{position:relative;display:inline-flex;align-items:center;gap:4px;}
+/* Botón-ícono "Ver detalle" (👁) al lado del "⋯" de @/Components/DropdownMenu
+   — mismo tamaño/estados que ese trigger (tokens --dropdown-trigger-*, sin
+   borde), para que los dos botones de la columna se lean como un par. */
 .icon-action{
-  width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);
+  width:var(--dropdown-trigger-size);height:var(--dropdown-trigger-size);border-radius:var(--dropdown-trigger-radius);
+  border:none;background:transparent;padding:0;flex-shrink:0;
   display:inline-flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s;
+  transition:background .15s,color .15s;
 }
-.icon-action .icon{width:18px;height:18px;}
-.icon-action:hover{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary);}
-tr.selected .icon-action{border-color:var(--primary-100);color:var(--primary);}
+.icon-action .icon{width:var(--dropdown-trigger-icon-size);height:var(--dropdown-trigger-icon-size);}
+.icon-action:hover{background:var(--gray-bg);color:var(--ink-900);}
+.icon-action:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
-.row-menu{
-  position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);
-  border-radius:9px;box-shadow:0 10px 24px rgba(16,24,39,.14);padding:8px;min-width:150px;z-index:20;
-}
-.row-menu-item{
-  display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:7px;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;white-space:nowrap;
-  background:none;border:none;font-family:inherit;width:100%;text-align:left;
-}
-.row-menu-item .icon{width:15px;height:15px;color:var(--ink-500);}
-.row-menu-item:hover{background:#f3f5f9;}
-html[data-theme="dark"] .row-menu-item:hover{background:#20283a;}
-.row-menu-item.danger{color:#c02b2b;}
-.row-menu-item.danger .icon{color:#c02b2b;}
-.row-menu-item.danger:hover{background:#fdf2f2;}
-html[data-theme="dark"] .row-menu-item.danger{color:#ff8a8a;}
-html[data-theme="dark"] .row-menu-item.danger .icon{color:#ff8a8a;}
-html[data-theme="dark"] .row-menu-item.danger:hover{background:#2a1620;}
+/* Menú "⋯" de fila: @/Components/DropdownMenu (ver AGENTS.md "Dropdowns") —
+   el bloque .row-menu/.row-menu-item (con hex sueltos para hover/danger y
+   su versión dark) se borró al migrar. */
 
 .card-footer{
   display:flex;align-items:center;justify-content:space-between;padding:16px 24px;

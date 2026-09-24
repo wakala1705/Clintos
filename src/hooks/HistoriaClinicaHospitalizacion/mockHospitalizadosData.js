@@ -17,11 +17,15 @@
 // NOMBRE_COMPLETO/documentoDe/numeroAdmisionDe viven en el mock de
 // Enfermería porque sus pantallas también los muestran.
 import {
-  documentoDe, NOMBRE_COMPLETO, numeroAdmisionDe, PACIENTES_PISO,
+  documentoDe, estanciaLabel, fechaIngresoLarga, NOMBRE_COMPLETO, numeroAdmisionDe, PACIENTES_PISO,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import { DOCTOR } from '@/hooks/HistoriaClinica/mockAgendaData';
+import { ADMISIONES_PISO } from '@/hooks/GestionEnfermeria/mockPacientesEnfermeriaData';
+import { AREAS_FUNCIONALES, datosAdministrativos } from '@/hooks/DetalleAdmision/datosAdministrativos';
 
-export { AREAS_OPERATIVAS, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
+export {
+  AREAS_OPERATIVAS, estanciaLabel, fechaIngresoLarga, sectorDeCama,
+} from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 
 // tipo: 'evolucion' (nota de evolución del día sin registrar), 'orden'
 // (orden médica por firmar/validar), 'resultado' (resultado sin revisar,
@@ -155,14 +159,6 @@ const ALERGIAS_POR_PACIENTE = {
   ],
 };
 
-// '12 Ago' (formato de PACIENTES_PISO) → '12.AGO.2026', el formato de fecha
-// de los registros de Historia Clínica (ver mockHistoriaClinicaRecords.js).
-// Año fijo 2026: las fechas de ingreso del piso están ancladas a ese año.
-function fechaIngresoLarga(admision) {
-  const [dia, mes] = admision.split(' ');
-  return `${dia}.${mes.toUpperCase()}.2026`;
-}
-
 // Fila completa de PACIENTES_HOSPITALIZADOS (pendientes/evolucionPendiente/
 // ordenesPorFirmar/resultadosNuevos incluidos) para UN paciente por id — a
 // diferencia de getHospitalizadoData() de abajo, que arma el shape distinto
@@ -194,10 +190,13 @@ export function buildHospitalizadoData(id) {
       documento: documentoDe(p.id),
       numeroAdmision: numeroAdmisionDe(p.id),
       // Campo fijo de PatientBanner (fila 2, entre N° Admisión y Cama).
-      fechaIngreso: `${fechaIngresoLarga(p.admision)} (${p.diasEstancia} días)`,
+      fechaIngreso: `${fechaIngresoLarga(p.ingreso)} (${estanciaLabel(p).toLowerCase()})`,
       edad: `${p.edad} años`,
       sexo: p.genero === 'femenino' ? 'Femenino' : 'Masculino',
-      eps: 'Salud Total EPS',
+      // Mismo contratante que el modal "Ver detalle" (getDetalleAdmision) y
+      // Enfermería → Pacientes: la administradora de su admisión, no un
+      // valor fijo igual para todos.
+      eps: ADMISIONES_PISO.find((a) => a.id === p.id)?.administradora ?? '—',
       cama: p.cama,
       diagnostico: p.diagnostico,
       medicoTratante: `Dr. ${DOCTOR.nombre}`,
@@ -208,4 +207,57 @@ export function buildHospitalizadoData(id) {
 
 export function getHospitalizadoData(id) {
   return Promise.resolve(buildHospitalizadoData(id));
+}
+
+// ---------- Detalle de admisión (menú "⋯" → "Ver detalle") ----------
+// Shape que consume @/Components/DetalleAdmisionModal (compartido con
+// Admisiones, ver detalleDesdeAdmision en mockAdmisionesData.js).
+// Contratante y tipo de contrato salen de ADMISIONES_PISO (la misma admisión
+// que muestra Enfermería → Pacientes); médico de ingreso, acompañante,
+// usuarios y régimen de datosAdministrativos (ficticios, estables por
+// paciente).
+function horaDe(fecha) {
+  return fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+export function getDetalleAdmision(id) {
+  const p = PACIENTES_HOSPITALIZADOS.find((x) => x.id === id);
+  if (!p) return null;
+  const adm = ADMISIONES_PISO.find((a) => a.id === id);
+  const n = Number(id.replace(/\D/g, ''));
+  const admin = datosAdministrativos(n);
+  // Algunos pacientes entraron por Urgencias y luego subieron a piso.
+  const ingresoPorUrgencias = n % 3 !== 0;
+
+  return {
+    id: p.id,
+    iniciales: iniciales(p.paciente),
+    nombre: p.paciente,
+    documento: documentoDe(p.id),
+    // Edad detallada "33 años 6 meses 30 días" (formato del panel de
+    // Admisiones) — meses/días ficticios estables por paciente.
+    edadDetallada: `${p.edad} años ${n % 12} meses ${n % 28} días`,
+    sexo: p.genero === 'femenino' ? 'Femenino' : 'Masculino',
+    numeroAdmision: numeroAdmisionDe(p.id),
+    historia: p.id,
+    fechaIngreso: fechaIngresoLarga(p.ingreso),
+    horaIngreso: horaDe(p.ingreso),
+    estancia: estanciaLabel(p),
+    nuevoIngreso: p.nuevoIngreso,
+    prolongada: p.prolongada,
+    diagnostico: p.diagnostico,
+    cama: p.cama,
+    habitacion: `P${p.cama.split('-')[0]}`,
+    areaIngreso: ingresoPorUrgencias ? AREAS_FUNCIONALES.urgencias : AREAS_FUNCIONALES.hospitalizacion,
+    areaActual: AREAS_FUNCIONALES.hospitalizacion,
+    medicoTratante: `Dr. ${DOCTOR.nombre}`,
+    contratante: adm?.administradora ?? null,
+    tipoContrato: adm?.tipoContrato ?? null,
+    regimen: admin.regimen,
+    medicoIngreso: admin.medicoIngreso,
+    acompanante: admin.acompanante,
+    usuarioIngresa: admin.usuarioIngresa,
+    // Sigue hospitalizado: nadie le ha dado alta todavía.
+    usuarioAlta: null,
+  };
 }

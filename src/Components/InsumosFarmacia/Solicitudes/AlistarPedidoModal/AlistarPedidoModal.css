@@ -217,7 +217,7 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
 .mig-summary-title .icon{width:16px;height:16px;color:var(--ink-500);}
 /* :hover (auditoría de craft visual, regla 11 "cada estado diseñado") --
    faltaba: el resto de controles clicables del módulo (.filters-more-btn,
-   .mig-row-menu-btn, .mig-lotes-accion-btn) ya cubren hover+focus-visible,
+   el "⋯" de DropdownMenu, .mig-lotes-accion-btn) ya cubren hover+focus-visible,
    este toggle solo tenía el segundo. */
 .mig-summary-title:hover{color:var(--primary);}
 .mig-summary-title:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}

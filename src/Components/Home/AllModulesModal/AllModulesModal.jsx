@@ -55,14 +55,20 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const tabItems = groups
-    .filter((group) => group.module === activeTab)
-    .flatMap((group) => group.items.map((item) => ({ ...item, sectionTitle: group.title })));
-
+  // Agrupado por sección (Consulta Externa, Hospitalización...): el nombre de
+  // la sección va una sola vez como label del grupo, no repetido en cada card.
+  // Si la búsqueda coincide con el nombre de la sección, se muestran todos
+  // sus ítems.
   const q = normalizar(query.trim());
-  const filteredItems = q
-    ? tabItems.filter((item) => normalizar(item.title).includes(q) || normalizar(item.sectionTitle).includes(q))
-    : tabItems;
+  const filteredGroups = groups
+    .filter((group) => group.module === activeTab)
+    .map((group) => ({
+      ...group,
+      items: !q || normalizar(group.title).includes(q)
+        ? group.items
+        : group.items.filter((item) => normalizar(item.title).includes(q)),
+    }))
+    .filter((group) => group.items.length > 0);
 
   const tone = MODULE_TONES[activeTab];
 
@@ -92,42 +98,51 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
           </div>
         </div>
 
-        <div className="amm-grid">
-          {filteredItems.length === 0 && (
+        <div className="amm-list">
+          {filteredGroups.length === 0 && (
             <p className="amm-empty">
               {query ? <>Sin resultados para &quot;{query}&quot;.</> : 'Todavía no hay submódulos disponibles acá.'}
             </p>
           )}
-          {filteredItems.map((item) => {
-            const content = (
-              <>
-                <div className={`amm-item-icon${tone !== 'blue' ? ` tone-${tone}` : ''}`}><item.icon className="icon" /></div>
-                <div className="amm-item-body">
-                  <div className="amm-item-title-row">
-                    <span className="amm-item-title">{item.title}</span>
-                    {!item.enabled && (
-                      <span className="module-card-badge"><LuLock className="icon" />Próximamente</span>
-                    )}
-                  </div>
-                  <p className="amm-item-desc">{item.description}</p>
-                  <span className="amm-item-section">{item.sectionTitle}</span>
-                </div>
-              </>
-            );
-            const key = `${item.sectionTitle}-${item.title}`;
-            if (!item.enabled) {
-              return (
-                <div key={key} className="amm-item disabled" aria-disabled="true">
-                  {content}
-                </div>
-              );
-            }
-            return (
-              <Link key={key} href={item.href} className="amm-item" onClick={onClose}>
-                {content}
-              </Link>
-            );
-          })}
+          {filteredGroups.map((group) => (
+            <section key={group.title} className="amm-group">
+              <h4 className="amm-group-title">
+                <group.icon className="icon" aria-hidden="true" />
+                {group.title}
+                <span className="amm-group-count">{group.items.length}</span>
+              </h4>
+              <div className="amm-grid">
+                {group.items.map((item) => {
+                  const content = (
+                    <>
+                      <div className={`amm-item-icon${tone !== 'blue' ? ` tone-${tone}` : ''}`}><item.icon className="icon" /></div>
+                      <div className="amm-item-body">
+                        <div className="amm-item-title-row">
+                          <span className="amm-item-title">{item.title}</span>
+                          {!item.enabled && (
+                            <span className="module-card-badge"><LuLock className="icon" />Próximamente</span>
+                          )}
+                        </div>
+                        <p className="amm-item-desc">{item.description}</p>
+                      </div>
+                    </>
+                  );
+                  if (!item.enabled) {
+                    return (
+                      <div key={item.title} className="amm-item disabled" aria-disabled="true">
+                        {content}
+                      </div>
+                    );
+                  }
+                  return (
+                    <Link key={item.title} href={item.href} className="amm-item" onClick={onClose}>
+                      {content}
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       </div>
     </div>

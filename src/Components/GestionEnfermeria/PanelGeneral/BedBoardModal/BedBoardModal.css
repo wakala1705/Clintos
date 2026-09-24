@@ -49,6 +49,10 @@
 .bb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
 .bb-table-actions{display:inline-flex;align-items:center;gap:4px;}
 .bb-paciente-nombre{text-transform:uppercase;}
+/* Cama y estado son columnas cortas y de escaneo: ancho al contenido, así
+   Paciente (la columna con texto largo) se queda con el espacio sobrante. */
+.bb-cell-cama,
+.bb-cell-estado{width:1%;white-space:nowrap;padding-right:32px;}
 
 .cb-empty-state{padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 

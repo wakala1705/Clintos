@@ -5,7 +5,7 @@ import './Admisiones.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
-import { ESTADO_LABEL, fetchAdmisiones } from '@/hooks/Admisiones/mockAdmisionesData';
+import { detalleDesdeAdmision, ESTADO_LABEL, fetchAdmisiones } from '@/hooks/Admisiones/mockAdmisionesData';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
@@ -13,7 +13,7 @@ import AdmisionesToolbar from '@/Components/Admisiones/AdmisionesToolbar/Admisio
 import AdmisionesTable from '@/Components/Admisiones/AdmisionesTable/AdmisionesTable';
 import AdmisionesTableSkeleton from '@/Components/Admisiones/AdmisionesTableSkeleton/AdmisionesTableSkeleton';
 import AdmisionesEmptyState from '@/Components/Admisiones/AdmisionesEmptyState/AdmisionesEmptyState';
-import AdmisionDetalleModal from '@/Components/Admisiones/AdmisionDetalleModal/AdmisionDetalleModal';
+import DetalleAdmisionModal from '@/Components/DetalleAdmisionModal/DetalleAdmisionModal';
 import PreIngresoModal from '@/Components/Admisiones/PreIngresoModal/PreIngresoModal';
 import CargosModal from '@/Components/Admisiones/CargosModal/CargosModal';
 import Button from '@/Components/Button/Button';
@@ -193,7 +193,9 @@ export default function Admisiones() {
         </div>
       </div>
 
-      <AdmisionDetalleModal admision={selectedAdmision} onClose={() => setSelectedAdmision(null)} />
+      {selectedAdmision && (
+        <DetalleAdmisionModal detalle={detalleDesdeAdmision(selectedAdmision)} onClose={() => setSelectedAdmision(null)} />
+      )}
       {preIngresoPatient && (
         <PreIngresoModal
           patient={preIngresoPatient}

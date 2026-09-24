@@ -16,7 +16,7 @@ import { SECCIONES_ORDEN } from '../shared/ordenSecciones';
 // agregados (`ordenItems`, uno por categoría) vive acá porque tanto
 // ItemFormPanel (agrega) como OrdenBuilderTabla (quita) lo necesitan.
 export default function NuevaOrdenForm({ onCancelar, onGuardar }) {
-  const [categoriaActiva, setCategoriaActiva] = useState(SECCIONES_ORDEN[0].clave);
+  const [categoriaActiva, setCategoriaActiva] = useState('medicamentos');
   const [ordenItems, setOrdenItems] = useState({});
 
   const categoria = SECCIONES_ORDEN.find((s) => s.clave === categoriaActiva);

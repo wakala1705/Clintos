@@ -22,6 +22,13 @@
   --bg:#f4f6fb;
   --table-header-bg:var(--bg);
   --gray-bg:#eef0f4;
+  /* --surface-modal/--red/--red-bg: los consume @/Components/DropdownMenu
+     (ítem "Eliminar" del menú "⋯" de ReposicionesCard) — antes eran hex
+     sueltos en shared.css (.row-menu-item.danger). Mismos valores que el
+     resto de features. */
+  --surface-modal:#ffffff;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --green:#12a150;
@@ -50,6 +57,9 @@ html[data-theme="dark"]{
   --surface:#161c2b;
   --bg:#0c0f17;
   --gray-bg:#242c3d;
+  --surface-modal:#1c2333;
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
   --green:#34d399;

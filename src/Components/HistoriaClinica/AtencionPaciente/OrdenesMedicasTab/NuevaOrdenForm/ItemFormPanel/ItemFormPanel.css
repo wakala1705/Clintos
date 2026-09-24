@@ -28,6 +28,31 @@
 .ifp-panel .form-field textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
 .ifp-panel .form-field input[aria-invalid="true"]{border-color:var(--red);}
 
+/* Encabezado de la categoría activa: el riel (CategoriaRail) solo muestra
+   íconos con tooltip, así que sin esto el formulario no dice a qué sección de
+   la orden va a agregar. Ícono + tono iguales a .obt-section-icon.* de
+   OrdenBuilderTabla.css (mismo catálogo, ../../shared/ordenSecciones.js) para
+   que el usuario asocie el formulario con su sección en la tabla de la
+   derecha; en 28px en vez de 34px porque el panel es más angosto. */
+.ifp-header{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.ifp-header-icon{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.ifp-header-icon .icon{width:16px;height:16px;}
+.ifp-header-icon.verde{background:var(--green-bg);color:#0d7a3d;}
+.ifp-header-icon.naranja{background:var(--amber-bg);color:var(--amber-fg);}
+.ifp-header-icon.violeta{background:var(--violet-bg);color:var(--violet-fg);}
+.ifp-header-icon.rojo{background:var(--red-bg);color:var(--red);}
+.ifp-header-icon.gris{background:var(--gray-bg);color:var(--gray-fg);}
+.ifp-header-text{display:flex;align-items:baseline;gap:4px;min-width:0;}
+.ifp-header-eyebrow{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-500);white-space:nowrap;flex-shrink:0;}
+.ifp-header-title{
+  margin:0;min-width:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
 .ifp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .ifp-field-split{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;}
 
@@ -91,4 +116,10 @@
 .ifp-row-cantidad{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;}
 .ifp-cantidad{width:100px;flex-shrink:0;}
 
-.ifp-actions{display:flex;flex-direction:column;gap:8px;padding-top:6px;border-top:1px solid var(--border);}
+.ifp-actions{display:flex;flex-direction:row;gap:8px;padding-top:6px;}
+/* "Recetario por voz" solo ícono: Button no tiene modo icon-only, así que se
+   cuadra igualando el padding horizontal al vertical (8px, = --btn-padding).
+   Prefijado con .ifp-actions: Button.module.css carga después de este archivo
+   y con la misma especificidad su padding ganaría. */
+.ifp-actions .ifp-voz-btn{padding:8px;flex-shrink:0;}
+.ifp-actions .ifp-agregar-btn{flex:1;}

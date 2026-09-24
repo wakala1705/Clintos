@@ -1,26 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './ReposicionesCard.css';
 import Badge from '@/Components/Badge/Badge';
-import { LuEllipsis, LuEye, LuPencil, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
+import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
+import { LuEye, LuPencil, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
 
 // Card maestra de reposiciones: buscador (por consecutivo) + tabla + footer
-// con el conteo y la fila seleccionada. El menú "···" de cada fila se
-// controla con un solo id (openMenuId) porque solo puede haber uno abierto a
-// la vez — se cierra al hacer click fuera de cualquier .row-actions.
+// con el conteo y la fila seleccionada. El menú "⋯" de cada fila es
+// @/Components/DropdownMenu (ver AGENTS.md "Dropdowns").
 export default function ReposicionesCard({ repos, selectedId, onSelect, onNuevo, onVerDetalle, onEditar, onEliminar }) {
   const [query, setQuery] = useState('');
-  const [openMenuId, setOpenMenuId] = useState(null);
-
-  useEffect(() => {
-    if (!openMenuId) return;
-    function handleClickOutside(e) {
-      if (!e.target.closest('.row-actions')) setOpenMenuId(null);
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [openMenuId]);
 
   const term = query.trim().toLowerCase();
   const filtered = term ? repos.filter((r) => r.id.toLowerCase().includes(term)) : repos;
@@ -84,46 +74,25 @@ export default function ReposicionesCard({ repos, selectedId, onSelect, onNuevo,
                   <td className="center"><Badge tone={rep.estado.cls}>{rep.estado.text}</Badge></td>
                   <td className="center">
                     <div className="row-actions">
-                      <span
+                      <button
+                        type="button"
                         className="icon-action"
                         title="Ver detalle"
-                        role="button"
-                        tabIndex={0}
+                        aria-label={`Ver detalle de la reposición ${rep.id}`}
                         onClick={(e) => { e.stopPropagation(); onVerDetalle(rep.id); }}
+                        onKeyDown={(e) => e.stopPropagation()}
                       >
                         <LuEye className="icon" aria-hidden="true" />
-                      </span>
-                      <span
-                        className="icon-action"
-                        title="Más acciones"
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => { e.stopPropagation(); setOpenMenuId((id) => (id === rep.id ? null : rep.id)); }}
-                      >
-                        <LuEllipsis className="icon" aria-hidden="true" />
-                      </span>
-                      {openMenuId === rep.id && (
-                        <div className="row-menu" role="menu">
-                          <button
-                            type="button"
-                            className="row-menu-item"
-                            role="menuitem"
-                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEditar(rep.id); }}
-                          >
-                            <LuPencil className="icon" aria-hidden="true" />
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            className="row-menu-item danger"
-                            role="menuitem"
-                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEliminar(rep.id); }}
-                          >
-                            <LuTrash2 className="icon" aria-hidden="true" />
-                            Eliminar
-                          </button>
-                        </div>
-                      )}
+                      </button>
+                      <DropdownMenu
+                        label={`Más acciones para la reposición ${rep.id}`}
+                        items={[
+                          { id: 'editar', label: 'Editar', icon: LuPencil, onSelect: () => onEditar(rep.id) },
+                          {
+                            id: 'eliminar', label: 'Eliminar', icon: LuTrash2, tone: 'danger', onSelect: () => onEliminar(rep.id),
+                          },
+                        ]}
+                      />
                     </div>
                   </td>
                 </tr>

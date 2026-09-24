@@ -1,6 +1,9 @@
 import AtencionPaciente from '@/Components/HistoriaClinica/AtencionPaciente/AtencionPaciente';
 
-export default async function AtencionHospitalizadoPage({ params }) {
+// `?tab=<id>` abre la atención directo en esa pestaña (ej. "Ver órdenes
+// médicas" del menú "⋯" de la tabla de HC Hospitalización).
+export default async function AtencionHospitalizadoPage({ params, searchParams }) {
   const { id } = await params;
-  return <AtencionPaciente id={id} variante="hospitalizacion" />;
+  const { tab } = await searchParams;
+  return <AtencionPaciente id={id} variante="hospitalizacion" initialTab={tab} />;
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './NuevaCitaDropdown.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuChevronDown, LuPlus } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 
@@ -52,10 +53,10 @@ export default function NuevaCitaDropdown({ onNuevaCita }) {
       </div>
 
       {open && (
-        <div className="pc-nc-menu" role="menu">
+        <div className={`pc-nc-menu ${panel.panel}`} role="menu">
           <button
             type="button"
-            className="pc-nc-option"
+            className={panel.item}
             role="menuitem"
             onClick={() => { setOpen(false); window.ncToast?.('Multiagendamiento en desarrollo.'); }}
           >

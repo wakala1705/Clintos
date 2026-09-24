@@ -3,18 +3,7 @@
    si quedara anidado dentro. z-index +1 sobre --z-modal por la misma razón
    que ahí -- el portal queda fuera del stacking context de cualquier modal
    que pudiera estar abierto. */
-.sam-menu{
-  position:fixed;min-width:200px;z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
-  display:flex;flex-direction:column;gap:1px;
-}
-.sam-item{
-  display:flex;align-items:center;gap:8px;width:100%;
-  padding:9px 10px;border-radius:8px;border:none;background:none;font-family:inherit;
-  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
-}
-.sam-item .icon{width:20px;height:20px;color:var(--primary);flex-shrink:0;}
-.sam-item:hover{background:var(--bg);}
-.sam-item:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
-.sam-item-warning .icon{color:var(--amber-fg);}
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición y el ícono ámbar de "Cirugía de urgencia" (solo el ícono: no es una acción que falle o destruya, así que no lleva el tono warn completo). */
+.sam-menu{position:fixed;z-index:calc(var(--z-modal, 50) + 1);}
+.sam-icon-urgencia{color:var(--amber-fg);}

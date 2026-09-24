@@ -100,12 +100,17 @@ const VARIANTES = {
   },
 };
 
-export default function AtencionPaciente({ id, variante = 'consulta-externa' }) {
+export default function AtencionPaciente({ id, variante = 'consulta-externa', initialTab }) {
   const router = useRouter();
   const cfg = VARIANTES[variante];
   const [status, setStatus] = useState('loading'); // loading | ready | not-found
   const [data, setData] = useState(null);
-  const [activeTab, setActiveTab] = useState('historia-clinica');
+  // `initialTab` (viene de `?tab=` vía page.jsx, ej. "Ver órdenes médicas"
+  // del menú "⋯" de HC Hospitalización): solo pestañas habilitadas; cualquier
+  // otro valor se ignora y queda "Historia clínica".
+  const [activeTab, setActiveTab] = useState(
+    () => (TABS.some((t) => t.id === initialTab && t.enabled) ? initialTab : 'historia-clinica'),
+  );
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
@@ -264,6 +269,9 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
   // ContextChip.jsx que oculta el botón "✕" cuando no se lo pasan.
   const clintosPaciente = variante === 'hospitalizacion' ? getPacienteHospitalizado(id) : null;
   const clintosAIRef = useRef(null);
+  // Espejo de si el panel de Kora está abierto (vía onOpenChange de
+  // <ClintosAI/>) — estado `active` del switch del Topbar.
+  const [koraOpen, setKoraOpen] = useState(false);
 
   // Botón "Resumen" de un registro (HistoriaClinicaTab.jsx, encargo
   // explícito): en vez de mostrar el resultado inline en el registro, lo
@@ -288,7 +296,11 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         >
           {clintosPaciente && (
-            <KoraTopbarButton variant="secondary-accent" onClick={() => clintosAIRef.current?.open()} />
+            <KoraTopbarButton
+              variant="secondary-accent"
+              active={koraOpen}
+              onClick={() => (koraOpen ? clintosAIRef.current?.close() : clintosAIRef.current?.open())}
+            />
           )}
         </Topbar>
 
@@ -401,6 +413,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa' }) 
               onNavigate={router.push}
               selectedPaciente={clintosPaciente}
               screenLabel="Hospitalización · Atención del paciente"
+              onOpenChange={setKoraOpen}
             />
           )}
         </div>

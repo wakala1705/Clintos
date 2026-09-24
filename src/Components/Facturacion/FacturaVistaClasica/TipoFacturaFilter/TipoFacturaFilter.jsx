@@ -5,6 +5,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import './TipoFacturaFilter.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuChevronDown } from 'react-icons/lu';
 
 // Filtro "Tipo Factura" de selección múltiple (encargo explícito, ver imagen
@@ -102,7 +103,7 @@ export default function TipoFacturaFilter({
       {open && coords && createPortal(
         <div
           ref={dropdownRef}
-          className="tff-dropdown"
+          className={`tff-dropdown ${panel.panel}`}
           role="dialog"
           aria-label={ariaLabel}
           style={{ top: coords.top, left: coords.left, minWidth: coords.minWidth }}
@@ -114,7 +115,7 @@ export default function TipoFacturaFilter({
           <ul className="tff-options">
             {options.map((o) => (
               <li key={o.value}>
-                <label className="tff-option">
+                <label className={`${panel.item} tff-option`}>
                   <input
                     type="checkbox"
                     checked={value.includes(o.value)}

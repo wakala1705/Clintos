@@ -29,15 +29,6 @@
 .pcd-chev{transition:transform .15s ease;}
 .pcd-toggle[aria-expanded="true"] .pcd-chev{transform:rotate(180deg);}
 
-.pcd-menu{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:var(--z-popover);
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:6px;
-  display:flex;flex-direction:column;gap:1px;
-}
-.pcd-option{
-  padding:9px 10px;border-radius:8px;text-align:left;
-  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
-  background:none;border:none;font-family:inherit;width:100%;
-}
-.pcd-option:hover{background:var(--bg);}
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición. */
+.pcd-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:var(--z-popover);min-width:0;}

@@ -36,12 +36,24 @@
 /* Tabs de módulo: @/Components/Home/PillTabs/PillTabs (compartido con el
    selector rápido del hero, ver Home.jsx). */
 
-.amm-grid{
+/* Listado agrupado por sección: el nombre de la sección va una sola vez como
+   label del grupo, no repetido en cada card. */
+.amm-list{
   flex:1;min-height:0;overflow-y:auto;
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
-  padding:16px 24px 24px;align-content:start;
+  display:flex;flex-direction:column;gap:24px;
+  padding:8px 24px 24px;
 }
-.amm-empty{grid-column:1 / -1;padding:32px 0;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+.amm-group-title{
+  display:flex;align-items:center;gap:8px;margin:0 0 12px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.amm-group-title .icon{width:16px;height:16px;color:var(--primary-dark);}
+.amm-group-count{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  background:var(--gray-bg);padding:1px 8px;border-radius:20px;
+}
+.amm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.amm-empty{padding:32px 0;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
 
 .amm-item{
   display:flex;align-items:flex-start;gap:12px;
@@ -70,4 +82,3 @@ html[data-theme="dark"] .amm-item:not(.disabled):hover{box-shadow:0 4px 14px rgb
 .amm-item-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
 .amm-item-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .amm-item-desc{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;margin-top:2px;}
-.amm-item-section{display:block;font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;margin-top:2px;}

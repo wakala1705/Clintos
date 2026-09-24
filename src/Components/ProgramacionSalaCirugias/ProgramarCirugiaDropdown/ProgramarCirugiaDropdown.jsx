@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ProgramarCirugiaDropdown.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuChevronDown, LuPlus } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 
@@ -51,10 +52,10 @@ export default function ProgramarCirugiaDropdown({ onNuevaCirugia, onNuevaUrgenc
       </div>
 
       {open && (
-        <div className="pcd-menu" role="menu">
+        <div className={`pcd-menu ${panel.panel}`} role="menu">
           <button
             type="button"
-            className="pcd-option"
+            className={panel.item}
             role="menuitem"
             onClick={() => { setOpen(false); onNuevaUrgencia?.(); }}
           >

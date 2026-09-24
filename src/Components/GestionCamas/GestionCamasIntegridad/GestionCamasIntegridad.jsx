@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect, useRef, useState, useSyncExternalStore,
+} from 'react';
 import '../GestionCamas.css';
 import './GestionCamasIntegridad.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -38,6 +40,12 @@ const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', detectado: 'cualquiera'
 // encargo sección 17) ni tratar esto como alerta clínica (sección 16): por
 // eso ImpactoBadge/EstadoInconsistenciaBadge usan el mismo lenguaje
 // administrativo rojo/ámbar/azul del resto del módulo, no el de TriageBadge.
+// Suscripción vacía para useSyncExternalStore: solo interesa distinguir
+// render del servidor (false) de render en el cliente (true).
+function suscribirNada() {
+  return () => {};
+}
+
 export default function GestionCamasIntegridad() {
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
@@ -62,6 +70,12 @@ export default function GestionCamasIntegridad() {
   const [inconsistencias, setInconsistencias] = useState(INCONSISTENCIAS_INICIALES);
   const [historialVerificaciones, setHistorialVerificaciones] = useState(HISTORIAL_VERIFICACIONES_INICIAL);
   const [ultimaVerificacion, setUltimaVerificacion] = useState(ULTIMA_VERIFICACION_INICIAL);
+  // La hora de 'Última verificación' sale de Date.now() al cargar el mock
+  // (mockIntegridadData.js): el servidor y el navegador la calculan en
+  // momentos distintos y el HTML no coincide (error de hidratación). Se
+  // pinta solo ya en el cliente — mismo patrón useSyncExternalStore que
+  // hooks/Bodega/bodega.js; en el render del servidor muestra '—'.
+  const hidratado = useSyncExternalStore(suscribirNada, () => true, () => false);
   const [verificando, setVerificando] = useState(false);
 
   const [status, setStatus] = useState('loading'); // loading | ready | error
@@ -248,7 +262,7 @@ export default function GestionCamasIntegridad() {
               <KpiCard icon={LuCircleAlert} label="Críticas" value={kpiCriticas} description="Acción recomendada" variant="danger" />
               <KpiCard icon={LuTriangleAlert} label="Advertencias" value={kpiAdvertencias} description="Revisión sugerida" variant="warning" />
               <KpiCard icon={LuInfo} label="Informativas" value={kpiInformativas} description="Sin impacto operativo" variant="info" />
-              <KpiCard icon={LuShieldCheck} label="Última verificación" value={formatHoraRelativa(ultimaVerificacion)} description={formatFecha(ultimaVerificacion)} variant="neutral" />
+              <KpiCard icon={LuShieldCheck} label="Última verificación" value={hidratado ? formatHoraRelativa(ultimaVerificacion) : '—'} description={hidratado ? formatFecha(ultimaVerificacion) : ' '} variant="neutral" />
             </div>
 
             <div className="card cbi-table-card">

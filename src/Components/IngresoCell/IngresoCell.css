@@ -1,0 +1,6 @@
+/* Colores de los badges: @/Components/Badge (tokens --amber-bg/fg, --amber,
+   --status-info-bg/fg del :root de la feature donde se monta). */
+.ingreso-cell-dias{color:var(--ink-500);}
+.ingreso-cell-badge{margin-left:8px;vertical-align:middle;}
+/* Ícono del badge de estancia prolongada, a la escala del texto --fs-xs. */
+.ingreso-cell-icon{width:12px;height:12px;flex-shrink:0;}

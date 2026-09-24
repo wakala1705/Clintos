@@ -7,3 +7,20 @@
    una doble línea entre la barra de filtros y la tabla. Selector compuesto
    para no depender del orden de inyección respecto a .filter-bar. */
 .filter-bar.hh-patients-toolbar{border-bottom:none;}
+
+/* Expandir/contraer tabla — botón de ícono cuadrado con el mismo borde,
+   radio y alto que el trigger de AreaSelector a su izquierda. Activo
+   (expandida) con los tokens de selección, como un toggle. */
+.hh-expand-btn{
+  flex-shrink:0;width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;transition:var(--btn-transition);
+}
+.hh-expand-btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.hh-expand-btn:hover{background:var(--gray-bg);}
+.hh-expand-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.hh-expand-btn[aria-pressed="true"]{
+  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);
+}
+

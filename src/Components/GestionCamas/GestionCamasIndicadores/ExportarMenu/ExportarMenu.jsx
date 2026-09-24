@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ExportarMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import {
   LuChevronDown, LuDownload, LuFileSpreadsheet, LuFileText, LuFileType2,
 } from 'react-icons/lu';
@@ -53,16 +54,16 @@ export default function ExportarMenu({ onExport }) {
       </Button>
 
       {open && (
-        <div className="cbin-export-dropdown" role="menu">
+        <div className={`cbin-export-dropdown ${panel.panel}`} role="menu">
           {FORMATOS.map((f) => (
             <button
               type="button"
               key={f.id}
-              className="cbin-export-item"
+              className={panel.item}
               role="menuitem"
               onClick={() => { setOpen(false); onExport(f.id); }}
             >
-              <f.icon className="icon" aria-hidden="true" />
+              <f.icon className={panel.icon} aria-hidden="true" />
               {f.label}
             </button>
           ))}

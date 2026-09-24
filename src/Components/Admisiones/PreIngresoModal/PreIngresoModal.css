@@ -1,5 +1,5 @@
 /* .adm-modal-overlay/.adm-modal/.adm-modal-body/.adm-modal-footer:
-   definidas en ../shared/shared.css (compartidas con AdmisionDetalleModal).
+   definidas en ../shared/shared.css (compartidas con CargosModal y sus modales anidados).
    El header usa @/Components/ModalHeader/ModalHeader (homologado) —
    .estado-badge/.dot del pill de estado del paciente: definidas en
    NuevaCitaFlow.css (montado en Admisiones.jsx) — acá solo lo exclusivo de

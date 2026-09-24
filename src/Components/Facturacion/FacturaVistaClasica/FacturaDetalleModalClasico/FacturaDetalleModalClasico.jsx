@@ -116,7 +116,7 @@ function Field({ label, value, children }) {
 // `toggleSelectedItem`). Selección por `id` estable del ítem (ver buildItems
 // en mockFacturasData.js), no por índice del array -- FacturaItemsTable ya
 // lo espera así independientemente de si hay algo más arriba filtrando
-// `items`. `factura` null = cerrado, mismo patrón que AdmisionDetalleModal.
+// `items`. `factura` null = cerrado, mismo patrón que DetalleAdmisionModal en Admisiones.jsx.
 //
 // fvcd-anulada-card (encargo explícito) -- solo cuando `factura.estado ===
 // 'anulada'`, entre fvcd-compact-fields y fvcd-detail-row (nunca deja hueco

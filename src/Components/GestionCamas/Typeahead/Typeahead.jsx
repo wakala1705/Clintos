@@ -5,6 +5,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import './Typeahead.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuSearch } from 'react-icons/lu';
 
 let requestSeq = 0;
@@ -155,11 +156,11 @@ export default function Typeahead({
           ref={dropdownRef}
           id={listboxId}
           role="listbox"
-          className="cbta-dropdown"
+          className={`cbta-dropdown ${panel.panel}`}
           style={{ top: coords.top, left: coords.left, width: coords.width }}
         >
-          {loading && <li className="cbta-status">Buscando…</li>}
-          {!loading && results.length === 0 && <li className="cbta-status">Sin resultados</li>}
+          {loading && <li className={panel.empty}>Buscando…</li>}
+          {!loading && results.length === 0 && <li className={panel.empty}>Sin resultados</li>}
           {!loading && results.map((item, i) => (
             <li key={item.key ?? i} role="presentation">
               <button
@@ -167,7 +168,7 @@ export default function Typeahead({
                 id={`${id}-option-${i}`}
                 role="option"
                 aria-selected={i === activeIndex}
-                className={`cbta-option${i === activeIndex ? ' active' : ''}`}
+                className={[panel.item, 'cbta-option', i === activeIndex && panel.highlighted].filter(Boolean).join(' ')}
                 onMouseDown={(e) => e.preventDefault()}
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => handleSelect(item)}

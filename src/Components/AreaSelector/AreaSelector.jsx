@@ -5,6 +5,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import './AreaSelector.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCheck, LuChevronDown, LuMapPin } from 'react-icons/lu';
 
 // Reemplaza el <select> nativo de "Área operativa" (encargo explícito) por
@@ -110,7 +111,7 @@ export default function AreaSelector({ options, value, onChange, label }) {
       {open && coords && createPortal(
         <ul
           ref={dropdownRef}
-          className="pg-area-select-dropdown"
+          className={`pg-area-select-dropdown ${panel.panel}`}
           role="listbox"
           aria-label={label ?? 'Área operativa'}
           style={{ top: coords.top, right: coords.right, minWidth: coords.minWidth }}
@@ -119,8 +120,8 @@ export default function AreaSelector({ options, value, onChange, label }) {
             <Fragment key={o.value}>
               {o.group && o.group !== options[i - 1]?.group && (
                 <>
-                  {i > 0 && <li role="separator" className="pg-area-select-divider" />}
-                  <li role="presentation" className="pg-area-select-group-label">{o.group}</li>
+                  {i > 0 && <li role="separator" className={panel.divider} />}
+                  <li role="presentation" className={panel.groupLabel}>{o.group}</li>
                 </>
               )}
               <li role="presentation">
@@ -128,11 +129,11 @@ export default function AreaSelector({ options, value, onChange, label }) {
                   type="button"
                   role="option"
                   aria-selected={o.value === value}
-                  className={`pg-area-select-option${o.value === value ? ' active' : ''}`}
+                  className={[panel.item, o.value === value && panel.selected].filter(Boolean).join(' ')}
                   onClick={() => handleSelect(o.value)}
                 >
                   {o.label}
-                  {o.value === value && <LuCheck className="icon" aria-hidden="true" />}
+                  {o.value === value && <LuCheck className={panel.check} aria-hidden="true" />}
                 </button>
               </li>
             </Fragment>

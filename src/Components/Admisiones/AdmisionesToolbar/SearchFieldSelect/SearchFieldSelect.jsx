@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './SearchFieldSelect.css';
-import { LuChevronDown } from 'react-icons/lu';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
+import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 // Reemplaza el <select> nativo del campo "Buscar por" (su popup de opciones
 // no es estilable — queda con la apariencia del SO). Mismo patrón
@@ -51,17 +52,18 @@ export default function SearchFieldSelect({ options, value, onChange, label }) {
       </button>
 
       {open && (
-        <div className="adm-search-select-dropdown" role="listbox">
+        <div className={`adm-search-select-dropdown ${panel.panel}`} role="listbox">
           {options.map((o) => (
             <button
               key={o.value}
               type="button"
               role="option"
               aria-selected={o.value === value}
-              className={`adm-search-select-item${o.value === value ? ' selected' : ''}`}
+              className={[panel.item, o.value === value && panel.selected].filter(Boolean).join(' ')}
               onClick={() => handleSelect(o.value)}
             >
               {o.label}
+              {o.value === value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
         </div>

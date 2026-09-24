@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './RowHeightDropdown.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCheck, LuChevronDown, LuRows3 } from 'react-icons/lu';
 
 const OPTIONS = [
@@ -53,18 +54,18 @@ export default function RowHeightDropdown({ value, onChange }) {
       </button>
 
       {open && (
-        <div className="pc-rowh-menu" role="listbox">
+        <div className={`pc-rowh-menu ${panel.panel}`} role="listbox">
           {OPTIONS.map((o) => (
             <button
               type="button"
               key={o.value}
-              className={`pc-rowh-option${o.value === value ? ' active' : ''}`}
+              className={[panel.item, o.value === value && panel.selected].filter(Boolean).join(' ')}
               role="option"
               aria-selected={o.value === value}
               onClick={() => { onChange(o.value); setOpen(false); }}
             >
               <span>{o.label}</span>
-              {o.value === value && <LuCheck className="icon" aria-hidden="true" />}
+              {o.value === value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
         </div>

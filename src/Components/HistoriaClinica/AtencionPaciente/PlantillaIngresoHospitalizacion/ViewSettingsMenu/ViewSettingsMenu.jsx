@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ViewSettingsMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuSettings2, LuColumns2, LuStretchHorizontal } from 'react-icons/lu';
 
 // Dropdown de "Configuración de vista" del pih-titlebar (ver
@@ -61,8 +62,8 @@ export default function ViewSettingsMenu({ columnLayout, onColumnLayoutChange })
       </button>
 
       {open && (
-        <div className="vsm-dropdown" role="menu">
-          <div className="vsm-section-label">Diseño de columna</div>
+        <div className={`vsm-dropdown ${panel.panel}`} role="menu">
+          <div className={panel.groupLabel}>Diseño de columna</div>
           <div className="vsm-colsize-group" role="group" aria-label="Diseño de columna">
             {COLUMN_LAYOUTS.map((c) => (
               <button

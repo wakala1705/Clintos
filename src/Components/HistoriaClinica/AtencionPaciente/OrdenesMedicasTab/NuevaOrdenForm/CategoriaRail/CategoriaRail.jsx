@@ -17,7 +17,7 @@ export default function CategoriaRail({ categorias, activa, onSelect }) {
           <button
             key={cat.clave}
             type="button"
-            className={`cr-item${isActive ? ' active' : ''}`}
+            className={`cr-item ${cat.tono}${isActive ? ' active' : ''}`}
             onClick={() => onSelect(cat.clave)}
             aria-pressed={isActive}
             title={cat.titulo}

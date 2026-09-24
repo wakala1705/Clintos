@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './UserMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import ConfigModal from './ConfigModal/ConfigModal';
 import { LuBell, LuChevronDown, LuLifeBuoy, LuLogOut, LuSettings } from 'react-icons/lu';
 
@@ -57,30 +58,30 @@ export default function UserMenu({ name, role, initials }) {
         </button>
 
         {open && (
-          <div className="user-menu-dropdown" role="menu">
-            <button type="button" className="user-menu-item" role="menuitem" onClick={() => setOpen(false)}>
-              <LuBell className="icon" aria-hidden="true" />
+          <div className={`user-menu-dropdown ${panel.panel}`} role="menu">
+            <button type="button" className={panel.item} role="menuitem" onClick={() => setOpen(false)}>
+              <LuBell className={panel.icon} aria-hidden="true" />
               Notificaciones
             </button>
-            <button type="button" className="user-menu-item" role="menuitem" onClick={() => setOpen(false)}>
-              <LuLifeBuoy className="icon" aria-hidden="true" />
+            <button type="button" className={panel.item} role="menuitem" onClick={() => setOpen(false)}>
+              <LuLifeBuoy className={panel.icon} aria-hidden="true" />
               Soporte
             </button>
             <button
               type="button"
-              className="user-menu-item"
+              className={panel.item}
               role="menuitem"
               onClick={() => {
                 setOpen(false);
                 setConfigOpen(true);
               }}
             >
-              <LuSettings className="icon" aria-hidden="true" />
+              <LuSettings className={panel.icon} aria-hidden="true" />
               Configuración
             </button>
-            <div className="user-menu-divider"></div>
-            <button type="button" className="user-menu-item danger" role="menuitem" onClick={handleLogout}>
-              <LuLogOut className="icon" aria-hidden="true" />
+            <div className={panel.divider} role="separator"></div>
+            <button type="button" className={`${panel.item} ${panel.danger}`} role="menuitem" onClick={handleLogout}>
+              <LuLogOut className={panel.icon} aria-hidden="true" />
               Cerrar sesión
             </button>
           </div>

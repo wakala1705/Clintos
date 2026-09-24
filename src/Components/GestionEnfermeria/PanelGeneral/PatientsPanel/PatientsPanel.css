@@ -4,4 +4,23 @@
 .pg-patients-toolbar{
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;flex-shrink:0;
 }
-.pg-patients-toolbar .search-field{width:260px;}
+/* Buscador flexible (180–260px): con el panel de secciones abierto, cede
+   ancho antes de que el botón expandir salte a una segunda fila. */
+.pg-patients-toolbar .search-field{flex:1 1 180px;min-width:180px;max-width:260px;}
+
+/* Expandir/contraer tabla — botón de ícono cuadrado con el mismo borde,
+   radio y alto que "Mapa de camas" a su izquierda. Activo (expandida) con
+   los tokens de selección, como un toggle. Mismo botón que .hh-expand-btn
+   de HC Hospitalización. */
+.pg-expand-btn{
+  flex-shrink:0;width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;transition:var(--btn-transition);
+}
+.pg-expand-btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.pg-expand-btn:hover{background:var(--gray-bg);}
+.pg-expand-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.pg-expand-btn[aria-pressed="true"]{
+  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);
+}

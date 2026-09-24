@@ -3,12 +3,11 @@
 .vsm-root{position:relative;flex-shrink:0;}
 .vsm-trigger[aria-expanded="true"]{background:var(--gray-bg);color:var(--ink-900);}
 
-.vsm-dropdown{
-  position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:280px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:0 16px 40px rgba(16,24,39,.20);padding:12px;
-}
-.vsm-section-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;margin:0 0 10px;}
+/* Panel y título de sección: apariencia de @/Components/DropdownPanel (ver
+   AGENTS.md "Dropdowns"). Acá solo la posición y las cards de diseño de
+   columna (control propio, no una opción de lista). */
+.vsm-dropdown{position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:280px;}
+.vsm-colsize-group{padding:0 4px 4px;}
 
 /* Cards de "2 columnas"/"Flexible" -- ícono de Lucide (LuColumns2/
    LuStretchHorizontal, ver ViewSettingsMenu.jsx) + label debajo, la opción

@@ -221,7 +221,7 @@ export default function BedCard({
         <IconoEstado className="icon cb-card-estado-icon" aria-hidden="true" />
         <span className="cb-card-numero">{cama.numero}</span>
         <div className="cb-card-menu-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} role="presentation">
-          <BedActionsMenu estado={cama.estado} numero={cama.numero} onAction={(action) => onAction(action, cama.id)} />
+          <BedActionsMenu estado={cama.estado} numero={cama.numero} size="sm" onAction={(action) => onAction(action, cama.id)} />
         </div>
       </div>
 

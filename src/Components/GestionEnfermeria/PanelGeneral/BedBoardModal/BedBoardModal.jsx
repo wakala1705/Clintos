@@ -27,6 +27,13 @@ const FILTROS_ESTADO = [
 // AREAS_OPERATIVAS (misma fuente que el selector de área de Panel General)
 // sin la opción "Todo el área" — solo lo usa BedListView para la columna
 // "Sector" de la vista Lista.
+// Estancia en la sublínea del paciente: un nuevo ingreso (< 24 h) dice
+// cuándo entró en vez de "0 días" — mismo criterio que estanciaLabel.
+function estanciaTexto(p) {
+  if (p.nuevoIngreso) return `Ingresó hace ${Math.max(1, p.horasDesdeIngreso)} h`;
+  return p.diasEstancia === 1 ? '1 día de estancia' : `${p.diasEstancia} días de estancia`;
+}
+
 const SECTOR_LABEL = Object.fromEntries(
   AREAS_OPERATIVAS.filter((a) => a.value !== 'todo').map((a) => [a.value, a.label]),
 );
@@ -37,6 +44,11 @@ const SECTOR_LABEL = Object.fromEntries(
 // modela, así que reusar BedTable dejaría 5 columnas en blanco. Mismo
 // patrón que ContenidoPrincipal en BedCard.jsx: sub-componente local no
 // exportado, solo para este archivo.
+//
+// Orden de columnas: Cama (identificador) → Estado (lo primero que se
+// escanea: ¿libre u ocupada?) → Paciente (quién la ocupa, con edad y días
+// de estancia) → Sector (contexto de ubicación, el dato menos consultado)
+// → acción principal + "⋯".
 function BedListView({ camas, onAction }) {
   return (
     <div className="bb-table-outer">
@@ -45,9 +57,9 @@ function BedListView({ camas, onAction }) {
           <thead>
             <tr>
               <th>Cama</th>
-              <th>Sector</th>
               <th>Estado</th>
               <th>Paciente</th>
+              <th>Sector</th>
               <th className="col-acciones"><span className="sr-only">Acciones</span></th>
             </tr>
           </thead>
@@ -56,17 +68,21 @@ function BedListView({ camas, onAction }) {
               const cta = CTA_PRINCIPAL[c.estado];
               return (
                 <tr key={c.id}>
-                  <td className="cell-primary">{c.numero}</td>
-                  <td className="cell-muted">{SECTOR_LABEL[sectorDeCama(c.numero)] ?? '—'}</td>
-                  <td><EstadoCamaBadge estado={c.estado} /></td>
+                  <td className="cell-primary bb-cell-cama">{c.numero}</td>
+                  <td className="bb-cell-estado"><EstadoCamaBadge estado={c.estado} /></td>
                   <td>
                     {c.paciente ? (
                       <>
                         <span className="bb-paciente-nombre">{c.paciente.nombre}</span>
-                        <span className="cell-sub">{c.paciente.hc}</span>
+                        <span className="cell-sub">
+                          {c.paciente.hc} · {c.paciente.edad} años · {estanciaTexto(c.paciente)}
+                        </span>
                       </>
-                    ) : <span className="cell-muted">—</span>}
+                    ) : (
+                      <span className="cell-muted">Última limpieza {c.ultimaLimpieza}</span>
+                    )}
                   </td>
+                  <td className="cell-muted">{SECTOR_LABEL[sectorDeCama(c.numero)] ?? '—'}</td>
                   <td className="col-acciones">
                     <div className="bb-table-actions">
                       {/* Aislamiento/Inactiva no tienen CTA_PRINCIPAL (mockCamasData.js) */}

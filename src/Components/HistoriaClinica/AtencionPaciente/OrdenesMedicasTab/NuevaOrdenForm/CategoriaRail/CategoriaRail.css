@@ -7,6 +7,15 @@
   display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;flex-shrink:0;padding:0;
 }
 .cr-item:hover{background:var(--gray-bg);color:var(--ink-900);}
-.cr-item.active{background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);}
+/* Activo en el tono de su categoría: mismos pares bg/fg que
+   .ifp-header-icon.* (ItemFormPanel.css) y .obt-section-icon.*
+   (OrdenBuilderTabla.css), así riel, encabezado del formulario y sección de la
+   tabla leen como la misma categoría. El borde toma el color del texto. */
+.cr-item.active{background:var(--primary-50);border-color:var(--primary);color:var(--primary);}
+.cr-item.active.verde{background:var(--green-bg);border-color:#0d7a3d;color:#0d7a3d;}
+.cr-item.active.naranja{background:var(--amber-bg);border-color:var(--amber-fg);color:var(--amber-fg);}
+.cr-item.active.violeta{background:var(--violet-bg);border-color:var(--violet-fg);color:var(--violet-fg);}
+.cr-item.active.rojo{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.cr-item.active.gris{background:var(--gray-bg);border-color:var(--gray-fg);color:var(--gray-fg);}
 .cr-item .icon{width:18px;height:18px;}
 .cr-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}

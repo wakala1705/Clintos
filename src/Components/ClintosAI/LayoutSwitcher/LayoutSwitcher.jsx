@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './LayoutSwitcher.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuAppWindow, LuCheck, LuMaximize2, LuPanelRight } from 'react-icons/lu';
 
 const MODES = [
@@ -51,13 +52,13 @@ export default function LayoutSwitcher({ mode, onChange }) {
       </button>
 
       {open && (
-        <div className="cai-layout-dropdown" role="menu">
-          <div className="cai-layout-dropdown-label">Cambiar a</div>
+        <div className={`cai-layout-dropdown ${panel.panel}`} role="menu">
+          <div className={panel.groupLabel}>Cambiar a</div>
           {MODES.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
               type="button"
-              className="cai-layout-item"
+              className={[panel.item, mode === value && panel.selected].filter(Boolean).join(' ')}
               role="menuitemradio"
               aria-checked={mode === value}
               onClick={() => {
@@ -65,9 +66,9 @@ export default function LayoutSwitcher({ mode, onChange }) {
                 setOpen(false);
               }}
             >
-              <Icon className="icon" aria-hidden="true" />
-              <span className="cai-layout-item-label">{label}</span>
-              {mode === value && <LuCheck className="icon cai-layout-item-check" aria-hidden="true" />}
+              <Icon className={panel.icon} aria-hidden="true" />
+              {label}
+              {mode === value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
         </div>

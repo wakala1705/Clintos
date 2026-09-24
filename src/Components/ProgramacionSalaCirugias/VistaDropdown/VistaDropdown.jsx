@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './VistaDropdown.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 const OPTIONS = [
@@ -75,19 +76,19 @@ export default function VistaDropdown({ value, onChange, mostrarFinesDeSemana, o
       </button>
 
       {open && (
-        <div className="psc-vista-menu" role="listbox">
+        <div className={`psc-vista-menu ${panel.panel}`} role="listbox">
           {OPTIONS.map((o) => (
             <button
               type="button"
               key={o.id}
-              className={`psc-vista-option${o.id === value ? ' active' : ''}`}
+              className={[panel.item, o.id === value && panel.selected].filter(Boolean).join(' ')}
               role="option"
               aria-selected={o.id === value}
               onClick={() => handleSelect(o.id)}
             >
               <span>{o.label}</span>
               {o.id === value ? (
-                <LuCheck className="icon" aria-hidden="true" />
+                <LuCheck className={panel.check} aria-hidden="true" />
               ) : (
                 <span className="psc-vista-shortcut">{o.key}</span>
               )}
@@ -96,15 +97,15 @@ export default function VistaDropdown({ value, onChange, mostrarFinesDeSemana, o
 
           {value === 'semana' && (
             <>
-              <div className="psc-vista-divider" role="separator" />
+              <div className={panel.divider} role="separator" />
               <button
                 type="button"
-                className="psc-vista-option"
+                className={panel.item}
                 aria-pressed={mostrarFinesDeSemana}
                 onClick={() => onToggleFinesDeSemana(!mostrarFinesDeSemana)}
               >
                 <span>Mostrar fines de semana</span>
-                {mostrarFinesDeSemana && <LuCheck className="icon" aria-hidden="true" />}
+                {mostrarFinesDeSemana && <LuCheck className={panel.check} aria-hidden="true" />}
               </button>
             </>
           )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './RangoDropdown.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 const OPTIONS = [
@@ -62,19 +63,19 @@ export default function RangoDropdown({ value, onChange }) {
       </button>
 
       {open && (
-        <div className="pc-rango-menu" role="listbox">
+        <div className={`pc-rango-menu ${panel.panel}`} role="listbox">
           {OPTIONS.map((o) => (
             <button
               type="button"
               key={o.id}
-              className={`pc-rango-option${o.id === value ? ' active' : ''}`}
+              className={[panel.item, o.id === value && panel.selected].filter(Boolean).join(' ')}
               role="option"
               aria-selected={o.id === value}
               onClick={() => { onChange(o.id); setOpen(false); }}
             >
               <span>{o.label}</span>
               {o.id === value ? (
-                <LuCheck className="icon" aria-hidden="true" />
+                <LuCheck className={panel.check} aria-hidden="true" />
               ) : (
                 <span className="pc-rango-shortcut">{o.key}</span>
               )}

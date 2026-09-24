@@ -161,12 +161,22 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
 
   return (
     <div className="ifp-panel">
+      <div className="ifp-header">
+        <span className={`ifp-header-icon ${categoria.tono}`}>
+          <categoria.icon className="icon" aria-hidden="true" />
+        </span>
+        <div className="ifp-header-text">
+          <span className="ifp-header-eyebrow">Agregando a</span>
+          <h3 className="ifp-header-title">{categoria.titulo}</h3>
+        </div>
+      </div>
+
       <div className="ifp-search-wrap" ref={searchWrapRef}>
         <div className={`ifp-search${errors.nombre ? ' error' : ''}`}>
           <LuSearch className="icon" aria-hidden="true" />
           <input
             type="text"
-            placeholder="Buscar"
+            placeholder={`Buscar en ${categoria.titulo.toLowerCase()}`}
             value={itemSeleccionado ? '' : busqueda}
             disabled={!!itemSeleccionado}
             aria-label={`Buscar en ${categoria.titulo}`}
@@ -338,12 +348,17 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
       )}
 
       <div className="ifp-actions">
-        <Button variant="outline" icon={LuMic} onClick={() => window.ncToast?.('Recetario por voz (flujo en desarrollo).')}>
-          Recetario por voz
-        </Button>
-        <Button variant="primary" icon={LuPlus} onClick={handleAgregar}>
+        <Button variant="primary" icon={LuPlus} className="ifp-agregar-btn" onClick={handleAgregar}>
           Agregar a la orden
         </Button>
+        <Button
+          variant="outline"
+          icon={LuMic}
+          className="ifp-voz-btn"
+          aria-label="Recetario por voz"
+          title="Recetario por voz"
+          onClick={() => window.ncToast?.('Recetario por voz (flujo en desarrollo).')}
+        />
       </div>
     </div>
   );

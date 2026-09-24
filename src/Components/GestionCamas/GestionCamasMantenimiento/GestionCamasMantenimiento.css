@@ -27,6 +27,17 @@
    (GestionCamasLimpieza.css). */
 .cbm-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
 .cbm-table-actions{display:inline-flex;align-items:center;gap:4px;}
+/* Botón-ícono "Ver detalle" (👁) al lado del "⋯" — mismo tamaño/estados que
+   el trigger de @/Components/DropdownMenu. Antes vivía en
+   MantenimientoRowActionsMenu.css (borrado al migrar a DropdownMenu). */
+.cbm-actions-menu-btn{
+  width:var(--dropdown-trigger-size);height:var(--dropdown-trigger-size);border-radius:var(--dropdown-trigger-radius);flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.cbm-actions-menu-btn .icon{width:var(--dropdown-trigger-icon-size);height:var(--dropdown-trigger-icon-size);}
+.cbm-actions-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cbm-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
 /* Fila completa clicable → abre el detalle (encargo sección 11) — el botón
    👁 y el menú "⋯" cortan la propagación del click (ver

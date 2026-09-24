@@ -5,7 +5,7 @@ import './BedDetailModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import EstadoCamaBadge from '@/Components/GestionCamas/EstadoCamaBadge/EstadoCamaBadge';
 import {
-  AREAS_OPERATIVAS, ESTADO_MEDICACION_LABEL, PACIENTES_PISO, sectorDeCama,
+  AREAS_OPERATIVAS, ESTADO_MEDICACION_LABEL, estanciaLabel, PACIENTES_PISO, sectorDeCama,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import {
   LuArrowLeftRight, LuBedDouble, LuCalendarCheck, LuCalendarClock, LuCalendarX,
@@ -148,7 +148,7 @@ export default function BedDetailModal({
                 </div>
                 <div className="dp-info-row">
                   <span className="k">Días hospitalizado</span>
-                  <span className="v">{pacienteCompleto.diasEstancia} días</span>
+                  <span className="v">{estanciaLabel(pacienteCompleto)}</span>
                 </div>
                 <div className="dp-info-row">
                   <span className="k">Medicación</span>

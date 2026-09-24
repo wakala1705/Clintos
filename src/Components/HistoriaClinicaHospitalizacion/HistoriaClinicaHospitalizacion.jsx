@@ -15,10 +15,11 @@ import KoraTopbarButton from '@/Components/ClintosAI/KoraTopbarButton/KoraTopbar
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import PendientesPanel from './PendientesPanel/PendientesPanel';
 import {
-  AREAS_OPERATIVAS, PACIENTES_HOSPITALIZADOS, pendientesOrdenados, sectorDeCama,
+  AREAS_OPERATIVAS, getDetalleAdmision, PACIENTES_HOSPITALIZADOS, pendientesOrdenados, sectorDeCama,
 } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
+import DetalleAdmisionModal from '@/Components/DetalleAdmisionModal/DetalleAdmisionModal';
 import {
-  LuClipboardList, LuFilePen, LuFlaskConical, LuLogOut, LuUsers,
+  LuFilePen, LuFlaskConical, LuLogOut, LuUsers,
 } from 'react-icons/lu';
 
 // El panel lateral "Pendientes clínicos" queda oculto en esta versión (encargo
@@ -27,10 +28,11 @@ import {
 const MOSTRAR_PENDIENTES = false;
 
 // Tablero del médico sobre sus pacientes hospitalizados — mismo layout que
-// el Panel General de Enfermería (PanelGeneral.jsx: encabezado, fila de 5
+// el Panel General de Enfermería (PanelGeneral.jsx: encabezado, fila de
 // KPIs, tabla de pacientes ~70% + panel lateral ~30%), pero con contenido
-// clínico en vez de operativo (evolución, órdenes por firmar, resultados,
-// altas). Todo (KPIs, tabla y panel de pendientes) se deriva de
+// clínico en vez de operativo (evolución, resultados, altas — el KPI
+// "Órdenes por firmar" se quitó por encargo explícito; las órdenes siguen
+// visibles por paciente en la columna Pendientes de la tabla). Todo (KPIs, tabla y panel de pendientes) se deriva de
 // `pacientesFiltrados`, ya recortado por el selector de área, así que nunca
 // hay un número que no cuadre con la lista que se ve. El filtro rápido vive
 // acá (no en PatientsPanel) porque el botón del panel lateral también lo
@@ -47,6 +49,15 @@ export default function HistoriaClinicaHospitalizacion() {
   // AGENTS.md-style comentario ahí) — necesita abrir el mismo <ClintosAI/>
   // de más abajo, que vive fuera del Topbar.
   const clintosAIRef = useRef(null);
+  // Espejo de si el panel de Kora está abierto (vía onOpenChange de
+  // <ClintosAI/>) — estado `active` del switch del Topbar.
+  const [koraOpen, setKoraOpen] = useState(false);
+  // Botón expandir de la barra de la tabla (PatientsPanel.jsx): compacta
+  // los KPIs a una sola línea para darle ese alto a la tabla.
+  const [tablaExpandida, setTablaExpandida] = useState(false);
+  // "Ver detalle" del menú "⋯" (DetalleAdmisionModal) — id del paciente o null.
+  const [detalleId, setDetalleId] = useState(null);
+  const detalle = useMemo(() => (detalleId ? getDetalleAdmision(detalleId) : null), [detalleId]);
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar — mismo init que
   // PanelGeneral.jsx/HistoriaClinica.jsx: sin este efecto los onClick de
@@ -57,8 +68,19 @@ export default function HistoriaClinicaHospitalizacion() {
     return cleanup;
   }, []);
 
-  function goToHistoria(pacienteId) {
-    router.push(`/hospitalizacion/historia-clinica/${pacienteId}`);
+  // `tab` opcional: abre la atención directo en esa pestaña (ej.
+  // 'ordenes-medicas' desde el menú "⋯" de la tabla, ver RowActionsMenu.jsx).
+  function goToHistoria(pacienteId, tab) {
+    const query = tab ? `?tab=${tab}` : '';
+    router.push(`/hospitalizacion/historia-clinica/${pacienteId}${query}`);
+  }
+
+  // "Preguntar a Kora sobre este paciente" (menú "⋯"): selecciona la fila
+  // —eso es lo que vuelve contextual a Kora, ver selectedPaciente abajo— y
+  // abre el panel.
+  function preguntarKora(pacienteId) {
+    setSelectedPacienteId(pacienteId);
+    clintosAIRef.current?.open();
   }
 
   const pacientesFiltrados = useMemo(() => (
@@ -77,7 +99,6 @@ export default function HistoriaClinicaHospitalizacion() {
   const kpis = useMemo(() => ({
     total: pacientesFiltrados.length,
     evolucionPendiente: pacientesFiltrados.filter((p) => p.evolucionPendiente).length,
-    ordenesPorFirmar: pacientesFiltrados.reduce((n, p) => n + p.ordenesPorFirmar, 0),
     resultadosNuevos: pacientesFiltrados.reduce((n, p) => n + p.resultadosNuevos, 0),
     resultadosCriticos: pacientesFiltrados.reduce((n, p) => n + p.resultadosCriticos, 0),
     altasProbables: pacientesFiltrados.filter((p) => p.altaProbable).length,
@@ -93,17 +114,21 @@ export default function HistoriaClinicaHospitalizacion() {
           page="Historia Clínica"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         >
-          <KoraTopbarButton variant="secondary-accent" onClick={() => clintosAIRef.current?.open()} />
+          <KoraTopbarButton
+            variant="secondary-accent"
+            active={koraOpen}
+            onClick={() => (koraOpen ? clintosAIRef.current?.close() : clintosAIRef.current?.open())}
+          />
         </Topbar>
 
         <div className="hh-body-row">
           <div className="content hh-content">
             <div className="hh-header">
               <h1>Historia Clínica - Hospitalización</h1>
-              <p>Mis pacientes hospitalizados y pendientes clínicos</p>
+              <p>Mis pacientes hospitalizados</p>
             </div>
 
-            <div className="hh-kpi-row">
+            <div className={`hh-kpi-row${tablaExpandida ? ' compact' : ''}`}>
               <KpiCard
                 icon={LuUsers}
                 label="Mis pacientes"
@@ -116,13 +141,6 @@ export default function HistoriaClinicaHospitalizacion() {
                 label="Evolución pendiente"
                 value={kpis.evolucionPendiente}
                 description="Sin nota del día"
-                variant="warning"
-              />
-              <KpiCard
-                icon={LuClipboardList}
-                label="Órdenes por firmar"
-                value={kpis.ordenesPorFirmar}
-                description="Órdenes pendientes"
                 variant="warning"
               />
               <KpiCard
@@ -154,6 +172,10 @@ export default function HistoriaClinicaHospitalizacion() {
                 areaOptions={AREAS_OPERATIVAS}
                 selectedId={selectedPacienteId}
                 onSelectRow={setSelectedPacienteId}
+                onPreguntarKora={preguntarKora}
+                onVerDetalle={setDetalleId}
+                expandida={tablaExpandida}
+                onToggleExpandida={() => setTablaExpandida((v) => !v)}
               />
               {MOSTRAR_PENDIENTES && (
                 <PendientesPanel
@@ -175,9 +197,18 @@ export default function HistoriaClinicaHospitalizacion() {
             selectedPaciente={selectedPaciente}
             screenLabel="Hospitalización · Historia Clínica"
             onClearPaciente={() => setSelectedPacienteId(null)}
+            onOpenChange={setKoraOpen}
           />
         </div>
       </div>
+
+      {detalle && (
+        <DetalleAdmisionModal
+          detalle={detalle}
+          onClose={() => setDetalleId(null)}
+          onVerHistoria={() => goToHistoria(detalle.id)}
+        />
+      )}
     </div>
   );
 }

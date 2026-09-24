@@ -31,20 +31,12 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .ss-control:has(inp
 .ss-control input::placeholder{color:var(--ink-400);}
 .ss-chevron{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;}
 
-/* Listbox flotante — mismo z-index de overlays de la app (--z-dropdown si
-   existiera; se reutiliza --z-sticky, ya por encima del contenido normal
-   del panel, ver .data-table thead th en shared.css). */
+/* Listbox flotante — apariencia de @/Components/DropdownPanel (ver
+   AGENTS.md "Dropdowns"); acá solo posición/alto. z-index --z-popover (antes
+   --z-sticky, que podía quedar por debajo de un encabezado sticky). Las
+   opciones pueden partir línea (nombres largos). */
 .ss-listbox{
-  position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:var(--z-sticky);
-  background:var(--surface-modal);border:1px solid var(--border);border-radius:var(--radius);
-  box-shadow:0 12px 28px rgba(16,24,39,.16);max-height:240px;overflow-y:auto;
-  padding:4px;margin:0;list-style:none;
+  position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:var(--z-popover);
+  max-height:240px;overflow-y:auto;
 }
-.ss-empty{padding:10px 12px;font-size:var(--fs-sm);color:var(--ink-500);}
-.ss-option{
-  width:100%;text-align:left;padding:9px 10px;border-radius:6px;border:none;background:none;
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;
-}
-.ss-option:hover{background:var(--bg);}
-.ss-option.active{background:var(--primary-50);color:var(--primary-dark);font-weight:var(--fw-semibold);}
-.ss-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.ss-listbox [role="option"] > button{white-space:normal;}

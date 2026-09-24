@@ -151,9 +151,9 @@ body{
   min-height:0;
   overflow-y:auto;
 }
-.home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:32px;}
+.home-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:24px;}
 
-.home-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.home-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
 .home-hero h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .home-hero p{font-size:var(--fs-base);color:var(--ink-500);margin-top:4px;}
 
@@ -229,8 +229,4 @@ body{
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:14px;
   margin-top:16px;
-  background:var(--bg);
-  border-radius:var(--radius-lg);
-  padding:16px;
-  border:1px solid var(--border);
 }

@@ -4,8 +4,16 @@
 .cb-table-wrap{flex:1;}
 .cb-table{width:100%;}
 .cb-table .col-acciones{width:1%;white-space:nowrap;text-align:right;}
-/* El botón "Ver detalle" reusa .cb-actions-menu-btn (definida en
-   ../BedActionsMenu/BedActionsMenu.css, mismo criterio de solo-un-ícono/28px
-   que el botón "⋯" que tiene al lado) — sin clase propia, ya se carga en
-   esta página porque BedTable ya importa BedActionsMenu. */
+/* Botón-ícono "Ver detalle" (👁) al lado del "⋯" — mismo tamaño/estados que
+   el trigger de @/Components/DropdownMenu (tokens --dropdown-trigger-*).
+   Antes vivía en BedActionsMenu.css y se reusaba acá; ese CSS se borró al
+   migrar el menú a DropdownMenu. */
+.cb-actions-menu-btn{
+  width:var(--dropdown-trigger-size);height:var(--dropdown-trigger-size);border-radius:var(--dropdown-trigger-radius);flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-500);cursor:pointer;border:none;background:transparent;padding:0;
+}
+.cb-actions-menu-btn .icon{width:var(--dropdown-trigger-icon-size);height:var(--dropdown-trigger-icon-size);}
+.cb-actions-menu-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cb-actions-menu-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cb-table-actions{display:inline-flex;align-items:center;gap:4px;}

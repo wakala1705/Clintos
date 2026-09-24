@@ -5,6 +5,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import './FormSelect.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCheck, LuChevronDown } from 'react-icons/lu';
 
 // Reemplaza el <select> nativo dentro de un .form-field (encargo explícito)
@@ -87,8 +88,10 @@ export default function FormSelect({
   // listado puede ser más alto que su `max-height` (ver FormSelect.css).
   useLayoutEffect(() => {
     if (!open || activeIndex < 0 || !dropdownRef.current) return;
+    // Por role, no por clase: la apariencia de la opción viene de
+    // DropdownPanel (CSS Module, clase con hash).
     dropdownRef.current.children[activeIndex]
-      ?.querySelector('.form-select-option')
+      ?.querySelector('[role="option"]')
       ?.scrollIntoView({ block: 'nearest' });
   }, [open, activeIndex]);
 
@@ -191,7 +194,7 @@ export default function FormSelect({
       {open && coords && createPortal(
         <ul
           ref={dropdownRef}
-          className="form-select-dropdown"
+          className={`form-select-dropdown ${panel.panel}`}
           role="listbox"
           aria-labelledby={id}
           style={{ top: coords.top, left: coords.left, minWidth: coords.minWidth }}
@@ -204,12 +207,12 @@ export default function FormSelect({
                 role="option"
                 tabIndex={-1}
                 aria-selected={o.value === value}
-                className={`form-select-option${o.value === value ? ' active' : ''}${i === activeIndex ? ' highlighted' : ''}`}
+                className={[panel.item, o.value === value && panel.selected, i === activeIndex && panel.highlighted].filter(Boolean).join(' ')}
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => handleSelect(o.value)}
               >
                 {o.label}
-                {o.value === value && <LuCheck className="icon" aria-hidden="true" />}
+                {o.value === value && <LuCheck className={panel.check} aria-hidden="true" />}
               </button>
             </li>
           ))}

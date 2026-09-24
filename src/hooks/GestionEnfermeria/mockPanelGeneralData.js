@@ -6,17 +6,51 @@
 // "ajustar los calendarios a las fechas reales actuales" — antes era una
 // fecha fija, 14 Ago 2026, mismo criterio que tenían SEMANA_ANCLA en
 // mockProgramacionData.js y viewDate en asignacion-citas/page.jsx, también
-// actualizados). Las fechas de admisión (`diaAdmision`/`mesAdmisionIdx`, ver
-// PACIENTES_PISO) siguen ancladas a 2026 sin cambios — `diasEstancia` va a
-// crecer con el correr de los años reales; el campo `prolongada` que
-// alimenta el KPI "Estancias prolongadas" es un booleano curado por
-// paciente (no se recalcula desde `diasEstancia`), así que ese KPI no se ve
-// afectado por este cambio.
+// actualizados). La admisión de cada paciente se define RELATIVA a hoy
+// ("ingresó hace N días", ver ingresoHace) — antes eran fechas fijas de
+// Jul/Ago 2026 y la estancia crecía sola con el correr del calendario real
+// (llegó a 40-60 días). Encargo explícito: estancias entre 1 y 30 días, más
+// un ingreso de menos de 24 h (nuevo ingreso). El campo `prolongada` que
+// alimenta el KPI "Estancias prolongadas" sigue siendo un booleano curado
+// por paciente (no se recalcula desde `diasEstancia`).
 const HOY = new Date();
 
-function diasEstancia(diaAdmision, mesAdmisionIdx) {
-  const admision = new Date(2026, mesAdmisionIdx, diaAdmision);
-  return Math.round((HOY - admision) / 86400000);
+const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+// Campos de admisión de un paciente que ingresó hace `dias` días + `horas`
+// horas: `ingreso` (Date real, con año correcto aunque cruce de año),
+// `admision` ('12 Ago', formato corto que ya mostraban las tablas),
+// `diasEstancia` y `horasDesdeIngreso`. `nuevoIngreso` (< 24 h) alimenta el
+// badge "Nuevo ingreso" de HC Hospitalización.
+function ingresoHace(dias, horas = 0) {
+  const horasDesdeIngreso = dias * 24 + horas;
+  const ingreso = new Date(HOY.getTime() - horasDesdeIngreso * 3600000);
+  return {
+    ingreso,
+    admision: `${String(ingreso.getDate()).padStart(2, '0')} ${MESES_CORTOS[ingreso.getMonth()]}`,
+    diasEstancia: dias,
+    horasDesdeIngreso,
+    nuevoIngreso: horasDesdeIngreso < 24,
+  };
+}
+
+// Estancia para mostrar junto a la fecha de ingreso: "Hace 6 h" en un nuevo
+// ingreso (< 24 h — "0 días" no le dice nada a médico/enfermera), "1 día" /
+// "N días" después. Compartido por Enfermería y HC Hospitalización.
+export function estanciaLabel(p) {
+  if (p.nuevoIngreso) return `Hace ${Math.max(1, p.horasDesdeIngreso)} h`;
+  return p.diasEstancia === 1 ? '1 día' : `${p.diasEstancia} días`;
+}
+
+const MESES_LARGOS = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+// `ingreso` (Date) → '12.AGO.2026', el formato de fecha de los registros de
+// Historia Clínica (ver mockHistoriaClinicaRecords.js). Toma el Date real (no
+// el '12 Ago' corto de `admision`) para que el año sea el correcto. Lo usan
+// la columna "Fecha de ingreso" (@/Components/IngresoCell) y el banner/detalle
+// de HC Hospitalización.
+export function fechaIngresoLarga(ingreso) {
+  return `${String(ingreso.getDate()).padStart(2, '0')}.${MESES_LARGOS[ingreso.getMonth()]}.${ingreso.getFullYear()}`;
 }
 
 // CAMAS_TOTALES fijo (piso de 18 camas) — CAMAS_OCUPADAS se deriva de
@@ -32,10 +66,11 @@ export const ORDENES_PENDIENTES = 5;
 
 // `prolongada` está curada para calzar exactamente con el KPI "Estancias
 // prolongadas" (3) del encargo — los 3 pacientes con más días de estancia
-// de la lista (Carmen Ruiz 20d, Elena Vargas 17d, Patricia López 13d), no un
-// simple ">7 días" automático (con ese criterio puro también calificarían
-// Sofía Torres —11d— y Ana Martínez —9d—; en la práctica un jefe de
-// enfermería cura cuáles casos se seleccionan para seguimiento activo).
+// de la lista (Carmen Ruiz 30d, Elena Vargas 26d, Patricia López 22d), no un
+// simple ">N días" automático (con ">7 días" también calificarían Sofía
+// Torres —14d— y Ana Martínez —12d—; en la práctica un jefe de enfermería
+// cura cuáles casos se seleccionan para seguimiento activo). Jorge Ramírez
+// (colecistitis aguda) es el nuevo ingreso: entró hace 6 h.
 // `genero` alimenta el indicador rosa/azul de BedCard (encargo explícito,
 // "Ajuste de cards — Bed Board", sección color por género) — inferido del
 // nombre de pila de cada paciente ficticio (ningún documento fuente define
@@ -46,72 +81,72 @@ export const ORDENES_PENDIENTES = 5;
 // en true").
 export const PACIENTES_PISO = [
   {
-    id: 'HC-48291', cama: '101-A', admision: '12 Ago', diasEstancia: diasEstancia(12, 7),
+    id: 'HC-48291', cama: '101-A', ...ingresoHace(8),
     paciente: 'María González', diagnostico: 'Neumonía adquirida en comunidad', edad: 67, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
-    id: 'HC-48307', cama: '101-B', admision: '13 Ago', diasEstancia: diasEstancia(13, 7),
+    id: 'HC-48307', cama: '101-B', ...ingresoHace(5),
     paciente: 'Carlos Rodríguez', diagnostico: 'Diabetes mellitus tipo 2 descompensada', edad: 59, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
-    id: 'HC-48192', cama: '102-A', admision: '05 Ago', diasEstancia: diasEstancia(5, 7),
+    id: 'HC-48192', cama: '102-A', ...ingresoHace(12),
     paciente: 'Ana Martínez', diagnostico: 'Insuficiencia cardíaca', edad: 74, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
-    id: 'HC-48321', cama: '102-B', admision: '13 Ago', diasEstancia: diasEstancia(13, 7),
+    id: 'HC-48321', cama: '102-B', ...ingresoHace(0, 6),
     paciente: 'Jorge Ramírez', diagnostico: 'Colecistitis aguda', edad: 48, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
-    id: 'HC-47984', cama: '103-A', admision: '01 Ago', diasEstancia: diasEstancia(1, 7),
+    id: 'HC-47984', cama: '103-A', ...ingresoHace(22),
     paciente: 'Patricia López', diagnostico: 'EPOC exacerbado', edad: 71, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: true,
   },
   {
-    id: 'HC-48266', cama: '103-B', admision: '10 Ago', diasEstancia: diasEstancia(10, 7),
+    id: 'HC-48266', cama: '103-B', ...ingresoHace(4),
     paciente: 'Luis Hernández', diagnostico: 'Infección urinaria', edad: 63, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
-    id: 'HC-48031', cama: '104-A', admision: '03 Ago', diasEstancia: diasEstancia(3, 7),
+    id: 'HC-48031', cama: '104-A', ...ingresoHace(14),
     paciente: 'Sofía Torres', diagnostico: 'Postoperatorio abdominal', edad: 52, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
-    id: 'HC-48345', cama: '104-B', admision: '14 Ago', diasEstancia: diasEstancia(14, 7),
+    id: 'HC-48345', cama: '104-B', ...ingresoHace(3),
     paciente: 'Andrés Castro', diagnostico: 'Hipertensión arterial', edad: 61, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
-    id: 'HC-47892', cama: '105-A', admision: '28 Jul', diasEstancia: diasEstancia(28, 6),
+    id: 'HC-47892', cama: '105-A', ...ingresoHace(26),
     paciente: 'Elena Vargas', diagnostico: 'Accidente cerebrovascular', edad: 79, genero: 'femenino',
     estadoMedicacion: 'retrasada', prolongada: true,
   },
   {
-    id: 'HC-48215', cama: '105-B', admision: '08 Ago', diasEstancia: diasEstancia(8, 7),
+    id: 'HC-48215', cama: '105-B', ...ingresoHace(10),
     paciente: 'Ricardo Moreno', diagnostico: 'Fractura de cadera', edad: 82, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
   {
-    id: 'HC-48176', cama: '106-A', admision: '07 Ago', diasEstancia: diasEstancia(7, 7),
+    id: 'HC-48176', cama: '106-A', ...ingresoHace(6),
     paciente: 'Laura Sánchez', diagnostico: 'Neumonía', edad: 68, genero: 'femenino',
     estadoMedicacion: 'pendiente', prolongada: false,
   },
   {
-    id: 'HC-48302', cama: '106-B', admision: '12 Ago', diasEstancia: diasEstancia(12, 7),
+    id: 'HC-48302', cama: '106-B', ...ingresoHace(7),
     paciente: 'Diego Pérez', diagnostico: 'Pancreatitis aguda', edad: 45, genero: 'masculino',
     estadoMedicacion: 'no-aplica', prolongada: false,
   },
   {
-    id: 'HC-47765', cama: '107-A', admision: '25 Jul', diasEstancia: diasEstancia(25, 6),
+    id: 'HC-47765', cama: '107-A', ...ingresoHace(30),
     paciente: 'Carmen Ruiz', diagnostico: 'Insuficiencia renal', edad: 76, genero: 'femenino',
     estadoMedicacion: 'al-dia', prolongada: true,
   },
   {
-    id: 'HC-48254', cama: '107-B', admision: '09 Ago', diasEstancia: diasEstancia(9, 7),
+    id: 'HC-48254', cama: '107-B', ...ingresoHace(2),
     paciente: 'Felipe Gómez', diagnostico: 'Postoperatorio de hernia', edad: 57, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },

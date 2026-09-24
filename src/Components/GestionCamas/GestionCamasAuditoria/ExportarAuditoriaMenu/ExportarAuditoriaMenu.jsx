@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ExportarAuditoriaMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import Button from '@/Components/Button/Button';
 import {
   LuChevronDown, LuDownload, LuFileSpreadsheet, LuFileText, LuFileType2,
@@ -51,16 +52,16 @@ export default function ExportarAuditoriaMenu({ onExport }) {
       </Button>
 
       {open && (
-        <div className="cbau-export-dropdown" role="menu">
+        <div className={`cbau-export-dropdown ${panel.panel}`} role="menu">
           {FORMATOS.map((f) => (
             <button
               type="button"
               key={f.id}
-              className="cbau-export-item"
+              className={panel.item}
               role="menuitem"
               onClick={() => { setOpen(false); onExport(f.id); }}
             >
-              <f.icon className="icon" aria-hidden="true" />
+              <f.icon className={panel.icon} aria-hidden="true" />
               {f.label}
             </button>
           ))}

@@ -32,6 +32,7 @@ const CAMAS_OCUPADAS = PACIENTES_PISO.map((p) => ({
   // valor propio de este mock.
   paciente: {
     nombre: p.paciente, hc: p.id, genero: p.genero, edad: p.edad, diasEstancia: p.diasEstancia,
+    nuevoIngreso: p.nuevoIngreso, horasDesdeIngreso: p.horasDesdeIngreso,
   },
 }));
 

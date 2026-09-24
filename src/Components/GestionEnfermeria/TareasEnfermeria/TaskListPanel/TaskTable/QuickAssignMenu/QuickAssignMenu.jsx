@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './QuickAssignMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { ASIGNACION_RAPIDA_OPCIONES } from '@/hooks/GestionEnfermeria/mockTareasData';
 import Button from '@/Components/Button/Button';
 import { LuUserRoundPlus } from 'react-icons/lu';
@@ -50,13 +51,13 @@ export default function QuickAssignMenu({ onAsignar }) {
       </Button>
 
       {open && (
-        <ul className="task-quick-assign-dropdown" role="listbox" aria-label="Asignar responsable" onClick={(e) => e.stopPropagation()}>
+        <ul className={`task-quick-assign-dropdown ${panel.panel}`} role="listbox" aria-label="Asignar responsable" onClick={(e) => e.stopPropagation()}>
           {ASIGNACION_RAPIDA_OPCIONES.map((o) => (
             <li key={o} role="presentation">
               <button
                 type="button"
                 role="option"
-                className="task-quick-assign-option"
+                className={panel.item}
                 onClick={() => { setOpen(false); onAsignar(o); }}
               >
                 {o}

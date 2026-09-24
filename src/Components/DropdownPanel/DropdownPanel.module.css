@@ -1,0 +1,115 @@
+/* Apariencia única de TODO dropdown del proyecto (ver AGENTS.md
+   "Dropdowns"): el panel flotante y sus ítems/opciones. Lo consumen
+   @/Components/DropdownMenu (menús "⋯") y las listas de selección
+   (FormSelect, AreaSelector, Typeahead, SearchableSelect...), que importan
+   este módulo y aplican sus clases junto a las propias.
+
+   Solo apariencia: posición (fixed/absolute, top/left), z-index, ancho y
+   max-height siguen siendo de cada componente, porque dependen de dónde y
+   cómo se ancla cada uno. Estructura desde los tokens --dropdown-*
+   (globals.css); colores desde los tokens de la feature donde se monta.
+
+   CSS Module (mismo motivo que Button/Badge/ChipFilter): sin choques con las
+   clases globales que cada feature todavía tiene. */
+
+/* ---------- Panel ---------- */
+.panel {
+  box-sizing: border-box;
+  min-width: var(--dropdown-min-width);
+  margin: 0;
+  padding: var(--dropdown-padding);
+  list-style: none;
+  background: var(--surface-modal, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: var(--dropdown-radius);
+  box-shadow: var(--dropdown-shadow);
+}
+
+/* ---------- Ítem / opción ---------- */
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--dropdown-item-gap);
+  width: 100%;
+  padding: var(--dropdown-item-padding);
+  border: none;
+  border-radius: var(--dropdown-item-radius);
+  background: none;
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  line-height: 1.35;
+  color: var(--ink-700);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.item:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--ink-900);
+}
+.item:focus-visible,
+.highlighted {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  background: var(--bg);
+}
+.item:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* Ícono a la izquierda del texto. */
+.icon {
+  width: var(--dropdown-icon-size);
+  height: var(--dropdown-icon-size);
+  flex-shrink: 0;
+  color: var(--ink-500);
+}
+
+/* Opción seleccionada (listas de selección): fondo azul suave + texto
+   --primary-dark + ✓ a la derecha (.check). Mismo peso que el resto
+   (--fw-medium): la selección la marcan el color y el ✓, no la negrita. */
+.selected,
+.selected:hover:not(:disabled) {
+  background: var(--primary-50);
+  color: var(--primary-dark);
+}
+.check {
+  width: var(--dropdown-icon-size);
+  height: var(--dropdown-icon-size);
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--primary-dark);
+}
+
+/* Tonos (menús de acciones): destructiva / advertencia. */
+.danger,
+.danger .icon { color: var(--red); }
+.danger:hover:not(:disabled) { background: var(--red-bg); color: var(--red); }
+.warn,
+.warn .icon { color: var(--amber-fg); }
+.warn:hover:not(:disabled) { background: var(--amber-bg); color: var(--amber-fg); }
+
+/* ---------- Estructura ---------- */
+.divider {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--border);
+}
+.groupLabel {
+  display: block;
+  padding: 6px 10px 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.empty {
+  display: block;
+  padding: var(--dropdown-item-padding);
+  font-size: var(--fs-sm);
+  color: var(--ink-500);
+  white-space: nowrap;
+}

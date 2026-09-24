@@ -3,7 +3,17 @@
 import './PatientsTable.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
-import { LuFileText, LuHourglass } from 'react-icons/lu';
+import IngresoCell from '@/Components/IngresoCell/IngresoCell';
+import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
+import { documentoDe } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
+import { LuFileText } from 'react-icons/lu';
+
+// Columna "Pendientes" oculta por ahora (encargo explícito: todavía no está
+// definido de qué son esos pendientes). PendientesCell y sus datos siguen
+// intactos — poner en true para volver a mostrarla en la tabla y en las
+// tarjetas mobile. Mismo criterio que MOSTRAR_PENDIENTES del panel lateral
+// en HistoriaClinicaHospitalizacion.jsx.
+const MOSTRAR_PENDIENTES = false;
 
 // Chips de pendientes clínicos de un paciente (órdenes por firmar/resultados
 // nuevos, con "crítico" aparte) — siempre texto con conteo, nunca solo color
@@ -50,7 +60,7 @@ function EvolucionBadge({ p }) {
 // seleccionado para volverse contextual (brief "Contexto dinámico"), así que
 // la selección ya no puede quedar atrapada dentro de esta tabla.
 export default function PatientsTable({
-  pacientes, onOpenHistoria, selectedId, onSelectRow,
+  pacientes, onOpenHistoria, selectedId, onSelectRow, onPreguntarKora, onVerDetalle,
 }) {
   function toggleSelectRow(id) {
     onSelectRow(selectedId === id ? null : id);
@@ -80,13 +90,11 @@ export default function PatientsTable({
           <thead>
             <tr>
               <th>Cama</th>
-              <th>ID paciente</th>
-              <th>Ingreso</th>
               <th>Paciente</th>
               <th>Diagnóstico</th>
-              <th className="col-right">Edad</th>
               <th>Evolución</th>
-              <th>Pendientes</th>
+              {MOSTRAR_PENDIENTES && <th>Pendientes</th>}
+              <th>Fecha de ingreso</th>
               <th className="col-acciones"><span className="sr-only">Acciones</span></th>
             </tr>
           </thead>
@@ -102,27 +110,32 @@ export default function PatientsTable({
                 onDoubleClick={() => onOpenHistoria(p.id)}
               >
                 <td className="cell-primary">{p.cama}</td>
-                <td className="cell-muted">{p.id}</td>
+                {/* Identidad en una sola celda: nombre + documento · edad — mismo
+                    tratamiento que PatientsTable.jsx de Enfermería. Orden de
+                    columnas: identidad → diagnóstico → lo que pide acción
+                    (Evolución/Pendientes, mismo orden que los KPIs de arriba)
+                    → fecha de ingreso como contexto al final. */}
                 <td>
-                  {p.admision}
-                  {p.prolongada ? (
-                    <span className="hh-estancia-flag" title={`${p.diasEstancia} días de estancia`}>
-                      <LuHourglass className="icon" aria-hidden="true" />
-                      {p.diasEstancia} días
-                    </span>
-                  ) : (
-                    <span className="cell-sub">{p.diasEstancia} días</span>
-                  )}
+                  <span className="cell-primary hh-cell-nombre">{p.paciente}</span>
+                  <span className="cell-sub">CC {documentoDe(p.id)} · {p.edad} años</span>
                 </td>
-                <td className="cell-primary hh-cell-nombre">{p.paciente}</td>
                 <td className="hh-col-diagnostico">{p.diagnostico}</td>
-                <td className="col-right cell-muted">{p.edad}</td>
                 <td><EvolucionBadge p={p} /></td>
-                <td><PendientesCell p={p} /></td>
+                {MOSTRAR_PENDIENTES && <td><PendientesCell p={p} /></td>}
+                <td className="hh-cell-ingreso"><IngresoCell p={p} /></td>
                 <td className="col-acciones" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
-                  <Button variant="outline" size="sm" icon={LuFileText} onClick={() => onOpenHistoria(p.id)}>
-                    Historia
-                  </Button>
+                  <div className="hh-row-actions">
+                    <Button variant="outline" size="sm" icon={LuFileText} onClick={() => onOpenHistoria(p.id)}>
+                      Historia
+                    </Button>
+                    <RowActionsMenu
+                      paciente={p.paciente}
+                      onVerDetalle={() => onVerDetalle(p.id)}
+                      onVerHistoria={() => onOpenHistoria(p.id)}
+                      onVerOrdenes={() => onOpenHistoria(p.id, 'ordenes-medicas')}
+                      onPreguntarKora={() => onPreguntarKora(p.id)}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}
@@ -147,27 +160,28 @@ export default function PatientsTable({
             <div className="hh-card-top">
               <div className="hh-card-id">
                 <div className="hh-card-name">{p.paciente}</div>
-                <div className="hh-card-sub">Cama {p.cama} · {p.id}</div>
+                <div className="hh-card-sub">Cama {p.cama} · CC {documentoDe(p.id)}</div>
               </div>
               <EvolucionBadge p={p} />
             </div>
             <div className="hh-card-meta">
               <span>{p.diagnostico} · {p.edad} años</span>
               <span>
-                Ingreso {p.admision}
-                {p.prolongada && (
-                  <span className="hh-estancia-flag" title={`${p.diasEstancia} días de estancia`}>
-                    <LuHourglass className="icon" aria-hidden="true" />
-                    {p.diasEstancia} días
-                  </span>
-                )}
+                Ingreso <IngresoCell p={p} />
               </span>
             </div>
-            <PendientesCell p={p} />
+            {MOSTRAR_PENDIENTES && <PendientesCell p={p} />}
             <div className="hh-card-actions" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
               <Button variant="outline" size="sm" icon={LuFileText} onClick={() => onOpenHistoria(p.id)}>
                 Historia
               </Button>
+              <RowActionsMenu
+                paciente={p.paciente}
+                onVerDetalle={() => onVerDetalle(p.id)}
+                onVerHistoria={() => onOpenHistoria(p.id)}
+                onVerOrdenes={() => onOpenHistoria(p.id, 'ordenes-medicas')}
+                onPreguntarKora={() => onPreguntarKora(p.id)}
+              />
             </div>
           </div>
         ))}

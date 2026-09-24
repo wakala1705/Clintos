@@ -1,4 +1,4 @@
-/* Mismo lenguaje visual que .tc-card-menu-dropdown/.pg-row-menu-dropdown
+/* Mismo lenguaje visual que .tc-card-menu-dropdown/@/Components/DropdownMenu
    (blanco, radio, sombra) pero más ancho: acá hay detalle a mostrar, no
    solo una lista de acciones. position:fixed + top/left completados inline
    en TurnoCellPopover.jsx (calculados desde `anchorEl` vía

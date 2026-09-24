@@ -632,6 +632,150 @@ Mismo tipo de deriva ya documentado para Botones/Badges.
   - `GestionCamasIndicadores` — los `<span className="chip-filter active">`
     de "Filtros:" son etiquetas de solo lectura, no botones.
 
+# Dropdowns
+
+La auditoría (2026-09-24) encontró 52 dropdowns en 3 familias —menús de
+acciones, listas de selección y popovers con contenido— con la misma deriva
+ya documentada para Botones/Badges: 6 sombras, 7 formas de z-index (incluidos
+`20`/`150`/`400` a mano), 3 tamaños de ícono, `--fw-semibold` vs
+`--fw-medium`, hover en hex suelto (`#f3f5f9`), 11 ítems sin
+`:focus-visible` y **~17 copias casi idénticas de un menú "⋯"** (una por
+feature, cada una con su lógica de apertura). Los que iban `position:absolute`
+dentro de una tabla con scroll quedaban recortados en las últimas filas.
+
+- **Tokens** (`--dropdown-*`, en el `:root` de `globals.css`, no se duplican
+  por feature — solo estructura, sin variante de tema):
+
+  | Token | Valor | Uso |
+  |---|---|---|
+  | `--dropdown-radius` | 8px | radio del contenedor |
+  | `--dropdown-shadow` | `0 8px 24px rgba(16,24,39,.16)` | sombra del contenedor |
+  | `--dropdown-padding` | 6px | padding del contenedor |
+  | `--dropdown-min-width` | 180px | ancho mínimo |
+  | `--dropdown-item-padding` | 8px 10px | padding del ítem |
+  | `--dropdown-item-radius` | 7px | radio del ítem |
+  | `--dropdown-item-gap` | 10px | ícono↔texto |
+  | `--dropdown-icon-size` | 16px | ícono del ítem |
+  | `--dropdown-trigger-size` | 28px | botón "⋯" |
+  | `--dropdown-trigger-radius` | 7px | radio del botón "⋯" |
+  | `--dropdown-trigger-icon-size` | 17px | ícono del botón "⋯" |
+
+  Colores desde los tokens de la feature: fondo `--surface-modal` (un tono
+  sobre `--surface` en dark, así no se ve "hundido" dentro de un modal),
+  hover `--bg`, ítem en `--fw-medium` (es texto con énfasis, no un título —
+  ver "Tipografía"), ícono `--ink-500`.
+
+- **Apariencia única: `@/Components/DropdownPanel/DropdownPanel.module.css`**
+  — el panel y sus ítems/opciones viven UNA sola vez ahí y lo importan
+  tanto `DropdownMenu` como cada lista de selección (un CSS Module se puede
+  importar desde varios componentes). Clases: `panel`, `item`, `icon`,
+  `selected` + `check` (opción elegida), `highlighted` (resaltada por
+  teclado vía `aria-activedescendant`, cuando el foco real no llega a la
+  opción), `danger`/`warn`, `divider`, `groupLabel`, `empty`.
+
+  ```jsx
+  import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
+
+  <ul className={`form-select-dropdown ${panel.panel}`} role="listbox">
+    <button
+      role="option"
+      aria-selected={o.value === value}
+      className={[panel.item, o.value === value && panel.selected, i === activeIndex && panel.highlighted].filter(Boolean).join(' ')}
+    >
+      {o.label}
+      {o.value === value && <LuCheck className={panel.check} aria-hidden="true" />}
+    </button>
+  </ul>
+  ```
+
+  El CSS propio de cada componente queda **solo con posición** (absolute/
+  fixed, top/left/right, z-index, ancho, max-height) y lo que sea exclusivo
+  de su opción (subtítulo de Typeahead, chip de código CIE, atajo de
+  teclado, checkbox). Mantener su clase de posición junto a la de
+  `panel` (ej. `.form-select-dropdown`): los popovers de filtros la usan en
+  `e.target.closest('.form-select-dropdown')` (ver "Selects de formulario").
+  Buscar opciones desde JS por `role`, nunca por clase (las de
+  `DropdownPanel` llevan hash) — pasó en el `scrollIntoView` de FormSelect.
+
+- **Opción seleccionada, un solo tratamiento**: fondo `--primary-50` +
+  texto `--primary-dark` + ✓ (`panel.check`) a la derecha, mismo peso que
+  el resto (la selección la marcan color y ✓, no la negrita). Antes había 5
+  tratamientos distintos. Excepción: multi-selección con checkbox
+  (`TipoFacturaFilter`) — el checkbox ya marca el estado.
+
+- **Componente**: `@/Components/DropdownMenu/DropdownMenu` — todo menú de
+  acciones nuevo ("⋯" de fila, menú de card) lo usa; nunca un
+  `*RowActionsMenu` propio con su CSS.
+
+  ```jsx
+  <DropdownMenu
+    label={`Más acciones para ${paciente}`}  // aria-label del botón y del menú
+    size="base"                              // base (28px, default) | sm (22px, espacios muy apretados)
+    emptyLabel="Sin acciones disponibles"    // opcional, si `items` viene vacío
+    items={[
+      { id: 'ver', label: 'Ver detalle', icon: LuEye, onSelect: onVer },
+      { id: 'reprogramar', label: 'Reprogramar', icon: LuCalendarClock, onSelect, disabled: true },
+      { id: 'no-realizada', label: 'Marcar como no realizada', icon: LuCircleSlash, onSelect, tone: 'warn', dividerBefore: true },
+      { id: 'cancelar', label: 'Cancelar', icon: LuBan, onSelect, tone: 'danger' },
+    ]}
+  />
+  ```
+
+  - Siempre portado a `document.body` con `position:fixed` y
+    `z-index:calc(var(--z-modal) + 1)`: no lo recorta ningún `overflow`
+    (tablas, `.cb-card`) y funciona igual dentro de un modal. Se abre hacia
+    arriba si no entra abajo y sigue al botón en scroll/resize.
+  - Corta la propagación de click/doble click/teclado del botón y del menú
+    (casi todos viven en filas clicables) — el componente que lo monta no
+    necesita un wrapper con `stopPropagation`.
+  - Teclado: al abrir, foco en el primer ítem; ↑/↓/Home/End (saltando
+    deshabilitados); Escape cierra y devuelve el foco al botón.
+  - **Tono `danger`** para acciones que borran/anulan/cancelan/desactivan;
+    `warn` para las que marcan algo como fallido. No usar el tono como
+    decoración.
+  - **CSS Module** (mismo motivo que `Button`/`Badge`/`ChipFilter`).
+  - **Gotcha al migrar** (mismo que Botones): un selector contextual sobre
+    la clase vieja del botón (`.wrapper .xx-menu-btn{...}`) deja de aplicar.
+    Pasó en `BedCard` (achicaba el "⋯" a 22px → ahora `size="sm"`) y en los
+    botones 👁 "Ver detalle" de `BedTable`/Mantenimiento, que reusaban la
+    clase del botón del menú (sus reglas se movieron a `BedTable.css`/
+    `GestionCamasMantenimiento.css`). Grepear la clase vieja en todo `src/`
+    antes de borrar el CSS del menú.
+
+- **Migración — primera tanda (menús de acciones): hecha.** HC
+  Hospitalización, Enfermería (Panel General, Tareas), Admisiones
+  (`RowMoreMenu`, también en Enfermería → Pacientes), Lista de Pacientes,
+  Vacunación, Tipos de turno, Facturación (grilla clásica), Insumos
+  (`MovimientoRowMenu`, `LoteRowMenu` dentro de `AlistarPedidoModal`),
+  Gestión de Camas (`BedActionsMenu` en tabla/tarjetas/Bed Board,
+  Limpieza, Mantenimiento, Reservas, Integridad) y Solicitud de Consumo
+  (`ReposicionesCard`). Cada wrapper conserva su nombre, props e ítems;
+  su CSS propio se borró — reintroducir un `.xx-row-menu-dropdown` es una
+  regresión.
+- **Migración — segunda tanda (listas de selección y menús de botón):
+  hecha.** A `DropdownPanel`: `FormSelect`, `AreaSelector`,
+  `SearchFieldSelect`, `Typeahead`, `SearchableSelect`, `DiagnosticoField`,
+  `TipoFacturaFilter`, `QuickAssignMenu`, `LayoutSwitcher`,
+  `RangoDropdown`/`RowHeightDropdown`/`NuevaCitaDropdown` (Programar cita),
+  `VistaDropdown`/`ProgramarCirugiaDropdown`/`SlotAccionesMenu` (Sala de
+  cirugías), `UserMenu`, Exportar ×2 (Camas) y `ViewSettingsMenu` ×2 (solo
+  panel/ítem/título — sus toggles son controles propios). A `DropdownMenu`:
+  `CirugiaCardMenu` (`size="sm"` + `onOpenChange` para mantener visible el
+  "⋯" que la tarjeta solo muestra en hover). De paso: `SearchableSelect`/
+  `DiagnosticoField` pasaron de `z-index:var(--z-sticky)` (podían quedar
+  bajo un encabezado sticky) a `--z-popover`; el hover del trigger de
+  `AreaSelector` dejó los hex `#f3f5f9`/`#d7dce6`.
+- **Bloqueados (no son React)**: el "⋯" de asignación de citas y de
+  `NuevaCitaFlow` (`.row-menu-btn`/`.context-menu`) y el de Medicamentos
+  (`.med-menu-btn`) los arma `legacy-app.js`/`legacy-nueva-cita.js` como
+  string — mismo bloqueo que `<Badge>` en asignación de citas.
+- **Fuera de alcance**: los popovers con contenido (`.filter-popover`,
+  `DosePopover`, `TurnoCellPopover`, popover de alergias del banner) — son
+  paneles con formularios, no listas de opciones, y ya eran consistentes
+  entre sí. `AccionesMegaMenu` (Admisiones) y `HamburgerMenu` (Topbar)
+  tampoco: son megamenús de navegación con submenús en cascada y su propio
+  estado "submenú abierto", no un dropdown de una lista.
+
 # Responsive / Breakpoints
 
 El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada

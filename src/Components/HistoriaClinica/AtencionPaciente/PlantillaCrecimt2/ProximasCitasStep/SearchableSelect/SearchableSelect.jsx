@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import './SearchableSelect.css';
-import { LuChevronDown, LuSearch } from 'react-icons/lu';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
+import { LuCheck, LuChevronDown, LuSearch } from 'react-icons/lu';
 
 // Combobox de búsqueda (ver ProximasCitasStep.jsx, 2 reusos: "Profesional
 // próxima cita" y "Especialidad de destino" — el encargo pide "select
@@ -66,16 +67,17 @@ export default function SearchableSelect({ label, value, onChange, options, plac
       </div>
 
       {open && !disabled && (
-        <ul className="ss-listbox" role="listbox">
-          {filtered.length === 0 && <li className="ss-empty">Sin resultados</li>}
+        <ul className={`ss-listbox ${panel.panel}`} role="listbox">
+          {filtered.length === 0 && <li className={panel.empty}>Sin resultados</li>}
           {filtered.map((option) => (
             <li key={option} role="option" aria-selected={option === value}>
               <button
                 type="button"
-                className={`ss-option${option === value ? ' active' : ''}`}
+                className={[panel.item, option === value && panel.selected].filter(Boolean).join(' ')}
                 onClick={() => handlePick(option)}
               >
                 {option}
+                {option === value && <LuCheck className={panel.check} aria-hidden="true" />}
               </button>
             </li>
           ))}

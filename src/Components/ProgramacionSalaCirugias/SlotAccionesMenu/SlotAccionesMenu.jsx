@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './SlotAccionesMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuCalendarPlus, LuTriangleAlert } from 'react-icons/lu';
 
 // Menú contextual disparado al clickear una celda vacía de AgendaSemana (ver
@@ -70,16 +71,16 @@ export default function SlotAccionesMenu({
   return createPortal(
     <div
       ref={menuRef}
-      className={`sam-menu${pos.openUp ? ' menu-up' : ''}`}
+      className={`sam-menu ${panel.panel}`}
       role="menu"
       style={{ top: pos.top, bottom: pos.bottom, left: pos.left }}
     >
-      <button type="button" className="sam-item" role="menuitem" onClick={onProgramarCirugia}>
-        <LuCalendarPlus className="icon" aria-hidden="true" />
+      <button type="button" className={panel.item} role="menuitem" onClick={onProgramarCirugia}>
+        <LuCalendarPlus className={panel.icon} aria-hidden="true" />
         Programar cirugía
       </button>
-      <button type="button" className="sam-item sam-item-warning" role="menuitem" onClick={onCirugiaUrgencia}>
-        <LuTriangleAlert className="icon" aria-hidden="true" />
+      <button type="button" className={panel.item} role="menuitem" onClick={onCirugiaUrgencia}>
+        <LuTriangleAlert className={`${panel.icon} sam-icon-urgencia`} aria-hidden="true" />
         Cirugía de urgencia
       </button>
     </div>,

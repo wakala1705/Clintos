@@ -1,6 +1,9 @@
 /* .data-table (base)/.cell-primary/.cell-muted/.cell-sub/.col-right/.sr-only:
    definidas en ../../shared/shared.css — acá solo lo exclusivo de esta
    tabla. */
+/* Sin padding-bottom: la franja libre bajo la última fila (para que el
+   trigger flotante de Kora no la tape) ahora la da el footer de la card
+   (@/Components/ListFooter, ver PatientsPanel.jsx). */
 .hh-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
 .hh-patients-table{width:100%;}
 .hh-patients-table tbody tr{cursor:pointer;}
@@ -10,18 +13,13 @@
 
 .hh-col-diagnostico{min-width:220px;color:var(--ink-700);}
 .hh-cell-nombre{text-transform:uppercase;}
+/* Fecha de ingreso: @/Components/IngresoCell (compartida con Enfermería). */
+.hh-cell-ingreso{white-space:nowrap;}
 .col-acciones{width:1%;white-space:nowrap;text-align:right;}
+/* Historia + "⋯" (RowActionsMenu) lado a lado en la celda de acciones. */
+.hh-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px;}
 
 .hh-pend-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
-
-/* Bandera de estancia prolongada — icono + texto ámbar (nunca solo color,
-   WCAG), junto a la fecha de ingreso en vez de una columna propia. */
-.hh-estancia-flag{
-  display:inline-flex;align-items:center;gap:4px;margin-left:8px;
-  font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--amber-fg);background:var(--amber-bg);
-  padding:2px 8px;border-radius:10px;white-space:nowrap;
-}
-.hh-estancia-flag .icon{width:11px;height:11px;flex-shrink:0;}
 
 /* Estado vacío (filtro/búsqueda sin resultados). */
 .hh-empty{
@@ -50,4 +48,4 @@
 .hh-card-name{font-weight:var(--fw-semibold);color:var(--ink-900);font-size:var(--fs-base);text-transform:uppercase;}
 .hh-card-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .hh-card-meta{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);color:var(--ink-700);}
-.hh-card-actions{display:flex;justify-content:flex-end;}
+.hh-card-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px;}

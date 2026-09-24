@@ -85,6 +85,16 @@ const CATALOGO = {
     mkItem('cat-mn-1', 'GAMMAGRAFIA OSEA'),
     mkItem('cat-mn-2', 'PET-CT DE CUERPO ENTERO'),
   ],
+  oxigeno: [
+    mkItem('cat-ox-1', 'OXIGENO POR CANULA NASAL'),
+    mkItem('cat-ox-2', 'OXIGENO POR MASCARA VENTURI'),
+    mkItem('cat-ox-3', 'OXIGENO POR MASCARA DE NO REINHALACION'),
+  ],
+  protocolosQuimioterapia: [
+    mkItem('cat-pq-1', 'PROTOCOLO FOLFOX'),
+    mkItem('cat-pq-2', 'PROTOCOLO R-CHOP'),
+    mkItem('cat-pq-3', 'PROTOCOLO AC-T'),
+  ],
 };
 
 export function getCatalogoCategoria(clave) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './ViewSettingsMenu.css';
+import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import { LuSettings2, LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 
 // Dropdown de "configuración de vista" del pf-titlebar (ver
@@ -57,10 +58,10 @@ export default function ViewSettingsMenu({
       </button>
 
       {open && (
-        <div className="vsm-dropdown" role="menu">
+        <div className={`vsm-dropdown ${panel.panel}`} role="menu">
           <button
             type="button"
-            className="vsm-item"
+            className={panel.item}
             role="menuitem"
             onClick={() => {
               onToggleMaximizar?.();
@@ -68,16 +69,16 @@ export default function ViewSettingsMenu({
             }}
           >
             {maximizada ? (
-              <LuMinimize2 className="icon" aria-hidden="true" />
+              <LuMinimize2 className={panel.icon} aria-hidden="true" />
             ) : (
-              <LuMaximize2 className="icon" aria-hidden="true" />
+              <LuMaximize2 className={panel.icon} aria-hidden="true" />
             )}
             {maximizada ? 'Restaurar' : 'Maximizar'}
           </button>
 
-          <div className="vsm-divider"></div>
+          <div className={panel.divider} role="separator"></div>
 
-          <div className="vsm-section-label">Tipo de formulario</div>
+          <div className={panel.groupLabel}>Tipo de formulario</div>
           {/* .pf-toggle-group / .pf-toggle-btn: definidas en
               ../PlantillaCrecimt2.css (shared del feature) */}
           <div className="pf-toggle-group vsm-type-toggle" role="group" aria-label="Tipo de formulario">

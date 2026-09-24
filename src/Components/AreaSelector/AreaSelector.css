@@ -14,41 +14,17 @@
   border:var(--btn-border-width) solid var(--border);background:var(--surface);color:var(--ink-700);
   cursor:pointer;transition:var(--btn-transition);
 }
-.pg-area-select-trigger:hover{background:#f3f5f9;border-color:#d7dce6;}
+.pg-area-select-trigger:hover{background:var(--bg);border-color:var(--ink-400);}
 .pg-area-select-trigger:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
 .pg-area-select-trigger .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
 .pg-area-select-chev{transition:transform .15s ease;}
 .pg-area-select-chev.open{transform:rotate(180deg);}
 
-/* position:fixed + top/right/minWidth se completan inline en
-   AreaSelector.jsx (calculados desde el trigger vía getBoundingClientRect)
-   — el listado se porta a document.body, así que no puede depender de
-   position:absolute relativo a .pg-area-select (mismo motivo que
-   .form-select-dropdown en FormSelect.css: si quedara absoluto dentro de un
-   .modal-body con overflow-y:auto, su alto suma al scrollHeight del modal).
-   z-index va por encima de --z-modal porque, al portarse, queda hermano de
-   .modal-overlay en el DOM en vez de descendiente. */
-.pg-area-select-dropdown{
-  position:fixed;min-width:180px;z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(16,24,39,.16);padding:6px;
-  list-style:none;margin:0;
-}
-.pg-area-select-option{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
-  padding:8px 10px;border-radius:7px;border:none;background:none;font-family:inherit;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);cursor:pointer;text-align:left;white-space:nowrap;
-}
-.pg-area-select-option:hover{background:var(--bg);}
-.pg-area-select-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;background:var(--bg);}
-.pg-area-select-option.active{color:var(--primary-dark);}
-.pg-area-select-option .icon{width:16px;height:16px;color:var(--primary);flex-shrink:0;}
-
-/* Label de sección + divider (opt-in vía `group` por opción, ver
-   AreaSelector.jsx) — mismo nivel tipográfico que un section-title de menú,
-   nunca clicable (role="presentation"). */
-.pg-area-select-group-label{
-  padding:6px 10px 4px;font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-500);
-  text-transform:uppercase;letter-spacing:.04em;
-}
-.pg-area-select-divider{height:1px;background:var(--border);margin:4px 6px;}
+/* Panel, opciones, label de grupo y divider: apariencia de
+   @/Components/DropdownPanel (ver AGENTS.md "Dropdowns"). Acá solo la
+   posición: position:fixed + top/right/minWidth inline desde
+   AreaSelector.jsx — el listado se porta a document.body (mismo motivo que
+   .form-select-dropdown: si quedara absoluto dentro de un .modal-body con
+   overflow-y:auto, su alto sumaría al scrollHeight del modal), z-index por
+   encima de --z-modal porque al portarse queda hermano de .modal-overlay. */
+.pg-area-select-dropdown{position:fixed;z-index:calc(var(--z-modal, 50) + 1);}

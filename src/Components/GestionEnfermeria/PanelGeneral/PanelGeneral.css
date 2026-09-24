@@ -22,6 +22,20 @@
 .pg-main-row .pg-patients-card{flex:7 1 0;min-width:0;}
 .pg-main-row .pg-alerts-card{flex:3 1 0;min-width:280px;}
 
+/* Tabla expandida (botón de la barra de PatientsPanel): cada KPI pasa a una
+   sola línea — ícono + label a la izquierda, valor a la derecha, sin
+   descripción ni barra de progreso — y cede ~70px de alto a la tabla (y al
+   panel de alertas). Override local sobre las clases de @/Components/KpiCard;
+   mismos valores que .hh-kpi-row.compact de HC Hospitalización. */
+.pg-kpi-row.compact{gap:12px;}
+.pg-kpi-row.compact .pg-kpi-card{flex-direction:row;align-items:center;gap:10px;padding:10px 14px;}
+.pg-kpi-row.compact .pg-kpi-top{flex:1;min-width:0;}
+.pg-kpi-row.compact .pg-kpi-icon{width:28px;height:28px;}
+.pg-kpi-row.compact .pg-kpi-icon .icon{width:16px;height:16px;}
+.pg-kpi-row.compact .pg-kpi-value{font-size:var(--fs-xl);}
+.pg-kpi-row.compact .pg-kpi-desc,
+.pg-kpi-row.compact .pg-kpi-progress{display:none;}
+
 @media (max-width:1280px){
   .pg-kpi-row{grid-template-columns:repeat(3,1fr);}
 }

@@ -59,6 +59,23 @@
   --btn-focus-offset: 2px;
   --btn-transition: background .15s, border-color .15s, color .15s, opacity .15s;
 
+  /* Dropdowns / menús de acciones (ver AGENTS.md "Dropdowns" y
+     @/Components/DropdownMenu). Solo estructura — los colores siguen siendo
+     tokens por feature (--surface-modal, --bg, --gray-bg, --ink-*, --red...).
+     Valores = los que ya dominaban en la auditoría de los 27 menús. */
+  --dropdown-radius: 8px;
+  --dropdown-shadow: 0 8px 24px rgba(16,24,39,.16);
+  --dropdown-padding: 6px;
+  --dropdown-min-width: 180px;
+  --dropdown-offset: 4px;
+  --dropdown-item-padding: 8px 10px;
+  --dropdown-item-radius: 7px;
+  --dropdown-item-gap: 10px;
+  --dropdown-icon-size: 16px;
+  --dropdown-trigger-size: 28px;
+  --dropdown-trigger-radius: 7px;
+  --dropdown-trigger-icon-size: 17px;
+
   /* Encabezados de tabla (ver AGENTS.md "Encabezados de tabla"). --z-sticky
      ya lo declaraban 8 features con este mismo valor; se sube acá para que
      las que no lo declaran (asignación de citas, ListaPacientes, Vacunación,

@@ -30,3 +30,20 @@ button.kora-topbar-secondary-btn:hover{
     linear-gradient(var(--bg), var(--bg)) padding-box,
     linear-gradient(135deg, var(--primary), var(--accent-teal)) border-box;
 }
+
+/* Estado activo del switch (panel de Kora abierto): mismo borde degradado
+   que el hover, pero fijo y con relleno azul sutil (--primary-50) en vez de
+   --bg, para que se lea "encendido" y no solo "con el mouse encima". El
+   relleno va sobre --surface (no solo --primary-50) porque en dark mode
+   --primary-50 es un rgba translúcido y el degradado del border-box se
+   vería a través. Mismo selector `button.` que el hover para ganarle a
+   .secondaryAccent de Button.module.css. */
+button.kora-topbar-secondary-btn.is-active,
+button.kora-topbar-secondary-btn.is-active:hover{
+  border-color:transparent;
+  background:
+    linear-gradient(var(--primary-50), var(--primary-50)) padding-box,
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--primary), var(--accent-teal)) border-box;
+  color:var(--primary-dark);
+}

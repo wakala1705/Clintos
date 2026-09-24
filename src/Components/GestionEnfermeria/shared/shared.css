@@ -65,6 +65,18 @@
   --cyan:#0e7490;
   --cyan-bg:#e0fbfc;
   --cyan-fg:#0e7490;
+  /* Ocupada/Aislamiento/Inactiva de EstadoCamaBadge (Mapa de camas) — mismos
+     valores que GestionCamas.css. Faltaban: el badge "Ocupada" (--accent-*)
+     se veía sin fondo ni color, solo con el borde. */
+  --accent:#0065CD;
+  --accent-bg:#eef4ff;
+  --accent-fg:#0052a6;
+  --purple:#7c3aed;
+  --purple-bg:#f3e8ff;
+  --purple-fg:#6d28d9;
+  --slate:#475569;
+  --slate-bg:#e2e8f0;
+  --slate-fg:#334155;
   /* Sistema de color "clinical-status" de BedCard (encargo explícito,
      rediseño 2 paneles v2) — mismo criterio, mismos valores y mismas notas
      de contraste/dark-mode que GestionCamas.css (ver comentario completo
@@ -164,6 +176,15 @@ html[data-theme="dark"]{
   --cyan:#22d3ee;
   --cyan-bg:rgba(14,116,144,.22);
   --cyan-fg:#67e8f9;
+  --accent:#5b9df2;
+  --accent-bg:rgba(0,101,205,.22);
+  --accent-fg:#93c5fd;
+  --purple:#a78bfa;
+  --purple-bg:rgba(124,58,237,.22);
+  --purple-fg:#c4b5fd;
+  --slate:#94a3b8;
+  --slate-bg:rgba(71,85,105,.30);
+  --slate-fg:#cbd5e1;
   /* clinical-status en oscuro — ver comentario completo en GestionCamas.css
      (misma fórmula .20 de opacidad para -bg, mismo aclarado ~55% para -fg;
      el panel sólido no se redefine acá, es fijo entre temas). */
@@ -808,7 +829,10 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
 .data-table-wrap{
   flex:1;min-height:0;min-width:0;overflow:auto;
 }
-.data-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+/* separate + spacing 0 (no collapse): con collapse el border-top del th
+   sticky lo pinta la tabla y se va con el scroll, dejando una franja
+   transparente sobre el encabezado por donde se ven las filas. */
+.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
 /* Receta canónica de label de thead th (encargo explícito: sin mayúsculas,
    fw-semibold, fs-sm, sin letter-spacing, color ink-700) — reemplaza la
    versión "uppercase/fs-xs/ink-500" de la homologación anterior. Repetida
@@ -825,11 +849,11 @@ html[data-theme="dark"] .segmented-btn:hover{background:#20283a;}
   padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);border-top:1px solid var(--border);
 }
 .data-table th.col-right, .data-table td.col-right{text-align:right;}
-.data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-900);}
+.data-table td{padding:11px 14px;border-bottom:1px solid #eef0f4;vertical-align:middle;color:var(--ink-700);}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:#fafbfd;}
-.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
-.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-medium);margin-top:2px;}
+.data-table .cell-primary{font-weight:var(--fw-regular);color:var(--ink-900);}
+.data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-regular);margin-top:2px;}
 .data-table .cell-muted{color:var(--ink-500);}
 .data-table tr.filtered-out{display:none;}
 

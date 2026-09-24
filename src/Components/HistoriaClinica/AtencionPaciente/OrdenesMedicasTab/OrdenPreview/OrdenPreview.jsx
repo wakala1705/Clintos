@@ -8,20 +8,31 @@ import {
   LuCircleCheck, LuClipboardList, LuCopy, LuPencil, LuX,
 } from 'react-icons/lu';
 
-const COLUMNAS = [
-  'Descripción', 'Dosis', 'Unidad de medida', 'Presentación', 'Vía',
-  'Frecuencia', 'Duración', 'Cant.', 'Prioritario', 'Observaciones', 'Acciones',
+// Columnas de dosificación: solo aplican a medicamentos (y afines). Cada
+// sección muestra únicamente las que tienen valor en al menos uno de sus
+// items — en Laboratorios/Consultas no aparece ninguna, en vez de 6 columnas
+// enteras de "-" sombreado (encargo explícito: orden más limpia). Si un item
+// puntual no trae un campo que sus hermanos sí, esa celda sigue mostrando el
+// "-" sombreado (.op-na).
+const COLUMNAS_DOSIS = [
+  { campo: 'dosis', label: 'Dosis' },
+  { campo: 'unidad', label: 'Unidad de medida' },
+  { campo: 'presentacion', label: 'Presentación' },
+  { campo: 'via', label: 'Vía' },
+  { campo: 'frecuencia', label: 'Frecuencia' },
+  { campo: 'duracion', label: 'Duración' },
 ];
-
-// Columnas de dosificación: en consultas y laboratorios no aplican y se
-// muestran como "-" sombreado (ver .op-na).
-const CAMPOS_DOSIS = ['dosis', 'unidad', 'presentacion', 'via', 'frecuencia', 'duracion'];
 
 function proximamente(accion) {
   window.ncToast?.(`${accion} (flujo en desarrollo).`);
 }
 
 function SeccionServicios({ titulo, icon: Icon, tono, items }) {
+  const columnasDosis = COLUMNAS_DOSIS.filter(({ campo }) => items.some((item) => item[campo]));
+  const columnas = [
+    'Descripción', ...columnasDosis.map((c) => c.label), 'Cant.', 'Prioritario', 'Observaciones', 'Acciones',
+  ];
+
   return (
     <section className="op-section">
       <div className="op-section-head">
@@ -31,10 +42,10 @@ function SeccionServicios({ titulo, icon: Icon, tono, items }) {
       </div>
 
       <div className="op-table-wrap">
-        <table className="op-table">
+        <table className={`op-table${columnasDosis.length > 0 ? ' con-dosis' : ''}`}>
           <thead>
             <tr>
-              {COLUMNAS.map((c) => <th key={c}>{c}</th>)}
+              {columnas.map((c) => <th key={c}>{c}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -48,7 +59,7 @@ function SeccionServicios({ titulo, icon: Icon, tono, items }) {
                     <div className="op-contrato no"><LuX className="icon" aria-hidden="true" />Servicio no contratado</div>
                   )}
                 </td>
-                {CAMPOS_DOSIS.map((campo) => (
+                {columnasDosis.map(({ campo }) => (
                   item[campo]
                     ? <td key={campo}>{item[campo]}</td>
                     : <td key={campo} className="op-na">-</td>

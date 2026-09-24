@@ -28,8 +28,17 @@ const ESTADO_BADGE = {
 // "acción de abrir" por doble clic porque el detalle ya tiene su propio
 // botón directo (columna "Detalles"), así que un solo clic ya cubre la
 // única interacción de fila que hace falta.
-export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAccion }) {
+//
+// `ocultarColumnas` (opcional): claves de columnas a no mostrar, en tabla y
+// tarjetas — 'estado' | 'atendido' | 'tipoContrato'. Admisiones las muestra
+// todas; Enfermería → Pacientes oculta las tres (en piso todos están
+// admitidos y atendidos, y el contrato es dato administrativo — sigue
+// disponible en "Ver detalle").
+export default function AdmisionesTable({
+  admisiones, onEditar, onDetalle, onAccion, ocultarColumnas = [],
+}) {
   const [selectedId, setSelectedId] = useState(null);
+  const ver = (col) => !ocultarColumnas.includes(col);
 
   function handleRowKeyDown(e, id) {
     // Solo cuando el foco está en la fila misma: los botones/menús de adentro
@@ -58,14 +67,14 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAcc
               <th>Fecha</th>
               <th>Hora</th>
               <th>Triage</th>
-              <th>Estado</th>
+              {ver('estado') && <th>Estado</th>}
               <th>Documento</th>
               <th>Nombre del afiliado</th>
-              <th>Atendido</th>
+              {ver('atendido') && <th>Atendido</th>}
               <th>Administradora</th>
               <th>Cama</th>
               <th>Tipo de admisión</th>
-              <th>Tipo de contrato</th>
+              {ver('tipoContrato') && <th>Tipo de contrato</th>}
               <th className="col-acciones"><span className="sr-only">Acciones</span></th>
               <th className="col-acciones"><span className="sr-only">Más opciones</span></th>
             </tr>
@@ -84,14 +93,14 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAcc
                 <td className="cell-muted">{a.fecha}</td>
                 <td className="cell-muted">{a.hora}</td>
                 <td><TriageBadge level={a.triage} /></td>
-                <td><Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge></td>
+                {ver('estado') && <td><Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge></td>}
                 <td className="cell-muted">{a.documento}</td>
                 <td className="cell-primary">{a.nombreAfiliado}</td>
-                <td><span className={a.atendido ? 'adm-atendido-si' : 'adm-atendido-no'}>{a.atendido ? 'SI' : 'NO'}</span></td>
+                {ver('atendido') && <td><span className={a.atendido ? 'adm-atendido-si' : 'adm-atendido-no'}>{a.atendido ? 'SI' : 'NO'}</span></td>}
                 <td className="cell-muted">{a.administradora}</td>
                 <td className="adm-cell-cama">{a.cama ?? '—'}</td>
                 <td className="cell-muted">{a.tipoAdmision}</td>
-                <td className="cell-muted">{a.tipoContrato}</td>
+                {ver('tipoContrato') && <td className="cell-muted">{a.tipoContrato}</td>}
                 <td className="col-acciones" onClick={(e) => e.stopPropagation()}>
                   <RowActionsMenu {...rowActionsProps(a)} />
                 </td>
@@ -120,12 +129,12 @@ export default function AdmisionesTable({ admisiones, onEditar, onDetalle, onAcc
                 <div className="adm-card-name">{a.nombreAfiliado}</div>
                 <div className="adm-card-doc">{a.numeroAdmision} · Doc. {a.documento}</div>
               </div>
-              <Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge>
+              {ver('estado') && <Badge {...ESTADO_BADGE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge>}
             </div>
             <div className="adm-card-meta">
-              <span>{a.fecha} · {a.hora} · Atendido: {a.atendido ? 'SI' : 'NO'}</span>
+              <span>{a.fecha} · {a.hora}{ver('atendido') && ` · Atendido: ${a.atendido ? 'SI' : 'NO'}`}</span>
               <span>{a.administradora}</span>
-              <span>{a.tipoContrato} · {a.tipoAdmision}</span>
+              <span>{ver('tipoContrato') ? `${a.tipoContrato} · ${a.tipoAdmision}` : a.tipoAdmision}</span>
             </div>
             <div className="adm-card-actions" onClick={(e) => e.stopPropagation()}>
               <Button variant="secondary" icon={LuEye} className="adm-detalle-btn" onClick={() => onDetalle(a)}>

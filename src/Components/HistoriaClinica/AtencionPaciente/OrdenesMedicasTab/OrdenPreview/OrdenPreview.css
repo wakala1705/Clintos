@@ -31,7 +31,15 @@
 /* Scroll horizontal propio: la tabla tiene 11 columnas y el panel derecho
    (junto a los 360px de la lista) no siempre las aloja. */
 .op-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;}
-.op-table{width:100%;min-width:1100px;border-collapse:collapse;font-size:var(--fs-sm);}
+.op-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
+/* Solo con columnas de dosificación (Medicamentos) la tabla necesita ancho
+   mínimo + scroll horizontal. Sin ellas (Laboratorios, Consultas... ver
+   COLUMNAS_DOSIS en OrdenPreview.jsx) entra completa: la descripción toma el
+   espacio libre y Cant./Prioritario/Acciones se ajustan a su contenido. */
+.op-table.con-dosis{min-width:1100px;}
+.op-table:not(.con-dosis) th:not(:first-child),
+.op-table:not(.con-dosis) td:not(:first-child){width:1%;white-space:nowrap;}
+.op-table:not(.con-dosis) td:nth-last-child(2){min-width:160px;white-space:normal;}
 .op-table th{
   position:sticky;top:0;background:var(--table-header-bg);color:var(--th-color);
   font-size:var(--th-fs);font-weight:var(--th-fw);text-align:left;

@@ -1,6 +1,6 @@
 import {
   LuAtom, LuClipboardList, LuFlaskConical, LuMicroscope, LuPill, LuRadiation,
-  LuScanLine, LuScissors, LuSyringe, LuUserCheck,
+  LuListChecks, LuScanLine, LuScissors, LuSyringe, LuUserCheck, LuWind,
 } from 'react-icons/lu';
 
 // Catálogo único de categorías/secciones de una orden médica: clave, título,
@@ -15,6 +15,9 @@ import {
 // las 3 pantallas diverjan en qué ícono/color/etiqueta representa cada
 // categoría.
 export const SECCIONES_ORDEN = [
+  {
+    clave: 'ordenesGenerales', titulo: 'Órdenes generales', icon: LuClipboardList, tono: 'azul', formulario: 'simple',
+  },
   {
     clave: 'medicamentos', titulo: 'Medicamentos', icon: LuPill, tono: 'azul', formulario: 'completo',
   },
@@ -34,9 +37,6 @@ export const SECCIONES_ORDEN = [
     clave: 'consultas', titulo: 'Consultas', icon: LuUserCheck, tono: 'verde', formulario: 'simple',
   },
   {
-    clave: 'ordenesGenerales', titulo: 'Órdenes generales', icon: LuClipboardList, tono: 'azul', formulario: 'simple',
-  },
-  {
     clave: 'radioterapiaBraquiterapia', titulo: 'Radioterapia/Braquiterapia', icon: LuRadiation, tono: 'rojo', formulario: 'simple',
   },
   {
@@ -44,5 +44,11 @@ export const SECCIONES_ORDEN = [
   },
   {
     clave: 'medicinaNuclear', titulo: 'Medicina nuclear', icon: LuAtom, tono: 'gris', formulario: 'simple',
+  },
+  {
+    clave: 'oxigeno', titulo: 'Oxígeno', icon: LuWind, tono: 'azul', formulario: 'simple',
+  },
+  {
+    clave: 'protocolosQuimioterapia', titulo: 'Protocolos de quimioterapia', icon: LuListChecks, tono: 'violeta', formulario: 'simple',
   },
 ];

@@ -22,7 +22,20 @@
 .hh-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .hh-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
-.hh-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex-shrink:0;}
+.hh-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex-shrink:0;}
+
+/* Tabla expandida (botón de la barra de PatientsPanel): cada KPI pasa a una
+   sola línea — ícono + label a la izquierda, valor a la derecha, sin
+   descripción — y cede ~70px de alto a la tabla. Override local sobre las
+   clases de @/Components/KpiCard (compartido con otras features, que no
+   cambian). */
+.hh-kpi-row.compact{gap:12px;}
+.hh-kpi-row.compact .pg-kpi-card{flex-direction:row;align-items:center;gap:10px;padding:10px 14px;}
+.hh-kpi-row.compact .pg-kpi-top{flex:1;min-width:0;}
+.hh-kpi-row.compact .pg-kpi-icon{width:28px;height:28px;}
+.hh-kpi-row.compact .pg-kpi-icon .icon{width:16px;height:16px;}
+.hh-kpi-row.compact .pg-kpi-value{font-size:var(--fs-xl);}
+.hh-kpi-row.compact .pg-kpi-desc{display:none;}
 
 /* 2 columnas ~70% / ~30% — flex-basis en vez de % fijo para que ambas sigan
    repartiendo el espacio sobrante. min-height:0 para que .card
@@ -33,5 +46,5 @@
 .hh-main-row .hh-pendientes-card{flex:3 1 0;min-width:280px;}
 
 @media (max-width:1280px){
-  .hh-kpi-row{grid-template-columns:repeat(3,1fr);}
+  .hh-kpi-row{grid-template-columns:repeat(2,1fr);}
 }

@@ -13,13 +13,13 @@
 .tff-chev{width:15px;height:15px;color:var(--ink-500);flex-shrink:0;transition:transform .15s ease;}
 .tff-chev.open{transform:rotate(180deg);}
 
-/* position:fixed + top/left/width inline (ver TipoFacturaFilter.jsx) -- el
-   listado se porta a document.body, mismo motivo que .form-select-dropdown. */
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición (position:fixed + top/left/width
+   inline, ver TipoFacturaFilter.jsx — portado a document.body, mismo motivo
+   que .form-select-dropdown), la fila Todos/Limpiar y el checkbox: es
+   multi-selección, así que el estado lo marca el checkbox, no el ✓. */
 .tff-dropdown{
   position:fixed;width:max-content;max-width:min(280px,calc(100vw - 16px));z-index:calc(var(--z-modal, 50) + 1);
-  background:var(--surface);border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(16,24,39,.16);border:solid 1px var(--border);
-  padding:6px;
 }
 .tff-actions{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
@@ -33,11 +33,6 @@
 .tff-action-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
 
 .tff-options{list-style:none;margin:0;padding:0;max-height:260px;overflow-y:auto;}
-.tff-option{
-  display:flex;align-items:center;gap:10px;width:100%;
-  padding:8px 10px;border-radius:7px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
-}
-.tff-option:hover{background:var(--bg);}
 .tff-option input[type="checkbox"]{
   width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer;margin:0;
 }

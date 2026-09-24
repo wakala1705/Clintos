@@ -24,7 +24,13 @@ import Button from '@/Components/Button/Button';
 //   degradado que .cai-suggestion-card — no se toca Button.module.css
 //   directo: ese variant lo usan 46+ botones del proyecto (ver AGENTS.md
 //   "Botones"), este acento es una decisión puntual de este botón.
-export default function KoraTopbarButton({ onClick, variant = 'gradient' }) {
+//
+// Switch (encargo explícito): `active` = el panel de Kora está abierto. El
+// padre lo toma del `onOpenChange` de <ClintosAI/> (no de un estado propio
+// de este botón), así refleja también aperturas/cierres hechos desde el
+// trigger flotante o la ✕ del panel; el padre decide en `onClick` si abre o
+// cierra. `aria-pressed` anuncia el estado a lectores de pantalla.
+export default function KoraTopbarButton({ onClick, variant = 'gradient', active = false }) {
   if (variant === 'secondary-accent') {
     return (
       <Button
@@ -32,7 +38,8 @@ export default function KoraTopbarButton({ onClick, variant = 'gradient' }) {
         size="sm"
         icon={LuSparkles}
         onClick={onClick}
-        className="kora-topbar-secondary-btn"
+        aria-pressed={active}
+        className={`kora-topbar-secondary-btn${active ? ' is-active' : ''}`}
       >
         Preguntar a Kora
       </Button>
@@ -40,7 +47,7 @@ export default function KoraTopbarButton({ onClick, variant = 'gradient' }) {
   }
 
   return (
-    <button type="button" className="kora-topbar-btn" onClick={onClick}>
+    <button type="button" className="kora-topbar-btn" onClick={onClick} aria-pressed={active}>
       <LuSparkles className="icon" aria-hidden="true" />
       Preguntar a Kora
     </button>

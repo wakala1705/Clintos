@@ -169,7 +169,7 @@ function CirugiaPanel({
 // mock estático y los botones son solo visuales (sin handlers) — es la
 // primera versión del modal, para conectar comportamiento real más
 // adelante. `admision` es la única fuente de verdad de si el modal está
-// abierto, mismo patrón que AdmisionDetalleModal.
+// abierto, mismo patrón que DetalleAdmisionModal en Admisiones.jsx.
 export default function CargosModal({ admision, onClose }) {
   const [activeTab, setActiveTab] = useState('cargos');
   // Modal "Agregando un Registro" del panel Programación Sala Cirugía (ver

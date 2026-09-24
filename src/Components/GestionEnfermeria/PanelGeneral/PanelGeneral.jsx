@@ -36,6 +36,10 @@ import {
 export default function PanelGeneral() {
   const router = useRouter();
   const [areaOperativa, setAreaOperativa] = useState('todo');
+  // Botón expandir de la barra de la tabla (PatientsPanel.jsx): compacta la
+  // fila de KPIs para darle más alto a la tabla — mismo comportamiento que
+  // HC Hospitalización (tablaExpandida en HistoriaClinicaHospitalizacion.jsx).
+  const [tablaExpandida, setTablaExpandida] = useState(false);
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar (con auto-colapso
   // responsive por debajo de 1024px) — mismo init que AtencionEnfermeria.jsx
@@ -90,7 +94,7 @@ export default function PanelGeneral() {
               </div>
             </div>
 
-            <div className="pg-kpi-row">
+            <div className={`pg-kpi-row${tablaExpandida ? ' compact' : ''}`}>
               <KpiCard
                 icon={LuUsers}
                 label="Total pacientes"
@@ -136,6 +140,8 @@ export default function PanelGeneral() {
                 areaOperativa={areaOperativa}
                 onAreaOperativaChange={setAreaOperativa}
                 areaOptions={AREAS_OPERATIVAS}
+                expandida={tablaExpandida}
+                onToggleExpandida={() => setTablaExpandida((v) => !v)}
               />
               <AlertsPanel />
             </div>
