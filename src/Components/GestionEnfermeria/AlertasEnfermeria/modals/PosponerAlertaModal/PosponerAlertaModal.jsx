@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { AHORA_LABEL } from '@/hooks/GestionEnfermeria/mockAlertasData';
 import { LuTimer } from 'react-icons/lu';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 const OPCIONES_RAPIDAS = [
   { value: 15, label: '15 minutos' },
@@ -60,22 +61,22 @@ export default function PosponerAlertaModal({ alerta, onClose, onConfirm }) {
               <label>Posponer por</label>
               <div className="chip-group segmented pam-chips">
                 {OPCIONES_RAPIDAS.map((o) => (
-                  <button
-                    type="button"
+                  <ChipFilter
                     key={o.value}
-                    className={`chip-filter${opcion === o.value ? ' active' : ''}`}
+                    variant="segmented"
+                    active={opcion === o.value}
                     onClick={() => setOpcion(o.value)}
                   >
                     {o.label}
-                  </button>
+                  </ChipFilter>
                 ))}
-                <button
-                  type="button"
-                  className={`chip-filter${personalizado ? ' active' : ''}`}
+                <ChipFilter
+                  variant="segmented"
+                  active={personalizado}
                   onClick={() => setOpcion('personalizado')}
                 >
                   Personalizado
-                </button>
+                </ChipFilter>
               </div>
             </div>
 

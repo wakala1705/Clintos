@@ -159,3 +159,42 @@ export const ESTADO_MEDICACION_LABEL = {
   'no-aplica': 'No aplica',
 };
 
+// Nombre completo (2 nombres + 2 apellidos) por paciente — `paciente` de
+// PACIENTES_PISO (compartido con Bed Board y Alertas) solo trae nombre +
+// primer apellido y no se toca para no alterar esas pantallas. Lo consumen
+// la tabla del Panel General de Enfermería y Historia Clínica de
+// Hospitalización (mockHospitalizadosData.js), así ambas muestran el mismo
+// nombre. El primer nombre y el primer apellido de cada entrada coinciden
+// con los de PACIENTES_PISO.
+export const NOMBRE_COMPLETO = {
+  'HC-48291': 'María Fernanda González Restrepo',
+  'HC-48307': 'Carlos Andrés Rodríguez Molina',
+  'HC-48192': 'Ana Lucía Martínez Duque',
+  'HC-48321': 'Jorge Iván Ramírez Ospina',
+  'HC-47984': 'Patricia Elena López Cardona',
+  'HC-48266': 'Luis Alberto Hernández Vélez',
+  'HC-48031': 'Sofía Alejandra Torres Bedoya',
+  'HC-48345': 'Andrés Felipe Castro Zapata',
+  'HC-47892': 'Elena María Vargas Salazar',
+  'HC-48215': 'Ricardo Antonio Moreno Giraldo',
+  'HC-48176': 'Laura Camila Sánchez Arango',
+  'HC-48302': 'Diego Armando Pérez Londoño',
+  'HC-47765': 'Carmen Rosa Ruiz Henao',
+  'HC-48254': 'Felipe Andrés Gómez Herrera',
+};
+
+// Documento (CC) ficticio derivado del id de historia — PACIENTES_PISO no
+// trae documento real. Mismo valor en la tabla del Panel General y en el
+// PatientBanner de Historia Clínica de Hospitalización.
+export function documentoDe(id) {
+  return `10${id.replace(/\D/g, '')}`;
+}
+
+// N° de admisión ficticio (10 dígitos como los de Admisiones), derivado del
+// id de historia para que sea estable por paciente — mismo valor en
+// Enfermería → Pacientes y en el PatientBanner de Historia Clínica de
+// Hospitalización.
+export function numeroAdmisionDe(id) {
+  return `02012${id.replace(/\D/g, '')}`;
+}
+

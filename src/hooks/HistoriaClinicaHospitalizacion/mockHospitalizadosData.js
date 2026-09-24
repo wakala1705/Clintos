@@ -14,7 +14,11 @@
 // diferencia de Enfermería, acá todo (incluido el panel lateral) sí se puede
 // recortar por sector, porque cada pendiente pertenece a un paciente con
 // cama.
-import { PACIENTES_PISO } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
+// NOMBRE_COMPLETO/documentoDe/numeroAdmisionDe viven en el mock de
+// Enfermería porque sus pantallas también los muestran.
+import {
+  documentoDe, NOMBRE_COMPLETO, numeroAdmisionDe, PACIENTES_PISO,
+} from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import { DOCTOR } from '@/hooks/HistoriaClinica/mockAgendaData';
 
 export { AREAS_OPERATIVAS, sectorDeCama } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
@@ -63,28 +67,6 @@ const PENDIENTES_POR_PACIENTE = {
     { tipo: 'resultado', detalle: 'Creatinina y electrolitos', min: 55 },
   ],
   'HC-48254': [],
-};
-
-// Nombre completo (2 nombres + 2 apellidos) por paciente — PACIENTES_PISO
-// (compartido con Enfermería, Bed Board y Alertas) solo trae nombre + primer
-// apellido, y ese mock no se toca para no alterar las otras pantallas. El
-// primer nombre y el primer apellido de cada entrada coinciden con el de
-// PACIENTES_PISO, así que es el mismo paciente visto desde Historia Clínica.
-const NOMBRE_COMPLETO = {
-  'HC-48291': 'María Fernanda González Restrepo',
-  'HC-48307': 'Carlos Andrés Rodríguez Molina',
-  'HC-48192': 'Ana Lucía Martínez Duque',
-  'HC-48321': 'Jorge Iván Ramírez Ospina',
-  'HC-47984': 'Patricia Elena López Cardona',
-  'HC-48266': 'Luis Alberto Hernández Vélez',
-  'HC-48031': 'Sofía Alejandra Torres Bedoya',
-  'HC-48345': 'Andrés Felipe Castro Zapata',
-  'HC-47892': 'Elena María Vargas Salazar',
-  'HC-48215': 'Ricardo Antonio Moreno Giraldo',
-  'HC-48176': 'Laura Camila Sánchez Arango',
-  'HC-48302': 'Diego Armando Pérez Londoño',
-  'HC-47765': 'Carmen Rosa Ruiz Henao',
-  'HC-48254': 'Felipe Andrés Gómez Herrera',
 };
 
 // Pacientes marcados por el médico para egreso hoy/mañana.
@@ -192,10 +174,13 @@ export function getPacienteHospitalizado(id) {
   return PACIENTES_HOSPITALIZADOS.find((p) => p.id === id) ?? null;
 }
 
-export function getHospitalizadoData(id) {
+// Versión síncrona de getHospitalizadoData — la usa AtencionEnfermeria.jsx
+// para que el banner de Enfermería muestre el mismo paciente (mismo nombre,
+// documento, admisión y cama) que Historia Clínica de Hospitalización.
+export function buildHospitalizadoData(id) {
   const p = PACIENTES_HOSPITALIZADOS.find((x) => x.id === id);
-  if (!p) return Promise.resolve(null);
-  return Promise.resolve({
+  if (!p) return null;
+  return {
     hospitalizacion: {
       cama: p.cama,
       admision: p.admision,
@@ -206,10 +191,8 @@ export function getHospitalizadoData(id) {
     patient: {
       iniciales: iniciales(p.paciente),
       nombre: p.paciente,
-      documento: `10${p.id.replace(/\D/g, '')}`,
-      // N° de admisión ficticio (10 dígitos como los de Admisiones), derivado
-      // del id de historia para que sea estable por paciente.
-      numeroAdmision: `02012${p.id.replace(/\D/g, '')}`,
+      documento: documentoDe(p.id),
+      numeroAdmision: numeroAdmisionDe(p.id),
       // Campo fijo de PatientBanner (fila 2, entre N° Admisión y Cama).
       fechaIngreso: `${fechaIngresoLarga(p.admision)} (${p.diasEstancia} días)`,
       edad: `${p.edad} años`,
@@ -220,5 +203,9 @@ export function getHospitalizadoData(id) {
       medicoTratante: `Dr. ${DOCTOR.nombre}`,
       allergies: ALERGIAS_POR_PACIENTE[p.id],
     },
-  });
+  };
+}
+
+export function getHospitalizadoData(id) {
+  return Promise.resolve(buildHospitalizadoData(id));
 }

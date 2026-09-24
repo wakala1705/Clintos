@@ -2430,10 +2430,14 @@ export function initGestionEnfermeria() {
     document.getElementById('suspend-modal-title').textContent = titleText;
     document.getElementById('suspend-confirm-label').textContent = titleText;
 
+    // Nombre/documento desde los data-* de PatientBanner (valor real), no
+    // desde su texto visible: el texto puede estar enmascarado por el botón
+    // de ojo, y leer `.patient-meta .pm-item b` devolvía SEXO desde que el
+    // documento pasó a `.pdoc`. Mismo patrón en los otros 4 modales.
     document.getElementById('suspend-patient-name').textContent =
-      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+      document.querySelector('[data-patient-name]')?.dataset.patientName || '—';
     document.getElementById('suspend-patient-cc').textContent =
-      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+      document.querySelector('[data-patient-doc]')?.dataset.patientDoc || '—';
 
     document.getElementById('suspend-med-list').innerHTML = meds.map(med => `
       <div class="suspend-med-row">
@@ -2559,9 +2563,9 @@ export function initGestionEnfermeria() {
     returnModalMeds = meds;
 
     document.getElementById('return-patient-name').textContent =
-      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+      document.querySelector('[data-patient-name]')?.dataset.patientName || '—';
     document.getElementById('return-patient-cc').textContent =
-      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+      document.querySelector('[data-patient-doc]')?.dataset.patientDoc || '—';
 
     document.getElementById('return-med-list').innerHTML = meds.map(med => {
       const dosis = getDosisSuspendidas(med);
@@ -3457,9 +3461,9 @@ export function initGestionEnfermeria() {
 
     document.getElementById('orden-detalle-modal-title').textContent = `Detalle de la orden ${orden.consecutivo}`;
     document.getElementById('orden-detalle-patient-name').textContent =
-      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+      document.querySelector('[data-patient-name]')?.dataset.patientName || '—';
     document.getElementById('orden-detalle-patient-cc').textContent =
-      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+      document.querySelector('[data-patient-doc]')?.dataset.patientDoc || '—';
     document.getElementById('orden-detalle-consecutivo').textContent = orden.consecutivo;
     document.getElementById('orden-detalle-medico').textContent = orden.medico;
     document.getElementById('orden-detalle-fecha').textContent = orden.fecha;
@@ -3696,9 +3700,9 @@ export function initGestionEnfermeria() {
     document.getElementById('program-confirm-label').textContent = count === 1 ? 'Confirmar programación' : `Confirmar programación (${count})`;
 
     document.getElementById('program-patient-name').textContent =
-      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+      document.querySelector('[data-patient-name]')?.dataset.patientName || '—';
     document.getElementById('program-patient-cc').textContent =
-      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+      document.querySelector('[data-patient-doc]')?.dataset.patientDoc || '—';
     document.getElementById('program-por').textContent =
       CURRENT_USER_NAME.startsWith('Enf.') ? CURRENT_USER_NAME : 'Enf. ' + CURRENT_USER_NAME;
 
@@ -4007,9 +4011,9 @@ export function initGestionEnfermeria() {
     document.getElementById('pedido-modal-title').textContent = count === 1 ? 'Pedido a farmacia' : `Pedido a farmacia (${count} medicamentos)`;
 
     document.getElementById('pedido-patient-name').textContent =
-      document.querySelector('.patient-name-block .pname')?.textContent || '—';
+      document.querySelector('[data-patient-name]')?.dataset.patientName || '—';
     document.getElementById('pedido-patient-cc').textContent =
-      document.querySelector('.patient-meta .pm-item b')?.textContent || '—';
+      document.querySelector('[data-patient-doc]')?.dataset.patientDoc || '—';
     document.getElementById('pedido-por').textContent =
       CURRENT_USER_NAME.startsWith('Enf.') ? CURRENT_USER_NAME : 'Enf. ' + CURRENT_USER_NAME;
 

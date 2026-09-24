@@ -1,11 +1,14 @@
 'use client';
 
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
+
 // Franja de chips segmentados clickeable — extraído de PatientsPanel.jsx
 // (el "Todos (14) / Con pendientes (6) / Prolongados (3)" de Panel General),
 // que hasta ahora repetía este mismo `.map()` inline; con Bed Board como
 // segundo consumidor pasa a vivir acá (ver AGENTS.md "App-wide components").
-// Solo consume las clases ya compartidas por feature `.chip-group.segmented`/
-// `.chip-filter` (mismo criterio que FilterDropdown.jsx: sin CSS propio).
+// El contenedor `.chip-group.segmented` sigue siendo la clase compartida por
+// feature; cada segmento es <ChipFilter variant="segmented"> (ver AGENTS.md
+// "Chips de filtro").
 //
 // `resetValue` es opcional: sin él, este es un tablist de selección única de
 // siempre-una-opción-activa (igual que PatientsPanel, que ya incluye su
@@ -27,16 +30,17 @@ export default function SegmentedFilterBar({
   return (
     <div className="chip-group segmented" role="tablist" aria-label={ariaLabel}>
       {options.map((o) => (
-        <button
-          type="button"
+        <ChipFilter
           key={o.value}
+          variant="segmented"
           role="tab"
           aria-selected={value === o.value}
-          className={`chip-filter${value === o.value ? ' active' : ''}`}
+          active={value === o.value}
+          count={o.count}
           onClick={() => handleClick(o.value)}
         >
-          {o.label} <span className="count">({o.count})</span>
-        </button>
+          {o.label}
+        </ChipFilter>
       ))}
     </div>
   );

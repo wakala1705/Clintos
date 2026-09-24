@@ -5,15 +5,16 @@ import './CargosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
+import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import ProgramacionCirugiaModal from './ProgramacionCirugiaModal/ProgramacionCirugiaModal';
 import CirugiaDetalleModal from './CirugiaDetalleModal/CirugiaDetalleModal';
 import SeleccionarProgramacionModal from './SeleccionarProgramacionModal/SeleccionarProgramacionModal';
 import { CARGOS_ROWS, CARGOS_TOTALS, DETALLE_BY_PRESTACION } from '@/hooks/Admisiones/mockCargosData';
 import {
-  LuBan, LuBriefcaseMedical, LuCalculator, LuChevronDown, LuChevronUp, LuEye, LuEyeOff, LuFileText,
+  LuBan, LuBriefcaseMedical, LuCalculator, LuEye, LuFileText,
   LuFlaskConical, LuFolderDown, LuInfo, LuLayers, LuPackage, LuPencil, LuPill, LuPlus,
   LuPrinter, LuRefreshCw, LuRotateCcw, LuScan, LuShieldAlert, LuTrash2,
-  LuTriangleAlert, LuUndo2, LuUser,
+  LuTriangleAlert, LuUndo2,
 } from 'react-icons/lu';
 
 const TABS = [
@@ -159,29 +160,6 @@ function CirugiaPanel({
   );
 }
 
-function Field({ label, value }) {
-  return (
-    <div className="cm-field">
-      <span className="cm-field-label">{label}</span>
-      <span className="cm-field-value">{value}</span>
-    </div>
-  );
-}
-
-// Enmascara un valor manteniendo su longitud (mismo criterio que un campo de
-// contraseña) — el botón de ojo (ver cm-patient-badges) alterna esto en vez
-// de navegar a ningún lado.
-function maskValue(value) {
-  return '•'.repeat(String(value).length);
-}
-
-// Mismo criterio que maskValue, pero conserva los espacios entre palabras
-// (nombre completo) para que el resultado siga leyéndose como un nombre de
-// varias palabras en vez de un solo bloque de puntos.
-function maskName(value) {
-  return String(value).replace(/\S/g, '•');
-}
-
 // Modal extra grande disparado por la opción "Cargos" del megamenú de
 // Acciones (columna Administrativas, ver AccionesMegaMenu.jsx) — vuelca la
 // ficha de cargos de una admisión (barra de admisión + banner de paciente +
@@ -194,11 +172,6 @@ function maskName(value) {
 // abierto, mismo patrón que AdmisionDetalleModal.
 export default function CargosModal({ admision, onClose }) {
   const [activeTab, setActiveTab] = useState('cargos');
-  const [adminExpanded, setAdminExpanded] = useState(true);
-  // El botón de ojo (ver cm-patient-badges) no navega — enmascara/revela los
-  // datos sensibles del afiliado (nombre y documento), como el botón de
-  // mostrar contraseña de un formulario.
-  const [dataHidden, setDataHidden] = useState(false);
   // Modal "Agregando un Registro" del panel Programación Sala Cirugía (ver
   // ProgramacionCirugiaModal.jsx) — se monta por encima de este modal (mismo
   // patrón que CatalogoDiagnosticosModal dentro de InformacionGeneralStep).
@@ -217,8 +190,25 @@ export default function CargosModal({ admision, onClose }) {
 
   if (!admision) return null;
 
-  const documentoMostrado = dataHidden ? maskValue(admision.documento) : admision.documento;
-  const nombreMostrado = dataHidden ? maskName(admision.nombreAfiliado) : admision.nombreAfiliado;
+  // Paciente de la admisión en el shape de PatientBanner. Sexo, fecha de
+  // nacimiento, régimen y contrato siguen siendo mock estático (no existen
+  // en mockAdmisionesData.js todavía), iguales a los que tenía el banner
+  // hecho a mano; Id. Afiliado = documento.
+  const bannerPatient = {
+    iniciales: admision.nombreAfiliado.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]).join(''),
+    nombre: admision.nombreAfiliado,
+    documento: admision.documento,
+    sexo: 'Femenino',
+    fechaNacimiento: '16.SEP.1984 · 41 años 4 meses',
+    eps: admision.administradora,
+    numeroAdmision: admision.numeroAdmision,
+    fechaIngreso: `${admision.fecha} - ${admision.hora}`,
+    cama: admision.cama ?? '—',
+    idAfiliado: admision.documento,
+    regimen: 'FOSYGA',
+    numeroContrato: 'PRUEBA123458',
+    idContrato: '340',
+  };
 
   // Solo la pestaña Cargos tiene mock (ver CARGOS_ROWS); Recién nacidos sigue
   // vacía, con totales en cero.
@@ -245,84 +235,14 @@ export default function CargosModal({ admision, onClose }) {
         />
 
         <div className="adm-modal-body cm-body">
-          <div className="cm-patient-banner">
-            {/* Fila 1: identidad del paciente + datos clínicos en la misma
-                fila (encargo explícito) — ya no llevan label de grupo, la
-                identidad (avatar/nombre/badges) alcanza para dar contexto de
-                que lo que sigue es del paciente. */}
-            <div className="cm-patient-row">
-              <div className="cm-patient-identity">
-                <div className="cm-patient-avatar">
-                  <LuUser className="icon" aria-hidden="true" />
-                </div>
-                {/* Nombre + tipo/n° de documento agrupados en una sola
-                    columna (encargo explícito) — antes Doc. Id./Tipo vivían
-                    como Field aparte en la grilla, ahora es la línea
-                    secundaria de la identidad ("CC 2450854"). */}
-                <div className="cm-patient-info">
-                  <span className="cm-patient-name">{nombreMostrado}</span>
-                  <span className="cm-patient-doc">CC {documentoMostrado}</span>
-                </div>
-              </div>
-              <div className="cm-patient-fields">
-                <Field label="Sexo" value="F" />
-                <Field label="Fecha Nac." value="16.SEP.1984 · 41 años 4 meses" />
-                <Field label="Asegurador" value={admision.administradora} />
-              </div>
-              {/* Alergias/chevron al extremo derecho de la fila (encargo
-                  explícito) — antes en la misma línea del nombre. "Activo"
-                  bajó a la fila 2 (encargo explícito, ver abajo). El chevron
-                  vive acá (fila 1, siempre visible) y no en la fila 2 — así,
-                  colapsado, el banner queda en una sola fila en vez de dejar
-                  una franja aparte solo para el botón. El botón de ojo no
-                  navega (encargo explícito): enmascara/revela los datos
-                  sensibles del afiliado (nombre y documento, ver
-                  nombreMostrado/documentoMostrado más arriba), como el
-                  toggle de un campo de contraseña. */}
-              <div className="cm-patient-badges">
-                <button
-                  type="button"
-                  className="cm-icon-btn"
-                  onClick={() => setDataHidden((v) => !v)}
-                  aria-pressed={dataHidden}
-                  aria-label={dataHidden ? 'Mostrar datos sensibles' : 'Ocultar datos sensibles'}
-                >
-                  {dataHidden ? <LuEyeOff className="icon" aria-hidden="true" /> : <LuEye className="icon" aria-hidden="true" />}
-                </button>
-                <Badge tone="warn" dot className="cm-alergias-badge">Alergias</Badge>
-                <button
-                  type="button"
-                  className="cm-banner-toggle"
-                  onClick={() => setAdminExpanded((v) => !v)}
-                  aria-expanded={adminExpanded}
-                  aria-label={adminExpanded ? 'Ocultar datos administrativos' : 'Mostrar datos administrativos'}
-                >
-                  {adminExpanded ? <LuChevronUp className="icon" aria-hidden="true" /> : <LuChevronDown className="icon" aria-hidden="true" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Fila 2: datos administrativos (admisión/contrato) + Cama +
-                Id. Afiliado + Activo (encargo explícito: bajaron de la fila
-                1 a esta; Asegurador subió a la fila 1, después de Fecha
-                Nac.) — mismo criterio de mock estático que N° Contrato/ID
-                Contrato (no hay estos campos en mockAdmisionesData.js
-                todavía). Colapsable con el chevron de la fila 1 (encargo
-                explícito): compactado, el banner queda en una sola fila —
-                esta fila entera deja de montarse, sin dejar franja. */}
-            {adminExpanded && (
-              <div className="cm-patient-fields cm-patient-fields-admin">
-                <Field label="N° Admisión" value={admision.numeroAdmision} />
-                <Field label="Fecha de ingreso" value={`${admision.fecha} - ${admision.hora}`} />
-                <Field label="Cama" value={admision.cama ?? '—'} />
-                <Field label="Id. Afiliado" value={documentoMostrado} />
-                <Field label="Régimen" value="FOSYGA" />
-                <Field label="N° Contrato" value="PRUEBA123458" />
-                <Field label="ID Contrato" value="340" />
-                <Badge tone="success" dot className="cm-estado-badge">Activo</Badge>
-              </div>
-            )}
-          </div>
+          {/* Banner homologado: variant="cargos" de PatientBanner (ver
+              @/hooks/PatientBanner/variants.js) — antes era un banner hecho a
+              mano acá (.cm-patient-banner) con la misma estructura. */}
+          <PatientBanner
+            variant="cargos"
+            patient={bannerPatient}
+            statusBadge={{ label: 'Activo', tone: 'success' }}
+          />
 
           {/* cm-cargos-card / cm-detail-card en 2 columnas del 50% (encargo
               explícito) — antes apiladas de a una por fila. */}

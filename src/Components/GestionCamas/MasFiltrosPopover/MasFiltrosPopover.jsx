@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './MasFiltrosPopover.css';
 import { LuFilter } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 // Filtros avanzados agrupados por categoría conceptual, no por campo
 // (encargo) — 2 columnas: "Ubicación" (Piso/Sector/Habitación) y Clasificación
@@ -112,16 +113,15 @@ export default function MasFiltrosPopover({
                 </div>
                 <div className="chip-group">
                   {pisoOptions.slice(1).map((o) => (
-                    <button
-                      type="button"
+                    <ChipFilter
                       key={o.value}
                       role="option"
                       aria-selected={o.value === draft.piso}
-                      className={`chip-filter${o.value === draft.piso ? ' active' : ''}`}
+                      active={o.value === draft.piso}
                       onClick={() => setDraftPiso(o.value)}
                     >
                       {o.label}
-                    </button>
+                    </ChipFilter>
                   ))}
                 </div>
               </div>
@@ -135,16 +135,15 @@ export default function MasFiltrosPopover({
                 </div>
                 <div className="chip-group">
                   {sectorOptions.slice(1).map((o) => (
-                    <button
-                      type="button"
+                    <ChipFilter
                       key={o.value}
                       role="option"
                       aria-selected={o.value === draft.sector}
-                      className={`chip-filter${o.value === draft.sector ? ' active' : ''}`}
+                      active={o.value === draft.sector}
                       onClick={() => setDraftSector(o.value)}
                     >
                       {o.label}
-                    </button>
+                    </ChipFilter>
                   ))}
                 </div>
               </div>

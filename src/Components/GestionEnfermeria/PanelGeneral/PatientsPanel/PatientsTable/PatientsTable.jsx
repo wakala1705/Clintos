@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import './PatientsTable.css';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
-import { ESTADO_MEDICACION_LABEL } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
+import { documentoDe, ESTADO_MEDICACION_LABEL } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import { LuCircleCheck, LuClock, LuHourglass, LuMinus, LuTriangleAlert } from 'react-icons/lu';
 
 // Ícono + texto por estado (nunca solo color, mismo criterio WCAG que el
@@ -41,9 +41,8 @@ export default function PatientsTable({ pacientes, onOpenAtencion }) {
           <thead>
             <tr>
               <th>Cama</th>
-              <th>ID paciente</th>
-              <th>Admisión</th>
               <th>Paciente</th>
+              <th>Admisión</th>
               <th>Diagnóstico</th>
               <th className="col-right">Edad</th>
               <th>Estado medicación</th>
@@ -64,7 +63,10 @@ export default function PatientsTable({ pacientes, onOpenAtencion }) {
                   onDoubleClick={() => onOpenAtencion(p.id)}
                 >
                   <td className="cell-primary">{p.cama}</td>
-                  <td className="cell-muted">{p.id}</td>
+                  <td>
+                    <span className="cell-primary pg-cell-nombre">{p.paciente}</span>
+                    <span className="cell-sub">CC {documentoDe(p.id)}</span>
+                  </td>
                   <td>
                     {p.admision}
                     {p.prolongada ? (
@@ -76,7 +78,6 @@ export default function PatientsTable({ pacientes, onOpenAtencion }) {
                       <span className="cell-sub">{p.diasEstancia} días</span>
                     )}
                   </td>
-                  <td className="cell-primary pg-cell-nombre">{p.paciente}</td>
                   <td className="pg-col-diagnostico">{p.diagnostico}</td>
                   <td className="col-right cell-muted">{p.edad}</td>
                   <td>
@@ -118,7 +119,7 @@ export default function PatientsTable({ pacientes, onOpenAtencion }) {
               <div className="pg-card-top">
                 <div className="pg-card-id">
                   <div className="pg-card-name">{p.paciente}</div>
-                  <div className="pg-card-sub">Cama {p.cama} · {p.id}</div>
+                  <div className="pg-card-sub">Cama {p.cama} · CC {documentoDe(p.id)}</div>
                 </div>
                 <span className={`pg-med-badge pg-med-${p.estadoMedicacion}`}>
                   <EstadoIcon className="icon" aria-hidden="true" />

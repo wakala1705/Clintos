@@ -5,89 +5,49 @@ import './PatientBanner.css';
 import Badge from '@/Components/Badge/Badge';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import PatientDetailModal from './PatientDetailModal/PatientDetailModal';
+import { BASE_FIELDS, PATIENT_BANNER_VARIANTS } from '@/hooks/PatientBanner/variants';
 import {
   LuChevronDown, LuChevronUp, LuCircleAlert, LuEye, LuEyeOff, LuSearch, LuUserPlus, LuX,
 } from 'react-icons/lu';
 
 // Enmascara un valor manteniendo su longitud/espacios (mismo criterio que un
-// campo de contraseña) — mismo patrón que CargosModal.jsx (Admisiones), acá
-// reimplementado porque este componente es global y no puede importar de una
-// feature. El botón de ojo de patient-banner-right alterna esto sobre
-// nombre/documento en vez de navegar a ningún lado.
+// campo de contraseña). El botón de ojo de patient-banner-right alterna esto
+// sobre nombre/documento en vez de navegar a ningún lado.
 function maskText(value) {
   return String(value).replace(/\S/g, '•');
 }
 
-// Banner de identidad del paciente, compartido por /asignacion-citas y
-// /gestion-enfermeria (antes duplicado: uno como componente React estático en
-// GestionEnfermeria, el otro como HTML armado a mano por legacy-app.js — ver
-// AGENTS.md, mismo criterio que Sidebar/UserMenu/Topbar). La fila principal
-// (avatar, nombre, CC/EDAD/SEXO/EPS, "Ver más datos", alergias) es igual en
-// todas las rutas; lo que varía por página se pasa como props: `secondRow`
-// (fila de chips tipo admisión — en Enfermería admisión/contrato/cama, en
-// Asignación de Citas ciudad/teléfono/citas futuras), `statusBadge` y
-// `onClose` (Asignación de Citas permite quitar el paciente seleccionado),
-// y `empty` (Asignación de Citas arranca sin paciente hasta que se busca uno;
-// Enfermería siempre entra con un paciente ya admitido). `compact` (usado por
-// PlantillaCrecimt2 y PlantillaIngresoHospitalizacion al maximizar, ver
-// ViewSettingsMenu.jsx / botón "Expandir pantalla" homólogo) reduce el
-// banner a una sola línea con nombre/edad/cama/diagnóstico (sin CC/sexo/
-// aseguradora — encargo explícito, mismo criterio que ASEGURADOR desaparece
-// al colapsar la fila 2 de la variante normal) — ignora secondRow/
-// statusBadge/onClose/alergias para dejar sitio real a la card que crece
-// por encima.
-// `leadingSelect` (un <select> nativo antes del primer chip de secondRow —
-// hoy solo lo usa Asignación de Citas para "Régimen", ver
-// asignacion-citas/page.jsx; estilo tipo .pc-select-wrap/.pc-picker-trigger
-// de ProgramarCita/AgendaToolbar.css, reimplementado acá con clases propias
-// .pb-* porque este componente es global y no puede depender de tokens de
-// una sola feature): { label, value, options: [{value,label}], onChange }.
-// `secondRowButton` (botón al final de esa misma fila — hoy solo lo usa
-// Asignación de Citas para "Historial de citas", ver asignacion-citas/
-// page.jsx): { label, icon: Icon, onClick }.
-// El chevron al extremo derecho de admission-row es un toggle interno
-// (`collapsed`, con estado propio) que arranca en `defaultCollapsed` (default
-// false) — las 2 variantes de AtencionPaciente (Historias Clínicas y
-// Hospitalización) entran con el banner ya contraído (ver
-// AtencionPaciente.jsx); el resto de pantallas (Asignación de Citas,
-// Enfermería) no pasa esta prop y conserva el comportamiento expandido de
-// siempre: al accionarlo el banner oculta la fila 2
-// (admission-row), quita ASEGURADOR de la fila 1 y agrega Cama/Diagnóstico
-// (`patient.cama`/`diagnostico`/`medicoTratante`, opcionales) en columnas label
-// arriba/valor abajo; el chevron para volver a expandir pasa a
-// patient-banner-right. Es independiente del prop `compact` — este último
-// sigue siendo la variante fija de una línea, sin admission-row/chevron, que
-// usa PlantillaCrecimt2.
-// Nombre + documento van agrupados en una sola columna (`patient-name-block`
-// con `pname`/`pdoc`, encargo explícito replicado desde CargosModal —
-// Admisiones/Cargos) en vez de nombre en su propio bloque y CC como chip
-// suelto de `patient-meta`. El botón de ojo de `patient-banner-right`
-// enmascara/revela ambos (`dataHidden`, ver maskText arriba) — mismo patrón
-// que el toggle de un campo de contraseña, no navega a ningún lado.
-// `statusBadge` ahora se renderiza dentro de `admission-row` (fila 2, junto
-// al resto de chips) en vez de en `patient-banner-right` (encargo explícito,
-// mismo criterio que "Activo" bajó a la fila 2 en CargosModal) — Enfermería
-// ya pasaba su estado como parte de `secondRow` directamente, así que solo
-// afecta a Asignación de Citas (único consumidor de `statusBadge`).
+// Banner de identidad del paciente — único en el proyecto (ver AGENTS.md
+// "Banner de paciente"). Fila 1 (avatar, nombre + CC, sexo, fecha nac./edad,
+// asegurador, "Ver más", ojo, alergias) igual en todas las pantallas; fila 2
+// (admission-row) según la variante.
 //
-// Estructura de 2 filas homologada con CargosModal.jsx (Admisiones/Cargos,
-// encargo explícito: "que sea el mismo componente global, con esa misma
-// estructura y los mismos datos") — fila 1 agrega FECHA NAC./ASEGURADOR
-// junto a SEXO (antes solo EDAD/SEXO/Aseg.); fila 2 agrega un set fijo de
-// campos de admisión (`patient.numeroAdmision/fechaIngreso/cama/idAfiliado/
-// regimen/numeroContrato/idContrato`, ver abajo) delante de `secondRow`.
-// Cada campo fijo es opcional y solo se renderiza si la pantalla que monta
-// el banner lo pasa en `patient` — así una pantalla sin admisión/contrato
-// (Asignación de Citas, Historia Clínica) no muestra nada de más, y una que
-// sí tiene esos datos (Enfermería) los consume directo en vez de armarlos a
-// mano en su propio `secondRow`. `secondRow` sigue existiendo como
-// extensión libre para datos propios de una pantalla que no encajan en este
-// set fijo (ciudad/teléfono/citas futuras en Asignación de Citas; cita/
-// servicio/tipo de cita en Historia Clínica).
-export default function PatientBanner({ patient, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed = false }) {
+// - `variant` (hospitalizacion | consulta-externa | citas | cargos, ver
+//   @/hooks/PatientBanner/variants.js): campos de la fila 2, en orden, y si
+//   abre contraído. `context` trae los valores de esa fila que no son del
+//   paciente (la cita, citas futuras...); cada campo se busca primero en
+//   `context` y después en `patient`, y se omite si no tiene valor. Sin
+//   `variant` = banner base (set de campos de admisión de Cargos, cada uno
+//   solo si viene en `patient`).
+// - Extras que dependen de callbacks de la pantalla (no son de la variante):
+//   `leadingSelect` { label, value, options, onChange } y `secondRowButton`
+//   { label, icon, onClick } al inicio/final de la fila 2, `statusBadge`
+//   { label, tone } dentro de la fila 2, `onClose` (quitar paciente) y
+//   `empty` (estado sin paciente). `secondRow` [{ label, value }] sigue como
+//   extensión libre al final de la fila 2.
+// - Colapsado (chevron, arranca en `defaultCollapsed` ?? el de la variante):
+//   oculta la fila 2, quita ASEGURADOR y suma Cama/Diagnóstico/Médico
+//   tratante a la fila 1. `compact` es otra cosa: una sola línea fija
+//   (nombre/edad/cama/diagnóstico) para plantillas maximizadas.
+// - El ojo enmascara nombre, documento y los campos `mask` de la variante;
+//   el valor real queda en data-patient-name/doc para legacy-app.js.
+export default function PatientBanner({
+  patient, variant, context, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed,
+}) {
+  const variantCfg = variant ? PATIENT_BANNER_VARIANTS[variant] : null;
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const [collapsed, setCollapsed] = useState(defaultCollapsed ?? variantCfg?.defaultCollapsed ?? false);
   const [dataHidden, setDataHidden] = useState(false);
   const allergyRef = useRef(null);
 
@@ -134,9 +94,15 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
     );
   }
 
+  // Valor real (nunca enmascarado) para los módulos imperativos que necesitan
+  // el paciente del banner (legacy-app.js de Enfermería lo copia a sus
+  // modales) — leer el texto visible rompe con el ojo activado o al mover
+  // un campo de lugar.
+  const dataAttrs = { 'data-patient-name': patient.nombre, 'data-patient-doc': patient.documento };
+
   if (compact) {
     return (
-      <div className="patient-banner patient-banner-compact">
+      <div className="patient-banner patient-banner-compact" {...dataAttrs}>
         <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
         <div className="patient-name-block"><div className="pname">{nombreMostrado}</div></div>
         <div className="patient-meta">
@@ -152,14 +118,22 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
   // (admission-row) oculta: sin ASEGURADOR y con Cama/Diagnóstico
   // (`patient.cama`/`diagnostico`/`medicoTratante`, opcionales) en columnas label
   // arriba/valor abajo, igual que el resto de pm-item.
+  // Campos de la fila 2: los de la variante (o el set base) con valor, más
+  // `secondRow` como extensión libre al final.
+  const fieldRows = (variantCfg?.fields ?? BASE_FIELDS)
+    .map((f) => ({ ...f, value: context?.[f.key] ?? patient[f.key] }))
+    .filter((f) => f.value !== undefined && f.value !== null && f.value !== '');
+  const rows = [
+    ...fieldRows,
+    ...(secondRow ?? []).map((item) => ({ key: `extra-${item.label}`, label: item.label, value: item.value })),
+  ];
+
   const mostrarSegundaFila = !collapsed && Boolean(
-    (secondRow && secondRow.length > 0) || leadingSelect || secondRowButton || statusBadge
-    || patient.numeroAdmision || patient.fechaIngreso || patient.cama || patient.idAfiliado
-    || patient.regimen || patient.numeroContrato || patient.idContrato,
+    rows.length > 0 || leadingSelect || secondRowButton || statusBadge,
   );
 
   return (
-    <div className="patient-banner">
+    <div className="patient-banner" {...dataAttrs}>
       <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
       {/* Nombre + documento agrupados en una columna (encargo explícito,
           replicado desde CargosModal) en vez de nombre solo + CC como chip
@@ -257,33 +231,11 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
               </select>
             </div>
           )}
-          {/* Set fijo de campos de admisión (encargo explícito, homologado
-              con CargosModal) — cada uno opcional, se omite si la pantalla
-              no lo pasa en `patient`. */}
-          {patient.numeroAdmision && (
-            <div className="ar-item"><span className="lbl">N° Admisión</span> <b>{patient.numeroAdmision}</b></div>
-          )}
-          {patient.fechaIngreso && (
-            <div className="ar-item"><span className="lbl">Fecha de ingreso</span> <b>{patient.fechaIngreso}</b></div>
-          )}
-          {patient.cama && (
-            <div className="ar-item"><span className="lbl">Cama</span> <b>{patient.cama}</b></div>
-          )}
-          {patient.idAfiliado && (
-            <div className="ar-item"><span className="lbl">Id. Afiliado</span> <b>{dataHidden ? maskText(patient.idAfiliado) : patient.idAfiliado}</b></div>
-          )}
-          {patient.regimen && (
-            <div className="ar-item"><span className="lbl">Régimen</span> <b>{patient.regimen}</b></div>
-          )}
-          {patient.numeroContrato && (
-            <div className="ar-item"><span className="lbl">N° Contrato</span> <b>{patient.numeroContrato}</b></div>
-          )}
-          {patient.idContrato && (
-            <div className="ar-item"><span className="lbl">ID Contrato</span> <b>{patient.idContrato}</b></div>
-          )}
-          {secondRow?.map((item) => (
-            <div className="ar-item" key={item.label}>
-              <span className="lbl">{item.label}</span> <b>{item.value}</b>
+          {/* Campos de la variante (ver @/hooks/PatientBanner/variants.js)
+              + secondRow — cada uno se omite si no tiene valor. */}
+          {rows.map((f) => (
+            <div className="ar-item" key={f.key}>
+              <span className="lbl">{f.label}</span> <b>{f.mask && dataHidden ? maskText(f.value) : f.value}</b>
             </div>
           ))}
           {/* Encargo explícito (replicado desde CargosModal): el badge de
@@ -310,7 +262,7 @@ export default function PatientBanner({ patient, secondRow, leadingSelect, secon
         </div>
       )}
       {detailOpen && (
-        <PatientDetailModal patient={patient} secondRow={secondRow} onClose={() => setDetailOpen(false)} />
+        <PatientDetailModal patient={patient} secondRow={rows} onClose={() => setDetailOpen(false)} />
       )}
     </div>
   );

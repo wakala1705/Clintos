@@ -174,36 +174,14 @@ html[data-theme="dark"] .btn-secondary:hover{background:#20283a;border-color:#33
    por feature que el resto del proyecto (GestionCamas.css/PatientsPanel.css),
    el componente no trae CSS propio. */
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.chip-filter{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
-  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;white-space:nowrap;
-  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
-}
-.chip-filter:hover{background:#f3f5f9;border-color:#d7dce6;}
-.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
-.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
-.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
 
 .chip-group.segmented{
   display:inline-flex;align-items:center;gap:2px;
   background:var(--bg);border:1px solid var(--border);border-radius:999px;
   padding:3px;
 }
-.chip-group.segmented .chip-filter{
-  border:1px solid transparent;background:transparent;box-shadow:none;
-}
-.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
-.chip-group.segmented .chip-filter.active{
-  background:var(--surface);color:var(--ink-900);
-  box-shadow:0 1px 2px rgba(16,24,39,.10);
-}
-.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
+
 html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
-html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
-html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;}
 
 /* Navegación de semana (día ‹ rango › + Hoy) — usada por Programación de
    turnos (ver ProgramacionTurnos.jsx), mismo patrón que .day-nav* en

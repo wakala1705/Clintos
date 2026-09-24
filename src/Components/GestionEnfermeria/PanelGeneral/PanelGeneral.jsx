@@ -12,7 +12,7 @@ import KpiCard from '@/Components/KpiCard/KpiCard';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import AlertsPanel from './AlertsPanel/AlertsPanel';
 import {
-  AREAS_OPERATIVAS, CAMAS_POR_AREA, DOSIS_PROGRAMADAS_HOY, ORDENES_PENDIENTES,
+  AREAS_OPERATIVAS, CAMAS_POR_AREA, DOSIS_PROGRAMADAS_HOY, NOMBRE_COMPLETO, ORDENES_PENDIENTES,
   PACIENTES_PISO, sectorDeCama,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import {
@@ -51,11 +51,13 @@ export default function PanelGeneral() {
     router.push(`/gestion-enfermeria/atencion/${pacienteId}`);
   }
 
+  // Nombre completo (2 nombres + 2 apellidos), igual que Historia Clínica de
+  // Hospitalización — también lo usa el buscador de PatientsPanel.
   const pacientesFiltrados = useMemo(() => (
     areaOperativa === 'todo'
       ? PACIENTES_PISO
       : PACIENTES_PISO.filter((p) => sectorDeCama(p.cama) === areaOperativa)
-  ), [areaOperativa]);
+  ).map((p) => ({ ...p, paciente: NOMBRE_COMPLETO[p.id] ?? p.paciente })), [areaOperativa]);
 
   const camasTotales = CAMAS_POR_AREA[areaOperativa];
 

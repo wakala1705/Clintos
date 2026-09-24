@@ -37,38 +37,6 @@
    footer quedaría flotando a la mitad en vez de pegado abajo. */
 .cm-body{gap:14px;flex:1;min-height:0;overflow-y:auto;}
 
-/* ---------- Panel "Datos Afiliado" (identidad + grilla de campos) ----------
-   Antes N° Admisión/N° Contrato/ID Contrato/Fecha vivían en una barra propia
-   (.cm-admision-bar) separada de este panel — se plegaron adentro de
-   .cm-patient-fields (ver .jsx) porque ya son datos de la misma admisión/
-   afiliado que el resto de la grilla, así que no tiene sentido repetir un
-   segundo bloque con estructura de card propia solo para esos 4 campos. */
-.cm-patient-banner{
-  display:flex;flex-direction:column;gap:12px;
-  padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
-}
-/* Fila 1: identidad + datos clínicos en línea (encargo explícito, sin label
-   de grupo — ver .jsx). */
-.cm-patient-row{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
-.cm-patient-identity{display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.cm-patient-avatar{
-  flex-shrink:0;width:40px;height:40px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--primary-50);color:var(--primary);
-}
-.cm-patient-avatar .icon{width:20px;height:20px;}
-/* Nombre (arriba) + tipo/n° de documento (abajo, "CC 2450854") en una sola
-   columna (encargo explícito) — reemplaza el Field aparte de Doc. Id./Tipo
-   en la grilla de abajo. */
-.cm-patient-info{display:flex;flex-direction:column;gap:2px;}
-.cm-patient-name{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cm-patient-doc{font-size:var(--fs-sm);color:var(--ink-500);}
-/* Estado/Ver paciente/Alergias al extremo derecho de la fila (encargo
-   explícito) — margin-left:auto los empuja ahí sin necesitar
-   justify-content:space-between en .cm-patient-row (que separaría también
-   la identidad de los campos clínicos del medio). */
-.cm-patient-badges{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
-.cm-estado-badge{flex-shrink:0;}
 .cm-icon-btn{
   flex-shrink:0;width:26px;height:26px;border-radius:var(--radius);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-500);
@@ -77,7 +45,6 @@
 .cm-icon-btn:hover{background:var(--gray-bg);}
 .cm-icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .cm-icon-btn .icon{width:15px;height:15px;}
-.cm-alergias-badge{flex-shrink:0;}
 /* Variante destructiva (borrar ítem): hover en rojo en vez del gris neutro. */
 .cm-icon-btn-danger:hover{background:var(--red-bg);border-color:var(--red);color:var(--red);}
 
@@ -86,33 +53,6 @@
 .cm-table .cm-row-actions-col{width:1%;text-align:right;}
 .cm-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
 .cm-table td.cm-row-actions-col{padding-top:4px;padding-bottom:4px;}
-
-/* Grilla densa de campos (Id. Afiliado/Doc. Id./Tipo/Sexo/Fecha Nac./Cama en
-   fila 1; N° Admisión/Fecha/Asegurador/Régimen/N° Contrato/ID Contrato en
-   fila 2) — mismo patrón Field label+value que FacturaDetalleModalClasico
-   (.fvcd-field), reimplementado acá porque esos tokens están scopeados por
-   feature (ver AGENTS.md). */
-.cm-patient-fields{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;flex:1;min-width:0;}
-.cm-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.cm-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
-.cm-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);white-space:nowrap;}
-
-/* Fila 2 (datos administrativos, ver .jsx): separador propio para
-   diferenciarla de la fila 1 (identidad + datos clínicos) sin label de
-   grupo — mismo border-top que ya usaba la grilla única antes de separarse
-   en 2 filas. Solo se monta con el banner expandido (el chevron que la
-   controla vive en la fila 1, no acá) — así, colapsado, el banner queda en
-   una sola fila en vez de dejar una franja aparte solo para el toggle. */
-.cm-patient-fields-admin{padding-top:12px;border-top:1px solid var(--border);}
-.cm-patient-fields-admin .cm-estado-badge{align-self:center;}
-.cm-banner-toggle{
-  flex-shrink:0;width:26px;height:26px;border-radius:var(--radius);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-500);
-  cursor:pointer;transition:background .15s,border-color .15s;
-}
-.cm-banner-toggle:hover{background:var(--gray-bg);}
-.cm-banner-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.cm-banner-toggle .icon{width:15px;height:15px;}
 
 /* ---------- Layout 50/50: cm-cargos-card / cm-detail-card ----------
    Una arriba, otra abajo (encargo explícito — no en columnas lado a lado),
@@ -232,7 +172,4 @@
 
 @media (max-width:1024px){
   .cm-totals-row{flex-direction:column;align-items:flex-start;}
-  .cm-field-value{white-space:normal;}
-  .cm-patient-row{flex-direction:column;align-items:flex-start;gap:12px;}
-  .cm-patient-badges{margin-left:0;}
 }

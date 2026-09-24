@@ -1,24 +1,21 @@
 /* .app/.main/.content/.card (shell base) viven en ../shared/shared.css —
-   acá solo el layout propio de esta página. */
+   acá solo el layout propio de esta página. La tabla/toolbar son los de
+   Admisiones (ver PacientesEnfermeria.jsx) y traen su propio CSS. */
 .pe-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pe-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
-/* ---------- EMPTY STATE de página completa ----------
-   Mismo patrón que AdmisionesEmptyState/FichaNotFound (icono en círculo +
-   título + subtítulo, ver AGENTS.md): icono en .card, sin CTA porque no hay
-   ninguna acción que ofrecer todavía. Único consumidor de este feature hoy
-   (Turnos ya tiene su propio contenido, ver TurnosCalendar) — si un segundo
-   componente lo necesita, se sube a shared/shared.css recién ahí. */
-.ge-empty-state{
-  flex:1;min-height:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  text-align:center;padding:32px;
+/* Toast de acciones en desarrollo — mismo aspecto que .adm-toast
+   (Admisiones.css), que no se puede importar acá porque esa hoja también
+   define el :root y .content de Admisiones. */
+.pe-toast{
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);
+  background:var(--ink-900);color:#fff;
+  padding:12px 20px;border-radius:var(--radius);
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);
+  opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:8px;z-index:var(--z-toast);
+  transition:opacity .15s,transform .15s;
 }
-.ge-empty-icon{
-  width:52px;height:52px;border-radius:50%;margin-bottom:4px;
-  background:var(--gray-bg);color:var(--ink-500);
-  display:flex;align-items:center;justify-content:center;
-}
-.ge-empty-icon .icon{width:24px;height:24px;}
-.ge-empty-title{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.ge-empty-sub{font-size:var(--fs-base);color:var(--ink-500);max-width:360px;}
+.pe-toast.show{opacity:1;transform:translate(-50%,0);}
+.pe-toast-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+html[data-theme="dark"] .pe-toast{background:var(--surface-modal);border:1px solid var(--border);}

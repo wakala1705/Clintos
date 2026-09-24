@@ -81,33 +81,12 @@
    mismo criterio y mismos valores que Facturacion/shared/shared.css (ver
    AGENTS.md "Barra de filtros de listado"). */
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.chip-filter{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
-  padding:6px var(--space-3);border-radius:20px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;white-space:nowrap;
-  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
-}
-.chip-filter:hover{background:var(--gray-bg);}
-.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.chip-filter .count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
-.chip-filter.active{background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);color:var(--interactive-selected-text);}
-.chip-filter.active .count{color:var(--interactive-selected-text);opacity:.75;}
 
 .chip-group.segmented{
   display:inline-flex;align-items:center;gap:2px;
   background:var(--bg);border:1px solid var(--border);border-radius:999px;
   padding:3px;
 }
-.chip-group.segmented .chip-filter{
-  border:1px solid transparent;background:transparent;box-shadow:none;
-}
-.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);border-color:transparent;}
-.chip-group.segmented .chip-filter.active{
-  background:var(--surface);border-color:var(--border);color:var(--ink-900);
-  box-shadow:0 1px 2px rgba(16,24,39,.10);
-}
-.chip-group.segmented .chip-filter.active .count{color:var(--ink-500);}
 
 /* Botón "Filtros" + popover (MovimientosFiltrosPopover) -- duplicado por
    feature, mismos valores que Facturacion/shared/shared.css (ver

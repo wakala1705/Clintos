@@ -117,6 +117,7 @@ export default function AsignacionCitasPage() {
 
       {/* PATIENT BANNER */}
       <PatientBanner
+        variant="citas"
         leadingSelect={patient ? { label: 'Régimen', value: regimen, options: REGIMEN_OPTIONS, onChange: setRegimen } : undefined}
         secondRowButton={patient ? {
           label: 'Historial de citas',
@@ -136,11 +137,7 @@ export default function AsignacionCitasPage() {
           ciudad: patient.ciudad,
           telefono: patient.telefono,
         } : null}
-        secondRow={patient ? [
-          { label: 'Ciudad', value: patient.ciudad },
-          { label: 'Teléfono', value: patient.telefono },
-          { label: 'Citas futuras', value: patient.citasFuturas },
-        ] : undefined}
+        context={patient ? { citasFuturas: patient.citasFuturas } : undefined}
         statusBadge={patient ? { label: ESTADO_LABEL[patient.estado], tone: ESTADO_TONE[patient.estado] } : undefined}
         onClose={patient ? () => window.clearPatient() : undefined}
         empty={{

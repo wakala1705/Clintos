@@ -23,20 +23,26 @@ import CerrarParcialModal from '@/Components/GestionEnfermeria/modals/CerrarParc
 import OrdenDetalleModal from '@/Components/GestionEnfermeria/modals/OrdenDetalleModal/OrdenDetalleModal';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import { LuActivity, LuBox, LuClipboardList, LuFile, LuFileUp, LuPill } from 'react-icons/lu';
+import { buildHospitalizadoData } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
+import { LuActivity, LuBox, LuClipboardList, LuFileUp, LuPill } from 'react-icons/lu';
 
 // Atención de enfermería a UN paciente (Medicamentos/Órdenes/Pedidos, ver
 // tabs abajo) — vivía en /gestion-enfermeria a secas; ahora que esa ruta es
 // el Panel General (lista de pacientes del piso, ver
 // src/Components/GestionEnfermeria/PanelGeneral/), esta pantalla se movió a
 // /gestion-enfermeria/atencion/[id] (mismo patrón que
-// /historia-clinica/atencion/[id] → AtencionPaciente.jsx). `id` se acepta
-// por consistencia de ruta (así cada paciente del Panel General navega a su
-// propia URL) pero todavía no selecciona datos por paciente — el resto de
-// esta pantalla (PatientBanner, MEDS, timeline...) sigue viniendo de datos
-// de ejemplo fijos, igual que antes del split; conectar `id` a datos reales
-// por paciente queda para cuando este módulo deje de ser un mock.
+// /historia-clinica/atencion/[id] → AtencionPaciente.jsx). El PatientBanner
+// sí sale de `id`: mismo paciente (nombre, documento, admisión, cama) que
+// Historia Clínica de Hospitalización, vía buildHospitalizadoData(). El resto
+// de esta pantalla (MEDS, timeline...) sigue viniendo de datos de ejemplo
+// fijos, iguales para todos los pacientes — conectarlos a `id` queda para
+// cuando este módulo deje de ser un mock.
 export default function AtencionEnfermeria({ id }) {
+  // Mismo banner que HC de Hospitalización (encargo explícito): mismos datos
+  // y variant="hospitalizacion" (ver @/hooks/PatientBanner/variants.js).
+  const data = buildHospitalizadoData(id);
+  const patient = data?.patient ?? null;
+
   useEffect(() => {
     const cleanup = initGestionEnfermeria();
     return cleanup;
@@ -55,46 +61,16 @@ export default function AtencionEnfermeria({ id }) {
       section={['Hospitalización', { label: 'Gestión de Enfermería', href: '/gestion-enfermeria' }]}
       page="Atención de enfermería"
       user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
-    >
-      <div className="meta-item">
-        <LuFile className="icon" />
-        <span className="lbl">Especialidad:</span> <b>Oncología</b>
-      </div>
-    </Topbar>
+    />
 
     <div className="content">
       <PatientBanner
-        patient={{
-          iniciales: 'ID',
-          nombre: 'Isabella Daniela Rodríguez Paternina',
-          documento: '1234567890',
-          edad: '34 años 10 meses 14 días',
-          fechaNacimiento: '05.NOV.1991 · 34 años 10 meses 14 días',
-          sexo: 'Femenino',
-          eps: 'Salud Total Entidad Promotora de Salud del Régimen Contributivo y del Régimen S',
-          ciudad: 'Bogotá D.C.',
-          direccion: 'Calle 134 # 45-12, Apto 601',
-          telefono: '310 842 9173',
-          email: 'isabella.rodriguez@example.com',
-          // Set fijo de campos de admisión homologado con CargosModal
-          // (Admisiones/Cargos, ver comentario en PatientBanner.jsx) — antes
-          // armados a mano en `secondRow` con un Badge inline para "Estado".
-          // Completo (fechaIngreso/idAfiliado/regimen, antes ausentes acá)
-          // para que la fila 2 se vea igual que en CargosModal en vez de
-          // saltarse esos campos por falta de dato.
-          numeroAdmision: '0200265899',
-          fechaIngreso: '15.SEP.2026 - 08:30',
-          idAfiliado: '1234567890',
-          regimen: 'Contributivo',
-          numeroContrato: '** No Especificado **',
-          idContrato: '197',
-          cama: '305',
-          allergies: [
-            { name: 'Penicilina', reaction: 'Reacción cutánea moderada' },
-            { name: 'Mariscos', reaction: 'Anafilaxia leve' },
-          ],
+        variant="hospitalizacion"
+        patient={patient}
+        empty={{
+          title: 'No encontramos este paciente',
+          subtitle: 'Puede que el enlace esté vencido o el paciente ya no esté en el piso.',
         }}
-        statusBadge={{ label: 'Activo', tone: 'success' }}
       />
 
       {/* CARD: CRONOGRAMA (con tabs de módulo integradas) */}

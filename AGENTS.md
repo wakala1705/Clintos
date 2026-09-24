@@ -540,6 +540,98 @@ construir el componente).
     migración — son otro sistema, con más de 4-5 tonos cada uno, y no
     deben forzarse a la API de `<Badge>` genérico.
 
+# Banner de paciente
+
+Todo banner de identidad de paciente usa `@/Components/PatientBanner/PatientBanner`
+con una variante — no armar la fila 2 a mano por pantalla ni un banner propio
+(CargosModal tenía uno hecho a mano con la misma estructura; se migró).
+
+```jsx
+<PatientBanner
+  variant="hospitalizacion"   // hospitalizacion | consulta-externa | citas | cargos | (sin variant = base)
+  patient={patient}           // shape de getHospitalizadoData/getAtencionData
+  context={{ cita: '08:30' }} // opcional — valores de la fila 2 que no son del paciente
+/>
+```
+
+| Variante | Pantallas | Fila 2 | Abre |
+|---|---|---|---|
+| `hospitalizacion` | HC Hospitalización, Atención de enfermería | N° Admisión · Fecha ingreso · Cama · Médico tratante · Diagnóstico | contraído |
+| `consulta-externa` | HC Consulta externa | Cita · Servicio · Tipo cita | contraído |
+| `citas` | Asignación de citas | Ciudad · Teléfono · Citas futuras (+ select Régimen, estado, Historial) | expandido |
+| `cargos` | CargosModal (Admisiones) | N° Admisión · Fecha ingreso · Cama · Id. Afiliado · Régimen · N° Contrato · ID Contrato (+ Activo) | expandido |
+| base | Historial quirúrgico | set de Cargos, solo los campos que vengan en `patient` | expandido |
+
+- **Las variantes viven en `@/hooks/PatientBanner/variants.js`** (datos, no
+  JSX — ver "Hooks / logic organization"): `fields: [{ key, label, mask? }]`
+  + `defaultCollapsed`. Cada `key` se busca en `context` y luego en
+  `patient`; un campo sin valor se omite. Nueva variante = nueva entrada ahí,
+  no un `secondRow` armado en la pantalla.
+- **Lo interactivo no es parte de la variante** (depende de callbacks de la
+  pantalla): `leadingSelect`, `secondRowButton`, `statusBadge`, `onClose`,
+  `empty`. `secondRow` queda como extensión libre para casos puntuales.
+- **Nunca leer el banner por su texto visible** desde código imperativo: el
+  ojo enmascara nombre/documento y los campos cambian de lugar. El valor real
+  está en `data-patient-name`/`data-patient-doc` del contenedor (así lo leen
+  los modales de `legacy-app.js` de Enfermería — antes mostraban "CC
+  Femenino" por leer `.patient-meta .pm-item b`).
+- Fuera de alcance (no son banners): la cabecera de página de `FichaHeader` y
+  la tarjeta de paciente de `PreIngresoModal`.
+
+# Chips de filtro
+
+Antes de este componente había 8 copias de `.chip-filter` global
+(Facturacion, GestionCamas, GestionEnfermeria, GestionTurnos,
+HistoriaClinicaHospitalizacion, InsumosFarmacia, ProgramacionSalaCirugias,
+Vacunacion), con divergencias entre sí: `font-size` `--fs-sm` vs `--fs-base`,
+padding `6px`/`7px 12px`/`--space-2`, hover en hex suelto (`#f3f5f9`/
+`#d7dce6`) vs `--gray-bg`/`--bg`, y el activo del segmented con o sin borde.
+Mismo tipo de deriva ya documentado para Botones/Badges.
+
+- **Componente**: `@/Components/ChipFilter/ChipFilter` — úsalo para todo chip
+  de filtro nuevo en vez de `<button className="chip-filter">`.
+
+  ```jsx
+  <ChipFilter
+    active={value === o.value}
+    variant="default"   // default | segmented (dentro de un .chip-group.segmented)
+    size="base"          // base (default) | sm (chips de filtros activos, más densos)
+    count={12}           // opcional — se muestra como "(12)" tras el texto
+    removable            // opcional — X al final (filtro activo que se quita con click)
+    role="tab" aria-selected={...} onClick={...} // el resto de props pasan al <button>
+  >
+    Pendientes
+  </ChipFilter>
+  ```
+
+- **Spec fija**: `--fs-base` + `--fw-medium` (pasó de `--fw-semibold` a
+  `--fw-medium` por encargo explícito, 2026-09-24), padding
+  `--space-2 --space-3`, radio `20px`; hover `var(--gray-bg)` (nunca hex);
+  activo con los tokens `--interactive-selected-*`. `sm` = `--fs-sm` +
+  `6px --space-3`. El segmented activo lleva borde `var(--border)` (el valor
+  de 4 de las 7 copias).
+- **El contenedor no es parte del componente**: `.chip-group` y
+  `.chip-group.segmented` siguen siendo clases globales por feature (el
+  layout/píldora que agrupa los chips); solo el chip es CSS Module.
+- **CSS Modules** por el mismo motivo que `Button`/`Badge`: una clase global
+  colisionaría con las copias de `.chip-filter` que todavía existen.
+- **Migración hecha**: `SegmentedFilterBar` y `FilterDropdown` (app-wide, cubren
+  Panel General, Bed Board, Alertas, Tareas, Turnos, HC Hospitalización,
+  Insumos, Facturación), `FiltrosActivosChips` (Facturación, `size="sm"
+  removable`), los 4 FiltrosPopover de GestionCamas, `PosponerAlertaModal`,
+  `DateRangeChips`, `TaskListPanel` y `VacToolbar`. Borrado el `.chip-filter`
+  muerto de Facturacion, GestionTurnos, HistoriaClinicaHospitalizacion,
+  InsumosFarmacia, ProgramacionSalaCirugias y Vacunacion — reintroducirlo ahí
+  es una regresión. Vacunación pasó de mostrar el conteo como `12` a `(12)`,
+  como el resto.
+- **Bloqueada / fuera de alcance** (conservan `.chip-filter` global):
+  - `GestionEnfermeria` — Medicamentos, Órdenes médicas, Pedidos
+    (Solicitudes/Recepción/Devoluciones) y `PedidoModal`: `legacy-app.js`
+    los consulta con `querySelectorAll('.chip-filter')` y alterna `.active`
+    con `classList` (mismo bloqueo que `<Badge>` en asignación de citas).
+  - `GestionCamasIndicadores` — los `<span className="chip-filter active">`
+    de "Filtros:" son etiquetas de solo lectura, no botones.
+
 # Responsive / Breakpoints
 
 El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada

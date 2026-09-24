@@ -5,6 +5,7 @@ import './VacToolbar.css';
 import { LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
 import { ESQUEMA_OPTIONS, ESTADO_OPTIONS, PROXIMA_OPTIONS, QUICK_FILTERS } from '@/hooks/Vacunacion/mockVacunacionData';
 import Button from '@/Components/Button/Button';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 // Barra de herramientas en una sola línea: búsqueda a la izquierda, el
 // segmented control de acceso rápido (Todos/Pendientes/Atrasados/Próximos) y
@@ -77,16 +78,17 @@ export default function VacToolbar({
 
         <div className="chip-group segmented" role="tablist" aria-label="Filtro rápido">
           {QUICK_FILTERS.map((f) => (
-            <button
+            <ChipFilter
               key={f.value}
-              type="button"
               role="tab"
               aria-selected={quickFilter === f.value}
-              className={`chip-filter${quickFilter === f.value ? ' active' : ''}`}
+              variant="segmented"
+              active={quickFilter === f.value}
               onClick={() => onQuickFilterChange(f.value)}
+              count={counts[f.value]}
             >
-              {f.label} <span className="count">{counts[f.value]}</span>
-            </button>
+              {f.label}
+            </ChipFilter>
           ))}
         </div>
 

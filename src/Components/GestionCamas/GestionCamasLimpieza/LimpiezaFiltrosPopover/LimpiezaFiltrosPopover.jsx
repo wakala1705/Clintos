@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LuFilter } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 import { PISOS, SECTORES, TIEMPOS } from '@/hooks/GestionCamas/mockLimpiezaData';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 // "Más filtros" — Piso/Sector/Tiempo (encargo: agrupar acá el filtro de SLA
 // en vez de un AreaSelector propio en el filter-bar, para simplificar la
@@ -72,16 +73,15 @@ export default function LimpiezaFiltrosPopover({
             <span className="fp-section-title">Piso</span>
             <div className="chip-group">
               {PISOS.slice(1).map((o) => (
-                <button
-                  type="button"
+                <ChipFilter
                   key={o.value}
                   role="option"
                   aria-selected={o.value === draft.piso}
-                  className={`chip-filter${o.value === draft.piso ? ' active' : ''}`}
+                  active={o.value === draft.piso}
                   onClick={() => setDraft((d) => ({ ...d, piso: o.value === d.piso ? 'todos' : o.value }))}
                 >
                   {o.label}
-                </button>
+                </ChipFilter>
               ))}
             </div>
           </div>
@@ -90,16 +90,15 @@ export default function LimpiezaFiltrosPopover({
             <span className="fp-section-title">Sector</span>
             <div className="chip-group">
               {SECTORES.slice(1).map((o) => (
-                <button
-                  type="button"
+                <ChipFilter
                   key={o.value}
                   role="option"
                   aria-selected={o.value === draft.sector}
-                  className={`chip-filter${o.value === draft.sector ? ' active' : ''}`}
+                  active={o.value === draft.sector}
                   onClick={() => setDraft((d) => ({ ...d, sector: o.value === d.sector ? 'todos' : o.value }))}
                 >
                   {o.label}
-                </button>
+                </ChipFilter>
               ))}
             </div>
           </div>
@@ -108,16 +107,15 @@ export default function LimpiezaFiltrosPopover({
             <span className="fp-section-title">Tiempo</span>
             <div className="chip-group">
               {TIEMPOS.slice(1).map((o) => (
-                <button
-                  type="button"
+                <ChipFilter
                   key={o.value}
                   role="option"
                   aria-selected={o.value === draft.tiempo}
-                  className={`chip-filter${o.value === draft.tiempo ? ' active' : ''}`}
+                  active={o.value === draft.tiempo}
                   onClick={() => setDraft((d) => ({ ...d, tiempo: o.value === d.tiempo ? 'todos' : o.value }))}
                 >
                   {o.label}
-                </button>
+                </ChipFilter>
               ))}
             </div>
           </div>

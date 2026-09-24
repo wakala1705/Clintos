@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { LuChevronDown } from 'react-icons/lu';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 // Un único filtro-popover reutilizado por los 6 filtros de la barra de
 // herramientas (Estado/Prioridad/Tipo/Responsable/Turno/Fecha) — mismo
@@ -52,16 +53,15 @@ export default function FilterDropdown({ label, options, value, onChange }) {
             <div className="fp-section-title">{label}</div>
             <div className="chip-group">
               {options.map((o) => (
-                <button
-                  type="button"
+                <ChipFilter
                   key={o.value}
                   role="option"
                   aria-selected={o.value === value}
-                  className={`chip-filter${o.value === value ? ' active' : ''}`}
+                  active={o.value === value}
                   onClick={() => { onChange(o.value); setOpen(false); }}
                 >
                   {o.label}
-                </button>
+                </ChipFilter>
               ))}
             </div>
           </div>

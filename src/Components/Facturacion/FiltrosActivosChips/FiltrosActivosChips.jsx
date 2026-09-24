@@ -1,7 +1,7 @@
 'use client';
 
 import { CLASE_OPTIONS, TIPO_OPTIONS } from '@/hooks/Facturacion/mockFacturasData';
-import { LuX } from 'react-icons/lu';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 function formatFechaCorta(iso) {
   const [year, month, day] = iso.split('-');
@@ -30,10 +30,9 @@ export default function FiltrosActivosChips({ filtros, onRemove }) {
   return (
     <div className="chip-group">
       {chips.map((chip) => (
-        <button type="button" key={chip.key} className="chip-filter" onClick={() => onRemove(chip.key)}>
+        <ChipFilter key={chip.key} size="sm" removable onClick={() => onRemove(chip.key)}>
           {chip.label}
-          <LuX className="icon chip-remove" aria-hidden="true" />
-        </button>
+        </ChipFilter>
       ))}
     </div>
   );

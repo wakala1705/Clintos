@@ -14,8 +14,8 @@
    RecepcionSub (GestionEnfermeria), duplicado acá (ver AGENTS.md). */
 .filter-spacer{flex:1;min-width:12px;}
 
-/* .chip-group.segmented / .chip-filter (segmented control de acceso rápido):
-   definidos en ../Vacunacion.css — mismo patrón que el resto del proyecto
+/* .chip-group.segmented (segmented control de acceso rápido): definido en
+   ../Vacunacion.css; los chips son <ChipFilter variant="segmented"> — mismo patrón que el resto del proyecto
    (ver AGENTS.md). Ya no necesita align-self propio: al vivir en
    .vac-toolbar-row (flex row, no column) no hereda ningún stretch de ancho. */
 

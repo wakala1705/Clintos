@@ -40,6 +40,7 @@
   --gray-bg:#eef0f4;
   --violet-bg:#f1ecff;
   --violet-fg:#6d3fd6;
+  --triage-orange:#e8720c; /* TriageBadge (tabla de Admisiones reutilizada en Pacientes) */
   /* Centro de Alertas: prioridad "Media" necesita distinguirse de "Alta"
      (ámbar/naranja) — el sistema de tonos no tenía un amarillo propio hasta
      ahora, se agrega acá con el mismo criterio de duplicación por feature
@@ -150,6 +151,7 @@ html[data-theme="dark"]{
   --gray-bg:#242c3d;
   --violet-bg:rgba(109,63,214,.24);
   --violet-fg:#b79bf7;
+  --triage-orange:#ff9142;
   --yellow:#e0c341;
   --yellow-bg:rgba(181,137,0,.20);
   --yellow-fg:#e0c341;
@@ -465,9 +467,15 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
 
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+/* .chip-filter global: solo para los chips que maneja legacy-app.js
+   (Medicamentos/Órdenes médicas/Pedidos/PedidoModal), que los busca con
+   querySelectorAll('.chip-filter') y alterna .active con classList — no
+   pueden ser <ChipFilter> (clases hasheadas) sin convertir esas pantallas a
+   React. Los chips React del feature ya usan
+   @/Components/ChipFilter/ChipFilter, ver AGENTS.md "Chips de filtro". */
 .chip-filter{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
   padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
   background:var(--surface);cursor:pointer;white-space:nowrap;
   font-family:inherit;transition:background .15s,border-color .15s,color .15s;

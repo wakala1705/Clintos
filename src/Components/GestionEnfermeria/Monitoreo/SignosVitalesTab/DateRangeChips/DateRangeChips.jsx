@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './DateRangeChips.css';
 import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
 export default function DateRangeChips({ value, onChange }) {
   const [open, setOpen] = useState(false);
@@ -34,30 +35,30 @@ export default function DateRangeChips({ value, onChange }) {
   return (
     <>
       <div className="chip-group segmented">
-        <button
-          type="button"
-          className={`chip-filter${value.mode === '24h' ? ' active' : ''}`}
+        <ChipFilter
+          variant="segmented"
+          active={value.mode === '24h'}
           aria-pressed={value.mode === '24h'}
           onClick={() => onChange({ mode: '24h', desde: null, hasta: null })}
         >
           24 h
-        </button>
-        <button
-          type="button"
-          className={`chip-filter${value.mode === '7d' ? ' active' : ''}`}
+        </ChipFilter>
+        <ChipFilter
+          variant="segmented"
+          active={value.mode === '7d'}
           aria-pressed={value.mode === '7d'}
           onClick={() => onChange({ mode: '7d', desde: null, hasta: null })}
         >
           7 días
-        </button>
-        <button
-          type="button"
-          className={`chip-filter${value.mode === '30d' ? ' active' : ''}`}
+        </ChipFilter>
+        <ChipFilter
+          variant="segmented"
+          active={value.mode === '30d'}
           aria-pressed={value.mode === '30d'}
           onClick={() => onChange({ mode: '30d', desde: null, hasta: null })}
         >
           30 días
-        </button>
+        </ChipFilter>
       </div>
 
       <div className="filter-popover-wrap" ref={rootRef}>

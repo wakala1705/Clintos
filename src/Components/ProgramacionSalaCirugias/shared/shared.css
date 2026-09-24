@@ -84,29 +84,14 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 .tf-warning-note .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
 
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.chip-filter{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);
-  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;white-space:nowrap;
-  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
-}
-.chip-filter:hover{background:var(--bg);}
-.chip-filter:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
 .chip-group.segmented{
   display:inline-flex;align-items:center;gap:2px;
   background:var(--bg);border:1px solid var(--border);border-radius:999px;
   padding:3px;
 }
-.chip-group.segmented .chip-filter{border:1px solid transparent;background:transparent;}
-.chip-group.segmented .chip-filter:hover{background:rgba(16,24,39,.05);}
-.chip-group.segmented .chip-filter.active{
-  background:var(--surface);color:var(--ink-900);
-  box-shadow:0 1px 2px rgba(16,24,39,.10);
-}
+
 html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
-html[data-theme="dark"] .chip-group.segmented .chip-filter:hover{background:rgba(255,255,255,.06);}
-html[data-theme="dark"] .chip-group.segmented .chip-filter.active{background:#20283a;}
 
 /* Fila de navegación (label + prev/next), compartida por AgendaSemana
    (vistas Día/Semana) y AgendaMes (vista Mes) -- mismo header para las 3

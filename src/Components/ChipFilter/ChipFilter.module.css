@@ -1,0 +1,54 @@
+/* Chip de filtro — reemplaza las 8 copias de `.chip-filter` global
+   (Facturacion, GestionCamas, GestionEnfermeria, GestionTurnos,
+   HistoriaClinicaHospitalizacion, InsumosFarmacia, ProgramacionSalaCirugias,
+   Vacunacion). CSS Modules por el mismo motivo que Button/Badge (ver
+   AGENTS.md "Chips de filtro"): una clase global colisionaría con esas
+   copias según el orden de carga de cada hoja.
+   Solo consume tokens de color (--surface, --border, --gray-bg, --ink-400/
+   500/700/900, --interactive-selected-bg/border/text), declarados en el
+   :root de cada feature. */
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+  padding:var(--space-2) var(--space-3);border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+}
+/* Hover con token, nunca el #f3f5f9/#d7dce6 que tenían 3 de las copias —
+   --gray-bg ya tiene su variante oscura en cada feature. */
+.chip:hover{background:var(--gray-bg);border-color:var(--border);}
+.chip:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.chip:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
+
+.active,
+.active:hover{
+  background:var(--interactive-selected-bg);border-color:var(--interactive-selected-border);
+  color:var(--interactive-selected-text);
+}
+
+/* Tamaño sm: el de Facturación e InsumosFarmacia (chips de filtros
+   activos/removibles, más densos). */
+.sm{font-size:var(--fs-sm);padding:6px var(--space-3);}
+
+.count{font-size:var(--fs-xs);font-weight:var(--fw-bold);color:var(--ink-400);}
+.active .count{color:var(--interactive-selected-text);opacity:.75;}
+
+.remove{width:13px;height:13px;color:var(--ink-400);flex-shrink:0;}
+.chip:hover .remove{color:var(--ink-700);}
+
+/* Variante segmented: el chip vive dentro de un `.chip-group.segmented`
+   (contenedor píldora, sigue siendo global por feature) — sin borde propio,
+   la opción activa se distingue con fondo elevado, no con relleno azul.
+   El borde del activo es el valor de la mayoría de copias (4 de 7). */
+.segmented{border-color:transparent;background:transparent;box-shadow:none;}
+.segmented:hover{background:rgba(16,24,39,.05);border-color:transparent;}
+.segmented.active,
+.segmented.active:hover{
+  background:var(--surface);border-color:var(--border);color:var(--ink-900);
+  box-shadow:0 1px 2px rgba(16,24,39,.10);
+}
+.segmented.active .count{color:var(--ink-500);opacity:1;}
+html[data-theme="dark"] .segmented:hover{background:rgba(255,255,255,.06);}
+html[data-theme="dark"] .segmented.active,
+html[data-theme="dark"] .segmented.active:hover{background:#20283a;border-color:#333e54;}

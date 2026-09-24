@@ -5,6 +5,7 @@ import './TaskListPanel.css';
 import TaskTable from './TaskTable/TaskTable';
 import FilterDropdown from '@/Components/FilterDropdown/FilterDropdown';
 import Button from '@/Components/Button/Button';
+import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 import {
   ESTADOS, PRIORIDADES, RESPONSABLES, TIPOS_TAREA, TURNOS, USUARIO_ACTUAL, fechaDeTarea,
 } from '@/hooks/GestionEnfermeria/mockTareasData';
@@ -100,16 +101,17 @@ export default function TaskListPanel({
       <div className="task-list-tabs">
         <div className="chip-group segmented" role="tablist" aria-label="Ámbito de tareas">
           {TABS.map((tb) => (
-            <button
-              type="button"
+            <ChipFilter
               key={tb.key}
               role="tab"
               aria-selected={tab === tb.key}
-              className={`chip-filter${tab === tb.key ? ' active' : ''}`}
+              variant="segmented"
+              active={tab === tb.key}
               onClick={() => setTab(tb.key)}
+              count={counts[tb.key]}
             >
-              {tb.label} <span className="count">({counts[tb.key]})</span>
-            </button>
+              {tb.label}
+            </ChipFilter>
           ))}
         </div>
       </div>
