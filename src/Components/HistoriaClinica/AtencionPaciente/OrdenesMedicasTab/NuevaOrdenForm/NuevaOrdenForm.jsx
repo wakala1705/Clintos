@@ -18,10 +18,6 @@ import { SECCIONES_ORDEN } from '../shared/ordenSecciones';
 export default function NuevaOrdenForm({ onCancelar, onGuardar }) {
   const [categoriaActiva, setCategoriaActiva] = useState('medicamentos');
   const [ordenItems, setOrdenItems] = useState({});
-  // Receta del Recetario por voz a precargar en ItemFormPanel. `id` entra en
-  // el `key` del panel para forzar el remontaje aunque ya esté en
-  // Medicamentos (el prefill solo siembra estado inicial).
-  const [prefill, setPrefill] = useState(null);
 
   const categoria = SECCIONES_ORDEN.find((s) => s.clave === categoriaActiva);
 
@@ -39,17 +35,14 @@ export default function NuevaOrdenForm({ onCancelar, onGuardar }) {
     }));
   }
 
-  function handleSeleccionarCategoria(clave) {
-    setPrefill(null);
-    setCategoriaActiva(clave);
-  }
-
-  // La receta dictada siempre es un medicamento: cambia a esa categoría y
-  // precarga el formulario con lo interpretado.
-  function handleRecetaVoz(receta) {
-    setCategoriaActiva('medicamentos');
-    setPrefill({ id: Date.now(), receta });
-    window.ncToast?.('Receta cargada en el formulario. Revísela y agréguela a la orden.');
+  // Recetario por voz: el ítem dictado ya viene confirmado desde el modal y
+  // siempre es un medicamento, sin importar la categoría activa del riel.
+  function handleRecetaVoz(item) {
+    setOrdenItems((prev) => ({
+      ...prev,
+      medicamentos: [...(prev.medicamentos ?? []), item],
+    }));
+    window.ncToast?.(`${item.descripcion} agregado a la orden.`);
   }
 
   function handleGuardar() {
@@ -64,12 +57,11 @@ export default function NuevaOrdenForm({ onCancelar, onGuardar }) {
   return (
     <div className="nof-layout">
       <div className="nof-sidebar">
-        <CategoriaRail categorias={SECCIONES_ORDEN} activa={categoriaActiva} onSelect={handleSeleccionarCategoria} />
+        <CategoriaRail categorias={SECCIONES_ORDEN} activa={categoriaActiva} onSelect={setCategoriaActiva} />
         <ItemFormPanel
-          key={`${categoriaActiva}-${prefill?.id ?? 0}`}
+          key={categoriaActiva}
           categoria={categoria}
           onAgregar={handleAgregarItem}
-          prefill={prefill?.receta ?? null}
           onRecetaVoz={handleRecetaVoz}
         />
       </div>

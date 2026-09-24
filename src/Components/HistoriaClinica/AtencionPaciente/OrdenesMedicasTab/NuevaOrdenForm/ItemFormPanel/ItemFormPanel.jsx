@@ -43,28 +43,26 @@ function unidadTiempoLabel(value) {
 // formulario de nuevo — precargado con dosis/unidad/presentación/vía si la
 // categoría es de formulario completo.
 //
-// `prefill` (Recetario por voz, ver RecetarioVozModal.jsx): receta dictada
-// ya interpretada — solo siembra el estado inicial (NuevaOrdenForm cambia el
-// `key` para remontar este panel con ella). "Usar receta" en el modal no
-// toca este estado directo: sube vía `onRecetaVoz`, porque la receta es de
-// Medicamentos y el panel puede estar abierto en otra categoría.
+// `onRecetaVoz` (Recetario por voz, ver RecetarioVozModal.jsx): el ítem
+// dictado sube directo a NuevaOrdenForm en vez de pasar por `onAgregar`,
+// porque siempre es de Medicamentos y este panel puede estar en otra categoría.
 export default function ItemFormPanel({
-  categoria, onAgregar, prefill = null, onRecetaVoz,
+  categoria, onAgregar, onRecetaVoz,
 }) {
   const esCompleto = categoria.formulario === 'completo';
   const catalogo = useMemo(() => getCatalogoCategoria(categoria.clave), [categoria.clave]);
 
   const [busqueda, setBusqueda] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(prefill?.item ?? null);
-  const [dosis, setDosis] = useState(prefill?.dosis ?? '');
-  const [unidad, setUnidad] = useState(prefill?.unidad ?? '');
-  const [presentacion, setPresentacion] = useState(prefill?.presentacion ?? '');
-  const [via, setVia] = useState(prefill?.via ?? '');
-  const [frecuenciaValor, setFrecuenciaValor] = useState(prefill?.frecuenciaValor ?? '');
-  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState(prefill?.frecuenciaUnidad ?? '');
-  const [duracionValor, setDuracionValor] = useState(prefill?.duracionValor ?? '');
-  const [duracionUnidad, setDuracionUnidad] = useState(prefill?.duracionUnidad ?? '');
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+  const [dosis, setDosis] = useState('');
+  const [unidad, setUnidad] = useState('');
+  const [presentacion, setPresentacion] = useState('');
+  const [via, setVia] = useState('');
+  const [frecuenciaValor, setFrecuenciaValor] = useState('');
+  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState('');
+  const [duracionValor, setDuracionValor] = useState('');
+  const [duracionUnidad, setDuracionUnidad] = useState('');
   const [cantidad, setCantidad] = useState(esCompleto ? '' : '1');
   const [prioritario, setPrioritario] = useState(false);
   const [unicaDosis, setUnicaDosis] = useState(false);
@@ -377,7 +375,7 @@ export default function ItemFormPanel({
       {recetarioVozOpen && (
         <RecetarioVozModal
           onClose={closeRecetarioVoz}
-          onUsarReceta={(receta) => { setRecetarioVozOpen(false); onRecetaVoz(receta); }}
+          onConfirmar={(item) => { setRecetarioVozOpen(false); onRecetaVoz(item); }}
         />
       )}
     </div>

@@ -1,6 +1,9 @@
 /* .modal-overlay/.modal-card/.modal-body/.modal-footer: ver
    HistoriaClinica/shared/shared.css. */
 .rvm-card{width:640px;}
+.rvm-card--revision{width:760px;}
+
+/* ---------- Grabación (inicial / grabando / procesando) ---------- */
 .rvm-body{
   display:flex;flex-direction:column;align-items:center;gap:16px;
   padding:24px;text-align:center;min-height:220px;justify-content:center;
@@ -31,13 +34,39 @@
 .rvm-spin{animation:rvm-spin .9s linear infinite;}
 @keyframes rvm-spin{to{transform:rotate(360deg);}}
 
-.rvm-result{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left;}
-.rvm-result-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
-.rvm-result-transcript{margin:0;font-size:var(--fs-base);font-style:italic;color:var(--ink-700);}
-.rvm-fields{
-  margin:8px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;
-  padding:14px 16px;border-radius:var(--radius);background:var(--bg);
+/* ---------- Revisión: 2 bloques (ver referencia) ---------- */
+.rvm-body-revision{display:flex;flex-direction:column;gap:12px;padding:16px;}
+.rvm-block{
+  display:flex;flex-direction:column;gap:12px;padding:14px 16px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
 }
-.rvm-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.rvm-field dt{font-size:var(--fs-sm);color:var(--ink-500);}
-.rvm-field dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.rvm-block-head{display:flex;flex-direction:column;gap:2px;}
+.rvm-block-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.rvm-block-subtitle{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+.rvm-textarea{
+  width:100%;min-height:84px;resize:vertical;padding:10px 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);line-height:1.5;
+}
+.rvm-textarea:focus{outline:2px solid var(--primary);outline-offset:1px;}
+.rvm-textarea::placeholder{color:var(--ink-400);}
+.rvm-block-actions{display:flex;justify-content:flex-end;gap:8px;}
+
+.rvm-fields{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rvm-field{
+  display:flex;flex-direction:column;gap:4px;min-width:0;padding:10px 12px;
+  border:1px solid var(--border);border-radius:var(--radius);
+}
+.rvm-field dt{
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);
+  text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+.rvm-field dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);overflow-wrap:anywhere;}
+.rvm-field dd.rvm-field-empty{font-weight:var(--fw-regular);color:var(--ink-400);}
+
+.rvm-warning{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius);
+  background:var(--amber-bg);color:var(--amber-fg);font-size:var(--fs-sm);font-weight:var(--fw-medium);
+}
+.rvm-warning .icon{width:16px;height:16px;flex-shrink:0;}
