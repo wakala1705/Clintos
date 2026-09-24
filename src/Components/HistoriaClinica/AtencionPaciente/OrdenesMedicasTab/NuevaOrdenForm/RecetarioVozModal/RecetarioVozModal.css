@@ -1,0 +1,43 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer: ver
+   HistoriaClinica/shared/shared.css. */
+.rvm-card{width:640px;}
+.rvm-body{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:24px;text-align:center;min-height:220px;justify-content:center;
+}
+.rvm-hint{margin:0;max-width:440px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.5;}
+.rvm-hint em{color:var(--ink-700);}
+
+/* Cronómetro en píldora (ver referencia): mismos tokens de "seleccionado" que
+   el resto de la pantalla (--primary-50 / --primary). */
+.rvm-timer{
+  min-width:104px;padding:10px 24px;border-radius:999px;
+  background:var(--primary-50);border:1px solid var(--primary);color:var(--primary);
+  font-size:var(--fs-xl);font-weight:var(--fw-bold);font-variant-numeric:tabular-nums;
+}
+.rvm-status{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--red);}
+.rvm-rec-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:rvm-pulse 1s ease-in-out infinite;}
+@keyframes rvm-pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+.rvm-transcript{
+  margin:0;width:100%;max-width:480px;min-height:48px;padding:12px 14px;
+  border:1px dashed var(--border);border-radius:var(--radius);
+  font-size:var(--fs-base);color:var(--ink-900);line-height:1.5;
+}
+.rvm-transcript-placeholder{color:var(--ink-400);font-style:italic;}
+
+.rvm-processing{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-base);color:var(--ink-700);}
+.rvm-processing .icon{width:18px;height:18px;color:var(--primary);}
+.rvm-spin{animation:rvm-spin .9s linear infinite;}
+@keyframes rvm-spin{to{transform:rotate(360deg);}}
+
+.rvm-result{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left;}
+.rvm-result-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.rvm-result-transcript{margin:0;font-size:var(--fs-base);font-style:italic;color:var(--ink-700);}
+.rvm-fields{
+  margin:8px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;
+  padding:14px 16px;border-radius:var(--radius);background:var(--bg);
+}
+.rvm-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rvm-field dt{font-size:var(--fs-sm);color:var(--ink-500);}
+.rvm-field dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

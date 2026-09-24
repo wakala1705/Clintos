@@ -1,6 +1,7 @@
 .obt-panel{padding:20px 24px;display:flex;flex-direction:column;gap:20px;min-width:0;flex:1;overflow-y:auto;}
 .obt-header{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .obt-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--primary);}
+.obt-header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
 .obt-empty{color:var(--ink-500);font-size:var(--fs-base);margin:0;}
 
 .obt-section{display:flex;flex-direction:column;gap:12px;min-width:0;}

@@ -1,10 +1,11 @@
 'use client';
 
 import {
-  useEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import './ItemFormPanel.css';
 import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
+import RecetarioVozModal from '../RecetarioVozModal/RecetarioVozModal';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import {
@@ -41,26 +42,38 @@ function unidadTiempoLabel(value) {
 // Badge/OrdenPreview) y cierra el listado, dejando ver el resto del
 // formulario de nuevo — precargado con dosis/unidad/presentación/vía si la
 // categoría es de formulario completo.
-export default function ItemFormPanel({ categoria, onAgregar }) {
+//
+// `prefill` (Recetario por voz, ver RecetarioVozModal.jsx): receta dictada
+// ya interpretada — solo siembra el estado inicial (NuevaOrdenForm cambia el
+// `key` para remontar este panel con ella). "Usar receta" en el modal no
+// toca este estado directo: sube vía `onRecetaVoz`, porque la receta es de
+// Medicamentos y el panel puede estar abierto en otra categoría.
+export default function ItemFormPanel({
+  categoria, onAgregar, prefill = null, onRecetaVoz,
+}) {
   const esCompleto = categoria.formulario === 'completo';
   const catalogo = useMemo(() => getCatalogoCategoria(categoria.clave), [categoria.clave]);
 
   const [busqueda, setBusqueda] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
-  const [dosis, setDosis] = useState('');
-  const [unidad, setUnidad] = useState('');
-  const [presentacion, setPresentacion] = useState('');
-  const [via, setVia] = useState('');
-  const [frecuenciaValor, setFrecuenciaValor] = useState('');
-  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState('');
-  const [duracionValor, setDuracionValor] = useState('');
-  const [duracionUnidad, setDuracionUnidad] = useState('');
+  const [itemSeleccionado, setItemSeleccionado] = useState(prefill?.item ?? null);
+  const [dosis, setDosis] = useState(prefill?.dosis ?? '');
+  const [unidad, setUnidad] = useState(prefill?.unidad ?? '');
+  const [presentacion, setPresentacion] = useState(prefill?.presentacion ?? '');
+  const [via, setVia] = useState(prefill?.via ?? '');
+  const [frecuenciaValor, setFrecuenciaValor] = useState(prefill?.frecuenciaValor ?? '');
+  const [frecuenciaUnidad, setFrecuenciaUnidad] = useState(prefill?.frecuenciaUnidad ?? '');
+  const [duracionValor, setDuracionValor] = useState(prefill?.duracionValor ?? '');
+  const [duracionUnidad, setDuracionUnidad] = useState(prefill?.duracionUnidad ?? '');
   const [cantidad, setCantidad] = useState(esCompleto ? '' : '1');
   const [prioritario, setPrioritario] = useState(false);
   const [unicaDosis, setUnicaDosis] = useState(false);
   const [observaciones, setObservaciones] = useState('');
   const [errors, setErrors] = useState({});
+  const [recetarioVozOpen, setRecetarioVozOpen] = useState(false);
+  // Estable para que el efecto de Escape de RecetarioVozModal no se
+  // re-suscriba en cada render de este formulario.
+  const closeRecetarioVoz = useCallback(() => setRecetarioVozOpen(false), []);
 
   const searchWrapRef = useRef(null);
 
@@ -357,9 +370,16 @@ export default function ItemFormPanel({ categoria, onAgregar }) {
           className="ifp-voz-btn"
           aria-label="Recetario por voz"
           title="Recetario por voz"
-          onClick={() => window.ncToast?.('Recetario por voz (flujo en desarrollo).')}
+          onClick={() => setRecetarioVozOpen(true)}
         />
       </div>
+
+      {recetarioVozOpen && (
+        <RecetarioVozModal
+          onClose={closeRecetarioVoz}
+          onUsarReceta={(receta) => { setRecetarioVozOpen(false); onRecetaVoz(receta); }}
+        />
+      )}
     </div>
   );
 }

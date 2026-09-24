@@ -414,6 +414,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
               selectedPaciente={clintosPaciente}
               screenLabel="Hospitalización · Atención del paciente"
               onOpenChange={setKoraOpen}
+              hideTrigger
             />
           )}
         </div>

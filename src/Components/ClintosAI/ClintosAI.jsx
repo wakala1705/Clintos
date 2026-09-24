@@ -66,7 +66,7 @@ const NARROW_SIDEBAR_BREAKPOINT = '(max-width:1024px)';
 // aplican sin ese contexto, y cambia el saludo) — ver ese archivo.
 const ClintosAI = forwardRef(function ClintosAI({
   pacientes, areaLabel, userFirstName = 'Camilo', onOpenHistoria, onNavigate, selectedPaciente, screenLabel,
-  onClearPaciente, autoOpen = false, generalContext = false, onOpenChange,
+  onClearPaciente, autoOpen = false, generalContext = false, onOpenChange, hideTrigger = false,
 }, ref) {
   const [open, setOpen] = useState(autoOpen);
   const [layoutMode, setLayoutMode] = useState(autoOpen ? 'fullscreen' : 'sidebar');
@@ -110,6 +110,12 @@ const ClintosAI = forwardRef(function ClintosAI({
   }), []);
 
   if (!open) {
+    // `hideTrigger` (encargo explícito, solo AtencionPaciente.jsx): ahí el
+    // trigger fijo abajo-derecha tapaba "Guardar" del pie de "Iniciar nueva
+    // orden" (acción principal de la pantalla), y era una entrada duplicada —
+    // KoraTopbarButton ya abre el mismo panel desde el Topbar. El panel sigue
+    // abriéndose igual por `open()`/`askExternal()` del ref.
+    if (hideTrigger) return null;
     // Trigger flotante: fuerza "Flotante" (mismo criterio que `open()` de
     // arriba, cada entrada define su propio modo por defecto) — el usuario
     // sigue pudiendo cambiarlo desde LayoutSwitcher una vez abierto.

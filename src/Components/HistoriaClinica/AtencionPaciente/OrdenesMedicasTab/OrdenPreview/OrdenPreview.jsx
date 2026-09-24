@@ -100,7 +100,7 @@ export default function OrdenPreview({ orden }) {
           <span className="op-title-tipo">{orden.tituloNota}</span>
           <span className="op-title-rest"> - {orden.autor} - {orden.fechaProgramada ?? 'SIN FECHA'}</span>
         </h3>
-        <Button variant="outline" size="sm" icon={LuCopy} onClick={() => proximamente('Copiar orden')}>
+        <Button variant="secondary-accent" size="sm" icon={LuCopy} onClick={() => proximamente('Copiar orden')}>
           Copiar
         </Button>
       </div>

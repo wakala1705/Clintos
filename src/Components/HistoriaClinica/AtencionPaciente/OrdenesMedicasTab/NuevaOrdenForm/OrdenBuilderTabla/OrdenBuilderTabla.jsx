@@ -2,7 +2,20 @@
 
 import './OrdenBuilderTabla.css';
 import Badge from '@/Components/Badge/Badge';
-import { LuTrash2 } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
+import {
+  LuCopy, LuFlaskConical, LuFolder, LuTrash2,
+} from 'react-icons/lu';
+
+// Accesos del encabezado de la orden (encargo explícito, ver referencia):
+// cargar ítems desde una agrupación o un protocolo guardado, o copiar una
+// orden anterior. Todavía sin flujo propio — toast placeholder, mismo patrón
+// que "Recetario por voz" en ItemFormPanel.jsx.
+const ACCIONES_ORDEN = [
+  { id: 'agrupaciones', label: 'Agrupaciones', icon: LuFolder },
+  { id: 'protocolos', label: 'Protocolos', icon: LuFlaskConical },
+  { id: 'copiar', label: 'Copiar', icon: LuCopy },
+];
 
 const COLUMNAS = [
   'Descripción', 'Dosis', 'Unidad de medida', 'Presentación', 'Vía',
@@ -22,6 +35,19 @@ export default function OrdenBuilderTabla({ ordenItems, secciones, onQuitar }) {
     <div className="obt-panel">
       <div className="obt-header">
         <h3 className="obt-title">ORDEN MÉDICA</h3>
+        <div className="obt-header-actions">
+          {ACCIONES_ORDEN.map((a) => (
+            <Button
+              key={a.id}
+              variant="secondary-accent"
+              size="sm"
+              icon={a.icon}
+              onClick={() => window.ncToast?.(`${a.label} (flujo en desarrollo).`)}
+            >
+              {a.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {seccionesConItems.length === 0 ? (
