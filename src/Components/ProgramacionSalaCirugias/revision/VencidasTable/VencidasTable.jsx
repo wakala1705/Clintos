@@ -13,7 +13,7 @@ import { SALAS, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaD
 import { antiguedadLabel, clasificarInconsistencia, duracionMin } from '@/hooks/ProgramacionSalaCirugias/revisionVencidas';
 import './VencidasTable.css';
 
-const TOTAL_COLUMNAS = 9;
+const TOTAL_COLUMNAS = 8;
 
 // Acción sugerida por tipo (spec, tabla de clasificación). "Ver insumos" no
 // resuelve nada: expande la fila, porque ahí conviene mirar antes de decidir.
@@ -78,7 +78,6 @@ export default function VencidasTable({
             {thOrdenable('sala', 'Sala')}
             {thOrdenable('duracion', 'Duración', 'rv-num')}
             <th>No. Prog. / Consecutivo</th>
-            <th>Trazabilidad</th>
             <th className="rv-col-acciones">Acciones</th>
           </tr>
         </thead>
@@ -120,6 +119,22 @@ export default function VencidasTable({
                       )}
                       <InconsistenciaBadge tipo={tipo} />
                     </div>
+                    {(c.farmacia?.numeroPedido || c.traslado) && (
+                      <div className="rv-trazabilidad">
+                        {c.farmacia?.numeroPedido && (
+                          <span>
+                            <LuPackage className="icon" aria-hidden="true" />
+                            Pedido {c.farmacia.numeroPedido}
+                          </span>
+                        )}
+                        {c.traslado && (
+                          <span>
+                            <LuDoorOpen className="icon" aria-hidden="true" />
+                            Adm. {c.traslado.numeroAdmision}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td>
                     <div className="rv-cell-primary">{c.paciente.nombre}</div>
@@ -134,23 +149,6 @@ export default function VencidasTable({
                   <td>
                     <div className="rv-cell-primary">{numero}</div>
                     <div className="rv-cell-secondary">{c.consecutivo ?? '—'}</div>
-                  </td>
-                  <td>
-                    <div className="rv-trazabilidad">
-                      {c.farmacia?.numeroPedido && (
-                        <span>
-                          <LuPackage className="icon" aria-hidden="true" />
-                          Pedido {c.farmacia.numeroPedido}
-                        </span>
-                      )}
-                      {c.traslado && (
-                        <span>
-                          <LuDoorOpen className="icon" aria-hidden="true" />
-                          Adm. {c.traslado.numeroAdmision}
-                        </span>
-                      )}
-                      {!c.farmacia?.numeroPedido && !c.traslado && <span className="rv-cell-secondary">—</span>}
-                    </div>
                   </td>
                   <td className="rv-col-acciones">
                     <div className="rv-acciones">

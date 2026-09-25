@@ -1,6 +1,6 @@
 /* .filter-bar/.search-field/.filter-spacer/.filter-cluster viven en
    shared/shared.css -- acá solo lo propio de esta barra. */
-.rv-filter-bar .search-field{width:300px;}
+.rv-filter-bar .search-field{width:330px;}
 .rv-filtro-sala{width:190px;}
 .rv-filtro-fechas{display:flex;align-items:center;gap:6px;}
 .rv-filtro-fechas-sep{color:var(--ink-500);}

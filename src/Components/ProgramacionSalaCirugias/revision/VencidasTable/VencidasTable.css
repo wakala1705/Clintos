@@ -7,7 +7,7 @@
   background:var(--table-header-bg);border-bottom:1px solid var(--border);
   font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
 }
-.rv-table td{padding:6px 12px;height:44px;border-bottom:1px solid var(--border);color:var(--ink-700);vertical-align:middle;}
+.rv-table td{padding:6px 10px;height:44px;border-bottom:1px solid var(--border);color:var(--ink-700);vertical-align:middle;}
 .rv-table .rv-num{text-align:right;}
 .rv-table .rv-nowrap{white-space:nowrap;}
 .rv-row:hover > td{background:var(--bg);}
@@ -40,7 +40,7 @@
 .rv-cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .rv-cell-secondary{font-size:var(--fs-sm);color:var(--ink-500);}
 
-.rv-trazabilidad{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);}
+.rv-trazabilidad{display:flex;flex-direction:row;flex-wrap:wrap;gap:2px 8px;margin:4px 0 0 28px;font-size:var(--fs-sm);}
 .rv-trazabilidad span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
 .rv-trazabilidad .icon{width:14px;height:14px;color:var(--ink-500);}
 
