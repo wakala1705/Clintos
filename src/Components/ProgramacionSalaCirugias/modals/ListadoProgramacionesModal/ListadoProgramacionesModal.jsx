@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import {
-  LuCalendarDays, LuChevronsUpDown, LuCircleArrowLeft, LuList,
+  LuCalendarDays, LuCircleArrowLeft, LuList,
 } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -12,10 +12,9 @@ import './ListadoProgramacionesModal.css';
 
 // Réplica visual de la ventana legada "Listado de Programaciones - Revisión"
 // (encargo explícito, 2026-09-25: mismos campos y columnas tal cual, solo
-// visual, abierta desde "Listado de cirugías"). Sin lógica: el ícono de
-// ordenar de los encabezados es decorativo (no un botón, para no ofrecer un
-// control que no hace nada) y "Cambiar estado" no tiene acción. Los íconos
-// de filtro/lupa de la referencia se quitaron por encargo explícito.
+// visual, abierta desde "Listado de cirugías"). Sin lógica: "Cambiar estado"
+// no tiene acción. Los íconos de ordenar/filtro/lupa de los encabezados de
+// la referencia se quitaron por encargo explícito.
 const COLUMNAS = [
   { key: 'sala', label: 'Sala' },
   { key: 'noProgramacion', label: 'No. Programación', align: 'lpm-center' },
@@ -58,10 +57,7 @@ export default function ListadoProgramacionesModal({ onClose }) {
                 <tr>
                   {COLUMNAS.map((col) => (
                     <th key={col.key} className={col.check ? 'lpm-check' : col.align}>
-                      <span className="lpm-th">
-                        <span className="lpm-th-label">{col.label}</span>
-                        <LuChevronsUpDown className="icon lpm-th-sort" aria-hidden="true" />
-                      </span>
+                      {col.label}
                     </th>
                   ))}
                 </tr>

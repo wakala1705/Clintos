@@ -30,11 +30,7 @@
 .lpm-table .lpm-right{text-align:right;}
 .lpm-table .lpm-check{text-align:center;width:1%;}
 
-.lpm-th{display:inline-flex;align-items:center;gap:6px;}
-.lpm-right .lpm-th{flex-direction:row-reverse;}
-.lpm-check .lpm-th{flex-direction:column;gap:2px;white-space:normal;text-align:center;}
-.lpm-check .lpm-th-label{min-width:76px;}
-.lpm-th-sort{width:13px;height:13px;flex-shrink:0;color:var(--ink-400);}
+.lpm-table th.lpm-check{white-space:normal;min-width:76px;}
 
 .lpm-table td input[type="checkbox"]{
   width:15px;height:15px;margin:0;vertical-align:middle;
