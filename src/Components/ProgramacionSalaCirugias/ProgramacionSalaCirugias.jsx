@@ -397,6 +397,7 @@ export default function ProgramacionSalaCirugias() {
                 onNuevaUrgencia={handleAbrirNuevaUrgencia}
                 resumen={resumen}
                 vencidas={vencidas}
+                onVerVencidas={() => setModal({ type: 'listado' })}
               />
             </div>
 

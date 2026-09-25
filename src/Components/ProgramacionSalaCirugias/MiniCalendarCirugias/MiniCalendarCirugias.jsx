@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import './MiniCalendarCirugias.css';
 import { addMeses, grillaMes, mesLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
@@ -31,7 +30,7 @@ const MOSTRAR_AVISO_URGENCIAS = false;
 // desde el pie de AgendaSemana/AgendaMes (.psc-agenda-legend, encargo
 // explícito) -- antes vivía duplicada al pie de cada vista del calendario.
 export default function MiniCalendarCirugias({
-  selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia, resumen, vencidas = 0,
+  selectedDate, onSelectDate, onNuevaCirugia, onNuevaUrgencia, resumen, vencidas = 0, onVerVencidas,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [monthDate, setMonthDate] = useState(() => new Date());
@@ -166,14 +165,16 @@ export default function MiniCalendarCirugias({
         )}
         {/* Programaciones vencidas sin cerrar: mismo tratamiento visual que
             el aviso de urgencias de arriba (encargo explícito, reemplaza al
-            banner que vivía bajo el encabezado de la página), pero como link
-            a la revisión. Ícono propio para no confundirlo con urgencias. */}
+            banner que vivía bajo el encabezado de la página), pero clicable:
+            abre el modal "Listado de Programaciones - Revisión" (encargo
+            explícito; la página de revisión está oculta por ahora). Ícono
+            propio para no confundirlo con urgencias. */}
         {vencidas > 0 && (
-          <Link href="/programacion-sala-cirugias/revision" className="mcc-resumen-urgencia mcc-resumen-vencidas">
+          <button type="button" className="mcc-resumen-urgencia mcc-resumen-vencidas" onClick={onVerVencidas}>
             <LuCalendarX className="icon" aria-hidden="true" />
             <span>{vencidas} {vencidas === 1 ? 'programación vencida' : 'programaciones vencidas'}</span>
             <LuChevronRight className="icon mcc-resumen-urgencia-chevron" aria-hidden="true" />
-          </Link>
+          </button>
         )}
       </div>
 
