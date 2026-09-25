@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { LuArrowLeft } from 'react-icons/lu';
 import './HistorialQuirurgico.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import Button from '@/Components/Button/Button';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
@@ -24,6 +27,7 @@ import { PACIENTE_DEMO, INTERVENCIONES } from '@/hooks/HistorialQuirurgico/mockH
 // (encargo explícito -- no existe historial real por cada uno de los ~46
 // pacientes mock de ListaPacientes).
 export default function HistorialQuirurgico() {
+  const router = useRouter();
   useEffect(() => {
     const cleanupChrome = initShellChrome({ startCollapsed: true });
     return () => cleanupChrome?.();
@@ -44,6 +48,19 @@ export default function HistorialQuirurgico() {
         />
 
         <div className="content">
+          {/* Salida atrás (encargo explícito): vuelve a Programación sala de
+              cirugías, desde donde se abre este historial ("Historial de
+              cirugías"). Ruta fija en vez de router.back() para que funcione
+              igual si se entró por URL directa, sin historial previo. */}
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={LuArrowLeft}
+            className="hq-back-btn"
+            onClick={() => router.push('/programacion-sala-cirugias')}
+          >
+            Volver
+          </Button>
           <PatientBanner patient={PACIENTE_DEMO} />
 
           <div className="hq-body">
