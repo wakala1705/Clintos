@@ -951,6 +951,121 @@ let CIRUGIAS = [
   },
 ];
 
+// Semilla de "Revisión de programaciones vencidas" (spec 2026-09-25):
+// transcripción de la captura del sistema legado "Listado de Programaciones
+// - Revisión" (mismos No. programación/consecutivo/sala/fecha/hora/duración/
+// pedido/admisión/paciente), sin la fila "PACIENTE DE PRUEBAS". Todas quedan
+// en 'programada' con fecha de 2022, así que fetchVencidas las devuelve.
+// Tupla: [No. programación, consecutivo, salaId, fecha, hora inicio,
+// duración (min), tiene pedido de inventario, No. admisión | null,
+// Id. afiliado, "APELLIDOS, NOMBRES"].
+const VENCIDAS_LEGACY = [
+  [5584, '0200000009', 'gastroenterologia', '2022-09-01', '10:05', 20, false, '0200000005', '15042902', 'ALVARADO CARDOZO, NAUN DE JESUS'],
+  [5591, '0200000016', 'gastroenterologia', '2022-09-01', '10:25', 20, false, '0200000006', '30563036', 'MONTES RIVERA, RUTH MARIA'],
+  [5576, '0200000001', 'gastroenterologia', '2022-09-02', '07:00', 20, false, '0200000648', '30567236', 'JIMENEZ MARTINEZ, ARGELIA MARIA'],
+  [5617, '0200000042', 'gastroenterologia', '2022-09-02', '07:20', 20, true, '0200000627', '98598507', 'HERNANDEZ MENDEZ, FILADELFO MIGUEL'],
+  [5620, '0200000045', 'gastroenterologia', '2022-09-02', '07:40', 20, false, null, '45443416', 'COGOLLO PORTILLO, LUZ ESTER'],
+  [5621, '0200000046', 'gastroenterologia', '2022-09-02', '08:00', 20, false, null, '15015206', 'TORDECILLA CORREA, JOSE MARIA'],
+  [5624, '0200000049', 'gastroenterologia', '2022-09-02', '08:40', 20, true, '0200000601', '1007535893', 'PACHECO MESTRA, ANDREA CAROLINA'],
+  [5577, '0200000002', 'gastroenterologia', '2022-09-02', '14:00', 20, true, '0200000858', '34956054', 'URANGO VILLALBA, CARMEN ALICIA'],
+  [5579, '0200000004', 'gastroenterologia', '2022-09-02', '14:20', 20, true, '0200000881', '25988394', 'SEÑA RICARDO, CEVERINA SEGUNDA'],
+  [5581, '0200000006', 'gastroenterologia', '2022-09-02', '14:40', 20, true, '0200000933', '30671061', 'PAYARES HERNANDEZ, GRISAIDA CARMEN'],
+  [5582, '0200000007', 'gastroenterologia', '2022-09-02', '15:00', 20, true, '0200000877', '26039243', 'HERNANDEZ GOMEZ, LUCINA DEL SOCORRO'],
+  [5583, '0200000008', 'gastroenterologia', '2022-09-02', '15:20', 20, true, '0200000872', '34959829', 'GARAVITO VARGAS, ANA FELISA'],
+  [5640, '0200000064', 'gastroenterologia', '2022-09-02', '15:40', 20, false, null, '26037063', 'TABORDA GARAY, ADIS ESTHER'],
+  [5641, '0200000065', 'gastroenterologia', '2022-09-02', '16:00', 20, false, null, '6884333', 'BUELVAS BERROCAL, JOSE LUIS'],
+  [5642, '0200000066', 'gastroenterologia', '2022-09-02', '16:20', 20, false, '0200000848', '50892332', 'JIMENEZ CORREA, DAIRA ELENA'],
+  [5644, '0200000068', 'gastroenterologia', '2022-09-02', '17:00', 20, false, null, '34991821', 'VERGARA SERPA, DIANA MARGARITA'],
+  [5645, '0200000069', 'gastroenterologia', '2022-09-02', '17:20', 20, false, null, '34986661', 'WILCHEZ GALEANO, SARA REBECA'],
+  [5585, '0200000010', 'gastroenterologia', '2022-09-03', '07:00', 20, false, null, '15041717', 'MONTALVO GUERRA, MANUEL FRANCISCO'],
+  [5627, '0200000052', 'qx-1', '2022-09-03', '07:00', 60, false, null, '73078260', 'SANCHEZ CALVO, ALVARO ENRIQUE'],
+  [5586, '0200000011', 'gastroenterologia', '2022-09-03', '07:20', 20, false, '0200000968', '10985069', 'NUÑEZ, MANUEL FELIPE'],
+  [5587, '0200000012', 'gastroenterologia', '2022-09-03', '07:40', 20, false, null, '25762818', 'GALVAN LOPEZ, AMADA ROSA'],
+  [5588, '0200000013', 'gastroenterologia', '2022-09-03', '08:00', 20, false, null, '1067938627', 'SUAREZ RUBIO, DANYS MAILER'],
+  [5589, '0200000014', 'gastroenterologia', '2022-09-03', '08:20', 20, false, '0200000972', '25956001', 'MORATO SIERRA, GLADYS'],
+  [5590, '0200000015', 'gastroenterologia', '2022-09-03', '08:40', 20, false, null, '1104258526', 'PATERNINA VERGARA, IVAN ANDRES'],
+  [5592, '0200000017', 'gastroenterologia', '2022-09-03', '09:00', 20, false, null, '1067885903', 'LOPEZ MORON, YODIS'],
+  [5593, '0200000018', 'gastroenterologia', '2022-09-03', '09:20', 20, false, null, '50880944', 'HERNANDEZ MEJIA, FANNY'],
+  [5594, '0200000019', 'gastroenterologia', '2022-09-03', '09:40', 20, false, '0200000971', '15663747', 'ALVAREZ BELTRAN, SERVIO AUGUSTO'],
+  [5648, '0200000072', 'gastroenterologia', '2022-09-03', '10:00', 20, false, null, '1072526353', 'CAICEDO JULIO, ESPERANZA EDITH'],
+  [5649, '0200000073', 'gastroenterologia', '2022-09-03', '10:20', 20, false, '0200000973', '1137975838', 'VERGARA ESCUDERO, MARIA ELIZABETH'],
+  [5736, '0200000160', 'qx-1', '2022-09-03', '18:00', 60, false, null, '1104256622', 'MONTERROSA PEREZ, MARIA ALEJANDRA'],
+  [5744, '0200000168', 'qx-1', '2022-09-04', '07:00', 60, true, null, '7486686', 'ATENCIO ARRIETA, MIGUEL'],
+  [5725, '0200000149', 'qx-1', '2022-09-05', '00:00', 60, false, null, '1579842', 'GUERRA MARTINEZ, MANUEL DEL CRISTO'],
+  [5726, '0200000150', 'qx-1', '2022-09-05', '01:00', 60, false, null, '15072173', 'CORREA BABILONIA, GABRIEL'],
+  [5727, '0200000151', 'qx-1', '2022-09-05', '02:00', 40, false, null, '2823314', 'VIDAL RODRIGUEZ, GUALBERTO JOSE'],
+  [5728, '0200000152', 'qx-1', '2022-09-05', '02:40', 40, true, null, '1065380090', 'MORELO FERNANDEZ, SHAROL LUCIA'],
+  [5729, '0200000153', 'qx-1', '2022-09-05', '03:20', 40, true, null, '1062538007', 'BERROCAL PAYARES, PAULINA'],
+  [5730, '0200000154', 'qx-1', '2022-09-05', '04:00', 40, true, null, '1041271202', 'HERNANDEZ MARTINEZ, ALEXANDRA'],
+  [5731, '0200000155', 'qx-1', '2022-09-05', '04:40', 40, true, null, '1064797597', 'SUAREZ HERNANDEZ, MARIA ALEJANDRA'],
+  [5743, '0200000167', 'qx-2', '2022-09-05', '05:00', 60, true, null, '6878270', 'ARIZA MEZA, JAIME ALFONSO'],
+  [5694, '0200000118', 'qx-1', '2022-09-05', '06:00', 60, true, null, '33173971', 'OTERO PADILLA, RUBBY ESTHER'],
+  [5738, '0200000162', 'qx-2', '2022-09-05', '06:00', 120, false, null, '26057070', 'RIVERA DE PRADO, CLEOTILDE DEL CARMEN'],
+  [5595, '0200000020', 'gastroenterologia', '2022-09-05', '07:00', 20, false, null, '11330499', 'NADER SIMONDS, ALBERTO AGUSTIN DEMETRIO'],
+  [5706, '0200000130', 'qx-1', '2022-09-05', '07:00', 60, false, null, '50954877', 'CASTILLO IBARRA, LOURDES PETRONA'],
+];
+
+// Procedimiento/cirujano/medicamentos por sala: la captura legada no los
+// muestra, se asigna uno representativo por sala para que el detalle de
+// insumos y los modales de cancelar/reprogramar tengan datos.
+const BASE_VENCIDA_POR_SALA = {
+  gastroenterologia: {
+    procedimiento: 'Esofagogastroduodenoscopia',
+    servicio: 'Gastroenterología',
+    cirujano: 'Dr. Andrés López',
+    medicamentos: [{ nombre: 'Propofol', dosis: '200mg IV' }, { nombre: 'Lidocaína spray', dosis: '10%' }],
+  },
+  'qx-1': {
+    procedimiento: 'Colecistectomía laparoscópica',
+    servicio: 'Cirugía general',
+    cirujano: 'Dr. Juan García',
+    medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Ondansetrón', dosis: '4mg IV' }],
+  },
+  'qx-2': {
+    procedimiento: 'Herniorrafia inguinal',
+    servicio: 'Cirugía general',
+    cirujano: 'Dr. Carlos Martínez',
+    medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+  },
+};
+
+function vencidaLegacy([
+  numeroProgramacion, consecutivo, salaId, fecha, horaInicio, duracionMin, conPedido, numeroAdmision, idAfiliado, nombre,
+]) {
+  const base = BASE_VENCIDA_POR_SALA[salaId];
+  return {
+    id: `v-${numeroProgramacion}`,
+    sedeId: '02',
+    salaId,
+    numeroProgramacion: String(numeroProgramacion),
+    consecutivo,
+    paciente: { nombre, documento: `CC ${idAfiliado}` },
+    procedimientoPrincipal: base.procedimiento,
+    servicio: base.servicio,
+    tipoCirugia: 'Programada',
+    cirujano: base.cirujano,
+    fecha,
+    horaInicio,
+    horaFin: calcularHoraFin(horaInicio, duracionMin),
+    estado: 'programada',
+    procedimientos: [{
+      nombre: base.procedimiento, tipo: 'principal', duracionMin, notas: '',
+    }],
+    personal: [{ rol: 'Cirujano', nombre: base.cirujano }],
+    equipos: [],
+    canasta: { nombre: 'Sin canasta asignada', items: [] },
+    farmacia: conPedido ? {
+      numeroPedido: `PED-${consecutivo.slice(-4)}`,
+      estado: 'listo',
+      fechaSolicitud: `${fecha}T06:00`,
+      medicamentos: base.medicamentos.map((med) => ({ ...med })),
+    } : null,
+    traslado: numeroAdmision ? { numeroAdmision } : null,
+  };
+}
+
+CIRUGIAS = [...CIRUGIAS, ...VENCIDAS_LEGACY.map(vencidaLegacy)];
+
 let nextIdSeq = 12353;
 
 // Consecutivo de "No. Programación" de AgregarProcedimientoModal (encargo
@@ -1348,5 +1463,59 @@ export function reprogramarCirugia(id, {
 }
 
 export function cancelarCirugia(id, motivo) {
-  return actualizarCirugia(id, { estado: 'cancelada', motivoCancelacion: motivo });
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    estado: 'cancelada',
+    motivoCancelacion: motivo,
+    farmacia: conResolucionInsumos(actual, 'devolucion'),
+  });
+}
+
+// ---------- Revisión de programaciones vencidas (spec 2026-09-25) ----------
+
+// Registros crudos: la clasificación por tipo la hace revisionVencidas.js en
+// la pantalla, así el mock no depende de ella.
+export function fetchVencidas({ hoy }) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(CIRUGIAS.filter((c) => c.estado === 'programada' && c.fecha < hoy));
+    }, 250);
+  });
+}
+
+// Qué pasa con el pedido de insumos al cerrar la programación: realizada ->
+// 'consumido'; incumplida/cancelada -> 'devolucion'. Solo una marca en el
+// mock, sin integración real con inventario (fuera de alcance del spec).
+function conResolucionInsumos(cirugia, resolucion) {
+  if (!cirugia?.farmacia?.numeroPedido) return cirugia?.farmacia;
+  return { ...cirugia.farmacia, resolucionInsumos: resolucion };
+}
+
+// Devuelve los registros tal como estaban antes del cambio: es el snapshot
+// que usa "Deshacer" (ver deshacerResolucion).
+function resolverVarias(ids, cambios) {
+  const snapshot = CIRUGIAS.filter((c) => ids.includes(c.id));
+  CIRUGIAS = CIRUGIAS.map((c) => (ids.includes(c.id) ? { ...c, ...cambios(c) } : c));
+  return snapshot;
+}
+
+export function marcarRealizadas(ids) {
+  return resolverVarias(ids, (c) => ({
+    estado: 'realizada',
+    farmacia: conResolucionInsumos(c, 'consumido'),
+  }));
+}
+
+export function marcarIncumplidas(ids, { causal, observacion = '' }) {
+  return resolverVarias(ids, (c) => ({
+    estado: 'incumplida',
+    causalIncumplimiento: causal,
+    observacionIncumplimiento: observacion,
+    farmacia: conResolucionInsumos(c, 'devolucion'),
+  }));
+}
+
+export function deshacerResolucion(snapshot) {
+  const previos = new Map(snapshot.map((c) => [c.id, c]));
+  CIRUGIAS = CIRUGIAS.map((c) => previos.get(c.id) ?? c);
 }
