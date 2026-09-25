@@ -10,20 +10,18 @@ import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideL
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
-import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw, LuUser,
 } from 'react-icons/lu';
 
-// Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
-// a las 4 tabs de nivel superior que tenía antes el modal (Personal/Equipos/
-// Insumos/Farmacia). "Procedimientos" ya no es una tab: es la lista fija de
-// la izquierda (mismo esquema que .hqd-split en IntervencionDetalleModal,
-// HistorialQuirurgico -- encargo explícito con esa captura de referencia).
+// Tabs del panel derecho del split (ver .dcp-split más abajo).
+// "Procedimientos" no es una tab: es la lista fija de la izquierda (mismo
+// esquema que .hqd-split en IntervencionDetalleModal, HistorialQuirurgico).
+// Sin tab "Farmacia" (encargo explícito): la solicitud a farmacia se ve y se
+// hace desde Insumos.
 const DETAIL_TABS = [
   { id: 'insumos', label: 'Insumos' },
-  { id: 'farmacia', label: 'Farmacia' },
   { id: 'personal', label: 'Personal clínico' },
   { id: 'equipos', label: 'Equipos' },
 ];
@@ -91,23 +89,23 @@ export default function DetalleCirugiaPanel({
 
   const body = (
     <>
-      {/* Estado junto al cierre (trailing) y el caso identificado en el
-          subtítulo -- antes el badge ocupaba una fila entera propia. */}
       <ModalHeader
         title="Detalle de la cirugía"
         titleId="dcp-title"
-        subtitle={`No. Prog ${cirugia.id} · ${cirugia.paciente.nombre}`}
-        trailing={<EstadoCirugiaBadge estado={cirugia.estado} />}
         onClose={onClose}
         closeLabel="Cerrar detalle"
       />
 
       {/* Mismos 12 campos del formulario legacy de referencia, agrupados en
-          2 bloques: Programación (lo que identifica la cirugía, destacado) y
-          Paciente (datos de contexto). */}
+          2 bloques: Programación (lo que identifica la cirugía, destacado,
+          con el estado junto a su título) y Paciente (datos de contexto). */}
       <div className="dcp-info">
         <section className="dcp-info-group dcp-info-group-prog" aria-label="Programación">
-          <div className="dcp-info-group-title">Programación</div>
+          <div className="dcp-info-group-title">
+            <LuCalendarClock className="dcp-info-group-icon" aria-hidden="true" />
+            Programación
+            <span className="dcp-info-group-estado"><EstadoCirugiaBadge estado={cirugia.estado} /></span>
+          </div>
           <div className="dcp-info-grid">
             <InfoItem label="Fecha" value={`${fechaLabel(cirugia.fecha)} ${cirugia.horaInicio}`} />
             <InfoItem label="No. Prog" value={cirugia.id} />
@@ -115,7 +113,10 @@ export default function DetalleCirugiaPanel({
           </div>
         </section>
         <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">
-          <div className="dcp-info-group-title">Paciente</div>
+          <div className="dcp-info-group-title">
+            <LuUser className="dcp-info-group-icon" aria-hidden="true" />
+            Paciente
+          </div>
           <div className="dcp-info-grid">
             <InfoItem label="Nombre" value={cirugia.paciente.nombre} />
             <InfoItem label="Doc. Id" value={cirugia.paciente.documento} />
@@ -133,7 +134,7 @@ export default function DetalleCirugiaPanel({
       {/* Split de 2 columnas -- mismo esquema que .hqd-split
           (IntervencionDetalleModal, HistorialQuirurgico, ver comentario en
           DetalleCirugiaPanel.css): izquierda, la lista fija de procedimientos
-          de la cirugía; derecha, tabs anidadas Insumos/Farmacia/Personal
+          de la cirugía; derecha, tabs anidadas Insumos/Personal
           clínico/Equipos. Reemplaza a las 6 tabs de nivel superior que tenía
           antes el modal (Resumen se eliminó, Procedimientos pasó a ser la
           columna izquierda permanente en vez de una tab más) -- encargo
@@ -172,7 +173,6 @@ export default function DetalleCirugiaPanel({
               {activeDetailTab === 'insumos' && (
                 <InsumosTab cirugia={cirugia} puedeAccionar={puedeAccionar} onPedirInsumos={onPedirInsumos} />
               )}
-              {activeDetailTab === 'farmacia' && <FarmaciaTab cirugia={cirugia} />}
               {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
               {activeDetailTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
             </div>
@@ -182,8 +182,10 @@ export default function DetalleCirugiaPanel({
 
       {/* Editar/Reprogramar a la vista; los cambios de estado (realizada,
           incumplida, cancelar) agrupados en "Cambiar estado" -- mismos
-          bloques y reglas de disabled que CirugiaCardMenu.jsx, con Cancelar
-          en tono danger y separado para evitar clics por error. La acción
+          bloques y reglas de disabled que CirugiaCardMenu.jsx. Textos en
+          color neutro (encargo explícito); solo los íconos de incumplida/
+          cancelar llevan tono (iconTone), y Cancelar va separado para evitar
+          clics por error. La acción
           principal ("Pedir insumos a farmacia") vive en el pie de la tabla
           de Insumos (ver InsumosTab.jsx). */}
       <div className="dcp-actions">
@@ -198,10 +200,10 @@ export default function DetalleCirugiaPanel({
               id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeAccionar, onSelect: () => onMarcarRealizada(cirugia),
             },
             {
-              id: 'incumplida', label: 'Marcar como incumplida', icon: LuCalendarX, tone: 'warn', disabled: !puedeMarcarIncumplida, onSelect: () => onMarcarIncumplida(cirugia),
+              id: 'incumplida', label: 'Marcar como incumplida', icon: LuCalendarX, iconTone: 'warn', disabled: !puedeMarcarIncumplida, onSelect: () => onMarcarIncumplida(cirugia),
             },
             {
-              id: 'cancelar', label: 'Cancelar cirugía', icon: LuBan, tone: 'danger', disabled: !puedeAccionar, onSelect: () => onCancelar(cirugia), dividerBefore: true,
+              id: 'cancelar', label: 'Cancelar cirugía', icon: LuBan, iconTone: 'danger', disabled: !puedeAccionar, onSelect: () => onCancelar(cirugia), dividerBefore: true,
             },
           ]}
         />

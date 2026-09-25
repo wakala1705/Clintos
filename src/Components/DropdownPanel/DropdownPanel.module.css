@@ -90,6 +90,9 @@
 .warn,
 .warn .icon { color: var(--amber-fg); }
 .warn:hover:not(:disabled) { background: var(--amber-bg); color: var(--amber-fg); }
+/* Solo el ícono con tono, texto neutro (item.iconTone en DropdownMenu). */
+.iconDanger { color: var(--red); }
+.iconWarn { color: var(--amber-fg); }
 
 /* ---------- Estructura ---------- */
 .divider {

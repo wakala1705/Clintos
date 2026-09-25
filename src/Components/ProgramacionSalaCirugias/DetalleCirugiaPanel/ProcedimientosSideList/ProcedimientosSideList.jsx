@@ -23,13 +23,12 @@ export default function ProcedimientosSideList({ procedimientos, selectedId, onS
       <table className="dcp-proc-table">
         <thead>
           <tr>
-            <th>Item</th>
             <th>Procedimiento</th>
             <th>Duración</th>
           </tr>
         </thead>
         <tbody>
-          {procedimientos.map((p, idx) => (
+          {procedimientos.map((p) => (
             <tr
               key={p.nombre}
               className={selectedId === p.nombre ? 'selected' : undefined}
@@ -38,7 +37,6 @@ export default function ProcedimientosSideList({ procedimientos, selectedId, onS
               onClick={() => onSelect(p.nombre)}
               onKeyDown={(e) => handleRowKeyDown(e, p.nombre)}
             >
-              <td className="cell-muted">{idx + 1}</td>
               <td className="cell-primary">{p.nombre}</td>
               <td className="cell-muted">{p.duracionMin} min</td>
             </tr>
