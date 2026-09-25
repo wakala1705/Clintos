@@ -457,6 +457,10 @@ export default function ProgramacionSalaCirugias() {
         onCancelar={handleCancelarCirugia}
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
+        // "Pedir insumos a farmacia" (encargo explícito, acción principal
+        // del detalle): el flujo de pedido todavía no existe -- por ahora
+        // solo avisa, mismo criterio que las vistas "en desarrollo".
+        onPedirInsumos={() => showToast('Pedido de insumos a farmacia: en desarrollo.')}
       />
 
       <NuevaCitaFlow />

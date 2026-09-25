@@ -12,7 +12,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPackagePlus, LuPencil,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
@@ -34,7 +34,7 @@ const DETAIL_TABS = [
 // explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
-  onMarcarRealizada, onMarcarIncumplida,
+  onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
@@ -219,7 +219,12 @@ export default function DetalleCirugiaPanel({
         <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
         <Button variant="secondary-accent" icon={LuCheckCheck} disabled={!puedeAccionar} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
         <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
-        <Button variant="danger" icon={LuBan} disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
+        {/* Cancelar deja de ser el botón destacado (encargo explícito): pasa
+            a secondary-accent con el ícono en rojo (ver .dcp-cancel-btn) para
+            conservar la señal de acción destructiva, y la acción principal
+            del detalle es "Pedir insumos a farmacia". */}
+        <Button variant="secondary-accent" icon={LuBan} className="dcp-cancel-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
+        <Button variant="primary" icon={LuPackagePlus} disabled={!puedeAccionar} onClick={() => onPedirInsumos(cirugia)}>Pedir insumos a farmacia</Button>
       </div>
     </>
   );

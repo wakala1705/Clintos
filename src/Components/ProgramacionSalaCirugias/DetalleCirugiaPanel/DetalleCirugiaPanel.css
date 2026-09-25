@@ -83,3 +83,7 @@
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
   padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
+/* "Cancelar" en secondary-accent con ícono rojo (acción destructiva, pero
+   ya no la destacada). Selector doble para ganarle a `.secondaryAccent .icon`
+   de Button.module.css (2 clases), que lo pinta en --primary. */
+.dcp-actions .dcp-cancel-btn svg{color:var(--red);}
