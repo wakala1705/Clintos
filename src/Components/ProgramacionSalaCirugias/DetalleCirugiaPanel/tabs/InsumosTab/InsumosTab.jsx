@@ -1,6 +1,6 @@
 'use client';
 
-import { LuPackagePlus } from 'react-icons/lu';
+import { LuPackageMinus, LuPackagePlus } from 'react-icons/lu';
 import './InsumosTab.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -38,7 +38,12 @@ export default function InsumosTab({ cirugia, puedeAccionar, onPedirInsumos }) {
         </tbody>
       </table>
       <div className="ist-footer">
+        {/* Solo visual por ahora (encargo explícito, sin lógica todavía). */}
+        <Button variant="secondary-accent" icon={LuPackageMinus} disabled={!puedeAccionar}>
+          Devolver insumos
+        </Button>
         <Button
+          variant="secondary-accent"
           icon={LuPackagePlus}
           disabled={!puedeAccionar || !hayInsumosPorSolicitar}
           onClick={() => onPedirInsumos(cirugia)}
