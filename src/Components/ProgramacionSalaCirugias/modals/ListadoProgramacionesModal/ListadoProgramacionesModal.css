@@ -34,8 +34,7 @@
 .lpm-right .lpm-th{flex-direction:row-reverse;}
 .lpm-check .lpm-th{flex-direction:column;gap:2px;white-space:normal;text-align:center;}
 .lpm-check .lpm-th-label{min-width:76px;}
-.lpm-th-tools{display:inline-flex;align-items:center;gap:2px;}
-.lpm-th-tools .icon{width:13px;height:13px;color:var(--ink-400);}
+.lpm-th-sort{width:13px;height:13px;flex-shrink:0;color:var(--ink-400);}
 
 .lpm-table td input[type="checkbox"]{
   width:15px;height:15px;margin:0;vertical-align:middle;

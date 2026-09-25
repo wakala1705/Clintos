@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import {
-  LuCalendarDays, LuChevronsUpDown, LuCircleArrowLeft, LuFilter, LuList, LuSearch,
+  LuCalendarDays, LuChevronsUpDown, LuCircleArrowLeft, LuList,
 } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -12,25 +12,24 @@ import './ListadoProgramacionesModal.css';
 
 // Réplica visual de la ventana legada "Listado de Programaciones - Revisión"
 // (encargo explícito, 2026-09-25: mismos campos y columnas tal cual, solo
-// visual, abierta desde "Listado de cirugías"). Sin lógica: ordenar/filtrar/
-// buscar de los encabezados son íconos decorativos (no botones, para no
-// ofrecer controles que no hacen nada) y "Cambiar estado" no tiene acción.
-// `tool` replica el ícono que cada encabezado trae en la referencia (embudo
-// = filtro, lupa = búsqueda, ninguno en los checkboxes).
+// visual, abierta desde "Listado de cirugías"). Sin lógica: el ícono de
+// ordenar de los encabezados es decorativo (no un botón, para no ofrecer un
+// control que no hace nada) y "Cambiar estado" no tiene acción. Los íconos
+// de filtro/lupa de la referencia se quitaron por encargo explícito.
 const COLUMNAS = [
-  { key: 'sala', label: 'Sala', tool: 'filter' },
-  { key: 'noProgramacion', label: 'No. Programación', tool: 'search', align: 'lpm-center' },
-  { key: 'consecutivo', label: 'Consecutivo', tool: 'filter' },
-  { key: 'fechaProg', label: 'Fecha Prog.', tool: 'search', align: 'lpm-right' },
-  { key: 'duracion', label: 'Duración (min.)', tool: 'search', align: 'lpm-right' },
+  { key: 'sala', label: 'Sala' },
+  { key: 'noProgramacion', label: 'No. Programación', align: 'lpm-center' },
+  { key: 'consecutivo', label: 'Consecutivo' },
+  { key: 'fechaProg', label: 'Fecha Prog.', align: 'lpm-right' },
+  { key: 'duracion', label: 'Duración (min.)', align: 'lpm-right' },
   { key: 'pedInventario', label: 'Ped. Inventario', check: true },
   { key: 'trasladoCirugia', label: 'Traslado a Cirugía', check: true },
-  { key: 'noAdmision', label: 'No. Admisión', tool: 'filter' },
-  { key: 'idAfiliado', label: 'Id. Afiliado', tool: 'filter' },
-  { key: 'pApellido', label: 'P. Apellido', tool: 'filter' },
-  { key: 'sApellido', label: 'S. Apellido', tool: 'filter' },
-  { key: 'pNombre', label: 'P. Nombre', tool: 'filter' },
-  { key: 'sNombre', label: 'S. Nombre', tool: 'filter' },
+  { key: 'noAdmision', label: 'No. Admisión' },
+  { key: 'idAfiliado', label: 'Id. Afiliado' },
+  { key: 'pApellido', label: 'P. Apellido' },
+  { key: 'sApellido', label: 'S. Apellido' },
+  { key: 'pNombre', label: 'P. Nombre' },
+  { key: 'sNombre', label: 'S. Nombre' },
 ];
 
 export default function ListadoProgramacionesModal({ onClose }) {
@@ -61,11 +60,7 @@ export default function ListadoProgramacionesModal({ onClose }) {
                     <th key={col.key} className={col.check ? 'lpm-check' : col.align}>
                       <span className="lpm-th">
                         <span className="lpm-th-label">{col.label}</span>
-                        <span className="lpm-th-tools" aria-hidden="true">
-                          <LuChevronsUpDown className="icon" />
-                          {col.tool === 'filter' && <LuFilter className="icon" />}
-                          {col.tool === 'search' && <LuSearch className="icon" />}
-                        </span>
+                        <LuChevronsUpDown className="icon lpm-th-sort" aria-hidden="true" />
                       </span>
                     </th>
                   ))}
