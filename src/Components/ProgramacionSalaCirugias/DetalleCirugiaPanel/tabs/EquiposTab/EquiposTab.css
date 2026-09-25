@@ -4,3 +4,6 @@
    igual que Insumos/Personal clínico -- scopeado al panel de tabs para no
    cambiar la tabla en HistorialQuirurgico. */
 .dcp-split-right-body .eqtb-table td{padding:6px 16px;}
+/* Nombre del equipo en mayúsculas y peso regular, igual que procedimientos/
+   insumos/personal del detalle (solo acá, no en HistorialQuirurgico). */
+.dcp-split-right-body .eqtb-table .cell-primary{font-weight:var(--fw-regular);text-transform:uppercase;}

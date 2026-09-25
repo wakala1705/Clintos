@@ -11,5 +11,5 @@
 }
 .pst-table td{padding:6px 16px;border-bottom:1px solid var(--gray-bg);color:var(--ink-700);}
 .pst-table tbody tr:last-child td{border-bottom:none;}
-.pst-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pst-table .cell-primary{font-weight:var(--fw-regular);text-transform:uppercase;color:var(--ink-900);}
 .pst-table .cell-muted{color:var(--ink-500);}

@@ -21,7 +21,7 @@
 }
 .ist-table td{padding:6px 16px;border-bottom:1px solid var(--gray-bg);color:var(--ink-700);}
 .ist-table tbody tr:last-child td{border-bottom:none;}
-.ist-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ist-table .cell-primary{font-weight:var(--fw-regular);text-transform:uppercase;color:var(--ink-900);}
 .ist-table .cell-muted{color:var(--ink-500);}
 /* Cantidad angosta y a la derecha (columna numérica, th con la misma clase
    que sus celdas); Estado con ancho fijo para que no salte al cambiar el
