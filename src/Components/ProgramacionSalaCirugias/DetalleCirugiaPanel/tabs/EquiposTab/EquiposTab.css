@@ -1,4 +1,6 @@
-/* Sin reglas propias: la tabla es @/Components/EquiposTable/EquiposTable
-   (componente app-wide compartido con HistorialQuirurgico, ver AGENTS.md
-   "Component organization") -- este archivo existe solo para cumplir la
-   convención de un .css por componente. */
+/* La tabla es @/Components/EquiposTable/EquiposTable (componente app-wide
+   compartido con HistorialQuirurgico, ver AGENTS.md "Component
+   organization"). Filas más compactas solo dentro del detalle de la cirugía,
+   igual que Insumos/Personal clínico -- scopeado al panel de tabs para no
+   cambiar la tabla en HistorialQuirurgico. */
+.dcp-split-right-body .eqtb-table td{padding:6px 16px;}
