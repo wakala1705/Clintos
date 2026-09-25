@@ -12,7 +12,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPackagePlus, LuPencil,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
@@ -78,9 +78,6 @@ export default function DetalleCirugiaPanel({
 
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
   const puedeMarcarIncumplida = cirugia.estado === 'programada';
-  // "Pedir insumos a farmacia" solo tiene sentido si queda algún insumo de
-  // la canasta sin solicitar (ver InsumosTab / solicitarInsumosFarmacia).
-  const hayInsumosPorSolicitar = (cirugia.canasta?.items ?? []).some((i) => i.solicitudFarmacia !== 'solicitado');
 
   const body = (
     <>
@@ -201,7 +198,9 @@ export default function DetalleCirugiaPanel({
               ))}
             </div>
             <div className="dcp-split-right-body" role="tabpanel" id={`dcp-detail-panel-${activeDetailTab}`}>
-              {activeDetailTab === 'insumos' && <InsumosTab cirugia={cirugia} />}
+              {activeDetailTab === 'insumos' && (
+                <InsumosTab cirugia={cirugia} puedeAccionar={puedeAccionar} onPedirInsumos={onPedirInsumos} />
+              )}
               {activeDetailTab === 'farmacia' && <FarmaciaTab cirugia={cirugia} />}
               {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
               {activeDetailTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
@@ -224,17 +223,10 @@ export default function DetalleCirugiaPanel({
         <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
         {/* Cancelar deja de ser el botón destacado (encargo explícito): pasa
             a secondary-accent con el ícono en rojo (ver .dcp-cancel-btn) para
-            conservar la señal de acción destructiva, y la acción principal
-            del detalle es "Pedir insumos a farmacia". */}
+            conservar la señal de acción destructiva. La acción principal,
+            "Pedir insumos a farmacia", vive en el pie de la tabla de la tab
+            Insumos (ver InsumosTab.jsx). */}
         <Button variant="secondary-accent" icon={LuBan} className="dcp-cancel-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
-        <Button
-          variant="primary"
-          icon={LuPackagePlus}
-          disabled={!puedeAccionar || !hayInsumosPorSolicitar}
-          onClick={() => onPedirInsumos(cirugia)}
-        >
-          Pedir insumos a farmacia
-        </Button>
       </div>
     </>
   );

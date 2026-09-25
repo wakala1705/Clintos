@@ -1,4 +1,4 @@
-.ist-tab{display:flex;flex-direction:column;gap:10px;}
+.ist-tab{display:flex;flex-direction:column;gap:10px;min-height:100%;}
 /* Mismo recipe que .data-table del resto del proyecto (ver
    HistorialQuirurgico/shared/shared.css): header con fondo propio
    (--table-header-bg) + uppercase/fs-xs/ink-500, filas separadas por
@@ -15,7 +15,11 @@
 .ist-table tbody tr:last-child td{border-bottom:none;}
 .ist-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ist-table .cell-muted{color:var(--ink-500);}
-.ist-tag{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:2px 8px;border-radius:12px;white-space:nowrap;}
-/* Estado de la solicitud a farmacia (ver SOLICITUD_FARMACIA_LABEL). */
-.ist-tag-sin-solicitar{background:var(--gray-bg);color:var(--gray-fg);}
-.ist-tag-solicitado{background:var(--status-info-bg);color:var(--status-info-fg);}
+/* Pie de la tabla con "Pedir insumos a farmacia": sticky al fondo del panel
+   que scrollea (.dcp-split-right-body) para que la acción quede siempre a la
+   vista aunque la canasta sea larga. */
+.ist-footer{
+  position:sticky;bottom:0;margin-top:auto;
+  display:flex;justify-content:flex-end;
+  padding:12px 16px;background:var(--surface);border-top:1px solid var(--border);
+}
