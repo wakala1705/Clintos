@@ -10,6 +10,7 @@ import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideL
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
+import DevolucionesCirugiaModal from '../modals/DevolucionesCirugiaModal/DevolucionesCirugiaModal';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw, LuUser,
@@ -45,6 +46,9 @@ export default function DetalleCirugiaPanel({
   onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
+  // Ventana "Devoluciones en Cirugías" (réplica visual, se abre desde
+  // "Devolver insumos" de la tab Insumos) montada encima de este modal.
+  const [devolucionesAbierto, setDevolucionesAbierto] = useState(false);
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -60,17 +64,20 @@ export default function DetalleCirugiaPanel({
   if ((cirugia?.id ?? null) !== lastCirugiaId) {
     setLastCirugiaId(cirugia?.id ?? null);
     setActiveDetailTab('insumos');
+    setDevolucionesAbierto(false);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
 
   useEffect(() => {
-    if (!cirugia) return undefined;
+    // Con Devoluciones abierta encima, Escape cierra solo esa ventana (su
+    // propio onKeyDown), no también el detalle.
+    if (!cirugia || devolucionesAbierto) return undefined;
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cirugia, onClose]);
+  }, [cirugia, onClose, devolucionesAbierto]);
 
   function handleDetailTabsKeyDown(e) {
     const idx = DETAIL_TABS.findIndex((t) => t.id === activeDetailTab);
@@ -171,7 +178,12 @@ export default function DetalleCirugiaPanel({
             </div>
             <div className="dcp-split-right-body" role="tabpanel" id={`dcp-detail-panel-${activeDetailTab}`}>
               {activeDetailTab === 'insumos' && (
-                <InsumosTab cirugia={cirugia} puedeAccionar={puedeAccionar} onPedirInsumos={onPedirInsumos} />
+                <InsumosTab
+                  cirugia={cirugia}
+                  puedeAccionar={puedeAccionar}
+                  onPedirInsumos={onPedirInsumos}
+                  onDevolverInsumos={() => setDevolucionesAbierto(true)}
+                />
               )}
               {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
               {activeDetailTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
@@ -212,16 +224,21 @@ export default function DetalleCirugiaPanel({
   );
 
   return (
-    <div className="modal-overlay open" role="presentation" onClick={onClose}>
-      <div
-        className="modal-card dcp-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="dcp-title"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {body}
+    <>
+      <div className="modal-overlay open" role="presentation" onClick={onClose}>
+        <div
+          className="modal-card dcp-modal-card"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dcp-title"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {body}
+        </div>
       </div>
-    </div>
+      {devolucionesAbierto && (
+        <DevolucionesCirugiaModal cirugia={cirugia} onClose={() => setDevolucionesAbierto(false)} />
+      )}
+    </>
   );
 }

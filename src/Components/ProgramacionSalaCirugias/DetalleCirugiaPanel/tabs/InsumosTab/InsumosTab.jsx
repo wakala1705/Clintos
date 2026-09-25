@@ -24,10 +24,12 @@ const HEAD_ROW = (
 // Columna "Estado" = estado de la solicitud a farmacia del insumo. El pie de
 // la tabla muestra el avance ("n de N solicitados") y una sola acción según
 // ese estado: "Pedir insumos a farmacia" (primary) mientras quede alguno sin
-// solicitar, "Devolver insumos" (solo visual por ahora, sin lógica) una vez
-// que hay insumos solicitados -- no se puede devolver lo que no se pidió.
+// solicitar, "Devolver insumos" (abre la ventana de Devoluciones en
+// Cirugías, `onDevolverInsumos`) una vez que hay insumos solicitados -- no se puede devolver lo que no se pidió.
 // Ambas se deshabilitan si la cirugía ya está cerrada (`puedeAccionar`).
-export default function InsumosTab({ cirugia, puedeAccionar, onPedirInsumos }) {
+export default function InsumosTab({
+  cirugia, puedeAccionar, onPedirInsumos, onDevolverInsumos,
+}) {
   const { canasta } = cirugia;
   const total = canasta.items.length;
   const solicitados = canasta.items.filter((i) => i.solicitudFarmacia === 'solicitado').length;
@@ -76,7 +78,7 @@ export default function InsumosTab({ cirugia, puedeAccionar, onPedirInsumos }) {
             Pedir insumos a farmacia
           </Button>
         ) : (
-          <Button variant="secondary-accent" icon={LuPackageMinus} disabled={!puedeAccionar}>
+          <Button variant="secondary-accent" icon={LuPackageMinus} disabled={!puedeAccionar} onClick={onDevolverInsumos}>
             Devolver insumos
           </Button>
         )}
