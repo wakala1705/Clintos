@@ -24,7 +24,13 @@
   border-bottom:1px solid var(--border);color:var(--ink-900);
 }
 .lpm-table tbody tr:nth-child(even) td{background:var(--bg);}
-.lpm-table tbody tr:hover td{background:var(--primary-50);}
+.lpm-row{cursor:pointer;}
+.lpm-row:hover td{background:var(--primary-50);}
+.lpm-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+/* Fila seleccionada: mismos tokens que el resto de selecciones del proyecto
+   (.cpm-option.active) -- fondo + barra primaria a la izquierda. */
+.lpm-table tbody .lpm-row.selected td{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);}
+.lpm-row.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
 
 .lpm-table .lpm-center{text-align:center;}
 .lpm-table .lpm-right{text-align:right;}

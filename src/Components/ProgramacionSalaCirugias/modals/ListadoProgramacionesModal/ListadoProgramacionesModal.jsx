@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   LuCalendarDays, LuCircleArrowLeft, LuList,
 } from 'react-icons/lu';
@@ -14,7 +14,9 @@ import './ListadoProgramacionesModal.css';
 // (encargo explícito, 2026-09-25: mismos campos y columnas tal cual, solo
 // visual, abierta desde "Listado de cirugías"). Sin lógica: "Cambiar estado"
 // no tiene acción. Los íconos de ordenar/filtro/lupa de los encabezados de
-// la referencia se quitaron por encargo explícito.
+// la referencia se quitaron por encargo explícito. Única interacción: cada
+// fila se puede seleccionar (una a la vez, como la fila resaltada de la
+// ventana legada) con click o Enter/Espacio.
 const COLUMNAS = [
   { key: 'sala', label: 'Sala' },
   { key: 'noProgramacion', label: 'No. Programación', align: 'lpm-center' },
@@ -37,6 +39,7 @@ const COLUMNAS = [
 export default function ListadoProgramacionesModal({ onClose }) {
   const cardRef = useRef(null);
   useModalFocusTrap(cardRef);
+  const [seleccionada, setSeleccionada] = useState(null);
 
   return (
     <div className="modal-overlay open" onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}>
@@ -55,7 +58,7 @@ export default function ListadoProgramacionesModal({ onClose }) {
           </div>
 
           <div className="lpm-table-wrap">
-            <table className="lpm-table">
+            <table className="lpm-table" role="grid" aria-label="Programaciones vencidas">
               <thead>
                 <tr>
                   {COLUMNAS.map((col) => (
@@ -67,7 +70,19 @@ export default function ListadoProgramacionesModal({ onClose }) {
               </thead>
               <tbody>
                 {LISTADO_PROGRAMACIONES.map((fila) => (
-                  <tr key={fila.noProgramacion}>
+                  <tr
+                    key={fila.noProgramacion}
+                    className={`lpm-row${seleccionada === fila.noProgramacion ? ' selected' : ''}`}
+                    tabIndex={0}
+                    aria-selected={seleccionada === fila.noProgramacion}
+                    onClick={() => setSeleccionada(fila.noProgramacion)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setSeleccionada(fila.noProgramacion);
+                      }
+                    }}
+                  >
                     {COLUMNAS.map((col) => (col.check ? (
                       <td key={col.key} className="lpm-check">
                         <input
