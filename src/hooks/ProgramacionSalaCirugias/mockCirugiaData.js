@@ -1461,21 +1461,117 @@ export function reprogramarCirugia(id, {
   });
 }
 
-// Estado de la solicitud a farmacia de cada insumo de la canasta (columna
-// "Estado" de InsumosTab, encargo explícito 2026-09-25: reemplaza a
-// disponible/faltante). Un ítem sin `solicitudFarmacia` cuenta como
-// 'sin-solicitar'.
-export const SOLICITUD_FARMACIA_LABEL = { 'sin-solicitar': 'Sin solicitar', solicitado: 'Solicitado' };
+// ---------- Flujo de insumos: solicitud -> entrega -> devolución ----------
+// (encargo explícito 2026-09-25). Cada insumo de la canasta guarda en
+// `solicitudFarmacia` su paso del flujo: 'sin-solicitar' (o ausente) ->
+// 'solicitado' ("Pedir insumos a farmacia") -> 'entregado' ("Registrar
+// entrega"). Las devoluciones viven en `cirugia.devoluciones` y el estado
+// devuelto/devuelto parcial se DERIVA de ellas (estadoInsumo), no se guarda:
+// así anular o modificar una devolución no deja el insumo desincronizado.
+// Sin integración real con farmacia (mock): la devolución queda confirmada
+// por farmacia en el mismo momento de guardarse (decisión explícita).
+export const SOLICITUD_FARMACIA_LABEL = {
+  'sin-solicitar': 'Sin solicitar',
+  solicitado: 'Solicitado',
+  entregado: 'Entregado',
+  'devuelto-parcial': 'Devuelto parcial',
+  devuelto: 'Devuelto',
+};
 
-// "Pedir insumos a farmacia" del detalle de la cirugía: marca toda la
-// canasta como solicitada. Sin integración real con farmacia (mock).
-export function solicitarInsumosFarmacia(id) {
+// Estados de una devolución -- mismos nombres que la leyenda de la ventana
+// legada "Devoluciones en Cirugías". Hoy solo se usan confirmada (al
+// guardar) y anulada (Eliminar); pendiente/no completada quedan para cuando
+// farmacia confirme por separado.
+export const DEVOLUCION_ESTADO_LABEL = {
+  confirmada: 'Confirmada por farmacia',
+  pendiente: 'Pendiente por entregar a farmacia',
+  'no-completada': 'No completada por el usuario',
+  anulada: 'Anulado en Farmacia',
+};
+
+let nextConsecutivoDevolucion = 1;
+
+// Cantidad ya devuelta de un insumo (suma de sus devoluciones no anuladas).
+// `excepto`: consecutivo a ignorar -- al modificar una devolución, su propia
+// cantidad anterior no cuenta contra el máximo.
+export function cantidadDevuelta(cirugia, nombre, { excepto } = {}) {
+  return (cirugia.devoluciones ?? [])
+    .filter((d) => d.estado !== 'anulada' && d.consecutivo !== excepto)
+    .reduce((total, d) => total + (d.items.find((i) => i.nombre === nombre)?.cantidad ?? 0), 0);
+}
+
+// Máximo que todavía se puede devolver de un insumo (0 si no fue entregado).
+export function cantidadDevolvible(cirugia, item, { excepto } = {}) {
+  if (item.solicitudFarmacia !== 'entregado') return 0;
+  return item.cantidad - cantidadDevuelta(cirugia, item.nombre, { excepto });
+}
+
+export function estadoInsumo(cirugia, item) {
+  const paso = item.solicitudFarmacia ?? 'sin-solicitar';
+  if (paso !== 'entregado') return paso;
+  const devuelta = cantidadDevuelta(cirugia, item.nombre);
+  if (devuelta === 0) return 'entregado';
+  return devuelta >= item.cantidad ? 'devuelto' : 'devuelto-parcial';
+}
+
+function avanzarCanasta(id, desde, hasta) {
   const actual = CIRUGIAS.find((c) => c.id === id);
   return actualizarCirugia(id, {
     canasta: {
       ...actual.canasta,
-      items: actual.canasta.items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+      items: actual.canasta.items.map((i) => (
+        (i.solicitudFarmacia ?? 'sin-solicitar') === desde ? { ...i, solicitudFarmacia: hasta } : i
+      )),
     },
+  });
+}
+
+// "Pedir insumos a farmacia": los insumos sin solicitar pasan a solicitados.
+export function solicitarInsumosFarmacia(id) {
+  return avanzarCanasta(id, 'sin-solicitar', 'solicitado');
+}
+
+// "Registrar entrega": farmacia entregó lo solicitado al quirófano.
+export function registrarEntregaInsumos(id) {
+  return avanzarCanasta(id, 'solicitado', 'entregado');
+}
+
+// Crea (sin `consecutivo`) o modifica (con `consecutivo`) una devolución.
+// `lineas`: [{ nombre, cantidad }]; las de cantidad 0 se descartan. Lanza
+// Error con un mensaje para el usuario si no hay nada que devolver o si
+// alguna cantidad supera lo devolvible.
+export function guardarDevolucion(id, { consecutivo, lineas, usuario = 'CLINTOS' }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  const aDevolver = lineas.filter((l) => l.cantidad > 0);
+  if (aDevolver.length === 0) throw new Error('Indica al menos una cantidad a devolver.');
+  const items = aDevolver.map((l) => {
+    const item = actual.canasta.items.find((i) => i.nombre === l.nombre);
+    const maximo = item ? cantidadDevolvible(actual, item, { excepto: consecutivo }) : 0;
+    if (!Number.isInteger(l.cantidad) || l.cantidad > maximo) {
+      throw new Error(`${l.nombre}: se pueden devolver como máximo ${maximo}.`);
+    }
+    return {
+      nombre: item.nombre, codigo: item.codigo ?? '', cantidad: l.cantidad, manejaLote: false, noLote: '',
+    };
+  });
+  const fecha = fechaHoraLocalISO(new Date());
+  const devoluciones = actual.devoluciones ?? [];
+  const nuevas = consecutivo
+    ? devoluciones.map((d) => (d.consecutivo === consecutivo ? { ...d, items, fecha } : d))
+    : [...devoluciones, {
+      consecutivo: nextConsecutivoDevolucion++, usuario, fecha, estado: 'confirmada', items,
+    }];
+  return actualizarCirugia(id, { devoluciones: nuevas });
+}
+
+// "Eliminar" de la ventana de devoluciones: la anula (queda en el listado en
+// gris, como en la ventana legada) y deja de contar como devuelta.
+export function anularDevolucion(id, consecutivo) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    devoluciones: (actual.devoluciones ?? []).map((d) => (
+      d.consecutivo === consecutivo ? { ...d, estado: 'anulada' } : d
+    )),
   });
 }
 

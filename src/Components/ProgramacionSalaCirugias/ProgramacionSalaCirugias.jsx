@@ -43,7 +43,7 @@ import {
   rangoSemanaLabel,
   reprogramarCirugia,
   resumenAgenda,
-  solicitarInsumosFarmacia,
+  solicitarInsumosFarmacia, registrarEntregaInsumos, guardarDevolucion, anularDevolucion,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
@@ -351,6 +351,30 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(solicitarInsumosFarmacia(cirugia.id));
     showToast('Insumos solicitados a farmacia.');
   }
+  // Siguiente paso del flujo de insumos: farmacia entregó lo solicitado.
+  function handleRegistrarEntrega(cirugia) {
+    applyUpdated(registrarEntregaInsumos(cirugia.id));
+    showToast('Entrega de insumos registrada.');
+  }
+  // Ventana "Devoluciones en Cirugías": crea/modifica una devolución.
+  // Devuelve { error } con el mensaje de validación (la ventana lo muestra
+  // sin cerrarse) o { consecutivo } de la devolución guardada, para dejarla
+  // seleccionada.
+  function handleGuardarDevolucion(cirugia, { consecutivo, lineas }) {
+    let actualizada;
+    try {
+      actualizada = guardarDevolucion(cirugia.id, { consecutivo, lineas });
+    } catch (err) {
+      return { error: err.message };
+    }
+    applyUpdated(actualizada);
+    showToast(consecutivo ? 'Devolución modificada.' : 'Devolución registrada y confirmada por farmacia.');
+    return { consecutivo: consecutivo ?? actualizada.devoluciones.at(-1).consecutivo };
+  }
+  function handleAnularDevolucion(cirugia, consecutivo) {
+    applyUpdated(anularDevolucion(cirugia.id, consecutivo));
+    showToast('Devolución anulada.');
+  }
   // "Editar" (encargo explícito) reabre NuevaCirugiaWizard en modo edición
   // -- ver `editCirugia` arriba y su montaje más abajo.
   function handleEditarCirugia(cirugia) {
@@ -466,6 +490,9 @@ export default function ProgramacionSalaCirugias() {
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
+        onRegistrarEntrega={handleRegistrarEntrega}
+        onGuardarDevolucion={handleGuardarDevolucion}
+        onAnularDevolucion={handleAnularDevolucion}
       />
 
       <NuevaCitaFlow />

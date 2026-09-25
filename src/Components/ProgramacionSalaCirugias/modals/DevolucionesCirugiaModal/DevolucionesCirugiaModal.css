@@ -36,8 +36,40 @@
 }
 .dvm-leyenda li{display:flex;align-items:center;gap:8px;white-space:nowrap;}
 .dvm-swatch{width:14px;height:14px;border-radius:4px;flex-shrink:0;border:1px solid;}
-.dvm-swatch-green{background:var(--green-bg);border-color:var(--green);}
-.dvm-swatch-amber{background:var(--amber-bg);border-color:var(--amber-fg);}
-.dvm-swatch-red{background:var(--red-bg);border-color:var(--red);}
-.dvm-swatch-gray{background:var(--gray-bg);border-color:var(--ink-400);}
+.dvm-swatch-confirmada{background:var(--green-bg);border-color:var(--green);}
+.dvm-swatch-pendiente{background:var(--amber-bg);border-color:var(--amber-fg);}
+.dvm-swatch-no-completada{background:var(--red-bg);border-color:var(--red);}
+.dvm-swatch-anulada{background:var(--gray-bg);border-color:var(--ink-400);}
 .dvm-acciones{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+/* Filas de devolución: el color de fondo es el estado (misma convención que
+   la leyenda de la ventana legada) + selección con barra primaria (mismo
+   criterio que .lpm-row.selected en ListadoProgramacionesModal). */
+.dvm-row{cursor:pointer;}
+.dvm-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.dvm-row-confirmada td{background:var(--green-bg);}
+.dvm-row-pendiente td{background:var(--amber-bg);}
+.dvm-row-no-completada td{background:var(--red-bg);}
+.dvm-row-anulada td{background:var(--gray-bg);color:var(--ink-500);}
+.dvm-row.selected td{font-weight:var(--fw-medium);}
+.dvm-row.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+.dvm-check{width:16px;height:16px;color:var(--green);vertical-align:middle;}
+.dvm-table td.dvm-desc{text-transform:uppercase;}
+
+/* Cantidad a devolver (modo Nuevo/Modificar) con su tope al lado. */
+.dvm-cant{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;}
+.dvm-cant input{
+  width:72px;height:30px;padding:0 8px;text-align:right;font:inherit;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--ink-900);
+}
+.dvm-cant input:focus{outline:2px solid var(--primary);outline-offset:0;border-color:var(--primary);}
+.dvm-cant input:disabled{background:var(--gray-bg);color:var(--ink-400);}
+.dvm-max{font-size:var(--fs-sm);color:var(--ink-500);min-width:36px;text-align:left;}
+
+.dvm-error{margin:0;flex-shrink:0;font-size:var(--fs-sm);color:var(--red);}
+.dvm-confirmar{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  padding:10px 12px;border-radius:var(--radius);background:var(--red-bg);
+  font-size:var(--fs-sm);color:var(--ink-900);
+}
+.dvm-confirmar span{flex:1;}

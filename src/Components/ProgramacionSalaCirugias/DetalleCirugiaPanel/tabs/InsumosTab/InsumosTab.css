@@ -29,7 +29,7 @@
 .ist-table .ist-num{text-align:right;}
 .ist-col-cantidad{width:110px;}
 .ist-col-estado{width:170px;}
-.ist-table th:nth-child(3),.ist-table td:nth-child(3){padding-left:32px;}
+.ist-table th:nth-child(4),.ist-table td:nth-child(4){padding-left:32px;}
 /* Pie de la tabla: resumen a la izquierda, acción a la derecha, siempre
    visible bajo el listado que scrollea. Sin border-top: con el del pie del
    modal justo debajo quedaban 2 divisores casi pegados; lo separa una

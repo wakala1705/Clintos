@@ -44,9 +44,10 @@ function InfoItem({ label, value, wide = false }) {
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
+  onRegistrarEntrega, onGuardarDevolucion, onAnularDevolucion,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
-  // Ventana "Devoluciones en Cirugías" (réplica visual, se abre desde
+  // Ventana "Devoluciones en Cirugías" (se abre desde
   // "Devolver insumos" de la tab Insumos) montada encima de este modal.
   const [devolucionesAbierto, setDevolucionesAbierto] = useState(false);
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
@@ -182,6 +183,7 @@ export default function DetalleCirugiaPanel({
                   cirugia={cirugia}
                   puedeAccionar={puedeAccionar}
                   onPedirInsumos={onPedirInsumos}
+                  onRegistrarEntrega={onRegistrarEntrega}
                   onDevolverInsumos={() => setDevolucionesAbierto(true)}
                 />
               )}
@@ -237,7 +239,12 @@ export default function DetalleCirugiaPanel({
         </div>
       </div>
       {devolucionesAbierto && (
-        <DevolucionesCirugiaModal cirugia={cirugia} onClose={() => setDevolucionesAbierto(false)} />
+        <DevolucionesCirugiaModal
+          cirugia={cirugia}
+          onGuardar={(datos) => onGuardarDevolucion(cirugia, datos)}
+          onAnular={(consecutivo) => onAnularDevolucion(cirugia, consecutivo)}
+          onClose={() => setDevolucionesAbierto(false)}
+        />
       )}
     </>
   );
