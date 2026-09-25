@@ -159,7 +159,14 @@ export default function RevisionVencidas() {
   }
 
   function handleSubmitIncumplida({ causal, observacion }) {
-    const { cirugias } = modal;
+    // Optional chaining acá y en el resto de los handlers que leen `modal`/
+    // `toast`: con el React Compiler activo (next.config `reactCompiler`),
+    // el handler memoizado se re-evalúa en render para comparar sus
+    // dependencias por property-path, y en ese punto `modal`/`toast` puede
+    // ser el `null` inicial -- mismo motivo que `modal?.cirugia?.id` en
+    // ProgramacionSalaCirugias.jsx.
+    const cirugias = modal?.cirugias;
+    if (!cirugias) return;
     const ids = cirugias.map((c) => c.id);
     const snapshot = marcarIncumplidas(ids, { causal, observacion });
     quitarResueltas(ids);
@@ -173,13 +180,15 @@ export default function RevisionVencidas() {
   }
 
   function handleConfirmarRealizadas() {
-    const { cirugias } = modal;
+    const cirugias = modal?.cirugias;
+    if (!cirugias) return;
     setModal(null);
     resolverRealizadas(cirugias);
   }
 
   function handleSubmitCancelar(motivo) {
-    const cirugia = modal.cirugias[0];
+    const cirugia = modal?.cirugias?.[0];
+    if (!cirugia) return;
     cancelarCirugia(cirugia.id, motivo);
     quitarResueltas([cirugia.id]);
     setModal(null);
@@ -187,7 +196,8 @@ export default function RevisionVencidas() {
   }
 
   function handleSubmitReprogramar(datos) {
-    const cirugia = modal.cirugias[0];
+    const cirugia = modal?.cirugias?.[0];
+    if (!cirugia) return;
     reprogramarCirugia(cirugia.id, datos);
     quitarResueltas([cirugia.id]);
     setModal(null);
@@ -195,7 +205,8 @@ export default function RevisionVencidas() {
   }
 
   function handleDeshacer() {
-    const { snapshot } = toast;
+    const snapshot = toast?.snapshot;
+    if (!snapshot) return;
     deshacerResolucion(snapshot);
     setVencidas((prev) => [...prev.filter((c) => !snapshot.some((s) => s.id === c.id)), ...snapshot]);
     window.clearTimeout(toastTimerRef.current);
@@ -320,22 +331,22 @@ export default function RevisionVencidas() {
       </div>
 
       {modal?.type === 'incumplida' && (
-        <MarcarIncumplidaModal cirugias={modal.cirugias} onClose={() => setModal(null)} onSubmit={handleSubmitIncumplida} />
+        <MarcarIncumplidaModal cirugias={modal?.cirugias} onClose={() => setModal(null)} onSubmit={handleSubmitIncumplida} />
       )}
       {modal?.type === 'confirmar-realizadas' && (
         <ConfirmarRealizadasDialog
-          cantidad={modal.cirugias.length}
-          conInsumos={modal.cirugias.filter((c) => c.farmacia?.numeroPedido).length}
+          cantidad={modal?.cirugias?.length}
+          conInsumos={modal?.cirugias?.filter((c) => c.farmacia?.numeroPedido).length}
           onCancel={() => setModal(null)}
           onConfirm={handleConfirmarRealizadas}
         />
       )}
       {modal?.type === 'cancelar' && (
-        <CancelarCirugiaModal cirugia={modal.cirugias[0]} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
+        <CancelarCirugiaModal cirugia={modal?.cirugias?.[0]} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
       )}
       {modal?.type === 'reprogramar' && (
         <ReprogramarCirugiaModal
-          cirugia={modal.cirugias[0]}
+          cirugia={modal?.cirugias?.[0]}
           fechaMinima={manana}
           onClose={() => setModal(null)}
           onSubmit={handleSubmitReprogramar}
