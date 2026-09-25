@@ -1491,6 +1491,28 @@ export const DEVOLUCION_ESTADO_LABEL = {
 
 let nextConsecutivoDevolucion = 1;
 
+// Código de inventario y lote inventados (mock, encargo explícito): los
+// insumos de las canastas de prueba no traen código ni lote. Se derivan de
+// un hash del nombre en vez de Math.random() para que un mismo insumo
+// muestre siempre el mismo código/lote entre renders y devoluciones.
+function hashTexto(texto) {
+  let h = 0;
+  for (let i = 0; i < texto.length; i += 1) h = ((h * 31) + texto.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+export function codigoInsumo(item) {
+  if (item.codigo) return item.codigo;
+  return `DM${String(hashTexto(item.nombre) % 1000000).padStart(6, '0')}`;
+}
+
+export function datosLoteInsumo(item) {
+  const h = hashTexto(`lote:${item.nombre}`);
+  const anio = 25 + (h % 2);
+  const letra = String.fromCharCode(65 + ((h >>> 3) % 26));
+  return { manejaLote: true, noLote: `L${anio}${letra}${String((h >>> 8) % 10000).padStart(4, '0')}` };
+}
+
 // Cantidad ya devuelta de un insumo (suma de sus devoluciones no anuladas).
 // `excepto`: consecutivo a ignorar -- al modificar una devolución, su propia
 // cantidad anterior no cuenta contra el máximo.
@@ -1551,7 +1573,7 @@ export function guardarDevolucion(id, { consecutivo, lineas, usuario = 'CLINTOS'
       throw new Error(`${l.nombre}: se pueden devolver como máximo ${maximo}.`);
     }
     return {
-      nombre: item.nombre, codigo: item.codigo ?? '', cantidad: l.cantidad, manejaLote: false, noLote: '',
+      nombre: item.nombre, codigo: codigoInsumo(item), cantidad: l.cantidad, ...datosLoteInsumo(item),
     };
   });
   const fecha = fechaHoraLocalISO(new Date());

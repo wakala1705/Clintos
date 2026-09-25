@@ -9,7 +9,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
-  DEVOLUCION_ESTADO_LABEL, cantidadDevolvible, fechaHoraLabel, fechaISO,
+  DEVOLUCION_ESTADO_LABEL, cantidadDevolvible, codigoInsumo, datosLoteInsumo, fechaHoraLabel, fechaISO,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import './DevolucionesCirugiaModal.css';
 
@@ -229,10 +229,13 @@ export default function DevolucionesCirugiaModal({
                 )}
                 {filasItems.map((item, idx) => {
                   const maximo = edicion ? cantidadDevolvible(cirugia, item, { excepto: edicion?.consecutivo }) : null;
+                  // Líneas guardadas traen su lote; en edición (insumos de la
+                  // canasta) se toma el lote inventado del mock.
+                  const lote = item.noLote ? item : datosLoteInsumo(item);
                   return (
                     <tr key={item.nombre}>
                       <td>{idx + 1}</td>
-                      <td>{item.codigo || '—'}</td>
+                      <td>{codigoInsumo(item)}</td>
                       <td className="dvm-desc">{item.nombre}</td>
                       <td className="dvm-right">
                         {edicion ? (
@@ -256,8 +259,8 @@ export default function DevolucionesCirugiaModal({
                           </span>
                         ) : item.cantidad}
                       </td>
-                      <td className="dvm-center">{item.manejaLote ? 'Sí' : 'No'}</td>
-                      <td>{item.noLote || '—'}</td>
+                      <td className="dvm-center">{lote.manejaLote ? 'Sí' : 'No'}</td>
+                      <td>{lote.noLote || '—'}</td>
                     </tr>
                   );
                 })}
