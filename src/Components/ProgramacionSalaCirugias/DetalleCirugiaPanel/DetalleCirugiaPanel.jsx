@@ -98,18 +98,18 @@ export default function DetalleCirugiaPanel({
 
       {/* Mismos 12 campos del formulario legacy de referencia, agrupados en
           2 bloques: Programación (lo que identifica la cirugía, destacado,
-          con el estado junto a su título) y Paciente (datos de contexto). */}
+          con el estado como un campo más de su grilla) y Paciente (datos de contexto). */}
       <div className="dcp-info">
         <section className="dcp-info-group dcp-info-group-prog" aria-label="Programación">
           <div className="dcp-info-group-title">
             <LuCalendarClock className="dcp-info-group-icon" aria-hidden="true" />
             Programación
-            <span className="dcp-info-group-estado"><EstadoCirugiaBadge estado={cirugia.estado} /></span>
           </div>
           <div className="dcp-info-grid">
             <InfoItem label="Fecha" value={`${fechaLabel(cirugia.fecha)} ${cirugia.horaInicio}`} />
             <InfoItem label="No. Prog" value={cirugia.id} />
-            <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} wide />
+            <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} />
+            <InfoItem label="Estado" value={<EstadoCirugiaBadge estado={cirugia.estado} />} />
           </div>
         </section>
         <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">
