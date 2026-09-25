@@ -371,7 +371,6 @@ export const CANASTAS_CATALOGO = [
 
 export const EQUIPO_ESTADO_LABEL = { disponible: 'Disponible', 'en-uso': 'En uso', mantenimiento: 'Mantenimiento' };
 export const FARMACIA_ESTADO_LABEL = { 'en-preparacion': 'En preparación', listo: 'Listo', entregado: 'Entregado' };
-export const INSUMO_ESTADO_LABEL = { disponible: 'Disponible', faltante: 'Faltante' };
 
 // Canasta de insumos que se precarga al agregar un procedimiento QX
 // (AgregarProcedimientoModal, Paso 2 del wizard "Nueva cirugía" -- encargo
@@ -1459,6 +1458,24 @@ export function reprogramarCirugia(id, {
     duracionEstimadaMin,
     duracionPostquirurgicaMin,
     duracionRecuperacionMin,
+  });
+}
+
+// Estado de la solicitud a farmacia de cada insumo de la canasta (columna
+// "Estado" de InsumosTab, encargo explícito 2026-09-25: reemplaza a
+// disponible/faltante). Un ítem sin `solicitudFarmacia` cuenta como
+// 'sin-solicitar'.
+export const SOLICITUD_FARMACIA_LABEL = { 'sin-solicitar': 'Sin solicitar', solicitado: 'Solicitado' };
+
+// "Pedir insumos a farmacia" del detalle de la cirugía: marca toda la
+// canasta como solicitada. Sin integración real con farmacia (mock).
+export function solicitarInsumosFarmacia(id) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    canasta: {
+      ...actual.canasta,
+      items: actual.canasta.items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+    },
   });
 }
 

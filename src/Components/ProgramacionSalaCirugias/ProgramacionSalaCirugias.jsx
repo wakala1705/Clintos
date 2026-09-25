@@ -43,6 +43,7 @@ import {
   rangoSemanaLabel,
   reprogramarCirugia,
   resumenAgenda,
+  solicitarInsumosFarmacia,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
@@ -343,6 +344,13 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(actualizarEstadoCirugia(cirugia.id, 'incumplida'));
     showToast('Cirugía marcada como incumplida.');
   }
+  // "Pedir insumos a farmacia" (acción principal del detalle): pasa los
+  // insumos de la canasta a "Solicitado" -- el detalle se re-renderiza solo
+  // porque selectedCirugia sale de `cirugias`.
+  function handlePedirInsumos(cirugia) {
+    applyUpdated(solicitarInsumosFarmacia(cirugia.id));
+    showToast('Insumos solicitados a farmacia.');
+  }
   // "Editar" (encargo explícito) reabre NuevaCirugiaWizard en modo edición
   // -- ver `editCirugia` arriba y su montaje más abajo.
   function handleEditarCirugia(cirugia) {
@@ -457,10 +465,7 @@ export default function ProgramacionSalaCirugias() {
         onCancelar={handleCancelarCirugia}
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
-        // "Pedir insumos a farmacia" (encargo explícito, acción principal
-        // del detalle): el flujo de pedido todavía no existe -- por ahora
-        // solo avisa, mismo criterio que las vistas "en desarrollo".
-        onPedirInsumos={() => showToast('Pedido de insumos a farmacia: en desarrollo.')}
+        onPedirInsumos={handlePedirInsumos}
       />
 
       <NuevaCitaFlow />

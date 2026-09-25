@@ -78,6 +78,9 @@ export default function DetalleCirugiaPanel({
 
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
   const puedeMarcarIncumplida = cirugia.estado === 'programada';
+  // "Pedir insumos a farmacia" solo tiene sentido si queda algún insumo de
+  // la canasta sin solicitar (ver InsumosTab / solicitarInsumosFarmacia).
+  const hayInsumosPorSolicitar = (cirugia.canasta?.items ?? []).some((i) => i.solicitudFarmacia !== 'solicitado');
 
   const body = (
     <>
@@ -224,7 +227,14 @@ export default function DetalleCirugiaPanel({
             conservar la señal de acción destructiva, y la acción principal
             del detalle es "Pedir insumos a farmacia". */}
         <Button variant="secondary-accent" icon={LuBan} className="dcp-cancel-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
-        <Button variant="primary" icon={LuPackagePlus} disabled={!puedeAccionar} onClick={() => onPedirInsumos(cirugia)}>Pedir insumos a farmacia</Button>
+        <Button
+          variant="primary"
+          icon={LuPackagePlus}
+          disabled={!puedeAccionar || !hayInsumosPorSolicitar}
+          onClick={() => onPedirInsumos(cirugia)}
+        >
+          Pedir insumos a farmacia
+        </Button>
       </div>
     </>
   );

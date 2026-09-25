@@ -16,6 +16,6 @@
 .ist-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ist-table .cell-muted{color:var(--ink-500);}
 .ist-tag{font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:2px 8px;border-radius:12px;white-space:nowrap;}
-.ist-tag-disponible{background:var(--green-bg);color:#0d7a3d;}
-html[data-theme="dark"] .ist-tag-disponible{color:var(--green);}
-.ist-tag-faltante{background:var(--red-bg);color:var(--red);}
+/* Estado de la solicitud a farmacia (ver SOLICITUD_FARMACIA_LABEL). */
+.ist-tag-sin-solicitar{background:var(--gray-bg);color:var(--gray-fg);}
+.ist-tag-solicitado{background:var(--status-info-bg);color:var(--status-info-fg);}
