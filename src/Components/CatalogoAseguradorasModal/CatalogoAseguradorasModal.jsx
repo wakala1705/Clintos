@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './CatalogoAseguradorasModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -69,6 +69,14 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [seleccion, setSeleccion] = useState(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   function handleQueryId(v) {
     setQueryId(v);
@@ -221,7 +229,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
         </div>
         <div className="cam-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
+          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

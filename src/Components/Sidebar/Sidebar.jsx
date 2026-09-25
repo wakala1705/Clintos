@@ -22,6 +22,7 @@ import {
   LuHeartPulse,
   LuHouse,
   LuLandmark,
+  LuMessagesSquare,
   LuMoon,
   LuPill,
   LuReceipt,
@@ -61,7 +62,8 @@ export default function Sidebar() {
   const isAdmisiones = pathname === '/admisiones';
   const isProgramacionSalaCirugias = pathname.startsWith('/programacion-sala-cirugias');
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp;
+  const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp || isInterconsulta;
   const isFacturas = pathname === '/facturas';
   const isFinanzas = isFacturas;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
@@ -109,6 +111,7 @@ export default function Sidebar() {
           <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
           <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
           <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
+          <Link href="/hospitalizacion/interconsulta" className={`nav-subitem${isInterconsulta ? ' active' : ''}`}><LuMessagesSquare className="icon" />Interconsulta</Link>
         </div>
       </div>
 

@@ -153,7 +153,7 @@ export default function CatalogoAreaFuncionalModal({ onSelect, onClose }) {
 
         <div className="modal-footer">
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={handleElegir} disabled={!seleccion}>Elegir</Button>
+          <Button variant="primary" onClick={handleElegir} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

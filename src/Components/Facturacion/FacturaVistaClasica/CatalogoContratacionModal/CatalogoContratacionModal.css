@@ -28,7 +28,7 @@
   padding:9px 12px;
 }
 .ccm-row-head{
-  background:var(--bg);border-bottom:1px solid var(--border);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 

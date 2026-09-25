@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './CatalogoEquiposModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -33,6 +33,14 @@ export default function CatalogoEquiposModal({ onSelect, onClose }) {
   useModalFocusTrap(modalRef);
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const q = normalizar(query.trim());
   const filtered = EQUIPOS_QX_CATALOGO.filter((e) => (
@@ -98,7 +106,7 @@ export default function CatalogoEquiposModal({ onSelect, onClose }) {
         </div>
         <div className="modal-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
+          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

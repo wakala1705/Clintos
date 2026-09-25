@@ -84,7 +84,7 @@ function SearchField({
     <div className="form-field">
       <label htmlFor={id}>
         {label}
-        {required && <span className="cdm-required" aria-hidden="true"> *</span>}
+        {required && <span className="cgd-required" aria-hidden="true"> *</span>}
       </label>
       <div className="field-with-search">
         <input
@@ -128,45 +128,45 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
 
   return (
     <div className="adm-modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="adm-modal cdm-modal" role="dialog" aria-modal="true" aria-labelledby="cdm-modal-title">
+      <div className="adm-modal cgd-modal" role="dialog" aria-modal="true" aria-labelledby="cgd-modal-title">
         <ModalHeader
           title="Agregando un Registro a QXPCXD (002)"
-          titleId="cdm-modal-title"
+          titleId="cgd-modal-title"
           onClose={onClose}
           trailing={<Badge tone="neutral">Quirúrgico</Badge>}
         />
 
-        <div className="cdm-tabbar">
-          <div className="cdm-tabs" role="tablist" aria-label="Secciones del registro">
+        <div className="cgd-tabbar">
+          <div className="cgd-tabs" role="tablist" aria-label="Secciones del registro">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                className={`cdm-tab${activeTab === tab.id ? ' active' : ''}`}
+                className={`cgd-tab${activeTab === tab.id ? ' active' : ''}`}
                 role="tab"
                 aria-selected={activeTab === tab.id}
-                aria-controls={`cdm-panel-${tab.id}`}
+                aria-controls={`cgd-panel-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.label}
               </button>
             ))}
           </div>
-          <div className="cdm-meta">
-            <span className="cdm-usuario-liquidacion">Usuario Liquidación: <strong>CAMILO</strong></span>
-            <span className="cdm-consecutivo">Consecutivo: <strong>QX2609211010</strong></span>
+          <div className="cgd-meta">
+            <span className="cgd-usuario-liquidacion">Usuario Liquidación: <strong>CAMILO</strong></span>
+            <span className="cgd-consecutivo">Consecutivo: <strong>QX2609211010</strong></span>
           </div>
         </div>
 
-        <div className="adm-modal-body cdm-body" role="tabpanel" id={`cdm-panel-${activeTab}`}>
+        <div className="adm-modal-body cgd-body" role="tabpanel" id={`cgd-panel-${activeTab}`}>
           {activeTab === 'general' ? (
-            <div className="cdm-card">
-              <div className="cdm-row-top">
-                <div className="form-field cdm-item-field">
-                  <label htmlFor="cdm-item">Item</label>
-                  <div className="tf-readonly-value" id="cdm-item">002</div>
+            <div className="cgd-card">
+              <div className="cgd-row-top">
+                <div className="form-field cgd-item-field">
+                  <label htmlFor="cgd-item">Item</label>
+                  <div className="tf-readonly-value" id="cgd-item">002</div>
                 </div>
-                <label className="cdm-checkbox">
+                <label className="cgd-checkbox">
                   <input
                     type="checkbox"
                     checked={draft.urgencia}
@@ -174,13 +174,13 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                   />
                   Urgencia
                 </label>
-                <Button variant="outline" size="sm" icon={LuRefreshCw} className="cdm-contrato-btn">
+                <Button variant="outline" size="sm" icon={LuRefreshCw} className="cgd-contrato-btn">
                   Cambiar Contrato
                 </Button>
               </div>
 
               <SearchField
-                id="cdm-id-tercero"
+                id="cgd-id-tercero"
                 label="Id. Tercero"
                 required
                 value={draft.idTercero}
@@ -188,16 +188,16 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                 searchLabel="Buscar tercero"
               />
               <SearchField
-                id="cdm-regimen"
+                id="cgd-regimen"
                 label="Régimen"
                 value={draft.regimen}
                 onChange={(v) => set('regimen', v)}
                 searchLabel="Buscar régimen"
               />
 
-              <div className="cdm-grid">
+              <div className="cgd-grid">
                 <SearchField
-                  id="cdm-tipo-cirugia"
+                  id="cgd-tipo-cirugia"
                   label="Tipo Cirugía"
                   placeholder="Buscar tipo de cirugía..."
                   value={draft.tipoCirugia}
@@ -205,9 +205,9 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                   searchLabel="Buscar tipo de cirugía"
                 />
                 <div className="form-field">
-                  <label htmlFor="cdm-cubrimiento">% Cubrimiento</label>
+                  <label htmlFor="cgd-cubrimiento">% Cubrimiento</label>
                   <input
-                    id="cdm-cubrimiento"
+                    id="cgd-cubrimiento"
                     type="number"
                     min="0"
                     max="100"
@@ -218,7 +218,7 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                 </div>
 
                 <SearchField
-                  id="cdm-id-servicio"
+                  id="cgd-id-servicio"
                   label="Id. Servicio / CUPS"
                   required
                   placeholder="Buscar procedimiento / cirugía..."
@@ -226,17 +226,17 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                   onChange={(v) => set('idServicio', v)}
                   searchLabel="Buscar servicio"
                 />
-                <div className="cdm-cirujano-row">
+                <div className="cgd-cirujano-row">
                   <div className="form-field">
-                    <label htmlFor="cdm-tipo-cirujano">Tipo de Cirujano</label>
+                    <label htmlFor="cgd-tipo-cirujano">Tipo de Cirujano</label>
                     <FormSelect
-                      id="cdm-tipo-cirujano"
+                      id="cgd-tipo-cirujano"
                       value={draft.tipoCirujano}
                       onChange={(v) => set('tipoCirujano', v)}
                       options={TIPO_CIRUJANO_OPTIONS}
                     />
                   </div>
-                  <label className="cdm-checkbox">
+                  <label className="cgd-checkbox">
                     <input
                       type="checkbox"
                       checked={draft.paquete}
@@ -247,11 +247,11 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                 </div>
               </div>
 
-              <div className="cdm-tarifa-wrap">
-                <table className="cdm-tarifa-table">
+              <div className="cgd-tarifa-wrap">
+                <table className="cgd-tarifa-table">
                   <thead>
                     <tr>
-                      <th scope="col" className="cdm-tarifa-concepto">Concepto</th>
+                      <th scope="col" className="cgd-tarifa-concepto">Concepto</th>
                       {TARIFA_ROLES.map((role) => <th scope="col" key={role}>{TARIFA_ROLE_LABEL[role]}</th>)}
                     </tr>
                   </thead>
@@ -284,7 +284,7 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                           <input
                             type="number"
                             min="0"
-                            className="cdm-tarifa-input"
+                            className="cgd-tarifa-input"
                             aria-label={`Por Minuto/UVR - ${TARIFA_ROLE_LABEL[role]}`}
                             value={draft.porMinutoValor[role]}
                             disabled={role !== 'derechosSala'}
@@ -299,7 +299,7 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
                         <td key={role}>
                           <input
                             type="number"
-                            className="cdm-tarifa-input"
+                            className="cgd-tarifa-input"
                             aria-label={`Vr. Manuales - ${TARIFA_ROLE_LABEL[role]}`}
                             value={draft.vrManuales[role]}
                             disabled
@@ -312,14 +312,14 @@ export default function CirugiaDetalleModal({ admision, onClose }) {
               </div>
             </div>
           ) : (
-            <div className="cdm-card">
-              <div className="cdm-contrat-grid">
+            <div className="cgd-card">
+              <div className="cgd-contrat-grid">
                 {CONTRATACION_COLUMNAS.map((campos, i) => (
-                  <div className="cdm-contrat-col" key={i}>
+                  <div className="cgd-contrat-col" key={i}>
                     {campos.map(([id, label, value]) => (
                       <div className="form-field" key={id}>
-                        <label htmlFor={`cdm-${id}`}>{label}</label>
-                        <input id={`cdm-${id}`} type="text" value={value} readOnly />
+                        <label htmlFor={`cgd-${id}`}>{label}</label>
+                        <input id={`cgd-${id}`} type="text" value={value} readOnly />
                       </div>
                     ))}
                   </div>

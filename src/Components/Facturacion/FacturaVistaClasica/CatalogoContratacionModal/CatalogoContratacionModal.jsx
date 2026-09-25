@@ -158,7 +158,7 @@ export default function CatalogoContratacionModal({
 
         <div className="modal-footer">
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={handleAceptar} disabled={!seleccion}>Aceptar</Button>
+          <Button variant="primary" onClick={handleAceptar} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

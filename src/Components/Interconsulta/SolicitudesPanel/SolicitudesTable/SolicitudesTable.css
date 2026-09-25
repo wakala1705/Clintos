@@ -1,0 +1,18 @@
+/* .data-table (base)/.cell-primary/.cell-sub/.col-right: definidas en
+   ../../shared/shared.css — acá solo lo exclusivo de esta tabla. */
+.ic-table-wrap{flex:1;min-height:0;min-width:0;overflow:auto;}
+
+/* Selectores compuestos (.ic-table td.xxx): `.data-table td` (shared.css)
+   fija el color de la celda con más especificidad que una clase sola. */
+.ic-table td.ic-cell-fecha{white-space:nowrap;}
+/* Días de espera: número resaltado, alineado a la derecha con su encabezado. */
+.ic-table td.ic-cell-dias{font-weight:var(--fw-semibold);color:var(--primary);font-variant-numeric:tabular-nums;}
+
+/* Estado vacío (bandeja sin datos o filtro/búsqueda sin resultados). */
+.ic-empty{
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:32px 16px;text-align:center;
+}
+.ic-empty-icon{width:32px;height:32px;color:var(--primary);margin-bottom:6px;}
+.ic-empty-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ic-empty-sub{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}

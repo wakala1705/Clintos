@@ -1,0 +1,37 @@
+/* .card/.filter-bar/.search-field/.filter-spacer/.chip-group.segmented:
+   definidas en ../shared/shared.css — acá solo el layout propio de esta
+   card. */
+.ic-toolbar .search-field{width:380px;}
+/* Sin border-bottom propio: el encabezado sticky de la tabla ya trae su
+   border-top (.data-table thead th, shared.css) — con los dos se dibujaba
+   una doble línea. Selector compuesto para no depender del orden de
+   inyección respecto a .filter-bar. */
+.filter-bar.ic-toolbar{border-bottom:none;}
+
+/* Expandir/contraer tabla — botón de ícono cuadrado con el mismo borde,
+   radio y alto que el trigger del filtro de Estado a su izquierda. Activo
+   (expandida) con los tokens de selección, como un toggle. */
+.ic-expand-btn{
+  flex-shrink:0;width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;transition:var(--btn-transition);
+}
+.ic-expand-btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.ic-expand-btn:hover{background:var(--gray-bg);}
+.ic-expand-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.ic-expand-btn[aria-pressed="true"]{
+  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);
+}
+
+.ic-estado-filter{display:flex;align-items:center;gap:8px;}
+.ic-estado-filter .form-select{width:160px;}
+.ic-estado-label{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-700);}
+
+.ic-list-head{
+  flex-shrink:0;display:flex;align-items:baseline;gap:10px;
+  padding:12px 20px;border-top:1px solid var(--border);background:var(--bg);
+}
+.ic-list-head h2{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ic-list-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+.ic-list-count{margin-left:auto;align-self:center;}

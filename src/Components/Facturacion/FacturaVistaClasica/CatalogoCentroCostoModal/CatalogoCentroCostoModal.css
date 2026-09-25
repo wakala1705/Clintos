@@ -32,7 +32,7 @@
   padding:10px 12px;
 }
 .cco-row-head{
-  background:var(--bg);border-bottom:1px solid var(--border);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 
@@ -47,7 +47,7 @@
 .cco-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 
 .cco-codigo{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}
-.cco-descripcion{font-size:var(--fs-base);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cco-descripcion{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cco-estado{font-size:var(--fs-sm);color:var(--ink-700);}
 
 .cco-empty{padding:24px 12px;text-align:center;font-size:var(--fs-sm);color:var(--ink-500);}

@@ -31,10 +31,9 @@
   padding:10px 12px;
 }
 .cpm-row-head{
-  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);flex-shrink:0;
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
-html[data-theme="dark"] .cpm-row-head{background:#1c2333;}
 
 .cpm-list{flex:1;min-height:0;overflow-y:auto;max-height:400px;}
 .cpm-option{
@@ -46,8 +45,8 @@ html[data-theme="dark"] .cpm-row-head{background:#1c2333;}
 .cpm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .cpm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 .cpm-prefijo{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;}
-.cpm-id{font-size:var(--fs-sm);color:var(--ink-700);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.cpm-descripcion{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cpm-id{font-size:var(--fs-sm);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cpm-descripcion{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cpm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
 
 /* ---------- Paginación ----------

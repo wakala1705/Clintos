@@ -78,7 +78,7 @@ input[type="checkbox"].row-check, input[type="checkbox"].select-all-check{
 .timeline-table thead .check-col-head{z-index:calc(var(--z-sticky) + 5);}
 
 .med-cell{padding:12px 20px;border-bottom:1px solid #eef0f4;vertical-align:middle;text-align:left;font-weight:var(--fw-regular);}
-.med-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.35;}
+.med-name{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);line-height:1.35;}
 .med-status-badge{
   display:inline-flex;align-items:center;gap:6px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);padding:4px 10px;border-radius:20px;margin-left:8px;

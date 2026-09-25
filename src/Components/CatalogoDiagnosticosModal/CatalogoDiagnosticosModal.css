@@ -47,7 +47,7 @@
   padding:10px 14px;
 }
 .cdm-row-head{
-  background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);flex-shrink:0;
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 
@@ -60,8 +60,8 @@
 .cdm-option:hover{background:var(--bg);}
 .cdm-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .cdm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
-.cdm-codigo{font-size:var(--fs-base);color:var(--ink-700);font-variant-numeric:tabular-nums;}
-.cdm-descripcion{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cdm-codigo{font-size:var(--fs-base);color:var(--ink-500);font-variant-numeric:tabular-nums;}
+.cdm-descripcion{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cdm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
 
 /* ---------- Paginación ---------- */

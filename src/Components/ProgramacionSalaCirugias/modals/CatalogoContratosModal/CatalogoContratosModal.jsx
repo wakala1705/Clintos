@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './CatalogoContratosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -23,13 +23,21 @@ function normalizar(texto) {
 // Ventana de búsqueda de "Id. Contrato" en NuevaUrgenciaModal -- mismo look/
 // estructura que CatalogoEquiposModal (buscador + tabla con borde + fila-
 // botón seleccionable, sin paginación porque CONTRATOS_CATALOGO es chico),
-// clases propias `.ccm-*` (ver AGENTS.md "Component organization").
+// clases propias `.cctm-*` (ver AGENTS.md "Component organization").
 // `onSelect` recibe el string "idContrato - descripción", mismo formato que
 // CatalogoAseguradorasModal/CatalogoProcedimientosModal (precarga un input
 // de texto, no un objeto estructurado).
 export default function CatalogoContratosModal({ onSelect, onClose }) {
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const q = normalizar(query.trim());
   const filtered = CONTRATOS_CATALOGO.filter((c) => (
@@ -44,15 +52,15 @@ export default function CatalogoContratosModal({ onSelect, onClose }) {
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-card ccm-modal-card" role="dialog" aria-modal="true" aria-labelledby="ccm-title">
+      <div className="modal-card cctm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cctm-title">
         <ModalHeader
           title="Seleccionar contrato"
-          titleId="ccm-title"
+          titleId="cctm-title"
           onClose={onClose}
           closeLabel="Cerrar búsqueda de contrato"
         />
-        <div className="modal-body ccm-body">
-          <div className="ccm-search">
+        <div className="modal-body cctm-body">
+          <div className="cctm-search">
             <LuSearch className="icon" aria-hidden="true" />
             <input
               type="text"
@@ -63,14 +71,14 @@ export default function CatalogoContratosModal({ onSelect, onClose }) {
             />
           </div>
 
-          <div className="ccm-table">
-            <div className="ccm-row ccm-row-head">
+          <div className="cctm-table">
+            <div className="cctm-row cctm-row-head">
               <span>Id. Contrato</span>
               <span>Descripción</span>
             </div>
-            <div className="ccm-list" role="listbox" aria-labelledby="ccm-title">
+            <div className="cctm-list" role="listbox" aria-labelledby="cctm-title">
               {filtered.length === 0 && (
-                <div className="ccm-empty">Sin resultados para los filtros aplicados.</div>
+                <div className="cctm-empty">Sin resultados para los filtros aplicados.</div>
               )}
               {filtered.map((c) => {
                 const active = seleccion?.idContrato === c.idContrato;
@@ -80,11 +88,11 @@ export default function CatalogoContratosModal({ onSelect, onClose }) {
                     key={c.idContrato}
                     role="option"
                     aria-selected={active}
-                    className={`ccm-row ccm-option${active ? ' active' : ''}`}
+                    className={`cctm-row cctm-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(c)}
                   >
-                    <span className="ccm-id">{c.idContrato}</span>
-                    <span className="ccm-descripcion">{c.descripcion}</span>
+                    <span className="cctm-id">{c.idContrato}</span>
+                    <span className="cctm-descripcion">{c.descripcion}</span>
                   </button>
                 );
               })}
@@ -93,7 +101,7 @@ export default function CatalogoContratosModal({ onSelect, onClose }) {
         </div>
         <div className="modal-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
+          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

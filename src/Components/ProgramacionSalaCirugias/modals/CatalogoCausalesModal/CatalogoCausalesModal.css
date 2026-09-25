@@ -30,10 +30,9 @@
   padding:10px 14px;
 }
 .ccam-row-head{
-  background:#f7f8fb;border-bottom:1px solid var(--border);flex-shrink:0;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);flex-shrink:0;
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
-html[data-theme="dark"] .ccam-row-head{background:#1c2333;}
 
 .ccam-list{flex:1;min-height:0;overflow-y:auto;}
 .ccam-option{

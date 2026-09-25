@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './CatalogoInsumosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -54,6 +54,14 @@ export default function CatalogoInsumosModal({ onSelect, onClose }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [seleccion, setSeleccion] = useState(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   function handleQuery(v) {
     setQuery(v);
@@ -184,7 +192,7 @@ export default function CatalogoInsumosModal({ onSelect, onClose }) {
         </div>
         <div className="modal-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Confirmar</Button>
+          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

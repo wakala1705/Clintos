@@ -1,0 +1,25 @@
+/* El footer se ancla al fondo de la card (flex column, ver .card en
+   ../../shared/shared.css): la tabla (flex:1) toma el resto del alto. */
+.ic-footer{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 20px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.ic-footer b{font-weight:var(--fw-semibold);color:var(--ink-700);}
+
+.ic-pagination{display:flex;align-items:center;gap:8px;}
+.ic-pagination-btn,
+.ic-pagination-page{
+  width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:var(--btn-radius);font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);
+}
+.ic-pagination-btn{
+  border:none;background:none;color:var(--ink-500);cursor:pointer;transition:var(--btn-transition);
+}
+.ic-pagination-btn .icon{width:16px;height:16px;}
+.ic-pagination-btn:hover:not(:disabled){background:var(--gray-bg);color:var(--ink-900);}
+.ic-pagination-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.ic-pagination-btn:disabled{opacity:var(--btn-disabled-opacity);cursor:default;}
+.ic-pagination-page{
+  border:var(--btn-border-width) solid var(--ink-700);background:var(--surface);color:var(--ink-900);
+}
