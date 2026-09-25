@@ -13,6 +13,12 @@ import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 
 const ESTADOS_LEYENDA = ['programada', 'urgencia', 'realizada', 'cancelada', 'incumplida'];
 
+// Aviso "N cirugías de urgencia" del Resumen de agenda: oculto por encargo
+// explícito (2026-09-25) hasta que tenga lógica (hoy no navega ni filtra).
+// Pasar a `true` para volver a mostrarlo. Su estilo (.mcc-resumen-urgencia)
+// sigue en uso por el aviso de programaciones vencidas.
+const MOSTRAR_AVISO_URGENCIAS = false;
+
 // Bloque único de la columna lateral (mismo lugar que MiniCalendar en
 // Programar cita, ver .psc-side-col en ProgramacionSalaCirugias.css): 4
 // secciones separadas por .mcc-divider — acción principal "Programar
@@ -151,7 +157,7 @@ export default function MiniCalendarCirugias({
             <span className="mcc-resumen-label">Ocupación</span>
           </div>
         </div>
-        {resumen.urgencias > 0 && (
+        {MOSTRAR_AVISO_URGENCIAS && resumen.urgencias > 0 && (
           <div className="mcc-resumen-urgencia">
             <LuTriangleAlert className="icon" aria-hidden="true" />
             <span>{resumen.urgencias} {resumen.urgencias === 1 ? 'cirugía de urgencia' : 'cirugías de urgencia'}</span>
