@@ -5,12 +5,16 @@
   border-radius:var(--radius-lg);
   padding:16px;
   cursor:pointer;
-  transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s,background .15s;
 }
 .module-card:not(.disabled):hover{
   border-color:var(--primary);
+  background:var(--primary-50);
   box-shadow:0 4px 14px rgba(16,24,39,.06);
 }
+/* El ícono azul por defecto ya usa --primary-50 de fondo: en hover sube un
+   tono para no fundirse con el nuevo fondo de la card. */
+.module-card:not(.disabled):hover .module-card-icon:not([class*="tone-"]){background:var(--primary-100);}
 .module-card:not(.disabled):hover .module-card-cta{color:var(--primary);}
 .module-card:not(.disabled):focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 html[data-theme="dark"] .module-card:not(.disabled):hover{box-shadow:0 4px 14px rgba(0,0,0,.28);}
