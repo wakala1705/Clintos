@@ -1,0 +1,51 @@
+.rv-table-wrap{flex:1;min-height:0;overflow:auto;}
+.rv-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
+/* th y td comparten padding horizontal (12px) -- AGENTS.md "Encabezados de tabla". */
+.rv-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:10px 12px;white-space:nowrap;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.rv-table td{padding:6px 12px;height:44px;border-bottom:1px solid var(--border);color:var(--ink-700);vertical-align:middle;}
+.rv-table .rv-num{text-align:right;}
+.rv-table .rv-nowrap{white-space:nowrap;}
+.rv-row:hover > td{background:var(--bg);}
+.rv-row.selected > td{background:var(--primary-50);}
+
+.rv-col-check{width:40px;}
+.rv-col-check input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+.rv-col-acciones{width:1%;white-space:nowrap;}
+
+.rv-sort-btn{
+  display:inline-flex;align-items:center;gap:4px;padding:0;border:none;background:none;cursor:pointer;
+  font:inherit;color:inherit;
+}
+.rv-num .rv-sort-btn{flex-direction:row-reverse;}
+.rv-sort-btn .icon{width:14px;height:14px;color:var(--ink-400);}
+.rv-sort-btn.active .icon{color:var(--primary);}
+.rv-sort-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+
+.rv-tipo-cell{display:flex;align-items:center;gap:6px;}
+.rv-expand-btn, .rv-expand-spacer{width:24px;height:24px;flex-shrink:0;}
+.rv-expand-btn{
+  display:flex;align-items:center;justify-content:center;padding:0;
+  border:none;border-radius:6px;background:none;color:var(--ink-500);cursor:pointer;
+}
+.rv-expand-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.rv-expand-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.rv-expand-btn .icon{width:16px;height:16px;transition:transform .15s;}
+.rv-expand-btn .icon.open{transform:rotate(90deg);}
+
+.rv-cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
+.rv-cell-secondary{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.rv-trazabilidad{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);}
+.rv-trazabilidad span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.rv-trazabilidad .icon{width:14px;height:14px;color:var(--ink-500);}
+
+.rv-acciones{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+
+@media (prefers-reduced-motion:reduce){
+  .rv-expand-btn .icon{transition:none;}
+}

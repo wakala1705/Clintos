@@ -190,3 +190,21 @@ html[data-theme="dark"] .psc-toast{background:var(--surface-modal);border:1px so
 .ncw-icon-btn-primary:hover{background:var(--primary-50);color:var(--primary);}
 .ncw-icon-btn-danger{color:var(--red);}
 .ncw-icon-btn-danger:hover{background:var(--red-bg);color:var(--red);}
+
+/* Barra de filtros de listado -- receta estándar del proyecto (ver AGENTS.md
+   "Barra de filtros de listado", referencia GestionTurnos.css). Una sola
+   fila con wrap: buscador, spacer, chips, resto de filtros. */
+.filter-bar{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.search-field{position:relative;width:280px;flex-shrink:0;}
+.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
+.search-field input{
+  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);
+}
+.search-field input::placeholder{color:var(--ink-400);}
+.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
+.filter-spacer{flex:1;}
+.filter-cluster{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}

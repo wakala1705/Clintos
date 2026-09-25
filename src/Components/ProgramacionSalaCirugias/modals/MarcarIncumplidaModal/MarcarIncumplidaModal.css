@@ -1,0 +1,4 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field/
+   .tf-warning-note viven en shared/shared.css. */
+.mim-modal-card{width:480px;}
+.mim-modal-card .tf-warning-note{margin:0;}

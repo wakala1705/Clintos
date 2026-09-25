@@ -1,0 +1,11 @@
+/* .modal-overlay/.modal-card/.tf-warning-note viven en shared/shared.css. */
+.rv-confirm-card{width:420px;padding:24px;gap:12px;align-items:center;text-align:center;}
+.rv-confirm-icon{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.rv-confirm-icon .icon{width:22px;height:22px;}
+.rv-confirm-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.rv-confirm-text{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.rv-confirm-card .tf-warning-note{text-align:left;align-self:stretch;}
+.rv-confirm-actions{display:flex;justify-content:center;gap:10px;margin-top:8px;}

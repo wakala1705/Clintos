@@ -1,0 +1,7 @@
+.rv-lote-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;
+  padding:10px 20px;background:var(--primary-50);border-top:1px solid var(--interactive-selected-border);
+}
+.rv-lote-count{font-size:var(--fs-base);color:var(--ink-700);}
+.rv-lote-count strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.rv-lote-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
