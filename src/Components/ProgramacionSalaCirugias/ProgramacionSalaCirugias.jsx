@@ -22,6 +22,7 @@ import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/Reprograma
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
+import RevisionPendienteBanner from './RevisionPendienteBanner/RevisionPendienteBanner';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -369,6 +370,8 @@ export default function ProgramacionSalaCirugias() {
               <Button variant="secondary-accent" icon={LuList}>Listado de cirugías</Button>
             </div>
           </div>
+
+          <RevisionPendienteBanner />
 
           <div className="psc-workspace">
             <div className="psc-side-col">
