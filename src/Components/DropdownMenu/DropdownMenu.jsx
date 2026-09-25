@@ -4,7 +4,7 @@ import {
   useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { LuEllipsis } from 'react-icons/lu';
+import { LuChevronDown, LuEllipsis } from 'react-icons/lu';
 import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import styles from './DropdownMenu.module.css';
 
@@ -35,8 +35,12 @@ import styles from './DropdownMenu.module.css';
 // onOpenChange(open): opcional, para el padre que necesita saber si el
 // menú está abierto (ej. CirugiaCardMenu mantiene visible el "⋯" que la
 // tarjeta solo muestra en hover mientras el menú sigue abierto).
+// triggerLabel/triggerIcon: opcionales — en vez del "⋯", un botón con texto +
+// chevron con la apariencia de Button variant="secondary-accent" (ej.
+// "Cambiar estado" en el pie de DetalleCirugiaPanel).
 export default function DropdownMenu({
   label, items, emptyLabel = 'Sin acciones disponibles', size = 'base', className = '', onOpenChange,
+  triggerLabel, triggerIcon: TriggerIcon,
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
@@ -134,7 +138,7 @@ export default function DropdownMenu({
       <button
         ref={triggerRef}
         type="button"
-        className={[styles.trigger, size === 'sm' && styles.sm, open && styles.triggerOpen, className].filter(Boolean).join(' ')}
+        className={[triggerLabel ? styles.labeled : styles.trigger, !triggerLabel && size === 'sm' && styles.sm, open && styles.triggerOpen, className].filter(Boolean).join(' ')}
         onClick={(e) => {
           e.stopPropagation();
           if (!open) setPos(null);
@@ -147,10 +151,18 @@ export default function DropdownMenu({
         }}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={label}
-        title="Más acciones"
+        aria-label={triggerLabel ? undefined : label}
+        title={triggerLabel ? undefined : 'Más acciones'}
       >
-        <LuEllipsis className={styles.triggerIcon} aria-hidden="true" />
+        {triggerLabel ? (
+          <>
+            {TriggerIcon && <TriggerIcon className={styles.labeledIcon} aria-hidden="true" />}
+            {triggerLabel}
+            <LuChevronDown className={styles.labeledChevron} aria-hidden="true" />
+          </>
+        ) : (
+          <LuEllipsis className={styles.triggerIcon} aria-hidden="true" />
+        )}
       </button>
 
       {open && createPortal(

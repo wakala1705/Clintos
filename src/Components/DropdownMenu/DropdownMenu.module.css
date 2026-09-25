@@ -43,6 +43,51 @@
   outline-offset: 1px;
 }
 
+/* ---------- Botón con texto (triggerLabel) ----------
+   Misma apariencia que Button variant="secondary-accent" (Button.module.css),
+   desde los tokens --btn-*. */
+.labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--btn-gap);
+  font-family: inherit;
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-base);
+  padding: var(--btn-padding);
+  border-radius: var(--btn-radius);
+  border: var(--btn-border-width) solid var(--border);
+  background: var(--surface);
+  color: var(--ink-700);
+  cursor: pointer;
+  transition: var(--btn-transition);
+  white-space: nowrap;
+}
+.labeled:hover,
+.labeled.triggerOpen {
+  background: var(--bg);
+  border-color: var(--ink-400);
+}
+.labeled:focus-visible {
+  outline: var(--btn-focus-outline) solid var(--primary);
+  outline-offset: var(--btn-focus-offset);
+}
+.labeled[disabled] {
+  opacity: var(--btn-disabled-opacity);
+  cursor: not-allowed;
+}
+.labeledIcon {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+  color: var(--primary);
+}
+.labeledChevron {
+  width: 16px;
+  height: 16px;
+  color: var(--ink-500);
+  transition: transform .15s;
+}
+.triggerOpen .labeledChevron { transform: rotate(180deg); }
+
 /* ---------- Menú ----------
    Apariencia (panel, ítems, tonos, separador, vacío) en
    @/Components/DropdownPanel/DropdownPanel.module.css, compartida con las

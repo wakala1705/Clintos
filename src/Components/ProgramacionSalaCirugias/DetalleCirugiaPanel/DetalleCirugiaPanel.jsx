@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
+import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
@@ -12,7 +13,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import FarmaciaTab from './tabs/FarmaciaTab/FarmaciaTab';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo) -- reemplazan
@@ -26,6 +27,15 @@ const DETAIL_TABS = [
   { id: 'personal', label: 'Personal clínico' },
   { id: 'equipos', label: 'Equipos' },
 ];
+
+function InfoItem({ label, value, wide = false }) {
+  return (
+    <div className={`dcp-info-item${wide ? ' wide' : ''}`}>
+      <div className="dcp-info-label">{label}</div>
+      <div className="dcp-info-value">{value}</div>
+    </div>
+  );
+}
 
 // Modal centrado superpuesto (nunca docked en el layout) -- mismo patrón
 // que el resto de modales de esta feature (.modal-overlay/.modal-card, ver
@@ -81,82 +91,43 @@ export default function DetalleCirugiaPanel({
 
   const body = (
     <>
+      {/* Estado junto al cierre (trailing) y el caso identificado en el
+          subtítulo -- antes el badge ocupaba una fila entera propia. */}
       <ModalHeader
         title="Detalle de la cirugía"
         titleId="dcp-title"
+        subtitle={`No. Prog ${cirugia.id} · ${cirugia.paciente.nombre}`}
+        trailing={<EstadoCirugiaBadge estado={cirugia.estado} />}
         onClose={onClose}
         closeLabel="Cerrar detalle"
       />
-      <div className="dcp-status-row">
-        <EstadoCirugiaBadge estado={cirugia.estado} />
-      </div>
 
-      {/* Mismos campos y orden que "Información del Procedimiento
-          Quirúrgico" (formulario legacy de referencia, encargo explícito):
-          No. Prog, Fecha, Tel. Aviso, Doc. Id, Nombre, Sexo, Edad, Nivel,
-          Tipo Afiliado, Dirección, Aseguradora, Cirujano -- 12 campos que
-          calzan exacto en una grilla de 3 columnas x 4 filas (antes 1 sola
-          columna apilada porque el drawer de 420px no daba para más; el
-          modal centrado sí tiene el ancho para repartirlos). */}
-      <div className="dcp-info-grid">
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Nombre</div>
-          <div className="dcp-info-value">{cirugia.paciente.nombre}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Doc. Id</div>
-          <div className="dcp-info-value">{cirugia.paciente.documento}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Edad</div>
-          <div className="dcp-info-value">{edadDetalleLabel(cirugia.paciente)}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Sexo</div>
-          <div className="dcp-info-value">{cirugia.paciente.sexo}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Aseguradora</div>
-          <div className="dcp-info-value">{cirugia.paciente.aseguradora}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Tel. Aviso</div>
-          <div className="dcp-info-value">{cirugia.paciente.telAviso || '—'}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Nivel</div>
-          <div className="dcp-info-value">{cirugia.paciente.nivel || '—'}</div>
-        </div>
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Tipo Afiliado</div>
-          <div className="dcp-info-value">{cirugia.paciente.tipoAfiliado || '—'}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Dirección</div>
-          <div className="dcp-info-value">{cirugia.paciente.direccion || '—'}</div>
-        </div>
-
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">No. Prog</div>
-          <div className="dcp-info-value">{cirugia.id}</div>
-        </div>
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Fecha</div>
-          <div className="dcp-info-value">{fechaLabel(cirugia.fecha)} {cirugia.horaInicio}</div>
-        </div>
-        
-                          
-        <div className="dcp-info-item">
-          <div className="dcp-info-label">Cirujano</div>
-          <div className="dcp-info-value">{cirugia.cirujano || '—'}</div>
-        </div>
+      {/* Mismos 12 campos del formulario legacy de referencia, agrupados en
+          2 bloques: Programación (lo que identifica la cirugía, destacado) y
+          Paciente (datos de contexto). */}
+      <div className="dcp-info">
+        <section className="dcp-info-group dcp-info-group-prog" aria-label="Programación">
+          <div className="dcp-info-group-title">Programación</div>
+          <div className="dcp-info-grid">
+            <InfoItem label="Fecha" value={`${fechaLabel(cirugia.fecha)} ${cirugia.horaInicio}`} />
+            <InfoItem label="No. Prog" value={cirugia.id} />
+            <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} wide />
+          </div>
+        </section>
+        <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">
+          <div className="dcp-info-group-title">Paciente</div>
+          <div className="dcp-info-grid">
+            <InfoItem label="Nombre" value={cirugia.paciente.nombre} />
+            <InfoItem label="Doc. Id" value={cirugia.paciente.documento} />
+            <InfoItem label="Edad" value={edadDetalleLabel(cirugia.paciente)} />
+            <InfoItem label="Sexo" value={cirugia.paciente.sexo} />
+            <InfoItem label="Aseguradora" value={cirugia.paciente.aseguradora} />
+            <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso || '—'} />
+            <InfoItem label="Nivel" value={cirugia.paciente.nivel || '—'} />
+            <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado || '—'} />
+            <InfoItem label="Dirección" value={cirugia.paciente.direccion || '—'} wide />
+          </div>
+        </section>
       </div>
 
       {/* Split de 2 columnas -- mismo esquema que .hqd-split
@@ -209,24 +180,31 @@ export default function DetalleCirugiaPanel({
         </div>
       </div>
 
-      {/* Mismas 5 acciones que CirugiaCardMenu.jsx (Editar/Reprogramar/Marcar
-          como realizada/Marcar como incumplida/Cancelar), todas visibles acá
-          en vez de detrás de un dropdown "Más acciones" -- encargo explícito
-          para que el footer del detalle no esconda ninguna acción que la
-          card sí muestra directo. Mismas reglas de disabled que el menú
-          (puedeAccionar/puedeMarcarIncumplida, ambas comparten
-          ESTADOS_TERMINALES_CIRUGIA). */}
+      {/* Editar/Reprogramar a la vista; los cambios de estado (realizada,
+          incumplida, cancelar) agrupados en "Cambiar estado" -- mismos
+          bloques y reglas de disabled que CirugiaCardMenu.jsx, con Cancelar
+          en tono danger y separado para evitar clics por error. La acción
+          principal ("Pedir insumos a farmacia") vive en el pie de la tabla
+          de Insumos (ver InsumosTab.jsx). */}
       <div className="dcp-actions">
         <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
         <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
-        <Button variant="secondary-accent" icon={LuCheckCheck} disabled={!puedeAccionar} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
-        <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
-        {/* Cancelar deja de ser el botón destacado (encargo explícito): pasa
-            a secondary-accent con el ícono en rojo (ver .dcp-cancel-btn) para
-            conservar la señal de acción destructiva. La acción principal,
-            "Pedir insumos a farmacia", vive en el pie de la tabla de la tab
-            Insumos (ver InsumosTab.jsx). */}
-        <Button variant="secondary-accent" icon={LuBan} className="dcp-cancel-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar</Button>
+        <DropdownMenu
+          label="Cambiar estado de la cirugía"
+          triggerLabel="Cambiar estado"
+          triggerIcon={LuRefreshCw}
+          items={[
+            {
+              id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeAccionar, onSelect: () => onMarcarRealizada(cirugia),
+            },
+            {
+              id: 'incumplida', label: 'Marcar como incumplida', icon: LuCalendarX, tone: 'warn', disabled: !puedeMarcarIncumplida, onSelect: () => onMarcarIncumplida(cirugia),
+            },
+            {
+              id: 'cancelar', label: 'Cancelar cirugía', icon: LuBan, tone: 'danger', disabled: !puedeAccionar, onSelect: () => onCancelar(cirugia), dividerBefore: true,
+            },
+          ]}
+        />
       </div>
     </>
   );

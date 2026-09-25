@@ -15,11 +15,23 @@
 .ist-table tbody tr:last-child td{border-bottom:none;}
 .ist-table .cell-primary{font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ist-table .cell-muted{color:var(--ink-500);}
-/* Pie de la tabla con "Pedir insumos a farmacia": sticky al fondo del panel
-   que scrollea (.dcp-split-right-body) para que la acción quede siempre a la
-   vista aunque la canasta sea larga. */
+/* Cantidad angosta y a la derecha (columna numérica, th con la misma clase
+   que sus celdas); Estado con ancho fijo para que no salte al cambiar el
+   texto del badge. */
+.ist-table .ist-num{text-align:right;}
+.ist-col-cantidad{width:110px;}
+.ist-col-estado{width:170px;}
+.ist-table th:nth-child(3),.ist-table td:nth-child(3){padding-left:32px;}
+/* Pie de la tabla: resumen a la izquierda, acción a la derecha. Sticky al
+   fondo del panel que scrollea (.dcp-split-right-body) para que la acción
+   quede a la vista aunque la canasta sea larga. Sin border-top: con el del
+   pie del modal justo debajo quedaban 2 divisores casi pegados; lo separa
+   una sombra suave solo cuando hay filas pasando por detrás. */
 .ist-footer{
   position:sticky;bottom:0;margin-top:auto;
-  display:flex;justify-content:flex-end;gap:8px;
-  padding:12px 16px;background:var(--surface);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 16px;background:var(--surface);
+  box-shadow:0 -1px 0 var(--gray-bg);
 }
+.ist-resumen{font-size:var(--fs-sm);color:var(--ink-500);}
+.ist-resumen strong{font-weight:var(--fw-semibold);color:var(--ink-900);}

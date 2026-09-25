@@ -11,28 +11,26 @@
    tab. */
 .modal-card.dcp-modal-card{width:95vw;max-width:1400px;height:90vh;max-height:90vh;}
 
-.dcp-status-row{padding:16px;flex-shrink:0;}
-
-/* Grilla de 3 columnas x 4 filas -- mismos 12 campos y mismo orden que
-   "Información del Procedimiento Quirúrgico" (formulario legacy de
-   referencia, encargo explícito): No. Prog/Fecha/Tel. Aviso, Doc. Id/
-   Nombre/Sexo, Edad/Nivel/Tipo Afiliado, Dirección/Aseguradora/Cirujano.
-   Antes era una sola columna apilada (el drawer de 420px no daba para más);
-   el modal centrado sí tiene el ancho para repartirlos sin necesitar los
-   divs `.dcp-info-row`/`.dcp-info-row-inline` que agrupaban manualmente las
-   filas que iban lado a lado -- acá el grid ya los reparte solo. */
-/* Encapsulado en su propia caja (var(--gray-bg), mismo criterio que
-   .apm-patient-info en AgregarProcedimientoModal.css) en vez de una franja a
-   sangre con solo un border-bottom -- encargo explícito para darle más
-   jerarquía visual frente al split de abajo. */
-.dcp-info-grid{
-  display:grid;grid-template-columns:repeat(6, 1fr);gap:14px 24px;
-  margin:0 24px;padding:14px 20px;
-  background:var(--bg);border-radius:var(--radius-lg);flex-shrink:0;border:1px solid var(--border);
+/* Caja de datos (mismo fondo/borde que .apm-patient-info en
+   AgregarProcedimientoModal.css) partida en 2 bloques: Programación (lo que
+   identifica la cirugía, a la izquierda y con el valor más marcado) y
+   Paciente (datos de contexto), separados por un divisor vertical. */
+.dcp-info{
+  display:grid;grid-template-columns:minmax(0,2fr) minmax(0,5fr);
+  margin:16px 24px 0;background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-lg);flex-shrink:0;
 }
+.dcp-info-group{padding:14px 20px;min-width:0;}
+.dcp-info-group-prog{border-right:1px solid var(--border);}
+.dcp-info-group-title{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);margin-bottom:10px;}
+.dcp-info-grid{display:grid;gap:12px 24px;}
+.dcp-info-group-prog .dcp-info-grid{grid-template-columns:repeat(2, minmax(0,1fr));}
+.dcp-info-group-pac .dcp-info-grid{grid-template-columns:repeat(5, minmax(0,1fr));}
 .dcp-info-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.dcp-info-item.wide{grid-column:span 2;}
 .dcp-info-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
 .dcp-info-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.dcp-info-group-prog .dcp-info-value{font-weight:var(--fw-semibold);}
 
 .dcp-tabs-bar{
   display:flex;align-items:center;gap:20px;padding:0 20px;
@@ -56,18 +54,19 @@
    (IntervencionDetalleModal.css, HistorialQuirurgico), reimplementado acá
    con su propio prefijo en vez de importar cruzado entre features (ver
    AGENTS.md "Component organization"). Columna izquierda a ancho fijo
-   (500px) con la lista de
+   (320px; antes 500px, que con 1-2 procedimientos dejaba casi todo vacío y
+   le quitaba ancho a la tabla de insumos) con la lista de
    procedimientos siempre visible; la derecha, con las tabs Insumos/Farmacia/
    Personal clínico/Equipos, se lleva el resto con 1fr. Cada lado es su
    propia card (mismo criterio que .hq-card en hqd-split: border/radio/fondo
    propios, no comparten box con el otro) para que quede clara la separación
    entre "lista fija" y "detalle que cambia de tab". */
-.dcp-split{display:grid;grid-template-columns:500px 1fr;gap:24px;flex:1;min-height:0;}
+.dcp-split{display:grid;grid-template-columns:320px 1fr;gap:24px;flex:1;min-height:0;}
 .dcp-split-left,.dcp-split-right{
   display:flex;flex-direction:column;min-width:0;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
-.dcp-split-left{width:500px;}
+.dcp-split-left{width:320px;}
 .dcp-split-right{width:100%;}
 /* El label "Procedimientos" reusa .dcp-tabs-bar/.dcp-tab (activo, no
    clickeable) para alinear su altura con la barra de tabs real de la
@@ -76,14 +75,9 @@
 .dcp-split-left .dcp-tab{cursor:default;}
 .dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;}
 
-/* Las 5 acciones (Editar/Reprogramar/Marcar como realizada/Marcar como
-   incumplida/Cancelar) van todas directo acá, sin dropdown "Más acciones"
+/* Editar/Reprogramar + menú "Cambiar estado" (realizada/incumplida/cancelar)
    -- ver comentario en DetalleCirugiaPanel.jsx. */
 .dcp-actions{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
   padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;
 }
-/* "Cancelar" en secondary-accent con ícono rojo (acción destructiva, pero
-   ya no la destacada). Selector doble para ganarle a `.secondaryAccent .icon`
-   de Button.module.css (2 clases), que lo pinta en --primary. */
-.dcp-actions .dcp-cancel-btn svg{color:var(--red);}
