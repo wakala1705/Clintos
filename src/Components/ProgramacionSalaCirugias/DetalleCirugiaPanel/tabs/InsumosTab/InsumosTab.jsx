@@ -36,7 +36,7 @@ const HEAD_ROW = (
 // El pie muestra el avance y UNA acción según el paso en que va la canasta:
 // 1. quedan insumos sin solicitar -> "Pedir insumos a farmacia"
 // 2. quedan solicitados sin entregar -> "Registrar entrega" (+ "Cancelar
-//    solicitud", que los devuelve a sin solicitar)
+//    solicitud", que pide la causal y los devuelve a sin solicitar)
 // 3. todo entregado -> "Devolver insumos" (abre Devoluciones en Cirugías)
 // Pedir/Registrar se deshabilitan con la cirugía cerrada (`puedeAccionar`);
 // Devolver no: lo no usado se devuelve también después de realizada o
@@ -71,7 +71,7 @@ export default function InsumosTab({
           icon={LuPackageX}
           className="ist-cancelar-btn"
           disabled={!puedeAccionar}
-          onClick={() => onCancelarSolicitud(cirugia)}
+          onClick={onCancelarSolicitud}
         >
           Cancelar solicitud
         </Button>

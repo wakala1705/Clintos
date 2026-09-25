@@ -1554,9 +1554,19 @@ export function solicitarInsumosFarmacia(id) {
 }
 
 // "Cancelar solicitud": deshace el pedido mientras farmacia no haya
-// entregado -- los solicitados vuelven a "Sin solicitar".
-export function cancelarSolicitudInsumos(id) {
-  return avanzarCanasta(id, 'solicitado', 'sin-solicitar');
+// entregado -- los solicitados vuelven a "Sin solicitar". La causal de
+// anulación y la observación (ventana "Causal de Cancelación de
+// Programación") quedan en el historial `cancelacionesSolicitud`.
+export function cancelarSolicitudInsumos(id, { causal, observacion = '', usuario = 'CLINTOS' }) {
+  const actual = avanzarCanasta(id, 'solicitado', 'sin-solicitar');
+  return actualizarCirugia(id, {
+    cancelacionesSolicitud: [
+      ...(actual.cancelacionesSolicitud ?? []),
+      {
+        idCausal: causal.idCausal, causal: causal.descripcion, observacion, usuario, fecha: fechaHoraLocalISO(new Date()),
+      },
+    ],
+  });
 }
 
 // "Registrar entrega": farmacia entregó lo solicitado al quirófano.

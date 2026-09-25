@@ -351,8 +351,8 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(solicitarInsumosFarmacia(cirugia.id));
     showToast('Insumos solicitados a farmacia.');
   }
-  function handleCancelarSolicitud(cirugia) {
-    applyUpdated(cancelarSolicitudInsumos(cirugia.id));
+  function handleCancelarSolicitud(cirugia, { causal, observacion }) {
+    applyUpdated(cancelarSolicitudInsumos(cirugia.id, { causal, observacion }));
     showToast('Solicitud de insumos cancelada.');
   }
   // Siguiente paso del flujo de insumos: farmacia entregó lo solicitado.

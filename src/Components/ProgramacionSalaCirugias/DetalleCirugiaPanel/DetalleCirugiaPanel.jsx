@@ -11,6 +11,7 @@ import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import DevolucionesCirugiaModal from '../modals/DevolucionesCirugiaModal/DevolucionesCirugiaModal';
+import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
 import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw, LuUser,
@@ -50,6 +51,10 @@ export default function DetalleCirugiaPanel({
   // Ventana "Devoluciones en Cirugías" (se abre desde
   // "Devolver insumos" de la tab Insumos) montada encima de este modal.
   const [devolucionesAbierto, setDevolucionesAbierto] = useState(false);
+  // Ventana "Causal de Cancelación de Programación" (se abre desde
+  // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
+  const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
+  const subventanaAbierta = devolucionesAbierto || cancelarSolicitudAbierto;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -66,19 +71,20 @@ export default function DetalleCirugiaPanel({
     setLastCirugiaId(cirugia?.id ?? null);
     setActiveDetailTab('insumos');
     setDevolucionesAbierto(false);
+    setCancelarSolicitudAbierto(false);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
 
   useEffect(() => {
-    // Con Devoluciones abierta encima, Escape cierra solo esa ventana (su
-    // propio onKeyDown), no también el detalle.
-    if (!cirugia || devolucionesAbierto) return undefined;
+    // Con una subventana abierta encima (Devoluciones / Cancelar solicitud),
+    // Escape cierra solo esa ventana (su propio listener), no el detalle.
+    if (!cirugia || subventanaAbierta) return undefined;
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [cirugia, onClose, devolucionesAbierto]);
+  }, [cirugia, onClose, subventanaAbierta]);
 
   function handleDetailTabsKeyDown(e) {
     const idx = DETAIL_TABS.findIndex((t) => t.id === activeDetailTab);
@@ -183,7 +189,7 @@ export default function DetalleCirugiaPanel({
                   cirugia={cirugia}
                   puedeAccionar={puedeAccionar}
                   onPedirInsumos={onPedirInsumos}
-                  onCancelarSolicitud={onCancelarSolicitud}
+                  onCancelarSolicitud={() => setCancelarSolicitudAbierto(true)}
                   onRegistrarEntrega={onRegistrarEntrega}
                   onDevolverInsumos={() => setDevolucionesAbierto(true)}
                 />
@@ -239,6 +245,15 @@ export default function DetalleCirugiaPanel({
           {body}
         </div>
       </div>
+      {cancelarSolicitudAbierto && (
+        <CancelarSolicitudInsumosModal
+          onSubmit={(datos) => {
+            onCancelarSolicitud(cirugia, datos);
+            setCancelarSolicitudAbierto(false);
+          }}
+          onClose={() => setCancelarSolicitudAbierto(false)}
+        />
+      )}
       {devolucionesAbierto && (
         <DevolucionesCirugiaModal
           cirugia={cirugia}

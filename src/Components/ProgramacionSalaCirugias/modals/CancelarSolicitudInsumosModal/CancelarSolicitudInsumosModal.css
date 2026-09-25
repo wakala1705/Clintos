@@ -1,0 +1,3 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field viven en
+   shared/shared.css. Mismo ancho que la ventana legada de referencia. */
+.modal-card.csim-modal-card{width:480px;}
