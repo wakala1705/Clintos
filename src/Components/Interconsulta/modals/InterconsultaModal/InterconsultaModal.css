@@ -24,21 +24,22 @@
   padding:12px 16px;border-top:1px solid var(--border);
 }
 
-/* ---------- Identidad + datos de la solicitud ---------- */
+/* ---------- Resumen: identidad + datos de la solicitud (un solo bloque) ---------- */
+.im-resumen{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);}
 .im-identity{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+  padding:10px 16px;border-bottom:1px solid var(--border);
 }
+.im-identity-main{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;min-width:0;}
 .im-name{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);text-transform:uppercase;}
-.im-identity-sub{margin-top:2px;font-size:var(--fs-sm);color:var(--ink-500);}
+.im-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);}
 
-.im-datos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
-.im-dato{
-  display:flex;flex-direction:column;gap:2px;min-width:0;
-  padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
-}
-.im-dato-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
-.im-dato-value{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Datos sin caja individual: solo etiqueta + valor sobre el fondo del bloque. */
+.im-datos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px;margin:0;padding:10px 16px 12px;}
+.im-dato{min-width:0;}
+.im-dato.wide{grid-column:span 2;}
+.im-dato dt{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.im-dato dd{margin:2px 0 0;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
 
 /* ---------- Cards ---------- */
 .im-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start;}
@@ -49,9 +50,26 @@
 }
 .im-card-body{padding:12px;display:flex;flex-direction:column;gap:12px;}
 
+/* Card colapsable (Trazabilidad): el título es un botón de ancho completo con
+   chevron a la derecha. Cerrada, sin border-bottom (no hay cuerpo debajo). */
+.im-card-title-toggle{padding:0;}
+.im-card-toggle{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 16px;border:none;background:none;cursor:pointer;
+  font:inherit;color:inherit;text-align:left;
+}
+.im-card-toggle:hover{background:var(--gray-bg);}
+.im-card-toggle:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:-2px;}
+.im-card-chev{width:16px;height:16px;color:var(--ink-500);transition:transform .15s ease;}
+.im-traza-card.open .im-card-chev{transform:rotate(180deg);}
+.im-traza-card:not(.open) .im-card-title{border-bottom:none;}
+@media (prefers-reduced-motion:reduce){
+  .im-card-chev{transition:none;}
+}
+
 /* ---------- Campos ---------- */
 .im-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
-.im-field label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.im-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
 .im-field input,
 .im-field textarea{
   width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);

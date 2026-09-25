@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { LuChevronDown } from 'react-icons/lu';
 import './InterconsultaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
@@ -11,12 +12,18 @@ import {
 } from '@/hooks/Interconsulta/interconsultaData';
 import { estaCerrada, puedeConfirmarCargo } from '@/hooks/Interconsulta/interconsultaAcciones';
 
-// Dato de la cabecera (etiqueta en mayúsculas + valor). `-` cuando no hay dato.
-function Dato({ label, children }) {
+// Bloque "Acciones de Soporte Técnico" (Reintentar SMS, Regenerar HC, Anular
+// interconsulta) oculto (encargo explícito). El bloque, su estado y sus
+// acciones siguen intactos — poner en true para volver a mostrarlo.
+const MOSTRAR_SOPORTE_TECNICO = false;
+
+// Dato del resumen (etiqueta en mayúsculas + valor), sin caja propia. `-`
+// cuando no hay dato. `ancho` ocupa 2 columnas (para el texto más largo).
+function Dato({ label, children, ancho }) {
   return (
-    <div className="im-dato">
-      <span className="im-dato-label">{label}</span>
-      <span className="im-dato-value" title={typeof children === 'string' ? children : undefined}>{children || '-'}</span>
+    <div className={`im-dato${ancho ? ' wide' : ''}`}>
+      <dt>{label}</dt>
+      <dd title={typeof children === 'string' ? children : undefined}>{children || '-'}</dd>
     </div>
   );
 }
@@ -54,6 +61,14 @@ export default function InterconsultaModal({ solicitud, onClose, onAccion }) {
   const [telefono, setTelefono] = useState('');
   const [motivoAnulacion, setMotivoAnulacion] = useState('');
   const [errores, setErrores] = useState({});
+  const [trazaAbierta, setTrazaAbierta] = useState(false);
+  const trazaRef = useRef(null);
+
+  // La trazabilidad vive al fondo del cuerpo con scroll: al abrirla, se
+  // desplaza lo justo para que el historial quede a la vista.
+  useEffect(() => {
+    if (trazaAbierta) trazaRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [trazaAbierta]);
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -108,23 +123,27 @@ export default function InterconsultaModal({ solicitud, onClose, onAccion }) {
         />
 
         <div className="im-body">
-          <div className="im-identity">
-            <div>
-              <div className="im-name">{s.paciente}</div>
-              <div className="im-identity-sub">Identificación: {s.documento}</div>
+          {/* Un solo bloque: quién es el paciente y el estado arriba, los datos
+              de la solicitud debajo (2 filas de 4 columnas). */}
+          <section className="im-resumen" aria-label="Resumen de la solicitud">
+            <div className="im-identity">
+              <div className="im-identity-main">
+                <span className="im-name">{s.paciente}</span>
+                <span className="im-identity-sub">Identificación: {s.documento}</span>
+              </div>
+              <Badge tone={ESTADO_TONE[s.estado] ?? 'neutral'} dot>{ESTADO_LABEL[s.estado] ?? s.estado}</Badge>
             </div>
-            <Badge tone={ESTADO_TONE[s.estado] ?? 'neutral'} dot>{ESTADO_LABEL[s.estado] ?? s.estado}</Badge>
-          </div>
 
-          <div className="im-datos">
-            <Dato label="Servicio">{s.servicio}</Dato>
-            <Dato label="Especialidad">{s.especialidad}</Dato>
-            <Dato label="Solicitante">{s.solicitante}</Dato>
-            <Dato label="Interconsultante">{s.interconsultante}</Dato>
-            <Dato label="Fecha solicitud">{formatearFecha(s.fecha)}</Dato>
-            <Dato label="HC HIC">{s.hc}</Dato>
-            <Dato label="No. prestación">{s.prestacion}</Dato>
-          </div>
+            <dl className="im-datos">
+              <Dato label="Servicio" ancho>{s.servicio}</Dato>
+              <Dato label="Especialidad">{s.especialidad}</Dato>
+              <Dato label="Solicitante">{s.solicitante}</Dato>
+              <Dato label="Interconsultante">{s.interconsultante}</Dato>
+              <Dato label="Fecha solicitud">{formatearFecha(s.fecha)}</Dato>
+              <Dato label="HC HIC">{s.hc}</Dato>
+              <Dato label="No. prestación">{s.prestacion}</Dato>
+            </dl>
+          </section>
 
           <div className="im-cols">
             <Card titulo="Datos de la Solicitud">
@@ -200,60 +219,80 @@ export default function InterconsultaModal({ solicitud, onClose, onAccion }) {
             </Card>
           </div>
 
-          <Card titulo="Acciones de Soporte Técnico" className="im-soporte">
-            <div className="im-soporte-row">
-              <div className="im-field">
-                <label htmlFor="im-telefono" className="sr-only">Teléfono móvil para reintento SMS</label>
-                <input
-                  id="im-telefono"
-                  type="tel"
-                  inputMode="numeric"
-                  value={telefono}
-                  placeholder="Teléfono móvil para reintento SMS"
-                  aria-invalid={errores.telefono ? 'true' : undefined}
-                  aria-describedby={errores.telefono ? 'im-telefono-error' : undefined}
-                  onChange={(e) => { setTelefono(e.target.value); setError('telefono', null); }}
-                />
-                {errores.telefono && <p id="im-telefono-error" className="im-error" role="alert">{errores.telefono}</p>}
+          {MOSTRAR_SOPORTE_TECNICO && (
+            <Card titulo="Acciones de Soporte Técnico" className="im-soporte">
+              <div className="im-soporte-row">
+                <div className="im-field">
+                  <label htmlFor="im-telefono" className="sr-only">Teléfono móvil para reintento SMS</label>
+                  <input
+                    id="im-telefono"
+                    type="tel"
+                    inputMode="numeric"
+                    value={telefono}
+                    placeholder="Teléfono móvil para reintento SMS"
+                    aria-invalid={errores.telefono ? 'true' : undefined}
+                    aria-describedby={errores.telefono ? 'im-telefono-error' : undefined}
+                    onChange={(e) => { setTelefono(e.target.value); setError('telefono', null); }}
+                  />
+                  {errores.telefono && <p id="im-telefono-error" className="im-error" role="alert">{errores.telefono}</p>}
+                </div>
+                <Button variant="outline" onClick={reintentarSms}>Reintentar SMS</Button>
+                <Button variant="outline" onClick={() => onAccion('regenerar-hc')}>Regenerar HC</Button>
               </div>
-              <Button variant="outline" onClick={reintentarSms}>Reintentar SMS</Button>
-              <Button variant="outline" onClick={() => onAccion('regenerar-hc')}>Regenerar HC</Button>
-            </div>
-            <div className="im-soporte-row">
-              <div className="im-field">
-                <label htmlFor="im-anulacion" className="sr-only">Motivo o nota para anulación</label>
-                <input
-                  id="im-anulacion"
-                  type="text"
-                  value={motivoAnulacion}
-                  placeholder="Motivo o nota para anulación..."
-                  disabled={cerrada}
-                  aria-invalid={errores.motivo ? 'true' : undefined}
-                  aria-describedby={errores.motivo ? 'im-anulacion-error' : undefined}
-                  onChange={(e) => { setMotivoAnulacion(e.target.value); setError('motivo', null); }}
-                />
-                {errores.motivo && <p id="im-anulacion-error" className="im-error" role="alert">{errores.motivo}</p>}
+              <div className="im-soporte-row">
+                <div className="im-field">
+                  <label htmlFor="im-anulacion" className="sr-only">Motivo o nota para anulación</label>
+                  <input
+                    id="im-anulacion"
+                    type="text"
+                    value={motivoAnulacion}
+                    placeholder="Motivo o nota para anulación..."
+                    disabled={cerrada}
+                    aria-invalid={errores.motivo ? 'true' : undefined}
+                    aria-describedby={errores.motivo ? 'im-anulacion-error' : undefined}
+                    onChange={(e) => { setMotivoAnulacion(e.target.value); setError('motivo', null); }}
+                  />
+                  {errores.motivo && <p id="im-anulacion-error" className="im-error" role="alert">{errores.motivo}</p>}
+                </div>
+                <Button variant="danger-outline" disabled={cerrada} onClick={anular}>Anular interconsulta</Button>
               </div>
-              <Button variant="danger-outline" disabled={cerrada} onClick={anular}>Anular interconsulta</Button>
-            </div>
-          </Card>
+            </Card>
+          )}
 
-          <Card titulo="Trazabilidad e Historial" className="im-traza-card">
-            <ol className="im-traza">
-              {s.traza.map((t, i) => (
-                <li key={`${t.estado}-${t.fecha}-${i}`} className="im-traza-item">
-                  <span className="im-traza-dot" aria-hidden="true" />
-                  <div>
-                    <div className="im-traza-head">
-                      <b>{t.estado}</b>
-                      <span>{formatearFecha(t.fecha)} · {t.usuario}</span>
-                    </div>
-                    <div className="im-traza-detalle">{t.detalle}</div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Card>
+          {/* Colapsable (arranca cerrada): el historial es consulta puntual, no
+              parte de responder la interconsulta. */}
+          <section ref={trazaRef} className={`im-card im-traza-card${trazaAbierta ? ' open' : ''}`}>
+            <h4 className="im-card-title im-card-title-toggle">
+              <button
+                type="button"
+                className="im-card-toggle"
+                aria-expanded={trazaAbierta}
+                aria-controls="im-traza-panel"
+                onClick={() => setTrazaAbierta((v) => !v)}
+              >
+                Trazabilidad e Historial
+                <LuChevronDown className="icon im-card-chev" aria-hidden="true" />
+              </button>
+            </h4>
+            {trazaAbierta && (
+              <div id="im-traza-panel" className="im-card-body">
+                <ol className="im-traza">
+                  {s.traza.map((t, i) => (
+                    <li key={`${t.estado}-${t.fecha}-${i}`} className="im-traza-item">
+                      <span className="im-traza-dot" aria-hidden="true" />
+                      <div>
+                        <div className="im-traza-head">
+                          <b>{t.estado}</b>
+                          <span>{formatearFecha(t.fecha)} · {t.usuario}</span>
+                        </div>
+                        <div className="im-traza-detalle">{t.detalle}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </section>
         </div>
 
         <div className="im-footer">
