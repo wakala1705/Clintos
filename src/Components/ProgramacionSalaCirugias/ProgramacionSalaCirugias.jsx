@@ -4,7 +4,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuSearch, LuList } from 'react-icons/lu';
+import { LuHistory } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -95,7 +95,8 @@ export default function ProgramacionSalaCirugias() {
   // Mismo flujo compartido de búsqueda/alta de pacientes que Asignación de
   // citas/Programar cita/Admisiones (.ps-overlay/.ap-overlay, ver
   // NuevaCitaFlow.jsx y AGENTS.md) -- "+ Programar cirugía"/"Nueva urgencia" Y
-  // el ícono "Buscar" del header (acceso a Historial Quirúrgico) arrancan
+  // el botón "Historial de cirugías" del header (acceso a Historial
+  // Quirúrgico; antes un ícono de lupa "Buscar") arrancan
   // acá en vez de cada uno con su propio modal (encargo explícito: antes el
   // ícono de búsqueda abría un BuscarPacienteModal propio con otro look,
   // divergente del buscador que ya usa "Programar cirugía" -- ver
@@ -108,7 +109,7 @@ export default function ProgramacionSalaCirugias() {
   // vez de continuar un formulario de una sola pantalla), NuevaUrgenciaModal
   // para "Nueva urgencia" (flujo corto de una sola pantalla, distinto del
   // wizard -- ver NuevaUrgenciaModal.jsx), o navegar a Historial Quirúrgico
-  // para el ícono "Buscar". Las 3 intenciones se setean explícitamente en
+  // para "Historial de cirugías". Las 3 intenciones se setean explícitamente en
   // cada trigger (nunca se asume el default) para que un clic residual no
   // reabra el flujo equivocado si el usuario ya usó otro botón antes.
   const nuevaCirugiaPatientRef = useRef(null);
@@ -365,25 +366,27 @@ export default function ProgramacionSalaCirugias() {
               <p>Agenda y gestiona la ocupación de las salas de cirugía.</p>
             </div>
             <div className="psc-page-header-actions">
-              <button
-                type="button"
-                className="icon-btn-circle"
-                aria-label="Buscar"
-                onClick={() => {
-                  patientSearchIntentRef.current = 'historial';
-                  window.openPatientSearch();
-                }}
-              >
-                <LuSearch className="icon" />
-              </button>
               <VistaDropdown
                 value={vista}
                 onChange={handleChangeVista}
                 mostrarFinesDeSemana={mostrarFinesDeSemana}
                 onToggleFinesDeSemana={setMostrarFinesDeSemana}
               />
-              <Button variant="secondary-accent" icon={LuList} onClick={() => setModal({ type: 'listado' })}>
-                Listado de cirugías
+              {/* "Historial de cirugías" (antes "Listado de cirugías", encargo
+                  explícito 2026-09-25): hereda el flujo del ícono de lupa que
+                  había acá (buscador de pacientes -> Historial Quirúrgico), y
+                  la lupa se quitó. El modal del Listado de Programaciones
+                  sigue abriéndose desde el aviso de vencidas del panel
+                  lateral (MiniCalendarCirugias). */}
+              <Button
+                variant="secondary-accent"
+                icon={LuHistory}
+                onClick={() => {
+                  patientSearchIntentRef.current = 'historial';
+                  window.openPatientSearch();
+                }}
+              >
+                Historial de cirugías
               </Button>
             </div>
           </div>
