@@ -25,10 +25,13 @@ const COLUMNAS = [
   { key: 'trasladoCirugia', label: 'Traslado a Cirugía', check: true },
   { key: 'noAdmision', label: 'No. Admisión' },
   { key: 'idAfiliado', label: 'Id. Afiliado' },
-  { key: 'pApellido', label: 'P. Apellido' },
-  { key: 'sApellido', label: 'S. Apellido' },
-  { key: 'pNombre', label: 'P. Nombre' },
-  { key: 'sNombre', label: 'S. Nombre' },
+  // Los 4 campos de nombre de la referencia (P./S. Apellido, P./S. Nombre)
+  // agrupados en una sola columna (encargo explícito); los vacíos se omiten.
+  {
+    key: 'paciente',
+    label: 'Paciente',
+    value: (f) => [f.pNombre, f.sNombre, f.pApellido, f.sApellido].filter(Boolean).join(' '),
+  },
 ];
 
 export default function ListadoProgramacionesModal({ onClose }) {
@@ -76,7 +79,7 @@ export default function ListadoProgramacionesModal({ onClose }) {
                         />
                       </td>
                     ) : (
-                      <td key={col.key} className={col.align}>{fila[col.key]}</td>
+                      <td key={col.key} className={col.align}>{col.value ? col.value(fila) : fila[col.key]}</td>
                     )))}
                   </tr>
                 ))}
