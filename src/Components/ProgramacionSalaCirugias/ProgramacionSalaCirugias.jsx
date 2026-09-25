@@ -43,7 +43,7 @@ import {
   rangoSemanaLabel,
   reprogramarCirugia,
   resumenAgenda,
-  solicitarInsumosFarmacia, registrarEntregaInsumos, guardarDevolucion, anularDevolucion,
+  solicitarInsumosFarmacia, cancelarSolicitudInsumos, registrarEntregaInsumos, guardarDevolucion, anularDevolucion,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 export default function ProgramacionSalaCirugias() {
@@ -351,6 +351,10 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(solicitarInsumosFarmacia(cirugia.id));
     showToast('Insumos solicitados a farmacia.');
   }
+  function handleCancelarSolicitud(cirugia) {
+    applyUpdated(cancelarSolicitudInsumos(cirugia.id));
+    showToast('Solicitud de insumos cancelada.');
+  }
   // Siguiente paso del flujo de insumos: farmacia entregó lo solicitado.
   function handleRegistrarEntrega(cirugia) {
     applyUpdated(registrarEntregaInsumos(cirugia.id));
@@ -490,6 +494,7 @@ export default function ProgramacionSalaCirugias() {
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
+        onCancelarSolicitud={handleCancelarSolicitud}
         onRegistrarEntrega={handleRegistrarEntrega}
         onGuardarDevolucion={handleGuardarDevolucion}
         onAnularDevolucion={handleAnularDevolucion}

@@ -1553,6 +1553,12 @@ export function solicitarInsumosFarmacia(id) {
   return avanzarCanasta(id, 'sin-solicitar', 'solicitado');
 }
 
+// "Cancelar solicitud": deshace el pedido mientras farmacia no haya
+// entregado -- los solicitados vuelven a "Sin solicitar".
+export function cancelarSolicitudInsumos(id) {
+  return avanzarCanasta(id, 'solicitado', 'sin-solicitar');
+}
+
 // "Registrar entrega": farmacia entregó lo solicitado al quirófano.
 export function registrarEntregaInsumos(id) {
   return avanzarCanasta(id, 'solicitado', 'entregado');

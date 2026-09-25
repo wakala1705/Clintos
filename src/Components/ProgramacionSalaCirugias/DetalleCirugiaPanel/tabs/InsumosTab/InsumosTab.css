@@ -42,3 +42,8 @@
 }
 .ist-resumen{font-size:var(--fs-sm);color:var(--ink-500);}
 .ist-resumen strong{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ist-acciones{display:flex;align-items:center;gap:8px;}
+/* "Cancelar solicitud": ícono rojo (acción que deshace). Selector doble para
+   ganarle a `.secondaryAccent .icon` de Button.module.css, que lo pinta en
+   --primary. */
+.ist-acciones .ist-cancelar-btn svg{color:var(--red);}

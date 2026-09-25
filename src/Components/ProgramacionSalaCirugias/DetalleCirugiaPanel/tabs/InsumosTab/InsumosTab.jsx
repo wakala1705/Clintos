@@ -1,6 +1,8 @@
 'use client';
 
-import { LuPackageCheck, LuPackageMinus, LuPackagePlus } from 'react-icons/lu';
+import {
+  LuPackageCheck, LuPackageMinus, LuPackagePlus, LuPackageX,
+} from 'react-icons/lu';
 import './InsumosTab.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -33,13 +35,14 @@ const HEAD_ROW = (
 
 // El pie muestra el avance y UNA acción según el paso en que va la canasta:
 // 1. quedan insumos sin solicitar -> "Pedir insumos a farmacia"
-// 2. quedan solicitados sin entregar -> "Registrar entrega"
+// 2. quedan solicitados sin entregar -> "Registrar entrega" (+ "Cancelar
+//    solicitud", que los devuelve a sin solicitar)
 // 3. todo entregado -> "Devolver insumos" (abre Devoluciones en Cirugías)
 // Pedir/Registrar se deshabilitan con la cirugía cerrada (`puedeAccionar`);
 // Devolver no: lo no usado se devuelve también después de realizada o
 // cancelada la cirugía.
 export default function InsumosTab({
-  cirugia, puedeAccionar, onPedirInsumos, onRegistrarEntrega, onDevolverInsumos,
+  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onRegistrarEntrega, onDevolverInsumos,
 }) {
   const { canasta } = cirugia;
   const total = canasta.items.length;
@@ -59,10 +62,23 @@ export default function InsumosTab({
     );
   } else if (porEntregar > 0) {
     resumen = <><strong>{entregados}</strong> de {total} entregados por farmacia</>;
+    // Mientras farmacia no entregue, la solicitud se puede cancelar
+    // (secundaria, ícono rojo: mismo criterio que Cancelar cirugía).
     accion = (
-      <Button icon={LuPackageCheck} disabled={!puedeAccionar} onClick={() => onRegistrarEntrega(cirugia)}>
-        Registrar entrega
-      </Button>
+      <div className="ist-acciones">
+        <Button
+          variant="secondary-accent"
+          icon={LuPackageX}
+          className="ist-cancelar-btn"
+          disabled={!puedeAccionar}
+          onClick={() => onCancelarSolicitud(cirugia)}
+        >
+          Cancelar solicitud
+        </Button>
+        <Button icon={LuPackageCheck} disabled={!puedeAccionar} onClick={() => onRegistrarEntrega(cirugia)}>
+          Registrar entrega
+        </Button>
+      </div>
     );
   } else {
     const devueltos = canasta.items.filter((i) => cantidadDevuelta(cirugia, i.nombre) > 0).length;
