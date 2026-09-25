@@ -23,6 +23,7 @@ import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaM
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
 import RevisionPendienteBanner from './RevisionPendienteBanner/RevisionPendienteBanner';
+import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/ListadoProgramacionesModal';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -367,7 +368,9 @@ export default function ProgramacionSalaCirugias() {
                 mostrarFinesDeSemana={mostrarFinesDeSemana}
                 onToggleFinesDeSemana={setMostrarFinesDeSemana}
               />
-              <Button variant="secondary-accent" icon={LuList}>Listado de cirugías</Button>
+              <Button variant="secondary-accent" icon={LuList} onClick={() => setModal({ type: 'listado' })}>
+                Listado de cirugías
+              </Button>
             </div>
           </div>
 
@@ -495,6 +498,10 @@ export default function ProgramacionSalaCirugias() {
       {modal?.type === 'cancelar' && (
         <CancelarCirugiaModal cirugia={modal?.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
       )}
+      {/* "Listado de cirugías": réplica visual de la ventana legada
+          "Listado de Programaciones - Revisión", sin lógica (ver
+          ListadoProgramacionesModal.jsx). */}
+      {modal?.type === 'listado' && <ListadoProgramacionesModal onClose={() => setModal(null)} />}
 
       <div className={`psc-toast${toast ? ' show' : ''}`}>
         <span className="psc-toast-dot" />

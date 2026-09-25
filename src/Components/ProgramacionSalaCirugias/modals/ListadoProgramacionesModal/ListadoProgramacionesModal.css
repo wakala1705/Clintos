@@ -1,0 +1,43 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer viven en
+   shared/shared.css. Modal "ventana completa" (réplica de la pantalla
+   legada): ocupa casi todo el viewport para que las 13 columnas entren. */
+.lpm-modal-card{width:min(1600px, 100%);height:calc(100vh - 48px);}
+.lpm-body{flex:1;min-height:0;overflow:hidden;gap:12px;}
+
+.lpm-intro{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+.lpm-intro p{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
+
+.lpm-table-wrap{
+  flex:1;min-height:0;overflow:auto;
+  border:1px solid var(--border);border-radius:var(--radius);
+}
+.lpm-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
+/* th y td comparten padding horizontal (10px) -- AGENTS.md "Encabezados de tabla". */
+.lpm-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:8px 10px;white-space:nowrap;vertical-align:bottom;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.lpm-table td{
+  padding:6px 10px;white-space:nowrap;
+  border-bottom:1px solid var(--border);color:var(--ink-900);
+}
+.lpm-table tbody tr:nth-child(even) td{background:var(--bg);}
+.lpm-table tbody tr:hover td{background:var(--primary-50);}
+
+.lpm-table .lpm-center{text-align:center;}
+.lpm-table .lpm-right{text-align:right;}
+.lpm-table .lpm-check{text-align:center;width:1%;}
+
+.lpm-th{display:inline-flex;align-items:center;gap:6px;}
+.lpm-right .lpm-th{flex-direction:row-reverse;}
+.lpm-check .lpm-th{flex-direction:column;gap:2px;white-space:normal;text-align:center;}
+.lpm-check .lpm-th-label{min-width:76px;}
+.lpm-th-tools{display:inline-flex;align-items:center;gap:2px;}
+.lpm-th-tools .icon{width:13px;height:13px;color:var(--ink-400);}
+
+.lpm-table td input[type="checkbox"]{
+  width:15px;height:15px;margin:0;vertical-align:middle;
+  accent-color:var(--primary);pointer-events:none;
+}
