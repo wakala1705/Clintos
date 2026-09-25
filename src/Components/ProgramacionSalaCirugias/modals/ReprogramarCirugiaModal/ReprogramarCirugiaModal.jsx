@@ -39,8 +39,15 @@ import { LuCalendarClock, LuSearch } from 'react-icons/lu';
 // (encargo explícito, ver capturas de "Causales de anulación (CAU)") -- ya
 // no un FormSelect con un recorte inventado de motivos: la referencia trae
 // un catálogo cerrado real con id+descripción que hay que calcar.
-export default function ReprogramarCirugiaModal({ cirugia, onClose, onSubmit }) {
-  const [fecha, setFecha] = useState(cirugia.fecha);
+export default function ReprogramarCirugiaModal({
+  cirugia, onClose, onSubmit, fechaMinima,
+}) {
+  // `fechaMinima` (opcional, lo pasa la revisión de vencidas): la fecha
+  // actual de una programación vencida ya es pasada, así que arranca vacía
+  // en vez de precargada con un valor que no se puede enviar.
+  const [fecha, setFecha] = useState(
+    fechaMinima && cirugia.fecha < fechaMinima ? '' : cirugia.fecha,
+  );
   const [horaInicio, setHoraInicio] = useState(cirugia.horaInicio);
   const [horaFin, setHoraFin] = useState(cirugia.horaFin);
   const [salaId, setSalaId] = useState(cirugia.salaId);
@@ -57,8 +64,9 @@ export default function ReprogramarCirugiaModal({ cirugia, onClose, onSubmit }) 
   const salaSeleccionada = SALAS.find((s) => s.value === salaId);
   const causalSeleccionada = CAUSALES_REPROGRAMACION_CIRUGIA.find((c) => c.idCausal === causal);
 
+  const fechaInvalida = Boolean(fechaMinima) && fecha !== '' && fecha < fechaMinima;
   const puedeEnviar = causal !== '' && salaId !== '' && cirujano.trim() !== ''
-    && fecha !== '' && horaInicio !== '' && horaFin !== '';
+    && fecha !== '' && horaInicio !== '' && horaFin !== '' && !fechaInvalida;
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -163,7 +171,19 @@ export default function ReprogramarCirugiaModal({ cirugia, onClose, onSubmit }) 
               </div>
               <div className="form-field">
                 <label htmlFor="rcm-fecha">Nueva fecha</label>
-                <input id="rcm-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+                <input
+                  id="rcm-fecha"
+                  type="date"
+                  value={fecha}
+                  min={fechaMinima}
+                  onChange={(e) => setFecha(e.target.value)}
+                  aria-invalid={fechaInvalida || undefined}
+                  aria-describedby={fechaInvalida ? 'rcm-fecha-error' : undefined}
+                  required
+                />
+                {fechaInvalida && (
+                  <span id="rcm-fecha-error" className="rcm-field-error">La nueva fecha debe ser posterior a hoy.</span>
+                )}
               </div>
               <div className="form-field">
                 <label htmlFor="rcm-hora-inicio">Nueva hora inicio</label>

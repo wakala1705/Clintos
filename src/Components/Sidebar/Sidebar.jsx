@@ -59,7 +59,7 @@ export default function Sidebar() {
   const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
-  const isProgramacionSalaCirugias = pathname === '/programacion-sala-cirugias';
+  const isProgramacionSalaCirugias = pathname.startsWith('/programacion-sala-cirugias');
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp;
   const isFacturas = pathname === '/facturas';

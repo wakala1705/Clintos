@@ -20,3 +20,5 @@
   .rcm-info-box{grid-template-columns:1fr 1fr;}
   .rcm-grid{grid-template-columns:1fr;}
 }
+
+.rcm-field-error{font-size:var(--fs-sm);color:var(--red);}

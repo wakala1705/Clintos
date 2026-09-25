@@ -1,0 +1,40 @@
+/* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
+   ../ProgramacionSalaCirugias.css; .psc-toast/.psc-agenda-nav-btn de
+   ../shared/shared.css. Acá solo lo propio de la página de revisión. */
+.rv-breadcrumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
+.rv-breadcrumb a{color:var(--primary);text-decoration:none;font-weight:var(--fw-medium);}
+.rv-breadcrumb a:hover{text-decoration:underline;}
+.rv-breadcrumb a:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.rv-breadcrumb .icon{width:14px;height:14px;}
+.rv-breadcrumb [aria-current]{color:var(--ink-700);}
+
+.rv-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.rv-list-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+
+.rv-estado{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:48px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);
+}
+.rv-estado-filtros{flex:1;}
+.rv-estado-icon{width:36px;height:36px;color:var(--ink-400);}
+.rv-estado-icon-ok{color:var(--green);}
+.rv-estado-title{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.rv-estado-text{margin:0 0 8px;}
+
+.rv-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-shrink:0;
+  padding:8px 20px;border-top:1px solid var(--border);
+}
+.rv-paginacion-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.rv-paginacion-btns{display:flex;gap:4px;}
+.rv-paginacion-btns .psc-agenda-nav-btn:disabled{opacity:.4;cursor:default;background:none;}
+
+/* .psc-toast lleva pointer-events:none (solo informa); con "Deshacer" hay
+   que poder clickearlo. */
+.rv-toast.show{pointer-events:auto;}
+.rv-toast-undo{
+  margin-left:8px;padding:2px 8px;border:none;border-radius:6px;background:none;cursor:pointer;
+  font:inherit;font-weight:var(--fw-semibold);color:var(--primary-100);text-decoration:underline;
+}
+.rv-toast-undo:hover{background:rgba(255,255,255,.12);}
+.rv-toast-undo:focus-visible{outline:2px solid var(--primary-100);outline-offset:1px;}
