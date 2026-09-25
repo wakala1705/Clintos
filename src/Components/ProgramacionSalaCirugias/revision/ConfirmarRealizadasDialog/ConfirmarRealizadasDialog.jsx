@@ -30,7 +30,9 @@ export default function ConfirmarRealizadasDialog({
       >
         <div className="rv-confirm-icon"><LuCheckCheck className="icon" aria-hidden="true" /></div>
         <h3 id="rv-confirm-title" className="rv-confirm-title">
-          ¿Marcar {cantidad} programaciones como realizadas?
+          {cantidad === 1
+            ? '¿Marcar 1 programación como realizada?'
+            : `¿Marcar ${cantidad} programaciones como realizadas?`}
         </h3>
         <p id="rv-confirm-desc" className="rv-confirm-text">
           Esta acción queda registrada en la trazabilidad de cada una.

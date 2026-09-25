@@ -38,3 +38,8 @@
 }
 .rv-toast-undo:hover{background:rgba(255,255,255,.12);}
 .rv-toast-undo:focus-visible{outline:2px solid var(--primary-100);outline-offset:1px;}
+
+/* --primary-100 es rgba(0,101,205,.30) en dark: sobre el fondo oscuro de
+   --surface-modal del toast queda ~1.5:1 de contraste. --primary sí contrasta. */
+html[data-theme="dark"] .rv-toast-undo{color:var(--primary);}
+html[data-theme="dark"] .rv-toast-undo:focus-visible{outline-color:var(--primary);}

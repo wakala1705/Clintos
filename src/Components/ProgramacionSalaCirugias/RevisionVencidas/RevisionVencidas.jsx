@@ -114,13 +114,16 @@ export default function RevisionVencidas() {
     setPagina(n);
     setSeleccion(new Set());
   }
-  // asc -> desc -> orden por defecto.
+  // asc -> desc -> orden por defecto. La selección se limpia igual que al
+  // cambiar filtro/página: ordenar puede mover filas seleccionadas a otra
+  // página.
   function handleOrdenar(columna) {
     setOrden((o) => {
       if (o?.columna !== columna) return { columna, direccion: 'asc' };
       if (o.direccion === 'asc') return { columna, direccion: 'desc' };
       return null;
     });
+    setSeleccion(new Set());
   }
   function toggleEnSet(setter, id) {
     setter((prev) => {
@@ -144,6 +147,11 @@ export default function RevisionVencidas() {
     };
     setSeleccion(sinIds);
     setExpandidas(sinIds);
+    // Filas removidas pueden bajar totalPaginas; sin este clamp `pagina`
+    // queda por encima de la `paginaActual` ya clamped que se veía, y un
+    // Deshacer posterior (que no toca `pagina`) hace saltar la vista de
+    // vuelta a esa página vieja en vez de quedarse donde estaba.
+    setPagina((p) => Math.min(p, paginaActual));
   }
 
   function resolverRealizadas(cirugias) {

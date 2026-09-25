@@ -38,7 +38,7 @@ export default function MarcarIncumplidaModal({ cirugias, onClose, onSubmit }) {
   }
 
   return (
-    <div className="modal-overlay open">
+    <div className="modal-overlay open" onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}>
       <div ref={cardRef} className="modal-card mim-modal-card" role="dialog" aria-modal="true" aria-labelledby="mim-title">
         <form onSubmit={handleSubmit}>
           <ModalHeader

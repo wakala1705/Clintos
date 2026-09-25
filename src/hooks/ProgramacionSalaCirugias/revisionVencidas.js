@@ -60,7 +60,8 @@ function minutos(hora) {
 }
 
 // Módulo 1440: una cirugía que cruza la medianoche (calcularHoraFin en el mock
-// no rueda de día) igual da una duración positiva.
+// rueda de día con % 1440, así que horaFin puede ser menor que horaInicio)
+// igual da una duración positiva.
 export function duracionMin(cirugia) {
   return (minutos(cirugia.horaFin) - minutos(cirugia.horaInicio) + 1440) % 1440;
 }
