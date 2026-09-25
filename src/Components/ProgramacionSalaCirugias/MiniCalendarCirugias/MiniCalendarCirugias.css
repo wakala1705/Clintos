@@ -101,6 +101,10 @@
 .mcc-resumen-urgencia .icon{width:15px;height:15px;flex-shrink:0;}
 .mcc-resumen-urgencia span{flex:1;min-width:0;}
 .mcc-resumen-urgencia-chevron{width:14px;height:14px;color:var(--amber-fg);opacity:.7;}
+/* Variante link del aviso (programaciones vencidas -> revisión). */
+.mcc-resumen-vencidas{text-decoration:none;cursor:pointer;}
+.mcc-resumen-vencidas:hover .mcc-resumen-urgencia-chevron{opacity:1;}
+.mcc-resumen-vencidas:focus-visible{outline:2px solid var(--amber-fg);outline-offset:1px;}
 
 /* Leyenda de estados, trasladada acá desde el pie de AgendaSemana/AgendaMes
    (.psc-agenda-legend en shared.css, ver MiniCalendarCirugias.jsx). El

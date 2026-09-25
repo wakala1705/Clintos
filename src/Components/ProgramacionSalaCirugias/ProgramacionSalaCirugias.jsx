@@ -22,7 +22,6 @@ import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/Reprograma
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
-import RevisionPendienteBanner from './RevisionPendienteBanner/RevisionPendienteBanner';
 import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/ListadoProgramacionesModal';
 import {
   SALAS,
@@ -37,6 +36,7 @@ import {
   diasDeSemana,
   fechaISO,
   fetchAgendaRango,
+  fetchVencidas,
   grillaMes,
   lunesDeSemana,
   mesLabel,
@@ -210,6 +210,20 @@ export default function ProgramacionSalaCirugias() {
     return () => { cancelled = true; };
   }, [sedeId, salaId, estado, rangoInicio, rangoFin]);
 
+  // Programaciones vencidas sin cerrar (ver RevisionVencidas.jsx): se
+  // muestran en el "Resumen de agenda" del panel lateral, con el mismo
+  // tratamiento que el aviso de urgencias (encargo explícito: reemplaza al
+  // banner que antes vivía bajo el encabezado de la página). Se calcula al
+  // montar -- volver desde la revisión remonta la página y lo refresca.
+  const [vencidas, setVencidas] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    fetchVencidas({ hoy: fechaISO(new Date()) }).then((items) => {
+      if (!cancelled) setVencidas(items.length);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
   // Decide si una cirugía (recién creada/mutada) pertenece a la vista
   // actualmente visible -- evita un re-fetch completo después de cada
   // mutación: la respuesta de crearCirugia/actualizarCirugia/etc. ya trae
@@ -374,8 +388,6 @@ export default function ProgramacionSalaCirugias() {
             </div>
           </div>
 
-          <RevisionPendienteBanner />
-
           <div className="psc-workspace">
             <div className="psc-side-col">
               <MiniCalendarCirugias
@@ -384,6 +396,7 @@ export default function ProgramacionSalaCirugias() {
                 onNuevaCirugia={handleAbrirProgramarCirugia}
                 onNuevaUrgencia={handleAbrirNuevaUrgencia}
                 resumen={resumen}
+                vencidas={vencidas}
               />
             </div>
 
