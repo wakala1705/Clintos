@@ -1,0 +1,4 @@
+/* .card/.filter-bar/.search-field/.filter-spacer/.chip-group.segmented:
+   definidas en ../shared/shared.css — acá solo el layout propio de esta
+   card. */
+.tg-toolbar .search-field{width:380px;}

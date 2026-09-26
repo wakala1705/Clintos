@@ -91,6 +91,10 @@ function EstadoFeIcon({ f }) {
 // mismo que ya usa el ícono de ojo en Acciones), sin duplicar lógica en
 // ninguno de los dos casos. El clic simple sigue solo seleccionando la fila
 // (`onSelect`), sin importar el estado.
+//
+// `onVerDetalle` es opcional: en el modo "Dividida" (ver FacturaVistaClasica)
+// el detalle ya se ve en el panel inferior, así que no se pasa -- se oculta
+// el ícono de ojo y el doble clic sobre una factura "Facturada" no hace nada.
 export default function FacturasGridClasica({
   facturas, selectedId, onSelect, onVerDetalle, onEditar, onImprimir, onClearFilters,
 }) {
@@ -120,7 +124,7 @@ export default function FacturasGridClasica({
               key={f.id}
               className={f.id === selectedId ? 'selected' : ''}
               onClick={() => onSelect(f.id)}
-              onDoubleClick={() => (f.estadoFacturacion === 'pendiente' ? onEditar(f) : onVerDetalle(f))}
+              onDoubleClick={() => (f.estadoFacturacion === 'pendiente' ? onEditar(f) : onVerDetalle?.(f))}
               tabIndex={0}
               aria-selected={f.id === selectedId}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(f.id); } }}
@@ -140,15 +144,17 @@ export default function FacturasGridClasica({
               <td><EstadoFeIcon f={f} /></td>
               <td className="fvc-actions-cell">
                 <div className="fvc-row-actions">
-                  <button
-                    type="button"
-                    className="fvc-row-action-btn"
-                    onClick={(e) => { e.stopPropagation(); onVerDetalle(f); }}
-                    aria-label={`Ver detalle de la factura ${f.numero}`}
-                    title="Ver detalle"
-                  >
-                    <LuEye className="icon" />
-                  </button>
+                  {onVerDetalle && (
+                    <button
+                      type="button"
+                      className="fvc-row-action-btn"
+                      onClick={(e) => { e.stopPropagation(); onVerDetalle(f); }}
+                      aria-label={`Ver detalle de la factura ${f.numero}`}
+                      title="Ver detalle"
+                    >
+                      <LuEye className="icon" />
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="fvc-row-action-btn"

@@ -15,11 +15,11 @@ const SI_NO_OPTIONS = [
   { value: 'si', label: 'Sí' },
 ];
 
-export default function InformacionGeneralStep() {
-  const [motivoConsulta, setMotivoConsulta] = useState('');
-  const [enfermedadActual, setEnfermedadActual] = useState('');
-  const [revisionPorSistema, setRevisionPorSistema] = useState('');
-  const [reingreso, setReingreso] = useState('');
+export default function InformacionGeneralStep({ inicial }) {
+  const [motivoConsulta, setMotivoConsulta] = useState(inicial?.motivoConsulta ?? '');
+  const [enfermedadActual, setEnfermedadActual] = useState(inicial?.enfermedadActual ?? '');
+  const [revisionPorSistema, setRevisionPorSistema] = useState(inicial?.revisionPorSistema ?? '');
+  const [reingreso, setReingreso] = useState(inicial?.reingreso ?? '');
 
   return (
     <div>

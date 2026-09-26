@@ -32,14 +32,14 @@ function estadoInicialBooleanos() {
   return Object.fromEntries(CAMPOS_BOOLEANOS.map((c) => [c.key, { valor: '', observaciones: '' }]));
 }
 
-export default function AntecedentesStep() {
-  const [booleanos, setBooleanos] = useState(estadoInicialBooleanos);
-  const [ginecoObstetricos, setGinecoObstetricos] = useState('');
-  const [menarquia, setMenarquia] = useState('');
-  const [fum, setFum] = useState('');
-  const [ciclos, setCiclos] = useState('');
-  const [urologicos, setUrologicos] = useState('');
-  const [antecedentesSocialEconomico, setAntecedentesSocialEconomico] = useState('');
+export default function AntecedentesStep({ inicial }) {
+  const [booleanos, setBooleanos] = useState(() => ({ ...estadoInicialBooleanos(), ...inicial?.booleanos }));
+  const [ginecoObstetricos, setGinecoObstetricos] = useState(inicial?.ginecoObstetricos ?? '');
+  const [menarquia, setMenarquia] = useState(inicial?.menarquia ?? '');
+  const [fum, setFum] = useState(inicial?.fum ?? '');
+  const [ciclos, setCiclos] = useState(inicial?.ciclos ?? '');
+  const [urologicos, setUrologicos] = useState(inicial?.urologicos ?? '');
+  const [antecedentesSocialEconomico, setAntecedentesSocialEconomico] = useState(inicial?.socialEconomico ?? '');
 
   function updateBooleano(key, campo, value) {
     setBooleanos((prev) => ({ ...prev, [key]: { ...prev[key], [campo]: value } }));

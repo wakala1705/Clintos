@@ -1,0 +1,19 @@
+/* flex:1 0 auto -- dentro de la columna derecha (flex column) del modal y del
+   panel dividido, la tarjeta llena el alto disponible para que su borde
+   inferior quede alineado con el de la tabla de ítems; si el contenido es
+   más alto, crece y scrollea la columna. */
+.fir-card{
+  flex:1 0 auto;border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;background:var(--surface);
+}
+.fir-eyebrow{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary);text-transform:uppercase;letter-spacing:.03em;}
+.fir-title{display:flex;align-items:baseline;gap:8px;margin-top:2px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fir-ref{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}
+.fir-desc{margin:2px 0 10px;font-size:var(--fs-sm);color:var(--ink-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fir-subtitle{margin:14px 0 4px;padding-top:12px;border-top:1px solid var(--border);font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.fir-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:4px 0;}
+.fir-row span:first-child{color:var(--ink-500);}
+.fir-divider{height:1px;background:var(--border);margin:8px 0;}
+.fir-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fir-total span:last-child{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--primary);}
+.fir-empty{margin-top:6px;font-size:var(--fs-sm);color:var(--ink-500);}

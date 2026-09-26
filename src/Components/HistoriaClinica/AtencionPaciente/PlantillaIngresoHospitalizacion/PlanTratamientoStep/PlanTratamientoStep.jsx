@@ -34,12 +34,12 @@ const SI_NO_OPTIONS = [
   { value: 'si', label: 'Sí' },
 ];
 
-export default function PlanTratamientoStep() {
-  const [analisisClinico, setAnalisisClinico] = useState('');
-  const [opinionPlanTratamiento, setOpinionPlanTratamiento] = useState('');
-  const [perdidaPeso, setPerdidaPeso] = useState('');
-  const [cantidadPeso, setCantidadPeso] = useState('');
-  const [comidoMenos, setComidoMenos] = useState('');
+export default function PlanTratamientoStep({ inicial }) {
+  const [analisisClinico, setAnalisisClinico] = useState(inicial?.analisisClinico ?? '');
+  const [opinionPlanTratamiento, setOpinionPlanTratamiento] = useState(inicial?.opinionPlanTratamiento ?? '');
+  const [perdidaPeso, setPerdidaPeso] = useState(inicial?.perdidaPeso ?? '');
+  const [cantidadPeso, setCantidadPeso] = useState(inicial?.cantidadPeso ?? '');
+  const [comidoMenos, setComidoMenos] = useState(inicial?.comidoMenos ?? '');
 
   return (
     <div>

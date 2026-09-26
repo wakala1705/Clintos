@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import './AdmisionesTable.css';
-import TriageBadge from './TriageBadge/TriageBadge';
+import TriageBadge from '@/Components/TriageBadge/TriageBadge';
 import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import RowMoreMenu from './RowMoreMenu/RowMoreMenu';
 import { ESTADO_LABEL } from '@/hooks/Admisiones/mockAdmisionesData';

@@ -1,0 +1,11 @@
+/* .app/.main/.content/.card (base shell): definidas en ./shared/shared.css —
+   acá solo el layout propio de esta pantalla. */
+
+/* Selector compuesto (.content.tg-content): pisa a .content (misma clase
+   reutilizada por otras features) sin depender del orden de inyección de
+   <style> — mismo criterio que .content.ic-content en Interconsulta.css. */
+.content.tg-content{padding:16px;gap:16px;flex-direction:column;overflow-y:hidden;}
+
+.tg-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-shrink:0;}
+.tg-header h1{margin:0 0 4px;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.tg-header p{margin:0;font-size:var(--fs-base);color:var(--ink-500);}

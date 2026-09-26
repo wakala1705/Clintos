@@ -33,7 +33,7 @@ const RESUMEN_DELAY_MS = 1200;
 // "Resumen generado"/el spinner de abajo quedan sin usarse — ver el fallback
 // de "consulta-externa" (sin `onResumenRegistro`, sin Clintos AI todavía),
 // que sigue mostrando el resultado inline como antes.
-function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegistro) {
+function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegistro, onVerRegistro) {
   const handleResumenClick = onResumenRegistro ? () => onResumenRegistro(registro) : onGenerarResumen;
   return (
     <div className="hct-detalle">
@@ -71,7 +71,15 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegis
           <Button variant="secondary-accent" size="sm" icon={LuPencil}>
             Editar
           </Button>
-          <Button variant="secondary-accent" size="sm" icon={LuEye}>
+          {/* "Ver detalle" abre la plantilla ya diligenciada cuando el
+              registro trae `contenido` (hoy solo el INGHOSP de ejemplo, ver
+              mockIngresoHospitalizacionEjemplo.js). */}
+          <Button
+            variant="secondary-accent"
+            size="sm"
+            icon={LuEye}
+            onClick={registro.contenido && onVerRegistro ? () => onVerRegistro(registro) : undefined}
+          >
             Ver detalle
           </Button>
         </div>
@@ -91,7 +99,7 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegis
 }
 
 export default function HistoriaClinicaTab({
-  grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual, onResumenRegistro,
+  grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual, onResumenRegistro, onVerRegistro,
 }) {
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   // null | 'loading' | 'ready' — se resetea al cambiar de registro
@@ -123,7 +131,7 @@ export default function HistoriaClinicaTab({
       />
 
       <div className="hct-detail">
-        {selectedRegistro ? renderDetalle(selectedRegistro, resumenStatus, () => setResumenStatus('loading'), onResumenRegistro) : (
+        {selectedRegistro ? renderDetalle(selectedRegistro, resumenStatus, () => setResumenStatus('loading'), onResumenRegistro, onVerRegistro) : (
           <AgendaEmptyState
             icon={LuFileText}
             title="Aún no hay historia clínica registrada"

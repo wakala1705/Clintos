@@ -31,12 +31,13 @@ function estadoInicialSistemas() {
   return Object.fromEntries(SISTEMAS.map((s) => [s.key, '']));
 }
 
-export default function ExamenFisicoStep() {
-  const [inspeccionGeneral, setInspeccionGeneral] = useState('');
+export default function ExamenFisicoStep({ inicial }) {
+  const [inspeccionGeneral, setInspeccionGeneral] = useState(inicial?.inspeccionGeneral ?? '');
   const [signosVitales, setSignosVitales] = useState({
     frecuenciaCardiaca: '', frecuenciaRespiratoria: '', tensionArterial: '', temperatura: '', peso: '', talla: '',
+    ...inicial?.signosVitales,
   });
-  const [sistemas, setSistemas] = useState(estadoInicialSistemas);
+  const [sistemas, setSistemas] = useState(() => ({ ...estadoInicialSistemas(), ...inicial?.sistemas }));
 
   function updateSignoVital(campo, value) {
     setSignosVitales((prev) => ({ ...prev, [campo]: value }));

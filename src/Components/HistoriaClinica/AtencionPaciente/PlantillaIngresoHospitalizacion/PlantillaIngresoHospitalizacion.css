@@ -39,6 +39,7 @@
 .pih-aside{
   width:320px;flex-shrink:0;overflow-y:auto;padding:16px;
   background:var(--surface);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;gap:24px;
 }
 
 @media (max-width:1024px){

@@ -1,0 +1,30 @@
+/* .sr-only: ../../../shared/shared.css. */
+.tg-ci-criterios{
+  margin:0;padding:16px;min-width:0;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+}
+/* float + width:100% saca al <legend> del borde del fieldset y lo deja como
+   un título normal dentro del bloque. */
+.tg-ci-title{
+  float:left;width:100%;padding:0;margin:0 0 12px;text-align:center;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  text-transform:uppercase;letter-spacing:.02em;
+}
+.tg-ci-grid{clear:both;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+
+.tg-ci-opcion{
+  display:flex;align-items:center;justify-content:center;min-height:88px;padding:12px 16px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);text-align:center;
+  cursor:pointer;transition:background .15s, border-color .15s, color .15s;
+}
+.tg-ci-opcion.ninguno{grid-column:1 / -1;min-height:80px;}
+.tg-ci-opcion:hover{border-color:var(--ink-400);background:var(--gray-bg);}
+.tg-ci-opcion.selected{
+  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--interactive-selected-text);
+}
+.tg-ci-opcion:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:2px;}
+
+@media (max-width:1024px){
+  .tg-ci-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}

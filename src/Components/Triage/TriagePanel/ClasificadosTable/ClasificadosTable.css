@@ -1,0 +1,4 @@
+/* .data-table (base)/.cell-*: ../../shared/shared.css — acá solo lo
+   exclusivo de la pestaña "Clasificados". */
+.tg-nivel{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+.tg-nivel-label{font-weight:var(--fw-medium);color:var(--ink-900);}

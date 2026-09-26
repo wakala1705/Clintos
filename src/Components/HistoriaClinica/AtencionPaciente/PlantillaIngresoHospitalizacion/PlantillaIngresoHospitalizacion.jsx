@@ -11,6 +11,7 @@ import AntecedentesStep from './AntecedentesStep/AntecedentesStep';
 import ExamenFisicoStep from './ExamenFisicoStep/ExamenFisicoStep';
 import PlanTratamientoStep from './PlanTratamientoStep/PlanTratamientoStep';
 import DiagnosticosPanel from './DiagnosticosPanel/DiagnosticosPanel';
+import SignosVitalesPanel from './SignosVitalesPanel/SignosVitalesPanel';
 import ViewSettingsMenu from './ViewSettingsMenu/ViewSettingsMenu';
 import { LuArrowLeft, LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 
@@ -62,7 +63,11 @@ const SECCIONES = [
 
 const SCROLL_OFFSET = 32; // px desde el techo del panel que cuenta como "sección activa"
 
-export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, onToggleMaximizar }) {
+export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, onToggleMaximizar, registro }) {
+  // `registro` (opcional): registro INGHOSP ya guardado cuyo `contenido` se
+  // abre desde "Ver detalle" (ver AtencionPaciente.jsx) -- precarga cada
+  // sección con `inicial` en vez de arrancar vacía.
+  const contenido = registro?.contenido;
   const [activeSeccion, setActiveSeccion] = useState(SECCIONES[0].id);
   const [creadaEn] = useState(() => new Date());
   const [columnLayout, setColumnLayout] = useState('flexible');
@@ -117,8 +122,12 @@ export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, o
         <div className="pih-titlebar-info">
           <span className="pih-titlebar-label">PLANTILLA:</span>
           <span className="pih-titlebar-title">{PLANTILLA_NOMBRE}</span>
-          <span className="pih-titlebar-meta">{formatFechaHoraCreacion(creadaEn)}</span>
-          <Badge tone="success">Nuevo registro</Badge>
+          <span className="pih-titlebar-meta">{registro ? `${registro.fecha} · ${registro.hora}` : formatFechaHoraCreacion(creadaEn)}</span>
+          {registro ? (
+            <Badge tone="neutral">Registro N° {registro.numero}</Badge>
+          ) : (
+            <Badge tone="success">Nuevo registro</Badge>
+          )}
         </div>
 
         <div className="pih-titlebar-actions">
@@ -152,16 +161,16 @@ export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, o
           onSubmit={(e) => e.preventDefault()}
         >
           <div id="pih-informacion-general" ref={(el) => { sectionRefs.current[0] = el; }} className="pih-section-block">
-            <InformacionGeneralStep />
+            <InformacionGeneralStep inicial={contenido?.informacionGeneral} />
           </div>
           <div id="pih-antecedentes" ref={(el) => { sectionRefs.current[1] = el; }} className="pih-section-block">
-            <AntecedentesStep />
+            <AntecedentesStep inicial={contenido?.antecedentes} />
           </div>
           <div id="pih-examen-fisico" ref={(el) => { sectionRefs.current[2] = el; }} className="pih-section-block">
-            <ExamenFisicoStep />
+            <ExamenFisicoStep inicial={contenido?.examenFisico} />
           </div>
           <div id="pih-plan-tratamiento" ref={(el) => { sectionRefs.current[3] = el; }} className="pih-section-block">
-            <PlanTratamientoStep />
+            <PlanTratamientoStep inicial={contenido?.planTratamiento} />
           </div>
 
           <div className="pih-footer">
@@ -171,7 +180,8 @@ export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, o
         </form>
 
         <aside className="pih-aside">
-          <DiagnosticosPanel />
+          <SignosVitalesPanel inicial={contenido?.signosVitales} />
+          <DiagnosticosPanel inicial={contenido?.diagnosticos} />
         </aside>
       </div>
     </>

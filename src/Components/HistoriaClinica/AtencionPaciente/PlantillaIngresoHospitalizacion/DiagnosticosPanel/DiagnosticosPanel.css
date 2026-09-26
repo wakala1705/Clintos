@@ -1,20 +1,7 @@
-/* .form-field/.pih-fields/.pih-section-title: definidas en
-   ../shared/shared.css. Acá solo el layout propio del título con ícono y de
-   los selectpicker CIE-10/CIE-11 (ambos abren CatalogoDiagnosticosModal, ver
+/* .form-field/.pih-fields/.pih-section-title/.pih-aside-title(-row/-icon)/
+   .pih-aside-toggle/.pih-aside-chev: definidas en ../shared/shared.css. Acá solo los
+   selectpicker CIE-10/CIE-11 (ambos abren CatalogoDiagnosticosModal, ver
    DiagnosticosPanel.jsx). */
-
-/* Mismo criterio que .pf-card-header-icon/.pf-block-icon de PlantillaCrecimt2
-   (círculo de 32px con el ícono en tono primary) -- no reutilizado directo:
-   esas clases están scopeadas a su propio feature (ver AGENTS.md "Component
-   organization"). */
-.dxp-title-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-.dxp-title-icon{
-  width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
-  background:var(--primary-50);color:var(--primary);
-  display:flex;align-items:center;justify-content:center;
-}
-.dxp-title-icon .icon{width:17px;height:17px;}
-.dxp-title{margin:0;}
 
 /* Selectpicker CIE-10/CIE-11: texto plano + ícono de lupa, no una caja de
    input (mismo criterio que .meta-item.picker-btn del Topbar -- ver

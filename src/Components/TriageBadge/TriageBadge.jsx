@@ -1,5 +1,5 @@
 import './TriageBadge.css';
-import { TRIAGE_LABEL } from '@/hooks/Admisiones/mockAdmisionesData';
+import { TRIAGE_LABEL } from '@/hooks/TriageBadge/triageLevels';
 
 // Círculo relleno (no tinte + texto como el resto de badges del proyecto):
 // es el mismo lenguaje visual de un triage físico (pulsera/ficha de color),

@@ -1,0 +1,11 @@
+/* .data-table (base)/.cell-*: ../../shared/shared.css — acá solo lo
+   exclusivo de la pestaña "En espera". */
+.tg-banderas{display:inline-flex;flex-wrap:wrap;gap:4px;}
+/* Observación: texto libre, se corta a 2 líneas para no inflar la fila. El
+   clamp va en un <span> interno, nunca en el <td>: `display:-webkit-box`
+   sobre la celda le quita el display:table-cell y la desalinea de la fila
+   (se veía corrida hacia arriba y con el borde inferior partido). */
+.tg-obs{
+  max-width:280px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}

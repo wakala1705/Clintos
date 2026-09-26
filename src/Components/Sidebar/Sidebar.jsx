@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useActiveModule } from '@/hooks/Session/session';
 import './Sidebar.css';
 import {
+  LuActivity,
   LuBed,
   LuBoxes,
   LuCalendarClock,
@@ -63,7 +64,8 @@ export default function Sidebar() {
   const isProgramacionSalaCirugias = pathname.startsWith('/programacion-sala-cirugias');
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp || isInterconsulta;
+  const isTriage = pathname.startsWith('/hospitalizacion/triage');
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp || isInterconsulta || isTriage;
   const isFacturas = pathname === '/facturas';
   const isFinanzas = isFacturas;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
@@ -109,6 +111,7 @@ export default function Sidebar() {
         <div className="nav-body">
           <Link href="/hospitalizacion/historia-clinica" className={`nav-subitem${isHistoriaClinicaHosp ? ' active' : ''}`}><LuFileText className="icon" />Historia Clínica</Link>
           <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
+          <Link href="/hospitalizacion/triage" className={`nav-subitem${isTriage ? ' active' : ''}`}><LuActivity className="icon" />Triage</Link>
           <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
           <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
           <Link href="/hospitalizacion/interconsulta" className={`nav-subitem${isInterconsulta ? ' active' : ''}`}><LuMessagesSquare className="icon" />Interconsulta</Link>

@@ -1,0 +1,64 @@
+/* .pih-section-title, .pih-aside-title(-row/-icon), .pih-aside-toggle y
+   .pih-aside-chev: definidas en ../shared/shared.css (cabecera compartida con
+   DiagnosticosPanel). */
+
+.svp-body{display:flex;flex-direction:column;gap:16px;}
+
+.svp-group-label{
+  margin:0 0 4px 0;font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+  color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;
+}
+
+/* Fila: nombre a la izquierda, valor + unidad + estado a la derecha. Solo
+   separadores horizontales suaves (sin grilla de celdas). */
+.svp-row{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:6px 0;border-top:1px solid var(--border);
+}
+.svp-group-label + .svp-row{border-top:none;}
+
+.svp-label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);min-width:0;}
+.svp-calc-hint{margin-left:4px;font-size:var(--fs-xs);color:var(--ink-400);}
+
+.svp-control{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+.svp-input{
+  width:56px;height:var(--input-sm);padding:0 8px;
+  border:1px solid var(--border);border-radius:6px;background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  text-align:right;-moz-appearance:textfield;
+  transition:border-color .15s;
+}
+.svp-input::-webkit-outer-spin-button,
+.svp-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.svp-input::placeholder{color:var(--ink-400);font-weight:var(--fw-regular);}
+.svp-input:hover{border-color:var(--ink-400);}
+.svp-input:focus{outline:2px solid var(--primary);outline-offset:-1px;border-color:transparent;}
+.svp-input.is-warn{border-color:var(--amber-fg);color:var(--amber-fg);}
+.svp-input.is-danger{border-color:var(--red);color:var(--red);}
+
+.svp-pa-sep{color:var(--ink-400);}
+/* PA: dos campos en la misma fila -- más angostos (3 dígitos) para que
+   la fila entre en los 320px de .pih-aside. */
+.svp-pa .svp-input{width:46px;}
+
+/* Valores calculados (IMC/ISC): texto, no campo -- mismo ancho que el input
+   para que las unidades queden alineadas en columna. */
+.svp-calc{
+  width:56px;padding:0 9px;text-align:right;
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
+}
+.svp-calc.is-empty{color:var(--ink-400);font-weight:var(--fw-regular);}
+
+.svp-unit{width:38px;font-size:var(--fs-sm);color:var(--ink-500);}
+
+/* Slot fijo (también en filas sin rango) para que las unidades no se
+   corran cuando aparece el punto. */
+.svp-dot-slot{width:8px;display:flex;justify-content:center;flex-shrink:0;}
+.svp-dot{width:8px;height:8px;border-radius:50%;}
+.svp-dot.is-warn{background:var(--amber-fg);}
+.svp-dot.is-danger{background:var(--red);}
+
+@media (prefers-reduced-motion:reduce){
+  .svp-input{transition:none;}
+}

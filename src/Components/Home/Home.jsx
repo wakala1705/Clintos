@@ -130,7 +130,8 @@ const MODULE_GROUPS = [
         title: 'Triage',
         description: 'Clasificación y priorización de pacientes al ingreso.',
         icon: LuActivity,
-        enabled: false,
+        href: '/hospitalizacion/triage',
+        enabled: true,
       },
       {
         title: 'Admisiones',

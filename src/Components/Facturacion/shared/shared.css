@@ -245,6 +245,25 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    valor. */
 .fvc-uppercase{text-transform:uppercase;}
 
+/* Tarjeta de la tabla de ítems (FacturaItemsTable) -- compartida por el
+   modal "Ver detalle" y el panel inferior del modo dividido. Llena el alto
+   de su contenedor (flex:1) y .fvc-items-body scrollea internamente (ver
+   .fvc-items-scroll), así el alto no depende de la cantidad de ítems. El
+   contenedor debe fijar su propio alto mínimo (ver .fvcd-detail-row /
+   .fds-body) para que la tarjeta no se colapse en pantallas bajas.
+   overflow:hidden recorta las esquinas de la tabla. */
+.fvc-items-card{
+  flex:1;min-height:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.fvc-items-body{flex:1;min-height:0;display:flex;flex-direction:column;}
+/* .fvc-grid pone border-right/border-bottom en cada celda -- los de la última
+   columna/fila quedan pegados al borde de la tarjeta y se ven como doble
+   línea. Se suprimen solo dentro de la tarjeta. */
+.fvc-items-body .fvc-grid th:last-child,
+.fvc-items-body .fvc-grid td:last-child{border-right:none;}
+.fvc-items-body .fvc-grid tbody tr:last-child td{border-bottom:none;}
+
 /* Los botones de esta vista (Imprimir, Anular, Refrescar...) usan
    @/Components/Button/Button con variant="secondary-accent" (ícono en
    --primary, ver Button.module.css) en vez de una clase propia — ver

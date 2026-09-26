@@ -1,0 +1,4 @@
+/* .fvc-grid/.fvc-items-scroll/.fvc-items-grid: ver ../../shared/shared.css.
+   Cantidad y montos alineados a la derecha solo en esta tabla (.fvc-num
+   sigue a la izquierda en la grilla de facturas). */
+.fvc-items-grid .fvc-items-num{text-align:right;}

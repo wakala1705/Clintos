@@ -1,0 +1,66 @@
+.tg-dv{display:flex;flex-direction:column;gap:12px;}
+
+/* Cada bloque (motivo / condiciones / signos) es una tarjeta gris, mismo
+   fondo que el bloque de criterios del paso 1. */
+.tg-dv-section{
+  margin:0;padding:14px 16px 16px;min-width:0;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+  display:flex;flex-direction:column;gap:10px;
+}
+/* float + width:100% saca al <legend> del borde del fieldset (mismo truco
+   que .tg-ci-title); en el <label> del motivo no hace falta pero no molesta. */
+.tg-dv-section-title{
+  float:left;width:100%;padding:0;margin:0;
+  display:flex;align-items:center;gap:8px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.tg-dv-section-title .icon{width:18px;height:18px;color:var(--primary);}
+
+.tg-dv-textarea{
+  width:100%;min-height:80px;resize:vertical;padding:10px 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+}
+.tg-dv-textarea::placeholder{color:var(--ink-400);}
+
+/* ---------- Condiciones especiales: tarjetas con radio a la derecha ---------- */
+.tg-dv-condiciones{clear:both;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.tg-dv-condicion{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:8px 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);line-height:1.25;
+  cursor:pointer;transition:background .15s, border-color .15s, color .15s;
+}
+.tg-dv-condicion:hover{border-color:var(--ink-400);}
+.tg-dv-condicion.selected{border-color:var(--primary);color:var(--ink-900);box-shadow:0 0 0 1px var(--primary);}
+.tg-dv-condicion input{flex-shrink:0;width:18px;height:18px;margin:0;accent-color:var(--primary);cursor:pointer;}
+.tg-dv-condicion:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:2px;}
+.tg-dv-condicion input:focus-visible{outline:none;}
+
+/* ---------- Signos vitales: input con la unidad adentro, a la derecha ---------- */
+.tg-dv-signos{clear:both;display:grid;gap:12px;}
+.tg-dv-signos.cols-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.tg-dv-signos.cols-5{grid-template-columns:repeat(5,minmax(0,1fr));}
+.tg-dv-signo{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.tg-dv-label{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);}
+
+.tg-dv-input-unidad{
+  display:flex;align-items:center;height:var(--input-md);padding:0 10px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+.tg-dv-input-unidad:hover{border-color:var(--ink-400);}
+.tg-dv-input-unidad input{
+  flex:1;min-width:0;height:100%;padding:0;border:none;background:none;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);text-align:right;
+}
+.tg-dv-input-unidad input:focus{outline:none;}
+.tg-dv-unidad{flex-shrink:0;margin-left:6px;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);}
+
+.tg-dv-textarea:focus-visible,
+.tg-dv-input-unidad:focus-within{outline:2px solid var(--primary);outline-offset:1px;border-color:var(--primary);}
+
+@media (max-width:1024px){
+  .tg-dv-condiciones,
+  .tg-dv-signos.cols-4,
+  .tg-dv-signos.cols-5{grid-template-columns:repeat(2,minmax(0,1fr));}
+}

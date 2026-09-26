@@ -5,6 +5,8 @@
 // Fonseca) devuelve un arreglo vacío, que es justo lo que ejercita el estado
 // vacío del panel de Registros.
 
+import { INGHOSP_EJEMPLO, INGHOSP_EJEMPLO_RESUMEN } from './mockIngresoHospitalizacionEjemplo';
+
 const REGISTROS_BY_DOCUMENTO = {
   // Isabella Daniela Rodríguez Paternina — mismo documento que el paciente
   // demo de Gestión de Enfermería (ver mockAgendaData.js, cita id 8).
@@ -95,6 +97,15 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
   {
     tipo: 'INGHOSP',
     registros: [
+      // Ingreso diligenciado de ejemplo (neumonía adquirida en comunidad):
+      // único registro con `contenido` -- "Ver detalle" abre con él la
+      // plantilla real ya diligenciada (ver mockIngresoHospitalizacionEjemplo.js).
+      {
+        id: 'inghosp-ejemplo', fecha: '26.SEP.2026', hora: '05:40 PM', numero: '0201295620', tituloNota: 'INGRESO A HOSPITALIZACION',
+        autor: 'CAMILO GRONDONA', rol: 'Médico', especialidad: 'MEDICINA INTERNA', ambito: 'QX', plantilla: 'INGHOSP',
+        contenido: INGHOSP_EJEMPLO,
+        resumen: INGHOSP_EJEMPLO_RESUMEN,
+      },
       {
         id: 'inghosp-1', fecha: '21.SEP.2026', hora: '03:35 PM', numero: '0201295608', tituloNota: 'INGRESO A HOSPITALIZACION',
         autor: 'GUZMAN OSPINA RICARDO ANDRES', rol: 'Médico', especialidad: 'MEDICINA GENERAL', ambito: 'QX', plantilla: 'INGHOSP',

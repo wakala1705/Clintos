@@ -69,3 +69,32 @@
 .pih-cols-2 .pih-fields > .pih-subsection-title,
 .pih-cols-2 .pih-fields > .pih-grid-3{grid-column:1 / -1;}
 .pih-cols-2 .pih-grid-3{grid-template-columns:repeat(2, 1fr);}
+
+/* Cabecera de los bloques de la columna derecha (.pih-aside: Signos
+   vitales, Diagnósticos) -- ícono en círculo de 32px tono primary + título.
+   Mismo criterio que .pf-card-header-icon de PlantillaCrecimt2 (no
+   reutilizado directo: scopeado a su propio feature). */
+.pih-aside-title-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.pih-aside-title-icon{
+  width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+}
+.pih-aside-title-icon .icon{width:17px;height:17px;}
+
+/* Título de bloque colapsable del aside = botón de acordeón WAI
+   (<h3><button aria-expanded>): ocupa todo el ancho restante para que el
+   chevron quede a la derecha y todo el título sea clicable. */
+.pih-aside-title{margin:0;flex:1;min-width:0;}
+.pih-aside-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+  border:none;background:none;padding:0;cursor:pointer;
+  font:inherit;color:inherit;text-align:left;
+}
+.pih-aside-toggle:hover .pih-aside-chev{color:var(--ink-900);}
+.pih-aside-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.pih-aside-chev{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;transition:transform .15s;}
+.pih-aside-chev.open{transform:rotate(180deg);}
+@media (prefers-reduced-motion:reduce){
+  .pih-aside-chev{transition:none;}
+}

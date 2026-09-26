@@ -20,3 +20,9 @@
 @media (max-width:1024px){
   .fvc-toolbar{overflow-x:auto;flex-wrap:nowrap;}
 }
+
+/* Selector Lista / Dividida al final del toolbar -- .segmented-control/
+   .segmented-btn vienen de ../shared/shared.css; acá solo ícono + texto en
+   línea y el alto alineado con los controles "sm" de la toolbar. */
+.fvc-view-toggle .segmented-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;}
+.fvc-view-toggle .icon{width:15px;height:15px;}

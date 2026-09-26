@@ -7,9 +7,15 @@
    (FacturaItemsTable, misma tabla de 14 columnas que el panel inferior de
    FacturaDetalleClasico) sin que quede apretada -- ver .modal-xl de
    SolicitudConsumo/shared/shared.css, mismo criterio de tamaño. */
-.fvcd-modal{width:95vw;max-width:1400px;}
+/* Alto fijo (= max-height de .modal): el espacio que sobra debajo de la
+   ficha lo toma .fvcd-detail-row, así la tabla de ítems crece hasta el
+   footer en vez de dejar un hueco o un alto arbitrario en px. */
+.fvcd-modal{width:95vw;max-width:1400px;height:90vh;}
+/* El body toma todo el alto libre entre header y footer -- sin esto el
+   sobrante de height:90vh quedaba como hueco debajo del footer. */
+.fvcd-modal > .modal-body{flex:1;}
 
-.fvcd-identity-row{display:flex;align-items:center;gap:12px;}
+.fvcd-identity-row{display:flex;align-items:flex-start;gap:12px;}
 /* Ícono de la factura (número + tercero), bajado acá desde ModalHeader
    (encargo explícito: header genérico "Detalle de factura", sin ícono) --
    mismo círculo 34px/tono primary que .modal-header-icon.tone-primary
@@ -26,86 +32,24 @@
    ver comentario en el .jsx) -- .fvcd-identity-text de al lado (afiliado) no
    lleva badge y no le afecta. */
 .fvcd-identity-name{display:flex;align-items:center;gap:8px;font-weight:var(--fw-semibold);font-size:var(--fs-lg);color:var(--ink-900);}
-.fvcd-identity-id{
-  margin-left:8px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);
-}
 .fvcd-identity-sub{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.fvcd-identity-patient{font-weight:var(--fw-medium);color:var(--ink-700);}
+/* Valor total de la factura como dato principal del modal, alineado a la
+   derecha del encabezado (única aparición del total de la factura, ver
+   comentario del .jsx). */
+.fvcd-hero-total{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;text-align:right;}
+.fvcd-hero-total .fvcd-total-value{font-size:var(--fs-3xl);line-height:1.1;}
 
-/* La tabla de ítems es lo importante del modal (encargo explícito) -- va en
-   su propia tarjeta con borde (en vez del simple separador border-top de
-   .fvcd-compact-fields de abajo), dividida en 2 bloques: el body (la tabla)
-   y el footer (Imprimir anexo/Anexo por prefijo/Capitados, ver
-   .fvcd-items-footer -- sin header propio de título, encargo explícito). El
-   resumen no vive adentro de esta tarjeta, ver .fvcd-detail-row más abajo
-   (encargo explícito: tabla+resumen en un solo bloque de 2 columnas en vez
-   de apilados, para no alargar la modal ahora que la tabla ganó ancho libre
-   al sacarle las columnas redundantes con el resumen). overflow:hidden
-   recorta las esquinas rectas de FacturaItemsTable a los bordes redondeados
-   de la tarjeta. */
-/* Alto fijo (encargo explícito: "que el footer siempre quede fijo al fondo
-   de la tabla, para que no esté saltando la tabla") -- antes esta tarjeta
-   crecía/achicaba con la cantidad de ítems (16 vs 10 en dos facturas
-   distintas ya se veían con alturas distintas y el footer de acciones se
-   corría con ellas). Con height fija + .fvcd-items-body como flex:1 que
-   scrollea internamente (ver .fvc-items-scroll en FacturaDetalleClasico.css,
-   ya trae flex:1/min-height:0/overflow:auto), la tarjeta ocupa siempre el
-   mismo alto sin importar si la factura tiene 3 ítems o 30, y el footer
-   queda anclado a su fondo en vez de perseguir el alto de la tabla.
-   flex-shrink:0 -- .fvcd-detail-main (su contenedor flex-column directo) es
-   la única sección con overflow:hidden; sin esto, su tamaño mínimo
-   automático en flexbox pasa a ser 0 (spec: min-size auto solo aplica con
-   overflow:visible) y, apenas el contenido total supera max-height:90vh del
-   modal, el algoritmo de flex-shrink la colapsa a ella sola en vez de
-   repartir el achique -- la tabla queda con su alto real pero recortada a
-   ~unos px de alto. Bug real encontrado al agregar el footer de acciones/
-   resumen debajo (mismo riesgo sin importar en qué nivel de anidamiento de
-   flex-columns viva esta tarjeta, por eso se repite acá). */
-.fvcd-items-card{
-  flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
-  height:460px;display:flex;flex-direction:column;
-}
-.fvcd-items-body{flex:1;min-height:0;display:flex;flex-direction:column;}
-/* Imprimir anexo/Anexo por prefijo/Capitados como footer de la tarjeta de
-   ítems (encargo explícito) -- mismo tratamiento que .modal-footer (border-top
-   + padding), en vez del bloque suelto .fvcd-bottom-actions de antes debajo
-   de la tarjeta. flex-shrink:0 para que .fvcd-items-body (flex:1) sea la
-   única sección que ceda espacio y el footer no se comprima. */
-.fvcd-items-footer{
-  flex-shrink:0;padding:10px 16px;border-top:1px solid var(--border);background:var(--bg);
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-}
-/* FacturaItemsTable (.fvc-grid) pone border-right/border-bottom en cada
-   celda (pensado para sus otros 2 usos sin tarjeta propia, ver
-   shared/shared.css) -- acá esos bordes de la última columna/fila quedan
-   pegados al border de .fvcd-items-card y se ven como doble línea. Se
-   suprimen solo en este contenedor, sin tocar .fvc-grid (compartida). */
-.fvcd-items-body .fvc-grid th:last-child,
-.fvcd-items-body .fvc-grid td:last-child{
-  border-right:none;
-}
-.fvcd-items-body .fvc-grid tbody tr:last-child td{
-  border-bottom:none;
-}
-
-/* El resto de los campos de la ficha en una sola tarjeta compacta (encargo
-   explícito, ver imagen de referencia: caja con borde propio en vez del
-   simple separador border-top de antes) en vez de los 5 bloques con título
-   propio + grid de 3 columnas de la versión original -- separadores
-   verticales finos agrupan por tema (Datos de factura/Fechas/Estado y
-   control/Valor Total) sin el peso visual de un título + borde por grupo.
-   No. Admisión/Id. Afiliado ya no van acá, ver .fvcd-identity-id/-sub. Valor
-   Total (encargo explícito) cierra la tarjeta como su propio grupo -- ya no
-   en fvcd-identity-row ni en fvcd-items-footer (probado ahí antes), mismo
-   Field que el resto pero con .fvcd-total-value en vez de
-   .fvcd-field-value para que se distinga como el dato destacado de la
-   tarjeta. */
+/* 3 grupos con título (Fechas / Facturación electrónica / Origen), separados
+   por un borde izquierdo en vez de divisores sueltos. */
 .fvcd-compact-fields{
-  display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px 24px;
-  padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+  display:grid;grid-template-columns:auto auto 1fr;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
 }
-/* Reusada también en .fvcd-identity-row (separador factura/afiliado) --
-   mismo separador visual, no hace falta una clase aparte. */
-.fvcd-compact-divider{width:1px;align-self:stretch;background:var(--border);}
+.fvcd-group{padding:12px 20px;min-width:0;}
+.fvcd-group + .fvcd-group{border-left:1px solid var(--border);}
+.fvcd-group-title{margin:0 0 8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.fvcd-group-fields{display:flex;flex-wrap:wrap;gap:10px 24px;}
 .fvcd-field{display:flex;flex-direction:column;gap:3px;min-width:0;}
 .fvcd-badge{align-self:flex-start;}
 .fvcd-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
@@ -151,26 +95,26 @@
 }
 .fvcd-anulada-meta{margin-top:8px;font-size:var(--fs-sm);color:var(--ink-500);}
 
-/* Tabla de ítems + resumen en un solo bloque de 2 columnas (encargo
-   explícito, ver comentario en .fvcd-items-card arriba): a la izquierda
-   fvcd-detail-main (la tarjeta de ítems, con Imprimir anexo/Anexo por
-   prefijo/Capitados como footer de esa misma tarjeta, ver
-   .fvcd-items-footer), a la derecha el resumen en ancho fijo. flex-shrink:0
-   en la fila (mismo motivo que .fvcd-items-card) -- ninguno de sus 2 hijos
-   directos tiene overflow:hidden propio, pero se deja explícito para no
-   depender del comportamiento por defecto de flexbox acá. */
-.fvcd-detail-row{display:flex;align-items:flex-start;gap:16px;flex-shrink:0;}
-.fvcd-detail-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
-.fvcd-bottom-summary{display:flex;flex-direction:column;gap:12px;width:300px;flex-shrink:0;}
-.fvcd-summary-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--surface);}
-.fvcd-summary-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-bottom:10px;}
-.fvcd-summary-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:var(--fs-sm);color:var(--ink-900);padding:4px 0;}
-.fvcd-summary-row span:first-child{color:var(--ink-500);}
-.fvcd-summary-divider{height:1px;background:var(--border);margin:8px 0;}
-.fvcd-summary-total span:first-child{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.fvcd-summary-total span:last-child{font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--primary);}
+/* Tabla de ítems (izquierda) + panel contextual del ítem seleccionado
+   (derecha, ancho fijo). La fila toma el alto que sobra en .modal-body
+   (flex:1) y ambas columnas se estiran a ese mismo alto. min-height
+   explícito: por debajo de ese alto scrollea .modal-body en vez de aplastar
+   la tabla (.fvc-items-card, shared.css) contra el footer. Tarjeta de
+   ítems: .fvc-items-card; panel del ítem: FacturaItemResumen. */
+.fvcd-detail-row{flex:1;min-height:360px;display:flex;align-items:stretch;gap:16px;}
+.fvcd-detail-main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;}
+/* Si la trazabilidad no entra en el alto de la fila, el panel scrollea solo
+   (no empuja la fila más alta que la tabla). */
+.fvcd-bottom-summary{display:flex;flex-direction:column;gap:12px;width:300px;flex-shrink:0;min-height:0;overflow-y:auto;}
+
+/* Documentos de la factura a la izquierda, Cerrar/Facturar a la derecha. */
+.fvcd-footer{align-items:center;}
+.fvcd-footer-docs{display:flex;flex-wrap:wrap;gap:8px;margin-right:auto;}
 
 @media (max-width:1024px){
-  .fvcd-detail-row{flex-direction:column;}
-  .fvcd-bottom-summary{width:100%;}
+  .fvcd-compact-fields{grid-template-columns:1fr;}
+  .fvcd-group + .fvcd-group{border-left:none;border-top:1px solid var(--border);}
+  .fvcd-detail-row{flex:none;flex-direction:column;}
+  .fvcd-detail-main .fvc-items-card{flex:none;height:420px;}
+  .fvcd-bottom-summary{width:100%;overflow:visible;}
 }

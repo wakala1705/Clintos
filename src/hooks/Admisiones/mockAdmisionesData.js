@@ -6,6 +6,7 @@
 // TODO: reemplazar por la llamada real al backend.
 
 import { AREAS_FUNCIONALES, datosAdministrativos } from '@/hooks/DetalleAdmision/datosAdministrativos';
+import { TRIAGE_LABEL } from '@/hooks/TriageBadge/triageLevels';
 
 const NOMBRES = ['Diomedes', 'Tony Carlo', 'Hector Luis', 'Angelica Maria', 'Zuly Marcela', 'Jorge Eliser', 'Fabrizio Seguundo', 'Lina Maria', 'River', 'Camila', 'Andrés Felipe', 'Sofía', 'Julián', 'Mariana', 'Esteban', 'Valentina', 'Ricardo', 'Catalina', 'David', 'Natalia'];
 const APELLIDOS = ['Diaz', 'Pertuz Ramos', 'Amaris Bivanque', 'Maruy', 'Garcia Garcia', 'Jaramillo Villar', 'Martelo', 'Gomez Gomez', 'Aponte', 'Guarin Guarin', 'Montiel Montiel', 'Rodríguez Paternina', 'Zuluaga Restrepo', 'Cárdenas Ruiz', 'Bermúdez Cano'];
@@ -17,14 +18,9 @@ const TIPO_ADMISION_LIST = ['URGENCIAS', 'AMBULATORIO', 'HOSPITALIZACIÓN'];
 // recién llegado el paciente — de ahí el peso 0.5 en TRIAGE_LEVELS.
 const TRIAGE_LEVELS = [null, null, null, null, null, 1, 2, 2, 3, 3, 3, 4, 4, 5];
 
-export const TRIAGE_LABEL = {
-  1: 'Prioridad 1 · Resucitación (crítico)',
-  2: 'Prioridad 2 · Emergencia',
-  3: 'Prioridad 3 · Urgente',
-  4: 'Prioridad 4 · Menos urgente',
-  5: 'Prioridad 5 · No urgente',
-  none: 'Sin clasificar',
-};
+// TRIAGE_LABEL vive en @/hooks/TriageBadge/triageLevels (compartido con
+// la ruta de Triage); se re-exporta para no romper imports existentes.
+export { TRIAGE_LABEL };
 
 export const ESTADO_LABEL = {
   admitido: 'Admitido',

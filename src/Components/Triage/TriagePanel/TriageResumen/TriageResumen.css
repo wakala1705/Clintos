@@ -1,0 +1,13 @@
+/* Franja gris entre la barra de filtros y la tabla. Sin bordes propios: arriba
+   ya está el border-bottom de .filter-bar y abajo el border-top del
+   encabezado sticky de la tabla (../../shared/shared.css). */
+.tg-resumen{
+  flex-shrink:0;display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;
+  padding:10px 20px;background:var(--bg);
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.tg-resumen b{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.tg-resumen-sep{width:1px;height:14px;background:var(--border);}
+.tg-resumen-alerta{display:inline-flex;align-items:center;gap:6px;color:var(--amber-fg);}
+.tg-resumen-alerta b{color:var(--amber-fg);}
+.tg-resumen-alerta .icon{width:15px;height:15px;color:var(--amber);}

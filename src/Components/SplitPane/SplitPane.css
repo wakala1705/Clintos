@@ -1,0 +1,38 @@
+/* Consume --border/--surface/--primary/--primary-50/--ink-400 del :root de la
+   feature donde se monta (mismo contrato que ModalHeader). */
+.split-pane{display:grid;flex:1;min-height:0;}
+.split-pane-panel{display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+
+/* Área de agarre de 10px (más fácil de tomar que la línea de 1px que se ve);
+   la línea es el ::before y el grip queda centrado encima. */
+.split-pane-divider{
+  position:relative;height:10px;flex-shrink:0;cursor:row-resize;touch-action:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.split-pane-divider::before{
+  content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--border);
+  transition:background .15s, height .15s;
+}
+.split-pane-grip{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:10px;border:1px solid var(--border);border-radius:6px;
+  background:var(--surface);color:var(--ink-400);
+  transition:background .15s, border-color .15s, color .15s;
+}
+.split-pane-grip .icon{width:14px;height:14px;}
+
+.split-pane-divider:hover::before,
+.split-pane.is-dragging .split-pane-divider::before{height:2px;background:var(--primary);}
+.split-pane-divider:hover .split-pane-grip,
+.split-pane.is-dragging .split-pane-grip{border-color:var(--primary);background:var(--primary-50);color:var(--primary);}
+.split-pane-divider:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+/* Mientras se arrastra: sin selección de texto y el cursor no parpadea al
+   pasar sobre filas/links de los paneles. */
+.split-pane.is-dragging{user-select:none;cursor:row-resize;}
+.split-pane.is-dragging .split-pane-panel{pointer-events:none;}
+
+@media (prefers-reduced-motion:reduce){
+  .split-pane-divider::before,
+  .split-pane-grip{transition:none;}
+}

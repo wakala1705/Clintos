@@ -114,6 +114,9 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
+  // Registro guardado abierto desde "Ver detalle" (ver handleVerRegistro) --
+  // null cuando la plantilla activa es un registro nuevo.
+  const [registroAbierto, setRegistroAbierto] = useState(null);
   // "Maximizar"/"Expandir pantalla" (ver ViewSettingsMenu.jsx dentro de
   // PlantillaCrecimt2, y el botón homólogo en PlantillaIngresoHospitalizacion.jsx):
   // vive acá porque también compacta PatientBanner, hermano de la card, no
@@ -152,6 +155,17 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   function handleSalirPlantilla() {
     setPlantillaActiva(null);
     setPlantillaMaximizada(false);
+    setRegistroAbierto(null);
+  }
+
+  // "Ver detalle" de un registro con `contenido` (HistoriaClinicaTab.jsx):
+  // abre la plantilla de ese registro ya diligenciada, sin el delay de
+  // "creación" (no se crea nada nuevo). Hoy solo INGHOSP tiene formulario
+  // que acepte contenido guardado.
+  function handleVerRegistro(registro) {
+    if (registro.plantilla !== 'INGHOSP') return;
+    setRegistroAbierto(registro);
+    setPlantillaActiva('inghosp');
   }
 
   // Sin backend real (mock: "solo pinta el front"), crear la plantilla
@@ -352,6 +366,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                   ) : plantillaActiva === 'inghosp' ? (
                     <PlantillaIngresoHospitalizacion
                       onSalir={handleSalirPlantilla}
+                      registro={registroAbierto}
                       maximizada={plantillaMaximizada}
                       onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
                     />
@@ -388,6 +403,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                             onNuevaAtencion={openPlantillaModal}
                             onAgregarRegistro={handleAgregarRegistro}
                             onResumenRegistro={clintosPaciente ? handleResumenRegistro : undefined}
+                            onVerRegistro={handleVerRegistro}
                           />
                         )}
                         {activeTab === 'ordenes-medicas' && (

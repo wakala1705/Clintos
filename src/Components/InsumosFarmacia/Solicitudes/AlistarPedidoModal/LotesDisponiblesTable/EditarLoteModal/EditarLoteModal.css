@@ -8,10 +8,21 @@
 .mig-editar-lote-item{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-500);white-space:nowrap;}
 
 /* Bloque de identidad del lote: 3 columnas (encargo explícito) -- 9 campos
-   calzan exacto en 3 filas sin necesitar celda vacía de relleno. El bloque
-   de cantidades (mig-editar-lote-cantidades más abajo) se queda en 2. */
+   calzan exacto en 3 filas sin necesitar celda vacía de relleno. */
 .mig-editar-lote-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px;}
-.mig-editar-lote-cantidades{grid-template-columns:repeat(2,minmax(0,1fr));}
+
+/* Bloque único de cantidades: esperada · pendiente · a entregar ·
+   comprometida en una sola fila de 4 columnas (encargo explícito, réplica
+   de la referencia). Los valores de solo lectura no llevan color propio;
+   "Comprometida" va atenuada (tone-muted) y el input es el único foco. */
+.mig-editar-lote-cantidades{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start;
+  background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--radius);
+  padding:14px 16px;
+}
+.mig-editar-lote-cantidades .mig-editar-lote-field{gap:6px;}
+.mig-editar-lote-cantidades .mig-editar-lote-value{line-height:var(--input-sm);}
+.mig-editar-lote-field.tone-muted .mig-editar-lote-value{color:var(--ink-400);}
 .mig-editar-lote-field{display:flex;flex-direction:column;gap:2px;min-width:0;}
 .mig-editar-lote-label{
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
@@ -19,34 +30,19 @@
 }
 .mig-editar-lote-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-/* Semáforo de cantidades (encargo explícito, réplica de los 4 campos
-   coloreados de la referencia legacy) -- mismos tokens que el resto del
-   proyecto usa para esos 3 tonos (ver AlistarPedidoModal/colorVencimiento);
-   "stock"/"cantidad" comparten --primary-50 (celeste en la referencia),
-   distinguibles porque Cantidad es el único <input> real de la ficha. */
-.mig-editar-lote-field.tone-stock,
-.mig-editar-lote-field.tone-esperada,
-.mig-editar-lote-field.tone-pendiente,
-.mig-editar-lote-field.tone-cantidad,
-.mig-editar-lote-field.tone-comprometida{
-  padding:6px 10px;border-radius:var(--radius);
-}
-.tone-stock{background:var(--primary-50);}
-.tone-esperada{background:var(--red-bg);}
-.tone-pendiente{background:var(--green-bg);}
-.tone-cantidad{background:var(--primary-50);}
-.tone-comprometida{background:var(--amber-bg);}
+/* Stock actual resaltado en celeste dentro del bloque de identidad. */
+.mig-editar-lote-field.tone-stock{padding:6px 10px;border-radius:var(--radius);background:var(--primary-50);}
 
 .mig-editar-lote-descripcion{
   background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 12px;font-size:var(--fs-sm);color:var(--ink-700);
+  padding:10px 12px;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
 }
 
 .mig-editar-lote-input{
   height:var(--input-sm);width:100%;
-  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;
-  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
-  background:var(--surface);
+  border:1px solid var(--primary);border-radius:var(--radius);padding:0 10px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--primary);
+  background:var(--surface);text-align:right;
 }
 /* :hover (auditoría de craft visual, regla 11 "cada estado diseñado") --
    faltaba: su gemelo funcional .mig-lotes-cantidad-input (LotesDisponiblesTable.css)

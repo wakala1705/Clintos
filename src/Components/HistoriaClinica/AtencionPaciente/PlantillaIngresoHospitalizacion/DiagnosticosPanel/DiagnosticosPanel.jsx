@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react';
 import './DiagnosticosPanel.css';
-import { LuPlus, LuSearch, LuStethoscope } from 'react-icons/lu';
+import { LuChevronDown, LuPlus, LuSearch, LuStethoscope } from 'react-icons/lu';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import CatalogoDiagnosticosModal from '@/Components/CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
@@ -26,71 +26,86 @@ const TIPO_DX_OPTIONS = [
 // "Confirmar" escriba en el estado correcto sin acoplar ambos pickers.
 // CIE-10/CIE-11 son obligatorios (encargo explícito, ver `.req`); Tipo DX es
 // un FormSelect de opciones fijas.
-export default function DiagnosticosPanel() {
-  const [cie10, setCie10] = useState('');
-  const [cie11, setCie11] = useState('');
-  const [tipoDx, setTipoDx] = useState('');
+export default function DiagnosticosPanel({ inicial }) {
+  const [cie10, setCie10] = useState(inicial?.cie10 ?? '');
+  const [cie11, setCie11] = useState(inicial?.cie11 ?? '');
+  const [tipoDx, setTipoDx] = useState(inicial?.tipoDx ?? '');
   const [catalogoCie10Abierto, setCatalogoCie10Abierto] = useState(false);
   const [catalogoCie11Abierto, setCatalogoCie11Abierto] = useState(false);
+  const [abierto, setAbierto] = useState(true);
   const cie10LabelId = useId();
   const cie11LabelId = useId();
+  const bodyId = useId();
 
   return (
     <div className="dxp-panel">
-      <div className="dxp-title-row">
-        <span className="dxp-title-icon"><LuStethoscope className="icon" aria-hidden="true" /></span>
-        <h3 className="pih-section-title dxp-title">Diagnósticos</h3>
-      </div>
-
-      <div className="pih-fields">
-        <div className="form-field">
-          <label id={cie10LabelId}>CIE-10<span className="req">*</span></label>
+      <div className="pih-aside-title-row">
+        <span className="pih-aside-title-icon"><LuStethoscope className="icon" aria-hidden="true" /></span>
+        <h3 className="pih-section-title pih-aside-title">
           <button
             type="button"
-            className="dxp-diag-picker"
-            aria-labelledby={cie10LabelId}
-            onClick={() => setCatalogoCie10Abierto(true)}
+            className="pih-aside-toggle"
+            aria-expanded={abierto}
+            aria-controls={bodyId}
+            onClick={() => setAbierto((v) => !v)}
           >
-            <span className={cie10 ? 'dxp-diag-value' : 'dxp-diag-placeholder'}>
-              {cie10 || 'Selecciona un diagnóstico'}
-            </span>
-            <LuSearch className="icon" aria-hidden="true" />
+            Diagnósticos
+            <LuChevronDown className={`icon pih-aside-chev${abierto ? ' open' : ''}`} aria-hidden="true" />
           </button>
-        </div>
-
-        <div className="form-field">
-          <label id={cie11LabelId}>CIE-11<span className="req">*</span></label>
-          <button
-            type="button"
-            className="dxp-diag-picker"
-            aria-labelledby={cie11LabelId}
-            onClick={() => setCatalogoCie11Abierto(true)}
-          >
-            <span className={cie11 ? 'dxp-diag-value' : 'dxp-diag-placeholder'}>
-              {cie11 || 'Selecciona un diagnóstico'}
-            </span>
-            <LuSearch className="icon" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="dxp-tipo">Tipo DX</label>
-          <FormSelect
-            id="dxp-tipo"
-            value={tipoDx}
-            onChange={setTipoDx}
-            options={TIPO_DX_OPTIONS}
-            placeholder="Selecciona una opción"
-          />
-        </div>
-
-        {/* Solo el botón por ahora (encargo explícito) -- agregar la fila de
-            diagnóstico relacionado que dispara es un paso aparte, todavía no
-            pedido. */}
-        <Button type="button" variant="secondary-accent" size="sm" icon={LuPlus} className="dxp-add-relacionado">
-          Agregar diagnóstico relacionado
-        </Button>
+        </h3>
       </div>
+
+      {abierto && (
+        <div id={bodyId} className="pih-fields">
+          <div className="form-field">
+            <label id={cie10LabelId}>CIE-10<span className="req">*</span></label>
+            <button
+              type="button"
+              className="dxp-diag-picker"
+              aria-labelledby={cie10LabelId}
+              onClick={() => setCatalogoCie10Abierto(true)}
+            >
+              <span className={cie10 ? 'dxp-diag-value' : 'dxp-diag-placeholder'}>
+                {cie10 || 'Selecciona un diagnóstico'}
+              </span>
+              <LuSearch className="icon" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="form-field">
+            <label id={cie11LabelId}>CIE-11<span className="req">*</span></label>
+            <button
+              type="button"
+              className="dxp-diag-picker"
+              aria-labelledby={cie11LabelId}
+              onClick={() => setCatalogoCie11Abierto(true)}
+            >
+              <span className={cie11 ? 'dxp-diag-value' : 'dxp-diag-placeholder'}>
+                {cie11 || 'Selecciona un diagnóstico'}
+              </span>
+              <LuSearch className="icon" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="dxp-tipo">Tipo DX</label>
+            <FormSelect
+              id="dxp-tipo"
+              value={tipoDx}
+              onChange={setTipoDx}
+              options={TIPO_DX_OPTIONS}
+              placeholder="Selecciona una opción"
+            />
+          </div>
+
+          {/* Solo el botón por ahora (encargo explícito) -- agregar la fila de
+              diagnóstico relacionado que dispara es un paso aparte, todavía no
+              pedido. */}
+          <Button type="button" variant="secondary-accent" size="sm" icon={LuPlus} className="dxp-add-relacionado">
+            Agregar diagnóstico relacionado
+          </Button>
+        </div>
+      )}
 
       {catalogoCie10Abierto && (
         <CatalogoDiagnosticosModal

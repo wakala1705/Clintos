@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import './FacturaVistaClasica.css';
 import Button from '@/Components/Button/Button';
+import SplitPane from '@/Components/SplitPane/SplitPane';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   CLASE_OPTIONS, FACTURAS, TIPO_OPTIONS, matchesQuery,
@@ -12,10 +13,16 @@ import TipoFacturaFilter from './TipoFacturaFilter/TipoFacturaFilter';
 import FacturasGridClasica from './FacturasGridClasica/FacturasGridClasica';
 import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico';
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
+import FacturaDetalleSplit from './FacturaDetalleSplit/FacturaDetalleSplit';
 import FacturaAgregarModalClasico from './FacturaAgregarModalClasico/FacturaAgregarModalClasico';
 import PrintLoadingModal from './PrintLoadingModal/PrintLoadingModal';
 import FacturaPdfViewerModal from './FacturaPdfViewerModal/FacturaPdfViewerModal';
-import { LuRefreshCw, LuSearch } from 'react-icons/lu';
+import {
+  SPLIT_RATIO_DEFAULT, setSplitRatio, setVistaModo, useSplitRatio, useVistaModo,
+} from '@/hooks/Facturacion/vistaClasicaPrefs';
+import {
+  LuList, LuPanelBottom, LuRefreshCw, LuSearch,
+} from 'react-icons/lu';
 
 // Delay artificial del paso 1 del flujo de impresión (ver handleImprimir más
 // abajo) -- sin backend real (mockFacturasData.js: "solo pinta el front"),
@@ -52,7 +59,23 @@ const PE_FILTROS = [
 // panel inferior siempre visible. Estado propio (no comparte query/filtros
 // con FacturaListPane/Facturacion.jsx): son dos diseños distintos que se
 // comparan lado a lado, no la misma pantalla con dos pieles.
+// Modos de vista (encargo explícito, elección recordada entre visitas vía
+// vistaClasicaPrefs):
+// - "Lista": grilla de facturas + barra inferior con la admisión/total
+//   (FacturaDetalleClasico); el detalle completo se abre en el modal "Ver
+//   detalle" (ícono de ojo / doble clic).
+// - "Dividida": grilla arriba y detalle compacto de la factura seleccionada
+//   abajo (FacturaDetalleSplit), separados por un divisor arrastrable
+//   (SplitPane, proporción también recordada). El modal "Ver detalle" no
+//   existe en este modo -- sería el mismo contenido que ya está en pantalla.
+const VISTA_OPCIONES = [
+  { value: 'lista', label: 'Lista', icon: LuList },
+  { value: 'dividida', label: 'Dividida', icon: LuPanelBottom },
+];
+
 export default function FacturaVistaClasica() {
+  const modo = useVistaModo();
+  const splitRatio = useSplitRatio();
   const [query, setQuery] = useState('');
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
@@ -218,25 +241,62 @@ export default function FacturaVistaClasica() {
         >
           Refrescar
         </Button>
+
+        <div className="segmented-control fvc-view-toggle" role="group" aria-label="Modo de vista">
+          {VISTA_OPCIONES.map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              type="button"
+              className={`segmented-btn${modo === value ? ' active' : ''}`}
+              aria-pressed={modo === value}
+              onClick={() => setVistaModo(value)}
+            >
+              <Icon className="icon" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <FacturasGridClasica
-        facturas={facturas}
-        selectedId={effectiveSelectedId}
-        onSelect={setSelectedId}
-        onVerDetalle={setDetalleFactura}
-        onEditar={setEditFactura}
-        onImprimir={handleImprimir}
-        onClearFilters={handleLimpiarTodosLosFiltros}
-      />
+      {modo === 'dividida' ? (
+        <SplitPane
+          ratio={splitRatio}
+          onRatioChange={setSplitRatio}
+          defaultRatio={SPLIT_RATIO_DEFAULT}
+          label="Redimensionar lista de facturas y detalle"
+          top={(
+            <FacturasGridClasica
+              facturas={facturas}
+              selectedId={effectiveSelectedId}
+              onSelect={setSelectedId}
+              onEditar={setEditFactura}
+              onImprimir={handleImprimir}
+              onClearFilters={handleLimpiarTodosLosFiltros}
+            />
+          )}
+          bottom={<FacturaDetalleSplit factura={selectedFactura} onFacturar={handleFacturar} />}
+        />
+      ) : (
+        <>
+          <FacturasGridClasica
+            facturas={facturas}
+            selectedId={effectiveSelectedId}
+            onSelect={setSelectedId}
+            onVerDetalle={setDetalleFactura}
+            onEditar={setEditFactura}
+            onImprimir={handleImprimir}
+            onClearFilters={handleLimpiarTodosLosFiltros}
+          />
 
-      <FacturaDetalleClasico factura={selectedFactura} />
+          <FacturaDetalleClasico factura={selectedFactura} />
 
-      <FacturaDetalleModalClasico
-        factura={detalleFactura}
-        onClose={() => setDetalleFactura(null)}
-        onFacturar={handleFacturar}
-      />
+          <FacturaDetalleModalClasico
+            factura={detalleFactura}
+            onClose={() => setDetalleFactura(null)}
+            onFacturar={handleFacturar}
+          />
+        </>
+      )}
 
       {editFactura && (
         <FacturaAgregarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />

@@ -1,29 +1,49 @@
 'use client';
 
+import './FacturaItemsTable.css';
 import { formatCOP } from '@/hooks/Facturacion/mockFacturasData';
 
-// Vlr. Servicio/Vlr. IVA/Vlr. Copago/Vlr. Moderador/Vlr. Pag.Comp/Descuento
-// se sacaron de acá (encargo explícito) -- son la misma información que ya
-// muestra "Resumen de factura" (Subtotal servicios/IVA/Copago/Moderador/
-// Pago compartido/Descuento, ver FacturaDetalleModalClasico.jsx) apenas se
-// selecciona un ítem; mostrarlas repetidas en la tabla era redundante.
-// CCosto/Tabla Origen/ID Item Prestación/FTRDID (encargo explícito: primero
-// se agregaron acá, después se reubicaron) siguen el mismo criterio: viven
-// en la tarjeta "Información adicional" de FacturaDetalleModalClasico.jsx,
-// atadas a la fila seleccionada -- el dato en sí sigue existiendo por ítem
-// (ver buildItems en mockFacturasData.js), solo esta tabla no lo pinta como
-// columna propia.
-const ITEM_COLUMNS = [
-  'Item', 'Prefijo', 'Referencia', 'Descripción', 'Cantidad', 'Vlr. Unidad', 'Vlr. Total',
+// Columnas: `render` pinta la celda; `num` alinea a la derecha
+// (.fvc-items-num, ver FacturaItemsTable.css) -- el <th> lleva la misma
+// clase que sus celdas.
+//
+// IVA/Copago/Moderador/Pago compartido/Descuento solo se muestran con
+// `showValores` (panel del modo dividido, encargo explícito): ahí el panel
+// derecho quedó solo con la trazabilidad, así que los valores por ítem viven
+// en la tabla. En el modal no se pasan -- esos valores ya los muestra
+// FacturaItemResumen al seleccionar un ítem y repetirlos era redundante.
+// CCosto/Tabla Origen/ID Item Prestación/FTRDID nunca van como columna:
+// viven en FacturaItemResumen, atados a la fila seleccionada.
+const BASE_COLUMNS = [
+  { label: 'Item', render: (item, idx) => String(idx + 1).padStart(3, '0') },
+  { label: 'Prefijo', className: 'fvc-num', render: (item) => item.prefijo },
+  { label: 'Referencia', render: (item) => item.referencia },
+  { label: 'Descripción', ellipsis: true, render: (item) => item.descripcion },
+  { label: 'Cantidad', num: true, render: (item) => item.cantidad },
+  { label: 'Vlr. Unidad', num: true, render: (item) => formatCOP(item.vlrUnidad) },
+  { label: 'Vlr. Total', num: true, render: (item) => formatCOP(item.vlrServicio) },
+];
+const VALORES_COLUMNS = [
+  { label: 'IVA', num: true, render: (item) => formatCOP(item.vlrIVA) },
+  { label: 'Copago', num: true, render: (item) => formatCOP(item.vlrCopago) },
+  { label: 'Moderador', num: true, render: (item) => formatCOP(item.vlrModerador) },
+  { label: 'Pago compartido', num: true, render: (item) => formatCOP(item.vlrPagComp) },
+  { label: 'Descuento', num: true, render: (item) => formatCOP(item.descuento) },
 ];
 
+function cellClass(c) {
+  if (c.num) return 'fvc-items-num';
+  if (c.ellipsis) return 'fvc-ellipsis';
+  return c.className;
+}
+
 // Grilla densa de ítems de una factura (mismas columnas que el formulario
-// legacy de referencia) -- extraída originalmente para ser consumida tanto
-// por FacturaDetalleClasico como por FacturaDetalleModalClasico; hoy
-// FacturaDetalleClasico ya no la usa (ver su comentario), así que
-// FacturaDetalleModalClasico es el único consumidor. Sin CSS propio: solo
-// consume .fvc-items-scroll/.fvc-grid/.fvc-items-grid/.fvc-num/.fvc-ellipsis,
-// ya definidas en ../../shared/shared.css (mismo criterio que
+// legacy de referencia) -- la consumen el modal "Ver detalle"
+// (FacturaDetalleModalClasico) y el panel inferior del modo dividido
+// (FacturaDetalleSplit), ambos dentro de una tarjeta .fvc-items-card. Su CSS
+// propio solo alinea las columnas numéricas; el resto
+// (.fvc-items-scroll/.fvc-grid/.fvc-items-grid/.fvc-num/.fvc-ellipsis) ya
+// viene de ../../shared/shared.css (mismo criterio que
 // SegmentedFilterBar.jsx) -- el estilo de fila seleccionada/hover/focus
 // (tr.selected, tr:hover, tr:focus-visible) también sale de ahí, mismas
 // reglas que ya usa FacturasGridClasica.
@@ -40,12 +60,15 @@ const ITEM_COLUMNS = [
 // de referencia con cantidades > 1 (Jeringa cantidad 5, Vlr. Total debía
 // ser 2.500, no 500): pasaba inadvertido porque buildItems() siempre generó
 // `cantidad: 1`, caso en el que ambos campos coinciden por coincidencia.
-export default function FacturaItemsTable({ items, selectedId, onSelect }) {
+export default function FacturaItemsTable({
+  items, selectedId, onSelect, showValores = false,
+}) {
+  const columns = showValores ? [...BASE_COLUMNS, ...VALORES_COLUMNS] : BASE_COLUMNS;
   return (
     <div className="fvc-items-scroll">
       <table className="fvc-grid fvc-items-grid">
         <thead>
-          <tr>{ITEM_COLUMNS.map((c) => <th key={c}>{c}</th>)}</tr>
+          <tr>{columns.map((c) => <th key={c.label} className={c.num ? 'fvc-items-num' : undefined}>{c.label}</th>)}</tr>
         </thead>
         <tbody>
           {items.map((item, idx) => (
@@ -57,13 +80,11 @@ export default function FacturaItemsTable({ items, selectedId, onSelect }) {
               aria-selected={item.id === selectedId}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(item.id); } }}
             >
-              <td>{String(idx + 1).padStart(3, '0')}</td>
-              <td className="fvc-num">{item.prefijo}</td>
-              <td>{item.referencia}</td>
-              <td className="fvc-ellipsis" title={item.descripcion}>{item.descripcion}</td>
-              <td className="fvc-num">{item.cantidad}</td>
-              <td className="fvc-num">{formatCOP(item.vlrUnidad)}</td>
-              <td className="fvc-num">{formatCOP(item.vlrServicio)}</td>
+              {columns.map((c) => (
+                <td key={c.label} className={cellClass(c)} title={c.ellipsis ? c.render(item, idx) : undefined}>
+                  {c.render(item, idx)}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

@@ -15,6 +15,9 @@ function Field({ label, value, tone }) {
   );
 }
 
+// Cantidades con 2 decimales, como la referencia ("3.00").
+const formatCantidad = (n) => Number(n ?? 0).toFixed(2);
+
 // Modal "Editar lote" -- réplica de la ventana legacy "Record Will Be
 // Changed" (edición de un lote de "Artículos disponibles para el código"),
 // disparada por el botón lápiz de la columna Acciones y por doble clic en la
@@ -81,13 +84,19 @@ export default function EditarLoteModal({ lote, itemLabel, onClose, onSave }) {
             <Field label="Stock Actual" value={lote.stock} tone="stock" />
           </div>
 
-          <div className="mig-editar-lote-descripcion">{lote.descripcion}</div>
+          <div className="mig-editar-lote-field">
+            <span className="mig-editar-lote-label">Descripción</span>
+            <div className="mig-editar-lote-descripcion">{lote.descripcion}</div>
+          </div>
 
-          <div className="mig-editar-lote-grid mig-editar-lote-cantidades">
-            <Field label="Cnt. Esperada" value={lote.esperada} tone="esperada" />
-            <Field label="Cnt. Pendiente" value={pendiente} tone="pendiente" />
-            <div className="mig-editar-lote-field tone-cantidad">
-              <label htmlFor="mig-editar-lote-cantidad" className="mig-editar-lote-label">Cantidad</label>
+          {/* Las 4 cantidades van en un único bloque de 4 columnas (encargo
+              explícito, réplica de la barra de cantidades de la referencia) --
+              antes eran 4 tarjetas sueltas con semáforo de color. */}
+          <div className="mig-editar-lote-cantidades">
+            <Field label="Cnt. Esperada" value={formatCantidad(lote.esperada)} />
+            <Field label="Cnt. Pendiente" value={formatCantidad(pendiente)} />
+            <div className="mig-editar-lote-field">
+              <label htmlFor="mig-editar-lote-cantidad" className="mig-editar-lote-label">Cantidad a entregar</label>
               <input
                 id="mig-editar-lote-cantidad"
                 type="text"
@@ -98,7 +107,7 @@ export default function EditarLoteModal({ lote, itemLabel, onClose, onSave }) {
                 onChange={(e) => setCantidad(e.target.value.replace(/\D/g, ''))}
               />
             </div>
-            <Field label="Cnt. Comprometida" value={lote.comprometida} tone="comprometida" />
+            <Field label="Cnt. Comprometida" value={formatCantidad(lote.comprometida)} tone="muted" />
           </div>
         </div>
 
