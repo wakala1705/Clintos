@@ -296,9 +296,9 @@ export default function InterconsultaModal({ solicitud, onClose, onAccion }) {
         </div>
 
         <div className="im-footer">
-          <Button variant="outline" onClick={onClose}>Cerrar</Button>
+          <Button variant="secondary" onClick={onClose}>Cerrar</Button>
           <Button
-            variant="outline"
+            variant="secondary"
             disabled={!puedeConfirmarCargo(s)}
             onClick={() => { onAccion('confirmar-cargo'); onClose(); }}
           >

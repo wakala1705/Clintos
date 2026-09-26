@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import './AreaFuncionalPickerButton.css';
-import { LuChevronDown, LuLayers } from 'react-icons/lu';
+import { LuChevronDown, LuMapPin } from 'react-icons/lu';
 import AreaFuncionalPickerModal from '@/Components/AreaFuncionalPickerModal/AreaFuncionalPickerModal';
 import { setAreaFuncionalSeleccionada, useAreaFuncionalSeleccionada } from '@/hooks/AreaFuncional/areaFuncional';
 
@@ -23,7 +23,7 @@ export default function AreaFuncionalPickerButton({ obligatorio = true }) {
   return (
     <>
       <button type="button" className="meta-item picker-btn" onClick={() => setAbiertoManual(true)}>
-        <LuLayers className="icon" />
+        <LuMapPin className="icon" />
         <span className="lbl">Área:</span> <b>{area?.descripcion ?? 'Selecciona'}</b>
         <LuChevronDown className="icon chev" aria-hidden="true" />
       </button>
