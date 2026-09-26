@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './PlantillaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import Button from '@/Components/Button/Button';
 import { PLANTILLAS } from '@/hooks/HistoriaClinica/mockPlantillas';
-import { LuCheck, LuSearch } from 'react-icons/lu';
+import { LuSearch } from 'react-icons/lu';
 
 // Selector de elementos que pueden recibir foco de teclado dentro del modal
 // — usado para el focus trap (ver efecto de Tab más abajo) y para decidir a
@@ -161,11 +162,13 @@ export default function PlantillaModal({ open, onClose, onElegir, plantillas = P
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={handleClose}>Cancelar</button>
-          <button type="button" className="btn btn-primary" disabled={!selected} onClick={() => handleElegir()}>
-            <LuCheck className="icon" />
-            Elegir
-          </button>
+          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+          {/* "Seleccionar", sin ícono: mismo texto que el resto de modales de
+              catálogo (CatalogoDiagnosticosModal, Facturación, Sala de
+              cirugías...). */}
+          <Button variant="primary" disabled={!selected} onClick={() => handleElegir()}>
+            Seleccionar
+          </Button>
         </div>
       </div>
     </div>
