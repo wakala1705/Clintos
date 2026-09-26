@@ -65,7 +65,7 @@ const SCROLL_OFFSET = 32; // px desde el techo del panel que cuenta como "secci�
 
 export default function PlantillaIngresoHospitalizacion({ onSalir, maximizada, onToggleMaximizar, registro }) {
   // `registro` (opcional): registro INGHOSP ya guardado cuyo `contenido` se
-  // abre desde "Ver detalle" (ver AtencionPaciente.jsx) -- precarga cada
+  // abre desde "Editar" (ver AtencionPaciente.jsx) -- precarga cada
   // sección con `inicial` en vez de arrancar vacía.
   const contenido = registro?.contenido;
   const [activeSeccion, setActiveSeccion] = useState(SECCIONES[0].id);

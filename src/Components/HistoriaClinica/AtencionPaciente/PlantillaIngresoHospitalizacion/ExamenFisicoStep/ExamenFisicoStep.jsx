@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SISTEMAS_EXAMEN } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 
 // Transcrito de "INSPECCION GENERAL"/"EXAMEN FISICO"/"SIGNOS VITALES" de la
 // captura del sistema legado (INGHOSP). "Signos vitales" (6 medidas) y
@@ -14,21 +15,8 @@ import { useState } from 'react';
 // explícito, ver PlantillaIngresoHospitalizacion.jsx) — este Step ya no se
 // oculta con `hidden`, el nav lateral hace scroll hasta acá en vez de
 // mostrar/ocultar.
-const SISTEMAS = [
-  { key: 'cabezaOjosOrl', label: 'Cabeza / Ojos / ORL' },
-  { key: 'cuello', label: 'Cuello' },
-  { key: 'torax', label: 'Tórax' },
-  { key: 'abdomen', label: 'Abdomen' },
-  { key: 'extremidades', label: 'Extremidades' },
-  { key: 'genitourinario', label: 'Genitourinario' },
-  { key: 'neurologico', label: 'Neurológico' },
-  { key: 'osteomuscular', label: 'Osteo-muscular / Tejidos blandos' },
-  { key: 'tegumentario', label: 'Tegumentario' },
-  { key: 'ayudasDiagnosticas', label: 'Ayudas diagnósticas / Paraclínicos' },
-];
-
 function estadoInicialSistemas() {
-  return Object.fromEntries(SISTEMAS.map((s) => [s.key, '']));
+  return Object.fromEntries(SISTEMAS_EXAMEN.map((s) => [s.key, '']));
 }
 
 export default function ExamenFisicoStep({ inicial }) {
@@ -116,7 +104,7 @@ export default function ExamenFisicoStep({ inicial }) {
         </div>
 
         <h4 className="pih-subsection-title">Examen físico por sistemas</h4>
-        {SISTEMAS.map((sistema) => (
+        {SISTEMAS_EXAMEN.map((sistema) => (
           <div className="form-field" key={sistema.key}>
             <label htmlFor={`ef-${sistema.key}`}>{sistema.label}</label>
             <textarea

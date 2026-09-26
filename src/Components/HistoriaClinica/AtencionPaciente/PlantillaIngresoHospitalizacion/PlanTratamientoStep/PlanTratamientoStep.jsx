@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CANTIDAD_PESO_OPTIONS, PERDIDA_PESO_OPTIONS, SI_NO_OPTIONS } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 
 // Transcrito de "PLAN DE TRATAMIENTO" de la captura del sistema legado
@@ -16,24 +17,6 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // (encargo explícito, ver PlantillaIngresoHospitalizacion.jsx) — este Step
 // ya no se oculta con `hidden`, el nav lateral hace scroll hasta acá en vez
 // de mostrar/ocultar.
-const PERDIDA_PESO_OPTIONS = [
-  { value: 'no', label: 'No' },
-  { value: 'si', label: 'Sí' },
-  { value: 'no_estoy_seguro', label: 'No estoy seguro' },
-];
-
-const CANTIDAD_PESO_OPTIONS = [
-  { value: '1-5', label: '1-5 kg' },
-  { value: '6-10', label: '6-10 kg' },
-  { value: '11-15', label: '11-15 kg' },
-  { value: '>15', label: '> 15 kg' },
-];
-
-const SI_NO_OPTIONS = [
-  { value: 'no', label: 'No' },
-  { value: 'si', label: 'Sí' },
-];
-
 export default function PlanTratamientoStep({ inicial }) {
   const [analisisClinico, setAnalisisClinico] = useState(inicial?.analisisClinico ?? '');
   const [opinionPlanTratamiento, setOpinionPlanTratamiento] = useState(inicial?.opinionPlanTratamiento ?? '');

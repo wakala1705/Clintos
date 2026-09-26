@@ -114,7 +114,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
   const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
-  // Registro guardado abierto desde "Ver detalle" (ver handleVerRegistro) --
+  // Registro guardado abierto desde "Editar" (ver handleEditarRegistro) --
   // null cuando la plantilla activa es un registro nuevo.
   const [registroAbierto, setRegistroAbierto] = useState(null);
   // "Maximizar"/"Expandir pantalla" (ver ViewSettingsMenu.jsx dentro de
@@ -158,11 +158,11 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
     setRegistroAbierto(null);
   }
 
-  // "Ver detalle" de un registro con `contenido` (HistoriaClinicaTab.jsx):
+  // "Editar" de un registro con `contenido` (HistoriaClinicaTab.jsx):
   // abre la plantilla de ese registro ya diligenciada, sin el delay de
   // "creación" (no se crea nada nuevo). Hoy solo INGHOSP tiene formulario
   // que acepte contenido guardado.
-  function handleVerRegistro(registro) {
+  function handleEditarRegistro(registro) {
     if (registro.plantilla !== 'INGHOSP') return;
     setRegistroAbierto(registro);
     setPlantillaActiva('inghosp');
@@ -403,7 +403,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                             onNuevaAtencion={openPlantillaModal}
                             onAgregarRegistro={handleAgregarRegistro}
                             onResumenRegistro={clintosPaciente ? handleResumenRegistro : undefined}
-                            onVerRegistro={handleVerRegistro}
+                            onEditarRegistro={handleEditarRegistro}
                           />
                         )}
                         {activeTab === 'ordenes-medicas' && (
@@ -446,7 +446,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
           handleElegirPlantilla(plantilla);
         }}
       />
-      {creandoPlantilla && <CreandoPlantillaModal plantilla={creandoPlantilla} />}
+      {creandoPlantilla && <CreandoPlantillaModal descripcion={creandoPlantilla.descripcion} />}
     </div>
   );
 }

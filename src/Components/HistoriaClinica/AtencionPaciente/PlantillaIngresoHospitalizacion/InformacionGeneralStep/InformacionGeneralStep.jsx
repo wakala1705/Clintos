@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SI_NO_OPTIONS } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 
 // Transcrito de la sección "ANAMNESIS" de la captura del sistema legado
@@ -10,11 +11,6 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // la plantilla son un solo formulario continuo (encargo explícito, ver
 // PlantillaIngresoHospitalizacion.jsx) — este Step ya no se oculta con
 // `hidden`, el nav lateral hace scroll hasta acá en vez de mostrar/ocultar.
-const SI_NO_OPTIONS = [
-  { value: 'no', label: 'No' },
-  { value: 'si', label: 'Sí' },
-];
-
 export default function InformacionGeneralStep({ inicial }) {
   const [motivoConsulta, setMotivoConsulta] = useState(inicial?.motivoConsulta ?? '');
   const [enfermedadActual, setEnfermedadActual] = useState(inicial?.enfermedadActual ?? '');

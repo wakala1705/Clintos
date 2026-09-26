@@ -1,17 +1,12 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { TIPO_DX_OPTIONS } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 import './DiagnosticosPanel.css';
 import { LuChevronDown, LuPlus, LuSearch, LuStethoscope } from 'react-icons/lu';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import CatalogoDiagnosticosModal from '@/Components/CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
-
-const TIPO_DX_OPTIONS = [
-  { value: 'presuntivo', label: 'Presuntivo' },
-  { value: 'confirmado-nuevo', label: 'Confirmado nuevo' },
-  { value: 'confirmado-repetido', label: 'Confirmado repetido' },
-];
 
 // Bloque "Diagnósticos" de la columna derecha de pih-body (encargo
 // explícito). CIE-10/CIE-11 son los dos selectpicker con el mismo criterio

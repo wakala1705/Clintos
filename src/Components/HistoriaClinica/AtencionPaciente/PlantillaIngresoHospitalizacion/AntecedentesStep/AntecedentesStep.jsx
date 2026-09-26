@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CAMPOS_ANTECEDENTES, SI_NO_OPTIONS } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 
 // Transcrito de "ANTECEDENTES PATOLOGICOS"/"ANTECEDENTES PERSONALES" de la
@@ -12,24 +13,8 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 // continuo (encargo explícito, ver PlantillaIngresoHospitalizacion.jsx) —
 // este Step ya no se oculta con `hidden`, el nav lateral hace scroll hasta
 // acá en vez de mostrar/ocultar.
-const SI_NO_OPTIONS = [
-  { value: 'no', label: 'No' },
-  { value: 'si', label: 'Sí' },
-];
-
-const CAMPOS_BOOLEANOS = [
-  { key: 'toxicos', label: 'Tóxicos', conObservaciones: true },
-  { key: 'patologicos', label: 'Patológicos', conObservaciones: true },
-  { key: 'oncologicos', label: 'Oncológicos', conObservaciones: true },
-  { key: 'quirurgicos', label: 'Quirúrgicos', conObservaciones: true },
-  { key: 'farmacologicos', label: 'Farmacológicos', conObservaciones: true },
-  { key: 'transfusionales', label: 'Transfusionales', conObservaciones: true },
-  { key: 'alergicos', label: 'Alérgicos', conObservaciones: true },
-  { key: 'familiares', label: 'Antecedentes familiares' },
-];
-
 function estadoInicialBooleanos() {
-  return Object.fromEntries(CAMPOS_BOOLEANOS.map((c) => [c.key, { valor: '', observaciones: '' }]));
+  return Object.fromEntries(CAMPOS_ANTECEDENTES.map((c) => [c.key, { valor: '', observaciones: '' }]));
 }
 
 export default function AntecedentesStep({ inicial }) {
@@ -51,7 +36,7 @@ export default function AntecedentesStep({ inicial }) {
       <p className="pih-section-desc">Antecedentes personales, gineco-obstétricos y social/económicos del paciente.</p>
 
       <div className="pih-fields">
-        {CAMPOS_BOOLEANOS.map((campo) => (
+        {CAMPOS_ANTECEDENTES.map((campo) => (
           <div className="pih-campo-grupo" key={campo.key}>
             <div className="form-field">
               <label htmlFor={`ah-${campo.key}`}>{campo.label}</label>

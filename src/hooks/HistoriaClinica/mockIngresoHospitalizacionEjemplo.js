@@ -1,6 +1,6 @@
 // Ingreso a hospitalización (INGHOSP) diligenciado de ejemplo — mismo shape
 // que el estado de cada sección de PlantillaIngresoHospitalizacion (ver
-// `inicial` en cada Step/Panel), para que "Ver detalle" del registro abra
+// `inicial` en cada Step/Panel), para que "Editar" del registro abra
 // la plantilla real ya diligenciada (ver AtencionPaciente.jsx). Sin backend:
 // es el único registro INGHOSP con `contenido`.
 //

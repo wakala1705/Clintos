@@ -4,13 +4,19 @@ import { useEffect, useState } from 'react';
 import './HistoriaClinicaTab.css';
 import RegistrosPanel from '../RegistrosPanel/RegistrosPanel';
 import AgendaEmptyState from '../../AgendaEmptyState/AgendaEmptyState';
+import RegistroDetalle from '../RegistroDetalle/RegistroDetalle';
+import CreandoPlantillaModal from '../CreandoPlantillaModal/CreandoPlantillaModal';
 import Button from '@/Components/Button/Button';
-import { LuEye, LuFileText, LuLoaderCircle, LuPencil, LuPrinter, LuSparkles } from 'react-icons/lu';
+import { LuEye, LuEyeOff, LuFileText, LuLoaderCircle, LuPencil, LuPrinter, LuSparkles } from 'react-icons/lu';
 
 // Sin backend/IA real (mock: "solo pinta el front"), "generar" el resumen es
 // un delay simulado (mismo criterio que PRINT_LOADING_DELAY_MS en
 // FacturaVistaClasica.jsx) que revela el texto fijo de `registro.resumen`.
 const RESUMEN_DELAY_MS = 1200;
+// "Ver detalle": misma carga simulada, con el modal chico de carga de la
+// atención (CreandoPlantillaModal con otro texto, encargo explícito) como
+// si se estuvieran trayendo los datos del registro.
+const DETALLE_DELAY_MS = 1200;
 
 // Placeholder de detalle — el diseño interno de cada tipo de nota (EVO,
 // notas de enfermería...) todavía no está definido (ver prompt de esta
@@ -22,8 +28,8 @@ const RESUMEN_DELAY_MS = 1200;
 // funciona hoy, y únicamente cuando el registro trae `resumen` (hoy solo
 // HCURG, ver mockHistoriaClinicaRecords.js) — en el resto queda con
 // `onClick` sin asignar, mismo criterio ya usado en "Imprimir"
-// (`registro.archivoUrl`) y "Editar"/"Ver detalle" (sin flujo aún, solo
-// visual).
+// (`registro.archivoUrl`), "Editar" (`registro.contenido`) y "Ver detalle"
+// (sin flujo aún, solo visual).
 //
 // "Resumen" con `onResumenRegistro` (encargo explícito, variante
 // "hospitalizacion" con Clintos AI montado — ver AtencionPaciente.jsx): el
@@ -33,7 +39,9 @@ const RESUMEN_DELAY_MS = 1200;
 // "Resumen generado"/el spinner de abajo quedan sin usarse — ver el fallback
 // de "consulta-externa" (sin `onResumenRegistro`, sin Clintos AI todavía),
 // que sigue mostrando el resultado inline como antes.
-function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegistro, onVerRegistro) {
+function renderDetalle({
+  registro, resumenStatus, onGenerarResumen, onResumenRegistro, onEditarRegistro, detalleStatus, onToggleDetalle,
+}) {
   const handleResumenClick = onResumenRegistro ? () => onResumenRegistro(registro) : onGenerarResumen;
   return (
     <div className="hct-detalle">
@@ -68,19 +76,28 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegis
           >
             Imprimir
           </Button>
-          <Button variant="secondary-accent" size="sm" icon={LuPencil}>
-            Editar
-          </Button>
-          {/* "Ver detalle" abre la plantilla ya diligenciada cuando el
-              registro trae `contenido` (hoy solo el INGHOSP de ejemplo, ver
-              mockIngresoHospitalizacionEjemplo.js). */}
+          {/* "Editar" abre la plantilla ya diligenciada cuando el registro
+              trae `contenido` (hoy solo el INGHOSP de ejemplo, ver
+              mockIngresoHospitalizacionEjemplo.js). "Ver detalle" muestra el
+              registro en lectura debajo de esta cabecera (RegistroDetalle),
+              tras el modal de carga; si ya está visible, lo oculta. */}
           <Button
             variant="secondary-accent"
             size="sm"
-            icon={LuEye}
-            onClick={registro.contenido && onVerRegistro ? () => onVerRegistro(registro) : undefined}
+            icon={LuPencil}
+            onClick={registro.contenido && onEditarRegistro ? () => onEditarRegistro(registro) : undefined}
           >
-            Ver detalle
+            Editar
+          </Button>
+          <Button
+            variant="secondary-accent"
+            size="sm"
+            icon={detalleStatus === 'ready' ? LuEyeOff : LuEye}
+            aria-expanded={detalleStatus === 'ready'}
+            disabled={detalleStatus === 'loading'}
+            onClick={onToggleDetalle}
+          >
+            {detalleStatus === 'ready' ? 'Ocultar detalle' : 'Ver detalle'}
           </Button>
         </div>
       </div>
@@ -94,18 +111,29 @@ function renderDetalle(registro, resumenStatus, onGenerarResumen, onResumenRegis
           <p className="hct-resumen-result-text">{registro.resumen}</p>
         </div>
       )}
+
+      {detalleStatus === 'ready' && <RegistroDetalle registro={registro} />}
     </div>
   );
 }
 
 export default function HistoriaClinicaTab({
-  grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual, onResumenRegistro, onVerRegistro,
+  grupos, nuevaAtencionLabel, onNuevaAtencion, onAgregarRegistro, usuarioActual, onResumenRegistro, onEditarRegistro,
 }) {
   const [selectedRegistro, setSelectedRegistro] = useState(null);
   // null | 'loading' | 'ready' — se resetea al cambiar de registro
   // seleccionado (ver handleSelectRegistro) para que el resumen de uno no
   // "sobreviva" visualmente al abrir otro.
   const [resumenStatus, setResumenStatus] = useState(null);
+
+  // null | 'loading' | 'ready' — mismo criterio de reset que resumenStatus.
+  const [detalleStatus, setDetalleStatus] = useState(null);
+
+  useEffect(() => {
+    if (detalleStatus !== 'loading') return undefined;
+    const timer = setTimeout(() => setDetalleStatus('ready'), DETALLE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [detalleStatus]);
 
   useEffect(() => {
     if (resumenStatus !== 'loading') return undefined;
@@ -116,6 +144,7 @@ export default function HistoriaClinicaTab({
   function handleSelectRegistro(registro) {
     setSelectedRegistro(registro);
     setResumenStatus(null);
+    setDetalleStatus(null);
   }
 
   return (
@@ -131,7 +160,15 @@ export default function HistoriaClinicaTab({
       />
 
       <div className="hct-detail">
-        {selectedRegistro ? renderDetalle(selectedRegistro, resumenStatus, () => setResumenStatus('loading'), onResumenRegistro, onVerRegistro) : (
+        {selectedRegistro ? renderDetalle({
+          registro: selectedRegistro,
+          resumenStatus,
+          onGenerarResumen: () => setResumenStatus('loading'),
+          onResumenRegistro,
+          onEditarRegistro,
+          detalleStatus,
+          onToggleDetalle: () => setDetalleStatus((st) => (st === 'ready' ? null : 'loading')),
+        }) : (
           <AgendaEmptyState
             icon={LuFileText}
             title="Aún no hay historia clínica registrada"
@@ -139,6 +176,10 @@ export default function HistoriaClinicaTab({
           />
         )}
       </div>
+
+      {detalleStatus === 'loading' && selectedRegistro && (
+        <CreandoPlantillaModal texto="Cargando detalle..." descripcion={selectedRegistro.tituloNota} />
+      )}
     </div>
   );
 }

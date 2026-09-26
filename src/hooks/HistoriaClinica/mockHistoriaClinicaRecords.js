@@ -98,7 +98,7 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
     tipo: 'INGHOSP',
     registros: [
       // Ingreso diligenciado de ejemplo (neumonía adquirida en comunidad):
-      // único registro con `contenido` -- "Ver detalle" abre con él la
+      // único registro con `contenido` -- "Editar" abre con él la
       // plantilla real ya diligenciada (ver mockIngresoHospitalizacionEjemplo.js).
       {
         id: 'inghosp-ejemplo', fecha: '26.SEP.2026', hora: '05:40 PM', numero: '0201295620', tituloNota: 'INGRESO A HOSPITALIZACION',

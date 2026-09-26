@@ -17,18 +17,21 @@ import { LuLoaderCircle } from 'react-icons/lu';
 // replicado acá sobre `.modal-card` de HistoriaClinica. Sin fila de título/
 // cerrar ni forma de cancelarlo (mismo criterio que esa referencia): se
 // autodesmonta cuando el padre corta el timeout.
-export default function CreandoPlantillaModal({ plantilla }) {
+// `texto` (opcional) reutiliza el mismo modal para otras cargas simuladas
+// de la atención -- ej. "Cargando detalle..." de "Ver detalle" en
+// HistoriaClinicaTab.jsx; `descripcion` es la línea secundaria.
+export default function CreandoPlantillaModal({ descripcion, texto = 'Creando plantilla...' }) {
   return (
     <div className="modal-overlay" role="presentation">
       <div
         className="modal-card cpm-card"
         role="alertdialog"
         aria-modal="true"
-        aria-label={`Creando plantilla ${plantilla.descripcion}`}
+        aria-label={`${texto} ${descripcion}`}
       >
         <LuLoaderCircle className="icon cpm-spinner" aria-hidden="true" />
-        <p className="cpm-text">Creando plantilla...</p>
-        <span className="cpm-sub">{plantilla.descripcion}</span>
+        <p className="cpm-text">{texto}</p>
+        <span className="cpm-sub">{descripcion}</span>
       </div>
     </div>
   );
