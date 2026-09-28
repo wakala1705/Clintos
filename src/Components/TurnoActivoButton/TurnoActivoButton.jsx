@@ -126,7 +126,7 @@ export default function TurnoActivoButton() {
       <button
         type="button"
         ref={triggerRef}
-        className="meta-item picker-btn"
+        className="meta-item picker-btn tab-trigger"
         onClick={handleToggleOpen}
         aria-expanded={open}
         aria-haspopup="dialog"

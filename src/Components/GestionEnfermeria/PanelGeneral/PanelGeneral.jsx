@@ -17,6 +17,7 @@ import {
   PACIENTES_PISO, sectorDeCama,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
 import { abrirTurno, useTurnoActivo } from '@/hooks/Turno/turno';
+import { useActiveModule } from '@/hooks/Session/session';
 import {
   LuBedDouble, LuClipboardList, LuHourglass, LuPill, LuUsers,
 } from 'react-icons/lu';
@@ -46,7 +47,11 @@ export default function PanelGeneral() {
   // muestra mientras no haya turno abierto (hooks/Turno/turno.js, misma
   // sesión que lee @/Components/TurnoActivoButton en el Topbar) — no un flag
   // local que se resetea a "abierto" cada vez que se remonta el dashboard.
+  // No aplica al administrador (mismo criterio que TurnoActivoButton en
+  // Topbar.jsx: turno es la jornada de una enfermera, no un dato de contexto
+  // que también le sirva a quien navega el árbol completo).
   const turnoActivo = useTurnoActivo();
+  const isAdmin = useActiveModule() === 'administrador';
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar (con auto-colapso
   // responsive por debajo de 1024px) — mismo init que AtencionEnfermeria.jsx
@@ -156,7 +161,7 @@ export default function PanelGeneral() {
         </div>
       </div>
 
-      {!turnoActivo && (
+      {!turnoActivo && !isAdmin && (
         <IniciarTurnoModal
           onClose={() => router.push('/home')}
           onConfirm={({ unidad, turno }) => {

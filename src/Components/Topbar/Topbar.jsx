@@ -68,7 +68,13 @@ export default function Topbar({ section, page, user, pickers, children }) {
           <>
             <SedePickerButton />
             <AreaFuncionalPickerButton obligatorio={!isAdmin} />
-            {pathname.startsWith('/gestion-enfermeria') && <TurnoActivoButton />}
+            {/* Turno no aplica al administrador (no es un dato de contexto
+                que también le sirva, como Sede/Área -- es la jornada de
+                trabajo de una enfermera): se oculta entero, no se degrada a
+                "no obligatorio" como AreaFuncionalPickerButton arriba. El
+                gate de PanelGeneral.jsx (IniciarTurnoModal) sigue la misma
+                regla. */}
+            {pathname.startsWith('/gestion-enfermeria') && !isAdmin && <TurnoActivoButton />}
           </>
         )}
         {children}

@@ -13,6 +13,18 @@
    dropdown) y por eso no la definen ahí. */
 .picker-btn .chev.open{transform:rotate(180deg);}
 
+/* Borde propio para diferenciar el trigger de Turno de los de Sede/Área
+   (que son texto suelto, ver .picker-btn en Topbar.css) -- selector
+   compuesto .picker-btn.tab-trigger (no solo .tab-trigger) para ganarle a
+   `.picker-btn{border:none;...}` sin depender del orden de inyección de
+   <style> entre este archivo y Topbar.css (mismo criterio que
+   .content.ge-shell-content, ver AGENTS.md). */
+.picker-btn.tab-trigger{
+  padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius,8px);
+  transition:background .15s,border-color .15s;
+}
+.picker-btn.tab-trigger:hover{background:var(--gray-bg);}
+
 .tab-dropdown{
   position:fixed;width:320px;max-width:calc(100vw - 16px);
   background:var(--surface-modal,#fff);border:1px solid var(--border);border-radius:var(--radius-lg,12px);
