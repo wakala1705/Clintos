@@ -1393,6 +1393,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
         <AgregarItemModal
           numeroFactura={isEditMode ? factura.numero : PROXIMO_CONSECUTIVO}
           modoFacturacion={form.modoFacturacion}
+          tipoFactura={form.tipoFactura}
           item={itemEditando}
           onSave={handleGuardarItem}
           onClose={() => { setAgregarItemAbierto(false); setItemEditando(null); }}

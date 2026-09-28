@@ -93,6 +93,10 @@
 /* Solo el ícono con tono, texto neutro (item.iconTone en DropdownMenu). */
 .iconDanger { color: var(--red); }
 .iconWarn { color: var(--amber-fg); }
+/* Ícono destacado sin implicar severidad (RowActionsMenu de Facturación,
+   encargo explícito) -- a diferencia de danger/warn, no tiñe el texto ni el
+   hover: es solo el color del ícono. */
+.iconPrimary { color: var(--primary); }
 
 /* ---------- Estructura ---------- */
 .divider {

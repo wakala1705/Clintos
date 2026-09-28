@@ -27,6 +27,28 @@ const TIPO_FINANCIERO_OPTIONS = [
   { value: 'contratacion', label: 'Contratación' },
 ];
 
+// Precarga de "Centro Costo"/"Área Funcional"/"Prefijo" bajo Tipo Factura
+// "Moderadora"/"Copago"/"Pago Compartido" (encargo explícito, uno por uno:
+// primero Centro Costo/Prefijo bajo Moderadora, luego Prefijo/Área Funcional
+// bajo Copago, luego el mismo ejercicio bajo Pago Compartido) -- mismo
+// formato "código — descripción" que ya arma CatalogoCentroCostoModal/
+// CatalogoAreaFuncionalModal/CatalogoPrefijoModal al elegir una fila (ver
+// esos componentes), así el valor precargado es indistinguible de uno
+// elegido a mano en el catálogo. Sigue editable: el buscador de cada campo
+// abre igual y puede reemplazar este default. Centro Costo sigue exclusivo
+// de Moderadora -- Copago/Pago Compartido nunca lo pidieron.
+const CENTRO_COSTO_CONSULTA_EXTERNA = '01 — CONSULTA EXTERNA T1';
+const AREA_FUNCIONAL_CONSULTA_EXTERNA = '01 — CONSULTA EXTERNA';
+const PREFIJO_POR_TIPO_FACTURA = {
+  moderadora: '52 — CUOTA MODERADORA',
+  copago: '51 — COPAGO',
+  'pago-compartido': '53 — PAGOS COMPARTIDOS',
+};
+const AREA_FUNCIONAL_POR_TIPO_FACTURA = {
+  copago: AREA_FUNCIONAL_CONSULTA_EXTERNA,
+  'pago-compartido': AREA_FUNCIONAL_CONSULTA_EXTERNA,
+};
+
 function toNumber(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
@@ -45,7 +67,7 @@ function toNumber(value) {
 // 'contratacion' (el default de siempre) si el valor no existe en
 // TIPO_FINANCIERO_OPTIONS -- caso de "Unión Temporal", que no tiene
 // equivalente acá (ver comentario de TIPO_FINANCIERO_OPTIONS).
-function buildInitialForm(modoFacturacion, item) {
+function buildInitialForm(modoFacturacion, tipoFactura, item) {
   if (item) {
     return {
       tipoFinanciero: item.tipoFinanciero,
@@ -69,9 +91,9 @@ function buildInitialForm(modoFacturacion, item) {
     tipoFinanciero: TIPO_FINANCIERO_OPTIONS.some((o) => o.value === modoFacturacion)
       ? modoFacturacion
       : 'contratacion',
-    centroCosto: '',
-    areaFuncional: '',
-    prefijo: '',
+    centroCosto: tipoFactura === 'moderadora' ? CENTRO_COSTO_CONSULTA_EXTERNA : '',
+    areaFuncional: AREA_FUNCIONAL_POR_TIPO_FACTURA[tipoFactura] ?? '',
+    prefijo: PREFIJO_POR_TIPO_FACTURA[tipoFactura] ?? '',
     noContrato: '',
     idContrato: '0',
     codigo: '',
@@ -142,9 +164,9 @@ function buildInitialForm(modoFacturacion, item) {
 // devuelve al padre vía `onSave`, que decide qué hacer con él (agregarlo a
 // `items` y recalcular los totales del paso 1).
 export default function AgregarItemModal({
-  numeroFactura, modoFacturacion, item, onSave, onClose,
+  numeroFactura, modoFacturacion, tipoFactura, item, onSave, onClose,
 }) {
-  const [form, setForm] = useState(() => buildInitialForm(modoFacturacion, item));
+  const [form, setForm] = useState(() => buildInitialForm(modoFacturacion, tipoFactura, item));
   const [catalogoAreaFuncionalAbierto, setCatalogoAreaFuncionalAbierto] = useState(false);
   const [catalogoPrefijoAbierto, setCatalogoPrefijoAbierto] = useState(false);
   const [catalogoCentroCostoAbierto, setCatalogoCentroCostoAbierto] = useState(false);
@@ -191,6 +213,21 @@ export default function AgregarItemModal({
   // criterio que el resto de campos ocultos de este modal.
   const isTipoFinancieroContratacion = form.tipoFinanciero === 'contratacion';
 
+  // Bajo Tipo Factura "Moderadora"/"Copago"/"Pago Compartido" (encargo
+  // explícito, uno por uno: primero Moderadora, luego "hagamos estos mismos
+  // cambios en el flujo de copago", luego "en el flujo de pagos compartidos,
+  // vas a realizar el mismo ejercicio que en copago y moderadora"): reordena
+  // "Clasificación y ubicación" a Tipo Financiero-Prefijo / Centro Costo-Área
+  // Funcional (en vez del orden de siempre, ver campoTipoFinanciero/
+  // campoCentroCosto/campoAreaFuncional/campoPrefijo más abajo) y oculta de
+  // "Liquidación y valores" los campos que no aplican a un ítem de un solo
+  // valor (Porcentaje IVA/Valor IVA/Vr. Copagos/Valor Moderadora/Vr. P.
+  // Compartido), dejando solo Cantidad/Vlr Item/Valor Total -- Observaciones
+  // no es parte de este pedido, sigue visible. La precarga de Centro Costo
+  // (CENTRO_COSTO_CONSULTA_EXTERNA, ver buildInitialForm arriba) sigue
+  // exclusiva de Moderadora -- Copago/Pago Compartido nunca lo pidieron.
+  const usaLayoutSimplificado = ['moderadora', 'copago', 'pago-compartido'].includes(tipoFactura);
+
   // "Descripción" (encargo explícito: la columna "Descripción" de la
   // grilla de ítems del padre quedaba vacía bajo Tipo Financiero "Manual",
   // que no pasa por CatalogoServiciosAreaModal -- ver comentario del
@@ -207,6 +244,90 @@ export default function AgregarItemModal({
     });
     onClose();
   }
+
+  // Campos de "Clasificación y ubicación" -- variables en vez de JSX inline
+  // para poder reordenarlos bajo Moderadora/Copago sin duplicar el markup
+  // (ver usaLayoutSimplificado más arriba y su uso más abajo).
+  const campoTipoFinanciero = (
+    <div className="form-field">
+      <label htmlFor="aim-tipo-financiero">Tipo Financiero</label>
+      <FormSelect
+        id="aim-tipo-financiero"
+        value={form.tipoFinanciero}
+        onChange={setField('tipoFinanciero')}
+        options={TIPO_FINANCIERO_OPTIONS}
+      />
+    </div>
+  );
+  const campoCentroCosto = (
+    <div className="form-field">
+      <label htmlFor="aim-centro-costo">Centro Costo</label>
+      <div className="field-with-search">
+        <input
+          id="aim-centro-costo"
+          type="text"
+          value={form.centroCosto}
+          onChange={(e) => setField('centroCosto')(e.target.value)}
+          placeholder="Selecciona una opción"
+        />
+        <button
+          type="button"
+          className="search-btn"
+          onClick={() => setCatalogoCentroCostoAbierto(true)}
+          aria-label="Buscar centro de costo"
+          title="Buscar centro de costo"
+        >
+          <LuEye className="icon" />
+        </button>
+      </div>
+    </div>
+  );
+  const campoAreaFuncional = (
+    <div className="form-field">
+      <label htmlFor="aim-area-funcional">Área Funcional</label>
+      <div className="field-with-search">
+        <input
+          id="aim-area-funcional"
+          type="text"
+          value={form.areaFuncional}
+          onChange={(e) => setField('areaFuncional')(e.target.value)}
+          placeholder="Selecciona una opción"
+        />
+        <button
+          type="button"
+          className="search-btn"
+          onClick={() => setCatalogoAreaFuncionalAbierto(true)}
+          aria-label="Buscar área funcional"
+          title="Buscar área funcional"
+        >
+          <LuEye className="icon" />
+        </button>
+      </div>
+    </div>
+  );
+  const campoPrefijo = (
+    <div className={`form-field${isTipoFinancieroManual ? '' : ' fam-col-span-full'}`}>
+      <label htmlFor="aim-prefijo">Prefijo</label>
+      <div className="field-with-search">
+        <input
+          id="aim-prefijo"
+          type="text"
+          value={form.prefijo}
+          onChange={(e) => setField('prefijo')(e.target.value)}
+          placeholder="Selecciona una opción"
+        />
+        <button
+          type="button"
+          className="search-btn"
+          onClick={() => setCatalogoPrefijoAbierto(true)}
+          aria-label="Buscar prefijo"
+          title="Buscar prefijo"
+        >
+          <LuEye className="icon" />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -228,79 +349,16 @@ export default function AgregarItemModal({
               </div>
             </div>
             <div className={`fam-fields ${isTipoFinancieroManual ? 'fam-fields-2' : 'fam-fields-3'}`}>
-              <div className="form-field">
-                <label htmlFor="aim-tipo-financiero">Tipo Financiero</label>
-                <FormSelect
-                  id="aim-tipo-financiero"
-                  value={form.tipoFinanciero}
-                  onChange={setField('tipoFinanciero')}
-                  options={TIPO_FINANCIERO_OPTIONS}
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="aim-centro-costo">Centro Costo</label>
-                <div className="field-with-search">
-                  <input
-                    id="aim-centro-costo"
-                    type="text"
-                    value={form.centroCosto}
-                    onChange={(e) => setField('centroCosto')(e.target.value)}
-                    placeholder="Selecciona una opción"
-                  />
-                  <button
-                    type="button"
-                    className="search-btn"
-                    onClick={() => setCatalogoCentroCostoAbierto(true)}
-                    aria-label="Buscar centro de costo"
-                    title="Buscar centro de costo"
-                  >
-                    <LuEye className="icon" />
-                  </button>
-                </div>
-              </div>
-              <div className="form-field">
-                <label htmlFor="aim-area-funcional">Área Funcional</label>
-                <div className="field-with-search">
-                  <input
-                    id="aim-area-funcional"
-                    type="text"
-                    value={form.areaFuncional}
-                    onChange={(e) => setField('areaFuncional')(e.target.value)}
-                    placeholder="Selecciona una opción"
-                  />
-                  <button
-                    type="button"
-                    className="search-btn"
-                    onClick={() => setCatalogoAreaFuncionalAbierto(true)}
-                    aria-label="Buscar área funcional"
-                    title="Buscar área funcional"
-                  >
-                    <LuEye className="icon" />
-                  </button>
-                </div>
-              </div>
-
-              <div className={`form-field${isTipoFinancieroManual ? '' : ' fam-col-span-full'}`}>
-                <label htmlFor="aim-prefijo">Prefijo</label>
-                <div className="field-with-search">
-                  <input
-                    id="aim-prefijo"
-                    type="text"
-                    value={form.prefijo}
-                    onChange={(e) => setField('prefijo')(e.target.value)}
-                    placeholder="Selecciona una opción"
-                  />
-                  <button
-                    type="button"
-                    className="search-btn"
-                    onClick={() => setCatalogoPrefijoAbierto(true)}
-                    aria-label="Buscar prefijo"
-                    title="Buscar prefijo"
-                  >
-                    <LuEye className="icon" />
-                  </button>
-                </div>
-              </div>
+              {/* Orden Tipo Financiero-Prefijo / Centro Costo-Área Funcional
+                  bajo Moderadora/Copago (encargo explícito, ver
+                  usaLayoutSimplificado arriba) -- el resto de flujos
+                  conserva el orden de siempre (Tipo Financiero-Centro Costo
+                  / Área Funcional-Prefijo). Cada campo vive en su propia
+                  variable para reordenarlos sin duplicar JSX. */}
+              {campoTipoFinanciero}
+              {usaLayoutSimplificado ? campoPrefijo : campoCentroCosto}
+              {usaLayoutSimplificado ? campoCentroCosto : campoAreaFuncional}
+              {usaLayoutSimplificado ? campoAreaFuncional : campoPrefijo}
               {isTipoFinancieroContratacion && (
                 <div className="form-field fam-col-start-1">
                   <label htmlFor="aim-no-contrato">No Contrato</label>
@@ -368,7 +426,7 @@ export default function AgregarItemModal({
                 <div><h4>Liquidación y valores</h4></div>
               </div>
             </div>
-            <div className="fam-fields fam-fields-4">
+            <div className={`fam-fields ${usaLayoutSimplificado ? 'fam-fields-2' : 'fam-fields-4'}`}>
               <div className="form-field">
                 <label htmlFor="aim-cantidad">Cantidad<span className="fam-required-mark">*</span></label>
                 <input
@@ -392,7 +450,15 @@ export default function AgregarItemModal({
                   />
                 </div>
               )}
-              {!isTipoFinancieroContratacion && (
+              {/* Ocultos bajo Moderadora/Copago (encargo explícito, ver
+                  usaLayoutSimplificado arriba): un ítem de un solo valor no
+                  desglosa IVA/Copagos/Moderadora/Pago Compartido, solo
+                  Cantidad/Vlr Item/Valor Total. `valorIva`/`valorTotal` no
+                  se recalculan por esto -- mismo criterio que el resto de
+                  campos ocultos de este modal (ver comentario del
+                  componente), siguen sumando los valores en su default
+                  '0.00' mientras el campo no se muestra. */}
+              {!isTipoFinancieroContratacion && !usaLayoutSimplificado && (
                 <div className="form-field">
                   <label htmlFor="aim-porcentaje-iva">Porcentaje IVA</label>
                   <input
@@ -404,7 +470,7 @@ export default function AgregarItemModal({
                   />
                 </div>
               )}
-              {!isTipoFinancieroContratacion && (
+              {!isTipoFinancieroContratacion && !usaLayoutSimplificado && (
                 <div className="form-field">
                   <label htmlFor="aim-valor-iva">Valor IVA</label>
                   <input
@@ -416,18 +482,24 @@ export default function AgregarItemModal({
                 </div>
               )}
 
-              <div className="form-field">
-                <label htmlFor="aim-copagos">Vr. Copagos</label>
-                <CurrencyInput id="aim-copagos" value={form.vrCopagos} onChange={setField('vrCopagos')} />
-              </div>
-              <div className="form-field">
-                <label htmlFor="aim-moderadora">Valor Moderadora</label>
-                <CurrencyInput id="aim-moderadora" value={form.valorModeradora} onChange={setField('valorModeradora')} />
-              </div>
-              <div className="form-field">
-                <label htmlFor="aim-pago-compartido">Vr. P. Compartido</label>
-                <CurrencyInput id="aim-pago-compartido" value={form.vrPagoCompartido} onChange={setField('vrPagoCompartido')} />
-              </div>
+              {!usaLayoutSimplificado && (
+                <div className="form-field">
+                  <label htmlFor="aim-copagos">Vr. Copagos</label>
+                  <CurrencyInput id="aim-copagos" value={form.vrCopagos} onChange={setField('vrCopagos')} />
+                </div>
+              )}
+              {!usaLayoutSimplificado && (
+                <div className="form-field">
+                  <label htmlFor="aim-moderadora">Valor Moderadora</label>
+                  <CurrencyInput id="aim-moderadora" value={form.valorModeradora} onChange={setField('valorModeradora')} />
+                </div>
+              )}
+              {!usaLayoutSimplificado && (
+                <div className="form-field">
+                  <label htmlFor="aim-pago-compartido">Vr. P. Compartido</label>
+                  <CurrencyInput id="aim-pago-compartido" value={form.vrPagoCompartido} onChange={setField('vrPagoCompartido')} />
+                </div>
+              )}
 
               <div className="fam-col-span-full">
                 <div className="fam-total-box">

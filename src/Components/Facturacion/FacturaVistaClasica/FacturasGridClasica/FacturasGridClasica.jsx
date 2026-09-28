@@ -6,7 +6,7 @@ import RowActionsMenu from './RowActionsMenu/RowActionsMenu';
 import FacturasEmptyState from '../../FacturasEmptyState/FacturasEmptyState';
 import { formatCOP, formatFechaClasica } from '@/hooks/Facturacion/mockFacturasData';
 import {
-  LuEye, LuPrinter, LuCircleCheck, LuBan,
+  LuPrinter, LuCircleCheck, LuBan,
 } from 'react-icons/lu';
 
 const COLUMNS = [
@@ -144,17 +144,6 @@ export default function FacturasGridClasica({
               <td><EstadoFeIcon f={f} /></td>
               <td className="fvc-actions-cell">
                 <div className="fvc-row-actions">
-                  {onVerDetalle && (
-                    <button
-                      type="button"
-                      className="fvc-row-action-btn"
-                      onClick={(e) => { e.stopPropagation(); onVerDetalle(f); }}
-                      aria-label={`Ver detalle de la factura ${f.numero}`}
-                      title="Ver detalle"
-                    >
-                      <LuEye className="icon" />
-                    </button>
-                  )}
                   <button
                     type="button"
                     className="fvc-row-action-btn"
@@ -164,7 +153,11 @@ export default function FacturasGridClasica({
                   >
                     <LuPrinter className="icon" />
                   </button>
-                  <RowActionsMenu numero={f.numero} onEditar={() => onEditar(f)} />
+                  <RowActionsMenu
+                    numero={f.numero}
+                    onVerDetalle={onVerDetalle ? () => onVerDetalle(f) : undefined}
+                    onEditar={() => onEditar(f)}
+                  />
                 </div>
               </td>
             </tr>

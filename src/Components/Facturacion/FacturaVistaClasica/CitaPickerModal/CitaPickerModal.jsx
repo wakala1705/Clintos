@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import DateRangeFilter from '../DateRangeFilter/DateRangeFilter';
 import { CITAS, ESTADO_LABEL, ESTADO_TONE } from '@/hooks/Facturacion/mockCitasData';
 import { LuSearch } from 'react-icons/lu';
 
@@ -41,6 +42,15 @@ const MESES_ABBR = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP
 function formatFechaCita(fecha, hora) {
   const [dia, mes, anio] = fecha.split('.');
   return `${dia}.${MESES_ABBR[Number(mes) - 1]}.${anio} - ${hora}`;
+}
+
+// `c.fecha` viene "DD.MM.YYYY" (mock, ver mockCitasData.js) -- se convierte a
+// ISO solo para comparar contra `rango.desde`/`rango.hasta` (mismos valores
+// "YYYY-MM-DD" que entrega el `<input type="date">` de DateRangeFilter, ver
+// FacturaVistaClasica.jsx para el mismo patrón de comparación por string).
+function fechaCitaToISO(fecha) {
+  const [dia, mes, anio] = fecha.split('.');
+  return `${anio}-${mes}-${dia}`;
 }
 
 // Reemplaza al picker legacy "Registros de CIT" para el campo
@@ -98,7 +108,11 @@ function formatFechaCita(fecha, hora) {
 //    `cip-row-head`.
 export default function CitaPickerModal({ onSelect, onClose }) {
   const [query, setQuery] = useState('');
-  const [estado, setEstado] = useState('todos');
+  // Default "Sin facturar" (encargo explícito) -- este picker existe para
+  // encontrar citas pendientes de facturar, no para revisar el historial
+  // completo; "Todos" sigue disponible a mano.
+  const [estado, setEstado] = useState('pendiente');
+  const [rango, setRango] = useState({ desde: '', hasta: '' });
   const [seleccion, setSeleccion] = useState(null);
 
   useEffect(() => {
@@ -110,13 +124,16 @@ export default function CitaPickerModal({ onSelect, onClose }) {
   }, [onClose]);
 
   const q = normalizar(query.trim());
-  const filtered = CITAS.filter((c) => (
-    (estado === 'todos' || c.estado === estado)
-    && (!q
-      || normalizar(c.consecutivo).includes(q)
-      || normalizar(c.documento).includes(q)
-      || normalizar(c.nombreAfiliado).includes(q))
-  ));
+  const filtered = CITAS.filter((c) => {
+    const fechaISO = fechaCitaToISO(c.fecha);
+    return (estado === 'todos' || c.estado === estado)
+      && (!rango.desde || fechaISO >= rango.desde)
+      && (!rango.hasta || fechaISO <= rango.hasta)
+      && (!q
+        || normalizar(c.consecutivo).includes(q)
+        || normalizar(c.documento).includes(q)
+        || normalizar(c.nombreAfiliado).includes(q));
+  });
 
   function handleSeleccionar() {
     if (!seleccion) return;
@@ -155,6 +172,11 @@ export default function CitaPickerModal({ onSelect, onClose }) {
                 ariaLabel="Filtrar por estado"
               />
             </div>
+            <DateRangeFilter
+              desde={rango.desde}
+              hasta={rango.hasta}
+              onChange={setRango}
+            />
           </div>
 
           <div className="cip-table">

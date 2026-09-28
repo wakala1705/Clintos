@@ -14,9 +14,10 @@ import styles from './DropdownMenu.module.css';
 // hover en hex, 11 sin :focus-visible...).
 //
 // items: [{ id, label, icon?, onSelect, tone?: 'danger'|'warn', disabled?,
-//           dividerBefore?, iconTone?: 'danger'|'warn' }]
+//           dividerBefore?, iconTone?: 'danger'|'warn'|'primary' }]
 // iconTone: solo el ícono con el tono, el texto queda neutro (a diferencia
-// de `tone`, que tiñe todo el ítem).
+// de `tone`, que tiñe todo el ítem). 'primary' es decorativo (RowActionsMenu
+// de Facturación) -- no implica severidad como danger/warn.
 //
 // - Siempre portado a document.body con position:fixed: dentro de una tabla
 //   con overflow:auto (o una card con overflow:hidden, BedCard) un dropdown
@@ -193,7 +194,17 @@ export default function DropdownMenu({
                   disabled={item.disabled}
                   onClick={() => handleSelect(item)}
                 >
-                  {Icon && <Icon className={[panel.icon, item.iconTone === 'danger' && panel.iconDanger, item.iconTone === 'warn' && panel.iconWarn].filter(Boolean).join(' ')} aria-hidden="true" />}
+                  {Icon && (
+                    <Icon
+                      className={[
+                        panel.icon,
+                        item.iconTone === 'danger' && panel.iconDanger,
+                        item.iconTone === 'warn' && panel.iconWarn,
+                        item.iconTone === 'primary' && panel.iconPrimary,
+                      ].filter(Boolean).join(' ')}
+                      aria-hidden="true"
+                    />
+                  )}
                   {item.label}
                 </button>
               </div>

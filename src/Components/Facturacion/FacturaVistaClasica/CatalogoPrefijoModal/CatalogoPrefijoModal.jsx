@@ -83,6 +83,7 @@ const PREFIJOS = [
   { prefijo: '29', descripcion: 'LABORATORIO CLINICO NO PBS' },
   { prefijo: '993', descripcion: 'MANUALES' },
   { prefijo: '17', descripcion: 'MATERIAL DE OSTEOSINTESIS' },
+  { prefijo: '53', descripcion: 'PAGOS COMPARTIDOS' },
 ];
 
 // `onSelect` entrega "prefijo — descripción" ya compuesto (mismo formato
