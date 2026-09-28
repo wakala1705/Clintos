@@ -1,0 +1,44 @@
+/* Scaffolding de modal propio (.ctm-overlay/.ctm-modal/.ctm-body/.ctm-footer)
+   -- mismo criterio que SedePickerModal.css/AreaFuncionalPickerModal.css:
+   este modal se monta desde el Topbar (app-wide), no puede depender de
+   .modal-overlay/.modal-card de una feature en particular. Header de
+   título+cerrar: ver @/Components/ModalHeader/ModalHeader (spec fija, no se
+   toca acá). Fallback inline (var(--token, valor)) en los tokens que no
+   todas las rutas declaran. */
+.ctm-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal,50);
+  background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ctm-modal{
+  width:420px;max-width:95vw;
+  background:var(--surface-modal,#fff);border-radius:var(--radius-lg,12px);
+  display:flex;flex-direction:column;
+  box-shadow:0 12px 32px rgba(6,25,42,.22);
+}
+.ctm-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
+.ctm-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:12px;flex-shrink:0;
+}
+
+.ctm-lead{margin:0;font-size:var(--fs-lg,16px);font-weight:var(--fw-semibold,600);color:var(--ink-900);}
+.ctm-context-chip{
+  display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+  font-size:var(--fs-sm,12px);font-weight:var(--fw-semibold,600);color:var(--primary-dark,var(--primary));
+  background:var(--primary-50);padding:4px 10px;border-radius:20px;
+}
+.ctm-context-chip svg{width:13px;height:13px;flex-shrink:0;}
+
+/* Lista de actividades pendientes -- borde izquierdo ámbar (no una caja
+   plana) para que se lea como aviso real, mismo tono que el resto del
+   sistema (nunca rojo: eso queda para la acción destructiva en sí). */
+.ctm-warning-note{
+  background:var(--amber-bg);color:var(--amber-fg);
+  border-left:3px solid var(--amber);border-radius:0 var(--radius,8px) var(--radius,8px) 0;
+  padding:10px 12px;
+}
+.ctm-warning-title{margin:0 0 6px;font-size:var(--fs-sm,12px);font-weight:var(--fw-semibold,600);}
+.ctm-warning-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;}
+.ctm-warning-list li{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm,12px);}
+.ctm-warning-list .icon{width:14px;height:14px;flex-shrink:0;}

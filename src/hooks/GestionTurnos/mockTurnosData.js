@@ -48,6 +48,22 @@ export function duracionHoras(horaInicio, horaFin) {
   return Math.round(minutos / 60);
 }
 
+// "HH:MM" 24h -> "hh:mm a. m./p. m." — 00:00 se muestra como "12:00 a. m."
+// (medianoche), 12:00 como "12:00 p. m." (mediodía), igual que cualquier
+// reloj de 12h. Usado por IniciarTurnoModal (Panel General de Enfermería)
+// para mostrar horaInicio/horaFin de estos mismos turnos en el formato que
+// pide ese modal, sin duplicar el catálogo horaInicio/horaFin en otro mock.
+function horaAmPm(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  const periodo = h < 12 ? 'a. m.' : 'p. m.';
+  const h12 = (h % 12) || 12;
+  return `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${periodo}`;
+}
+
+export function rangoHorarioLabel(horaInicio, horaFin) {
+  return `${horaAmPm(horaInicio)} – ${horaAmPm(horaFin)}`;
+}
+
 // 4 turnos de 6 horas cubriendo las 24h (encargo: pasar de 3 turnos de 8h a
 // 4 de 6h) — Mañana/Tarde/Noche conservan sus nombres y punto de inicio
 // original, Madrugada es el turno nuevo que cierra el ciclo (00:00–06:00,

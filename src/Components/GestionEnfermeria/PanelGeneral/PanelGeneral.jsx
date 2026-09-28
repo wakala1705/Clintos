@@ -11,10 +11,12 @@ import GestionEnfermeriaSidebar from '@/Components/GestionEnfermeria/GestionEnfe
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import PatientsPanel from './PatientsPanel/PatientsPanel';
 import AlertsPanel from './AlertsPanel/AlertsPanel';
+import IniciarTurnoModal from './IniciarTurnoModal/IniciarTurnoModal';
 import {
   AREAS_OPERATIVAS, CAMAS_POR_AREA, DOSIS_PROGRAMADAS_HOY, NOMBRE_COMPLETO, ORDENES_PENDIENTES,
   PACIENTES_PISO, sectorDeCama,
 } from '@/hooks/GestionEnfermeria/mockPanelGeneralData';
+import { abrirTurno, useTurnoActivo } from '@/hooks/Turno/turno';
 import {
   LuBedDouble, LuClipboardList, LuHourglass, LuPill, LuUsers,
 } from 'react-icons/lu';
@@ -40,6 +42,11 @@ export default function PanelGeneral() {
   // fila de KPIs para darle más alto a la tabla — mismo comportamiento que
   // HC Hospitalización (tablaExpandida en HistoriaClinicaHospitalizacion.jsx).
   const [tablaExpandida, setTablaExpandida] = useState(false);
+  // Puerta de entrada al contexto operativo (ver IniciarTurnoModal): se
+  // muestra mientras no haya turno abierto (hooks/Turno/turno.js, misma
+  // sesión que lee @/Components/TurnoActivoButton en el Topbar) — no un flag
+  // local que se resetea a "abierto" cada vez que se remonta el dashboard.
+  const turnoActivo = useTurnoActivo();
 
   // Theme claro/oscuro + colapsar/expandir el Sidebar (con auto-colapso
   // responsive por debajo de 1024px) — mismo init que AtencionEnfermeria.jsx
@@ -148,6 +155,16 @@ export default function PanelGeneral() {
           </div>
         </div>
       </div>
+
+      {!turnoActivo && (
+        <IniciarTurnoModal
+          onClose={() => router.push('/home')}
+          onConfirm={({ unidad, turno }) => {
+            abrirTurno({ unidad, turno });
+            setAreaOperativa(unidad);
+          }}
+        />
+      )}
     </div>
   );
 }

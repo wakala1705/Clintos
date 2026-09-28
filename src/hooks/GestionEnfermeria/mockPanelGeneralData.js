@@ -13,6 +13,8 @@
 // un ingreso de menos de 24 h (nuevo ingreso). El campo `prolongada` que
 // alimenta el KPI "Estancias prolongadas" sigue siendo un booleano curado
 // por paciente (no se recalcula desde `diasEstancia`).
+import { TIPOS_TURNO_INICIALES, rangoHorarioLabel } from '@/hooks/GestionTurnos/mockTurnosData';
+
 const HOY = new Date();
 
 const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -232,4 +234,39 @@ export function documentoDe(id) {
 export function numeroAdmisionDe(id) {
   return `02012${id.replace(/\D/g, '')}`;
 }
+
+// ---------- Modal "Comienza tu jornada de enfermería" (IniciarTurnoModal) ----------
+// Sede/área funcional se leen de la sesión real (hooks/Sede/sede.js,
+// hooks/AreaFuncional/areaFuncional.js — mismos hooks que ya consume el
+// Topbar vía SedePickerButton/AreaFuncionalPickerButton), no de un mock
+// propio: son el mismo valor elegido en el login/picker, no una copia que
+// pueda desincronizarse. El campo "Unidad / Sector" sí reutiliza el filtro de
+// área operativa de PatientsPanel (AREAS_OPERATIVAS/CAMAS_POR_AREA/
+// sectorDeCama, ver arriba) en vez de inventar unidades propias — una sola
+// fuente de verdad para "camas"/"pacientes" por sector, igual que los kpis de
+// PanelGeneral.jsx.
+export const UNIDADES_DISPONIBLES = AREAS_OPERATIVAS.map((area) => ({
+  ...area,
+  camas: CAMAS_POR_AREA[area.value],
+  pacientes: area.value === 'todo'
+    ? PACIENTES_PISO.length
+    : PACIENTES_PISO.filter((p) => sectorDeCama(p.cama) === area.value).length,
+}));
+
+// Reutiliza el catálogo real de "Tipos de turno" de Gestión de turnos (ver
+// import arriba) en vez de inventar horarios propios — mismos 4 turnos que ya
+// se administran desde ahí (NuevoTurnoModal), solo los activos.
+// horaInicio/horaFin ("HH:MM" 24h, crudos) se conservan además de `rango`
+// (ya formateado) -- @/Components/TurnoActivoButton los necesita para
+// detectar si la hora real de apertura del turno cayó fuera de la ventana
+// programada (dropdown de "Inicio real").
+export const TURNOS_DISPONIBLES = TIPOS_TURNO_INICIALES
+  .filter((t) => t.estado === 'activo')
+  .map((t) => ({
+    value: t.id,
+    label: `Turno ${t.nombre.toLowerCase()}`,
+    rango: rangoHorarioLabel(t.horaInicio, t.horaFin),
+    horaInicio: t.horaInicio,
+    horaFin: t.horaFin,
+  }));
 

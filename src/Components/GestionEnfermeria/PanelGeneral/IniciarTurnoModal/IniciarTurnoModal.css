@@ -1,0 +1,62 @@
+/* Modal overlay/card base, .modal-body/.modal-footer, .form-field: shared.css
+   (ver AGENTS.md "Modales"). Acá solo lo exclusivo de esta puerta de entrada. */
+.itm-modal-card{width:540px;}
+.itm-body{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:var(--space-6) var(--space-5) var(--space-5);
+}
+
+.itm-hero-icon{
+  position:relative;flex-shrink:0;width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+  margin-bottom:var(--space-4);
+}
+.itm-hero-icon .icon{width:34px;height:34px;}
+.itm-hero-badge{
+  position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary);color:#fff;border:2px solid var(--surface-modal);
+}
+.itm-hero-badge svg{width:15px;height:15px;}
+
+.itm-title{margin:0 0 6px;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.itm-desc{margin:0 0 var(--space-5);font-size:var(--fs-base);color:var(--ink-500);}
+
+.itm-context-card{
+  display:flex;align-items:center;width:100%;
+  background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--radius);
+  padding:var(--space-3) var(--space-4);margin-bottom:var(--space-5);
+}
+.itm-context-item{flex:1;display:flex;flex-direction:column;gap:2px;text-align:left;}
+.itm-context-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary-dark);text-transform:uppercase;letter-spacing:.03em;}
+.itm-context-value{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.itm-context-sep{width:1px;align-self:stretch;background:var(--primary-100);margin:0 var(--space-4);flex-shrink:0;}
+
+.itm-field{width:100%;text-align:left;margin-bottom:var(--space-4);}
+.itm-field label{font-weight:var(--fw-semibold);}
+
+/* Ícono inicial superpuesto sobre .form-select-trigger (clase global, ver
+   FormSelect.jsx) sin tocar el componente — mismo criterio que .search-field
+   .icon sobre un <input> en shared.css. Empuja el texto del trigger con
+   padding-left, y sube el alto a --input-lg para el "área táctil" grande que
+   pide este modal (los .form-field de este feature usan --input-md por
+   defecto). */
+.itm-select-icon-wrap{position:relative;}
+.itm-select-icon-wrap .itm-select-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:var(--primary);pointer-events:none;z-index:1;
+}
+.itm-select-icon-wrap .form-select-trigger{height:var(--input-lg);padding-left:42px;}
+.itm-field-meta{margin:6px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+.itm-info-banner{
+  display:flex;align-items:flex-start;gap:var(--space-2);width:100%;
+  background:var(--status-info-bg);color:var(--status-info-fg);
+  border-radius:var(--radius);padding:var(--space-3) var(--space-4);
+  text-align:left;
+}
+.itm-info-banner .icon{width:17px;height:17px;flex-shrink:0;margin-top:1px;}
+.itm-info-banner p{margin:0;font-size:var(--fs-sm);line-height:1.45;}
+
+.itm-modal-card .modal-footer{width:100%;}

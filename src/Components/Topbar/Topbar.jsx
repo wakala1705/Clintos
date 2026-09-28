@@ -8,6 +8,7 @@ import HamburgerMenu from '@/Components/HamburgerMenu/HamburgerMenu';
 import UserMenu from '@/Components/UserMenu/UserMenu';
 import SedePickerButton from '@/Components/SedePickerButton/SedePickerButton';
 import AreaFuncionalPickerButton from '@/Components/AreaFuncionalPickerButton/AreaFuncionalPickerButton';
+import TurnoActivoButton from '@/Components/TurnoActivoButton/TurnoActivoButton';
 import { useActiveModule, useActiveModuleLabel } from '@/hooks/Session/session';
 
 // Topbar global, compartida por /asignacion-citas, /programar-cita y
@@ -67,6 +68,7 @@ export default function Topbar({ section, page, user, pickers, children }) {
           <>
             <SedePickerButton />
             <AreaFuncionalPickerButton obligatorio={!isAdmin} />
+            {pathname.startsWith('/gestion-enfermeria') && <TurnoActivoButton />}
           </>
         )}
         {children}

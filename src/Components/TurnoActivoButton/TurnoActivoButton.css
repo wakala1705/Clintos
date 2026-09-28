@@ -1,0 +1,44 @@
+/* .meta-item / .picker-btn: estilizados en @/Components/Topbar/Topbar.css
+   (global, siempre cargado donde se monta Topbar) -- nada propio que definir
+   para el botón en sí. Lo de acá es solo el dropdown que este componente
+   porta a document.body (mismo motivo que FormSelect.css: portado para no
+   depender del overflow del contenedor donde vive el trigger). Fallback
+   inline (var(--token, valor)) en tokens que no todas las rutas declaran. */
+.tab-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.tab-dot.active{background:#0d7a3d;}
+.tab-dot.inactive{background:var(--ink-400);}
+
+/* .chev ya viene de Topbar.css (.picker-btn .chev) -- solo agrega la
+   rotación al abrir, que Sede/Área no necesitan (abren un modal, no un
+   dropdown) y por eso no la definen ahí. */
+.picker-btn .chev.open{transform:rotate(180deg);}
+
+.tab-dropdown{
+  position:fixed;width:320px;max-width:calc(100vw - 16px);
+  background:var(--surface-modal,#fff);border:1px solid var(--border);border-radius:var(--radius-lg,12px);
+  box-shadow:0 10px 28px rgba(16,24,39,.16);
+  padding:14px;z-index:calc(var(--z-modal,50) + 1);
+}
+
+.tab-status{
+  display:flex;align-items:center;gap:8px;
+  font-size:var(--fs-sm,12px);font-weight:var(--fw-semibold,600);color:var(--ink-700);
+  margin:0 0 10px;
+}
+.tab-turno-name{margin:0;font-size:var(--fs-base,14px);font-weight:var(--fw-semibold,600);color:var(--ink-900);}
+.tab-turno-rango{margin:2px 0 0;font-size:var(--fs-sm,12px);color:var(--ink-500);}
+
+.tab-divider{height:1px;background:var(--border);margin:10px 0;}
+
+.tab-field-label{font-size:var(--fs-xs,11px);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
+.tab-field-value{margin:2px 0 0;font-size:var(--fs-base,14px);font-weight:var(--fw-semibold,600);color:var(--ink-900);}
+
+.tab-inicio-row{margin:8px 0 0;font-size:var(--fs-sm,12px);color:var(--ink-500);}
+.tab-inicio-row b{color:var(--ink-700);font-weight:var(--fw-semibold,600);}
+.tab-inicio-row.tab-inicio-warn{color:var(--amber-fg);}
+.tab-inicio-warn-icon{width:12px;height:12px;margin-right:3px;vertical-align:-1px;}
+
+.tab-empty-title{margin:0 0 4px;font-size:var(--fs-base,14px);font-weight:var(--fw-semibold,600);color:var(--ink-900);}
+.tab-empty-desc{margin:0 0 12px;font-size:var(--fs-sm,12px);color:var(--ink-500);line-height:1.4;}
+
+.tab-action-btn{width:100%;justify-content:center;}
