@@ -191,10 +191,17 @@ export default function AgregarItemModal({
   // criterio que el resto de campos ocultos de este modal.
   const isTipoFinancieroContratacion = form.tipoFinanciero === 'contratacion';
 
+  // "Descripción" (encargo explícito: la columna "Descripción" de la
+  // grilla de ítems del padre quedaba vacía bajo Tipo Financiero "Manual",
+  // que no pasa por CatalogoServiciosAreaModal -- ver comentario del
+  // componente) cae al Prefijo elegido cuando no hay descripción propia
+  // (Contratación ya la trae de "Código", ver `field-with-search` de
+  // "Código" más arriba -- eso no se pisa acá).
   function handleAceptar() {
     onSave({
       id: item?.id ?? `item-${Date.now()}`,
       ...form,
+      descripcion: form.descripcion || form.prefijo,
       valorIva,
       valorTotal,
     });
@@ -273,7 +280,7 @@ export default function AgregarItemModal({
                 </div>
               </div>
 
-              <div className="form-field fam-col-span-full">
+              <div className={`form-field${isTipoFinancieroManual ? '' : ' fam-col-span-full'}`}>
                 <label htmlFor="aim-prefijo">Prefijo</label>
                 <div className="field-with-search">
                   <input

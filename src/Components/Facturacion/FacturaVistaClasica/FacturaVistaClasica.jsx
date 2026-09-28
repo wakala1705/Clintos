@@ -17,12 +17,11 @@ import FacturaDetalleSplit from './FacturaDetalleSplit/FacturaDetalleSplit';
 import FacturaAgregarModalClasico from './FacturaAgregarModalClasico/FacturaAgregarModalClasico';
 import PrintLoadingModal from './PrintLoadingModal/PrintLoadingModal';
 import FacturaPdfViewerModal from './FacturaPdfViewerModal/FacturaPdfViewerModal';
+import VistaModoMenu from './VistaModoMenu/VistaModoMenu';
 import {
   SPLIT_RATIO_DEFAULT, setSplitRatio, setVistaModo, useSplitRatio, useVistaModo,
 } from '@/hooks/Facturacion/vistaClasicaPrefs';
-import {
-  LuList, LuPanelBottom, LuRefreshCw, LuSearch,
-} from 'react-icons/lu';
+import { LuRefreshCw, LuSearch } from 'react-icons/lu';
 
 // Delay artificial del paso 1 del flujo de impresión (ver handleImprimir más
 // abajo) -- sin backend real (mockFacturasData.js: "solo pinta el front"),
@@ -68,10 +67,9 @@ const PE_FILTROS = [
 //   abajo (FacturaDetalleSplit), separados por un divisor arrastrable
 //   (SplitPane, proporción también recordada). El modal "Ver detalle" no
 //   existe en este modo -- sería el mismo contenido que ya está en pantalla.
-const VISTA_OPCIONES = [
-  { value: 'lista', label: 'Lista', icon: LuList },
-  { value: 'dividida', label: 'Dividida', icon: LuPanelBottom },
-];
+// El toggle Lista/Dividida vive en VistaModoMenu.jsx (encargo explícito:
+// agrupar el segmented-control en un solo botón de "configuración" con
+// dropdown, ver ese componente) -- sus opciones ya no se listan acá.
 
 export default function FacturaVistaClasica() {
   const modo = useVistaModo();
@@ -242,20 +240,7 @@ export default function FacturaVistaClasica() {
           Refrescar
         </Button>
 
-        <div className="segmented-control fvc-view-toggle" role="group" aria-label="Modo de vista">
-          {VISTA_OPCIONES.map(({ value, label, icon: Icon }) => (
-            <button
-              key={value}
-              type="button"
-              className={`segmented-btn${modo === value ? ' active' : ''}`}
-              aria-pressed={modo === value}
-              onClick={() => setVistaModo(value)}
-            >
-              <Icon className="icon" aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </div>
+        <VistaModoMenu modo={modo} onChange={setVistaModo} />
       </div>
 
       {modo === 'dividida' ? (

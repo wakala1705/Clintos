@@ -194,22 +194,6 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    <Topbar> en el shell — no se redefine acá (ver AGENTS.md). */
 .icon-btn-circle:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
 
-/* ---------- Segmented control (toggle Vista nueva/Vista clásica) ---------- */
-.segmented-control{
-  display:flex;align-items:center;
-  border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden;width:max-content;flex-shrink:0;
-}
-.segmented-btn{
-  border:none;background:var(--surface);color:var(--ink-700);
-  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
-  padding:8px 12px;cursor:pointer;white-space:nowrap;
-}
-.segmented-btn:not(:last-child){border-right:1px solid var(--border);}
-.segmented-btn:hover{background:var(--gray-bg);}
-.segmented-btn:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.segmented-btn.active{background:var(--primary-50);color:var(--primary-dark);}
-
 /* ---------- Vista clásica (grilla densa + botones legacy) ----------
    Reusadas por 2+ componentes de FacturaVistaClasica (FacturasGridClasica,
    FacturaDetalleClasico, FacturaVistaClasica) — ver AGENTS.md "Component
@@ -408,6 +392,28 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field textare
 .fvc-discard-modal h3{margin:0 0 8px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fvc-discard-modal p{margin:0 0 20px;font-size:var(--fs-base);color:var(--ink-500);line-height:1.45;}
 .fvc-discard-actions{display:flex;justify-content:center;gap:10px;}
+/* Variante info de `.fvc-discard-icon` -- "Creación del tercero al
+   facturar" (FacturaAgregarModalClasico) pregunta, no advierte de una
+   pérdida de datos, así que no lleva el tono amber por defecto. */
+.fam-tercero-icon{background:var(--status-info-bg);color:var(--status-info-fg);}
+/* Ese mismo diálogo lleva un nombre de afiliado variable (puede ser largo,
+   ej. "MONTIEL MONTIEL JORGE ELISER") + 2 botones con la acción escrita en
+   el label ("Mantener tercero actual"/"Sí, facturar al paciente", ver
+   AGENTS.md "Modales") -- a diferencia de "Seguir editando"/"Sí,
+   descartar" (cortos, entran en fila en 400px), acá la fila quedaba muy
+   apretada contra el padding del diálogo (encargo explícito de revisión
+   PD). Apilados a ancho completo en vez de en fila -- mismo patrón ya
+   usado en `.tg-ns-actions`/`.tg-ns-btn` de NivelSugeridoDialog (Triage)
+   para este mismo problema (2 botones con label largo en un diálogo
+   centrado de 400px). */
+.fam-tercero-actions{flex-direction:column;}
+.fam-tercero-btn{width:100%;justify-content:center;}
+/* Ancla el botón "X" (encargo explícito) -- reusa `.modal-close-btn` de
+   ModalHeader.css tal cual (mismo tamaño/radio/hover que el resto del
+   proyecto), solo reposicionado porque este diálogo no tiene fila de
+   header donde vivir esa clase normalmente. */
+.fam-tercero-modal{position:relative;}
+.fam-tercero-close{position:absolute;top:14px;right:14px;}
 
 /* Label accesible sin representación visual (ej. "Observaciones" de
    AgregarItemModal, cuyo título ya lo da el `.fam-section-header` que lo

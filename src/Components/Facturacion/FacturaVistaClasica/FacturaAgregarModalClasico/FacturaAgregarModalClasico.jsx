@@ -10,12 +10,13 @@ import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/Ca
 import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
+import CitaPickerModal from '../CitaPickerModal/CitaPickerModal';
 import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
 import AgregarItemModal from '../AgregarItemModal/AgregarItemModal';
 import {
   LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuPencil, LuTriangleAlert, LuFileText, LuUser,
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
-  LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage, LuSave,
+  LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage, LuSave, LuLink, LuCircleHelp, LuX,
 } from 'react-icons/lu';
 
 // icon/description por opción (consumido por TipoFacturaSelector, panel
@@ -86,6 +87,16 @@ const ORIGEN_OPTIONS_BY_TIPO = {
   copago: ORIGEN_OPTIONS_COPAGO,
   moderadora: ORIGEN_OPTIONS_MODERADORA,
   'pago-compartido': ORIGEN_OPTIONS_PAGO_COMPARTIDO,
+};
+
+// Default de "Origen" al elegir un Tipo Factura, cuando ese tipo tiene uno
+// propio distinto del primer valor de su lista (encargo explícito: al
+// elegir "Moderadora" el default es "Citas", no "Admisiones" -- ver
+// handleChangeTipoFactura más abajo). Los tipos que no están acá siguen el
+// criterio de siempre: mantienen el Origen actual si sigue siendo válido
+// para la nueva lista, si no caen al primer valor de esa lista.
+const DEFAULT_ORIGEN_BY_TIPO = {
+  moderadora: 'citas',
 };
 
 const MODO_FACTURACION_OPTIONS = [
@@ -354,6 +365,11 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   const [catalogoContratacionAbierto, setCatalogoContratacionAbierto] = useState(false);
   const [catalogoAdministradoraAbierto, setCatalogoAdministradoraAbierto] = useState(false);
   const [admisionPickerAbierto, setAdmisionPickerAbierto] = useState(false);
+  // Bajo Tipo Factura "Moderadora" (encargo explícito), "No. Referencia"
+  // busca en CitaPickerModal en vez de AdmisionPickerModal -- ver
+  // abrirPickerReferencia/handleSeleccionAdmision más abajo, que ya
+  // generalizaron para aceptar tanto una admisión como una cita.
+  const [citaPickerAbierto, setCitaPickerAbierto] = useState(false);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [confirmingClose, setConfirmingClose] = useState(false);
@@ -363,6 +379,16 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // Referencia" a mano (ver handleChangeNoReferencia), porque en ese caso
   // el texto ya no refleja la admisión confirmada.
   const [admisionSeleccionada, setAdmisionSeleccionada] = useState(null);
+  // Confirmación "Creación del tercero al facturar" (encargo explícito, ver
+  // imagen de referencia) -- se dispara justo después de elegir una admisión
+  // en AdmisionPickerModal (ver handleSeleccionAdmision), para cualquier
+  // Tipo Factura (Normal/Copago/Moderadora/Pago Compartido, encargo
+  // explícito: "linkealo a los campos de N° referencia de todos los tipos
+  // de factura"), antes de decidir si "Tercero / Administradora" pasa a ser
+  // el paciente de esa admisión. Guarda la admisión elegida (no solo un
+  // boolean) porque "Sí" necesita su `nombreAfiliado` para completar el
+  // campo; null = diálogo cerrado.
+  const [confirmandoTerceroAdmision, setConfirmandoTerceroAdmision] = useState(null);
   // Toggle "Contraer sección"/"Expandir sección" de "Información
   // contractual" (encargo explícito, ver imagen de referencia).
   const [contractSectionCollapsed, setContractSectionCollapsed] = useState(false);
@@ -420,7 +446,15 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape') attemptClose();
+      if (e.key !== 'Escape') return;
+      // Mientras "Creación del tercero al facturar" está abierto, Escape lo
+      // cierra a él solo (mismo efecto que "Mantener tercero actual", sin
+      // tocar `idTercero`) -- antes caía en el `attemptClose` del wizard
+      // completo, dos overlays apilados compartiendo una sola tecla
+      // (encargo explícito de revisión PD: "Escape queda mal aislado entre
+      // overlays").
+      if (confirmandoTerceroAdmision) { setConfirmandoTerceroAdmision(null); return; }
+      attemptClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
@@ -502,25 +536,55 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
       ...f,
       tipoFactura: value,
       modoFacturacion: nextIsRestricted ? 'manual' : f.modoFacturacion,
-      origen: nextOrigenOptions.some((o) => o.value === f.origen) ? f.origen : nextOrigenOptions[0].value,
+      origen: DEFAULT_ORIGEN_BY_TIPO[value]
+        ?? (nextOrigenOptions.some((o) => o.value === f.origen) ? f.origen : nextOrigenOptions[0].value),
       tipoContrato: nextIsRestricted ? 'evento' : f.tipoContrato,
     }));
   }
 
-  // Bajo Copago/Moderadora/Pago Compartido (encargo explícito), elegir una
-  // admisión en AdmisionPickerModal carga el nombre del afiliado en
-  // "Tercero / Administradora" (`idTercero`) -- es la persona a la que se le
-  // factura bajo estos tipos, a diferencia de Normal donde ese campo es la
-  // aseguradora/administradora. Fuera de isRestricted el picker solo carga
-  // "No. Referencia", igual que antes. `admisionSeleccionada` (cualquier
-  // tipo) dispara el banner "Admisión encontrada" de la sección 1.
+  // Bajo Tipo Factura "Moderadora" (encargo explícito: "se debe abrir en el
+  // flujo de tipo factura moderadora, en el campo N° referencia"),
+  // "No. Referencia" busca en CitaPickerModal en vez de AdmisionPickerModal
+  // -- los botones de búsqueda/"Cambiar admisión" de la sección 1 llaman
+  // esta función para abrir el picker correcto sin repetir el `if` en cada
+  // uno.
+  function abrirPickerReferencia() {
+    if (form.tipoFactura === 'moderadora') setCitaPickerAbierto(true);
+    else setAdmisionPickerAbierto(true);
+  }
+
+  // Elegir una admisión en AdmisionPickerModal (o, bajo Moderadora, una
+  // cita en CitaPickerModal -- mismo shape de campos relevantes:
+  // `nombreAfiliado`/`documento`, y `numeroAdmision`/`consecutivo` para
+  // "No. Referencia", ver mockCitasData.js) carga "No. Referencia" y
+  // dispara el banner "Admisión encontrada"/"Cita encontrada" de la
+  // sección 1 para cualquier Tipo Factura -- pero "Tercero /
+  // Administradora" (`idTercero`) ya no se pisa acá directo (ni siquiera
+  // bajo Copago/Moderadora/Pago Compartido, que antes lo auto-completaban
+  // sin preguntar): el diálogo "Creación del tercero al facturar" (encargo
+  // explícito, ver imagen de referencia) pregunta primero, para los 4
+  // tipos por igual (encargo explícito: "linkealo a los campos de N°
+  // referencia de todos los tipos de factura"), si se quiere facturar a
+  // nombre del paciente de esa admisión/cita -- ver
+  // confirmandoTerceroAdmision/handleConfirmarTerceroAdmision más abajo.
   function handleSeleccionAdmision(admision) {
     setAdmisionSeleccionada(admision);
-    setForm((f) => ({
-      ...f,
-      noReferencia: admision.numeroAdmision,
-      idTercero: isRestricted ? admision.nombreAfiliado : f.idTercero,
-    }));
+    setField(setForm, 'noReferencia')(admision.numeroAdmision ?? admision.consecutivo);
+    setConfirmandoTerceroAdmision(admision);
+  }
+
+  // "Sí" del diálogo "Creación del tercero al facturar" -- reemplaza
+  // "Tercero / Administradora" por el afiliado de la admisión recién
+  // elegida. "No" solo cierra el diálogo sin tocar `idTercero` (ver JSX del
+  // diálogo más abajo). `confirmandoTerceroAdmision?.` (no lectura directa)
+  // porque `reactCompiler:true` evalúa las dependencias de este handler
+  // (property-path) durante el render para armar su cache key, incluso
+  // mientras el diálogo está cerrado y el estado sigue en `null` -- mismo
+  // patrón que `modal?.cirugia?.id` en ProgramacionSalaCirugias.jsx.
+  function handleConfirmarTerceroAdmision() {
+    if (!confirmandoTerceroAdmision) return;
+    setField(setForm, 'idTercero')(confirmandoTerceroAdmision?.nombreAfiliado);
+    setConfirmandoTerceroAdmision(null);
   }
 
   // Edición manual de "No. Referencia" (a diferencia de elegirla vía el
@@ -783,9 +847,9 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                       <button
                         type="button"
                         className="search-btn"
-                        onClick={() => setAdmisionPickerAbierto(true)}
-                        aria-label="Buscar admisión de referencia"
-                        title="Buscar admisión de referencia"
+                        onClick={abrirPickerReferencia}
+                        aria-label={form.tipoFactura === 'moderadora' ? 'Buscar cita de referencia' : 'Buscar admisión de referencia'}
+                        title={form.tipoFactura === 'moderadora' ? 'Buscar cita de referencia' : 'Buscar admisión de referencia'}
                       >
                         <LuEye className="icon" />
                       </button>
@@ -815,26 +879,33 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                     {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
                   </div>
 
-                  {/* Banner "Admisión encontrada" (encargo explícito, funcional
-                      para cualquier tipo) -- ver admisionSeleccionada/
-                      handleSeleccionAdmision/handleChangeNoReferencia arriba. */}
+                  {/* Banner "Admisión encontrada"/"Cita encontrada" (encargo
+                      explícito, funcional para cualquier tipo) -- ver
+                      admisionSeleccionada/handleSeleccionAdmision/
+                      handleChangeNoReferencia arriba. Copy condicionada por
+                      Tipo Factura (encargo explícito: bajo Moderadora la
+                      referencia es una cita, no una admisión con contrato
+                      -- "Se cargó..." se ajusta para no prometer un
+                      contrato que CitaPickerModal no trae). */}
                   {admisionSeleccionada && (
                     <div className="fam-admision-banner fam-col-span-full">
                       <span className="fam-admision-banner-text">
                         <LuCheck className="icon" aria-hidden="true" />
                         <span>
-                          <strong>Admisión encontrada</strong>
+                          <strong>{form.tipoFactura === 'moderadora' ? 'Cita encontrada' : 'Admisión encontrada'}</strong>
                           <br />
-                          Se cargó la información del afiliado y del contrato.
+                          {form.tipoFactura === 'moderadora'
+                            ? 'Se cargó la información del afiliado.'
+                            : 'Se cargó la información del afiliado y del contrato.'}
                         </span>
                       </span>
                       <Button
                         variant="outline"
                         size="sm"
                         icon={LuRefreshCw}
-                        onClick={() => setAdmisionPickerAbierto(true)}
+                        onClick={abrirPickerReferencia}
                       >
-                        Cambiar admisión
+                        {form.tipoFactura === 'moderadora' ? 'Cambiar cita' : 'Cambiar admisión'}
                       </Button>
                     </div>
                   )}
@@ -1299,6 +1370,13 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                 <Button variant="primary" onClick={() => setPaso(2)} disabled={saving}>Continuar</Button>
               ) : (
                 <>
+                  {/* Solo bajo Tipo Factura "Copago" (encargo explícito) --
+                      vincula esta factura con la del servicio principal que
+                      generó el copago. Solo pinta el front, mismo criterio
+                      que "Facturar" (sin onClick todavía). */}
+                  {form.tipoFactura === 'copago' && (
+                    <Button variant="secondary-accent" icon={LuLink} disabled={saving}>Vincular factura</Button>
+                  )}
                   <Button variant="secondary-accent" icon={LuSave} onClick={handleGuardar} disabled={saving}>Guardar</Button>
                   {/* Solo pinta el front (mismo criterio que el resto del
                       modal, ver comentario del componente) -- sin lógica de
@@ -1361,6 +1439,65 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
           onSelect={handleSeleccionAdmision}
           onClose={() => setAdmisionPickerAbierto(false)}
         />
+      )}
+
+      {citaPickerAbierto && (
+        <CitaPickerModal
+          onSelect={handleSeleccionAdmision}
+          onClose={() => setCitaPickerAbierto(false)}
+        />
+      )}
+
+      {/* "Creación del tercero al facturar" (encargo explícito, ver imagen
+          de referencia) -- mismo patrón de diálogo centrado sin fila de
+          header que `fvc-discard-modal` más abajo (ver AGENTS.md
+          "Modales"), con ícono en tono info (`--status-info-bg`/`-fg`, ya
+          declarados en el :root de esta feature) en vez de warning: acá se
+          pregunta, no se advierte de una pérdida de datos.
+          Copy con nombre + documento (no solo documento, encargo explícito
+          de revisión PD: obligaba a reconocer por número en vez de por
+          nombre) y botones con la acción explícita en vez de "Sí"/"No"
+          pelados (mismo criterio que "Sí, descartar" del diálogo de
+          abajo) -- "Sí, facturar al paciente" en `primary`/"Mantener
+          tercero actual" en `secondary` (encargo explícito: jerarquía
+          visual a propósito, no el peso simétrico en `outline` de la
+          primera versión). Botón "X" (encargo explícito) -- reusa
+          `.modal-close-btn` de ModalHeader.css (ya cargado en el bundle,
+          ver import de ModalHeader más arriba) en vez de duplicar su spec,
+          aunque este diálogo no usa `<ModalHeader>` (está fuera de ese
+          patrón, ver AGENTS.md "Modales"): por eso va suelto, posicionado
+          absoluto sobre `.fam-tercero-modal` en vez de dentro de una fila
+          de header. Mismo efecto que "Mantener tercero actual"/Escape --
+          cerrar sin aplicar el cambio, nunca sin decisión implícita. */}
+      {confirmandoTerceroAdmision && (
+        <div className="modal-overlay" role="presentation">
+          <div className="fvc-discard-modal fam-tercero-modal" role="alertdialog" aria-modal="true" aria-labelledby="fam-tercero-title" aria-describedby="fam-tercero-desc">
+            <button
+              type="button"
+              className="modal-close-btn fam-tercero-close"
+              onClick={() => setConfirmandoTerceroAdmision(null)}
+              aria-label="Cerrar"
+            >
+              <LuX className="icon" aria-hidden="true" />
+            </button>
+            <div className="fvc-discard-icon fam-tercero-icon"><LuCircleHelp className="icon" aria-hidden="true" /></div>
+            <h3 id="fam-tercero-title">Creación del tercero al facturar</h3>
+            <p id="fam-tercero-desc">
+              ¿Quiere facturar a nombre de
+              {' '}
+              {confirmandoTerceroAdmision.nombreAfiliado}
+              {' '}
+              (CC
+              {' '}
+              {confirmandoTerceroAdmision.documento}
+              )?
+            </p>
+            <div className="fvc-discard-actions fam-tercero-actions">
+              <Button variant="secondary" className="fam-tercero-btn" onClick={() => setConfirmandoTerceroAdmision(null)}>Mantener tercero actual</Button>
+              <Button variant="primary" className="fam-tercero-btn" onClick={handleConfirmarTerceroAdmision}>Sí, facturar al paciente</Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {confirmingClose && (

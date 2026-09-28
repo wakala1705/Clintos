@@ -1,0 +1,85 @@
+/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
+   definido en ../../shared/shared.css. Header: ver
+   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
+   modal -- 90% de ancho/alto de pantalla (encargo explícito), mismo
+   criterio de "el body toma todo el alto libre" que .fvcd-modal de
+   FacturaDetalleModalClasico (misma feature): sin `> .modal-body{flex:1;}`
+   el sobrante de `height:90vh` queda como hueco debajo del footer en vez
+   de dárselo a la tabla. */
+.cip-modal{width:90vw;height:90vh;}
+.cip-modal > .modal-body{flex:1;}
+
+.cip-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+
+.cip-search{
+  display:flex;align-items:center;gap:8px;flex:1;min-width:280px;
+  height:var(--input-md);padding:0 12px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.cip-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.cip-search input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);outline:none;
+}
+.cip-search input::placeholder{color:var(--ink-400);}
+
+.cip-estado-filter{width:200px;flex-shrink:0;}
+
+/* Crece para ocupar el alto libre del body (ver .cip-modal > .modal-body
+   arriba) -- `.cip-list` es el que scrollea adentro, no `.cip-table`
+   entero, para que la fila de encabezado quede siempre visible. */
+.cip-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0;
+}
+.cip-row{
+  display:grid;
+  grid-template-columns:110px 165px 100px 100px 1fr 1fr 110px 100px 100px 100px 100px;
+  align-items:center;gap:10px;
+  padding:10px 12px;
+}
+.cip-row-head{
+  background:var(--bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+  flex-shrink:0;
+}
+
+.cip-list{flex:1;overflow-y:auto;}
+.cip-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);
+}
+.cip-option:last-child{border-bottom:none;}
+.cip-option:hover{background:var(--bg);}
+.cip-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cip-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+
+/* Códigos/identificadores (Consecutivo) -- solo tabular-nums, sin alinear a
+   la derecha (no son magnitudes a comparar), mismo criterio que `.apm-num`
+   de AdmisionPickerModal. */
+.cip-num{font-variant-numeric:tabular-nums;}
+/* "Valor total" sí es un monto real -- alineado a la derecha como el resto
+   de columnas numéricas del proyecto (ver AGENTS.md "Encabezados de
+   tabla"), también en su `<span>` de encabezado. */
+.cip-money{font-variant-numeric:tabular-nums;text-align:right;}
+.cip-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* Columnas "Afiliado" (nombre+documento) y "Servicio" (descripción+id) --
+   agrupadas en 2 líneas jerarquizadas (encargo explícito), mismo criterio
+   de 2 niveles que `.fam-item-desc-main`/`-code` de
+   FacturaAgregarModalClasico.css (no promovido a shared.css: hoy solo lo
+   usa este componente, ver AGENTS.md "Component organization" -- se
+   homologa si un tercer consumidor lo pide). "Fecha cita" (fecha+hora) NO
+   usa este patrón de 2 líneas -- va en una sola línea con `.cip-num` (ver
+   formatFechaCita), encargo explícito para que el encabezado no wrappee. */
+.cip-stack{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.cip-stack-primary{
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-900);
+  text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.cip-stack-secondary{font-size:var(--fs-xs);color:var(--ink-500);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+@media (max-width:768px){
+  .cip-modal{width:100%;}
+  .cip-estado-filter{width:100%;}
+}
