@@ -20,7 +20,7 @@ const COLUMNS = [
   { key: 'fecha', label: 'F. Factura' },
   { key: 'fechaVencimiento', label: 'F. Vencimiento' },
   { key: 'valorTotal', label: 'Valor Total' },
-  { key: 'flagFE', label: 'F.Elect' },
+  { key: 'fElect', label: 'F.Elect' },
   { key: 'estadoPE', label: 'Estado de envío' },
   { key: 'estado', label: 'Estado FE' },
   { key: 'acciones', label: 'Acciones' },
@@ -28,12 +28,16 @@ const COLUMNS = [
 
 const TIPO_LABEL = {
   individual: 'Individual',
-  masiva: 'Masiva',
   copago: 'Copago',
   moderadora: 'Moderadora',
   'pago-compartido': 'Pago Compartido',
 };
 const CLASE_LABEL = { salud: 'Salud', particular: 'Particular' };
+
+// Copago/Moderadora/Pago Compartido se cobran al paciente, no a la EPS/
+// administradora -- "Tercero Razón Social" muestra el nombre del afiliado en
+// vez de `terceroRazonSocial` para esos 3 tipos (encargo explícito).
+const TIPO_FACTURA_PACIENTE = ['copago', 'moderadora', 'pago-compartido'];
 
 // 3 estados del flujo de facturación electrónica (encargo explícito) --
 // "enviada" es el estado normal/mayoritario, sin relación con `estado`
@@ -44,6 +48,12 @@ const ESTADO_PE = {
   'fe-pendiente': { label: 'Pendiente de correo', tone: 'warn' },
   enviada: { label: 'Enviada', tone: 'success' },
 };
+
+// "F.Elect" (columna de abajo) se deriva de `estadoPE` en vez de guardarse
+// como campo propio (encargo explícito) -- antes era un `flagFE` random e
+// independiente del estado de envío, lo que dejaba filas inconsistentes
+// (ej. "Enviada" con F.Elect "No"). Regla: "Enviada" => Sí; cualquier otro
+// estado (Pendiente/Pendiente de correo) => No.
 
 // Columna "Facturación" (encargo: primera columna de la grilla, antes "F"
 // sin significado -- ver mismo campo duplicado en FacturaDetalleModalClasico
@@ -96,7 +106,7 @@ function EstadoFeIcon({ f }) {
 // el detalle ya se ve en el panel inferior, así que no se pasa -- se oculta
 // el ícono de ojo y el doble clic sobre una factura "Facturada" no hace nada.
 export default function FacturasGridClasica({
-  facturas, selectedId, onSelect, onVerDetalle, onEditar, onImprimir, onClearFilters,
+  facturas, selectedId, onSelect, onVerDetalle, onEditar, onImprimir, onAnular, onClearFilters,
 }) {
   // Sin resultados para el filtro/búsqueda activos (encargo: antes la tabla
   // quedaba vacía sin ningún mensaje, indistinguible de "está cargando" o
@@ -119,49 +129,54 @@ export default function FacturasGridClasica({
           </tr>
         </thead>
         <tbody>
-          {facturas.map((f) => (
-            <tr
-              key={f.id}
-              className={f.id === selectedId ? 'selected' : ''}
-              onClick={() => onSelect(f.id)}
-              onDoubleClick={() => (f.estadoFacturacion === 'pendiente' ? onEditar(f) : onVerDetalle?.(f))}
-              tabIndex={0}
-              aria-selected={f.id === selectedId}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(f.id); } }}
-            >
-              <td><Badge tone={ESTADO_FACTURACION[f.estadoFacturacion].tone}>{ESTADO_FACTURACION[f.estadoFacturacion].label}</Badge></td>
-              <td className="fvc-strong">{f.numero}</td>
-              <td>{f.documento}</td>
-              <td className="fvc-ellipsis fvc-uppercase" title={f.terceroRazonSocial}>{f.terceroRazonSocial}</td>
-              <td>{f.tipoContrato}</td>
-              <td>{TIPO_LABEL[f.tipo]}</td>
-              <td>{CLASE_LABEL[f.clase]}</td>
-              <td>{formatFechaClasica(f.fecha)}</td>
-              <td>{formatFechaClasica(f.fechaVencimiento)}</td>
-              <td className="fvc-num">{formatCOP(f.valorTotal)}</td>
-              <td>{f.flagFE ? 'Sí' : 'No'}</td>
-              <td><Badge tone={ESTADO_PE[f.estadoPE].tone}>{ESTADO_PE[f.estadoPE].label}</Badge></td>
-              <td><EstadoFeIcon f={f} /></td>
-              <td className="fvc-actions-cell">
-                <div className="fvc-row-actions">
-                  <button
-                    type="button"
-                    className="fvc-row-action-btn"
-                    onClick={(e) => { e.stopPropagation(); onImprimir(f); }}
-                    aria-label={`Imprimir factura ${f.numero}`}
-                    title="Imprimir"
-                  >
-                    <LuPrinter className="icon" />
-                  </button>
-                  <RowActionsMenu
-                    numero={f.numero}
-                    onVerDetalle={onVerDetalle ? () => onVerDetalle(f) : undefined}
-                    onEditar={() => onEditar(f)}
-                  />
-                </div>
-              </td>
-            </tr>
-          ))}
+          {facturas.map((f) => {
+            const razonSocial = TIPO_FACTURA_PACIENTE.includes(f.tipo) ? f.nombreAfiliado : f.terceroRazonSocial;
+            return (
+              <tr
+                key={f.id}
+                className={f.id === selectedId ? 'selected' : ''}
+                onClick={() => onSelect(f.id)}
+                onDoubleClick={() => (f.estadoFacturacion === 'pendiente' ? onEditar(f) : onVerDetalle?.(f))}
+                tabIndex={0}
+                aria-selected={f.id === selectedId}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(f.id); } }}
+              >
+                <td><Badge tone={ESTADO_FACTURACION[f.estadoFacturacion].tone}>{ESTADO_FACTURACION[f.estadoFacturacion].label}</Badge></td>
+                <td className="fvc-strong">{f.numero}</td>
+                <td>{f.documento}</td>
+                <td className="fvc-ellipsis fvc-uppercase" title={razonSocial}>{razonSocial}</td>
+                <td>{f.tipoContrato}</td>
+                <td>{TIPO_LABEL[f.tipo]}</td>
+                <td>{CLASE_LABEL[f.clase]}</td>
+                <td>{formatFechaClasica(f.fecha)}</td>
+                <td>{formatFechaClasica(f.fechaVencimiento)}</td>
+                <td className="fvc-num">{formatCOP(f.valorTotal)}</td>
+                <td>{f.estadoPE === 'enviada' ? 'Sí' : 'No'}</td>
+                <td><Badge tone={ESTADO_PE[f.estadoPE].tone}>{ESTADO_PE[f.estadoPE].label}</Badge></td>
+                <td><EstadoFeIcon f={f} /></td>
+                <td className="fvc-actions-cell">
+                  <div className="fvc-row-actions">
+                    <button
+                      type="button"
+                      className="fvc-row-action-btn"
+                      onClick={(e) => { e.stopPropagation(); onImprimir(f); }}
+                      aria-label={`Imprimir factura ${f.numero}`}
+                      title="Imprimir"
+                    >
+                      <LuPrinter className="icon" />
+                    </button>
+                    <RowActionsMenu
+                      numero={f.numero}
+                      estado={f.estado}
+                      onVerDetalle={onVerDetalle ? () => onVerDetalle(f) : undefined}
+                      onEditar={() => onEditar(f)}
+                      onAnular={() => onAnular(f)}
+                    />
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

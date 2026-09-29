@@ -26,8 +26,12 @@ function Trazabilidad({ item }) {
 //   valores por ítem ya están como columnas de la tabla (ver `showValores` en
 //   FacturaItemsTable), así que acá solo queda la trazabilidad del ítem
 //   seleccionado; sin selección, un aviso para elegir uno.
+// - `actions` (opcional, encargo explícito): botones de FacturaDetalleSplit
+//   que antes vivían en `.fds-header-top` -- se pintan arriba de la tarjeta,
+//   apilados (la tarjeta mide 240px de ancho, no entran en una fila). Sin
+//   consumidores en FacturaDetalleModalClasico todavía, por eso opcional.
 export default function FacturaItemResumen({
-  selectedItem, selectedIndex, resumen, soloTrazabilidad = false,
+  selectedItem, selectedIndex, resumen, soloTrazabilidad = false, actions,
 }) {
   const header = selectedItem && (
     <>
@@ -43,6 +47,7 @@ export default function FacturaItemResumen({
   if (soloTrazabilidad) {
     return (
       <div className="fir-card" aria-live="polite">
+        {actions && <div className="fir-actions">{actions}</div>}
         {selectedItem ? (
           <>
             {header}
@@ -60,6 +65,7 @@ export default function FacturaItemResumen({
 
   return (
     <div className="fir-card" aria-live="polite">
+      {actions && <div className="fir-actions">{actions}</div>}
       {selectedItem ? header : (
         <>
           <div className="fir-eyebrow">Todos los ítems</div>

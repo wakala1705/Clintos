@@ -135,9 +135,13 @@ export default function CitaPickerModal({ onSelect, onClose }) {
         || normalizar(c.nombreAfiliado).includes(q));
   });
 
-  function handleSeleccionar() {
-    if (!seleccion) return;
-    onSelect(seleccion);
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx ("clic
+  // selecciona, doble clic confirma").
+  function handleSeleccionar(item = seleccion) {
+    if (!item) return;
+    onSelect(item);
     onClose();
   }
 
@@ -207,6 +211,7 @@ export default function CitaPickerModal({ onSelect, onClose }) {
                     aria-selected={active}
                     className={`cip-row cip-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(c)}
+                    onDoubleClick={() => handleSeleccionar(c)}
                   >
                     <span className="cip-num">{c.consecutivo}</span>
                     <span className="cip-num">{formatFechaCita(c.fecha, c.hora)}</span>

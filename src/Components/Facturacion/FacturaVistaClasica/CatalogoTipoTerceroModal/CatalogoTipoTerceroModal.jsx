@@ -34,9 +34,13 @@ export default function CatalogoTipoTerceroModal({ onSelect, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  function handleElegir() {
-    if (!seleccion) return;
-    onSelect(seleccion.tipo);
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx ("clic
+  // selecciona, doble clic confirma").
+  function handleElegir(item = seleccion) {
+    if (!item) return;
+    onSelect(item.tipo);
     onClose();
   }
 
@@ -67,6 +71,7 @@ export default function CatalogoTipoTerceroModal({ onSelect, onClose }) {
                     aria-selected={active}
                     className={`ctc-row ctc-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(t)}
+                    onDoubleClick={() => handleElegir(t)}
                   >
                     <span className="ctc-tipo">{t.tipo}</span>
                     <span className="ctc-detalle">{t.detalle}</span>

@@ -106,9 +106,13 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
   const pageItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const paginas = rangoPaginas(currentPage, totalPages);
 
-  function handleConfirm() {
-    if (!seleccion) return;
-    onSelect(seleccion[selectField]);
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx/
+  // AreaFuncionalPickerModal.jsx ("clic selecciona, doble clic confirma").
+  function handleConfirm(item = seleccion) {
+    if (!item) return;
+    onSelect(item[selectField]);
     onClose();
   }
 
@@ -166,6 +170,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
                     aria-selected={active}
                     className={`cam-row cam-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(a)}
+                    onDoubleClick={() => handleConfirm(a)}
                   >
                     <span className="cam-id">{a.idTercero}</span>
                     <span className="cam-razon-social">{a.razonSocial}</span>

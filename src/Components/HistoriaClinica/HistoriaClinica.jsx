@@ -12,6 +12,7 @@ import WeekDatePicker from './WeekDatePicker/WeekDatePicker';
 import AgendaTable from './AgendaTable/AgendaTable';
 import AgendaTableSkeleton from './AgendaTableSkeleton/AgendaTableSkeleton';
 import AgendaEmptyState from './AgendaEmptyState/AgendaEmptyState';
+import Badge from '@/Components/Badge/Badge';
 import { DOCTOR, fetchAgenda, fullDateLabel, todayISO } from '@/hooks/HistoriaClinica/mockAgendaData';
 import { LuCalendarDays, LuCircleCheckBig, LuClipboardList, LuRefreshCw, LuSearch, LuUser } from 'react-icons/lu';
 
@@ -100,10 +101,10 @@ export default function HistoriaClinica() {
           <div className="hc-card-shell">
             <div className="hc-agenda-header">
               <h2>Agenda del día</h2>
-              <span className="hc-date-pill">{fullDateLabel(selectedDate)}</span>
-            </div>
+              <Badge tone="info" className="hc-date-badge">{fullDateLabel(selectedDate)}</Badge>
 
-            <div className="hc-actions-bar">
+              <div className="hc-agenda-header-spacer" />
+
               <div className="search-field">
                 <LuSearch className="icon" />
                 <input

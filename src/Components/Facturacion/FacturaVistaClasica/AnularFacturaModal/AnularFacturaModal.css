@@ -1,0 +1,10 @@
+/* `.fvc-discard-modal`/`.fvc-discard-icon`/`.fvc-discard-actions`/
+   `.form-field`/`.fam-required-mark` ya viven en ../../shared/shared.css
+   (mismo diálogo centrado que usa FacturaAgregarModalClasico para
+   "¿Descartar los cambios?"), reutilizados tal cual acá. */
+
+/* "Motivo de anulación" -- único campo del diálogo, texto alineado a la
+   izquierda a diferencia del resto (`.fvc-discard-modal` centra todo, pero
+   un textarea centrado se lee mal) -- mismo criterio que
+   .cb-desactivar-motivo en GestionCamas/DesactivarCamaModal.css. */
+.afm-motivo{text-align:left;margin:0 0 18px;}

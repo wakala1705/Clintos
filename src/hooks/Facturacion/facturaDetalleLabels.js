@@ -6,7 +6,6 @@
 
 export const TIPO_LABEL = {
   individual: 'Individual',
-  masiva: 'Masiva',
   copago: 'Copago',
   moderadora: 'Moderadora',
   'pago-compartido': 'Pago Compartido',

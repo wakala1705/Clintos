@@ -80,12 +80,16 @@ export default function CatalogoContratacionModal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  function handleAceptar() {
-    if (!seleccion) return;
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx ("clic
+  // selecciona, doble clic confirma").
+  function handleAceptar(item = seleccion) {
+    if (!item) return;
     onSelect({
-      noContrato: seleccion.noContrato,
-      idContrato: String(seleccion.id),
-      tipoContrato: seleccion.tipoContrato,
+      noContrato: item.noContrato,
+      idContrato: String(item.id),
+      tipoContrato: item.tipoContrato,
     });
     onClose();
   }
@@ -141,6 +145,7 @@ export default function CatalogoContratacionModal({
                     aria-selected={active}
                     className={`ccm-row ccm-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(c)}
+                    onDoubleClick={() => handleAceptar(c)}
                   >
                     <span className="ccm-num">{c.id}</span>
                     <span>{c.noContrato}</span>

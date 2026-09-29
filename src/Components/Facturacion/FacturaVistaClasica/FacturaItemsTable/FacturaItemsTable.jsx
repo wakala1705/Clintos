@@ -18,7 +18,9 @@ const BASE_COLUMNS = [
   { label: 'Item', render: (item, idx) => String(idx + 1).padStart(3, '0') },
   { label: 'Prefijo', className: 'fvc-num', render: (item) => item.prefijo },
   { label: 'Referencia', render: (item) => item.referencia },
-  { label: 'Descripción', ellipsis: true, render: (item) => item.descripcion },
+  {
+    label: 'Descripción', ellipsis: true, className: 'fvc-uppercase', render: (item) => item.descripcion,
+  },
   { label: 'Cantidad', num: true, render: (item) => item.cantidad },
   { label: 'Vlr. Unidad', num: true, render: (item) => formatCOP(item.vlrUnidad) },
   { label: 'Vlr. Total', num: true, render: (item) => formatCOP(item.vlrServicio) },
@@ -33,8 +35,7 @@ const VALORES_COLUMNS = [
 
 function cellClass(c) {
   if (c.num) return 'fvc-items-num';
-  if (c.ellipsis) return 'fvc-ellipsis';
-  return c.className;
+  return [c.ellipsis && 'fvc-ellipsis', c.className].filter(Boolean).join(' ') || undefined;
 }
 
 // Grilla densa de ítems de una factura (mismas columnas que el formulario

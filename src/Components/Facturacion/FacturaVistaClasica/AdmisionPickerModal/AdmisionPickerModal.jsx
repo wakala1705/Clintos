@@ -91,9 +91,13 @@ export default function AdmisionPickerModal({ onSelect, onClose }) {
     || normalizar(a.nombreAfiliado).includes(q)
   ));
 
-  function handleElegir() {
-    if (!seleccion) return;
-    onSelect(seleccion);
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx ("clic
+  // selecciona, doble clic confirma").
+  function handleElegir(item = seleccion) {
+    if (!item) return;
+    onSelect(item);
     onClose();
   }
 
@@ -133,11 +137,11 @@ export default function AdmisionPickerModal({ onSelect, onClose }) {
           <div className="apm-table">
             <div className="apm-row apm-row-head">
               <span>N° Admisión</span>
-              <span>Fecha</span>
-              <span>Hora</span>
+              <span>Fecha de ingreso</span>
               <span>Estado</span>
-              <span>Documento</span>
               <span>Nombre del afiliado</span>
+              <span>Cama</span>
+              <span>Médico ingreso</span>
               <span>Administradora</span>
               <span>Tipo de contrato</span>
               <span>Tipo de admisión</span>
@@ -157,15 +161,19 @@ export default function AdmisionPickerModal({ onSelect, onClose }) {
                     aria-selected={active}
                     className={`apm-row apm-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(a)}
+                    onDoubleClick={() => handleElegir(a)}
                   >
-                    <span className="apm-num">{a.numeroAdmision}</span>
-                    <span>{a.fecha}</span>
-                    <span>{a.hora}</span>
+                    <span className="apm-num apm-admision-num">{a.numeroAdmision}</span>
+                    <span className="apm-nowrap">{a.fecha} · {a.hora}</span>
                     <span><Badge tone={ESTADO_TONE[a.estado]}>{ESTADO_LABEL[a.estado]}</Badge></span>
-                    <span className="apm-num">{a.documento}</span>
-                    <span className="apm-ellipsis">{a.nombreAfiliado}</span>
+                    <span className="apm-cell-stack">
+                      <div className="apm-cell-primary apm-ellipsis">{a.nombreAfiliado}</div>
+                      <div className="apm-cell-secondary apm-num">{a.documento}</div>
+                    </span>
+                    <span className="apm-num">{a.cama ?? '—'}</span>
+                    <span className="apm-ellipsis">{a.medicoIngreso.nombre}</span>
                     <span className="apm-ellipsis">{a.administradora}</span>
-                    <span>{a.tipoContrato}</span>
+                    <span className="apm-ellipsis">{a.tipoContrato}, EPS:{a.regimen}</span>
                     <span>{a.tipoAdmision}</span>
                   </button>
                 );

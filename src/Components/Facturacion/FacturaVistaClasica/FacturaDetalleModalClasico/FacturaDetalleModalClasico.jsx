@@ -169,7 +169,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
             <section className="fvcd-group" aria-labelledby="fvcd-g-fe">
               <h4 id="fvcd-g-fe" className="fvcd-group-title">Facturación electrónica</h4>
               <div className="fvcd-group-fields">
-                <Field label="F.Elect FE" value={factura.flagFE ? 'Sí' : 'No'} />
+                <Field label="F.Elect FE" value={factura.estadoPE === 'enviada' ? 'Sí' : 'No'} />
                 <Field label="Estado de envío">
                   <Badge tone={ESTADO_PE[factura.estadoPE].tone} className="fvcd-badge">{ESTADO_PE[factura.estadoPE].label}</Badge>
                 </Field>

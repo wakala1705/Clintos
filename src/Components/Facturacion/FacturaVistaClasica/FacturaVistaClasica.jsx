@@ -15,18 +15,42 @@ import FacturaDetalleClasico from './FacturaDetalleClasico/FacturaDetalleClasico
 import FacturaDetalleModalClasico from './FacturaDetalleModalClasico/FacturaDetalleModalClasico';
 import FacturaDetalleSplit from './FacturaDetalleSplit/FacturaDetalleSplit';
 import FacturaAgregarModalClasico from './FacturaAgregarModalClasico/FacturaAgregarModalClasico';
+import AnularFacturaModal from './AnularFacturaModal/AnularFacturaModal';
 import PrintLoadingModal from './PrintLoadingModal/PrintLoadingModal';
 import FacturaPdfViewerModal from './FacturaPdfViewerModal/FacturaPdfViewerModal';
 import VistaModoMenu from './VistaModoMenu/VistaModoMenu';
 import {
   SPLIT_RATIO_DEFAULT, setSplitRatio, setVistaModo, useSplitRatio, useVistaModo,
 } from '@/hooks/Facturacion/vistaClasicaPrefs';
+import { resetFacturasStore, useFacturasStore } from '@/hooks/Facturacion/facturasStore';
 import { LuRefreshCw, LuSearch } from 'react-icons/lu';
 
 // Delay artificial del paso 1 del flujo de impresión (ver handleImprimir más
 // abajo) -- sin backend real (mockFacturasData.js: "solo pinta el front"),
 // simula el tiempo de generación antes de mostrar el visor de PDF.
 const PRINT_LOADING_DELAY_MS = 1200;
+
+// Usuario de una anulación hecha desde AnularFacturaModal (encargo
+// explícito) -- a diferencia de anuladaPor de las filas ya generadas como
+// 'anulada' en mockFacturasData.js (variado, sembrado por seed), acá
+// siempre es el mismo (sin auth real todavía -- mismo usuario del Topbar,
+// ver Facturacion.jsx). El motivo en sí ya no es fijo: lo escribe el
+// usuario en el campo "Motivo de anulación" del diálogo (encargo explícito)
+// y llega como argumento a handleConfirmarAnular más abajo.
+const ANULADO_POR_ACTUAL = 'Camilo Grondona';
+
+function fechaHoyISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function horaActualLabel() {
+  const d = new Date();
+  const h24 = d.getHours();
+  const meridiano = h24 < 12 ? 'a. m.' : 'p. m.';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(d.getMinutes()).padStart(2, '0')} ${meridiano}`;
+}
 
 // Opciones del filtro "Tipo Factura" sin el sentinel "todas" de TIPO_OPTIONS
 // (ese sentinel es para el FormSelect de selección única de
@@ -38,19 +62,6 @@ const TIPO_FACTURA_VALUES = TIPO_FACTURA_OPTIONS.map((o) => o.value);
 const FILTROS_INICIALES = {
   clase: 'todas', tipo: TIPO_FACTURA_VALUES, desde: '', hasta: '', pe: 'todos',
 };
-
-// Opciones del dropdown "PE" (encargo explícito: antes chip segmentado, ahora
-// select dropdown normal -- mismo patrón/componente que "Tipo Factura", ver
-// FormSelect más abajo) -- mismas keys que ESTADO_PE en
-// FacturasGridClasica.jsx (pendiente/fe-pendiente/enviada), acá con
-// etiquetas cortas en vez de la etiqueta completa del badge ("Factura
-// electrónica pendiente").
-const PE_FILTROS = [
-  { value: 'todos', label: 'Todo' },
-  { value: 'pendiente', label: 'Pendiente' },
-  { value: 'fe-pendiente', label: 'F.E. Pendiente' },
-  { value: 'enviada', label: 'Enviada' },
-];
 
 // Réplica del formulario legacy de Facturas (encargo explícito, ver imagen
 // de referencia) -- toolbar de una sola fila con label+control inline (no
@@ -74,6 +85,10 @@ const PE_FILTROS = [
 export default function FacturaVistaClasica() {
   const modo = useVistaModo();
   const splitRatio = useSplitRatio();
+  // Facturas creadas/editadas por "Guardar" (FacturaAgregarModalClasico, ver
+  // facturasStore.js) -- store aparte porque "Nueva factura" se abre desde
+  // Facturacion.jsx (padre de este componente), no desde acá adentro.
+  const { facturasNuevas, facturasEditadas } = useFacturasStore();
   const [query, setQuery] = useState('');
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
@@ -89,6 +104,16 @@ export default function FacturaVistaClasica() {
   // handleFacturar cuando se confirma la acción "Facturar" del modal de
   // detalle -- mismo criterio que estadoPEOverrides de arriba.
   const [estadoFacturacionOverrides, setEstadoFacturacionOverrides] = useState({});
+  // Override local de `estado`/motivo/quién/cuándo (id -> objeto completo),
+  // aplicado por handleConfirmarAnular cuando se confirma AnularFacturaModal
+  // -- mismo criterio que los dos overrides de arriba, pero guarda el objeto
+  // entero (no un solo valor) porque además de `estado: 'anulada'` hay que
+  // fijar motivoAnulacion/anuladaPor/fechaAnulacion/horaAnulacion para que
+  // el aviso "Factura anulada" (FacturaDetalleModalClasico/
+  // FacturaDetalleSplit) tenga qué mostrar.
+  const [estadoOverrides, setEstadoOverrides] = useState({});
+  // Factura pendiente de confirmar en AnularFacturaModal -- null = cerrado.
+  const [anulandoFactura, setAnulandoFactura] = useState(null);
   // Flujo de impresión disparado por el ícono de la columna Acciones (ver
   // onImprimir más abajo): null = sin flujo activo; 'loading' = modal de
   // carga simulada; 'viewer' = visor de PDF. Solo una factura a la vez.
@@ -106,19 +131,32 @@ export default function FacturaVistaClasica() {
     return () => clearTimeout(timer);
   }, [printFlow]);
 
-  const facturasConOverrides = useMemo(() => (
-    Object.keys(estadoPEOverrides).length === 0 && Object.keys(estadoFacturacionOverrides).length === 0
-      ? FACTURAS
-      : FACTURAS.map((f) => (
-        estadoPEOverrides[f.id] || estadoFacturacionOverrides[f.id]
-          ? {
-            ...f,
-            ...(estadoPEOverrides[f.id] ? { estadoPE: estadoPEOverrides[f.id] } : null),
-            ...(estadoFacturacionOverrides[f.id] ? { estadoFacturacion: estadoFacturacionOverrides[f.id] } : null),
-          }
-          : f
-      ))
-  ), [estadoPEOverrides, estadoFacturacionOverrides]);
+  const facturasConOverrides = useMemo(() => {
+    // facturasNuevas primero (encargo: "Guardar" bajo Agregar debe verse en
+    // la tabla) -- FACTURAS es el dataset mock, facturasNuevas vive aparte
+    // en facturasStore.js (ver import arriba).
+    const base = facturasNuevas.length > 0 ? [...facturasNuevas, ...FACTURAS] : FACTURAS;
+    const sinOverrides = Object.keys(estadoPEOverrides).length === 0
+      && Object.keys(estadoFacturacionOverrides).length === 0
+      && Object.keys(estadoOverrides).length === 0
+      && Object.keys(facturasEditadas).length === 0;
+    if (sinOverrides) return base;
+    return base.map((f) => (
+      estadoPEOverrides[f.id] || estadoFacturacionOverrides[f.id] || estadoOverrides[f.id] || facturasEditadas[f.id]
+        ? {
+          ...f,
+          ...(estadoPEOverrides[f.id] ? { estadoPE: estadoPEOverrides[f.id] } : null),
+          ...(estadoFacturacionOverrides[f.id] ? { estadoFacturacion: estadoFacturacionOverrides[f.id] } : null),
+          ...(estadoOverrides[f.id] ?? null),
+          // "Guardar" bajo Editar (facturasEditadas) va al final: si el
+          // usuario editó una factura que también tenía un override previo
+          // (ej. ya "Facturada"), el objeto completo que armó el formulario
+          // gana -- es el dato más reciente e intencional de los 4.
+          ...(facturasEditadas[f.id] ?? null),
+        }
+        : f
+    ));
+  }, [facturasNuevas, facturasEditadas, estadoPEOverrides, estadoFacturacionOverrides, estadoOverrides]);
 
   // Sin el filtro "pe" -- separado de `facturas` de abajo solo para no
   // repetir el resto de los filtros dos veces.
@@ -164,12 +202,40 @@ export default function FacturaVistaClasica() {
     setEstadoFacturacionOverrides((overrides) => ({ ...overrides, [id]: 'facturada' }));
   }
 
+  // "Anular" del menú de fila (RowActionsMenu) -- abre AnularFacturaModal en
+  // vez de anular directo, mismo criterio que handleImprimir/printFlow (una
+  // decisión destructiva no se aplica sin el paso de confirmación de por
+  // medio).
+  function handleAnular(factura) {
+    setAnulandoFactura(factura);
+  }
+
+  // Confirmación ("Sí, anular factura") de AnularFacturaModal -- pasa esa
+  // factura a 'anulada' vía estadoOverrides, con el motivo que tipeó el
+  // usuario en el diálogo + usuario/fecha/hora de la anulación interactiva.
+  function handleConfirmarAnular(id, motivo) {
+    setEstadoOverrides((overrides) => ({
+      ...overrides,
+      [id]: {
+        estado: 'anulada',
+        motivoAnulacion: motivo,
+        anuladaPor: ANULADO_POR_ACTUAL,
+        fechaAnulacion: fechaHoyISO(),
+        horaAnulacion: horaActualLabel(),
+      },
+    }));
+    setAnulandoFactura(null);
+  }
+
   // Botón "Refrescar" (encargo: antes sin onClick, parecía funcional pero no
   // hacía nada) -- FACTURAS es un array mock estático, no hay backend real
   // que refetchear todavía (ver mockFacturasData.js), así que "refrescar"
   // vuelve el estado de la pantalla a su punto de partida: limpia
   // búsqueda/filtros y descarta los overrides locales de estadoPE/
-  // estadoFacturacion aplicados por el flujo de impresión y "Facturar".
+  // estadoFacturacion/estado aplicados por el flujo de impresión, "Facturar"
+  // y "Anular" -- también las facturas creadas/editadas por "Guardar"
+  // (facturasStore.js): son igual de locales, ningún backend real se enteró
+  // de ninguna de estas.
   // Delay artificial corto + ícono girando (ver .fvc-refreshing en
   // shared.css) para que el clic tenga feedback visible en vez de un cambio
   // instantáneo indistinguible de "no pasó nada".
@@ -182,6 +248,8 @@ export default function FacturaVistaClasica() {
       setFiltros(FILTROS_INICIALES);
       setEstadoPEOverrides({});
       setEstadoFacturacionOverrides({});
+      setEstadoOverrides({});
+      resetFacturasStore();
       setRefreshing(false);
     }, 450);
   }
@@ -218,11 +286,6 @@ export default function FacturaVistaClasica() {
           />
         </div>
 
-        <div className="fvc-filter-field">
-          <label htmlFor="fvc-pe">PE:</label>
-          <FormSelect id="fvc-pe" value={filtros.pe} onChange={(v) => setFiltros((f) => ({ ...f, pe: v }))} options={PE_FILTROS} />
-        </div>
-
         <DateRangeFilter
           desde={filtros.desde}
           hasta={filtros.hasta}
@@ -256,6 +319,7 @@ export default function FacturaVistaClasica() {
               onSelect={setSelectedId}
               onEditar={setEditFactura}
               onImprimir={handleImprimir}
+              onAnular={handleAnular}
               onClearFilters={handleLimpiarTodosLosFiltros}
             />
           )}
@@ -270,6 +334,7 @@ export default function FacturaVistaClasica() {
             onVerDetalle={setDetalleFactura}
             onEditar={setEditFactura}
             onImprimir={handleImprimir}
+            onAnular={handleAnular}
             onClearFilters={handleLimpiarTodosLosFiltros}
           />
 
@@ -286,6 +351,12 @@ export default function FacturaVistaClasica() {
       {editFactura && (
         <FacturaAgregarModalClasico factura={editFactura} onClose={() => setEditFactura(null)} />
       )}
+
+      <AnularFacturaModal
+        factura={anulandoFactura}
+        onClose={() => setAnulandoFactura(null)}
+        onConfirm={handleConfirmarAnular}
+      />
 
       {printFlow?.stage === 'loading' && (
         <PrintLoadingModal numero={printFlow.factura.numero} />

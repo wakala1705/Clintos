@@ -203,6 +203,9 @@
 .fam-items-grid tbody tr{cursor:default;}
 .fam-items-grid tbody tr:last-child td{border-bottom:none;}
 .fam-items-grid th:last-child,.fam-items-grid td:last-child{width:76px;}
+/* "Cant." (antes "Cantidad", encargo explícito) -- angosta la columna al
+   acortar el label, ya que el valor siempre es un número corto. */
+.fam-items-grid .fam-items-col-cant{width:64px;}
 /* Columna única Descripción+Código (encargo explícito: "agrupa en una
    columna la descripción + código, dándole más jerarquía a la descripción
    que al código") -- reemplaza las 2 columnas `Código`/`Descripción`

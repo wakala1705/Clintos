@@ -13,6 +13,7 @@ import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
 import CitaPickerModal from '../CitaPickerModal/CitaPickerModal';
 import TipoFacturaSelector from '../TipoFacturaSelector/TipoFacturaSelector';
 import AgregarItemModal from '../AgregarItemModal/AgregarItemModal';
+import { agregarFactura, editarFactura } from '@/hooks/Facturacion/facturasStore';
 import {
   LuFilePlus2, LuFilePenLine, LuEye, LuCheck, LuTrash2, LuPencil, LuTriangleAlert, LuFileText, LuUser,
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
@@ -149,20 +150,25 @@ const PASOS = [
 // componente) -- factura.items ya existe (mockFacturasData.js/buildItems),
 // pero con un shape más viejo (referencia/vlrUnidad/vlrCopago/vlrModerador/
 // vlrPagComp/ccosto/prefijo) que no cubre todos los campos de AgregarItemModal.
-// Solo se mapea lo que tiene equivalente directo y confiable -- prefijo (mismo
-// dominio, ver PREFIJO_OPTIONS) y los montos -- el resto (Centro Costo/Área
-// Funcional/Tipo Financiero/No Contrato/ID/Observaciones) queda en su
-// default en vez de forzar un valor que no existe en el registro legacy.
+// Centro Costo/Área Funcional/Tipo Financiero/No Contrato/ID/Observaciones
+// solo existen en un ítem si vino de buildFacturaRecord (ver más abajo) --
+// una factura guardada por este mismo formulario, que sí los persiste; un
+// ítem de mockFacturasData.js/buildItems (dataset legacy, nunca tuvo estos
+// campos) cae a su default de siempre. Bug real encontrado (encargo
+// explícito): antes `tipoFinanciero` quedaba fijo en 'contratacion' para
+// CUALQUIER ítem bajo Editar, así que un ítem guardado como "Manual" volvía
+// a mostrar "Contratación" al reabrir -- perdía la elección real del
+// usuario en vez de repetir el default solo cuando de verdad no había dato.
 function mapFacturaItemsToForm(facturaItems) {
   if (!Array.isArray(facturaItems)) return [];
   return facturaItems.map((it) => ({
     id: it.id,
-    tipoFinanciero: 'contratacion',
-    centroCosto: '',
-    areaFuncional: '',
+    tipoFinanciero: it.tipoFinanciero ?? 'contratacion',
+    centroCosto: it.centroCosto ?? '',
+    areaFuncional: it.areaFuncional ?? '',
     prefijo: it.prefijo ?? '',
-    noContrato: '',
-    idContrato: '0',
+    noContrato: it.noContrato ?? '',
+    idContrato: it.idContrato ?? '0',
     codigo: it.referencia ?? '',
     descripcion: it.descripcion ?? '',
     cantidad: String(it.cantidad ?? 1),
@@ -171,7 +177,7 @@ function mapFacturaItemsToForm(facturaItems) {
     vrCopagos: String(it.vlrCopago ?? 0),
     valorModeradora: String(it.vlrModerador ?? 0),
     vrPagoCompartido: String(it.vlrPagComp ?? 0),
-    observaciones: '',
+    observaciones: it.observaciones ?? '',
     valorIva: it.vlrIVA ?? 0,
     valorTotal: it.valor ?? it.vlrUnidad ?? 0,
   }));
@@ -335,11 +341,17 @@ function SectionHeader({
 // -- a diferencia de Agregar, sigue siendo editable a mano después.
 //
 // Solo pinta el front (encargo explícito: "creá la modal... y luego le
-// damos lógica"): "Guardar" sigue sin persistir nada en un backend real --
-// pero ahora valida (Fecha Vencimiento >= Fecha Factura, montos no
-// negativos), calcula Valor Factura en vivo, y muestra un aviso "Guardado
-// (simulado)" antes de cerrar en vez de un cierre silencioso indistinguible
-// de un guardado real (ver validate/handleGuardar más abajo). Cerrar con
+// damos lógica"): "Guardar"/"Facturar" no persisten en un backend real --
+// pero sí quedan en memoria de la sesión (facturasStore.js, ver
+// buildFacturaRecord/handleGuardar/handleFacturarWizard más abajo): validan
+// (Fecha Vencimiento >= Fecha Factura, montos no negativos), calculan Valor
+// Factura en vivo, arman el registro con el shape de mockFacturasData.js y
+// lo agregan (Agregar) o lo mergean por id (Editar) al store que lee
+// FacturaVistaClasica.jsx -- "Facturar" además fija `estadoFacturacion:
+// 'facturada'` y asigna el No. de factura definitivo (ONCP####) en vez del
+// placeholder de "sin facturar" -- además de mostrar el aviso "Guardado"/
+// "Facturado (simulado)" antes de cerrar en vez de un cierre silencioso
+// indistinguible de un guardado real. Cerrar con
 // cambios sin guardar (Cancelar/overlay/Escape/botón X) pide confirmación
 // primero (ver attemptClose/fvc-discard-modal, clases compartidas en
 // shared.css). Id Tercero y Administradora reusan el mismo
@@ -371,7 +383,12 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   // generalizaron para aceptar tanto una admisión como una cita.
   const [citaPickerAbierto, setCitaPickerAbierto] = useState(false);
   const [errors, setErrors] = useState({});
-  const [saving, setSaving] = useState(false);
+  // null = sin guardado en curso; 'guardar'/'facturar' según qué botón del
+  // footer del paso 2 se apretó -- decide el texto del toast de abajo
+  // (fvc-save-toast) sin duplicar el resto de la lógica de handleGuardar/
+  // handleFacturarWizard, que ya comparten casi todo vía buildFacturaRecord.
+  const [savingAction, setSavingAction] = useState(null);
+  const saving = savingAction !== null;
   const [confirmingClose, setConfirmingClose] = useState(false);
   // Admisión confirmada vía AdmisionPickerModal (para cualquier tipo, no
   // solo isRestricted) -- maneja el banner "Admisión encontrada"/"Cambiar
@@ -643,7 +660,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
 
   // Suma de Servicios + Copago + Pago Comp. + Moderadora - Descuento (mismo
   // criterio que el comentario original del campo readOnly) -- calculado en
-  // vivo en el cliente; sigue sin persistir nada, ver handleGuardar.
+  // vivo en el cliente; es lo que handleGuardar guarda como `valorTotal`.
   const valorFactura = isRestricted ? 0 : (
     toNumber(effectiveValues.valorServicios) + toNumber(effectiveValues.valorCopago)
     + toNumber(effectiveValues.valorPagoCompartido) + toNumber(effectiveValues.valorModeradora)
@@ -679,12 +696,131 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
     return errs;
   }
 
+  // No. de factura definitivo (ONCP####) vs. placeholder de "sin facturar"
+  // (0200######) -- mismo contrato que noFactura en mockFacturasData.js.
+  function generarNumeroFactura(estadoFacturacionDestino) {
+    return estadoFacturacionDestino === 'facturada'
+      ? `ONCP${Math.floor(1000 + Math.random() * 9000)}`
+      : `0200${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+  }
+
+  // Arma el registro que persisten handleGuardar/handleFacturarWizard, con
+  // el shape de una fila de mockFacturasData.js (id/numero/
+  // terceroRazonSocial/tipo/tipoContrato/...) -- este formulario vive en un
+  // dominio más rico (admisionSeleccionada, items con el shape de
+  // AgregarItemModal) que el legacy que consume la grilla, así que hay
+  // campos sin equivalente real: bajo Agregar caen a un default razonable
+  // (mismo criterio que buildInitialForm bajo Editar); bajo Editar, al valor
+  // que ya traía `factura` (no se pisa un dato real por un default solo
+  // porque este formulario no lo edita). idItemPrestacion/ftrdid de cada
+  // ítem no tienen equivalente en AgregarItemModal -- se generan en el mismo
+  // rango que buildItems() (mockFacturasData.js) para que la trazabilidad de
+  // FacturaItemResumen no quede en blanco.
+  //
+  // `estadoFacturacionDestino` (default: el estado actual bajo Editar, o
+  // 'pendiente' bajo Agregar) es lo único que separa "Guardar" de
+  // "Facturar": este último la pasa a 'facturada'. El número solo se
+  // reasigna cuando corresponde -- bajo Agregar, siempre (según el destino);
+  // bajo Editar, solo al pasar de 'pendiente' a 'facturada' (ahí es cuando
+  // el legacy le asigna su primer número real, ver comentario de
+  // generarNumeroFactura/mockFacturasData.js) -- una factura ya facturada
+  // conserva su número si se la vuelve a guardar/facturar.
+  function buildFacturaRecord(estadoFacturacionDestino = isEditMode ? factura.estadoFacturacion : 'pendiente') {
+    const asignaNumeroNuevo = !isEditMode
+      || (estadoFacturacionDestino === 'facturada' && factura.estadoFacturacion === 'pendiente');
+    const numero = asignaNumeroNuevo ? generarNumeroFactura(estadoFacturacionDestino) : factura.numero;
+    const documento = admisionSeleccionada?.documento ?? (isEditMode ? factura.documento : '');
+    const nombreAfiliado = admisionSeleccionada?.nombreAfiliado
+      ?? (isRestricted ? form.idTercero : (isEditMode ? factura.nombreAfiliado : ''));
+    const tipoContratoLabel = TIPO_CONTRATO_OPTIONS.find((o) => o.value === form.tipoContrato)?.label
+      ?? (isEditMode ? factura.tipoContrato : 'Evento');
+
+    return {
+      id: numero,
+      numero,
+      terceroId: documento,
+      terceroRazonSocial: isRestricted
+        ? nombreAfiliado
+        : (form.idTercero || (isEditMode ? factura.terceroRazonSocial : '')),
+      sede: isEditMode ? factura.sede : 'Sede 01',
+      clase: isEditMode ? factura.clase : 'salud',
+      tipo: form.tipoFactura === 'normal' ? 'individual' : form.tipoFactura,
+      fecha: form.fechaFactura,
+      estado: isEditMode ? factura.estado : null,
+      valorTotal: valorFactura,
+      noAdmision: form.noReferencia || (isEditMode ? factura.noAdmision : ''),
+      nombreAfiliado,
+      administradora: form.administradora || (isEditMode ? factura.administradora : 'Clintos'),
+      usuario: isEditMode ? factura.usuario : 'Clintos',
+      procedencia: isEditMode ? factura.procedencia : 'Salud',
+      idAfiliado: documento,
+      items: items.map((it, idx) => ({
+        id: it.id ?? `item-${idx}`,
+        referencia: it.codigo,
+        descripcion: it.descripcion,
+        valor: toNumber(it.valorTotal ?? it.vlrItem),
+        prefijo: it.prefijo,
+        cantidad: toNumber(it.cantidad) || 1,
+        vlrUnidad: toNumber(it.vlrItem),
+        vlrServicio: toNumber(it.valorTotal ?? it.vlrItem),
+        vlrIVA: toNumber(it.valorIva),
+        vlrCopago: toNumber(it.vrCopagos),
+        vlrModerador: toNumber(it.valorModeradora),
+        vlrPagComp: toNumber(it.vrPagoCompartido),
+        descuento: 0,
+        ccosto: it.centroCosto || '—',
+        // Sin equivalente en el shape "legacy" de mockFacturasData.js (que
+        // solo entiende ccosto/prefijo/los montos) -- viajan igual para que
+        // mapFacturaItemsToForm los pueda leer de vuelta al reabrir "Editar"
+        // en vez de perder la elección real del usuario (ver su comentario).
+        tipoFinanciero: it.tipoFinanciero,
+        centroCosto: it.centroCosto,
+        areaFuncional: it.areaFuncional,
+        noContrato: it.noContrato,
+        idContrato: it.idContrato,
+        observaciones: it.observaciones,
+        tablaOrigen: 'HPRED',
+        idItemPrestacion: 5800000 + Math.floor(Math.random() * 99999),
+        ftrdid: 2700000 + Math.floor(Math.random() * 99999),
+      })),
+      documento,
+      tipoContrato: tipoContratoLabel,
+      fechaVencimiento: form.fechaVencimiento,
+      estadoPE: isEditMode ? factura.estadoPE : 'pendiente',
+      estadoFacturacion: estadoFacturacionDestino,
+      sedeCodigo: isEditMode ? factura.sedeCodigo : '01',
+      impreso: isEditMode ? factura.impreso : 0,
+    };
+  }
+
   function handleGuardar() {
     if (saving) return;
     const errs = validate();
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setSaving(true);
+    const record = buildFacturaRecord();
+    if (isEditMode) editarFactura(factura.id, record);
+    else agregarFactura(record);
+    setSavingAction('guardar');
+    setTimeout(onClose, 1100);
+  }
+
+  // "Facturar" del footer del paso 2 -- mismo flujo que "Guardar", pero fija
+  // `estadoFacturacion: 'facturada'` (ver buildFacturaRecord) en vez de
+  // dejarla como estaba/'pendiente'. A diferencia del "Facturar" del modal
+  // "Ver detalle" (handleFacturar en FacturaVistaClasica.jsx, que solo
+  // cambia el estado de una factura que ya existe en la tabla), este puede
+  // crear la factura de cero (Agregar) o completar una "Sin facturar"
+  // (Editar) con todos sus datos y facturarla en el mismo paso.
+  function handleFacturarWizard() {
+    if (saving) return;
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    const record = buildFacturaRecord('facturada');
+    if (isEditMode) editarFactura(factura.id, record);
+    else agregarFactura(record);
+    setSavingAction('facturar');
     setTimeout(onClose, 1100);
   }
 
@@ -796,9 +932,13 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
               {saving && (
                 <div className="fvc-save-toast" role="status" aria-live="polite">
                   <LuCheck className="icon" aria-hidden="true" />
-                  {isEditMode
-                    ? 'Cambios guardados (simulado) — no persiste todavía en el servidor.'
-                    : 'Factura guardada (simulado) — no persiste todavía en el servidor.'}
+                  {savingAction === 'facturar'
+                    ? (isEditMode
+                      ? 'Cambios facturados (simulado) — no persiste todavía en el servidor.'
+                      : 'Factura facturada (simulado) — no persiste todavía en el servidor.')
+                    : (isEditMode
+                      ? 'Cambios guardados (simulado) — no persiste todavía en el servidor.'
+                      : 'Factura guardada (simulado) — no persiste todavía en el servidor.')}
                 </div>
               )}
 
@@ -1291,7 +1431,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                           <thead>
                             <tr>
                               <th>Descripción</th>
-                              <th>Cantidad</th>
+                              <th className="fam-items-col-cant">Cant.</th>
                               <th>Vlr Item</th>
                               <th>Valor Total</th>
                               <th aria-label="Acciones" />
@@ -1372,16 +1512,13 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
                 <>
                   {/* Solo bajo Tipo Factura "Copago" (encargo explícito) --
                       vincula esta factura con la del servicio principal que
-                      generó el copago. Solo pinta el front, mismo criterio
-                      que "Facturar" (sin onClick todavía). */}
+                      generó el copago. Solo pinta el front todavía, a
+                      diferencia de "Guardar"/"Facturar" (sin onClick). */}
                   {form.tipoFactura === 'copago' && (
                     <Button variant="secondary-accent" icon={LuLink} disabled={saving}>Vincular factura</Button>
                   )}
                   <Button variant="secondary-accent" icon={LuSave} onClick={handleGuardar} disabled={saving}>Guardar</Button>
-                  {/* Solo pinta el front (mismo criterio que el resto del
-                      modal, ver comentario del componente) -- sin lógica de
-                      facturación todavía. */}
-                  <Button variant="primary" disabled={saving}>Facturar</Button>
+                  <Button variant="primary" onClick={handleFacturarWizard} disabled={saving}>Facturar</Button>
                 </>
               )}
             </div>

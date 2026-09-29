@@ -2,16 +2,25 @@
 
 import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import {
-  LuBan, LuCopy, LuDollarSign, LuEye, LuFileMinus, LuFileStack, LuPencil,
+  LuBan, LuCopy, LuEye, LuPencil, LuPrinter,
 } from 'react-icons/lu';
 
 // Acciones sin handler real todavía (solo cierran el menú, ver comentario
 // del componente) -- todas en tono primary (encargo explícito), a
 // diferencia de "Anular" que va aparte al final en tono danger.
+//
+// "Otras monedas"/"Admisiones masivas" son variantes de impresión (encargo
+// explícito) -- ícono `LuPrinter`, no uno decorativo por opción, para que se
+// lean como parte del mismo grupo de impresión que "Imprimir" (columna
+// Acciones) en vez de acciones sueltas sin relación entre sí.
+//
+// "Razón anulación" (encargo explícito: "ya la cubrimos en el flujo") ya no
+// va acá -- ese motivo ahora se pide en el propio paso de "Anular" (ver
+// AnularFacturaModal.jsx, campo "Motivo de anulación"), tenerlo dos veces
+// era redundante.
 const ACCIONES = [
-  { id: 'otras-monedas', label: 'Otras monedas', icon: LuDollarSign },
-  { id: 'admisiones-masivas', label: 'Admisiones masivas', icon: LuFileStack },
-  { id: 'razon-anulacion', label: 'Razón anulación', icon: LuFileMinus },
+  { id: 'otras-monedas', label: 'Otras monedas', icon: LuPrinter },
+  { id: 'admisiones-masivas', label: 'Admisiones masivas', icon: LuPrinter },
   { id: 'copias', label: 'Copias', icon: LuCopy },
 ];
 
@@ -35,7 +44,13 @@ const ACCIONES = [
 // cancelan/desactivan) -- va al final de la lista, separado del resto con
 // `dividerBefore`, para no mezclar la única acción destructiva con las
 // demás.
-export default function RowActionsMenu({ numero, onVerDetalle, onEditar }) {
+//
+// "Anular" abre AnularFacturaModal (`onAnular`, ver FacturaVistaClasica.jsx)
+// -- deshabilitado si la factura ya está anulada (`estado`), no tiene
+// sentido anular dos veces.
+export default function RowActionsMenu({
+  numero, estado, onVerDetalle, onEditar, onAnular,
+}) {
   return (
     <DropdownMenu
       label={`Más opciones para la factura ${numero}`}
@@ -48,7 +63,7 @@ export default function RowActionsMenu({ numero, onVerDetalle, onEditar }) {
         }] : []),
         ...ACCIONES.map((a) => ({ ...a, iconTone: 'primary' })),
         {
-          id: 'anular', label: 'Anular', icon: LuBan, tone: 'danger', dividerBefore: true,
+          id: 'anular', label: 'Anular', icon: LuBan, tone: 'danger', dividerBefore: true, disabled: estado === 'anulada', onSelect: onAnular,
         },
       ]}
     />

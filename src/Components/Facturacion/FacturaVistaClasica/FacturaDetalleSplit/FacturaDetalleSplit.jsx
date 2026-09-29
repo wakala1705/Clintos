@@ -71,15 +71,6 @@ export default function FacturaDetalleSplit({ factura, onFacturar }) {
             </span>
           </div>
 
-          <div className="fds-actions">
-            <Button variant="secondary-accent" size="sm" icon={LuPrinter}>Imprimir anexo</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuFileText}>Anexo por prefijo</Button>
-            <Button variant="secondary-accent" size="sm" icon={LuBuilding2}>Capitados</Button>
-            {factura.estadoFacturacion === 'pendiente' && (
-              <Button variant="primary" size="sm" onClick={() => onFacturar(factura.id)}>Facturar</Button>
-            )}
-          </div>
-
           <div className="fds-total">
             <span className="fds-meta-label">Valor total</span>
             <span className="fds-total-value">{formatCOP(factura.valorTotal)}</span>
@@ -117,7 +108,22 @@ export default function FacturaDetalleSplit({ factura, onFacturar }) {
           </div>
         </div>
         <div className="fds-side">
-          <FacturaItemResumen selectedItem={selectedItem} selectedIndex={selectedIndex} resumen={resumen} soloTrazabilidad />
+          <FacturaItemResumen
+            selectedItem={selectedItem}
+            selectedIndex={selectedIndex}
+            resumen={resumen}
+            soloTrazabilidad
+            actions={(
+              <>
+                <Button variant="secondary-accent" size="sm" icon={LuPrinter} className="fir-action-btn">Imprimir anexo</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuFileText} className="fir-action-btn">Anexo por prefijo</Button>
+                <Button variant="secondary-accent" size="sm" icon={LuBuilding2} className="fir-action-btn">Capitados</Button>
+                {factura.estadoFacturacion === 'pendiente' && (
+                  <Button variant="primary" size="sm" className="fir-action-btn" onClick={() => onFacturar(factura.id)}>Facturar</Button>
+                )}
+              </>
+            )}
+          />
         </div>
       </div>
     </section>

@@ -92,9 +92,13 @@ export default function CatalogoAreaFuncionalModal({ onSelect, onClose }) {
     || normalizar(a.centroCosto).includes(q)
   ));
 
-  function handleElegir() {
-    if (!seleccion) return;
-    onSelect(`${seleccion.id} — ${seleccion.descripcion}`);
+  // Recibe el registro por parámetro (no lee `seleccion` del state) para que
+  // el doble clic de una fila pueda confirmar en el mismo evento sin esperar
+  // el próximo render -- mismo patrón que SedePickerModal.jsx ("clic
+  // selecciona, doble clic confirma").
+  function handleElegir(item = seleccion) {
+    if (!item) return;
+    onSelect(`${item.id} — ${item.descripcion}`);
     onClose();
   }
 
@@ -140,6 +144,7 @@ export default function CatalogoAreaFuncionalModal({ onSelect, onClose }) {
                     aria-selected={active}
                     className={`cafm-row cafm-option${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(area)}
+                    onDoubleClick={() => handleElegir(area)}
                   >
                     <span className="cafm-id">{area.id}</span>
                     <span className="cafm-descripcion">{area.descripcion}</span>

@@ -140,6 +140,13 @@ export const ADMISIONES = Array.from({ length: 60 }, (_, i) => {
     tipoAdmision: pick(TIPO_ADMISION_LIST, rand),
   };
   record.cama = buildCama(record);
+  // Médico/usuario de ingreso + régimen: misma fuente que detalleDesdeAdmision
+  // (datosAdministrativos, sembrado por N° de admisión) para que la fila de
+  // la tabla y el modal de detalle muestren siempre el mismo dato.
+  const admin = datosAdministrativos(Number(record.numeroAdmision));
+  record.medicoIngreso = admin.medicoIngreso;
+  record.usuarioIngresa = admin.usuarioIngresa;
+  record.regimen = admin.regimen;
 
   consecutivo -= 1;
   // Salto de minutos/horas variable hacia atrás en el tiempo, con algún

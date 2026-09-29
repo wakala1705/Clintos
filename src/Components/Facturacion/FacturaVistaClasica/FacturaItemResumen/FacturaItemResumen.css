@@ -6,6 +6,11 @@
   flex:1 0 auto;border:1px solid var(--border);border-radius:var(--radius);
   padding:14px 16px;background:var(--surface);
 }
+/* Botones movidos acá desde .fds-header-top (encargo explícito) -- apilados,
+   la tarjeta mide 240px de ancho y no entran en una fila como en el header. */
+.fir-actions{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.fir-actions .fir-action-btn{width:100%;justify-content:flex-start;}
+
 .fir-eyebrow{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--primary);text-transform:uppercase;letter-spacing:.03em;}
 .fir-title{display:flex;align-items:baseline;gap:8px;margin-top:2px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .fir-ref{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}

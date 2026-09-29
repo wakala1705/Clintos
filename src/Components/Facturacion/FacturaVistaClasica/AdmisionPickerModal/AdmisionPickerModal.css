@@ -2,8 +2,12 @@
    definido en ../../shared/shared.css. Header: ver
    @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
    modal -- "extragrande" (encargo explícito), el más ancho de Facturación,
-   para que la tabla de 9 columnas no quede apretada. */
-.apm-modal{width:1180px;max-width:95vw;max-height:88vh;}
+   para que la tabla de 9 columnas no quede apretada. Tamaño fijo a 90% de
+   alto/ancho del viewport (encargo explícito) -- .modal-body/.apm-table/
+   .apm-list crecen con flex para aprovechar el alto extra en vez de dejar
+   espacio vacío bajo la lista.*/
+.apm-modal{width:90vw;height:90vh;max-width:90vw;max-height:90vh;}
+.apm-modal .modal-body{flex:1;min-height:0;}
 
 .apm-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 
@@ -24,10 +28,11 @@
 .apm-table{
   border:1px solid var(--border);border-radius:var(--radius);
   overflow:hidden;
+  display:flex;flex-direction:column;flex:1;min-height:0;
 }
 .apm-row{
   display:grid;
-  grid-template-columns:120px 90px 64px 150px 110px 1fr 1fr 100px 120px;
+  grid-template-columns:120px 150px 150px 1fr 90px 1fr 1fr 170px 120px;
   align-items:center;gap:10px;
   padding:9px 12px;
 }
@@ -36,7 +41,7 @@
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
 }
 
-.apm-list{max-height:min(52vh,460px);overflow-y:auto;}
+.apm-list{flex:1;min-height:0;overflow-y:auto;}
 .apm-option{
   width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
   text-align:left;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);
@@ -47,8 +52,17 @@
 .apm-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
 
 .apm-num{font-variant-numeric:tabular-nums;}
+.apm-admision-num{font-weight:var(--fw-medium);color:var(--primary);}
 .apm-ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.apm-nowrap{white-space:nowrap;}
 .apm-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}
+
+/* Celda apilada nombre+documento en una sola columna -- mismo patrón que
+   .rv-cell-primary/.rv-cell-secondary en VencidasTable.jsx. min-width:0 para
+   que el ellipsis del nombre respete el ancho de la columna del grid. */
+.apm-cell-stack{min-width:0;}
+.apm-cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
+.apm-cell-secondary{font-size:var(--fs-sm);color:var(--ink-500);}
 
 @media (max-width:768px){
   .apm-modal{width:100%;}

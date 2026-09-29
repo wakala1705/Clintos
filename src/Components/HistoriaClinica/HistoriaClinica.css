@@ -59,20 +59,12 @@ body{
   display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;
 }
 .hc-agenda-header{
-  display:flex;align-items:center;gap:12px;padding:16px 20px 0 20px;flex-shrink:0;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:16px 20px;flex-shrink:0;flex-wrap:wrap;
 }
 .hc-agenda-header h2{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.hc-date-pill{
-  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary-dark);background:var(--primary-50);
-  padding:4px 12px;border-radius:20px;text-transform:capitalize;
-}
-
-/* ---------- ACTIONS BAR (búsqueda + Refrescar / Ver Lista Pacientes) ---------- */
-.hc-actions-bar{
-  border-bottom: 1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding:16px 20px;
-}
+.hc-date-badge{text-transform:capitalize;}
+.hc-agenda-header-spacer{flex:1;min-width:12px;}
 .hc-actions-bar-buttons{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 
 /* ---------- MARCO DE LA TABLA ----------
