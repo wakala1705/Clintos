@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import './CanastasFiltrosBar.css';
@@ -18,9 +19,14 @@ const ESTADO_OPTIONS = [
 // listado. `onChange` recibe solo las claves que cambian, mismo criterio que
 // VencidasFiltrosBar.
 export default function CanastasFiltrosBar({
-  filtros, conteo, onChange, fechaLabel, onDiaAnterior, onDiaSiguiente,
+  filtros, conteo, onChange, fecha, fechaLabel, onFechaChange, onDiaAnterior, onDiaSiguiente,
 }) {
   const estadoOptions = ESTADO_OPTIONS.map((o) => ({ ...o, count: conteo[o.value] }));
+  // Saltar directo a una fecha sin clickear flecha por flecha (encargo
+  // explícito, 2026-09-29): el label se vuelve un <input type="date"> nativo
+  // al clickearlo, en vez de un popover de calendario propio -- más simple y
+  // suficiente para elegir una fecha puntual.
+  const [editandoFecha, setEditandoFecha] = useState(false);
 
   return (
     <div className="filter-bar">
@@ -28,7 +34,21 @@ export default function CanastasFiltrosBar({
         <button type="button" className="psc-agenda-nav-btn" aria-label="Día anterior" onClick={onDiaAnterior}>
           <LuChevronLeft className="icon" aria-hidden="true" />
         </button>
-        <span className="cnc-date-nav-label">{fechaLabel}</span>
+        {editandoFecha ? (
+          <input
+            type="date"
+            className="cnc-date-nav-input"
+            value={fecha}
+            aria-label="Ir a una fecha"
+            autoFocus
+            onChange={(e) => { onFechaChange(e.target.value); setEditandoFecha(false); }}
+            onBlur={() => setEditandoFecha(false)}
+          />
+        ) : (
+          <button type="button" className="cnc-date-nav-label" onClick={() => setEditandoFecha(true)}>
+            {fechaLabel}
+          </button>
+        )}
         <button type="button" className="psc-agenda-nav-btn" aria-label="Día siguiente" onClick={onDiaSiguiente}>
           <LuChevronRight className="icon" aria-hidden="true" />
         </button>

@@ -675,6 +675,16 @@ export function periodKeyDeSemana(weekStart, salaId) {
 // agenda, ver spec).
 export const SEMANA_ANCLA = new Date(2026, 7, 31);
 
+// Los 8 registros de esta semana ancla (12345-12352) traen `solicitudFarmacia`
+// en su canasta con una mezcla de los 3 pasos del flujo (encargo explícito,
+// 2026-09-29: la semana de referencia de la Agenda debe verse conectada con
+// "Canastas de cirugía", no solo la semilla de "hoy" agregada aparte para esa
+// pantalla) -- 12345/12349 'entregado', 12346/12348/12351 'solicitado',
+// 12347/12350/12352 sin marcar (sin-solicitar, el default). `farmacia.estado`
+// de cada registro es un campo aparte, no relacionado (no hay integración
+// real con farmacia en este mock) -- una posible discrepancia entre ambos no
+// es un bug.
+
 let CIRUGIAS = [
   {
     id: '12345',
@@ -706,7 +716,10 @@ let CIRUGIAS = [
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
       { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
     ],
-    canasta: { nombre: 'Colecistectomía estándar', items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i })) },
+    canasta: {
+      nombre: 'Colecistectomía estándar',
+      items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i, solicitudFarmacia: 'entregado' })),
+    },
     farmacia: {
       numeroPedido: '4582', estado: 'en-preparacion', fechaSolicitud: '2026-08-30T14:30',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Ondansetrón', dosis: '4mg IV' }],
@@ -741,7 +754,10 @@ let CIRUGIAS = [
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
     ],
-    canasta: { nombre: 'Hernia inguinal estándar', items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i })) },
+    canasta: {
+      nombre: 'Hernia inguinal estándar',
+      items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+    },
     farmacia: {
       numeroPedido: '4583', estado: 'listo', fechaSolicitud: '2026-08-30T09:00',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
@@ -811,7 +827,10 @@ let CIRUGIAS = [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
     ],
-    canasta: { nombre: 'Apendicectomía estándar', items: CANASTAS_CATALOGO[1].items.map((i) => ({ ...i })) },
+    canasta: {
+      nombre: 'Apendicectomía estándar',
+      items: CANASTAS_CATALOGO[1].items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+    },
     farmacia: {
       numeroPedido: '4585', estado: 'en-preparacion', fechaSolicitud: '2026-08-31T08:00',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Metronidazol', dosis: '500mg IV' }],
@@ -846,7 +865,10 @@ let CIRUGIAS = [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'en-uso' },
       { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
     ],
-    canasta: { nombre: 'Ginecología mayor', items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i })) },
+    canasta: {
+      nombre: 'Ginecología mayor',
+      items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i, solicitudFarmacia: 'entregado' })),
+    },
     farmacia: {
       numeroPedido: '4586', estado: 'en-preparacion', fechaSolicitud: '2026-09-01T10:30',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
@@ -916,7 +938,10 @@ let CIRUGIAS = [
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
     ],
-    canasta: { nombre: 'Ginecología mayor', items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i })) },
+    canasta: {
+      nombre: 'Ginecología mayor',
+      items: CANASTAS_CATALOGO[4].items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+    },
     farmacia: {
       numeroPedido: '4588', estado: 'en-preparacion', fechaSolicitud: '2026-09-02T11:00',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Ondansetrón', dosis: '4mg IV' }],

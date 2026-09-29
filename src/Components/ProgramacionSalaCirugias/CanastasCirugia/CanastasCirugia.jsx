@@ -198,7 +198,9 @@ export default function CanastasCirugia() {
               filtros={filtros}
               conteo={conteo}
               onChange={handleFiltrosChange}
+              fecha={fecha}
               fechaLabel={fechaNavLabel}
+              onFechaChange={setFecha}
               onDiaAnterior={() => cambiarDia(-1)}
               onDiaSiguiente={() => cambiarDia(1)}
             />

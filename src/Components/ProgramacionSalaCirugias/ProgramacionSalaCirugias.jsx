@@ -402,17 +402,6 @@ export default function ProgramacionSalaCirugias() {
               <p>Agenda y gestiona la ocupación de las salas de cirugía.</p>
             </div>
             <div className="psc-page-header-actions">
-              {/* "Canastas de cirugía" (encargo explícito, 2026-09-29): navega
-                  a /programacion-sala-cirugias/canastas -- por ahora una
-                  página en blanco (ver CanastasCirugia.jsx), el contenido
-                  real se construye en un paso aparte. */}
-              <Button
-                variant="secondary-accent"
-                icon={LuPackage}
-                onClick={() => router.push('/programacion-sala-cirugias/canastas')}
-              >
-                Canastas de cirugía
-              </Button>
               {/* "Historial de cirugías" (antes "Listado de cirugías", encargo
                   explícito 2026-09-25): hereda el flujo del ícono de lupa que
                   había acá (buscador de pacientes -> Historial Quirúrgico), y
@@ -430,6 +419,17 @@ export default function ProgramacionSalaCirugias() {
                 }}
               >
                 Historial de cirugías
+              </Button>
+              {/* "Canastas de cirugía" (encargo explícito, 2026-09-29): navega
+                  a /programacion-sala-cirugias/canastas -- por ahora una
+                  página en blanco (ver CanastasCirugia.jsx), el contenido
+                  real se construye en un paso aparte. */}
+              <Button
+                variant="secondary-accent"
+                icon={LuPackage}
+                onClick={() => router.push('/programacion-sala-cirugias/canastas')}
+              >
+                Canastas de cirugía
               </Button>
             </div>
           </div>
