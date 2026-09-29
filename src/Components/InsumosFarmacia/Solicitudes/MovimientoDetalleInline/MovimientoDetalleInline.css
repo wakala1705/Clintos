@@ -1,0 +1,19 @@
+/* .mig-grid/.mig-num/.mig-section-title/.mig-items-card: definidas en
+   ../shared/shared.css (ver AGENTS.md "Component organization"). */
+.mig-detalle-inline{
+  border-top:1px solid var(--border);padding:14px 16px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:10px;
+}
+.mig-detalle-inline-empty{
+  align-items:center;justify-content:center;text-align:center;
+  color:var(--ink-500);font-size:var(--fs-base);padding:24px;
+}
+.mig-detalle-inline-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mig-detalle-inline-consecutivo{font-size:var(--fs-sm);color:var(--ink-500);}
+
+/* Variante "fill" (modo Dividida, montado como `bottom` de SplitPane): el
+   panel ocupa todo el alto que le da el split -- .mig-items-card pasa de
+   alto fijo (280px, modo Lista) a flex:1 para crecer/encogerse con el
+   arrastre del divisor en vez de quedar recortada o con espacio vacío. */
+.mig-detalle-inline-fill{flex:1;min-height:0;border-top:none;}
+.mig-detalle-inline-fill .mig-items-card{flex:1;height:auto;min-height:0;}

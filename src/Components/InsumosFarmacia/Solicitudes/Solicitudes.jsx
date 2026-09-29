@@ -10,12 +10,17 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import BodegaPickerButton from '@/Components/BodegaPickerButton/BodegaPickerButton';
 import MovimientosToolbar from './MovimientosToolbar/MovimientosToolbar';
+import SplitPane from '@/Components/SplitPane/SplitPane';
 import MovimientosGrid from './MovimientosGrid/MovimientosGrid';
+import MovimientoDetalleInline from './MovimientoDetalleInline/MovimientoDetalleInline';
 import MovimientosPagination from './MovimientosPagination/MovimientosPagination';
 import MovimientoDetalleModal from './MovimientoDetalleModal/MovimientoDetalleModal';
 import AlistarPedidoModal from './AlistarPedidoModal/AlistarPedidoModal';
 import MovimientosTotalesFooter from './MovimientosTotalesFooter/MovimientosTotalesFooter';
 import { MOVIMIENTOS } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
+import {
+  SPLIT_RATIO_DEFAULT, setSplitRatio, setVistaModo, useSplitRatio, useVistaModo,
+} from '@/hooks/InsumosFarmacia/vistaSolicitudesPrefs';
 
 const PAGE_SIZE = 15;
 
@@ -51,6 +56,8 @@ export default function Solicitudes() {
     return cleanup;
   }, []);
 
+  const modo = useVistaModo();
+  const splitRatio = useSplitRatio();
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [detalleMovimiento, setDetalleMovimiento] = useState(null);
@@ -104,21 +111,6 @@ export default function Solicitudes() {
     [movimientos, effectivePage],
   );
 
-  // Base de conteo para los chips de Estado: todos los demás filtros ya
-  // aplicados, pero ignorando el propio Estado -- mismo criterio que
-  // PatientsPanel (los chips cuentan sobre la lista ya acotada por el resto
-  // de filtros activos, no sobre el universo completo).
-  const movimientosSinFiltroEstado = useMemo(
-    () => movimientosState.filter((m) => movimientoCoincide(m, { ...filtros, estado: 'todos' })),
-    [movimientosState, filtros],
-  );
-  const estadoCounts = useMemo(() => ({
-    todos: movimientosSinFiltroEstado.length,
-    confirmado: movimientosSinFiltroEstado.filter((m) => m.estado === 'confirmado').length,
-    'sin-confirmar': movimientosSinFiltroEstado.filter((m) => m.estado === 'sin-confirmar').length,
-    anulado: movimientosSinFiltroEstado.filter((m) => m.estado === 'anulado').length,
-  }), [movimientosSinFiltroEstado]);
-
   // Sin useState/useEffect: si la selección actual ya no está en la lista
   // filtrada (o todavía no hay ninguna), cae a la primera fila visible --
   // mismo patrón "siempre hay algo seleccionado" que FacturaVistaClasica.
@@ -167,16 +159,36 @@ export default function Solicitudes() {
               <MovimientosToolbar
                 filtros={filtros}
                 onChange={handleFiltrosChange}
-                estadoCounts={estadoCounts}
+                modo={modo}
+                onModoChange={setVistaModo}
               />
 
-              <MovimientosGrid
-                movimientos={movimientosPagina}
-                selectedId={effectiveSelectedId}
-                onSelect={setSelectedId}
-                onVerDetalle={setDetalleMovimiento}
-                onAlistarPedido={setAlistarMovimiento}
-              />
+              {modo === 'dividida' ? (
+                <SplitPane
+                  ratio={splitRatio}
+                  onRatioChange={setSplitRatio}
+                  defaultRatio={SPLIT_RATIO_DEFAULT}
+                  label="Redimensionar grilla y detalle"
+                  top={(
+                    <MovimientosGrid
+                      movimientos={movimientosPagina}
+                      selectedId={effectiveSelectedId}
+                      onSelect={setSelectedId}
+                      onVerDetalle={setDetalleMovimiento}
+                      onAlistarPedido={setAlistarMovimiento}
+                    />
+                  )}
+                  bottom={<MovimientoDetalleInline movimiento={selectedMovimiento} fill />}
+                />
+              ) : (
+                <MovimientosGrid
+                  movimientos={movimientosPagina}
+                  selectedId={effectiveSelectedId}
+                  onSelect={setSelectedId}
+                  onVerDetalle={setDetalleMovimiento}
+                  onAlistarPedido={setAlistarMovimiento}
+                />
+              )}
 
               <MovimientosPagination
                 page={effectivePage}

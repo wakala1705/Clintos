@@ -1,2 +1,49 @@
-.cc-page-header{flex-shrink:0;}
-.cc-page-header h1{margin:0;font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+/* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
+   ../ProgramacionSalaCirugias.css; .psc-toast de ../shared/shared.css. Acá
+   solo lo propio de esta página -- el navegador de fecha (.cnc-date-nav) vive
+   en ../canastas/CanastasFiltrosBar/, que es donde se monta. */
+
+.cnc-sala-select{width:220px;}
+
+/* KPIs del turno (sala + fecha seleccionados) -- estructura, no color de rol:
+   los 3 tonos calzan con ESTADO_TONE de CanastasTable.jsx (mismo criterio
+   semántico, no un color nuevo). */
+.cnc-kpis{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.cnc-kpi{
+  flex:1;min-width:200px;display:flex;align-items:center;gap:12px;
+  padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.cnc-kpi-icon-wrap{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.cnc-kpi-icon-wrap .icon{width:18px;height:18px;}
+.cnc-kpi-success{background:var(--green-bg);color:#0d7a3d;}
+html[data-theme="dark"] .cnc-kpi-success{color:var(--green);}
+.cnc-kpi-warn{background:var(--amber-bg);color:var(--amber-fg);}
+.cnc-kpi-neutral{background:var(--gray-bg);color:var(--ink-500);}
+.cnc-kpi-value{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.1;}
+.cnc-kpi-label{font-size:var(--fs-sm);color:var(--ink-500);}
+
+.cnc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.cnc-list-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+
+.cnc-estado{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:48px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);
+}
+.cnc-estado-icon{width:36px;height:36px;color:var(--ink-400);}
+.cnc-estado-text{margin:0;}
+
+/* .psc-toast lleva pointer-events:none (solo informa); con "Deshacer" hay
+   que poder clickearlo -- mismo ajuste que .rv-toast en RevisionVencidas.css. */
+.cnc-toast.show{pointer-events:auto;}
+.cnc-toast-undo{
+  margin-left:8px;padding:2px 8px;border:none;border-radius:6px;background:none;cursor:pointer;
+  font:inherit;font-weight:var(--fw-semibold);color:var(--primary-100);text-decoration:underline;
+}
+.cnc-toast-undo:hover{background:rgba(255,255,255,.12);}
+.cnc-toast-undo:focus-visible{outline:2px solid var(--primary-100);outline-offset:1px;}
+
+html[data-theme="dark"] .cnc-toast-undo{color:var(--primary);}
+html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primary);}

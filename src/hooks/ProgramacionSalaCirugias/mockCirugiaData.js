@@ -569,6 +569,17 @@ export function fechaLabel(fechaISOStr) {
   return `${pad2(d)}/${pad2(m)}/${y}`;
 }
 
+// "mar 29 sep 2026" -- formato compacto del navegador de fecha de "Canastas
+// de cirugía" (encargo explícito, 2026-09-29): ni fechaLabel ("29/09/2026")
+// ni diaLabel ("Martes 29 de Septiembre de 2026") calzaban con la
+// referencia. Reusa DIA_LABEL/MES_CORTO (ya en minúscula real solo tras
+// .toLowerCase(), esos arrays están en mayúscula para otros consumidores).
+export function diaCortoLabel(fechaISOStr) {
+  const [y, m, d] = fechaISOStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  return `${DIA_LABEL[date.getDay()].toLowerCase()} ${d} ${MES_CORTO[m - 1].toLowerCase()} ${y}`;
+}
+
 export function fechaHoraLabel(isoDateTimeStr) {
   const [fecha, hora] = isoDateTimeStr.split('T');
   return `${fechaLabel(fecha)} ${hora}`;
@@ -946,6 +957,129 @@ let CIRUGIAS = [
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
     },
   },
+  // 3 cirugías con fecha de "hoy" fija (2026-09-29, mismo criterio de fechas
+  // literales que el resto del mock) para que "Canastas de cirugía" no
+  // arranque vacía en su primer ingreso (encargo explícito, 2026-09-29) --
+  // una por cada paso del flujo de insumos, para que las 3 pestañas de esa
+  // pantalla (Pendientes de recepción/Recibidas/Todas) tengan contenido real
+  // sin depender de que el usuario primero pida insumos desde otra cirugía.
+  // Sofía Restrepo y Camila Duarte en 'qx-1' (sala por defecto de esa
+  // pantalla) para que el turno por defecto ya muestre pendiente + recibida
+  // sin cambiar de sala; Jorge Salcedo en 'qx-2' para probar el selector.
+  {
+    id: '12353',
+    sedeId: '02',
+    salaId: 'qx-1',
+    paciente: {
+      nombre: 'Sofía Restrepo', documento: 'CC 63.221.940', edad: 39, edadMeses: 6, edadDias: 11, sexo: 'Femenino', aseguradora: 'Sura EPS',
+      nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Cra 50 # 80-22, Bogotá', telAviso: '312 887 4410',
+    },
+    procedimientoPrincipal: 'Colecistectomía laparoscópica',
+    servicio: 'Cirugía general',
+    tipoCirugia: 'Programada',
+    cirujano: 'Dr. Juan García',
+    fecha: '2026-09-29',
+    horaInicio: '07:30',
+    horaFin: '09:30',
+    estado: 'programada',
+    procedimientos: [
+      { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 120, notas: 'Colecistitis crónica.' },
+    ],
+    personal: [
+      { rol: 'Cirujano', nombre: 'Dr. Juan García' },
+      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
+      { rol: 'Instrumentadora', nombre: 'María Fernández' },
+      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+    ],
+    equipos: [
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
+    ],
+    // Todos 'solicitado' -- pendiente de recepción, la pestaña por defecto de
+    // Canastas de cirugía.
+    canasta: {
+      nombre: 'Colecistectomía estándar',
+      items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+    },
+    farmacia: {
+      numeroPedido: '4590', estado: 'listo', fechaSolicitud: '2026-09-29T06:30',
+      medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Ondansetrón', dosis: '4mg IV' }],
+    },
+  },
+  {
+    id: '12354',
+    sedeId: '02',
+    salaId: 'qx-2',
+    paciente: {
+      nombre: 'Jorge Salcedo', documento: 'CC 79.334.110', edad: 26, edadMeses: 3, edadDias: 8, sexo: 'Masculino', aseguradora: 'Nueva EPS',
+      nivel: '2', tipoAfiliado: 'Cotizante', direccion: 'Calle 63 # 18-40, Bogotá', telAviso: '317 220 9981',
+    },
+    procedimientoPrincipal: 'Apendicectomía',
+    servicio: 'Cirugía general',
+    tipoCirugia: 'Urgencia',
+    cirujano: 'Dr. Carlos Martínez',
+    fecha: '2026-09-29',
+    horaInicio: '10:00',
+    horaFin: '12:00',
+    estado: 'urgencia',
+    procedimientos: [
+      { nombre: 'Apendicectomía', tipo: 'principal', duracionMin: 100, notas: 'Apendicitis aguda.' },
+    ],
+    personal: [
+      { rol: 'Cirujano', nombre: 'Dr. Carlos Martínez' },
+      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
+      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
+      { rol: 'Circulante', nombre: 'Andrés Molina' },
+    ],
+    equipos: [
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+    ],
+    // Sin `solicitudFarmacia` -- sin solicitar todavía, solo visible bajo la
+    // pestaña "Todas".
+    canasta: { nombre: 'Apendicectomía estándar', items: CANASTAS_CATALOGO[1].items.map((i) => ({ ...i })) },
+    farmacia: {
+      numeroPedido: '4591', estado: 'en-preparacion', fechaSolicitud: '2026-09-29T09:45',
+      medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Metronidazol', dosis: '500mg IV' }],
+    },
+  },
+  {
+    id: '12355',
+    sedeId: '02',
+    salaId: 'qx-1',
+    paciente: {
+      nombre: 'Camila Duarte', documento: 'CC 40.556.812', edad: 51, edadMeses: 2, edadDias: 19, sexo: 'Femenino', aseguradora: 'Salud Total EPS',
+      nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Av. Boyacá # 45-10, Bogotá', telAviso: '304 668 2230',
+    },
+    procedimientoPrincipal: 'Hernia inguinal',
+    servicio: 'Cirugía general',
+    tipoCirugia: 'Programada',
+    cirujano: 'Dr. Andrés López',
+    fecha: '2026-09-29',
+    horaInicio: '13:00',
+    horaFin: '15:00',
+    estado: 'programada',
+    procedimientos: [
+      { nombre: 'Hernia inguinal', tipo: 'principal', duracionMin: 90, notas: 'Abordaje abierto.' },
+    ],
+    personal: [
+      { rol: 'Cirujano', nombre: 'Dr. Andrés López' },
+      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
+      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
+      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+    ],
+    equipos: [
+      { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
+    ],
+    // Todos 'entregado' -- ya recibida, pestaña "Recibidas".
+    canasta: {
+      nombre: 'Hernia inguinal estándar',
+      items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i, solicitudFarmacia: 'entregado' })),
+    },
+    farmacia: {
+      numeroPedido: '4592', estado: 'entregado', fechaSolicitud: '2026-09-28T16:00',
+      medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  },
 ];
 
 // Semilla de "Revisión de programaciones vencidas" (spec 2026-09-25):
@@ -1063,7 +1197,7 @@ function vencidaLegacy([
 
 CIRUGIAS = [...CIRUGIAS, ...VENCIDAS_LEGACY.map(vencidaLegacy)];
 
-let nextIdSeq = 12353;
+let nextIdSeq = 12356;
 
 // Consecutivo de "No. Programación" de AgregarProcedimientoModal (encargo
 // explícito: "debe ser un consecutivo... pon un número real" -- ya no un
@@ -1534,6 +1668,31 @@ export function estadoInsumo(cirugia, item) {
   return devuelta >= item.cantidad ? 'devuelto' : 'devuelto-parcial';
 }
 
+// Resumen agregado de la canasta COMPLETA de una cirugía (a diferencia de
+// estadoInsumo, que es por ítem) -- alimenta el listado de "Canastas de
+// cirugía" (recepción por quirófano, encargo explícito 2026-09-29). No usa
+// estadoInsumo/cantidadDevuelta a propósito: una devolución posterior no debe
+// volver a marcar la canasta como pendiente de recepción, esa es otra etapa
+// del flujo que se resuelve en DetalleCirugiaPanel, no acá.
+// `solicitarInsumosFarmacia`/`registrarEntregaInsumos` avanzan TODOS los
+// ítems de una canasta a la vez (ver avanzarCanasta abajo), así que en la
+// práctica nunca hay una mezcla real de pasos dentro de una misma canasta --
+// el `else` final (recibida) solo se alcanza cuando `recibidos === total`.
+export function resumenCanasta(cirugia) {
+  const pasos = cirugia.canasta.items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
+  const total = pasos.length;
+  const porSolicitar = pasos.filter((p) => p === 'sin-solicitar').length;
+  const porRecibir = pasos.filter((p) => p === 'solicitado').length;
+  const recibidos = total - porSolicitar - porRecibir;
+  let estado;
+  if (porRecibir > 0) estado = 'pendiente-recepcion';
+  else if (porSolicitar === total) estado = 'sin-solicitar';
+  else estado = 'recibida';
+  return {
+    total, porSolicitar, porRecibir, recibidos, estado,
+  };
+}
+
 function avanzarCanasta(id, desde, hasta) {
   const actual = CIRUGIAS.find((c) => c.id === id);
   return actualizarCirugia(id, {
@@ -1628,6 +1787,28 @@ export function fetchVencidas({ hoy }) {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(CIRUGIAS.filter((c) => c.estado === 'programada' && c.fecha < hoy));
+    }, 250);
+  });
+}
+
+// ---------- Canastas de cirugía: recepción por quirófano (encargo explícito, 2026-09-29) ----------
+
+// Listado de las cirugías de UNA sala en un día (no cruzado entre salas):
+// el personal de quirófano que RECIBE los insumos está físicamente en un
+// quirófano puntual, mismo criterio de "sala seleccionada" que ya usa
+// fetchAgendaRango. Sede fija '02', mismo criterio que el resto del módulo
+// (ver comentario en VencidasFiltrosBar.jsx). Excluye estados terminales:
+// una cirugía cancelada/incumplida/realizada ya no tiene nada pendiente de
+// recibir.
+export function fetchCanastasDia({ fecha, salaId }) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const items = CIRUGIAS
+        .filter((c) => (
+          c.sedeId === '02' && c.salaId === salaId && c.fecha === fecha && !ESTADOS_TERMINALES_CIRUGIA.includes(c.estado)
+        ))
+        .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
+      resolve(items);
     }, 250);
   });
 }

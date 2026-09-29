@@ -1,0 +1,6 @@
+/* .psc-agenda-nav-btn viene de ../../shared/shared.css. */
+.cnc-date-nav{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.cnc-date-nav-label{
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  white-space:nowrap;min-width:150px;text-align:center;
+}

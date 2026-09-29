@@ -1,0 +1,38 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer vienen de
+   ../../shared/shared.css. Más ancho que el default (520px): la grilla de
+   resumen a 4 columnas + nombres de insumo largos no entraban cómodos ahí. */
+.modal-card.crm-modal-card{width:min(680px, 100%);}
+
+/* Resumen de la cirugía (encargo explícito, 2026-09-29, referencia visual):
+   nombre+doc/edad y pedido+estado en la fila superior, datos de la cirugía
+   en una grilla de 4 columnas debajo. */
+.crm-resumen{padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);}
+.crm-resumen-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.crm-resumen-nombre{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.crm-resumen-meta{font-size:var(--fs-sm);color:var(--ink-500);margin-left:8px;}
+.crm-resumen-header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.crm-resumen-pedido{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
+.crm-resumen-grid{
+  display:grid;grid-template-columns:repeat(4, 1fr);gap:12px 16px;
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--border);
+}
+.crm-resumen-grid > div{display:flex;flex-direction:column;gap:2px;}
+.crm-resumen-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.crm-resumen-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+.crm-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.crm-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.crm-table th{
+  text-align:left;padding:10px 10px;background:var(--table-header-bg);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+  border-bottom:1px solid var(--border);
+}
+.crm-table td{padding:8px 10px;border-bottom:1px solid var(--bg);color:var(--ink-700);}
+.crm-table tbody tr:last-child td{border-bottom:none;}
+.crm-col-ok{width:1%;white-space:nowrap;text-align:center;}
+.crm-col-ok input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+.crm-num{text-align:right;}
+
+.crm-footer{justify-content:space-between;align-items:center;gap:16px;}
+.crm-contador{font-size:var(--fs-sm);color:var(--ink-500);}
+.crm-acciones{display:flex;align-items:center;gap:10px;}

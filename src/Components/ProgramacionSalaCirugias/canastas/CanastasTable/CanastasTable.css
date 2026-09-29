@@ -1,0 +1,17 @@
+.cnc-table-wrap{flex:1;min-height:0;overflow:auto;}
+.cnc-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
+/* th y td comparten padding horizontal (10px) -- AGENTS.md "Encabezados de tabla". */
+.cnc-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:10px 10px;white-space:nowrap;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.cnc-table td{padding:6px 10px;height:44px;border-bottom:1px solid var(--border);color:var(--ink-700);vertical-align:middle;}
+.cnc-table tr:hover > td{background:var(--bg);}
+.cnc-nowrap{white-space:nowrap;}
+.cnc-col-acciones{width:1%;white-space:nowrap;}
+
+.cnc-cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
+.cnc-cell-secondary{font-size:var(--fs-sm);color:var(--ink-500);}
+.cnc-urgencia{margin-top:4px;}

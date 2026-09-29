@@ -19,19 +19,9 @@
    los separadores verticales de ese (acá es una sola franja de campos, no
    varios grupos lógicos). */
 
-/* Border general de la tabla (encargo explícito) + altura fija con scroll
-   propio (así el modal no "salta" de alto entre movimientos con distinta
-   cantidad de artículos) -- mismo criterio que .fvcd-items-card de
-   FacturaDetalleModalClasico. .mig-items-scroll es de MovimientoItemsTable
-   (../MovimientoItemsTable/MovimientoItemsTable.css); acá se overridea su
-   overflow-x:auto a overflow:auto + alto 100% para que scrollee dentro de
-   esta tarjeta en vez de crecer libre. */
-.mig-items-card{
-  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
-  height:280px;display:flex;flex-direction:column;
-}
-.mig-items-card .mig-items-scroll{flex:1;min-height:0;overflow:auto;}
-.mig-items-card .mig-grid tbody tr:last-child td{border-bottom:none;}
+/* .mig-items-card: promovida a ../shared/shared.css (2do consumidor real:
+   MovimientoDetalleInline), mismo criterio que .fvcd-items-card de
+   FacturaDetalleModalClasico. */
 
 @media (max-width:768px){
   .mig-meta-checkbox{margin-left:0;}

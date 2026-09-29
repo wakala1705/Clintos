@@ -59,6 +59,27 @@
 .mig-field-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;}
 .mig-field-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);word-break:break-word;}
 
+/* Título de sección chico ("1. Artículos solicitados", "Artículos
+   solicitados"...) -- promovido desde AlistarPedidoModal.css: 2 consumidores
+   reales hoy (AlistarPedidoModal, MovimientoDetalleInline). */
+.mig-section-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;}
+
+/* Tarjeta de la tabla de ítems (MovimientoItemsTable): borde propio + alto
+   fijo con scroll interno para que el contenedor no "salte" de alto entre
+   movimientos con distinta cantidad de artículos -- promovida desde
+   MovimientoDetalleModal.css: 2 consumidores reales hoy
+   (MovimientoDetalleModal, MovimientoDetalleInline). .mig-items-scroll es de
+   MovimientoItemsTable (../MovimientoDetalleModal/MovimientoItemsTable/
+   MovimientoItemsTable.css); acá se overridea su overflow-x:auto a
+   overflow:auto + alto 100% para que scrollee dentro de esta tarjeta en vez
+   de crecer libre. */
+.mig-items-card{
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  height:280px;display:flex;flex-direction:column;
+}
+.mig-items-card .mig-items-scroll{flex:1;min-height:0;overflow:auto;}
+.mig-items-card .mig-grid tbody tr:last-child td{border-bottom:none;}
+
 /* ---------- FILTER BAR (buscador + filtros), ver AGENTS.md "Barra de
    filtros de listado": una sola fila, buscador → filter-spacer → filtros. */
 .filter-bar{
@@ -77,16 +98,9 @@
 .filter-spacer{flex:1;}
 .filter-cluster{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;}
 
-/* Chips rápidos de estado (SegmentedFilterBar) -- duplicado por feature,
-   mismo criterio y mismos valores que Facturacion/shared/shared.css (ver
-   AGENTS.md "Barra de filtros de listado"). */
-.chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-
-.chip-group.segmented{
-  display:inline-flex;align-items:center;gap:2px;
-  background:var(--bg);border:1px solid var(--border);border-radius:999px;
-  padding:3px;
-}
+/* .chip-group/.chip-group.segmented (chips de Estado) se borraron: sin más
+   consumidores en esta feature tras reemplazar el filtro de Estado por
+   FilterListDropdown (lista, no chips -- encargo explícito). */
 
 /* Botón "Filtros" + popover (MovimientosFiltrosPopover) -- duplicado por
    feature, mismos valores que Facturacion/shared/shared.css (ver

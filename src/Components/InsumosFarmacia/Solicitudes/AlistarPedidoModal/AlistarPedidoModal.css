@@ -95,7 +95,7 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
    columna angosta, buscador/Sugerir Todos bajan a su propia fila, ver
    mig-articulos-toolbar). */
 .mig-section-header{display:flex;flex-wrap:wrap;}
-.mig-section-title{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0;}
+/* .mig-section-title: promovida a ../shared/shared.css (2do consumidor real: MovimientoDetalleInline). */
 .mig-section-desc{font-size:var(--fs-sm);color:var(--ink-500);margin:2px 0 0;}
 
 /* Columna izquierda: header de sección+toolbar+hint+tabla, todo en un solo

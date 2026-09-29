@@ -1,16 +1,21 @@
 'use client';
 
 import './MovimientosToolbar.css';
-import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import FilterListDropdown from '../FilterListDropdown/FilterListDropdown';
 import MovimientosFiltrosPopover from '../MovimientosFiltrosPopover/MovimientosFiltrosPopover';
+import VistaModoMenu from '../VistaModoMenu/VistaModoMenu';
 import { ESTADO_OPTIONS } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 import { LuSearch } from 'react-icons/lu';
 
 // Toolbar de una sola fila (buscador → filter-spacer → filtros), ver
 // AGENTS.md "Barra de filtros de listado". .filter-bar/.search-field/
 // .filter-spacer/.filter-cluster: definidas en ../shared/shared.css.
-export default function MovimientosToolbar({ filtros, onChange, estadoCounts }) {
-  const estadoOptions = ESTADO_OPTIONS.map((o) => ({ ...o, count: estadoCounts[o.value] }));
+// VistaModoMenu (Lista/Dividida) va al final de la fila, fuera de
+// .filter-cluster -- no es un filtro, mismo lugar (extremo derecho) que
+// ocupa en el toolbar de FacturaVistaClasica.
+export default function MovimientosToolbar({
+  filtros, onChange, modo, onModoChange,
+}) {
   const activeFiltrosCount = (filtros.tipoArticulo !== 'todos' ? 1 : 0) + (filtros.procedencia !== 'todos' ? 1 : 0);
 
   return (
@@ -29,11 +34,11 @@ export default function MovimientosToolbar({ filtros, onChange, estadoCounts }) 
       <div className="filter-spacer" />
 
       <div className="filter-cluster">
-        <SegmentedFilterBar
-          options={estadoOptions}
+        <FilterListDropdown
+          label="Estado"
+          options={ESTADO_OPTIONS}
           value={filtros.estado}
           onChange={(v) => onChange({ estado: v })}
-          ariaLabel="Filtrar por estado"
         />
 
         <MovimientosFiltrosPopover
@@ -42,6 +47,8 @@ export default function MovimientosToolbar({ filtros, onChange, estadoCounts }) 
           activeCount={activeFiltrosCount}
         />
       </div>
+
+      <VistaModoMenu modo={modo} onChange={onModoChange} />
     </div>
   );
 }
