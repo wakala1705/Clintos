@@ -1,9 +1,20 @@
 // Filas de "Listado de Programaciones - Revisión" (ListadoProgramacionesModal):
 // transcripción literal de la captura del sistema legado (encargo explícito,
 // 2026-09-25: "esta misma pantalla con los campos y columnas tal cual, solo
-// visual"). Valores ya formateados como los muestra la referencia (fecha
-// "AAAA/MM/DD HH:mm", duración con coma decimal) -- la pantalla no tiene
-// lógica, así que no hace falta derivarlos de CIRUGIAS.
+// visual"), con la fecha reformateada a "DD.MES.AAAA - HH:mm" (encargo
+// explícito, 2026-09-29 -- mismo formato largo que fechaIngresoLarga() en
+// mockPanelGeneralData.js / mockHistoriaClinicaRecords.js, con la hora al
+// final en vez de la fecha corta "AAAA/MM/DD HH:mm" de la captura legada).
+// Duración sigue con coma decimal -- la pantalla no tiene lógica, así que no
+// hace falta derivar nada de CIRUGIAS.
+const MESES_LARGOS = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+// 'AAAA/MM/DD HH:mm' (formato crudo de la captura legada) → 'DD.MES.AAAA - HH:mm'.
+function formatFechaProg(fechaHora) {
+  const [fecha, hora] = fechaHora.split(' ');
+  const [anio, mes, dia] = fecha.split('/');
+  return `${dia}.${MESES_LARGOS[Number(mes) - 1]}.${anio} - ${hora}`;
+}
 // Tupla: [Sala, No. Programación, Consecutivo, Fecha Prog., Duración (min.),
 // Ped. Inventario, Traslado a Cirugía, No. Admisión, Id. Afiliado,
 // P. Apellido, S. Apellido, P. Nombre, S. Nombre].
@@ -54,6 +65,22 @@ const FILAS = [
   ['Quirófano # 2', '5890', '0200000314', '2022/09/08 02:00', '60,00', false, false, '', '50900698', 'MENDOZA', '', 'CARMEN', 'ALICIA'],
 ];
 
+// Opciones de "Estado Programación" del modal CambiarEstadoProgramacionModal
+// -- mismo orden alfabético que trae el <select> de la ventana legada
+// (captura de referencia). Todas las filas de este listado nacen en
+// 'programada' (el listado ya solo muestra las que están en estado P, ver
+// intro del modal), por eso no hace falta un campo `estadoProg` por fila.
+export const ESTADO_PROGRAMACION_OPTIONS = [
+  { value: 'cancelada', label: 'Cancelada' },
+  { value: 'incumplida', label: 'Incumplida' },
+  { value: 'programada', label: 'Programada' },
+  { value: 'realizada', label: 'Realizada' },
+];
+
+export const ESTADO_PROGRAMACION_LABEL = Object.fromEntries(
+  ESTADO_PROGRAMACION_OPTIONS.map((o) => [o.value, o.label]),
+);
+
 export const LISTADO_PROGRAMACIONES = FILAS.map(([
   sala, noProgramacion, consecutivo, fechaProg, duracion, pedInventario, trasladoCirugia,
   noAdmision, idAfiliado, pApellido, sApellido, pNombre, sNombre,
@@ -61,7 +88,7 @@ export const LISTADO_PROGRAMACIONES = FILAS.map(([
   sala,
   noProgramacion,
   consecutivo,
-  fechaProg,
+  fechaProg: formatFechaProg(fechaProg),
   duracion,
   pedInventario,
   trasladoCirugia,

@@ -1,25 +1,34 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import '@/Components/FormSelect/FormSelect.css';
 import './VistaDropdown.css';
 import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
-import { LuCheck, LuChevronDown } from 'react-icons/lu';
+import { LuCalendarRange, LuCheck, LuChevronDown } from 'react-icons/lu';
 
+// Vista "Mes" oculta del selector (encargo explícito, 2026-09-29) -- el resto
+// del feature (AgendaMes.jsx, mesLabel/grillaMes en mockCirugiaData.js,
+// `vista === 'mes'` en ProgramacionSalaCirugias.jsx) se deja intacto, no se
+// borra: "ocultar" ≠ "eliminar" acá. Si se reactiva, alcanza con reagregar
+// la entrada acá; el atajo de teclado "M" se cae solo (busca por key sobre
+// este array).
 const OPTIONS = [
   { id: 'dia', label: 'Día', key: 'D' },
   { id: 'semana', label: 'Semana', key: 'S' },
-  { id: 'mes', label: 'Mes', key: 'M' },
 ];
 
-// Reemplaza el chip-group segmentado Día/Semana/Mes (encargo explícito) por
-// un dropdown estilo RangoDropdown de ProgramarCita/AgendaToolbar.jsx --
-// mismo patrón de apertura/cierre (click afuera + Escape) y mismos atajos
-// de teclado globales D/S/M (ver RangoDropdown.jsx). CSS propio
-// (.psc-vista-*) en vez de importar el de esa feature, mismo criterio ya
-// aplicado a CatalogoSalasModal vs FiltroPickerModal (ver AGENTS.md
-// "Component organization"). `onChange` recibe el id elegido y el
-// orquestador (ProgramacionSalaCirugias.jsx) decide qué agenda renderizar
-// (AgendaSemana para Día/Semana, AgendaMes para Mes).
+// Reemplaza el chip-group segmentado Día/Semana (antes Día/Semana/Mes,
+// encargo explícito) por un dropdown estilo RangoDropdown de
+// ProgramarCita/AgendaToolbar.jsx -- mismo patrón de apertura/cierre (click
+// afuera + Escape) y mismos atajos de teclado globales D/S (ver
+// RangoDropdown.jsx). El trigger reusa `.form-select-trigger` de
+// FormSelect.css (mismo criterio que CatalogPickerTrigger.jsx) para verse
+// igual que el resto de selectores de FiltrosBar (Sala/Estado) -- encargo
+// explícito, 2026-09-29: antes era un botón tipo "pill" (radio 999px) propio
+// que desentonaba con esos dos. `.psc-vista-*` en VistaDropdown.css queda
+// solo para lo que no cubre FormSelect.css: el wrapper, el ícono líder y el
+// menú/atajo de teclado. `onChange` recibe el id elegido y el orquestador
+// (ProgramacionSalaCirugias.jsx) decide qué agenda renderizar.
 // "Mostrar fines de semana" vive como item dentro de este menú (estilo
 // Google Calendar) en vez de un checkbox suelto en el header — solo
 // aplica a la vista Semana, igual que su visibilidad anterior.
@@ -66,13 +75,16 @@ export default function VistaDropdown({ value, onChange, mostrarFinesDeSemana, o
     <div className="psc-vista-dropdown" ref={rootRef}>
       <button
         type="button"
-        className="psc-vista-trigger"
+        className={`form-select-trigger psc-vista-trigger${open ? ' open' : ''}`}
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        {current?.label}
-        <LuChevronDown className="icon chev" aria-hidden="true" />
+        <span className="psc-vista-trigger-label">
+          <LuCalendarRange className="icon" aria-hidden="true" />
+          {current?.label}
+        </span>
+        <LuChevronDown className={`icon form-select-chev${open ? ' open' : ''}`} aria-hidden="true" />
       </button>
 
       {open && (

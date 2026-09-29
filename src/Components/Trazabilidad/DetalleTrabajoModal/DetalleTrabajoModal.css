@@ -1,0 +1,53 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer (base) y
+   .traz-copy-btn: definidas en ../shared/shared.css -- acá solo lo propio
+   de este modal. */
+.dtj-modal-card{width:760px;}
+.dtj-body{display:flex;flex-direction:column;gap:16px;}
+
+/* Eyebrow uppercase (trailing del ModalHeader "Auditoría real" + título de
+   cada bloque de código) -- mismo tratamiento visual que .filter-label del
+   toolbar, con su propia clase acá para no acoplar este modal al contexto
+   semántico de un filtro. */
+.dtj-eyebrow{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;}
+
+.dtj-jobid-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.dtj-jobid-block{display:flex;align-items:center;gap:8px;min-width:0;}
+.dtj-jobid-caption{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);white-space:nowrap;}
+.dtj-jobid-value{font-family:ui-monospace,monospace;font-size:var(--fs-sm);color:var(--ink-700);overflow-wrap:anywhere;}
+.dtj-jobid-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* ---------- Grillas de campos (N° Factura.../Fechas...) ----------
+   Primera grilla (identificadores) en .surface con borde; segunda (fechas +
+   duración) tintada en .bg -- mismo criterio que .dam-identity/.dam-section
+   de DetalleAdmisionModal.css: agrupar visualmente sin usar color de rol. */
+.dtj-info-card, .dtj-timing-card{margin:0;border-radius:var(--radius-lg);padding:16px;gap:14px 20px;}
+.dtj-info-card{border:1px solid var(--border);background:var(--surface);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+.dtj-timing-card{background:var(--bg);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));}
+.dtj-field{min-width:0;}
+.dtj-field dt{margin:0;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.dtj-field dd{margin:2px 0 0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
+.dtj-duration{color:var(--primary);font-weight:var(--fw-semibold);}
+
+@media (max-width:768px){
+  .dtj-info-card{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dtj-timing-card{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+/* ---------- Bloques de código (payload/response) ----------
+   Fondo siempre oscuro, sin depender de --surface/--bg (mismo criterio que
+   un visor de logs/consola: no cambia con el tema claro/oscuro de la app),
+   por eso los colores de acá son valores fijos y no tokens del :root. */
+.dtj-code-section{display:flex;flex-direction:column;gap:8px;}
+.dtj-code-header{display:flex;align-items:center;justify-content:space-between;}
+.dtj-code-block{
+  margin:0;background:#0f1420;border-radius:var(--radius);padding:14px 16px;overflow-x:auto;
+  font-family:ui-monospace,monospace;font-size:var(--fs-sm);line-height:1.6;color:#cbd3e1;
+}
+.dtj-code-block code{white-space:pre;}
+.dtj-code-scroll{max-height:180px;overflow-y:auto;}
+
+.dtj-json-key{color:#e7ecf3;}
+.dtj-json-string{color:#f2b366;}
+.dtj-json-number{color:#7ee787;}
+.dtj-json-boolean{color:#79c0ff;}
+.dtj-json-null{color:#d2a8ff;}

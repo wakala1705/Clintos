@@ -4,7 +4,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuHistory } from 'react-icons/lu';
+import { LuHistory, LuPackage } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -16,13 +16,13 @@ import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import MiniCalendarCirugias from './MiniCalendarCirugias/MiniCalendarCirugias';
 import AgendaSemana from './AgendaSemana/AgendaSemana';
 import AgendaMes from './AgendaMes/AgendaMes';
-import VistaDropdown from './VistaDropdown/VistaDropdown';
 import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
 import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/ListadoProgramacionesModal';
+import { ESTADO_PROGRAMACION_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockListadoProgramaciones';
 import {
   SALAS,
   SEMANA_ANCLA,
@@ -402,18 +402,25 @@ export default function ProgramacionSalaCirugias() {
               <p>Agenda y gestiona la ocupación de las salas de cirugía.</p>
             </div>
             <div className="psc-page-header-actions">
-              <VistaDropdown
-                value={vista}
-                onChange={handleChangeVista}
-                mostrarFinesDeSemana={mostrarFinesDeSemana}
-                onToggleFinesDeSemana={setMostrarFinesDeSemana}
-              />
+              {/* "Canastas de cirugía" (encargo explícito, 2026-09-29): navega
+                  a /programacion-sala-cirugias/canastas -- por ahora una
+                  página en blanco (ver CanastasCirugia.jsx), el contenido
+                  real se construye en un paso aparte. */}
+              <Button
+                variant="secondary-accent"
+                icon={LuPackage}
+                onClick={() => router.push('/programacion-sala-cirugias/canastas')}
+              >
+                Canastas de cirugía
+              </Button>
               {/* "Historial de cirugías" (antes "Listado de cirugías", encargo
                   explícito 2026-09-25): hereda el flujo del ícono de lupa que
                   había acá (buscador de pacientes -> Historial Quirúrgico), y
                   la lupa se quitó. El modal del Listado de Programaciones
                   sigue abriéndose desde el aviso de vencidas del panel
-                  lateral (MiniCalendarCirugias). */}
+                  lateral (MiniCalendarCirugias). El switch Día/Semana/Mes ya
+                  no vive acá -- se movió a FiltrosBar/psc-agenda-nav (encargo
+                  explícito, 2026-09-29). */}
               <Button
                 variant="secondary-accent"
                 icon={LuHistory}
@@ -455,6 +462,10 @@ export default function ProgramacionSalaCirugias() {
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  vista={vista}
+                  onChangeVista={handleChangeVista}
+                  mostrarFinesDeSemana={mostrarFinesDeSemana}
+                  onToggleFinesDeSemana={setMostrarFinesDeSemana}
                 />
               ) : (
                 <AgendaSemana
@@ -478,6 +489,10 @@ export default function ProgramacionSalaCirugias() {
                   onMarcarRealizada={handleMarcarRealizada}
                   onMarcarIncumplida={handleMarcarIncumplida}
                   onCancelarCirugia={handleCancelarCirugia}
+                  vista={vista}
+                  onChangeVista={handleChangeVista}
+                  mostrarFinesDeSemana={mostrarFinesDeSemana}
+                  onToggleFinesDeSemana={setMostrarFinesDeSemana}
                 />
               )}
             </div>
@@ -559,7 +574,12 @@ export default function ProgramacionSalaCirugias() {
       {/* "Listado de cirugías": réplica visual de la ventana legada
           "Listado de Programaciones - Revisión", sin lógica (ver
           ListadoProgramacionesModal.jsx). */}
-      {modal?.type === 'listado' && <ListadoProgramacionesModal onClose={() => setModal(null)} />}
+      {modal?.type === 'listado' && (
+        <ListadoProgramacionesModal
+          onClose={() => setModal(null)}
+          onCambiarEstado={(fila, nuevoEstado) => showToast(`Programación ${fila.noProgramacion} actualizada a ${ESTADO_PROGRAMACION_LABEL[nuevoEstado]}.`)}
+        />
+      )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`}>
         <span className="psc-toast-dot" />

@@ -27,9 +27,13 @@
 .lpm-row{cursor:pointer;}
 .lpm-row:hover td{background:var(--primary-50);}
 .lpm-row:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-/* Fila seleccionada: mismos tokens que el resto de selecciones del proyecto
-   (.cpm-option.active) -- fondo + barra primaria a la izquierda. */
-.lpm-table tbody .lpm-row.selected td{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);}
+/* Fila seleccionada: mismo tratamiento que el resto de tablas seleccionables
+   del proyecto (AdmisionesTable, TaskTable, PatientsTable...) -- solo fondo +
+   barra primaria a la izquierda, el texto conserva su color normal. No usar
+   --interactive-selected-text acá: ese token es --primary-dark y en este
+   proyecto se reserva para números de paginación activos/MiniCalendar, no
+   para el texto de una fila de tabla completa. */
+.lpm-table tbody .lpm-row.selected td{background:var(--interactive-selected-bg);}
 .lpm-row.selected td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
 
 .lpm-table .lpm-center{text-align:center;}
@@ -38,7 +42,4 @@
 
 .lpm-table th.lpm-check{white-space:normal;min-width:76px;}
 
-.lpm-table td input[type="checkbox"]{
-  width:15px;height:15px;margin:0;vertical-align:middle;
-  accent-color:var(--primary);pointer-events:none;
-}
+.lpm-check-icon{width:16px;height:16px;color:var(--primary);vertical-align:middle;}

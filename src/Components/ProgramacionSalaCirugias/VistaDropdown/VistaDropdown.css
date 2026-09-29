@@ -1,16 +1,14 @@
-.psc-vista-dropdown{position:relative;flex-shrink:0;}
-
-.psc-vista-trigger{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid var(--border);border-radius:999px;
-  background:var(--surface);color:var(--ink-900);
-  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);
-  padding:8px 14px;cursor:pointer;
+/* .form-select-trigger (FormSelect.css) da forma/tamaño/borde -- mismo
+   criterio que CatalogPickerTrigger.jsx: se ve igual que Sala/Estado en
+   FiltrosBar en vez de un botón "pill" propio (encargo explícito,
+   2026-09-29). Acá solo lo que ese archivo no cubre: el wrapper y el grupo
+   ícono+etiqueta de la izquierda. */
+.psc-vista-dropdown{position:relative;flex-shrink:0;min-width:140px;}
+.psc-vista-trigger-label{
+  display:flex;align-items:center;gap:8px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
 }
-.psc-vista-trigger:hover{background:var(--bg);}
-.psc-vista-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.psc-vista-trigger .chev{width:15px;height:15px;color:var(--ink-500);transition:transform .15s ease;}
-.psc-vista-trigger[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.psc-vista-trigger-label .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
 
 /* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
    "Dropdowns"). Acá solo la posición y el atajo de teclado (letra a la derecha, se reemplaza por el ✓ en la opción seleccionada). */

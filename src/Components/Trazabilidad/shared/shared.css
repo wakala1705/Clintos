@@ -85,6 +85,19 @@ html[data-theme="dark"][data-contrast="high"]{
 }
 html[data-theme="dark"] body{background:var(--bg);}
 
+/* Scrollbar fina/homologada (mismo criterio de duplicación por feature que
+   el resto de tokens de color -- ver Facturacion/shared/shared.css y
+   GestionEnfermeria/shared/shared.css, mismos valores). Aplica al scroll de
+   .traz-table-wrap y a cualquier otro overflow de la feature. */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
@@ -159,6 +172,42 @@ body{
 .data-table tbody tr:hover{background:#fafbfd;}
 .data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .data-table .cell-muted{color:var(--ink-500);}
+
+/* ---------- MODAL scaffolding ----------
+   Header homologado: ver @/Components/ModalHeader/ModalHeader (AGENTS.md
+   "Modales") -- acá solo overlay/card/body/footer, mismo criterio que
+   GestionCamas.css. Los modales de esta feature se montan condicionalmente
+   desde React (no legacy-imperativo), así que siempre llevan la clase
+   `open` literal en vez de alternarla por classList. */
+.modal-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .15s ease;
+  isolation:isolate;
+}
+.modal-overlay.open{display:flex;opacity:1;}
+.modal-card{
+  background:var(--surface-modal);border-radius:var(--radius-lg);width:780px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+}
+.modal-body{padding:20px 24px;overflow-y:auto;}
+.modal-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+/* Copiar al portapapeles (Job ID en TrazabilidadTable, Job ID/payload/
+   response en DetalleTrabajoModal) -- 2+ consumidores, ver AGENTS.md
+   "Component organization". Toggle ícono LuCopy/LuCheck + texto lo maneja
+   cada consumidor (setTimeout propio), acá solo el botón ícono-solo. */
+.traz-copy-btn{
+  width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--ink-500);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;
+}
+.traz-copy-btn .icon{width:14px;height:14px;}
+.traz-copy-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
+.traz-copy-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
 /* Label accesible sin representación visual (columna "Acciones", cuyo
    propósito ya se entiende por el botón "Ver" de cada fila) -- mismo valor

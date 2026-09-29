@@ -5,6 +5,7 @@ import './FiltrosBar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CatalogPickerTrigger from '../CatalogPickerTrigger/CatalogPickerTrigger';
 import CatalogoSalasModal from '../modals/CatalogoSalasModal/CatalogoSalasModal';
+import VistaDropdown from '../VistaDropdown/VistaDropdown';
 import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Vive embebido en .as-week-nav (ver AgendaSemana.jsx), junto a la
@@ -15,13 +16,15 @@ import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/m
 // `sedeId` acá solo sirve para acotar `salasDeSede`. Sin labels visibles
 // (encargo explícito): cada control lleva su nombre accesible por
 // aria-label/ariaLabel en vez de un <label> en pantalla — mismo valor
-// semántico, menos ruido visual en la fila. El switch Día/Semana/Mes vive en
-// el header de la página (ver .psc-page-header-actions en
-// ProgramacionSalaCirugias.jsx, mismo lugar que .pc-page-header-actions en
-// Programar cita) y no acá, a diferencia de una versión anterior de este
-// componente.
+// semántico, menos ruido visual en la fila. El switch Día/Semana/Mes vuelve a
+// vivir acá, al final de la fila (encargo explícito, 2026-09-29) -- antes
+// estaba en el header de la página (.psc-page-header-actions en
+// ProgramacionSalaCirugias.jsx); `vista`/`onChangeVista`/
+// `mostrarFinesDeSemana`/`onToggleFinesDeSemana` solo se reenvían al
+// VistaDropdown, el estado sigue viviendo en el orquestador.
 export default function FiltrosBar({
   sedeId, salaId, onSalaChange, estado, onEstadoChange,
+  vista, onChangeVista, mostrarFinesDeSemana, onToggleFinesDeSemana,
 }) {
   const [catalogoOpen, setCatalogoOpen] = useState(false);
   const salasDeSede = SALAS.filter((s) => s.sedeId === sedeId);
@@ -37,6 +40,12 @@ export default function FiltrosBar({
         ariaLabel="Sala / Quirófano"
       />
       <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
+      <VistaDropdown
+        value={vista}
+        onChange={onChangeVista}
+        mostrarFinesDeSemana={mostrarFinesDeSemana}
+        onToggleFinesDeSemana={onToggleFinesDeSemana}
+      />
 
       {catalogoOpen && (
         <CatalogoSalasModal

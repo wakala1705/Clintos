@@ -92,6 +92,58 @@ export const TRABAJOS = Array.from({ length: 52 }, (_, i) => {
   };
 });
 
+// Detalle completo de un trabajo (doble clic/"Ver" en TrazabilidadTable) --
+// mismo criterio que getAtencionData/getDetalleAdmision: busca por id y
+// arma el shape que espera DetalleTrabajoModal a partir de los propios
+// campos del trabajo, resuelve como valor directo (no Promise) porque es
+// una búsqueda en memoria sin estado de carga propio (el modal se abre con
+// el trabajo que ya está en la fila clickeada, no vuelve a pedirlo).
+export function getDetalleTrabajo(id) {
+  const t = TRABAJOS.find((x) => x.id === id);
+  if (!t) return null;
+
+  const cnsNumero = t.referencia.replace('Cns: ', '');
+  const consecutivo = `0201${cnsNumero.padStart(6, '0')}`;
+  const duracionSegundos = t.estado === 'completado' || t.estado === 'error'
+    ? +(2.1 + t.intentos * 2.4 + (Number(cnsNumero) % 7)).toFixed(2)
+    : null;
+  const fechaFin = duracionSegundos != null
+    ? new Date(t.fechaInicio.getTime() + duracionSegundos * 1000)
+    : null;
+
+  const response = t.estado === 'error'
+    ? {
+      numFactura: t.numeroFactura,
+      error: true,
+      codigo: 'ERR_TIMEOUT',
+      mensaje: 'No fue posible completar la operación en el tiempo esperado.',
+    }
+    : {
+      numFactura: t.numeroFactura,
+      email: 'egalvanc@unicia.co;icarpiop@unicia.co',
+      pdfLargo: 31376,
+      pdfOrigen: 'CLINTOS',
+      xmlOk: false,
+      xmlAdvertencia: null,
+      adjunto: { LogId: 312, Adjuntado: true },
+    };
+
+  return {
+    ...t,
+    consecutivo,
+    numeroAdmision: 'No aplica',
+    idTercero: 'General / No aplica',
+    idTransaccion: null,
+    sedeCompania: 'Sede: 02 | Cía: 02',
+    servidor: 'clintos.co',
+    fechaCreacion: t.fechaInicio,
+    fechaFin,
+    duracionSegundos,
+    payload: { nFactura: t.numeroFactura, cnsfct: consecutivo, imputable: t.tipo === 'imputar' ? 1 : 0 },
+    response,
+  };
+}
+
 function toISODate(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');

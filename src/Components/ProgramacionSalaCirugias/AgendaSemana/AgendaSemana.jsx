@@ -31,6 +31,7 @@ export default function AgendaSemana({
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
+  vista, onChangeVista, mostrarFinesDeSemana, onToggleFinesDeSemana,
 }) {
   // Slot clickeado a la espera de que el usuario elija tipo de programación
   // en SlotAccionesMenu (null = menú cerrado) -- guarda fecha/hora + el
@@ -74,6 +75,10 @@ export default function AgendaSemana({
           onSalaChange={onSalaChange}
           estado={estado}
           onEstadoChange={onEstadoChange}
+          vista={vista}
+          onChangeVista={onChangeVista}
+          mostrarFinesDeSemana={mostrarFinesDeSemana}
+          onToggleFinesDeSemana={onToggleFinesDeSemana}
         />
       </div>
 

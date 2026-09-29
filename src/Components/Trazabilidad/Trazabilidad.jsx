@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './Trazabilidad.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
-import { fetchTrazabilidad } from '@/hooks/Trazabilidad/mockTrazabilidadData';
+import { fetchTrazabilidad, getDetalleTrabajo } from '@/hooks/Trazabilidad/mockTrazabilidadData';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import TrazabilidadToolbar from './TrazabilidadToolbar/TrazabilidadToolbar';
@@ -12,6 +12,7 @@ import TrazabilidadTable from './TrazabilidadTable/TrazabilidadTable';
 import TrazabilidadTableSkeleton from './TrazabilidadTableSkeleton/TrazabilidadTableSkeleton';
 import TrazabilidadEmptyState from './TrazabilidadEmptyState/TrazabilidadEmptyState';
 import TrazabilidadPagination from './TrazabilidadPagination/TrazabilidadPagination';
+import DetalleTrabajoModal from './DetalleTrabajoModal/DetalleTrabajoModal';
 
 const FILTROS_VACIOS = { estado: 'todos', tipo: 'todos', query: '', desde: '', hasta: '' };
 const PAGE_SIZE = 20;
@@ -26,16 +27,22 @@ export default function Trazabilidad() {
     return cleanup;
   }, []);
 
-  // Filtros de tipo "formulario" (Buscar/Limpiar explícitos, no live-filter
-  // como el resto del proyecto) -- encargo explícito de la referencia:
-  // `draft` es lo que el usuario está editando, `filtros` es lo último
-  // aplicado (lo que de verdad dispara fetchTrazabilidad).
-  const [draft, setDraft] = useState(FILTROS_VACIOS);
+  // Filtrado en vivo (mismo criterio que el resto del proyecto, ver
+  // AGENTS.md "Barra de filtros de listado" y GestionCamasAuditoria.jsx) --
+  // cada cambio de filtro dispara fetchTrazabilidad directo, sin un paso
+  // intermedio "draft" ni botones Buscar/Limpiar (se quitaron por encargo
+  // explícito).
   const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('loading'); // loading | ready
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
+
+  // Id del trabajo abierto en DetalleTrabajoModal ("Ver" de cada fila) --
+  // solo el id (no el objeto completo) para que reabrir el modal siempre
+  // lea el detalle fresco vía getDetalleTrabajo, mismo criterio que
+  // detalleId en Admisiones.jsx/DetalleAdmisionModal.
+  const [verTrabajoId, setVerTrabajoId] = useState(null);
 
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
@@ -60,25 +67,16 @@ export default function Trazabilidad() {
     return () => { cancelled = true; };
   }, [filtros, page]);
 
-  function handleDraftChange(patch) {
-    setDraft((d) => ({ ...d, ...patch }));
-  }
-  function handleBuscar() {
+  function handleFiltrosChange(patch) {
     setStatus('loading');
-    setFiltros(draft);
-    setPage(1);
-  }
-  function handleLimpiar() {
-    setStatus('loading');
-    setDraft(FILTROS_VACIOS);
-    setFiltros(FILTROS_VACIOS);
+    setFiltros((f) => ({ ...f, ...patch }));
     setPage(1);
   }
   function handleReintentarColgados() {
     showToast('Reintentando trabajos colgados (en desarrollo).');
   }
   function handleVer(trabajo) {
-    showToast(`Ver detalle de ${trabajo.numeroFactura} (en desarrollo).`);
+    setVerTrabajoId(trabajo.id);
   }
 
   return (
@@ -100,10 +98,8 @@ export default function Trazabilidad() {
 
           <div className="card traz-table-card">
             <TrazabilidadToolbar
-              draft={draft}
-              onDraftChange={handleDraftChange}
-              onBuscar={handleBuscar}
-              onLimpiar={handleLimpiar}
+              filtros={filtros}
+              onFiltrosChange={handleFiltrosChange}
               onReintentarColgados={handleReintentarColgados}
             />
 
@@ -121,13 +117,14 @@ export default function Trazabilidad() {
                   pageSize={PAGE_SIZE}
                   total={total}
                   onChangePage={setPage}
-                  onReintentarColgados={handleReintentarColgados}
                 />
               </>
             )}
           </div>
         </div>
       </div>
+
+      <DetalleTrabajoModal trabajo={verTrabajoId ? getDetalleTrabajo(verTrabajoId) : null} onClose={() => setVerTrabajoId(null)} />
 
       <div className={`traz-toast${toast ? ' show' : ''}`}>
         <span className="traz-toast-dot"></span>

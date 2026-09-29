@@ -1,0 +1,16 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field viven en
+   shared/shared.css. */
+.modal-card.cepm-modal-card{width:420px;}
+
+/* Bloque de contexto de solo lectura (mismo criterio que .rcm-info-box en
+   ReprogramarCirugiaModal.css / .apm-patient-info en AgregarProcedimientoModal.css):
+   texto plano dentro de una caja con fondo, no .form-field/.tf-readonly-value
+   -- no son campos editables, no deben verse como inputs. */
+.cepm-info-box{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;
+  padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+}
+.cepm-info-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.cepm-info-item.wide{grid-column:1 / -1;}
+.cepm-info-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.cepm-info-value{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

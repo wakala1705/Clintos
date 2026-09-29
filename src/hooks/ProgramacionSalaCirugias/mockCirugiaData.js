@@ -505,21 +505,19 @@ export function diaLabel(date) {
   return `${DIA_LARGO[date.getDay()]} ${date.getDate()} de ${MES_LARGO[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-// Algoritmo ISO 8601 estándar de número de semana (no se hardcodea a un
-// valor fijo — cualquier semana navegada calcula el número real).
-export function numeroSemanaISO(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
+// Rango de fechas de la semana en vez del número de semana ISO (encargo
+// explícito, 2026-09-29: "Semana 36 - Agosto - Septiembre 2026" no decía qué
+// días eran realmente) -- "31 Ago - 6 Sep 2026" entre meses distintos, "1 - 7
+// Sep 2026" dentro del mismo mes (el día de inicio no repite el mes), con el
+// año de inicio sumado solo si la semana cruza fin de año.
 export function rangoSemanaLabel(weekStart) {
   const fin = addDias(weekStart, 6);
   const mismoMes = weekStart.getMonth() === fin.getMonth();
-  const mesFin = mismoMes ? '' : ` - ${MES_LARGO[fin.getMonth()]}`;
-  return `Semana ${numeroSemanaISO(weekStart)} - ${MES_LARGO[weekStart.getMonth()]}${mesFin} ${fin.getFullYear()}`;
+  const mismoAnio = weekStart.getFullYear() === fin.getFullYear();
+  const inicio = mismoMes
+    ? `${weekStart.getDate()}`
+    : `${weekStart.getDate()} ${MES_CORTO[weekStart.getMonth()]}${mismoAnio ? '' : ` ${weekStart.getFullYear()}`}`;
+  return `${inicio} - ${fin.getDate()} ${MES_CORTO[fin.getMonth()]} ${fin.getFullYear()}`;
 }
 
 // ---------- Mini-calendario (mes actual) ----------

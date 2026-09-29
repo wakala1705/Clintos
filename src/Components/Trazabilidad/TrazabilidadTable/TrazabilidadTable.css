@@ -1,15 +1,12 @@
-/* .data-table (base)/.cell-primary/.cell-muted/.sr-only: definidas en
-   ../shared/shared.css -- acá solo lo propio de esta tabla. */
+/* .data-table (base)/.cell-primary/.cell-muted/.sr-only/.traz-copy-btn:
+   definidas en ../shared/shared.css -- acá solo lo propio de esta tabla. */
 
-.traz-jobid-cell{display:flex;align-items:center;gap:6px;}
+/* En el <span> interno, no en el <td> -- puesto en el <td> directamente
+   rompía el vertical-align:middle que el resto de celdas hereda de
+   .data-table td (ver shared.css), desalineando la fila del Job ID contra
+   las demás columnas. */
+.traz-jobid-cell{display:inline-flex;align-items:center;gap:6px;}
 .traz-jobid{font-family:ui-monospace,monospace;font-size:var(--fs-sm);color:var(--ink-700);}
-.traz-copy-btn{
-  width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--ink-500);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;
-}
-.traz-copy-btn .icon{width:14px;height:14px;}
-.traz-copy-btn:hover{background:var(--gray-bg);color:var(--ink-900);}
-.traz-copy-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
 .traz-col-intentos{text-align:center;}
 .traz-intentos-alert{color:var(--amber-fg);font-weight:var(--fw-semibold);}

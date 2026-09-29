@@ -39,16 +39,18 @@ export default function TrazabilidadTable({ items, onVer }) {
       <tbody>
         {items.map((t) => (
           <tr key={t.id}>
-            <td className="traz-jobid-cell">
-              <span className="traz-jobid" title={t.jobId}>{t.jobId.slice(0, 8)}...</span>
-              <button
-                type="button"
-                className="traz-copy-btn"
-                onClick={() => handleCopy(t.jobId)}
-                aria-label={`Copiar Job ID ${t.jobId}`}
-              >
-                {copiedId === t.jobId ? <LuCheck className="icon" /> : <LuCopy className="icon" />}
-              </button>
+            <td>
+              <span className="traz-jobid-cell">
+                <span className="traz-jobid" title={t.jobId}>{t.jobId.slice(0, 8)}...</span>
+                <button
+                  type="button"
+                  className="traz-copy-btn"
+                  onClick={() => handleCopy(t.jobId)}
+                  aria-label={`Copiar Job ID ${t.jobId}`}
+                >
+                  {copiedId === t.jobId ? <LuCheck className="icon" /> : <LuCopy className="icon" />}
+                </button>
+              </span>
             </td>
             <td><Badge tone={TIPO_TONE[t.tipo]}>{TIPO_LABEL[t.tipo].toUpperCase()}</Badge></td>
             <td className="cell-primary">{t.numeroFactura}</td>
@@ -59,7 +61,7 @@ export default function TrazabilidadTable({ items, onVer }) {
             <td className={`traz-col-intentos${t.intentos > 0 ? ' traz-intentos-alert' : ''}`}>{t.intentos}</td>
             <td className="cell-muted">{formatFechaInicio(t.fechaInicio)}</td>
             <td className="col-acciones">
-              <Button variant="secondary" size="sm" icon={LuEye} onClick={() => onVer(t)}>Ver</Button>
+              <Button variant="secondary-accent" size="sm" icon={LuEye} onClick={() => onVer(t)}>Ver</Button>
             </td>
           </tr>
         ))}
