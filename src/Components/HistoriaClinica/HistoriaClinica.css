@@ -53,6 +53,19 @@ body{
 .hc-top-row{display:flex;align-items:stretch;gap:24px;flex-shrink:0;flex-wrap:wrap;}
 .hc-kpi-row{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px;flex:1;min-width:0;}
 
+/* Compact (botón expandir de hc-agenda-header, ver hc-expand-btn más abajo):
+   compacta KPIs + calendario para darle más alto a la tabla — mismo
+   comportamiento/valores que .pg-kpi-row.compact de Enfermería y
+   .hh-kpi-row.compact de HC Hospitalización, adaptado a que acá kpi-card ya
+   es una fila (icono | valor+label) en vez de una columna, así que no hace
+   falta cambiar flex-direction ni esconder un description aparte (kpi-label
+   ya cumple ese rol). El calendario compacta en WeekDatePicker.css. */
+.hc-kpi-row.compact{gap:10px;}
+.hc-kpi-row.compact .kpi-card{padding:10px 14px;gap:10px;}
+.hc-kpi-row.compact .kpi-icon{width:28px;height:28px;}
+.hc-kpi-row.compact .kpi-icon .icon{width:16px;height:16px;}
+.hc-kpi-row.compact .kpi-value{font-size:var(--fs-xl);}
+
 /* ---------- CARD: Agenda del día ---------- */
 .hc-card-shell{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -66,6 +79,23 @@ body{
 .hc-date-badge{text-transform:capitalize;}
 .hc-agenda-header-spacer{flex:1;min-width:12px;}
 .hc-actions-bar-buttons{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* Expandir/contraer tabla — al extremo del header, mismo botón que
+   .pg-expand-btn (Enfermería) / .hh-expand-btn (HC Hospitalización): ícono
+   cuadrado 36px, borde+radio de botón, tokens de selección cuando está
+   activo (expandida). */
+.hc-expand-btn{
+  flex-shrink:0;width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;transition:var(--btn-transition);
+}
+.hc-expand-btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.hc-expand-btn:hover{background:var(--gray-bg);}
+.hc-expand-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+.hc-expand-btn[aria-pressed="true"]{
+  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);
+}
 
 /* ---------- MARCO DE LA TABLA ----------
    Borde + esquinas redondeadas propios (distintos del borde de

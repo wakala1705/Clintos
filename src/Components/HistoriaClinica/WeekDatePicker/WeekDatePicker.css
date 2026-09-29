@@ -28,3 +28,16 @@
 .wdp-day.active .wdp-day-letter,
 .wdp-day.active .wdp-day-number{color:#fff;}
 .wdp-day:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
+/* Compact (botón expandir de hc-agenda-header, ver HistoriaClinica.jsx):
+   mismo criterio que .hc-kpi-row.compact -- reduce padding/gaps y esconde la
+   letra del día (dato secundario, el número solo ya identifica la fecha) en
+   vez de solo achicar fuentes, porque acá lo que gana altura para la tabla
+   es la fila completa, no una sola dimensión. */
+.wdp-card.compact{padding:6px var(--space-3);gap:6px;}
+.wdp-card.compact .wdp-month-label{font-size:var(--fs-sm);}
+.wdp-card.compact .wdp-nav-btn{width:22px;height:22px;}
+.wdp-card.compact .wdp-nav-btn .icon{width:14px;height:14px;}
+.wdp-card.compact .wdp-day{width:28px;padding:3px 0;gap:0;}
+.wdp-card.compact .wdp-day-letter{display:none;}
+.wdp-card.compact .wdp-day-number{font-size:var(--fs-sm);}

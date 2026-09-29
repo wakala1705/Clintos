@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './HistoriaClinica.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import KpiFilterCard from './KpiFilterCard/KpiFilterCard';
@@ -13,8 +14,12 @@ import AgendaTable from './AgendaTable/AgendaTable';
 import AgendaTableSkeleton from './AgendaTableSkeleton/AgendaTableSkeleton';
 import AgendaEmptyState from './AgendaEmptyState/AgendaEmptyState';
 import Badge from '@/Components/Badge/Badge';
+import Button from '@/Components/Button/Button';
+import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import { DOCTOR, fetchAgenda, fullDateLabel, todayISO } from '@/hooks/HistoriaClinica/mockAgendaData';
-import { LuCalendarDays, LuCircleCheckBig, LuClipboardList, LuRefreshCw, LuSearch, LuUser } from 'react-icons/lu';
+import {
+  LuCalendarDays, LuCircleCheckBig, LuClipboardList, LuMaximize2, LuMinimize2, LuRefreshCw, LuSearch, LuUser,
+} from 'react-icons/lu';
 
 const KPI_DEFS = [
   { key: 'en-sala', label: 'Pacientes en sala', icon: LuClipboardList, variant: 'warning' },
@@ -35,9 +40,34 @@ export default function HistoriaClinica() {
   // separada que el efecto tendría que invocar — mismo patrón que
   // reloadToken en ListaPacientes.jsx (ver AGENTS.md / react-hooks/set-state-in-effect).
   const [reloadToken, setReloadToken] = useState(0);
+  // Botón expandir del extremo de hc-agenda-header: compacta KPIs + calendario
+  // para darle más alto a la tabla — mismo comportamiento que Enfermería
+  // (PanelGeneral.jsx) y HC Hospitalización (tablaExpandida).
+  const [tablaExpandida, setTablaExpandida] = useState(false);
 
   useEffect(() => {
     const cleanup = initShellChrome({ startCollapsed: true });
+    return cleanup;
+  }, []);
+
+  // Mismo buscador de pacientes compartido (.ps-overlay, "Buscar afiliado")
+  // que usa Asignación de citas/Programar cita/Admisiones (ver NuevaCitaFlow.jsx
+  // y AGENTS.md) — "Ver Lista Pacientes" lo abre directo con
+  // window.openPatientSearch() en vez de encadenar a ncOpen() (el wizard de
+  // agendamiento). `onPatientConfirmed` es lo que evita ese encadenamiento,
+  // mismo criterio que Admisiones/PreIngresoModal.
+  const selectedPatientRef = useRef(null);
+  function handlePatientConfirmed(patient) {
+    window.ncToast?.(`Historia clínica de ${patient.nombre} (en desarrollo).`);
+  }
+
+  useEffect(() => {
+    const cleanup = initNuevaCita({
+      getPatient: () => selectedPatientRef.current,
+      setPatient: (patient) => { selectedPatientRef.current = patient; },
+      onPatientConfirmed: handlePatientConfirmed,
+      clearPatientAfterConfirm: true,
+    });
     return cleanup;
   }, []);
 
@@ -82,7 +112,7 @@ export default function HistoriaClinica() {
           </div>
 
           <div className="hc-top-row">
-            <div className="hc-kpi-row">
+            <div className={`hc-kpi-row${tablaExpandida ? ' compact' : ''}`}>
               {KPI_DEFS.map((kpi) => (
                 <KpiFilterCard
                   key={kpi.key}
@@ -95,7 +125,7 @@ export default function HistoriaClinica() {
                 />
               ))}
             </div>
-            <WeekDatePicker selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+            <WeekDatePicker selectedDate={selectedDate} onSelectDate={setSelectedDate} compact={tablaExpandida} />
           </div>
 
           <div className="hc-card-shell">
@@ -116,13 +146,21 @@ export default function HistoriaClinica() {
                 />
               </div>
               <div className="hc-actions-bar-buttons">
-                <button type="button" className="btn btn-secondary" onClick={handleRefresh}>
-                  <LuRefreshCw className="icon" />
+                <Button variant="secondary-accent" icon={LuRefreshCw} onClick={handleRefresh}>
                   Refrescar
-                </button>
-                <button type="button" className="btn btn-outline" onClick={() => router.push('/lista-pacientes')}>
-                  <LuUser className="icon" />
+                </Button>
+                <Button variant="secondary-accent" icon={LuUser} onClick={() => window.openPatientSearch()}>
                   Ver Lista Pacientes
+                </Button>
+                <button
+                  type="button"
+                  className="hc-expand-btn"
+                  onClick={() => setTablaExpandida((v) => !v)}
+                  aria-pressed={tablaExpandida}
+                  aria-label={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
+                  title={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
+                >
+                  {tablaExpandida ? <LuMinimize2 className="icon" aria-hidden="true" /> : <LuMaximize2 className="icon" aria-hidden="true" />}
                 </button>
               </div>
             </div>
@@ -137,6 +175,8 @@ export default function HistoriaClinica() {
           </div>
         </div>
       </div>
+
+      <NuevaCitaFlow />
     </div>
   );
 }

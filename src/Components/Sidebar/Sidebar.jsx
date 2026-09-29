@@ -21,6 +21,7 @@ import {
   LuHandCoins,
   LuHeart,
   LuHeartPulse,
+  LuHistory,
   LuHouse,
   LuLandmark,
   LuMessagesSquare,
@@ -67,7 +68,8 @@ export default function Sidebar() {
   const isTriage = pathname.startsWith('/hospitalizacion/triage');
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp || isInterconsulta || isTriage;
   const isFacturas = pathname === '/facturas';
-  const isFinanzas = isFacturas;
+  const isTrazabilidad = pathname === '/trazabilidad';
+  const isFinanzas = isFacturas || isTrazabilidad;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
   const isInsumosFarmacia = isSolicitudesInsumosFarmacia;
   const isUtilitarios = pathname === '/utilitarios';
@@ -135,6 +137,7 @@ export default function Sidebar() {
         </div>
         <div className="nav-body">
           <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
+          <Link href="/trazabilidad" className={`nav-subitem${isTrazabilidad ? ' active' : ''}`}><LuHistory className="icon" />Trazabilidad</Link>
           <div className="nav-subitem" tabIndex="0" role="button"><LuWallet className="icon" />Cartera</div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuVault className="icon" />Tesorería</div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuShoppingCart className="icon" />Compras</div>

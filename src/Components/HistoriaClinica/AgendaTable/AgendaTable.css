@@ -17,6 +17,12 @@
    /historia-clinica en la misma sesión; un refresh la descartaba). */
 .hc-table-wrap .data-table thead tr:first-child th{top:0;height:var(--th-row-height);box-sizing:border-box;}
 .hc-table-wrap .data-table thead tr:last-child th{top:var(--th-row-height);}
+/* Fila un poco más compacta que el resto de tablas que comparten .data-table
+   (PlantillaModal, CrecimientoStep...) -- escopado a .hc-table-wrap (mismo
+   criterio que las 2 reglas de arriba) para no afectarlas: acá la tabla es
+   el contenido principal de la card (varias filas visibles a la vez), así
+   que gana más viendo un poco de aire vertical de menos. */
+.hc-table-wrap .data-table td{padding:7px 10px;}
 .data-table thead th.group-head{text-align:center;border-bottom:1px solid var(--border);}
 /* Continúa la línea de cada grupo de columnas (Hora / Id.-Nombre-Servicio-
    Descripción / Primera vez / Tipo cita) desde el header hasta el cuerpo, en

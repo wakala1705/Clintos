@@ -9,7 +9,7 @@ import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 // gobierna la semana visible y es independiente de `selectedDate`: hojear
 // semanas con las flechas no cambia el día seleccionado hasta que se hace
 // clic en una píldora.
-export default function WeekDatePicker({ selectedDate, onSelectDate }) {
+export default function WeekDatePicker({ selectedDate, onSelectDate, compact = false }) {
   const [weekAnchor, setWeekAnchor] = useState(() => new Date(`${selectedDate}T00:00:00`));
 
   const days = weekDays(weekAnchor);
@@ -28,7 +28,7 @@ export default function WeekDatePicker({ selectedDate, onSelectDate }) {
   }
 
   return (
-    <div className="wdp-card">
+    <div className={`wdp-card${compact ? ' compact' : ''}`}>
       <div className="wdp-header">
         <button type="button" className="wdp-nav-btn" onClick={goToPrevWeek} aria-label="Semana anterior">
           <LuChevronLeft className="icon" />
