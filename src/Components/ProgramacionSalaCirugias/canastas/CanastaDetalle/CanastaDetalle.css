@@ -10,7 +10,7 @@
 .cnc-det-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .cnc-det-solicitud{font-size:var(--fs-xs);color:var(--ink-500);}
 .cnc-det-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:12px;}
-.cnc-det-label{display:block;font-size:var(--fs-xs);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;}
+.cnc-det-label{display:block;font-size:var(--fs-xs);color:var(--ink-700);text-transform:uppercase;letter-spacing:.04em;}
 .cnc-det-value{display:block;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);margin-top:2px;}
 
 .cnc-banner{
@@ -33,7 +33,7 @@ html[data-theme="dark"] .cnc-banner-success{color:var(--green);}
 .cnc-tab[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--primary);}
 .cnc-tab:disabled{color:var(--ink-400);font-weight:var(--fw-medium);cursor:not-allowed;}
 .cnc-tab:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
-.cnc-tab-nota{font-size:var(--fs-xs);}
+.cnc-tab-lock{width:13px;height:13px;margin-left:6px;vertical-align:-1px;}
 .cnc-tabpanel{flex:1;min-height:0;display:flex;flex-direction:column;}
 
 @media (max-width:1024px){

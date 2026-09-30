@@ -75,6 +75,14 @@ test('bannerCanasta: solo excepciones; el estado normal lo dice el badge', () =>
   assert.deepEqual(bannerCanasta(cirugia([ent()], { recepcion })), {
     tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.',
   });
+  assert.equal(
+    bannerCanasta(cirugia([ent()], { recepcion: { ...recepcion, origen: 'farmacia' } })).texto,
+    'Canasta recibida con novedades: farmacia despachó menos de lo solicitado y fue notificada.',
+  );
+  assert.equal(
+    bannerCanasta(cirugia([ent()], { recepcion: { ...recepcion, origen: 'ambos' } })).texto,
+    'Canasta recibida con diferencias en la entrega: farmacia fue notificada.',
+  );
   assert.deepEqual(bannerCanasta(cirugia([ent()], { estado: 'realizada' })), {
     tone: 'info', texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.',
   });
@@ -119,6 +127,8 @@ test('resumenDevolucion: unidades e insumos a devolver', () => {
 test('líneas de trazabilidad', () => {
   const conNov = cirugia([ent()], { recepcion: { usuario: 'Ana', fecha: '2026-09-29T08:10', conNovedades: true } });
   assert.equal(lineaRecepcion(conNov), 'Recibida con novedades por Ana · 29.SEP.2026 - 08:10 · Farmacia notificada');
+  const conMotivo = cirugia([ent()], { recepcion: { ...conNov.canasta.recepcion, motivo: 'danado' } });
+  assert.equal(lineaRecepcion(conMotivo), 'Recibida con novedades por Ana · 29.SEP.2026 - 08:10 · Motivo: Insumo dañado · Farmacia notificada');
   const sinNov = cirugia([ent()], { recepcion: { usuario: 'Ana', fecha: '2026-09-29T08:10', conNovedades: false } });
   assert.equal(lineaRecepcion(sinNov), 'Recibida completa por Ana · 29.SEP.2026 - 08:10');
   assert.equal(lineaRecepcion(cirugia([ent()])), 'Canasta recibida.');

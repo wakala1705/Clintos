@@ -1141,7 +1141,9 @@ let CIRUGIAS = [
           ...(falta ? { novedad: 'Faltan 1 en la entrega' } : {}),
         };
       }),
-      recepcion: { usuario: 'Camilo Grondona', fecha: `${HOY_ISO}T08:10`, conNovedades: true },
+      recepcion: {
+        usuario: 'Camilo Grondona', fecha: `${HOY_ISO}T08:10`, conNovedades: true, origen: 'farmacia', motivo: 'faltante-farmacia',
+      },
     },
     farmacia: {
       numeroPedido: '4592', estado: 'entregado', fechaSolicitud: '2026-09-28T16:00',
@@ -1855,6 +1857,29 @@ export function cantidadRecibida(item) {
 
 // Texto de novedad de un ítem: lo que farmacia despachó de menos y lo que
 // faltó en la entrega. '' si no hay novedad.
+// Motivos de la novedad de una recepción. 'faltante-farmacia' se asume solo
+// cuando la diferencia viene de farmacia (despachó menos de lo solicitado); si
+// hay diferencia en la entrega el receptor debe elegir el motivo.
+export const MOTIVOS_NOVEDAD = [
+  { value: 'faltante-farmacia', label: 'Faltante de farmacia' },
+  { value: 'faltante-entrega', label: 'Faltante en la entrega' },
+  { value: 'danado', label: 'Insumo dañado' },
+  { value: 'vencido', label: 'Insumo vencido o por vencer' },
+  { value: 'lote', label: 'Lote distinto al solicitado' },
+  { value: 'otro', label: 'Otro' },
+];
+
+// De dónde viene la diferencia de una recepción: 'farmacia' (despachó menos de
+// lo solicitado), 'entrega' (llegó menos de lo despachado), 'ambos' o null.
+// `pares` = [{ item, recibido }].
+export function origenDiferencia(pares) {
+  const farmacia = pares.some(({ item }) => cantidadDespachada(item) < item.cantidad);
+  const entrega = pares.some(({ item, recibido }) => recibido < cantidadDespachada(item));
+  if (farmacia && entrega) return 'ambos';
+  if (farmacia) return 'farmacia';
+  return entrega ? 'entrega' : null;
+}
+
 export function novedadItem(item, recibido) {
   const despachado = cantidadDespachada(item);
   const partes = [];
@@ -2000,12 +2025,15 @@ export function despacharCanasta(id) {
 // Recepción por cantidades en quirófano. `recibidos`: { [nombre]: cantidad };
 // un ítem sin entrada se toma completo (= lo despachado). Valida todo ANTES
 // de escribir, así un error no deja la canasta a medias.
-export function registrarRecepcion(id, { recibidos, usuario = 'CLINTOS' }) {
+export function registrarRecepcion(id, {
+  recibidos, usuario = 'CLINTOS', motivo, nota,
+}) {
   const actual = CIRUGIAS.find((c) => c.id === id);
   if (resumenCanasta(actual).estado !== 'despachada') {
     throw new Error('La canasta todavía no fue despachada por farmacia.');
   }
   let conNovedades = false;
+  const pares = [];
   const items = actual.canasta.items.map((i) => {
     if (i.solicitudFarmacia !== 'solicitado') return i;
     const despachado = cantidadDespachada(i);
@@ -2014,16 +2042,26 @@ export function registrarRecepcion(id, { recibidos, usuario = 'CLINTOS' }) {
       throw new Error(`${i.nombre}: lo recibido debe estar entre 0 y ${despachado}.`);
     }
     if (recibido < i.cantidad) conNovedades = true;
+    pares.push({ item: i, recibido });
     return {
       ...i, solicitudFarmacia: 'entregado', despachado, recibido, novedad: novedadItem(i, recibido) || undefined,
     };
   });
+  const origen = origenDiferencia(pares);
+  if ((origen === 'entrega' || origen === 'ambos') && !motivo) {
+    throw new Error('Indica el motivo de la diferencia en la entrega.');
+  }
+  if (motivo && !MOTIVOS_NOVEDAD.some((m) => m.value === motivo)) {
+    throw new Error('El motivo de la novedad no es válido.');
+  }
+  const recepcion = { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), conNovedades };
+  if (conNovedades) {
+    recepcion.origen = origen;
+    recepcion.motivo = motivo ?? 'faltante-farmacia';
+    if (nota?.trim()) recepcion.nota = nota.trim();
+  }
   return actualizarCirugia(id, {
-    canasta: {
-      ...actual.canasta,
-      items,
-      recepcion: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), conNovedades },
-    },
+    canasta: { ...actual.canasta, items, recepcion },
   });
 }
 

@@ -2,6 +2,7 @@
 
 import { LuMinus, LuPackageCheck, LuPlus } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import InsumosBuscador from '../InsumosBuscador/InsumosBuscador';
 import {
   CANASTA_ESTADOS_RECIBIDOS, cantidadRecibida, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -39,6 +40,10 @@ export default function ConsumoTab({
   });
   const { unidades, insumos } = resumenDevolucion(cirugia, Object.fromEntries(filas.map((f) => [f.item.nombre, f.usado])));
 
+  const busqueda = draft.busquedaInsumo ?? '';
+  const visibles = busqueda.trim()
+    ? filas.filter((f) => f.item.nombre.toLowerCase().includes(busqueda.trim().toLowerCase()))
+    : filas;
   const ajustar = (f, delta) => onDraftChange({
     usado: { ...usadoDraft, [f.item.nombre]: Math.min(f.recibido, Math.max(0, f.usado + delta)) },
   });
@@ -47,7 +52,11 @@ export default function ConsumoTab({
   return (
     <>
       <div className="cnc-tab-body">
-        <table className="cnc-tabla">
+        {filas.length > 8 && (
+          <InsumosBuscador value={busqueda} onChange={(v) => onDraftChange({ busquedaInsumo: v })} />
+        )}
+        <div className="cnc-tabla-scroll">
+          <table className="cnc-tabla">
           <thead>
             <tr>
               <th>Insumo</th>
@@ -57,7 +66,10 @@ export default function ConsumoTab({
             </tr>
           </thead>
           <tbody>
-            {filas.map((f) => (
+            {visibles.length === 0 && (
+              <tr><td colSpan={4} className="cnc-sin-resultados">Ningún insumo coincide con la búsqueda.</td></tr>
+            )}
+            {visibles.map((f) => (
               <tr key={f.item.nombre}>
                 <td className="cnc-insumo-nombre">{f.item.nombre}</td>
                 <td className="cnc-num">{f.recibido}</td>
@@ -90,7 +102,8 @@ export default function ConsumoTab({
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
       <div className="cnc-tab-footer">
         {consumo ? (

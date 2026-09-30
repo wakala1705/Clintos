@@ -21,8 +21,22 @@ test('registrarRecepcion: exige que farmacia haya despachado', () => {
   assert.throws(() => registrarRecepcion('12358', { recibidos: {}, usuario: 'Ana' }), /todavía no fue despachada/);
 });
 
+test('registrarRecepcion: una diferencia en la entrega exige motivo y no cambia nada sin él', async () => {
+  assert.throws(
+    () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana' }),
+    /Indica el motivo de la diferencia en la entrega/,
+  );
+  assert.throws(
+    () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana', motivo: 'inventado' }),
+    /motivo de la novedad no es válido/,
+  );
+  assert.equal(resumenCanasta(await cirugia('12356')).estado, 'despachada');
+});
+
 test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async () => {
-  const c = registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana' });
+  const c = registrarRecepcion('12356', {
+    recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana', motivo: 'danado', nota: '  Envase roto  ',
+  });
   assert.equal(resumenCanasta(c).estado, 'con-novedades');
   const gasas = c.canasta.items.find((i) => i.nombre === 'Gasas estériles');
   assert.equal(gasas.recibido, 4);
@@ -31,6 +45,9 @@ test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async
   assert.equal(c.canasta.recepcion.usuario, 'Ana');
   assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`); // hora de demostración fija
   assert.equal(c.canasta.recepcion.conNovedades, true);
+  assert.equal(c.canasta.recepcion.origen, 'ambos'); // farmacia despachó 5 de 6 y llegaron 4
+  assert.equal(c.canasta.recepcion.motivo, 'danado');
+  assert.equal(c.canasta.recepcion.nota, 'Envase roto');
 });
 
 test('registrarRecepcion: despachada completa, sin faltantes → recibida sin novedades', () => {

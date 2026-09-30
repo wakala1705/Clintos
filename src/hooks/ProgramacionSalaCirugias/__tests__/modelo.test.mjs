@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  HORA_DEMO, ahoraDemo, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
-  fechaISO, iniciaEnLabel, novedadItem, resumenCanasta,
+  HORA_DEMO, MOTIVOS_NOVEDAD, ahoraDemo, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
+  fechaISO, iniciaEnLabel, novedadItem, origenDiferencia, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const item = (extra = {}) => ({ nombre: 'Gasas', cantidad: 4, ...extra });
@@ -86,4 +86,13 @@ test('iniciaEnLabel', () => {
   assert.equal(en('08:00'), 'Hora de inicio superada');
   assert.equal(en('09:30', { estado: 'realizada' }), 'Finalizada');
   assert.equal(en('09:30', { fecha: '2026-09-30' }), '30/09/2026');
+});
+
+test('origenDiferencia distingue farmacia, entrega y ambos', () => {
+  const par = (despachado, recibido) => ({ item: item({ despachado }), recibido });
+  assert.equal(origenDiferencia([par(4, 4)]), null);
+  assert.equal(origenDiferencia([par(3, 3)]), 'farmacia');
+  assert.equal(origenDiferencia([par(4, 3)]), 'entrega');
+  assert.equal(origenDiferencia([par(3, 3), par(4, 2)]), 'ambos');
+  assert.equal(MOTIVOS_NOVEDAD.some((m) => m.value === 'faltante-farmacia'), true);
 });

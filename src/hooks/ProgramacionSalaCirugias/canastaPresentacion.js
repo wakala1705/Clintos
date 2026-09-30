@@ -6,7 +6,7 @@
 // Esta pantalla solo RECIBE la canasta y registra consumo y devolución: no
 // decide si una cirugía puede iniciar (esa lógica se quitó, 2026-09-30).
 import {
-  CANASTA_ESTADOS_RECIBIDOS, cantidadRecibida, fechaHoraTrazaLabel, resumenCanasta,
+  CANASTA_ESTADOS_RECIBIDOS, MOTIVOS_NOVEDAD, cantidadRecibida, fechaHoraTrazaLabel, resumenCanasta,
 } from './mockCirugiaData.js';
 
 // `violet: true` -> <Badge> no trae tono violeta; se agrega la clase global
@@ -115,7 +115,11 @@ export function bannerCanasta(cirugia) {
     return { tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.' };
   }
   if (estado === 'con-novedades') {
-    return { tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.' };
+    const origen = cirugia.canasta.recepcion?.origen;
+    let texto = 'Canasta recibida con novedades: farmacia fue notificada.';
+    if (origen === 'farmacia') texto = 'Canasta recibida con novedades: farmacia despachó menos de lo solicitado y fue notificada.';
+    if (origen === 'entrega' || origen === 'ambos') texto = 'Canasta recibida con diferencias en la entrega: farmacia fue notificada.';
+    return { tone: 'warn', texto };
   }
   return null;
 }
@@ -140,7 +144,9 @@ export function lineaRecepcion(cirugia) {
   const r = cirugia.canasta.recepcion;
   if (!r) return 'Canasta recibida.';
   const base = `${r.conNovedades ? 'Recibida con novedades' : 'Recibida completa'} por ${r.usuario} · ${fechaHoraTrazaLabel(r.fecha)}`;
-  return r.conNovedades ? `${base} · Farmacia notificada` : base;
+  if (!r.conNovedades) return base;
+  const motivo = MOTIVOS_NOVEDAD.find((m) => m.value === r.motivo)?.label;
+  return `${base}${motivo ? ` · Motivo: ${motivo}` : ''} · Farmacia notificada`;
 }
 
 export function lineaConsumo(cirugia) {

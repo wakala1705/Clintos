@@ -120,16 +120,19 @@ export default function CanastasCirugia() {
         return resto;
       });
       setError(null);
+      // Fija la selección: sin esto, al dejar de ser "la primera despachada" el
+      // detalle saltaría a otra cirugía en vez de mostrar el resultado.
+      setSeleccionId(cirugia.id);
       showToast(mensaje(actualizada), [cirugia]);
     } catch (e) {
       setError(e?.message ?? 'No se pudo completar la acción.');
     }
   }
 
-  function handleRecibir(cirugia, recibidos) {
+  function handleRecibir(cirugia, recibidos, novedad = {}) {
     aplicar(
       cirugia,
-      () => registrarRecepcion(cirugia.id, { recibidos, usuario: USUARIO }),
+      () => registrarRecepcion(cirugia.id, { recibidos, usuario: USUARIO, ...novedad }),
       (c) => (resumenCanasta(c).estado === 'con-novedades'
         ? `Canasta de ${cirugia.paciente.nombre} recibida con novedades`
         : `Canasta de ${cirugia.paciente.nombre} recibida`),
@@ -203,7 +206,7 @@ export default function CanastasCirugia() {
               draft={drafts[seleccion.id] ?? {}}
               error={error}
               onDraftChange={(patch) => handleDraftChange(seleccion.id, patch)}
-              onRecibir={(recibidos) => handleRecibir(seleccion, recibidos)}
+              onRecibir={(recibidos, novedad) => handleRecibir(seleccion, recibidos, novedad)}
               onRegistrarConsumo={(usados) => handleRegistrarConsumo(seleccion, usados)}
               onDespachar={() => handleDespachar(seleccion)}
             />

@@ -1,0 +1,9 @@
+.cnc-progreso{flex-shrink:0;margin-bottom:12px;}
+.cnc-progreso-texto{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  font-size:var(--fs-base);color:var(--ink-700);margin-bottom:6px;
+}
+.cnc-progreso-texto strong{color:var(--ink-900);font-weight:var(--fw-semibold);}
+.cnc-progreso-dif{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--amber-fg);}
+.cnc-progreso-barra{height:6px;border-radius:3px;background:var(--gray-bg);overflow:hidden;}
+.cnc-progreso-barra span{display:block;height:100%;background:var(--primary);border-radius:3px;transition:width .2s;}

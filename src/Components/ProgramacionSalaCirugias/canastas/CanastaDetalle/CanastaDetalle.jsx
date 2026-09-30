@@ -1,6 +1,6 @@
 'use client';
 
-import { LuInfo } from 'react-icons/lu';
+import { LuInfo, LuLock } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import EstadoCirugiaBadge from '../../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import RecepcionTab from '../RecepcionTab/RecepcionTab';
@@ -71,10 +71,12 @@ export default function CanastaDetalle({
           aria-selected={tab === 'consumo'}
           className="cnc-tab"
           disabled={!consumoDisponible}
+          title={consumoDisponible ? undefined : 'Disponible al finalizar la cirugía'}
           onClick={() => onDraftChange({ tab: 'consumo' })}
         >
           Consumo y devolución
-          {!consumoDisponible && <span className="cnc-tab-nota"> · al finalizar la cirugía</span>}
+          {!consumoDisponible && <LuLock className="cnc-tab-lock" aria-hidden="true" />}
+          {!consumoDisponible && <span className="cnc-sr"> (disponible al finalizar la cirugía)</span>}
         </button>
       </div>
 
