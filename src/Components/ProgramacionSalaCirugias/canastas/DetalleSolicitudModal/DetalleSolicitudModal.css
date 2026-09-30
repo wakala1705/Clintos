@@ -1,0 +1,10 @@
+/* .modal-*, .cnc-tabla y .cnc-tabla-scroll vienen de ../../shared/shared.css. */
+.cnc-dsm-card{width:560px;}
+.cnc-dsm-info{
+  margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;
+  padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
+}
+.cnc-dsm-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.cnc-dsm-item.wide{grid-column:1 / -1;}
+.cnc-dsm-item dt{font-size:var(--fs-sm);color:var(--ink-500);}
+.cnc-dsm-item dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}

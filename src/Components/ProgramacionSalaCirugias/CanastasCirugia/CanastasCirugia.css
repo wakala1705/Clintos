@@ -31,9 +31,21 @@
 html[data-theme="dark"] .cnc-toast-undo{color:var(--primary);}
 html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primary);}
 
+/* Botón de ícono "Historial de canastas": cuadrado, mismo alto que el selector
+   de fecha y "Ver agenda" (--input-md). */
+.cnc-historial-btn{
+  width:var(--input-md);height:var(--input-md);flex-shrink:0;padding:0;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--ink-700);
+}
+.cnc-historial-btn .icon{width:18px;height:18px;}
+.cnc-historial-btn:hover{background:var(--bg);color:var(--ink-900);}
+.cnc-historial-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+
 /* Objetivos táctiles de 44px (ancho de tablet o puntero táctil): "Ver agenda"
    del header. */
 @media (max-width:1024px), (pointer:coarse){
+  .cnc-historial-btn{width:44px;height:44px;}
   .psc-page-header-actions > button{min-height:44px;}
 }
 

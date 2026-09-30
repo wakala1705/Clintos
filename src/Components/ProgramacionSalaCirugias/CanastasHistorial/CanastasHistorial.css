@@ -1,0 +1,27 @@
+/* .cnc-panel, .cnc-tabla, .filter-bar y .search-field vienen de ../shared/shared.css. */
+.cnc-hist{flex:1;min-height:0;}
+.cnc-hist-filtros{flex-shrink:0;}
+.cnc-hist-estado{width:240px;}
+.cnc-hist-scroll{flex:1;min-height:0;overflow:auto;}
+.cnc-hist-num{font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;}
+.cnc-hist-nowrap{white-space:nowrap;}
+.cnc-hist-paciente{min-width:190px;}
+.cnc-hist-proc{min-width:200px;}
+.cnc-tabla .cnc-hist-acc{width:1%;text-align:center;white-space:nowrap;}
+.cnc-hist-ver{
+  width:var(--dropdown-trigger-size);height:var(--dropdown-trigger-size);padding:0;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  border:none;border-radius:var(--dropdown-trigger-radius);background:none;color:var(--ink-500);
+}
+.cnc-hist-ver .icon{width:var(--dropdown-trigger-icon-size);height:var(--dropdown-trigger-icon-size);}
+.cnc-hist-ver:hover{background:var(--gray-bg);color:var(--ink-900);}
+.cnc-hist-ver:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+@media (max-width:1024px), (pointer:coarse){
+  .cnc-hist-filtros .search-field input{height:44px;}
+  .cnc-hist-estado .form-select-trigger{min-height:44px;}
+  .cnc-hist-ver{width:44px;height:44px;}
+}
+@media (max-width:1024px){
+  .content.cnc-content{overflow-y:auto;}
+  .cnc-hist{min-height:480px;}
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LuCalendarDays, LuPackageSearch } from 'react-icons/lu';
+import { LuCalendarDays, LuHistory, LuPackageSearch } from 'react-icons/lu';
 // Tokens (:root), reset del shell y reglas compartidas de la feature: los
 // mismos 2 archivos que carga RevisionVencidas.jsx, porque esta ruta es otra
 // página de la misma feature (ProgramacionSalaCirugias).
@@ -242,6 +242,15 @@ export default function CanastasCirugia() {
             </div>
             <div className="psc-page-header-actions">
               <CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />
+              <button
+                type="button"
+                className="cnc-historial-btn"
+                aria-label="Historial de canastas"
+                title="Historial de canastas"
+                onClick={() => router.push('/programacion-sala-cirugias/canastas/historial')}
+              >
+                <LuHistory className="icon" aria-hidden="true" />
+              </button>
               <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/programacion-sala-cirugias')}>
                 Ver agenda
               </Button>

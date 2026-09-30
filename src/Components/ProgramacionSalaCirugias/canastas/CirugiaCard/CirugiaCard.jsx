@@ -10,6 +10,8 @@ export default function CirugiaCard({
   cirugia, ahora, seleccionada, onSelect,
 }) {
   const { estado } = resumenCanasta(cirugia);
+  // Sin número de pedido ('—') la canasta aún no se solicitó: no hay nada que mostrar.
+  const numeroPedido = cirugia.farmacia?.numeroPedido;
   return (
     <button
       type="button"
@@ -26,13 +28,12 @@ export default function CirugiaCard({
           <span className="cnc-cc-paciente">{cirugia.paciente.nombre}</span>
           {cirugia.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
         </div>
-        <div className="cnc-cc-linea">
-          <span className="cnc-cc-proc">{cirugia.procedimientoPrincipal}</span>
-          <span className="cnc-cc-sep" aria-hidden="true"> · </span>
-          <span className="cnc-cc-cirujano">{cirugia.cirujano}</span>
-        </div>
+        {/* Hasta 2 líneas; el nombre completo va en el tooltip. El cirujano no va en la
+            card: ya está en el detalle y competía por el espacio con el procedimiento. */}
+        <p className="cnc-cc-proc" title={cirugia.procedimientoPrincipal}>{cirugia.procedimientoPrincipal}</p>
         <div className="cnc-cc-badges">
           <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
+          {numeroPedido && numeroPedido !== '—' && <span className="cnc-cc-solicitud" title={`Solicitud ${numeroPedido}`}>{numeroPedido}</span>}
         </div>
       </div>
     </button>
