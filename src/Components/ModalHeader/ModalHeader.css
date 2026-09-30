@@ -14,6 +14,7 @@
 .modal-header-icon.tone-warning{background:var(--amber-bg);color:var(--amber-fg);}
 .modal-header-icon.tone-danger{background:var(--red-bg);color:var(--red);}
 .modal-header h3{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);min-width:0;}
+.modal-header-title-row{display:flex;align-items:center;gap:10px;min-width:0;}
 .modal-header-sub{margin-top:2px;font-size:var(--fs-sm);color:var(--ink-500);}
 .modal-close-btn, .modal-back-btn{
   flex-shrink:0;width:30px;height:30px;border-radius:8px;border:none;background:transparent;

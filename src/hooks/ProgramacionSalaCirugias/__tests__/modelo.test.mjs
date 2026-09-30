@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   HORA_DEMO, MOTIVOS_NOVEDAD, ahoraDemo, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
-  fechaISO, iniciaEnLabel, novedadItem, origenDiferencia, resumenCanasta,
+  fechaISO, iniciaEnLabel, novedadItem, origenDiferencia, resumenCanasta, unidadesPorRecibir, unidadesSaldo,
 } from '../mockCirugiaData.js';
 
 const item = (extra = {}) => ({ nombre: 'Gasas', cantidad: 4, ...extra });
@@ -26,11 +26,22 @@ test('resumenCanasta: en preparación cuenta los preparados', () => {
   assert.equal(r.porRecibir, 2);
 });
 
-test('resumenCanasta: despachada solo si TODOS los solicitados tienen despachado', () => {
-  const todos = cirugia([solicitado({ despachado: 4 }), solicitado({ nombre: 'B', despachado: 3 })]);
+test('resumenCanasta: despachada solo si farmacia despachó TODO lo solicitado', () => {
+  const todos = cirugia([solicitado({ despachado: 4 }), solicitado({ nombre: 'B', despachado: 4 })]);
   assert.equal(resumenCanasta(todos).estado, 'despachada');
+  const nada = cirugia([solicitado({}), solicitado({ nombre: 'B' })]);
+  assert.equal(resumenCanasta(nada).estado, 'en-preparacion');
+});
+
+test('resumenCanasta: despacho parcial si algo se despachó pero queda saldo', () => {
+  const menos = cirugia([solicitado({ despachado: 4 }), solicitado({ nombre: 'B', despachado: 3 })]);
+  assert.equal(resumenCanasta(menos).estado, 'despacho-parcial');
   const falta = cirugia([solicitado({ despachado: 4 }), solicitado({ nombre: 'B' })]);
-  assert.equal(resumenCanasta(falta).estado, 'en-preparacion');
+  assert.equal(resumenCanasta(falta).estado, 'despacho-parcial');
+  assert.equal(unidadesSaldo(menos), 1);
+  assert.equal(unidadesPorRecibir(menos), 7);
+  const recibido = cirugia([solicitado({ despachado: 4, recibido: 4 }), solicitado({ nombre: 'B', despachado: 3, recibido: 1 })]);
+  assert.equal(unidadesPorRecibir(recibido), 2);
 });
 
 test('resumenCanasta: recibida, con novedades y consumo registrado', () => {

@@ -11,7 +11,7 @@ test('sala qx-1 de hoy: los casos del diseño (+ una despachada completa), por h
   assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12357', '12355', '12358']);
   assert.deepEqual(
     items.map((c) => resumenCanasta(c).estado),
-    ['recibida', 'despachada', 'despachada', 'en-preparacion', 'con-novedades', 'en-preparacion'],
+    ['recibida', 'despacho-parcial', 'despachada', 'en-preparacion', 'con-novedades', 'en-preparacion'],
   );
 });
 

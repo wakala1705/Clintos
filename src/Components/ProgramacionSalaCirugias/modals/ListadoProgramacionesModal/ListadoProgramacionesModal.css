@@ -11,7 +11,7 @@
   flex:1;min-height:0;overflow:auto;
   border:1px solid var(--border);border-radius:var(--radius);
 }
-.lpm-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
+.lpm-table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-sm);}
 /* th y td comparten padding horizontal (10px) -- AGENTS.md "Encabezados de tabla". */
 .lpm-table th{
   position:sticky;top:0;z-index:var(--z-sticky);
@@ -40,6 +40,6 @@
 .lpm-table .lpm-right{text-align:right;}
 .lpm-table .lpm-check{text-align:center;width:1%;}
 
-.lpm-table th.lpm-check{white-space:normal;min-width:76px;}
+.lpm-table th.lpm-check{min-width:76px;}
 
 .lpm-check-icon{width:16px;height:16px;color:var(--primary);vertical-align:middle;}

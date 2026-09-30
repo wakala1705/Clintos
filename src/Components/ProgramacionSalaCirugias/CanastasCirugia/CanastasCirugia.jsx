@@ -20,7 +20,7 @@ import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
   HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, despacharCanasta, fechaISO, fetchCanastasDia,
-  registrarConsumo, registrarRecepcion, resumenCanasta,
+  cerrarConFaltante, registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { filtrarCanastas, primeraPorRecibir } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
@@ -132,9 +132,22 @@ export default function CanastasCirugia() {
     aplicar(
       cirugia,
       () => registrarRecepcion(cirugia.id, { recibidos, usuario: USUARIO, ...novedad }),
-      (c) => (resumenCanasta(c).estado === 'con-novedades'
-        ? `Canasta de ${cirugia.paciente.nombre} recibida con novedades`
-        : `Canasta de ${cirugia.paciente.nombre} recibida`),
+      (c) => {
+        const { estado } = resumenCanasta(c);
+        if (estado === 'despacho-parcial') return `Recepción parcial registrada: la solicitud de ${cirugia.paciente.nombre} sigue abierta`;
+        return estado === 'con-novedades'
+          ? `Canasta de ${cirugia.paciente.nombre} recibida con novedades`
+          : `Canasta de ${cirugia.paciente.nombre} recibida`;
+      },
+    );
+  }
+
+  // La enfermería del quirófano ya recibió todo lo despachado y acepta el saldo como faltante.
+  function handleCerrarConFaltante(cirugia, novedad = {}) {
+    aplicar(
+      cirugia,
+      () => cerrarConFaltante(cirugia.id, { usuario: USUARIO, ...novedad }),
+      () => `Solicitud de ${cirugia.paciente.nombre} cerrada con faltante`,
     );
   }
 
@@ -148,11 +161,13 @@ export default function CanastasCirugia() {
 
   // Solo demo: no hay integración real con farmacia, así que este atajo
   // simula que farmacia despachó la canasta para poder recibirla.
-  function handleDespachar(cirugia) {
+  function handleDespachar(cirugia, opciones) {
     aplicar(
       cirugia,
-      () => despacharCanasta(cirugia.id),
-      () => `Farmacia despachó la canasta de ${cirugia.paciente.nombre} (simulado)`,
+      () => despacharCanasta(cirugia.id, opciones),
+      (c) => (resumenCanasta(c).estado === 'despachada'
+        ? `Farmacia despachó la canasta de ${cirugia.paciente.nombre} (simulado)`
+        : `Farmacia despachó parcialmente la canasta de ${cirugia.paciente.nombre} (simulado)`),
     );
   }
 
@@ -214,8 +229,9 @@ export default function CanastasCirugia() {
               error={error}
               onDraftChange={(patch) => handleDraftChange(seleccion.id, patch)}
               onRecibir={(recibidos, novedad) => handleRecibir(seleccion, recibidos, novedad)}
+              onCerrarConFaltante={(novedad) => handleCerrarConFaltante(seleccion, novedad)}
               onRegistrarConsumo={(usados) => handleRegistrarConsumo(seleccion, usados)}
-              onDespachar={() => handleDespachar(seleccion)}
+              onDespachar={(opciones) => handleDespachar(seleccion, opciones)}
             />
           )}
         </div>

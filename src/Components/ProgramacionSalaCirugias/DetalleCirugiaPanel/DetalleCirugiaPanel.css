@@ -64,12 +64,12 @@
    propia card (mismo criterio que .hq-card en hqd-split: border/radio/fondo
    propios, no comparten box con el otro) para que quede clara la separación
    entre "lista fija" y "detalle que cambia de tab". */
-.dcp-split{display:grid;grid-template-columns:320px 1fr;gap:24px;flex:1;min-height:0;}
+.dcp-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:24px;flex:1;min-height:0;}
+.dcp-split-left{align-self:start;max-height:100%;}
 .dcp-split-left,.dcp-split-right{
   display:flex;flex-direction:column;min-width:0;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
-.dcp-split-left{width:320px;}
 .dcp-split-right{width:100%;}
 /* El label "Procedimientos" reusa .dcp-tabs-bar/.dcp-tab (activo, no
    clickeable) para alinear su altura con la barra de tabs real de la
@@ -78,8 +78,23 @@
 .dcp-split-left .dcp-tab{cursor:default;}
 .dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;}
 
-/* Editar/Reprogramar + menú "Cambiar estado" (realizada/incumplida/cancelar)
+/* Editar/Reprogramar + botones de estado (realizada/incumplida/cancelar)
    -- ver comentario en DetalleCirugiaPanel.jsx. */
+.dcp-info-group-num{margin-left:auto;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+.dcp-info-toggle{
+  display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:0;
+  border:none;background:none;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  color:var(--primary);cursor:pointer;
+}
+.dcp-info-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.dcp-info-toggle-icon{width:14px;height:14px;transition:transform .15s;}
+.dcp-info-toggle-icon.open{transform:rotate(180deg);}
+/* Cancelar cirugía: destructiva, aislada a la izquierda; neutra en reposo y roja solo en hover/foco. */
+.dcp-actions .dcp-cancelar-btn{border-color:transparent;background:transparent;color:var(--ink-700);}
+.dcp-actions .dcp-cancelar-btn svg{color:var(--ink-500);}
+.dcp-actions .dcp-cancelar-btn:hover:not([disabled]),.dcp-actions .dcp-cancelar-btn:focus-visible{background:var(--red-bg);color:var(--red);}
+.dcp-actions .dcp-cancelar-btn:hover:not([disabled]) svg,.dcp-actions .dcp-cancelar-btn:focus-visible svg{color:var(--red);}
+.dcp-actions-estado{display:flex;align-items:center;gap:10px;margin-left:auto;}
 .dcp-actions{
   display:flex;align-items:center;justify-content:flex-start;gap:10px;
   padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;

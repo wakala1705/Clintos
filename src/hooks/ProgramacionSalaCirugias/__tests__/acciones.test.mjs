@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, despacharCanasta,
+  actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, cerrarConFaltante, despacharCanasta,
   registrarConsumo, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
   fetchCanastasDia, fechaISO,
 } from '../mockCirugiaData.js';
@@ -14,40 +14,47 @@ test('registrarRecepcion: rechaza recibir más de lo despachado y no cambia nada
     () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 6 }, usuario: 'Ana' }),
     /Gasas estériles: lo recibido debe estar entre 0 y 5/,
   );
-  assert.equal(resumenCanasta(await cirugia('12356')).estado, 'despachada');
+  assert.equal(resumenCanasta(await cirugia('12356')).estado, 'despacho-parcial');
 });
 
 test('registrarRecepcion: exige que farmacia haya despachado', () => {
   assert.throws(() => registrarRecepcion('12358', { recibidos: {}, usuario: 'Ana' }), /todavía no fue despachada/);
 });
 
-test('registrarRecepcion: una diferencia en la entrega exige motivo y no cambia nada sin él', async () => {
+test('despacho parcial: recibir lo despachado deja la solicitud abierta y acumula', async () => {
+  const c = registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 3 }, usuario: 'Ana' });
+  assert.equal(resumenCanasta(c).estado, 'despacho-parcial');
+  const gasas = c.canasta.items.find((i) => i.nombre === 'Gasas estériles');
+  assert.equal(gasas.solicitudFarmacia, 'solicitado');
+  assert.equal(gasas.recibido, 3);
+  assert.equal(c.canasta.recepcion, undefined);
+  assert.equal(c.canasta.recepciones.length, 1);
+  // Lo que falta por recibir es lo despachado (5) menos lo ya recibido (3).
   assert.throws(
-    () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana' }),
-    /Indica el motivo de la diferencia en la entrega/,
+    () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 3 }, usuario: 'Ana' }),
+    /Gasas estériles: lo recibido debe estar entre 0 y 2/,
   );
-  assert.throws(
-    () => registrarRecepcion('12356', { recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana', motivo: 'inventado' }),
-    /motivo de la novedad no es válido/,
-  );
-  assert.equal(resumenCanasta(await cirugia('12356')).estado, 'despachada');
 });
 
-test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async () => {
-  const c = registrarRecepcion('12356', {
-    recibidos: { 'Gasas estériles': 4 }, usuario: 'Ana', motivo: 'danado', nota: '  Envase roto  ',
-  });
+test('cerrarConFaltante: exige haber recibido todo lo despachado', () => {
+  assert.throws(() => cerrarConFaltante('12356', { usuario: 'Ana' }), /Recibe primero lo que farmacia ya despachó/);
+  assert.throws(() => cerrarConFaltante('12359', { usuario: 'Ana' }), /despacho parcial/);
+});
+
+test('cerrarConFaltante: cierra con novedades, origen farmacia y trazabilidad', () => {
+  registrarRecepcion('12356', { recibidos: {}, usuario: 'Ana' });
+  assert.throws(() => cerrarConFaltante('12356', { usuario: 'Ana', motivo: 'inventado' }), /motivo de la novedad no es válido/);
+  const c = cerrarConFaltante('12356', { usuario: 'Ana', nota: '  Sin stock  ' });
   assert.equal(resumenCanasta(c).estado, 'con-novedades');
   const gasas = c.canasta.items.find((i) => i.nombre === 'Gasas estériles');
-  assert.equal(gasas.recibido, 4);
-  assert.equal(gasas.novedad, 'Farmacia despachó 5 de 6 · Faltan 1 en la entrega');
+  assert.deepEqual([gasas.despachado, gasas.recibido], [5, 5]);
+  assert.equal(gasas.novedad, 'Farmacia despachó 5 de 6');
   assert.equal(c.canasta.items.every((i) => i.solicitudFarmacia === 'entregado'), true);
-  assert.equal(c.canasta.recepcion.usuario, 'Ana');
-  assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`); // hora de demostración fija
-  assert.equal(c.canasta.recepcion.conNovedades, true);
-  assert.equal(c.canasta.recepcion.origen, 'ambos'); // farmacia despachó 5 de 6 y llegaron 4
-  assert.equal(c.canasta.recepcion.motivo, 'danado');
-  assert.equal(c.canasta.recepcion.nota, 'Envase roto');
+  assert.equal(c.canasta.recepcion.cierreConFaltante, true);
+  assert.equal(c.canasta.recepcion.origen, 'farmacia');
+  assert.equal(c.canasta.recepcion.motivo, 'faltante-farmacia');
+  assert.equal(c.canasta.recepcion.nota, 'Sin stock');
+  assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`);
 });
 
 test('registrarRecepcion: despachada completa, sin faltantes → recibida sin novedades', () => {
@@ -105,4 +112,16 @@ test('pedir insumos a una cirugía sin número de pedido le asigna el siguiente'
   // Con número ya asignado no se reasigna.
   const otra = cancelarSolicitudInsumos('12358', { causal });
   assert.equal(solicitarInsumosFarmacia('12358').farmacia.numeroPedido, otra.farmacia.numeroPedido);
+});
+
+test('despacho parcial (demo) y luego el saldo: se cierra recibiendo y no se puede anular con insumos recibidos', () => {
+  const causal = { idCausal: '1', descripcion: 'Cambio de plan' };
+  assert.equal(resumenCanasta(despacharCanasta('12358', { parcial: true })).estado, 'despacho-parcial');
+  registrarRecepcion('12358', { recibidos: {}, usuario: 'Ana' });
+  assert.throws(() => cancelarSolicitudInsumos('12358', { causal }), /ya se recibieron insumos/);
+  assert.equal(resumenCanasta(despacharCanasta('12358')).estado, 'despachada');
+  const c = registrarRecepcion('12358', { recibidos: {}, usuario: 'Ana' });
+  assert.equal(resumenCanasta(c).estado, 'recibida');
+  assert.equal(c.canasta.items.every((i) => i.recibido === i.cantidad), true);
+  assert.equal(c.canasta.recepciones.length, 2);
 });

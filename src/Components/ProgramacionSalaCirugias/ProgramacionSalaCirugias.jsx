@@ -42,7 +42,7 @@ import {
   rangoSemanaLabel,
   reprogramarCirugia,
   resumenAgenda,
-  solicitarInsumosFarmacia, cancelarSolicitudInsumos, guardarDevolucion, anularDevolucion,
+  solicitarInsumosFarmacia, cancelarSolicitudInsumos, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
@@ -341,7 +341,10 @@ export default function ProgramacionSalaCirugias() {
   // que necesitaban conocerlo).
   function handleMarcarRealizada(cirugia) {
     applyUpdated(actualizarEstadoCirugia(cirugia.id, 'realizada'));
-    showToast('Cirugía marcada como realizada.');
+    // Solo advierte (no bloquea): con saldo pendiente en farmacia la solicitud sigue abierta.
+    showToast(resumenCanasta(cirugia).estado === 'despacho-parcial'
+      ? 'Cirugía marcada como realizada. Su solicitud de insumos sigue abierta: farmacia tiene un saldo pendiente.'
+      : 'Cirugía marcada como realizada.');
   }
   function handleMarcarIncumplida(cirugia) {
     applyUpdated(actualizarEstadoCirugia(cirugia.id, 'incumplida'));
@@ -362,25 +365,6 @@ export default function ProgramacionSalaCirugias() {
   // cirugía: se abre allá con esta cirugía seleccionada.
   function handleVerEnCanastas(cirugia) {
     router.push(canastasHref(cirugia));
-  }
-  // Ventana "Devoluciones en Cirugías": crea/modifica una devolución.
-  // Devuelve { error } con el mensaje de validación (la ventana lo muestra
-  // sin cerrarse) o { consecutivo } de la devolución guardada, para dejarla
-  // seleccionada.
-  function handleGuardarDevolucion(cirugia, { consecutivo, lineas }) {
-    let actualizada;
-    try {
-      actualizada = guardarDevolucion(cirugia.id, { consecutivo, lineas });
-    } catch (err) {
-      return { error: err.message };
-    }
-    applyUpdated(actualizada);
-    showToast(consecutivo ? 'Devolución modificada.' : 'Devolución registrada y confirmada por farmacia.');
-    return { consecutivo: consecutivo ?? actualizada.devoluciones.at(-1).consecutivo };
-  }
-  function handleAnularDevolucion(cirugia, consecutivo) {
-    applyUpdated(anularDevolucion(cirugia.id, consecutivo));
-    showToast('Devolución anulada.');
   }
   // "Editar" (encargo explícito) reabre NuevaCirugiaWizard en modo edición
   // -- ver `editCirugia` arriba y su montaje más abajo.
@@ -514,8 +498,6 @@ export default function ProgramacionSalaCirugias() {
         onPedirInsumos={handlePedirInsumos}
         onCancelarSolicitud={handleCancelarSolicitud}
         onVerEnCanastas={handleVerEnCanastas}
-        onGuardarDevolucion={handleGuardarDevolucion}
-        onAnularDevolucion={handleAnularDevolucion}
       />
 
       <NuevaCitaFlow />

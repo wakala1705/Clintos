@@ -235,7 +235,7 @@ span.cnc-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
    borde, el radio y el scroll vertical; el radio recorta la tabla de adentro.
    Cabecera fija con los tokens --th-*, hover por fila y estados de fila
    (verificada / con novedad). */
-.cnc-tabla-scroll{min-height:96px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-lg);}
+.cnc-tabla-scroll{min-height:96px;overflow-y:auto;scrollbar-gutter:stable;border:1px solid var(--border);border-radius:var(--radius-lg);}
 .cnc-tabla{width:100%;border-collapse:separate;border-spacing:0;}
 .cnc-tabla th{
   position:sticky;top:0;z-index:var(--z-sticky);background:var(--table-header-bg);

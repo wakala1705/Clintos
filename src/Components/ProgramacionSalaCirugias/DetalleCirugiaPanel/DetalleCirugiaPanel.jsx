@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react';
 import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
-import DevolucionesCirugiaModal from '../modals/DevolucionesCirugiaModal/DevolucionesCirugiaModal';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
-import { ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil, LuRefreshCw, LuUser,
+  ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
+} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import {
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuPencil, LuUser,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo).
@@ -45,16 +45,17 @@ function InfoItem({ label, value, wide = false }) {
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
-  onCancelarSolicitud, onVerEnCanastas, onGuardarDevolucion, onAnularDevolucion,
+  onCancelarSolicitud, onVerEnCanastas,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
-  // Ventana "Devoluciones en Cirugías" (se abre desde
-  // "Devolver insumos" de la tab Insumos) montada encima de este modal.
-  const [devolucionesAbierto, setDevolucionesAbierto] = useState(false);
+  // Datos de contacto del paciente (tel., nivel, tipo de afiliado, dirección): se consultan poco, van plegados.
+  const [pacienteExpandido, setPacienteExpandido] = useState(false);
+  // "Ahora" tomado al montar (render puro): decide si la cirugía ya pasó de hora.
+  const [ahora] = useState(() => ahoraDemo());
   // Ventana "Causal de Cancelación de Programación" (se abre desde
   // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
   const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
-  const subventanaAbierta = devolucionesAbierto || cancelarSolicitudAbierto;
+  const subventanaAbierta = cancelarSolicitudAbierto;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -70,7 +71,7 @@ export default function DetalleCirugiaPanel({
   if ((cirugia?.id ?? null) !== lastCirugiaId) {
     setLastCirugiaId(cirugia?.id ?? null);
     setActiveDetailTab('insumos');
-    setDevolucionesAbierto(false);
+    setPacienteExpandido(false);
     setCancelarSolicitudAbierto(false);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
@@ -99,7 +100,15 @@ export default function DetalleCirugiaPanel({
   if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
-  const puedeMarcarIncumplida = cirugia.estado === 'programada';
+  // Incumplida solo aplica cuando la hora de inicio ya pasó.
+  const puedeMarcarIncumplida = cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
+  // Una cirugía programada solo se cierra como realizada cuando ya empezó (igual que incumplida);
+  // una urgencia se resuelve en el momento.
+  const puedeMarcarRealizada = puedeAccionar;
+  // Una sola acción principal por vista, la que sigue en el flujo: pedir insumos -> recibir la
+  // canasta (Ver en Canastas, en la pestaña Insumos) -> marcar como realizada. Solo con la canasta
+  // ya recibida y la cirugía en condiciones de cerrarse, "Marcar como realizada" es la azul.
+  const realizadaEsPrincipal = puedeMarcarRealizada && CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado);
 
   const body = (
     <>
@@ -108,6 +117,7 @@ export default function DetalleCirugiaPanel({
         titleId="dcp-title"
         onClose={onClose}
         closeLabel="Cerrar detalle"
+        titleAdornment={<EstadoCirugiaBadge estado={cirugia.estado} />}
       />
 
       {/* Mismos 12 campos del formulario legacy de referencia, agrupados en
@@ -118,18 +128,27 @@ export default function DetalleCirugiaPanel({
           <div className="dcp-info-group-title">
             <LuCalendarClock className="dcp-info-group-icon" aria-hidden="true" />
             Programación
+            <span className="dcp-info-group-num" title="No. de programación">{cirugia.id}</span>
           </div>
           <div className="dcp-info-grid">
-            <InfoItem label="Fecha" value={`${fechaLabel(cirugia.fecha)} ${cirugia.horaInicio}`} />
-            <InfoItem label="No. Prog" value={cirugia.id} />
+            <InfoItem label="Fecha" value={fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)} wide />
+            <InfoItem label="Sala" value={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'} />
             <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} />
-            <InfoItem label="Estado" value={<EstadoCirugiaBadge estado={cirugia.estado} />} />
           </div>
         </section>
         <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">
           <div className="dcp-info-group-title">
             <LuUser className="dcp-info-group-icon" aria-hidden="true" />
             Paciente
+            <button
+              type="button"
+              className="dcp-info-toggle"
+              aria-expanded={pacienteExpandido}
+              onClick={() => setPacienteExpandido((v) => !v)}
+            >
+              {pacienteExpandido ? 'Ver menos' : 'Ver más datos'}
+              <LuChevronDown className={`dcp-info-toggle-icon${pacienteExpandido ? ' open' : ''}`} aria-hidden="true" />
+            </button>
           </div>
           <div className="dcp-info-grid">
             <InfoItem label="Nombre" value={cirugia.paciente.nombre} />
@@ -137,10 +156,14 @@ export default function DetalleCirugiaPanel({
             <InfoItem label="Edad" value={edadDetalleLabel(cirugia.paciente)} />
             <InfoItem label="Sexo" value={cirugia.paciente.sexo} />
             <InfoItem label="Aseguradora" value={cirugia.paciente.aseguradora} />
-            <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso || '—'} />
-            <InfoItem label="Nivel" value={cirugia.paciente.nivel || '—'} />
-            <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado || '—'} />
-            <InfoItem label="Dirección" value={cirugia.paciente.direccion || '—'} wide />
+            {pacienteExpandido && (
+              <>
+                <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso || '—'} />
+                <InfoItem label="Nivel" value={cirugia.paciente.nivel || '—'} />
+                <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado || '—'} />
+                <InfoItem label="Dirección" value={cirugia.paciente.direccion || '—'} wide />
+              </>
+            )}
           </div>
         </section>
       </div>
@@ -191,7 +214,6 @@ export default function DetalleCirugiaPanel({
                   onPedirInsumos={onPedirInsumos}
                   onCancelarSolicitud={() => setCancelarSolicitudAbierto(true)}
                   onVerEnCanastas={onVerEnCanastas}
-                  onDevolverInsumos={() => setDevolucionesAbierto(true)}
                 />
               )}
               {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
@@ -201,33 +223,20 @@ export default function DetalleCirugiaPanel({
         </div>
       </div>
 
-      {/* Editar/Reprogramar a la vista; los cambios de estado (realizada,
-          incumplida, cancelar) agrupados en "Cambiar estado" -- mismos
-          bloques y reglas de disabled que CirugiaCardMenu.jsx. Textos en
-          color neutro (encargo explícito); solo los íconos de incumplida/
-          cancelar llevan tono (iconTone), y Cancelar va separado para evitar
-          clics por error. La acción
+      {/* Cancelar cirugía (destructiva) aislada en el extremo izquierdo, neutra en
+          reposo y roja solo en hover; a la derecha, modificar (Editar/Reprogramar)
+          y resolver (incumplida/realizada) --
+          mismas reglas de disabled que CirugiaCardMenu.jsx. La acción
           principal ("Pedir insumos a farmacia") vive en el pie de la tabla
           de Insumos (ver InsumosTab.jsx). */}
       <div className="dcp-actions">
-        <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
-        <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
-        <DropdownMenu
-          label="Cambiar estado de la cirugía"
-          triggerLabel="Cambiar estado"
-          triggerIcon={LuRefreshCw}
-          items={[
-            {
-              id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeAccionar, onSelect: () => onMarcarRealizada(cirugia),
-            },
-            {
-              id: 'incumplida', label: 'Marcar como incumplida', icon: LuCalendarX, iconTone: 'warn', disabled: !puedeMarcarIncumplida, onSelect: () => onMarcarIncumplida(cirugia),
-            },
-            {
-              id: 'cancelar', label: 'Cancelar cirugía', icon: LuBan, iconTone: 'danger', disabled: !puedeAccionar, onSelect: () => onCancelar(cirugia), dividerBefore: true,
-            },
-          ]}
-        />
+        <Button variant="secondary-accent" icon={LuBan} className="dcp-cancelar-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
+        <div className="dcp-actions-estado">
+          <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
+          <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
+          <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
+          <Button variant={realizadaEsPrincipal ? 'primary' : 'secondary-accent'} icon={LuCheckCheck} disabled={!puedeMarcarRealizada} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
+        </div>
       </div>
     </>
   );
@@ -252,14 +261,6 @@ export default function DetalleCirugiaPanel({
             setCancelarSolicitudAbierto(false);
           }}
           onClose={() => setCancelarSolicitudAbierto(false)}
-        />
-      )}
-      {devolucionesAbierto && (
-        <DevolucionesCirugiaModal
-          cirugia={cirugia}
-          onGuardar={(datos) => onGuardarDevolucion(cirugia, datos)}
-          onAnular={(consecutivo) => onAnularDevolucion(cirugia, consecutivo)}
-          onClose={() => setDevolucionesAbierto(false)}
         />
       )}
     </>

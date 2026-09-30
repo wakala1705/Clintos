@@ -1,14 +1,15 @@
 'use client';
 
 import {
-  LuCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert, LuTruck,
+  LuCheck, LuCircleCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert, LuTruck,
 } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import {
-  cantidadDespachada, cantidadRecibida, novedadItem, origenDiferencia, resumenCanasta,
+  cantidadDespachada, cantidadRecibida, despachadoAbierto, novedadItem, origenDiferencia, porRecibirItem, recibidoAbierto,
+  resumenCanasta, saldoFarmacia,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { lineaRecepcion } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { lineaRecepcion, movimientosCanasta } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import ProgresoVerificacion from '../ProgresoVerificacion/ProgresoVerificacion';
 import NovedadRecepcion from '../NovedadRecepcion/NovedadRecepcion';
 import InsumosBuscador from '../InsumosBuscador/InsumosBuscador';
@@ -18,6 +19,9 @@ import './RecepcionTab.css';
 // estado derivado de la canasta:
 //  - despachada     -> editar: verificar cada insumo (click en la fila) y, solo
 //                      si hace falta, "Ajustar" lo recibido.
+//  - despacho-parcial -> recepción parcial de lo que llegó; la solicitud sigue
+//                      abierta hasta que farmacia complete el saldo (o se
+//                      cierra con faltante).
 //  - en-preparacion -> vista de avance de farmacia.
 //  - sin-solicitar  -> aviso vacío.
 //  - resto          -> lectura de lo recibido.
@@ -216,6 +220,122 @@ function renderEditar({
   );
 }
 
+function renderParcial({
+  cirugia, draft, onDraftChange, onRecibir, onCerrarConFaltante, onDespachar,
+}) {
+  const ahoraDraft = draft.recibirAhora ?? {};
+  const filas = cirugia.canasta.items
+    .filter((i) => i.solicitudFarmacia === 'solicitado')
+    .map((item) => {
+      const pendiente = porRecibirItem(item);
+      return {
+        item, pendiente, saldo: saldoFarmacia(item), despachado: despachadoAbierto(item), recibido: recibidoAbierto(item),
+        ahora: Math.min(pendiente, ahoraDraft[item.nombre] ?? pendiente),
+      };
+    });
+  const totalAhora = filas.reduce((t, f) => t + f.ahora, 0);
+  const totalPendiente = filas.reduce((t, f) => t + f.pendiente, 0);
+  const saldoTotal = filas.reduce((t, f) => t + f.saldo, 0);
+  const todoRecibido = totalPendiente === 0;
+  const motivo = draft.motivo ?? 'faltante-farmacia';
+  const movimientos = movimientosCanasta(cirugia);
+  const ajustar = (f, delta) => onDraftChange({
+    recibirAhora: { ...ahoraDraft, [f.item.nombre]: Math.min(f.pendiente, Math.max(0, f.ahora + delta)) },
+  });
+
+  const mensaje = `${todoRecibido ? 'Ya recibiste todo lo despachado.' : `Hay ${totalPendiente} u. despachadas por recibir.`} Farmacia aún debe despachar ${saldoTotal} u.: la solicitud sigue abierta.`;
+
+  return (
+    <>
+      <div className="cnc-tab-body">
+        <div className="cnc-tabla-scroll">
+          <table className="cnc-tabla">
+            <thead>
+              <tr>
+                <th>Insumo</th>
+                <th className="cnc-num">Solicitado</th>
+                <th className="cnc-num">Despachado</th>
+                <th className="cnc-num">Recibido</th>
+                <th className="cnc-num">Recibir ahora</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map((f) => (
+                <tr key={f.item.nombre} className={f.saldo > 0 ? 'cnc-fila-dif' : undefined}>
+                  <td>
+                    <div className="cnc-insumo-nombre">{f.item.nombre}</div>
+                    {f.saldo > 0 && (
+                      <div className="cnc-nov cnc-nov-inline">
+                        <LuTriangleAlert className="icon" aria-hidden="true" />Faltan {f.saldo} por despachar
+                      </div>
+                    )}
+                  </td>
+                  <td className="cnc-num">{f.item.cantidad}</td>
+                  <td className="cnc-num"><span className={f.saldo > 0 ? 'cnc-num-alerta' : undefined}>{f.despachado}</span></td>
+                  <td className="cnc-num">{f.recibido}</td>
+                  <td className="cnc-num">
+                    {f.pendiente > 0 ? (
+                      <div className="cnc-stepper">
+                        <button
+                          type="button"
+                          aria-label={`Disminuir lo recibido ahora de ${f.item.nombre}`}
+                          disabled={f.ahora <= 0}
+                          onClick={() => ajustar(f, -1)}
+                        >
+                          <LuMinus className="icon" aria-hidden="true" />
+                        </button>
+                        <span className="cnc-stepper-valor">{f.ahora}</span>
+                        <button
+                          type="button"
+                          aria-label={`Aumentar lo recibido ahora de ${f.item.nombre}`}
+                          disabled={f.ahora >= f.pendiente}
+                          onClick={() => ajustar(f, 1)}
+                        >
+                          <LuPlus className="icon" aria-hidden="true" />
+                        </button>
+                      </div>
+                    ) : <span className="cnc-de">—</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {movimientos.length > 0 && (
+          <ul className="cnc-movimientos" aria-label="Movimientos de la solicitud">
+            {movimientos.map((m) => <li key={m}>{m}</li>)}
+          </ul>
+        )}
+        {todoRecibido && (
+          <NovedadRecepcion origen="farmacia" motivo={motivo} nota={draft.nota} onChange={onDraftChange} />
+        )}
+      </div>
+      <div className="cnc-tab-footer">
+        <span className="cnc-footer-msg">{mensaje}</span>
+        {onDespachar && (
+          <Button variant="secondary" icon={LuTruck} onClick={() => onDespachar()}>Simular saldo de farmacia (demo)</Button>
+        )}
+        <Button
+          variant="warning-outline"
+          icon={LuTriangleAlert}
+          disabled={!todoRecibido || !motivo}
+          title={todoRecibido ? undefined : 'Recibe primero lo que farmacia ya despachó'}
+          onClick={() => onCerrarConFaltante({ motivo, nota: draft.nota })}
+        >
+          Cerrar con faltante
+        </Button>
+        <Button
+          icon={LuPackageCheck}
+          disabled={totalAhora === 0}
+          onClick={() => onRecibir(Object.fromEntries(filas.map((f) => [f.item.nombre, f.ahora])), {})}
+        >
+          {`Recibir lo despachado (${totalAhora} u.)`}
+        </Button>
+      </div>
+    </>
+  );
+}
+
 function renderPreparacion({ cirugia, onDespachar }) {
   const { preparados, total } = resumenCanasta(cirugia);
   return (
@@ -247,7 +367,10 @@ function renderPreparacion({ cirugia, onDespachar }) {
       <div className="cnc-tab-footer">
         <span className="cnc-footer-msg">Podrás verificar la canasta cuando farmacia la despache.</span>
         {onDespachar && (
-          <Button variant="secondary" icon={LuTruck} onClick={onDespachar}>Simular despacho de farmacia (demo)</Button>
+          <>
+            <Button variant="secondary" icon={LuTruck} onClick={() => onDespachar({ parcial: true })}>Simular despacho parcial (demo)</Button>
+            <Button variant="secondary" icon={LuTruck} onClick={() => onDespachar()}>Simular despacho completo (demo)</Button>
+          </>
         )}
       </div>
     </>
@@ -259,17 +382,33 @@ function renderLectura({ cirugia, draft, onDraftChange }) {
   const items = cirugia.canasta.items;
   const visibles = busqueda.trim() ? items.filter((i) => coincide(i.nombre, busqueda)) : items;
   const nota = cirugia.canasta.recepcion?.nota;
+  const conNovedad = (i) => Boolean(i.novedad) || cantidadRecibida(i) < i.cantidad;
+  const sinNovedades = items.every((i) => !conNovedad(i));
+  const nConNovedad = items.filter(conNovedad).length;
   return (
     <>
       <div className="cnc-tab-body">
-        {items.length > MIN_PARA_BUSCAR && (
+        <div className={`cnc-resumen-lectura${sinNovedades ? '' : ' warn'}`}>
+          {sinNovedades
+            ? <LuCircleCheck className="icon" aria-hidden="true" />
+            : <LuTriangleAlert className="icon" aria-hidden="true" />}
+          <div>
+            <strong>
+              {sinNovedades
+                ? `${items.length} de ${items.length} insumos recibidos sin novedades`
+                : `${nConNovedad} de ${items.length} insumos con novedad`}
+            </strong>
+            <span>{lineaRecepcion(cirugia)}</span>
+          </div>
+        </div>
+        {!sinNovedades && items.length > MIN_PARA_BUSCAR && (
           <InsumosBuscador value={busqueda} onChange={(v) => onDraftChange({ busquedaInsumo: v })} />
         )}
         <div className="cnc-tabla-scroll">
           <table className="cnc-tabla">
             <thead>
               <tr>
-                <th className="cnc-col-ico"><span className="cnc-sr">Estado</span></th>
+                {!sinNovedades && <th className="cnc-col-ico"><span className="cnc-sr">Estado</span></th>}
                 <th>Insumo</th>
                 <th className="cnc-num">Despachado</th>
                 <th className="cnc-num">Recibido</th>
@@ -286,11 +425,13 @@ function renderLectura({ cirugia, draft, onDraftChange }) {
                   ?? (recibido < item.cantidad ? `Faltan ${item.cantidad - recibido} respecto a lo solicitado` : '');
                 return (
                   <tr key={item.nombre}>
-                    <td className="cnc-col-ico">
-                      {novedad
-                        ? <LuTriangleAlert className="cnc-ico cnc-ico-warn" aria-label="Con novedad" />
-                        : <LuCheck className="cnc-ico cnc-ico-ok" aria-label="Sin novedad" />}
-                    </td>
+                    {!sinNovedades && (
+                      <td className="cnc-col-ico">
+                        {novedad
+                          ? <LuTriangleAlert className="cnc-ico cnc-ico-warn" aria-label="Con novedad" />
+                          : <LuCheck className="cnc-ico cnc-ico-ok" aria-label="Sin novedad" />}
+                      </td>
+                    )}
                     <td>
                       <div className="cnc-insumo-nombre">{item.nombre}</div>
                       {novedad && (
@@ -303,7 +444,7 @@ function renderLectura({ cirugia, draft, onDraftChange }) {
                       <span className={despachado < item.cantidad ? 'cnc-num-alerta' : undefined}>{despachado}</span>
                       {despachado < item.cantidad && <span className="cnc-de">de {item.cantidad}</span>}
                     </td>
-                    <td className="cnc-num"><strong>{recibido}</strong></td>
+                    <td className="cnc-num">{recibido !== despachado ? <strong>{recibido}</strong> : recibido}</td>
                   </tr>
                 );
               })}
@@ -311,9 +452,6 @@ function renderLectura({ cirugia, draft, onDraftChange }) {
           </table>
         </div>
         {nota && <p className="cnc-nota-lectura"><strong>Nota de la recepción:</strong> {nota}</p>}
-      </div>
-      <div className="cnc-tab-footer">
-        <span className="cnc-footer-msg">{lineaRecepcion(cirugia)}</span>
       </div>
     </>
   );
@@ -348,6 +486,7 @@ function renderVacio({ cirugia }) {
 export default function RecepcionTab(props) {
   const { estado } = resumenCanasta(props.cirugia);
   if (estado === 'despachada') return renderEditar(props);
+  if (estado === 'despacho-parcial') return renderParcial(props);
   if (estado === 'en-preparacion') return renderPreparacion(props);
   if (estado === 'sin-solicitar') return renderVacio(props);
   return renderLectura(props);

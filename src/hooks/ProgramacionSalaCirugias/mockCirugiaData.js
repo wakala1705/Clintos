@@ -13,28 +13,29 @@ export const SEDES = [
 // (ver FiltrosBar.jsx) — el `label` completo ("Sala 1 - Quirófano #1") se
 // deriva de los dos primeros en vez de hardcodearse aparte, para que el
 // trigger del filtro y el catálogo nunca queden desincronizados. Las 6 salas
-// de sede '02' replican 1:1 el catálogo de referencia del encargo (mismos
-// id/descripción/estado); 'qx-1-central' es la única sala de sede '01' y
+// de sede '02' parten del catálogo de referencia del encargo (mismos id/descripción);
+// estado y complejidad ajustados (2026-09-30): Quirófano #1 activo, con varias
+// cirugías programadas, y Quirófano #3 en mantenimiento, sin ninguna; 'qx-1-central' es la única sala de sede '01' y
 // queda fuera del catálogo visible hoy porque la página fija sedeId a '02'
 // (ver comentario en FiltrosBar.jsx).
 export const SALAS = [
   {
-    value: 'qx-1', idSala: '01', descripcion: 'Quirófano #1', estado: 'Mantenimiento', complejidad: 'M', sedeId: '02',
+    value: 'qx-1', idSala: '01', descripcion: 'Quirófano #1', estado: 'Activo', complejidad: 'A', sedeId: '02',
   },
   {
-    value: 'qx-2', idSala: '02', descripcion: 'Quirófano #2', estado: 'Activo', complejidad: 'M', sedeId: '02',
+    value: 'qx-2', idSala: '02', descripcion: 'Quirófano #2', estado: 'Activo', complejidad: 'A', sedeId: '02',
   },
   {
-    value: 'qx-3', idSala: '03', descripcion: 'Quirófano #3', estado: 'Activo', complejidad: 'M', sedeId: '02',
+    value: 'qx-3', idSala: '03', descripcion: 'Quirófano #3', estado: 'Mantenimiento', complejidad: 'M', sedeId: '02',
   },
   {
     value: 'gastroenterologia', idSala: '04', descripcion: 'Gastroenterología', estado: 'Activo', complejidad: 'M', sedeId: '02',
   },
   {
-    value: 'hemodinamia', idSala: '05', descripcion: 'Hemodinamia', estado: 'Activo', complejidad: 'M', sedeId: '02',
+    value: 'hemodinamia', idSala: '05', descripcion: 'Hemodinamia', estado: 'Activo', complejidad: 'A', sedeId: '02',
   },
   {
-    value: 'proc-menores', idSala: '06', descripcion: 'Proc. Menores', estado: 'Activo', complejidad: 'M', sedeId: '02',
+    value: 'proc-menores', idSala: '06', descripcion: 'Proc. Menores', estado: 'Activo', complejidad: 'B', sedeId: '02',
   },
   {
     value: 'qx-1-central', idSala: '01', descripcion: 'Quirófano #1', estado: 'Activo', complejidad: 'M', sedeId: '01',
@@ -564,6 +565,13 @@ export function grillaMes(date = new Date()) {
   return { dowLabels: DOW_LABELS, days };
 }
 
+const MESES_LARGOS_ABR = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+// "30.SEP.2026 - 09:30 – 11:00": fecha larga del proyecto + hora de inicio y de fin.
+export function fechaHoraRangoLabel(fechaISOStr, horaInicio, horaFin) {
+  const [y, m, d] = fechaISOStr.split('-').map(Number);
+  return `${pad2(d)}.${MESES_LARGOS_ABR[m - 1]}.${y} - ${horaInicio}${horaFin ? ` – ${horaFin}` : ''}`;
+}
+
 export function fechaLabel(fechaISOStr) {
   const [y, m, d] = fechaISOStr.split('-').map(Number);
   return `${pad2(d)}/${pad2(m)}/${y}`;
@@ -599,7 +607,9 @@ export function duracionLabel(horaInicio, horaFin) {
 // Procedimiento Quirúrgico, ver DetalleCirugiaPanel.jsx), en vez del "45
 // años" plano que bastaba antes de ese encargo.
 export function edadDetalleLabel({ edad, edadMeses = 0, edadDias = 0 }) {
-  return `${edad} años ${pad2(edadMeses)} meses ${pad2(edadDias)} días`;
+  if (!Number.isFinite(edad)) return '—';
+  // Omite meses/días en cero ("47 años" en vez de "47 años 00 meses 00 días").
+  return [`${edad} años`, edadMeses && `${pad2(edadMeses)} meses`, edadDias && `${pad2(edadDias)} días`].filter(Boolean).join(' ');
 }
 
 // Desglosa fechaNacimiento (paciente, ver PATIENTS en mockPatientsData.js)
@@ -609,6 +619,8 @@ export function edadDetalleLabel({ edad, edadMeses = 0, edadDias = 0 }) {
 // hardcodeada) -- necesario para armarCirugiaDesdeWizard más abajo.
 export function calcularEdadDesglosada(fechaNacimientoISO, fechaReferencia = new Date()) {
   const nacimiento = new Date(fechaNacimientoISO);
+  // Sin fecha de nacimiento válida (paciente sin ese dato) no se inventa una edad: queda null.
+  if (Number.isNaN(nacimiento.getTime())) return { edad: null, edadMeses: 0, edadDias: 0 };
   let anios = fechaReferencia.getFullYear() - nacimiento.getFullYear();
   let meses = fechaReferencia.getMonth() - nacimiento.getMonth();
   let dias = fechaReferencia.getDate() - nacimiento.getDate();
@@ -695,11 +707,12 @@ const itemsDe = (catalogo, fn) => CANASTAS_CATALOGO[catalogo].items.map((i, n) =
 // las pantallas (mismo shape que las entradas literales de CIRUGIAS).
 function cirugiaHoy({
   id, nombre, documento, edad, sexo, procedimiento, servicio = 'Cirugía general', cirujano, horaInicio, horaFin, estado = 'programada', canasta, farmacia,
+  salaId = 'qx-1', procedimientos, personal, equipos,
 }) {
   return {
     id,
     sedeId: '02',
-    salaId: 'qx-1',
+    salaId,
     paciente: {
       nombre, documento, edad, edadMeses: 0, edadDias: 0, sexo, aseguradora: 'Sura EPS', nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Bogotá', telAviso: '300 000 0000',
     },
@@ -711,9 +724,9 @@ function cirugiaHoy({
     horaInicio,
     horaFin,
     estado,
-    procedimientos: [{ nombre: procedimiento, tipo: 'principal', duracionMin: 90, notas: '' }],
-    personal: [{ rol: 'Cirujano', nombre: cirujano }],
-    equipos: [],
+    procedimientos: procedimientos ?? [{ nombre: procedimiento, tipo: 'principal', duracionMin: 90, notas: '' }],
+    personal: personal ?? [{ rol: 'Cirujano', nombre: cirujano }],
+    equipos: equipos ?? [],
     canasta,
     farmacia,
   };
@@ -1169,6 +1182,51 @@ let CIRUGIAS = [
     },
     farmacia: {
       numeroPedido: '4593', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:30`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  }),
+  // Cirugía combinada (varios procedimientos en un mismo acto): colecistectomía
+  // laparoscópica con colangiografía intraoperatoria y hernioplastia umbilical.
+  // Canasta sin solicitar todavía (flujo "Pedir insumos a farmacia").
+  cirugiaHoy({
+    id: '12361',
+    nombre: 'Marta Elena Cifuentes',
+    documento: 'CC 39.552.871',
+    edad: 54,
+    sexo: 'Femenino',
+    procedimiento: 'Colecistectomía laparoscópica',
+    cirujano: 'Dr. Andrés López',
+    salaId: 'qx-2',
+    horaInicio: '14:00',
+    horaFin: '16:30',
+    procedimientos: [
+      { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 75, notas: 'Colelitiasis sintomática, dos episodios de cólico biliar.' },
+      { nombre: 'Colangiografía intraoperatoria', tipo: 'principal', duracionMin: 30, notas: 'Descartar coledocolitiasis antes de cerrar.' },
+      { nombre: 'Hernioplastia umbilical con malla', tipo: 'principal', duracionMin: 45, notas: 'Hernia umbilical de 2 cm, en el mismo tiempo quirúrgico.' },
+    ],
+    personal: [
+      { rol: 'Cirujano', nombre: 'Dr. Andrés López' },
+      { rol: 'Ayudante', nombre: 'Dr. Felipe Ortiz' },
+      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
+      { rol: 'Instrumentadora', nombre: 'María Fernández' },
+      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+    ],
+    equipos: [
+      { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
+      { nombre: 'Arco en C', tipo: 'Imagenología', identificacion: 'EQ-0310', estado: 'disponible' },
+      { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
+      { nombre: 'Monitor de signos vitales', tipo: 'Monitoreo', identificacion: 'EQ-0231', estado: 'disponible' },
+    ],
+    canasta: {
+      nombre: 'Colecistectomía + hernioplastia umbilical',
+      items: [
+        ['Trocar 5mm', 3], ['Trocar 10mm', 2], ['Aguja de Veress', 1], ['Pinza Maryland', 1], ['Clips de titanio', 6],
+        ['Bolsa de extracción', 1], ['Catéter de colangiografía', 1], ['Medio de contraste yodado 20ml', 1],
+        ['Malla de polipropileno', 1], ['Sutura Prolene 2-0', 2], ['Sutura Vicryl 2-0', 3], ['Gasas estériles', 12],
+      ].map(([nombre, cantidad]) => ({ nombre, cantidad, estado: 'disponible' })),
+    },
+    farmacia: {
+      numeroPedido: '4601', estado: 'pendiente', fechaSolicitud: `${HOY_ISO}T08:00`,
+      medicamentos: [{ nombre: 'Cefazolina', dosis: '2g IV' }, { nombre: 'Ketorolaco', dosis: '30mg IV' }],
     },
   }),
   // Despachada por recibir SIN novedades: farmacia despachó todo lo solicitado,
@@ -1840,6 +1898,7 @@ export const CANASTA_ESTADO_LABEL = {
   'sin-solicitar': 'Sin solicitar',
   'en-preparacion': 'En preparación en farmacia',
   despachada: 'Despachada · por recibir',
+  'despacho-parcial': 'Despacho parcial · saldo pendiente',
   recibida: 'Canasta recibida',
   'con-novedades': 'Recibida con novedades',
   'consumo-registrado': 'Consumo registrado',
@@ -1853,6 +1912,27 @@ export function cantidadDespachada(item) {
 
 export function cantidadRecibida(item) {
   return item.recibido ?? item.cantidad;
+}
+
+// Ítems de una solicitud todavía abierta (sin cerrar). Ahí `despachado` y
+// `recibido` son acumulados REALES (sin caer a `cantidad`): un ítem sin
+// `despachado` es que farmacia aún no despachó nada de él.
+const abierto = (i) => i.solicitudFarmacia === 'solicitado';
+export const despachadoAbierto = (item) => item.despachado ?? 0;
+export const recibidoAbierto = (item) => item.recibido ?? 0;
+// Lo que farmacia todavía debe despachar de un ítem abierto (el saldo).
+export const saldoFarmacia = (item) => Math.max(0, item.cantidad - despachadoAbierto(item));
+// Lo despachado que quirófano aún no recibió.
+export const porRecibirItem = (item) => Math.max(0, despachadoAbierto(item) - recibidoAbierto(item));
+
+// Unidades despachadas sin recibir de toda la canasta (0 si no hay solicitud abierta).
+export function unidadesPorRecibir(cirugia) {
+  return cirugia.canasta.items.filter(abierto).reduce((t, i) => t + porRecibirItem(i), 0);
+}
+
+// Unidades que farmacia aún debe despachar (saldo de la solicitud abierta).
+export function unidadesSaldo(cirugia) {
+  return cirugia.canasta.items.filter(abierto).reduce((t, i) => t + saldoFarmacia(i), 0);
 }
 
 // Texto de novedad de un ítem: lo que farmacia despachó de menos y lo que
@@ -1904,10 +1984,13 @@ export function resumenCanasta(cirugia) {
   if (cirugia.canasta.consumo) {
     estado = 'consumo-registrado';
   } else if (porRecibir > 0) {
-    const despachada = items
-      .filter((i) => i.solicitudFarmacia === 'solicitado')
-      .every((i) => i.despachado !== undefined);
-    estado = despachada ? 'despachada' : 'en-preparacion';
+    // 'despachada' solo si farmacia despachó TODO lo solicitado; con algo
+    // despachado pero saldo pendiente la solicitud sigue abierta
+    // ('despacho-parcial'); sin nada despachado, sigue en preparación.
+    const abiertos = items.filter(abierto);
+    if (abiertos.every((i) => saldoFarmacia(i) === 0)) estado = 'despachada';
+    else if (abiertos.some((i) => despachadoAbierto(i) > 0)) estado = 'despacho-parcial';
+    else estado = 'en-preparacion';
   } else if (porSolicitar === total) {
     estado = 'sin-solicitar';
   } else {
@@ -1923,6 +2006,14 @@ export function resumenCanasta(cirugia) {
 // "Hora de inicio superada". 08:45 es la hora de los artboards de diseño.
 // `null` vuelve a la hora real del sistema.
 export const HORA_DEMO = '08:45';
+
+// true si la hora de inicio de la cirugía ya pasó respecto de `ahora`: solo
+// entonces tiene sentido marcarla como incumplida.
+export function cirugiaYaInicio(cirugia, ahora) {
+  const [y, mo, d] = cirugia.fecha.split('-').map(Number);
+  const [h, m] = cirugia.horaInicio.split(':').map(Number);
+  return new Date(y, mo - 1, d, h, m) <= ahora;
+}
 
 // "Ahora" de la pantalla y de los sellos de trazabilidad de las acciones de
 // canasta: hoy a HORA_DEMO (o la hora real si HORA_DEMO es null).
@@ -1969,6 +2060,7 @@ function avanzarCanasta(id, desde, hasta) {
         if (hasta === 'sin-solicitar') {
           delete avanzado.preparado;
           delete avanzado.despachado;
+          delete avanzado.recibido;
         }
         return avanzado;
       }),
@@ -1994,6 +2086,10 @@ export function solicitarInsumosFarmacia(id) {
 // anulación y la observación (ventana "Causal de Cancelación de
 // Programación") quedan en el historial `cancelacionesSolicitud`.
 export function cancelarSolicitudInsumos(id, { causal, observacion = '', usuario = 'CLINTOS' }) {
+  const previa = CIRUGIAS.find((c) => c.id === id);
+  if (previa.canasta.items.some((i) => abierto(i) && recibidoAbierto(i) > 0)) {
+    throw new Error('No se puede anular la solicitud: ya se recibieron insumos.');
+  }
   const actual = avanzarCanasta(id, 'solicitado', 'sin-solicitar');
   return actualizarCirugia(id, {
     cancelacionesSolicitud: [
@@ -2010,43 +2106,84 @@ export function cancelarSolicitudInsumos(id, { causal, observacion = '', usuario
 // La recepción por cantidades (con novedades) vive en registrarRecepcion.
 // Farmacia despachó lo solicitado (mock: no hay integración real): todos los
 // solicitados quedan preparados y despachados por su cantidad completa.
-export function despacharCanasta(id) {
+//
+// Despacho ACUMULATIVO: `cantidades` ({ [nombre]: unidades de este despacho })
+// se suma a lo ya despachado, sin pasar de lo solicitado; sin entrada = todo
+// el saldo del ítem. `parcial` (demo) deja 1 unidad de saldo en el último ítem
+// con saldo, para probar el flujo de despacho parcial.
+export function despacharCanasta(id, { cantidades = {}, parcial = false } = {}) {
   const actual = CIRUGIAS.find((c) => c.id === id);
+  const ultimo = parcial
+    ? actual.canasta.items.map((i, n) => (abierto(i) && saldoFarmacia(i) > 0 ? n : -1)).filter((n) => n >= 0).pop()
+    : -1;
+  const movimiento = [];
+  const items = actual.canasta.items.map((i, n) => {
+    if (!abierto(i)) return i;
+    const saldo = saldoFarmacia(i);
+    const pedido = cantidades[i.nombre] ?? (n === ultimo ? saldo - 1 : saldo);
+    const agrega = Math.min(saldo, Math.max(0, pedido));
+    if (agrega > 0) movimiento.push({ nombre: i.nombre, cantidad: agrega });
+    return { ...i, preparado: true, despachado: despachadoAbierto(i) + agrega };
+  });
   return actualizarCirugia(id, {
     canasta: {
       ...actual.canasta,
-      items: actual.canasta.items.map((i) => (
-        i.solicitudFarmacia === 'solicitado' ? { ...i, preparado: true, despachado: i.despachado ?? i.cantidad } : i
-      )),
+      items,
+      despachos: movimiento.length > 0
+        ? [...(actual.canasta.despachos ?? []), { fecha: fechaHoraLocalISO(ahoraDemo()), items: movimiento }]
+        : actual.canasta.despachos,
     },
   });
 }
 
-// Recepción por cantidades en quirófano. `recibidos`: { [nombre]: cantidad };
-// un ítem sin entrada se toma completo (= lo despachado). Valida todo ANTES
-// de escribir, así un error no deja la canasta a medias.
+// Recepción por cantidades en quirófano. `recibidos`: { [nombre]: cantidad de
+// ESTA recepción }; un ítem sin entrada se toma completo (= lo despachado que
+// aún no se recibió). Valida todo ANTES de escribir, así un error no deja la
+// canasta a medias.
+//  - 'despachada' (farmacia despachó todo lo solicitado): cierra la solicitud.
+//  - 'despacho-parcial' (farmacia despachó menos): recepción PARCIAL -- suma lo
+//    recibido y la solicitud sigue abierta (se cierra al completarse el
+//    despacho o con cerrarConFaltante).
 export function registrarRecepcion(id, {
   recibidos, usuario = 'CLINTOS', motivo, nota,
 }) {
   const actual = CIRUGIAS.find((c) => c.id === id);
-  if (resumenCanasta(actual).estado !== 'despachada') {
+  const estadoActual = resumenCanasta(actual).estado;
+  if (estadoActual !== 'despachada' && estadoActual !== 'despacho-parcial') {
     throw new Error('La canasta todavía no fue despachada por farmacia.');
   }
+  const parcial = estadoActual === 'despacho-parcial';
   let conNovedades = false;
+  let recibidoAhora = 0;
   const pares = [];
+  const movimiento = [];
   const items = actual.canasta.items.map((i) => {
-    if (i.solicitudFarmacia !== 'solicitado') return i;
-    const despachado = cantidadDespachada(i);
-    const recibido = recibidos[i.nombre] ?? despachado;
-    if (!Number.isInteger(recibido) || recibido < 0 || recibido > despachado) {
-      throw new Error(`${i.nombre}: lo recibido debe estar entre 0 y ${despachado}.`);
+    if (!abierto(i)) return i;
+    const pendiente = porRecibirItem(i);
+    const ahora = recibidos[i.nombre] ?? pendiente;
+    if (!Number.isInteger(ahora) || ahora < 0 || ahora > pendiente) {
+      throw new Error(`${i.nombre}: lo recibido debe estar entre 0 y ${pendiente}.`);
     }
+    const recibido = recibidoAbierto(i) + ahora;
+    recibidoAhora += ahora;
+    if (ahora > 0) movimiento.push({ nombre: i.nombre, cantidad: ahora });
+    if (parcial) return { ...i, recibido };
     if (recibido < i.cantidad) conNovedades = true;
     pares.push({ item: i, recibido });
     return {
-      ...i, solicitudFarmacia: 'entregado', despachado, recibido, novedad: novedadItem(i, recibido) || undefined,
+      ...i, solicitudFarmacia: 'entregado', despachado: i.despachado, recibido, novedad: novedadItem(i, recibido) || undefined,
     };
   });
+  if (parcial) {
+    if (recibidoAhora === 0) throw new Error('No hay insumos despachados por recibir.');
+    return actualizarCirugia(id, {
+      canasta: {
+        ...actual.canasta,
+        items,
+        recepciones: [...(actual.canasta.recepciones ?? []), { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), items: movimiento }],
+      },
+    });
+  }
   const origen = origenDiferencia(pares);
   if ((origen === 'entrega' || origen === 'ambos') && !motivo) {
     throw new Error('Indica el motivo de la diferencia en la entrega.');
@@ -2061,8 +2198,45 @@ export function registrarRecepcion(id, {
     if (nota?.trim()) recepcion.nota = nota.trim();
   }
   return actualizarCirugia(id, {
-    canasta: { ...actual.canasta, items, recepcion },
+    canasta: {
+      ...actual.canasta,
+      items,
+      recepcion,
+      recepciones: movimiento.length > 0
+        ? [...(actual.canasta.recepciones ?? []), { usuario, fecha: recepcion.fecha, items: movimiento }]
+        : actual.canasta.recepciones,
+    },
   });
+}
+
+// Cierra con faltante una solicitud en 'despacho-parcial': la enfermería del
+// quirófano ya recibió TODO lo que farmacia despachó y acepta el saldo como
+// faltante de farmacia (queda con novedades y se puede registrar el consumo).
+export function cerrarConFaltante(id, {
+  usuario = 'CLINTOS', motivo = 'faltante-farmacia', nota,
+}) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (resumenCanasta(actual).estado !== 'despacho-parcial') {
+    throw new Error('Solo se puede cerrar con faltante una solicitud con despacho parcial.');
+  }
+  if (unidadesPorRecibir(actual) > 0) {
+    throw new Error('Recibe primero lo que farmacia ya despachó para poder cerrar con faltante.');
+  }
+  if (!MOTIVOS_NOVEDAD.some((m) => m.value === motivo)) {
+    throw new Error('El motivo de la novedad no es válido.');
+  }
+  const items = actual.canasta.items.map((i) => {
+    if (!abierto(i)) return i;
+    const cerrado = { ...i, despachado: despachadoAbierto(i), recibido: recibidoAbierto(i) };
+    return {
+      ...cerrado, solicitudFarmacia: 'entregado', novedad: novedadItem(cerrado, cerrado.recibido) || undefined,
+    };
+  });
+  const recepcion = {
+    usuario, fecha: fechaHoraLocalISO(ahoraDemo()), conNovedades: true, origen: 'farmacia', motivo, cierreConFaltante: true,
+  };
+  if (nota?.trim()) recepcion.nota = nota.trim();
+  return actualizarCirugia(id, { canasta: { ...actual.canasta, items, recepcion } });
 }
 
 // Consumo real tras la cirugía. `usados`: { [nombre]: cantidad } (sin entrada
@@ -2118,17 +2292,6 @@ export function guardarDevolucion(id, { consecutivo, lineas, usuario = 'CLINTOS'
       consecutivo: nextConsecutivoDevolucion++, usuario, fecha, estado: 'confirmada', items,
     }];
   return actualizarCirugia(id, { devoluciones: nuevas });
-}
-
-// "Eliminar" de la ventana de devoluciones: la anula (queda en el listado en
-// gris, como en la ventana legada) y deja de contar como devuelta.
-export function anularDevolucion(id, consecutivo) {
-  const actual = CIRUGIAS.find((c) => c.id === id);
-  return actualizarCirugia(id, {
-    devoluciones: (actual.devoluciones ?? []).map((d) => (
-      d.consecutivo === consecutivo ? { ...d, estado: 'anulada' } : d
-    )),
-  });
 }
 
 export function cancelarCirugia(id, motivo) {

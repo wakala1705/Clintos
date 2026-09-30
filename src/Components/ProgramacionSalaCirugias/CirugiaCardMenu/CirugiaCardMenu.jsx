@@ -6,7 +6,7 @@ import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import {
   LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
 } from 'react-icons/lu';
-import { ESTADOS_TERMINALES_CIRUGIA } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { ESTADOS_TERMINALES_CIRUGIA, ahoraDemo, cirugiaYaInicio } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Menú "⋯" de CirugiaCard (encargo explícito, 2026-09-07) —
 // @/Components/DropdownMenu (ver AGENTS.md "Dropdowns"), size="sm" por el
@@ -31,7 +31,9 @@ export default function CirugiaCardMenu({
   // cirugía en curso/futura solo puede "incumplirse" si estaba programada
   // (urgencia se resuelve o no en el momento, no queda pendiente de
   // cumplirse después).
-  const puedeMarcarIncumplida = cirugia.estado === 'programada';
+  const [ahora] = useState(() => ahoraDemo());
+  const puedeMarcarRealizada = puedeAccionar;
+  const puedeMarcarIncumplida = cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
 
   return (
     <div className={`ccm-wrap${open ? ' open' : ''}`}>
@@ -47,7 +49,7 @@ export default function CirugiaCardMenu({
             id: 'reprogramar', label: 'Reprogramar', icon: LuCalendarClock, disabled: !puedeAccionar, onSelect: () => onReprogramar(cirugia),
           },
           {
-            id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeAccionar, onSelect: () => onMarcarRealizada(cirugia), dividerBefore: true,
+            id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeMarcarRealizada, onSelect: () => onMarcarRealizada(cirugia), dividerBefore: true,
           },
           {
             id: 'incumplida', label: 'Marcar como incumplida', icon: LuCalendarX, disabled: !puedeMarcarIncumplida, onSelect: () => onMarcarIncumplida(cirugia),

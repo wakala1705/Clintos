@@ -40,6 +40,8 @@ export default function ModalHeader({
   // solo lo usa DetalleModal (SolicitudConsumo) para un badge de estado
   // junto al cierre, ver AGENTS.md/homologación de modales.
   trailing,
+  // Contenido pegado al título (ej. badge de estado), dentro de la misma fila que el <h3>.
+  titleAdornment,
   onBack, backLabel = 'Volver', backButtonRef, closeButtonRef, titleLive = false,
 }) {
   return (
@@ -62,7 +64,14 @@ export default function ModalHeader({
           </div>
         )}
         <div>
-          <h3 id={titleId} aria-live={titleLive ? 'polite' : undefined}>{title}</h3>
+          {titleAdornment ? (
+            <div className="modal-header-title-row">
+              <h3 id={titleId} aria-live={titleLive ? 'polite' : undefined}>{title}</h3>
+              {titleAdornment}
+            </div>
+          ) : (
+            <h3 id={titleId} aria-live={titleLive ? 'polite' : undefined}>{title}</h3>
+          )}
           {subtitle && <div className="modal-header-sub">{subtitle}</div>}
         </div>
       </div>

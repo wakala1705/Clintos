@@ -84,15 +84,17 @@ export const ESTADO_PROGRAMACION_LABEL = Object.fromEntries(
 export const LISTADO_PROGRAMACIONES = FILAS.map(([
   sala, noProgramacion, consecutivo, fechaProg, duracion, pedInventario, trasladoCirugia,
   noAdmision, idAfiliado, pApellido, sApellido, pNombre, sNombre,
-]) => ({
+], i) => ({
   sala,
   noProgramacion,
   consecutivo,
   fechaProg: formatFechaProg(fechaProg),
-  duracion,
+  // Sin decimales (encargo explícito, 2026-09-30): '60,00' → '60'.
+  duracion: duracion.split(',')[0],
   pedInventario,
   trasladoCirugia,
-  noAdmision,
+  // Números de admisión de ejemplo (la captura legada los traía vacíos).
+  noAdmision: noAdmision || String(220900100 + i),
   idAfiliado,
   pApellido,
   sApellido,

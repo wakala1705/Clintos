@@ -7,6 +7,7 @@
 // decide si una cirugía puede iniciar (esa lógica se quitó, 2026-09-30).
 import {
   CANASTA_ESTADOS_RECIBIDOS, MOTIVOS_NOVEDAD, cantidadRecibida, fechaHoraTrazaLabel, resumenCanasta,
+  unidadesPorRecibir, unidadesSaldo,
 } from './mockCirugiaData.js';
 
 // `violet: true` -> <Badge> no trae tono violeta; se agrega la clase global
@@ -15,6 +16,7 @@ export const CANASTA_META = {
   'sin-solicitar': { tone: 'neutral' },
   'en-preparacion': { tone: 'neutral' },
   despachada: { tone: 'info' },
+  'despacho-parcial': { tone: 'warn' },
   recibida: { tone: 'success' },
   'con-novedades': { tone: 'warn' },
   'consumo-registrado': { tone: 'neutral', violet: true },
@@ -27,10 +29,18 @@ export function badgeProps(meta) {
 export const ESTADO_FILTRO_OPTIONS = [
   { value: 'todas', label: 'Todos los estados' },
   { value: 'por-recibir', label: 'Despachadas por recibir' },
+  { value: 'despacho-parcial', label: 'Con saldo pendiente' },
   { value: 'en-preparacion', label: 'En preparación' },
   { value: 'recibidas', label: 'Recibidas' },
   { value: 'consumo-pendiente', label: 'Consumo pendiente' },
 ];
+
+// Hay algo que recibir ya: despacho completo, o parcial con unidades despachadas
+// sin recibir.
+function tienePorRecibir(cirugia) {
+  const { estado } = resumenCanasta(cirugia);
+  return estado === 'despachada' || (estado === 'despacho-parcial' && unidadesPorRecibir(cirugia) > 0);
+}
 
 // Cirugía ya realizada cuya canasta se recibió pero aún no tiene consumo y
 // devolución registrados.
@@ -44,6 +54,7 @@ export function filtrarCanastas(cirugias, { busqueda = '', estado = 'todas' } = 
     const e = resumenCanasta(c).estado;
     if (estado === 'por-recibir' && e !== 'despachada') return false;
     if (estado === 'en-preparacion' && e !== 'en-preparacion') return false;
+    if (estado === 'despacho-parcial' && e !== 'despacho-parcial') return false;
     if (estado === 'recibidas' && !CANASTA_ESTADOS_RECIBIDOS.includes(e)) return false;
     if (estado === 'consumo-pendiente' && !tieneConsumoPendiente(c)) return false;
     if (!texto) return true;
@@ -66,7 +77,7 @@ export function kpisCanastas(cirugias) {
 // distinta de `omitirId` (la que ya está abierta en el detalle): alimenta la
 // alerta "siguiente por recibir".
 export function primeraPorRecibir(cirugias, omitirId = null) {
-  return cirugias.find((c) => c.id !== omitirId && resumenCanasta(c).estado === 'despachada');
+  return cirugias.find((c) => c.id !== omitirId && tienePorRecibir(c));
 }
 
 // Filtro de estado que activa cada KPI al hacer click (misma clave que
@@ -89,8 +100,8 @@ export function agruparCanastas(cirugias) {
   ];
   cirugias.forEach((c) => {
     const e = resumenCanasta(c).estado;
-    if (e === 'despachada' || tieneConsumoPendiente(c)) grupos[0].items.push(c);
-    else if (e === 'en-preparacion' || e === 'sin-solicitar') grupos[1].items.push(c);
+    if (tienePorRecibir(c) || tieneConsumoPendiente(c)) grupos[0].items.push(c);
+    else if (e === 'en-preparacion' || e === 'despacho-parcial' || e === 'sin-solicitar') grupos[1].items.push(c);
     else grupos[2].items.push(c);
   });
   return grupos.filter((g) => g.items.length > 0);
@@ -108,11 +119,21 @@ export function bannerCanasta(cirugia) {
     if (CANASTA_ESTADOS_RECIBIDOS.includes(estado)) {
       return { tone: 'info', texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.' };
     }
+    if (estado === 'despacho-parcial') {
+      return { tone: 'warn', texto: 'Cirugía realizada con la solicitud abierta: farmacia aún debe despachar un saldo. Recibe lo despachado y cierra con faltante para registrar el consumo.' };
+    }
     return { tone: 'neutral', texto: 'Cirugía realizada, pero su canasta no fue recibida: no hay consumo que registrar.' };
   }
   if (cirugia.canasta.items.length === 0) return null;
   if (estado === 'en-preparacion') {
     return { tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.' };
+  }
+  if (estado === 'despacho-parcial') {
+    const saldo = unidadesSaldo(cirugia);
+    const texto = unidadesPorRecibir(cirugia) > 0
+      ? `Farmacia despachó menos de lo solicitado (saldo: ${saldo} u.). Recibe lo que llegó: la solicitud sigue abierta hasta que farmacia complete el saldo.`
+      : `Ya recibiste todo lo despachado y la solicitud sigue abierta: farmacia aún debe ${saldo} u. Espera el despacho del saldo o cierra con faltante.`;
+    return { tone: 'warn', texto };
   }
   if (estado === 'con-novedades') {
     const origen = cirugia.canasta.recepcion?.origen;
@@ -143,6 +164,10 @@ export function resumenDevolucion(cirugia, usados = {}) {
 export function lineaRecepcion(cirugia) {
   const r = cirugia.canasta.recepcion;
   if (!r) return 'Canasta recibida.';
+  if (r.cierreConFaltante) {
+    const motivo = MOTIVOS_NOVEDAD.find((m) => m.value === r.motivo)?.label;
+    return `Cerrada con faltante por ${r.usuario} · ${fechaHoraTrazaLabel(r.fecha)}${motivo ? ` · Motivo: ${motivo}` : ''} · Farmacia notificada`;
+  }
   const base = `${r.conNovedades ? 'Recibida con novedades' : 'Recibida completa'} por ${r.usuario} · ${fechaHoraTrazaLabel(r.fecha)}`;
   if (!r.conNovedades) return base;
   const motivo = MOTIVOS_NOVEDAD.find((m) => m.value === r.motivo)?.label;
@@ -160,4 +185,15 @@ export function lineaConsumo(cirugia) {
 export function canastasHref(cirugia) {
   const q = new URLSearchParams({ sala: cirugia.salaId, fecha: cirugia.fecha, cirugia: cirugia.id });
   return `/programacion-sala-cirugias/canastas?${q.toString()}`;
+}
+
+// Movimientos de una solicitud con despacho parcial (despachos de farmacia y
+// recepciones de quirófano), del más viejo al más nuevo.
+export function movimientosCanasta(cirugia) {
+  const lista = (m) => m.items.map((i) => `${i.cantidad} ${i.nombre}`).join(', ');
+  const despachos = (cirugia.canasta.despachos ?? []).map((d) => ({ fecha: d.fecha, texto: `Farmacia despachó: ${lista(d)}` }));
+  const recepciones = (cirugia.canasta.recepciones ?? []).map((r) => ({ fecha: r.fecha, texto: `Recibido por ${r.usuario}: ${lista(r)}` }));
+  return [...despachos, ...recepciones]
+    .sort((a, b) => a.fecha.localeCompare(b.fecha))
+    .map((m) => `${fechaHoraTrazaLabel(m.fecha)} · ${m.texto}`);
 }

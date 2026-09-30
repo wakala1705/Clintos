@@ -21,17 +21,38 @@ const ESTADO_TONE = {
   devuelto: 'neutral',
 };
 
-const COLGROUP = (
-  <colgroup>
-    <col />
-    <col className="ist-col-cantidad" />
-    <col className="ist-col-cantidad" />
-    <col className="ist-col-estado" />
-  </colgroup>
-);
-const HEAD_ROW = (
-  <tr><th>Insumo</th><th className="ist-num">Cantidad</th><th className="ist-num">Devuelto</th><th>Estado</th></tr>
-);
+// Un insumo "solicitado" avanza por dentro (farmacia lo prepara y luego lo
+// despacha) sin cambiar su `solicitudFarmacia`: la fila lo refleja para que
+// no contradiga el aviso del pie ("Farmacia despachó la canasta").
+function estadoFila(estado, item) {
+  if (estado === 'solicitado') {
+    if (item.despachado !== undefined) return { label: 'Despachado', tone: 'info' };
+    if (item.preparado) return { label: 'En preparación', tone: 'neutral' };
+  }
+  return { label: SOLICITUD_FARMACIA_LABEL[estado], tone: ESTADO_TONE[estado] };
+}
+
+// La columna "Devuelto" solo aparece cuando algún insumo tiene devolución.
+function colgroup(conDevuelto) {
+  return (
+    <colgroup>
+      <col />
+      <col className="ist-col-cantidad" />
+      {conDevuelto && <col className="ist-col-cantidad" />}
+      <col className="ist-col-estado" />
+    </colgroup>
+  );
+}
+function headRow(conDevuelto) {
+  return (
+    <tr>
+      <th>Insumo</th>
+      <th className="ist-num">Cantidad</th>
+      {conDevuelto && <th className="ist-num">Devuelto</th>}
+      <th>Estado</th>
+    </tr>
+  );
+}
 
 // El pie muestra el avance y UNA acción según el paso en que va la canasta:
 // 1. quedan insumos sin solicitar -> "Pedir insumos a farmacia"
@@ -43,13 +64,14 @@ const HEAD_ROW = (
 // Devolver no: lo no usado se devuelve también después de realizada o
 // cancelada la cirugía.
 export default function InsumosTab({
-  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onVerEnCanastas, onDevolverInsumos,
+  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onVerEnCanastas,
 }) {
   const { canasta } = cirugia;
   const total = canasta.items.length;
   const pasos = canasta.items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
   const porSolicitar = pasos.filter((p) => p === 'sin-solicitar').length;
   const porEntregar = pasos.filter((p) => p === 'solicitado').length;
+  const conDevuelto = canasta.items.some((i) => cantidadDevuelta(cirugia, i.nombre) > 0);
 
   let resumen;
   let accion;
@@ -62,9 +84,10 @@ export default function InsumosTab({
     );
   } else if (porEntregar > 0) {
     const { estado, preparados } = resumenCanasta(cirugia);
-    resumen = estado === 'despachada'
-      ? <>Farmacia <strong>despachó</strong> la canasta: recíbela en Canastas de cirugía</>
-      : <>Farmacia está preparando la canasta: <strong>{preparados}</strong> de {total} preparados</>;
+    const hayRecibido = canasta.items.some((i) => i.solicitudFarmacia === 'solicitado' && (i.recibido ?? 0) > 0);
+    if (estado === 'despachada') resumen = <>Farmacia <strong>despachó</strong> la canasta: recíbela en Canastas de cirugía</>;
+    else if (estado === 'despacho-parcial') resumen = <>Farmacia despachó <strong>menos de lo solicitado</strong>: recibe lo que llegó en Canastas de cirugía; la solicitud sigue abierta</>;
+    else resumen = <>Farmacia está preparando la canasta: <strong>{preparados}</strong> de {total} preparados</>;
     // Mientras farmacia no entregue, la solicitud se puede cancelar
     // (secundaria, ícono rojo: mismo criterio que Cancelar cirugía).
     accion = (
@@ -72,13 +95,13 @@ export default function InsumosTab({
         <Button
           variant="secondary-accent"
           icon={LuPackageX}
-          className="ist-cancelar-btn"
-          disabled={!puedeAccionar}
+          disabled={!puedeAccionar || hayRecibido}
+          title={hayRecibido ? 'Ya se recibieron insumos de esta solicitud' : undefined}
           onClick={onCancelarSolicitud}
         >
-          Cancelar solicitud
+          Anular solicitud
         </Button>
-        <Button icon={LuPackageSearch} onClick={() => onVerEnCanastas(cirugia)}>
+        <Button variant={estado === 'despachada' || estado === 'despacho-parcial' ? 'primary' : 'secondary-accent'} icon={LuPackageSearch} onClick={() => onVerEnCanastas(cirugia)}>
           Ver en Canastas
         </Button>
       </div>
@@ -87,8 +110,8 @@ export default function InsumosTab({
     const devueltos = canasta.items.filter((i) => cantidadDevuelta(cirugia, i.nombre) > 0).length;
     resumen = <><strong>{devueltos}</strong> de {total} con devolución</>;
     accion = (
-      <Button variant="secondary-accent" icon={LuPackageMinus} onClick={onDevolverInsumos}>
-        Devolver insumos
+      <Button variant="secondary-accent" icon={LuPackageMinus} onClick={() => onVerEnCanastas(cirugia)}>
+        Registrar consumo y devolución
       </Button>
     );
   }
@@ -102,24 +125,25 @@ export default function InsumosTab({
           el <thead> oculto visualmente para lectores de pantalla. */}
       <div className="ist-head" aria-hidden="true">
         <table className="ist-table">
-          {COLGROUP}
-          <thead>{HEAD_ROW}</thead>
+          {colgroup(conDevuelto)}
+          <thead>{headRow(conDevuelto)}</thead>
         </table>
       </div>
       <div className="ist-body">
         <table className="ist-table">
-          {COLGROUP}
-          <thead className="ist-sr-head">{HEAD_ROW}</thead>
+          {colgroup(conDevuelto)}
+          <thead className="ist-sr-head">{headRow(conDevuelto)}</thead>
           <tbody>
             {canasta.items.map((item) => {
               const estado = estadoInsumo(cirugia, item);
+              const { label, tone } = estadoFila(estado, item);
               const devuelta = cantidadDevuelta(cirugia, item.nombre);
               return (
                 <tr key={item.nombre}>
                   <td className="cell-primary">{item.nombre}</td>
                   <td className="cell-muted ist-num">{item.cantidad}</td>
-                  <td className="cell-muted ist-num">{devuelta || '—'}</td>
-                  <td><Badge tone={ESTADO_TONE[estado]}>{SOLICITUD_FARMACIA_LABEL[estado]}</Badge></td>
+                  {conDevuelto && <td className="cell-muted ist-num">{devuelta || '—'}</td>}
+                  <td><Badge tone={tone}>{label}</Badge></td>
                 </tr>
               );
             })}

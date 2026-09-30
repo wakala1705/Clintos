@@ -23,12 +23,13 @@ export default function ProcedimientosSideList({ procedimientos, selectedId, onS
       <table className="dcp-proc-table">
         <thead>
           <tr>
+            <th className="cell-item">Ítem</th>
             <th>Procedimiento</th>
             <th>Duración</th>
           </tr>
         </thead>
         <tbody>
-          {procedimientos.map((p) => (
+          {procedimientos.map((p, i) => (
             <tr
               key={p.nombre}
               className={selectedId === p.nombre ? 'selected' : undefined}
@@ -37,12 +38,18 @@ export default function ProcedimientosSideList({ procedimientos, selectedId, onS
               onClick={() => onSelect(p.nombre)}
               onKeyDown={(e) => handleRowKeyDown(e, p.nombre)}
             >
+              <td className="cell-item cell-muted">{String(i + 1).padStart(2, '0')}</td>
               <td className="cell-primary">{p.nombre}</td>
               <td className="cell-muted">{p.duracionMin} min</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="dcp-proc-resumen">
+        <strong>{procedimientos.length}</strong> {procedimientos.length === 1 ? 'procedimiento' : 'procedimientos'}
+        {' · '}
+        <strong>{procedimientos.reduce((t, p) => t + p.duracionMin, 0)}</strong> min en total
+      </div>
     </div>
   );
 }
