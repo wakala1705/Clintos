@@ -179,11 +179,8 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 .fp-date-row{display:flex;gap:10px;}
 .fp-date-field{flex:1;display:flex;flex-direction:column;gap:4px;}
 .fp-date-field label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.03em;}
-.fp-date-field input{
-  border:1px solid var(--border);border-radius:var(--radius);height:var(--input-sm);padding:0 8px;
-  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--bg);width:100%;
-}
-.fp-date-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
+/* El campo de fecha es un DatePicker (@/Components/DatePicker): solo se ajusta el fondo. */
+.fp-date-field .dp-trigger{background:var(--bg);}
 .fp-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border);}
 .fp-actions button{padding:var(--btn-padding-sm);font-size:var(--fs-base);}
 

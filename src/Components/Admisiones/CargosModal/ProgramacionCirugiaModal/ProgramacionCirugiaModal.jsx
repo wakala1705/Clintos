@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import { LuSearch } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const COMPLEJIDAD_OPTIONS = [
   { value: 'baja', label: 'Baja' },
@@ -123,12 +124,7 @@ export default function ProgramacionCirugiaModal({ admision, onClose }) {
 
             <div className="form-field">
               <label htmlFor="pcm-fecha">Fecha</label>
-              <input
-                id="pcm-fecha"
-                type="date"
-                value={draft.fecha}
-                onChange={(e) => set('fecha', e.target.value)}
-              />
+              <DatePicker id="pcm-fecha" value={draft.fecha} onChange={(v) => set('fecha', v)} clearable />
             </div>
             <div className="form-field">
               <label htmlFor="pcm-hora">Hora</label>

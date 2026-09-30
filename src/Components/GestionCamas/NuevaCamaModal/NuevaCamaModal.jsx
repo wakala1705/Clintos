@@ -12,6 +12,7 @@ import {
   SECTORES, SEDES, TIPOS,
 } from '@/hooks/GestionCamas/mockCamasData';
 import { LuBedDouble, LuChevronDown } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const SEDE_OPTIONS = SEDES.filter((s) => s.value !== 'todas');
 const AREA_OPTIONS = AREAS.filter((a) => a.value !== 'todas');
@@ -436,11 +437,11 @@ export default function NuevaCamaModal({
                       <label htmlFor="cb-form-fecha-exp">
                         Fecha de expiración <span className="cb-optional-mark">(opcional)</span>
                       </label>
-                      <input
+                      <DatePicker
                         id="cb-form-fecha-exp"
-                        type="date"
                         value={campos.fechaExpiracion}
-                        onChange={(e) => setCampo('fechaExpiracion', e.target.value)}
+                        onChange={(v) => setCampo('fechaExpiracion', v)}
+                        clearable
                       />
                     </div>
                     <div className="cb-form-help cb-form-help-flush">

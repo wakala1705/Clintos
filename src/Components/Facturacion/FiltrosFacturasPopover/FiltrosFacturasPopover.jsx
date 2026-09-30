@@ -5,6 +5,7 @@ import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { CLASE_OPTIONS, TIPO_OPTIONS } from '@/hooks/Facturacion/mockFacturasData';
 import { LuChevronDown, LuFilter } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // Botón único "Filtros" + popover (mismo patrón .filters-more-btn/
 // .filter-popover que FiltersRow en ListaPacientes, ver AGENTS.md "Barra de
@@ -30,6 +31,8 @@ export default function FiltrosFacturasPopover({ filtros, onApply, activeCount }
   useEffect(() => {
     if (!open) return undefined;
     function handleClickOutside(e) {
+      // El calendario (DatePicker) se porta a document.body: un clic ahí no es "afuera".
+      if (e.target.closest('.dp-panel')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -98,11 +101,23 @@ export default function FiltrosFacturasPopover({ filtros, onApply, activeCount }
             <div className="fp-date-row">
               <div className="fp-date-field">
                 <label htmlFor="fact-fp-desde">Desde</label>
-                <input id="fact-fp-desde" type="date" value={draft.desde} onChange={(e) => setDraft((d) => ({ ...d, desde: e.target.value }))} />
+                <DatePicker
+                  id="fact-fp-desde"
+                  value={draft.desde}
+                  onChange={(v) => setDraft((d) => ({ ...d, desde: v }))}
+                  clearable
+                  size="sm"
+                />
               </div>
               <div className="fp-date-field">
                 <label htmlFor="fact-fp-hasta">Y el</label>
-                <input id="fact-fp-hasta" type="date" value={draft.hasta} onChange={(e) => setDraft((d) => ({ ...d, hasta: e.target.value }))} />
+                <DatePicker
+                  id="fact-fp-hasta"
+                  value={draft.hasta}
+                  onChange={(v) => setDraft((d) => ({ ...d, hasta: v }))}
+                  clearable
+                  size="sm"
+                />
               </div>
             </div>
           </div>

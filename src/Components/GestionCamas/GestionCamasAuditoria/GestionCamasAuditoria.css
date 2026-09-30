@@ -29,10 +29,7 @@
 }
 .cbau-periodo-custom .icon{width:16px;height:16px;color:var(--ink-500);}
 .cbau-periodo-custom label{display:flex;align-items:center;gap:6px;font-weight:var(--fw-medium);color:var(--ink-700);}
-.cbau-periodo-custom input{
-  border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;
-  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:var(--surface);
-}
+.cbau-periodo-custom .dp-trigger{width:auto;min-width:140px;font-size:var(--fs-sm);}
 
 /* La tabla es el elemento protagonista (encargo, sección 6): buscador +
    tabla + paginación en la misma card — los indicadores de actividad viven

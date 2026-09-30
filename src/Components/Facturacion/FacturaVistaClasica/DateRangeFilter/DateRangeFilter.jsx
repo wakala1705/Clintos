@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // Reemplaza los 2 campos "Desde"/"Hasta" sueltos de la toolbar por un único
 // botón + popover (encargo explícito) -- mismas clases .filter-popover-wrap/
@@ -32,6 +33,8 @@ export default function DateRangeFilter({ desde, hasta, onChange }) {
   useEffect(() => {
     if (!open) return undefined;
     function handleClickOutside(e) {
+      // El calendario (DatePicker) se porta a document.body: un clic ahí no es "afuera".
+      if (e.target.closest('.dp-panel')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -83,11 +86,23 @@ export default function DateRangeFilter({ desde, hasta, onChange }) {
           <div className="fp-date-row">
             <div className="fp-date-field">
               <label htmlFor="fvc-rango-desde">Desde</label>
-              <input id="fvc-rango-desde" type="date" value={draftDesde} onChange={(e) => setDraftDesde(e.target.value)} />
+              <DatePicker
+                id="fvc-rango-desde"
+                value={draftDesde}
+                onChange={(v) => setDraftDesde(v)}
+                clearable
+                size="sm"
+              />
             </div>
             <div className="fp-date-field">
               <label htmlFor="fvc-rango-hasta">Hasta</label>
-              <input id="fvc-rango-hasta" type="date" value={draftHasta} onChange={(e) => setDraftHasta(e.target.value)} />
+              <DatePicker
+                id="fvc-rango-hasta"
+                value={draftHasta}
+                onChange={(v) => setDraftHasta(v)}
+                clearable
+                size="sm"
+              />
             </div>
           </div>
           {rangoInvalido && <div className="form-field-error">“Desde” no puede ser posterior a “Hasta”.</div>}

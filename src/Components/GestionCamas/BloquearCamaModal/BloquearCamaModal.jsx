@@ -7,6 +7,7 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import { AREA_LABEL, MOTIVOS_BLOQUEO, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL } from '@/hooks/GestionCamas/mockCamasData';
 import { LuLock } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // "Bloquear cama" (encargo sección 19) — reemplaza el atajo anterior que
 // abría el modal genérico "Cambiar estado" preseleccionado en Bloqueada (ver
@@ -65,21 +66,21 @@ export default function BloquearCamaModal({ cama, onClose, onConfirm }) {
             <div className="bc-row">
               <div className="form-field">
                 <label htmlFor="bc-fecha-inicio">Fecha inicio</label>
-                <input
+                <DatePicker
                   id="bc-fecha-inicio"
-                  type="date"
                   value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
+                  onChange={(v) => setFechaInicio(v)}
+                  clearable
                 />
               </div>
               <div className="form-field">
                 <label htmlFor="bc-fecha-fin">Fecha fin</label>
-                <input
+                <DatePicker
                   id="bc-fecha-fin"
-                  type="date"
-                  min={fechaInicio || undefined}
                   value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
+                  onChange={(v) => setFechaFin(v)}
+                  min={fechaInicio || undefined}
+                  clearable
                 />
               </div>
             </div>

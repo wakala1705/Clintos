@@ -9,6 +9,7 @@ import {
   AREAS, PISOS, SECTORES, SEDES,
 } from '@/hooks/GestionCamas/mockReservasData';
 import { LuCalendarPlus } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const SEDE_OPTIONS = SEDES.filter((s) => s.value !== 'todas');
 const AREA_OPTIONS = AREAS.filter((a) => a.value !== 'todas');
@@ -192,11 +193,11 @@ export default function NuevaReservaModal({ onClose, onSubmit }) {
             <div className="cbr-form-row">
               <div className="form-field">
                 <label htmlFor="cbr-form-inicio-fecha">Inicio<span className="cbr-required-mark">*</span></label>
-                <input
+                <DatePicker
                   id="cbr-form-inicio-fecha"
-                  type="date"
                   value={campos.inicioFecha}
-                  onChange={(e) => setCampo('inicioFecha', e.target.value)}
+                  onChange={(v) => setCampo('inicioFecha', v)}
+                  clearable
                 />
               </div>
               <div className="form-field">
@@ -214,11 +215,11 @@ export default function NuevaReservaModal({ onClose, onSubmit }) {
             <div className="cbr-form-row">
               <div className="form-field">
                 <label htmlFor="cbr-form-vencimiento-fecha">Vencimiento<span className="cbr-required-mark">*</span></label>
-                <input
+                <DatePicker
                   id="cbr-form-vencimiento-fecha"
-                  type="date"
                   value={campos.vencimientoFecha}
-                  onChange={(e) => setCampo('vencimientoFecha', e.target.value)}
+                  onChange={(v) => setCampo('vencimientoFecha', v)}
+                  clearable
                 />
               </div>
               <div className="form-field">

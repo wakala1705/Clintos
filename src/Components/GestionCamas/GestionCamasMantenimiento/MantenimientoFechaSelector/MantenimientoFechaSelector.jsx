@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './MantenimientoFechaSelector.css';
 import Button from '@/Components/Button/Button';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 function ddmm(iso) {
   if (!iso) return null;
@@ -31,6 +32,8 @@ export default function MantenimientoFechaSelector({
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
+      // El calendario (DatePicker) se porta a document.body: un clic ahí no es "afuera".
+      if (e.target.closest('.dp-panel')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -62,22 +65,22 @@ export default function MantenimientoFechaSelector({
         <div className="filter-popover open" role="dialog" aria-label="Filtrar por rango de fecha">
           <div className="fp-section">
             <span className="fp-section-title">Desde</span>
-            <input
-              type="date"
-              className="cbm-fecha-input"
+            <DatePicker
               value={desde}
-              onChange={(e) => onChange('desde', e.target.value)}
-              aria-label="Fecha desde"
+              onChange={(v) => onChange('desde', v)}
+              ariaLabel="Fecha desde"
+              clearable
+              size="sm"
             />
           </div>
           <div className="fp-section">
             <span className="fp-section-title">Hasta</span>
-            <input
-              type="date"
-              className="cbm-fecha-input"
+            <DatePicker
               value={hasta}
-              onChange={(e) => onChange('hasta', e.target.value)}
-              aria-label="Fecha hasta"
+              onChange={(v) => onChange('hasta', v)}
+              ariaLabel="Fecha hasta"
+              clearable
+              size="sm"
             />
           </div>
           <div className="fp-actions">

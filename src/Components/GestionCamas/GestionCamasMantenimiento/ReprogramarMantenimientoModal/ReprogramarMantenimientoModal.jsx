@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { formatFecha, formatHoraCorta } from '@/hooks/GestionCamas/mockMantenimientoData';
 import { LuCalendarClock } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 export default function ReprogramarMantenimientoModal({ mantenimiento, onClose, onConfirm }) {
   const [fecha, setFecha] = useState('');
@@ -44,7 +45,7 @@ export default function ReprogramarMantenimientoModal({ mantenimiento, onClose, 
             <div className="cbm-reprogramar-row">
               <div className="form-field">
                 <label htmlFor="cbm-reprogramar-fecha">Nueva fecha<span className="cbm-required-mark">*</span></label>
-                <input id="cbm-reprogramar-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+                <DatePicker id="cbm-reprogramar-fecha" value={fecha} onChange={(v) => setFecha(v)} clearable />
               </div>
               <div className="form-field">
                 <label htmlFor="cbm-reprogramar-hora">Hora<span className="cbm-required-mark">*</span></label>

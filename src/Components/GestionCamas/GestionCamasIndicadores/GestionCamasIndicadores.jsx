@@ -24,6 +24,7 @@ import {
 import {
   LuActivity, LuArrowDown, LuArrowUp, LuBan, LuBedDouble, LuCalendarClock, LuCircleAlert, LuCircleCheck, LuSearchX, LuTimer,
 } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const ICONO_POR_KPI = {
   ocupacion: LuBedDouble, disponibilidad: LuCircleCheck, rotacion: LuActivity, limpieza: LuTimer, fueraServicio: LuBan,
@@ -214,11 +215,21 @@ export default function GestionCamasIndicadores() {
                 <LuCalendarClock className="icon" aria-hidden="true" />
                 <label>
                   Desde
-                  <input type="date" value={personalizadoDesde} onChange={(e) => setPersonalizadoDesde(e.target.value)} />
+                  <DatePicker
+                    value={personalizadoDesde}
+                    onChange={(v) => setPersonalizadoDesde(v)}
+                    clearable
+                    size="sm"
+                  />
                 </label>
                 <label>
                   Hasta
-                  <input type="date" value={personalizadoHasta} onChange={(e) => setPersonalizadoHasta(e.target.value)} />
+                  <DatePicker
+                    value={personalizadoHasta}
+                    onChange={(v) => setPersonalizadoHasta(v)}
+                    clearable
+                    size="sm"
+                  />
                 </label>
               </div>
             )}

@@ -25,6 +25,7 @@ import {
   LuArrowDown, LuArrowUp, LuArrowUpDown, LuBedDouble, LuCalendarClock, LuCircleAlert, LuClipboardX,
   LuFileClock, LuFilterX, LuPencilLine, LuSearch, LuSearchX, LuTrash2, LuUsers,
 } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', habitacion: '' };
 
@@ -185,11 +186,21 @@ export default function GestionCamasAuditoria() {
                 <LuCalendarClock className="icon" aria-hidden="true" />
                 <label>
                   Desde
-                  <input type="date" value={personalizadoDesde} onChange={(e) => setPersonalizadoDesde(e.target.value)} />
+                  <DatePicker
+                    value={personalizadoDesde}
+                    onChange={(v) => setPersonalizadoDesde(v)}
+                    clearable
+                    size="sm"
+                  />
                 </label>
                 <label>
                   Hasta
-                  <input type="date" value={personalizadoHasta} onChange={(e) => setPersonalizadoHasta(e.target.value)} />
+                  <DatePicker
+                    value={personalizadoHasta}
+                    onChange={(v) => setPersonalizadoHasta(v)}
+                    clearable
+                    size="sm"
+                  />
                 </label>
               </div>
             )}

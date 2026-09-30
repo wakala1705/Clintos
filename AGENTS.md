@@ -776,6 +776,54 @@ dentro de una tabla con scroll quedaban recortados en las últimas filas.
   tampoco: son megamenús de navegación con submenús en cascada y su propio
   estado "submenú abierto", no un dropdown de una lista.
 
+# Selector de fecha
+
+Ningún `<input type="date">` nuevo: el del navegador no respeta la tipografía,
+los radios ni el dropdown del proyecto (mismo criterio que los selects, ver
+"Selects de formulario"). Usar `@/Components/DatePicker/DatePicker`.
+
+```jsx
+<DatePicker
+  value={fecha}                 // 'YYYY-MM-DD' (nunca un Date)
+  onChange={(iso) => ...}       // recibe el 'YYYY-MM-DD' directo, no un evento
+  ariaLabel="Ir a una fecha"    // nombre accesible del disparador
+  triggerClassName="mi-label"   // opcional — dimensiona el disparador en su contexto
+  min="2026-01-01" max="2026-12-31" // opcionales — los días fuera de rango se deshabilitan
+  clearable                     // opcional — "Limpiar" en el pie (campos opcionales y filtros)
+  required                      // opcional — resaltado ámbar mientras está vacío (como FormSelect)
+  invalid={!!error}             // opcional — borde de error (el mensaje va aparte)
+  size="sm"                     // opcional — disparador bajo (--input-sm) para popovers y filtros
+>
+  Hoy · mié 30 sep 2026         // opcional — contenido del disparador (por defecto DD/MM/AAAA)
+</DatePicker>
+```
+
+- **Panel flotante**: calendario mensual de 6 filas fijas (no cambia de alto
+  entre meses), semanas que arrancan en lunes, botón "Hoy". Se porta a
+  `document.body` con `position:fixed` (como `FormSelect`) y se abre arriba si
+  no entra abajo. Apariencia del panel desde `DropdownPanel.module.css`.
+- **Teclado**: al abrir el foco va al día elegido; ←/→ ±1 día, ↑/↓ ±1 semana,
+  Inicio/Fin = lunes/domingo, RePág/AvPág ±1 mes, Enter/Espacio elige, Escape
+  cierra y devuelve el foco al disparador.
+- **Táctil**: días y flechas de 44px con `(max-width:1024px), (pointer:coarse)`.
+- **Lógica pura** en `@/hooks/DatePicker/fechas.js` (con tests en `__tests__/`);
+  el componente no usa `new Date()` en el render (la fecha de "hoy" se toma al abrir).
+- **Dentro de un popover con cierre por click-afuera** (`filter-popover-wrap`):
+  el calendario vive en `document.body`, así que ese listener también hay que
+  blindarlo con `if (e.target.closest('.dp-panel')) return;` al principio del
+  handler (mismo caso que `.form-select-dropdown`, ver "Selects de formulario").
+  Sin eso, elegir un día cierra el popover antes de aplicar la fecha.
+- **Migrado**: Canastas de cirugía, Facturación, Gestión de Camas, Vacunación
+  (incluye Esquema de vacunación) y Admisiones. Las celdas compactas de una
+  tabla pasan `triggerClassName` (ver `.vac-date-input.dp-trigger` en
+  EsquemaVacunacion.css) y ocultan el ícono.
+- **Pendiente de migrar** (siguen con `<input type="date">` nativo): Gestión de
+  Enfermería (Medicamentos, Órdenes, Pedidos, Alertas, Tareas, Signos vitales),
+  Historia Clínica (plantilla Crecimiento T2), Trazabilidad y Programación sala
+  de cirugías (wizard, urgencias, reprogramar, devoluciones, revisión). Los
+  `<input type="datetime-local">` (Reservar/Trasladar cama, wizard de cirugía)
+  necesitan además hora: este componente solo elige fecha.
+
 # Responsive / Breakpoints
 
 El proyecto es desktop-first y hoy tiene un piso duro de ~1024–1440px (cada

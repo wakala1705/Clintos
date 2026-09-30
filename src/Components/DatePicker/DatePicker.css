@@ -1,0 +1,70 @@
+/* Solo tokens (colores de la feature donde se monta, --fs-*, --fw-*, --th-secondary-*).
+   La apariencia base del panel viene de DropdownPanel.module.css; acá la
+   posición, el ancho y el calendario. `div.dp-panel` (elemento + clase) para
+   ganarle en especificidad al padding del CSS Module sin depender del orden de carga. */
+/* Disparador de campo de formulario (sin `children`): mismo alto/borde/tipografía que
+   el trigger de FormSelect, para que un campo de fecha calce entre selects e inputs. */
+.dp-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;
+  height:var(--input-md,36px);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  cursor:pointer;text-align:left;
+}
+.dp-trigger.dp-sm{height:var(--input-sm,32px);padding:0 8px;}
+.dp-trigger:hover:not(:disabled){border-color:var(--ink-400);}
+.dp-trigger[aria-expanded="true"]{border-color:var(--primary);}
+.dp-trigger:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.dp-trigger:disabled{background:var(--bg);color:var(--ink-400);cursor:not-allowed;}
+.dp-trigger[data-invalid="true"]{border-color:var(--red);}
+.dp-valor{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dp-placeholder{color:var(--ink-400);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dp-icono{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+/* Resaltado ámbar "obligatorio y vacío" (prop `required`): mismo criterio y colores que FormSelect. */
+html:not([data-required-highlight="off"]) .dp-trigger[data-required-empty="true"]{
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .dp-trigger[data-required-empty="true"]{
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}
+
+div.dp-panel{
+  position:fixed;width:296px;padding:12px;z-index:calc(var(--z-modal, 50) + 1);
+}
+.dp-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.dp-titulo{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.dp-nav{
+  width:32px;height:32px;border:none;border-radius:var(--dropdown-item-radius,7px);background:none;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
+}
+.dp-nav:hover{background:var(--bg);color:var(--ink-900);}
+.dp-nav:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.dp-nav .icon{width:18px;height:18px;}
+
+.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;}
+.dp-dow{
+  height:28px;display:flex;align-items:center;justify-content:center;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);
+  text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+.dp-dia{
+  height:36px;border:1px solid transparent;border-radius:var(--dropdown-item-radius,7px);background:none;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  cursor:pointer;font-variant-numeric:tabular-nums;
+}
+.dp-dia:hover:not(:disabled){background:var(--bg);}
+.dp-dia.fuera{color:var(--ink-400);}
+.dp-dia.hoy{border-color:var(--primary);color:var(--primary);}
+.dp-dia.elegido{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:var(--fw-semibold);}
+.dp-dia.elegido:hover:not(:disabled){background:var(--primary);}
+.dp-dia:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.dp-dia:disabled{opacity:var(--btn-disabled-opacity,.45);cursor:not-allowed;}
+
+.dp-pie{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil). */
+@media (max-width:1024px), (pointer:coarse){
+  div.dp-panel{width:336px;}
+  .dp-nav{width:44px;height:44px;}
+  .dp-dia{height:44px;}
+  .dp-pie button{min-height:44px;}
+}

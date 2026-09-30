@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import './FechaSelector.css';
 import { LuCalendar, LuChevronDown } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
-// Botón "Fecha: DD/MM/AAAA" + popover con un <input type="date"> (mismo
+// Botón "Fecha: DD/MM/AAAA" + popover con un DatePicker (mismo
 // patrón trigger+popover que ViewToggle.jsx: .date-picker-btn +
 // .filter-popover, ambos ya compartidos vía GestionCamas.css). `value`/
-// `onChange` van en formato ISO (yyyy-mm-dd, el nativo del input) — el label
+// `onChange` van en formato ISO (yyyy-mm-dd, el del DatePicker) — el label
 // del trigger se muestra en dd/mm/aaaa vía `labelValue`, ya formateado por el
 // padre (mismo criterio que otros triggers: este componente no sabe de
 // locales, solo arma la UI).
@@ -21,6 +22,8 @@ export default function FechaSelector({
   useEffect(() => {
     if (!open) return;
     function handleClickOutside(e) {
+      // El calendario (DatePicker) se porta a document.body: un clic ahí no es "afuera".
+      if (e.target.closest('.dp-panel')) return;
       if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
     }
     function handleKeyDown(e) {
@@ -52,12 +55,12 @@ export default function FechaSelector({
         <div className="filter-popover open" role="dialog" aria-label="Filtrar por fecha">
           <div className="fp-section">
             <span className="fp-section-title">Fecha</span>
-            <input
-              type="date"
-              className="cbr-fecha-input"
+            <DatePicker
               value={value}
-              onChange={(e) => onChange(e.target.value)}
-              aria-label="Fecha de inicio de la reserva"
+              onChange={(v) => onChange(v)}
+              ariaLabel="Fecha de inicio de la reserva"
+              clearable
+              size="sm"
             />
           </div>
           <div className="fp-actions">

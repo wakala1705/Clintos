@@ -435,8 +435,8 @@ html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
    — mismo selector/colores que PlantillaCrecimt2.css/NuevaCitaFlow.css
    (cada feature de nivel superior duplica esta regla, mismo criterio que
    los tokens de color). Vía :required/:placeholder-shown nativos, sin JS
-   por campo — input[type="date"] no soporta :placeholder-shown en Chromium
-   (usaría :invalid en su lugar), pero este feature no tiene ese caso hoy.
+   por campo. Los campos de fecha son DatePicker (@/Components/DatePicker):
+   con `required` usan el mismo resaltado vía `data-required-empty`.
    Gateado por data-required-highlight en <html>; "off" apaga el resaltado
    en toda la app. Para un FormSelect (botón, sin :required nativo) ver la
    regla equivalente basada en `data-required-empty` en FormSelect.css. */

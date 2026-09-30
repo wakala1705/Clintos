@@ -10,6 +10,7 @@ import {
   AREA_LABEL, ESTADOS_CRITICOS, ESTADO_LABEL, PISO_LABEL, SECTOR_LABEL, SEDE_LABEL, TRANSICIONES_PERMITIDAS,
 } from '@/hooks/GestionCamas/mockCamasData';
 import { LuBedDouble } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // Fecha/hora de inicio nace en "ahora" (mismo criterio por defecto que el
 // mock del encargo, que ya trae 20/08/2026 16:20 — un timestamp presente,
@@ -129,11 +130,11 @@ export default function CambiarEstadoModal({
             <div className="cb-row">
               <div className="form-field">
                 <label htmlFor="cb-fecha-inicio">Fecha inicio</label>
-                <input
+                <DatePicker
                   id="cb-fecha-inicio"
-                  type="date"
                   value={fechaInicioFecha}
-                  onChange={(e) => setFechaInicioFecha(e.target.value)}
+                  onChange={(v) => setFechaInicioFecha(v)}
+                  clearable
                 />
               </div>
               <div className="form-field">

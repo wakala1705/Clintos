@@ -4,6 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import './EsquemaVacunacion.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuChevronDown, LuCircle, LuCircleCheck, LuExpand, LuPlus, LuSyringe, LuTrash2 } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // Componente app-wide (usado por 2+ features: paso "Vacunación" del wizard
 // CRECIMT2 de Historia Clínica y la acción "Ver esquema completo" de la
@@ -49,9 +50,9 @@ const BIOLOGICOS = [
 ];
 
 // Valores de ejemplo del formulario legacy — asignados al primer momento
-// aplicable de cada biológico, en formato ISO porque <input type="date">
-// solo acepta yyyy-mm-dd como value sin importar el locale con el que el
-// navegador lo muestre.
+// aplicable de cada biológico, en formato ISO porque el DatePicker
+// (@/Components/DatePicker) trabaja con yyyy-mm-dd como value sin importar
+// cómo se muestre la fecha.
 function initialFechas() {
   return {
     bcg: { rn: '2026-08-13' },
@@ -108,12 +109,12 @@ function VacMatrixTable({ fechas, setFecha }) {
                         : <LuCircle className="icon" aria-hidden="true" />}
                       <span className="sr-only">{aplicada ? 'Aplicada' : 'Pendiente'}</span>
                     </span>
-                    <input
-                      type="date"
-                      className="vac-date-input"
+                    <DatePicker
                       value={valor}
-                      aria-label={`${bio.label} — ${m.label}${m.sub ? ` ${m.sub}` : ''}`}
-                      onChange={(e) => setFecha(bio.key, m.key, e.target.value)}
+                      onChange={(v) => setFecha(bio.key, m.key, v)}
+                      ariaLabel={`${bio.label} — ${m.label}${m.sub ? ` ${m.sub}` : ''}`}
+                      triggerClassName="vac-date-input"
+                      clearable
                     />
                   </div>
                 </td>
@@ -255,11 +256,11 @@ const EsquemaVacunacion = forwardRef(function EsquemaVacunacion(
                             <label htmlFor={inputId} className="sr-only">
                               Fecha — {bio.label} — {m.label}{m.sub ? ` ${m.sub}` : ''}
                             </label>
-                            <input
+                            <DatePicker
                               id={inputId}
-                              type="date"
                               value={valor}
-                              onChange={(e) => setFecha(bio.key, m.key, e.target.value)}
+                              onChange={(v) => setFecha(bio.key, m.key, v)}
+                              clearable
                             />
                           </div>
                         </div>
@@ -297,11 +298,11 @@ const EsquemaVacunacion = forwardRef(function EsquemaVacunacion(
                 </div>
                 <div className="ev-field vac-otra-fecha">
                   <label htmlFor={`vac-otra-fecha-${i}`} className="sr-only">Fecha de aplicación</label>
-                  <input
+                  <DatePicker
                     id={`vac-otra-fecha-${i}`}
-                    type="date"
                     value={v.fecha}
-                    onChange={(e) => updateOtraVacuna(i, { fecha: e.target.value })}
+                    onChange={(fecha) => updateOtraVacuna(i, { fecha })}
+                    clearable
                   />
                 </div>
                 {otrasVacunas.length > 1 && (

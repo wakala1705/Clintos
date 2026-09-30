@@ -2,6 +2,7 @@
 
 import './AplicacionStep.css';
 import { MOTIVOS_FUERA_ESQUEMA, SITIO_APLICACION_OPTIONS, VIA_ADMINISTRACION_OPTIONS } from '@/hooks/Vacunacion/mockVacunacionData';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // Paso 3 — resuelve el nombre/dosis a mostrar según el origen de la
 // selección del paso anterior (esquema vs. fuera de esquema, ver
@@ -35,7 +36,7 @@ export default function AplicacionStep({ paciente, vacunaSel, value, onChange, e
         <div className="rv-grid-2">
           <div className={`rv-field${errors.fecha ? ' has-error' : ''}`}>
             <label htmlFor="rv-ap-fecha">Fecha de aplicación<span className="rv-required">*</span></label>
-            <input id="rv-ap-fecha" type="date" value={value.fecha} onChange={(e) => onChange({ fecha: e.target.value })} />
+            <DatePicker id="rv-ap-fecha" value={value.fecha} onChange={(v) => onChange({ fecha: v })} invalid={!!errors.fecha} clearable />
             {errors.fecha && <span className="rv-error-text">{errors.fecha}</span>}
           </div>
           <div className={`rv-field${errors.hora ? ' has-error' : ''}`}>
@@ -50,7 +51,12 @@ export default function AplicacionStep({ paciente, vacunaSel, value, onChange, e
           </div>
           <div className="rv-field">
             <label htmlFor="rv-ap-vencimiento">Fecha de vencimiento</label>
-            <input id="rv-ap-vencimiento" type="date" value={value.fechaVencimiento} onChange={(e) => onChange({ fechaVencimiento: e.target.value })} />
+            <DatePicker
+              id="rv-ap-vencimiento"
+              value={value.fechaVencimiento}
+              onChange={(v) => onChange({ fechaVencimiento: v })}
+              clearable
+            />
           </div>
           <div className="rv-field">
             <label htmlFor="rv-ap-fabricante">Fabricante</label>

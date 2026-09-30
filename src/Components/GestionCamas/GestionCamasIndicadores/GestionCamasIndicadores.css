@@ -27,10 +27,7 @@
 }
 .cbin-periodo-custom .icon{width:16px;height:16px;color:var(--ink-500);}
 .cbin-periodo-custom label{display:flex;align-items:center;gap:6px;font-weight:var(--fw-medium);color:var(--ink-700);}
-.cbin-periodo-custom input{
-  border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;
-  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:var(--surface);
-}
+.cbin-periodo-custom .dp-trigger{width:auto;min-width:140px;font-size:var(--fs-sm);}
 
 .cbin-filtros-activos{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;

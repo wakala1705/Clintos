@@ -9,6 +9,7 @@ import {
   AREAS, PRIORIDADES, SEDES, TIPOS,
 } from '@/hooks/GestionCamas/mockMantenimientoData';
 import { LuWrench } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 const SEDE_OPTIONS = SEDES.filter((s) => s.value !== 'todas');
 const AREA_OPTIONS = AREAS.filter((a) => a.value !== 'todas');
@@ -139,11 +140,11 @@ export default function ProgramarMantenimientoModal({ onClose, onSubmit }) {
             <div className="cbm-form-row">
               <div className="form-field">
                 <label htmlFor="cbm-form-fecha">Fecha programada<span className="cbm-required-mark">*</span></label>
-                <input
+                <DatePicker
                   id="cbm-form-fecha"
-                  type="date"
                   value={campos.fecha}
-                  onChange={(e) => setCampo('fecha', e.target.value)}
+                  onChange={(v) => setCampo('fecha', v)}
+                  clearable
                 />
               </div>
               <div className="form-field">

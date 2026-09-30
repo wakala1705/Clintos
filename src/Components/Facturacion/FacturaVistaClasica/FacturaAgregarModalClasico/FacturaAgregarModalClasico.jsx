@@ -19,6 +19,7 @@ import {
   LuClipboardList, LuCalculator, LuCoins, LuCreditCard, LuChartPie, LuInfo,
   LuRefreshCw, LuChevronUp, LuChevronDown, LuChevronLeft, LuPlus, LuPackage, LuSave, LuLink, LuCircleHelp, LuX,
 } from 'react-icons/lu';
+import DatePicker from '@/Components/DatePicker/DatePicker';
 
 // icon/description por opción (consumido por TipoFacturaSelector, panel
 // izquierdo) -- Normal se agrega como 4ta tarjeta (encargo explícito, ver
@@ -998,23 +999,21 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
 
                   <div className="form-field">
                     <label htmlFor="fam-fecha-factura">Fecha Factura<span className="fam-required-mark">*</span></label>
-                    <input
+                    <DatePicker
                       id="fam-fecha-factura"
-                      type="date"
                       value={form.fechaFactura}
-                      onChange={(e) => handleChangeFechaFactura(e.target.value)}
+                      onChange={(v) => handleChangeFechaFactura(v)}
                       required
                     />
                   </div>
                   <div className={`form-field${errors.fechaVencimiento ? ' has-error' : ''}`}>
                     <label htmlFor="fam-fecha-vencimiento">Fecha Vencimiento<span className="fam-required-mark">*</span></label>
-                    <input
+                    <DatePicker
                       id="fam-fecha-vencimiento"
-                      type="date"
                       value={form.fechaVencimiento}
-                      onChange={(e) => handleChangeFechaVencimiento(e.target.value)}
+                      onChange={(v) => handleChangeFechaVencimiento(v)}
+                      invalid={!!errors.fechaVencimiento}
                       required
-                      aria-invalid={!!errors.fechaVencimiento}
                     />
                     {errors.fechaVencimiento && <span className="form-field-error">{errors.fechaVencimiento}</span>}
                   </div>

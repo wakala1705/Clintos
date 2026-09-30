@@ -26,7 +26,6 @@
 .ev-wrap-compact{max-width:none;padding:20px 24px;}
 .ev-wrap-compact .vac-matrix-wrap{margin-top:0;}
 .ev-wrap-compact .vac-cell{padding:5px 4px;}
-.ev-wrap-compact .vac-date-input{padding:5px 4px;}
 
 .ev-title{font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);margin:0 0 4px;}
 .ev-desc{font-size:var(--fs-base);color:var(--ink-500);margin:0 0 24px;line-height:1.5;}
@@ -67,7 +66,6 @@
 .vac-expand-body{padding:24px;}
 .vac-expand-body .vac-matrix-wrap{margin-top:0;}
 .vac-expand-body .vac-cell{padding:5px 4px;}
-.vac-expand-body .vac-date-input{padding:5px 4px;}
 
 /* ---------- ENCABEZADO ---------- */
 .vac-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
@@ -124,12 +122,13 @@
 .vac-cell-status .icon{width:14px;height:14px;}
 .vac-cell-pending .vac-cell-status .icon{color:var(--ink-400);}
 .vac-cell-done .vac-cell-status .icon{color:var(--green);}
-.vac-date-input{
-  flex:1;min-width:0;border:1px solid var(--border);border-radius:6px;
-  padding:5px 6px;font-family:inherit;font-size:var(--fs-sm);color:var(--ink-900);background:var(--surface);
+/* Disparador del DatePicker dentro de la celda: compacto y sin ícono (la celda ya es angosta).
+   .dp-trigger viene de @/Components/DatePicker; la doble clase le gana en especificidad. */
+.vac-date-input.dp-trigger{
+  flex:1;width:auto;min-width:0;height:auto;padding:5px 6px;border-radius:6px;font-size:var(--fs-sm);
 }
-.vac-cell-done .vac-date-input{background:var(--surface);}
-.vac-date-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.ev-wrap-compact .vac-date-input.dp-trigger,.vac-expand-body .vac-date-input.dp-trigger{padding:5px 4px;}
+.vac-date-input .dp-icono{display:none;}
 
 /* ---------- TARJETAS MOBILE/TABLET ----------
    La matriz colapsa a un acordeón por biológico por debajo de 900px. */
