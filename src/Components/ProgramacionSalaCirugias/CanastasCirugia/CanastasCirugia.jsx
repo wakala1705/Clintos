@@ -20,7 +20,7 @@ import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
   HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, despacharCanasta, fechaISO, fetchCanastasDia,
-  cerrarConFaltante, registrarConsumo, registrarRecepcion, resumenCanasta,
+  cerrarConFaltante, reabrirSolicitud, registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { filtrarCanastas, primeraPorRecibir } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
@@ -151,6 +151,14 @@ export default function CanastasCirugia() {
     );
   }
 
+  function handleReabrir(cirugia) {
+    aplicar(
+      cirugia,
+      () => reabrirSolicitud(cirugia.id, { usuario: USUARIO }),
+      () => `Solicitud de ${cirugia.paciente.nombre} reabierta: ya puedes recibir el saldo`,
+    );
+  }
+
   function handleRegistrarConsumo(cirugia, usados) {
     aplicar(
       cirugia,
@@ -230,6 +238,7 @@ export default function CanastasCirugia() {
               onDraftChange={(patch) => handleDraftChange(seleccion.id, patch)}
               onRecibir={(recibidos, novedad) => handleRecibir(seleccion, recibidos, novedad)}
               onCerrarConFaltante={(novedad) => handleCerrarConFaltante(seleccion, novedad)}
+              onReabrir={() => handleReabrir(seleccion)}
               onRegistrarConsumo={(usados) => handleRegistrarConsumo(seleccion, usados)}
               onDespachar={(opciones) => handleDespachar(seleccion, opciones)}
             />

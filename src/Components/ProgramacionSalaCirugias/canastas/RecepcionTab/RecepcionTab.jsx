@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  LuCheck, LuCircleCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert, LuTruck,
+  LuCheck, LuCircleCheck, LuMinus, LuPackageCheck, LuPlus, LuRotateCcw, LuTriangleAlert, LuTruck,
 } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -377,11 +377,15 @@ function renderPreparacion({ cirugia, onDespachar }) {
   );
 }
 
-function renderLectura({ cirugia, draft, onDraftChange }) {
+function renderLectura({
+  cirugia, draft, onDraftChange, onReabrir,
+}) {
   const busqueda = draft.busquedaInsumo ?? '';
   const items = cirugia.canasta.items;
   const visibles = busqueda.trim() ? items.filter((i) => coincide(i.nombre, busqueda)) : items;
   const nota = cirugia.canasta.recepcion?.nota;
+  // Cerrada con faltante y sin consumo registrado: todavía se puede recibir el saldo.
+  const puedeReabrir = Boolean(onReabrir) && Boolean(cirugia.canasta.recepcion?.cierreConFaltante) && !cirugia.canasta.consumo;
   const conNovedad = (i) => Boolean(i.novedad) || cantidadRecibida(i) < i.cantidad;
   const sinNovedades = items.every((i) => !conNovedad(i));
   const nConNovedad = items.filter(conNovedad).length;
@@ -453,6 +457,12 @@ function renderLectura({ cirugia, draft, onDraftChange }) {
         </div>
         {nota && <p className="cnc-nota-lectura"><strong>Nota de la recepción:</strong> {nota}</p>}
       </div>
+      {puedeReabrir && (
+        <div className="cnc-tab-footer">
+          <span className="cnc-footer-msg">Si farmacia despacha el saldo, reabre la solicitud para recibirlo.</span>
+          <Button variant="secondary" icon={LuRotateCcw} onClick={onReabrir}>Reabrir para recibir saldo</Button>
+        </div>
+      )}
     </>
   );
 }

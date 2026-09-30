@@ -20,7 +20,7 @@ const oracion = (t = '') => (t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerC
 // pestañas Recepción / Consumo y devolución. El estado editable vive en
 // `draft` (lo guarda el orquestador por cirugía); esta capa no tiene estado.
 export default function CanastaDetalle({
-  cirugia, draft, error, onDraftChange, onRecibir, onCerrarConFaltante, onRegistrarConsumo, onDespachar,
+  cirugia, draft, error, onDraftChange, onRecibir, onCerrarConFaltante, onReabrir, onRegistrarConsumo, onDespachar,
 }) {
   const { estado } = resumenCanasta(cirugia);
   const banner = bannerCanasta(cirugia);
@@ -87,7 +87,7 @@ export default function CanastaDetalle({
 
       <div className="cnc-tabpanel" role="tabpanel" id={`cnc-panel-${tab}`} aria-labelledby={`cnc-tab-${tab}`}>
         {tab === 'recepcion' ? (
-          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} onCerrarConFaltante={onCerrarConFaltante} onDespachar={onDespachar} />
+          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} onCerrarConFaltante={onCerrarConFaltante} onReabrir={onReabrir} onDespachar={onDespachar} />
         ) : (
           <ConsumoTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRegistrarConsumo={onRegistrarConsumo} />
         )}

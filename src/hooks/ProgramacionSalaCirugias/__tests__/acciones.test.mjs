@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, cerrarConFaltante, despacharCanasta,
+  actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, cerrarConFaltante, despacharCanasta, reabrirSolicitud,
   registrarConsumo, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
   fetchCanastasDia, fechaISO,
 } from '../mockCirugiaData.js';
@@ -55,6 +55,24 @@ test('cerrarConFaltante: cierra con novedades, origen farmacia y trazabilidad', 
   assert.equal(c.canasta.recepcion.motivo, 'faltante-farmacia');
   assert.equal(c.canasta.recepcion.nota, 'Sin stock');
   assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`);
+});
+
+test('reabrirSolicitud: devuelve la solicitud cerrada con faltante a despacho-parcial y permite recibir el saldo', () => {
+  assert.throws(() => reabrirSolicitud('12359', { usuario: 'Ana' }), /cerrada con faltante/);
+  const c = reabrirSolicitud('12356', { usuario: 'Ana' });
+  assert.equal(resumenCanasta(c).estado, 'despacho-parcial');
+  assert.equal(c.canasta.recepcion, undefined);
+  assert.equal(c.canasta.reaperturas.length, 1);
+  const gasas = c.canasta.items.find((i) => i.nombre === 'Gasas estériles');
+  assert.deepEqual([gasas.despachado, gasas.recibido, gasas.novedad], [5, 5, undefined]);
+  assert.equal(resumenCanasta(despacharCanasta('12356')).estado, 'despachada');
+  const cerrada = registrarRecepcion('12356', { recibidos: {}, usuario: 'Ana' });
+  assert.equal(resumenCanasta(cerrada).estado, 'recibida');
+  assert.equal(cerrada.canasta.items.find((i) => i.nombre === 'Gasas estériles').recibido, 6);
+});
+
+test('reabrirSolicitud: no se puede con el consumo ya registrado', () => {
+  assert.throws(() => reabrirSolicitud('12353', { usuario: 'Ana' }), /ya se registró el consumo|cerrada con faltante/);
 });
 
 test('registrarRecepcion: despachada completa, sin faltantes → recibida sin novedades', () => {

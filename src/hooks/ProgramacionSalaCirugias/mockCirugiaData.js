@@ -2239,6 +2239,33 @@ export function cerrarConFaltante(id, {
   return actualizarCirugia(id, { canasta: { ...actual.canasta, items, recepcion } });
 }
 
+// Reabre una solicitud cerrada con faltante para recibir el saldo que farmacia
+// despache después. Conserva lo despachado/recibido; solo vale mientras no se
+// haya registrado el consumo (con consumo, las cantidades usadas y devueltas
+// quedarían inválidas). Deja la huella en `reaperturas`.
+export function reabrirSolicitud(id, { usuario = 'CLINTOS' }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (actual.canasta.consumo) {
+    throw new Error('No se puede reabrir: ya se registró el consumo de esta canasta.');
+  }
+  if (!actual.canasta.recepcion?.cierreConFaltante) {
+    throw new Error('Solo se puede reabrir una solicitud cerrada con faltante.');
+  }
+  const items = actual.canasta.items.map((i) => {
+    if (i.solicitudFarmacia !== 'entregado') return i;
+    const { novedad, ...resto } = i;
+    return { ...resto, solicitudFarmacia: 'solicitado' };
+  });
+  const { recepcion, ...canasta } = actual.canasta;
+  return actualizarCirugia(id, {
+    canasta: {
+      ...canasta,
+      items,
+      reaperturas: [...(canasta.reaperturas ?? []), { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), cierre: recepcion }],
+    },
+  });
+}
+
 // Consumo real tras la cirugía. `usados`: { [nombre]: cantidad } (sin entrada
 // = se usó todo lo recibido). Lo no usado se devuelve a farmacia creando una
 // devolución con guardarDevolucion (reusa topes, código y lote).
