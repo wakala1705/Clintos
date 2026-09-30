@@ -8,11 +8,18 @@ const HOY = fechaISO(new Date());
 
 test('sala qx-1 de hoy: los casos del diseño (+ una despachada completa), por hora', async () => {
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
-  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12355', '12357', '12358']);
+  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12357', '12355', '12358']);
   assert.deepEqual(
     items.map((c) => resumenCanasta(c).estado),
-    ['recibida', 'despachada', 'despachada', 'con-novedades', 'en-preparacion', 'en-preparacion'],
+    ['recibida', 'despachada', 'despachada', 'en-preparacion', 'con-novedades', 'en-preparacion'],
   );
+});
+
+test('sala qx-1 de hoy: ninguna cirugía se solapa con otra', async () => {
+  const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
+  items.slice(1).forEach((c, i) => {
+    assert.ok(items[i].horaFin <= c.horaInicio, `${items[i].id} termina ${items[i].horaFin} y ${c.id} empieza ${c.horaInicio}`);
+  });
 });
 
 test('despachada sin novedades (12359): todo lo despachado es lo solicitado', async () => {

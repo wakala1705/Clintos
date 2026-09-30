@@ -1158,7 +1158,7 @@ let CIRUGIAS = [
     procedimiento: 'Hernioplastia inguinal derecha',
     cirujano: 'Dr. Andrés López',
     horaInicio: '09:30',
-    horaFin: '11:30',
+    horaFin: '11:00',
     canasta: {
       nombre: 'Hernia inguinal estándar',
       items: itemsDe(2, (i) => ({
@@ -1181,7 +1181,7 @@ let CIRUGIAS = [
     servicio: 'Ortopedia',
     cirujano: 'Dra. Paula Restrepo',
     horaInicio: '11:00',
-    horaFin: '12:15',
+    horaFin: '12:00',
     canasta: {
       nombre: 'Ortopedia menor',
       items: itemsDe(3, (i) => ({ solicitudFarmacia: 'solicitado', preparado: true, despachado: i.cantidad })),
@@ -1199,8 +1199,8 @@ let CIRUGIAS = [
     sexo: 'Masculino',
     procedimiento: 'Apendicectomía laparoscópica',
     cirujano: 'Dr. Carlos Martínez',
-    horaInicio: '13:30',
-    horaFin: '14:30',
+    horaInicio: '12:00',
+    horaFin: '13:00',
     estado: 'urgencia',
     canasta: {
       nombre: 'Apendicectomía estándar',

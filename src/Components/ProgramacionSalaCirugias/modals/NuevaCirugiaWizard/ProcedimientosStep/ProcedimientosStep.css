@@ -22,7 +22,7 @@
 }
 .pcs-cell-icon .icon{width:18px;height:18px;}
 .pcs-card-heading-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.pcs-cell-primary{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pcs-cell-primary{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 .pcs-card-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .pcs-card-bottom{

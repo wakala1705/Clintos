@@ -13,7 +13,7 @@
 }
 .cfs-procedimiento-item:last-child, .cfs-personal-item:last-child{border-bottom:none;}
 
-.cfs-procedimiento-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.cfs-procedimiento-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
 .cfs-procedimiento-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .cfs-personal-rol{

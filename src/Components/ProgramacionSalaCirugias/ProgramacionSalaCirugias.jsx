@@ -25,7 +25,6 @@ import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/List
 import { ESTADO_PROGRAMACION_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockListadoProgramaciones';
 import {
   SALAS,
-  SEMANA_ANCLA,
   actualizarEstadoCirugia,
   addDias,
   addMeses,
@@ -49,15 +48,18 @@ import {
 export default function ProgramacionSalaCirugias() {
   const router = useRouter();
   // Sin filtro de Sede en la UI (encargo explícito): fija a '02' (Sede
-  // Norte), la única con datos completos en el mock (ver SEMANA_ANCLA en
-  // mockCirugiaData.js) — deja de ser estado porque nada la cambia.
+  // Norte), la única con datos completos en el mock (ver mockCirugiaData.js) — deja de ser estado porque nada la cambia.
   const sedeId = '02';
   const [salaId, setSalaId] = useState('qx-1');
   // Fecha foco de la agenda -- su significado depende de `vista`: el día
   // mostrado (dia), la semana que lo contiene (semana, vía lunesDeSemana) o
   // el mes que lo contiene (mes, vía grillaMes). Reemplaza al `weekStart`
   // de V1 (solo semana) para que las 3 vistas compartan un único ancla.
-  const [fechaAncla, setFechaAncla] = useState(SEMANA_ANCLA);
+  const [fechaAncla, setFechaAncla] = useState(() => {
+    // Arranca en el día de hoy (sin hora), no en una semana fija.
+    const hoy = new Date();
+    return new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  });
   const [estado, setEstado] = useState('todos');
   const [vista, setVista] = useState('semana');
   const [mostrarFinesDeSemana, setMostrarFinesDeSemana] = useState(true);

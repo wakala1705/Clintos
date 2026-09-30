@@ -60,7 +60,7 @@ function renderEditar({
           </thead>
           <tbody>
             {filas.map((f) => (
-              <tr key={f.item.nombre}>
+              <tr key={f.item.nombre} className={f.verificado ? 'cnc-fila-ok' : undefined}>
                 <td className="cnc-col-ok">
                   <button
                     type="button"
@@ -99,7 +99,9 @@ function renderEditar({
                     </button>
                   </div>
                 </td>
-                <td className="cnc-col-nov"><span className="cnc-nov">{f.novedad || '—'}</span></td>
+                <td className="cnc-col-nov">{f.novedad
+                  ? <span className="cnc-nov"><LuTriangleAlert className="icon" aria-hidden="true" />{f.novedad}</span>
+                  : <span className="cnc-nov-nada" aria-label="Sin novedad">—</span>}</td>
               </tr>
             ))}
           </tbody>
@@ -183,7 +185,9 @@ function renderLectura({ cirugia }) {
                   <td className="cnc-num">{item.cantidad}</td>
                   <td className="cnc-num">{cantidadDespachada(item)}</td>
                   <td className="cnc-num"><strong>{recibido}</strong></td>
-                  <td className="cnc-col-nov"><span className="cnc-nov">{novedad || '—'}</span></td>
+                  <td className="cnc-col-nov">{novedad
+                    ? <span className="cnc-nov">{novedad}</span>
+                    : <span className="cnc-nov-nada" aria-label="Sin novedad">—</span>}</td>
                 </tr>
               );
             })}
