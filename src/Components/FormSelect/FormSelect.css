@@ -38,3 +38,11 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
 .form-select-dropdown{
   position:fixed;width:max-content;max-width:min(320px,calc(100vw - 16px));overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
 }
+
+/* Opciones con objetivo táctil de 44px cuando el puntero es el dedo (no por
+   ancho: en un desktop angosto con ratón las opciones siguen densas). Se busca
+   por role, no por clase (las de DropdownPanel llevan hash). Solo FormSelect:
+   el resto de dropdowns que comparten DropdownPanel no cambia. */
+@media (pointer:coarse){
+  .form-select-dropdown [role="option"]{min-height:44px;}
+}
