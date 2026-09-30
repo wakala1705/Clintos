@@ -1,0 +1,4 @@
+/* Tabla, stepper y footer viven en ../../shared/shared.css. */
+.cnc-dev-cero{color:var(--ink-400);}
+.cnc-dev-uno{color:var(--status-info-fg);font-weight:var(--fw-bold);}
+.cnc-usado-fijo{font-weight:var(--fw-bold);}
