@@ -685,6 +685,40 @@ export const SEMANA_ANCLA = new Date(2026, 7, 31);
 // real con farmacia en este mock) -- una posible discrepancia entre ambos no
 // es un bug.
 
+// Fecha de "hoy" para las semillas de "Canastas de cirugía": dinámica (antes
+// eran literales de 2026-09-29 y la pantalla abría vacía al día siguiente).
+const HOY_ISO = fechaISO(new Date());
+
+const itemsDe = (catalogo, fn) => CANASTAS_CATALOGO[catalogo].items.map((i, n) => ({ ...i, ...fn(i, n) }));
+
+// Cirugía de sede '02'/sala 'qx-1' de hoy con los datos mínimos que consumen
+// las pantallas (mismo shape que las entradas literales de CIRUGIAS).
+function cirugiaHoy({
+  id, nombre, documento, edad, sexo, procedimiento, cirujano, horaInicio, horaFin, estado = 'programada', canasta, farmacia,
+}) {
+  return {
+    id,
+    sedeId: '02',
+    salaId: 'qx-1',
+    paciente: {
+      nombre, documento, edad, edadMeses: 0, edadDias: 0, sexo, aseguradora: 'Sura EPS', nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Bogotá', telAviso: '300 000 0000',
+    },
+    procedimientoPrincipal: procedimiento,
+    servicio: 'Cirugía general',
+    tipoCirugia: estado === 'urgencia' ? 'Urgencia' : 'Programada',
+    cirujano,
+    fecha: HOY_ISO,
+    horaInicio,
+    horaFin,
+    estado,
+    procedimientos: [{ nombre: procedimiento, tipo: 'principal', duracionMin: 90, notas: '' }],
+    personal: [{ rol: 'Cirujano', nombre: cirujano }],
+    equipos: [],
+    canasta,
+    farmacia,
+  };
+}
+
 let CIRUGIAS = [
   {
     id: '12345',
@@ -982,15 +1016,12 @@ let CIRUGIAS = [
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
     },
   },
-  // 3 cirugías con fecha de "hoy" fija (2026-09-29, mismo criterio de fechas
-  // literales que el resto del mock) para que "Canastas de cirugía" no
-  // arranque vacía en su primer ingreso (encargo explícito, 2026-09-29) --
-  // una por cada paso del flujo de insumos, para que las 3 pestañas de esa
-  // pantalla (Pendientes de recepción/Recibidas/Todas) tengan contenido real
-  // sin depender de que el usuario primero pida insumos desde otra cirugía.
-  // Sofía Restrepo y Camila Duarte en 'qx-1' (sala por defecto de esa
-  // pantalla) para que el turno por defecto ya muestre pendiente + recibida
-  // sin cambiar de sala; Jorge Salcedo en 'qx-2' para probar el selector.
+  // Cirugías de "hoy" (fecha dinámica, HOY_ISO) para que "Canastas de cirugía"
+  // no arranque vacía: 5 casos en 'qx-1' -- realizada con canasta recibida
+  // (consumo pendiente, 12353), despachada por recibir (12356), recibida con
+  // novedades (12355), urgencia en preparación (12357) y programada en
+  // preparación = bloqueada (12358) -- más Jorge Salcedo en 'qx-2' (sin
+  // solicitar) para probar el selector de sala.
   {
     id: '12353',
     sedeId: '02',
@@ -1003,10 +1034,10 @@ let CIRUGIAS = [
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
     cirujano: 'Dr. Juan García',
-    fecha: '2026-09-29',
+    fecha: HOY_ISO,
     horaInicio: '07:30',
     horaFin: '09:30',
-    estado: 'programada',
+    estado: 'realizada',
     procedimientos: [
       { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 120, notas: 'Colecistitis crónica.' },
     ],
@@ -1020,11 +1051,13 @@ let CIRUGIAS = [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
     ],
-    // Todos 'solicitado' -- pendiente de recepción, la pestaña por defecto de
-    // Canastas de cirugía.
+    // Recibida completa y cirugía ya realizada: queda el consumo por registrar.
     canasta: {
       nombre: 'Colecistectomía estándar',
-      items: CANASTAS_CATALOGO[0].items.map((i) => ({ ...i, solicitudFarmacia: 'solicitado' })),
+      items: itemsDe(0, (i) => ({
+        solicitudFarmacia: 'entregado', preparado: true, despachado: i.cantidad, recibido: i.cantidad,
+      })),
+      recepcion: { usuario: 'Camilo Grondona', fecha: `${HOY_ISO}T06:48`, conNovedades: false },
     },
     farmacia: {
       numeroPedido: '4590', estado: 'listo', fechaSolicitud: '2026-09-29T06:30',
@@ -1043,7 +1076,7 @@ let CIRUGIAS = [
     servicio: 'Cirugía general',
     tipoCirugia: 'Urgencia',
     cirujano: 'Dr. Carlos Martínez',
-    fecha: '2026-09-29',
+    fecha: HOY_ISO,
     horaInicio: '10:00',
     horaFin: '12:00',
     estado: 'urgencia',
@@ -1079,7 +1112,7 @@ let CIRUGIAS = [
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
     cirujano: 'Dr. Andrés López',
-    fecha: '2026-09-29',
+    fecha: HOY_ISO,
     horaInicio: '13:00',
     horaFin: '15:00',
     estado: 'programada',
@@ -1095,16 +1128,91 @@ let CIRUGIAS = [
     equipos: [
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
     ],
-    // Todos 'entregado' -- ya recibida, pestaña "Recibidas".
+    // Recibida con novedades: llegó 1 unidad menos de gasas.
     canasta: {
       nombre: 'Hernia inguinal estándar',
-      items: CANASTAS_CATALOGO[2].items.map((i) => ({ ...i, solicitudFarmacia: 'entregado' })),
+      items: itemsDe(2, (i) => {
+        const falta = i.nombre === 'Gasas estériles';
+        return {
+          solicitudFarmacia: 'entregado',
+          preparado: true,
+          despachado: i.cantidad,
+          recibido: falta ? i.cantidad - 1 : i.cantidad,
+          ...(falta ? { novedad: 'Faltan 1 en la entrega' } : {}),
+        };
+      }),
+      recepcion: { usuario: 'Camilo Grondona', fecha: `${HOY_ISO}T08:10`, conNovedades: true },
     },
     farmacia: {
       numeroPedido: '4592', estado: 'entregado', fechaSolicitud: '2026-09-28T16:00',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
     },
   },
+  // Despachada por recibir: farmacia despachó 5 de 6 gasas.
+  cirugiaHoy({
+    id: '12356',
+    nombre: 'Juan Rodríguez',
+    documento: 'CC 71.334.902',
+    edad: 47,
+    sexo: 'Masculino',
+    procedimiento: 'Hernioplastia inguinal derecha',
+    cirujano: 'Dr. Andrés López',
+    horaInicio: '09:30',
+    horaFin: '11:30',
+    canasta: {
+      nombre: 'Hernia inguinal estándar',
+      items: itemsDe(2, (i) => ({
+        solicitudFarmacia: 'solicitado', preparado: true, despachado: i.nombre === 'Gasas estériles' ? i.cantidad - 1 : i.cantidad,
+      })),
+    },
+    farmacia: {
+      numeroPedido: '4593', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:30`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  }),
+  // Urgencia con la canasta a medio preparar (3 de 5): puede autorizar inicio.
+  cirugiaHoy({
+    id: '12357',
+    nombre: 'Andrés Mejía',
+    documento: 'CC 1.017.228.391',
+    edad: 22,
+    sexo: 'Masculino',
+    procedimiento: 'Apendicectomía laparoscópica',
+    cirujano: 'Dr. Carlos Martínez',
+    horaInicio: '13:30',
+    horaFin: '14:30',
+    estado: 'urgencia',
+    canasta: {
+      nombre: 'Apendicectomía estándar',
+      items: itemsDe(1, (_, n) => ({ solicitudFarmacia: 'solicitado', preparado: n < 3 })),
+    },
+    farmacia: {
+      numeroPedido: '4594', estado: 'en-preparacion', fechaSolicitud: `${HOY_ISO}T09:45`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  }),
+  // Programada con la canasta en preparación: inicio bloqueado.
+  cirugiaHoy({
+    id: '12358',
+    nombre: 'Sofía Castro',
+    documento: 'CC 32.118.640',
+    edad: 46,
+    sexo: 'Femenino',
+    procedimiento: 'Histerectomía abdominal',
+    cirujano: 'Dr. Andrés López',
+    horaInicio: '15:30',
+    horaFin: '18:00',
+    canasta: {
+      nombre: 'Histerectomía abdominal',
+      items: [
+        ['Sutura Vicryl 1', 4], ['Sutura Vicryl 0', 3], ['Compresas quirúrgicas', 4], ['Gasas estériles', 5],
+        ['Hoja de bisturí #22', 2], ['Sonda Foley 16 Fr', 1], ['Bolsa recolectora de orina', 1],
+      ].map(([nombre, cantidad]) => ({
+        nombre, cantidad, estado: 'disponible', solicitudFarmacia: 'solicitado', preparado: false,
+      })),
+    },
+    farmacia: {
+      numeroPedido: '4595', estado: 'en-preparacion', fechaSolicitud: `${HOY_ISO}T10:15`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  }),
 ];
 
 // Semilla de "Revisión de programaciones vencidas" (spec 2026-09-25):
@@ -1908,15 +2016,15 @@ export function fetchVencidas({ hoy }) {
 // el personal de quirófano que RECIBE los insumos está físicamente en un
 // quirófano puntual, mismo criterio de "sala seleccionada" que ya usa
 // fetchAgendaRango. Sede fija '02', mismo criterio que el resto del módulo
-// (ver comentario en VencidasFiltrosBar.jsx). Excluye estados terminales:
-// una cirugía cancelada/incumplida/realizada ya no tiene nada pendiente de
-// recibir.
+// (ver comentario en VencidasFiltrosBar.jsx). Excluye cancelada/incumplida
+// (ya no tienen canasta que gestionar) pero SÍ incluye realizada: su canasta
+// sigue abierta para registrar consumo y devolución (encargo 2026-09-30).
 export function fetchCanastasDia({ fecha, salaId }) {
   return new Promise((resolve) => {
     setTimeout(() => {
       const items = CIRUGIAS
         .filter((c) => (
-          c.sedeId === '02' && c.salaId === salaId && c.fecha === fecha && !ESTADOS_TERMINALES_CIRUGIA.includes(c.estado)
+          c.sedeId === '02' && c.salaId === salaId && c.fecha === fecha && !['cancelada', 'incumplida'].includes(c.estado)
         ))
         .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
       resolve(items);
