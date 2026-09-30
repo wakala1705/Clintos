@@ -1017,11 +1017,11 @@ let CIRUGIAS = [
     },
   },
   // Cirugías de "hoy" (fecha dinámica, HOY_ISO) para que "Canastas de cirugía"
-  // no arranque vacía: 5 casos en 'qx-1' -- realizada con canasta recibida
-  // (consumo pendiente, 12353), despachada por recibir (12356), recibida con
-  // novedades (12355), urgencia en preparación (12357) y programada en
-  // preparación = bloqueada (12358) -- más Jorge Salcedo en 'qx-2' (sin
-  // solicitar) para probar el selector de sala.
+  // no arranque vacía: 6 casos en 'qx-1' -- realizada con canasta recibida
+  // (consumo pendiente, 12353), despachada con una gasa de menos (12356),
+  // despachada completa (12359), recibida con novedades (12355), urgencia en
+  // preparación (12357) y programada en preparación (12358) -- más Jorge
+  // Salcedo en 'qx-2' (sin solicitar) para probar el selector de sala.
   {
     id: '12353',
     sedeId: '02',
@@ -1190,7 +1190,7 @@ let CIRUGIAS = [
       numeroPedido: '4596', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:55`, medicamentos: [{ nombre: 'Ketorolaco', dosis: '30mg IV' }],
     },
   }),
-  // Urgencia con la canasta a medio preparar (3 de 5): puede autorizar inicio.
+  // Urgencia con la canasta a medio preparar en farmacia (3 de 5 preparados).
   cirugiaHoy({
     id: '12357',
     nombre: 'Andrés Mejía',
@@ -1210,7 +1210,7 @@ let CIRUGIAS = [
       numeroPedido: '4594', estado: 'en-preparacion', fechaSolicitud: `${HOY_ISO}T09:45`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
     },
   }),
-  // Programada con la canasta en preparación: inicio bloqueado.
+  // Programada con la canasta todavía en preparación en farmacia.
   cirugiaHoy({
     id: '12358',
     nombre: 'Sofía Castro',
@@ -1825,9 +1825,10 @@ export function estadoInsumo(cirugia, item) {
 // ---------- Canastas de cirugía: estado derivado (encargo 2026-09-30) ----------
 // Cada ítem puede traer, además de `solicitudFarmacia`: `preparado` (farmacia
 // lo alistó), `despachado` (cantidad que farmacia despachó), `recibido`
-// (cantidad que quirófano recibió) y `novedad`. La canasta guarda
-// `recepcion`, `autorizacionUrgencia` y `consumo`. NADA de esto se guarda como
-// "estado": `resumenCanasta`/`gateCirugia` lo derivan, mismo criterio que
+// (cantidad que quirófano recibió) y `novedad`. La canasta guarda `recepcion`
+// y `consumo`. NADA de esto se guarda como "estado": `resumenCanasta` lo
+// deriva (esta pantalla solo recibe y devuelve; no decide el inicio de la
+// cirugía), mismo criterio que
 // `estadoInsumo` -- así InsumosTab (que solo mueve `solicitudFarmacia`) y esta
 // pantalla no quedan desincronizados. Ítems legados sin estos campos caen a
 // `cantidad` (cantidadDespachada/cantidadRecibida).
@@ -1888,28 +1889,6 @@ export function resumenCanasta(cirugia) {
   return {
     total, porSolicitar, porRecibir, recibidos, preparados, estado,
   };
-}
-
-// Compuerta de inicio de la cirugía según su canasta. 'no-aplica' para
-// cirugías que ya no se inician (canceladas, incumplidas). Una canasta sin
-// ítems no tiene nada que recibir, así que nunca bloquea el inicio.
-export function gateCirugia(cirugia) {
-  if (cirugia.estado === 'realizada') return 'realizada';
-  if (cirugia.estado !== 'programada' && cirugia.estado !== 'urgencia') return 'no-aplica';
-  if (cirugia.canasta.items.length === 0) return 'lista';
-  if (CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado)) return 'lista';
-  if (cirugia.estado === 'urgencia') {
-    return cirugia.canasta.autorizacionUrgencia ? 'urgencia-autorizada' : 'urgencia-puede-autorizar';
-  }
-  return 'bloqueada';
-}
-
-// true mientras la cirugía NO puede iniciar (bloqueada, o urgencia todavía sin
-// autorizar). Solo informativo en "Canastas de cirugía"; la agenda y
-// DetalleCirugiaPanel aún no lo consumen (decisión explícita, spec 2026-09-30).
-export function bloqueoInicio(cirugia) {
-  const gate = gateCirugia(cirugia);
-  return gate === 'bloqueada' || gate === 'urgencia-puede-autorizar';
 }
 
 // Hora de demostración de "Canastas de cirugía": las semillas son horas fijas
@@ -2055,18 +2034,6 @@ export function registrarRecepcion(id, { recibidos, usuario = 'CLINTOS' }) {
       items,
       recepcion: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), conNovedades },
     },
-  });
-}
-
-// Excepción de urgencia: la cirugía puede iniciar sin la canasta. Queda
-// registrado quién y cuándo; la recepción sigue pendiente.
-export function autorizarInicioUrgencia(id, { usuario = 'CLINTOS' } = {}) {
-  const actual = CIRUGIAS.find((c) => c.id === id);
-  if (gateCirugia(actual) !== 'urgencia-puede-autorizar') {
-    throw new Error('Solo las cirugías de urgencia con la canasta sin recibir pueden autorizarse.');
-  }
-  return actualizarCirugia(id, {
-    canasta: { ...actual.canasta, autorizacionUrgencia: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()) } },
   });
 }
 

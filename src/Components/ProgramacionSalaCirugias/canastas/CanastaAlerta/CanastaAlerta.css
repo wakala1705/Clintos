@@ -1,8 +1,8 @@
 .cnc-alerta{
   box-sizing:border-box;display:flex;align-items:center;gap:10px;min-width:0;
   padding:10px 12px 10px 14px;border-radius:var(--radius-lg);font-size:var(--fs-sm);
-  background:var(--amber-bg);color:var(--amber-fg);
-  border:1px solid color-mix(in srgb,var(--amber-fg) 35%,transparent);
+  background:var(--status-info-bg);color:var(--status-info-fg);
+  border:1px solid color-mix(in srgb,var(--status-info-fg) 25%,transparent);
 }
 .cnc-alerta-icon{width:20px;height:20px;flex-shrink:0;}
 .cnc-alerta-text{flex:1;line-height:1.35;}

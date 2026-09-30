@@ -3,6 +3,17 @@
 Fecha: 2026-09-30 · Ruta: `/programacion-sala-cirugias/canastas`
 Referencia visual: artboards `Main.dc.html` (tablet 1194×834) y `Desktop.dc.html` (1440×900) del artefacto de diseño.
 
+> **Actualización 2026-09-30 (posterior): se eliminó la lógica de inicio/bloqueo.** Esta pantalla
+> solo **recibe** la canasta y registra **consumo y devolución**; no determina si una cirugía puede
+> iniciar. Quedaron fuera `gateCirugia`, `bloqueoInicio`, `autorizarInicioUrgencia`,
+> `autorizacionUrgencia`, el KPI/filtro/badge "Inicio bloqueado" y el botón "Autorizar inicio por
+> urgencia". Sus reemplazos: KPI **"Consumo pendiente"** (cirugías realizadas con canasta recibida
+> sin consumo registrado), filtro "Consumo pendiente", alerta que apunta a la primera canasta
+> **despachada por recibir**, y banners que describen el estado de la canasta ("Canasta despachada:
+> verifica y recibe los insumos", etc.). Las secciones de este documento que hablan de bloqueo,
+> urgencia o compuerta describen el diseño original y ya no aplican. El badge "Urgencia" de la
+> tarjeta se conserva solo como dato de la cirugía.
+
 ## Objetivo
 
 Llevar la pantalla actual (tabla + modal de checklist) al diseño completo de los artboards:

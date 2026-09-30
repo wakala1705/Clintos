@@ -1,20 +1,15 @@
 'use client';
 
-import { LuLock } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import EstadoCirugiaBadge from '../../EstadoCirugiaBadge/EstadoCirugiaBadge';
-import {
-  CANASTA_ESTADO_LABEL, gateCirugia, iniciaEnLabel, resumenCanasta,
-} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { CANASTA_META, GATE_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { CANASTA_ESTADO_LABEL, iniciaEnLabel, resumenCanasta } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CirugiaCard.css';
 
 export default function CirugiaCard({
   cirugia, ahora, seleccionada, onSelect,
 }) {
   const { estado } = resumenCanasta(cirugia);
-  const gate = gateCirugia(cirugia);
-  const gateMeta = GATE_META[gate];
   return (
     <button
       type="button"
@@ -38,12 +33,6 @@ export default function CirugiaCard({
         </div>
         <div className="cnc-cc-badges">
           <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
-          {gateMeta && (
-            <Badge {...badgeProps(gateMeta)}>
-              {gate === 'bloqueada' && <LuLock className="cnc-badge-icon" aria-hidden="true" />}
-              {gateMeta.label}
-            </Badge>
-          )}
         </div>
       </div>
     </button>

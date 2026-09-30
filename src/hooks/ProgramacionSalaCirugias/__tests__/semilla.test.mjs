@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  fechaISO, fetchCanastasDia, gateCirugia, resumenCanasta,
+  fechaISO, fetchCanastasDia, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const HOY = fechaISO(new Date());
@@ -12,10 +12,6 @@ test('sala qx-1 de hoy: los casos del diseño (+ una despachada completa), por h
   assert.deepEqual(
     items.map((c) => resumenCanasta(c).estado),
     ['recibida', 'despachada', 'despachada', 'con-novedades', 'en-preparacion', 'en-preparacion'],
-  );
-  assert.deepEqual(
-    items.map(gateCirugia),
-    ['realizada', 'bloqueada', 'bloqueada', 'lista', 'urgencia-puede-autorizar', 'bloqueada'],
   );
 });
 

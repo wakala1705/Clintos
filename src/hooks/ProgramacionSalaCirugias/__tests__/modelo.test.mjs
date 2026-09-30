@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  HORA_DEMO, ahoraDemo, bloqueoInicio, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
-  fechaISO, gateCirugia, iniciaEnLabel, novedadItem, resumenCanasta,
+  HORA_DEMO, ahoraDemo, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
+  fechaISO, iniciaEnLabel, novedadItem, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const item = (extra = {}) => ({ nombre: 'Gasas', cantidad: 4, ...extra });
 const solicitado = (extra = {}) => item({ solicitudFarmacia: 'solicitado', ...extra });
 const entregado = (extra = {}) => item({ solicitudFarmacia: 'entregado', ...extra });
-// `canasta` recibe los metadatos (recepcion, consumo, autorizacionUrgencia).
+// `canasta` recibe los metadatos (recepcion, consumo).
 const cirugia = (items, { estado = 'programada', ...canasta } = {}) => ({
   id: 'x', estado, fecha: '2026-09-29', horaInicio: '09:30', canasta: { nombre: 'c', items, ...canasta },
 });
@@ -55,40 +55,6 @@ test('cantidadDespachada/cantidadRecibida caen a `cantidad` en ítems legados', 
 test('cantidadDevolvible parte de lo recibido, no de lo solicitado', () => {
   const c = cirugia([entregado({ recibido: 3 })]);
   assert.equal(cantidadDevolvible(c, c.canasta.items[0]), 3);
-});
-
-test('gateCirugia cubre los 6 valores', () => {
-  const pend = [solicitado()];
-  assert.equal(gateCirugia(cirugia(pend)), 'bloqueada');
-  assert.equal(gateCirugia(cirugia(pend, { estado: 'urgencia' })), 'urgencia-puede-autorizar');
-  assert.equal(
-    gateCirugia(cirugia(pend, { estado: 'urgencia', autorizacionUrgencia: { usuario: 'u', fecha: '2026-09-29T08:00' } })),
-    'urgencia-autorizada',
-  );
-  assert.equal(gateCirugia(cirugia([entregado()])), 'lista');
-  assert.equal(gateCirugia(cirugia([entregado()], { estado: 'urgencia' })), 'lista');
-  assert.equal(gateCirugia(cirugia(pend, { estado: 'realizada' })), 'realizada');
-  assert.equal(gateCirugia(cirugia(pend, { estado: 'cancelada' })), 'no-aplica');
-});
-
-test('canasta sin ítems: no hay nada que recibir, la cirugía no se bloquea', () => {
-  assert.equal(gateCirugia(cirugia([])), 'lista');
-  assert.equal(gateCirugia(cirugia([], { estado: 'urgencia' })), 'lista');
-  assert.equal(bloqueoInicio(cirugia([])), false);
-  assert.equal(bloqueoInicio(cirugia([], { estado: 'urgencia' })), false);
-  // Una cirugía ya realizada sigue siendo 'realizada' aunque no tenga canasta.
-  assert.equal(gateCirugia(cirugia([], { estado: 'realizada' })), 'realizada');
-});
-
-test('bloqueoInicio: bloqueada y urgencia sin autorizar', () => {
-  assert.equal(bloqueoInicio(cirugia([solicitado()])), true);
-  assert.equal(bloqueoInicio(cirugia([solicitado()], { estado: 'urgencia' })), true);
-  assert.equal(
-    bloqueoInicio(cirugia([solicitado()], { estado: 'urgencia', autorizacionUrgencia: { usuario: 'u', fecha: '2026-09-29T08:00' } })),
-    false,
-  );
-  assert.equal(bloqueoInicio(cirugia([entregado()])), false);
-  assert.equal(bloqueoInicio(cirugia([solicitado()], { estado: 'realizada' })), false);
 });
 
 test('novedadItem describe faltantes de farmacia y de la entrega', () => {

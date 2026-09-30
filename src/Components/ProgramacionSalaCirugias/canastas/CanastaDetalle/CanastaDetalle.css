@@ -21,9 +21,7 @@
 .cnc-banner-success{background:var(--green-bg);color:#0d7a3d;}
 html[data-theme="dark"] .cnc-banner-success{color:var(--green);}
 .cnc-banner-warn{background:var(--amber-bg);color:var(--amber-fg);}
-.cnc-banner-danger{background:var(--red-bg);color:var(--red);}
 .cnc-banner-info{background:var(--status-info-bg);color:var(--status-info-fg);}
-.cnc-banner-violet{background:var(--violet-bg);color:var(--violet-fg);}
 .cnc-banner-neutral{background:var(--gray-bg);color:var(--ink-700);}
 .cnc-error{margin:8px 24px 0;padding:8px 12px;border-radius:var(--radius);background:var(--red-bg);color:var(--red);font-size:var(--fs-base);}
 

@@ -1,20 +1,20 @@
 'use client';
 
 import {
-  LuCheck, LuMinus, LuPackageCheck, LuPlus, LuShieldCheck, LuTriangleAlert,
+  LuCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert,
 } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import {
-  cantidadDespachada, cantidadRecibida, gateCirugia, novedadItem, resumenCanasta,
+  cantidadDespachada, cantidadRecibida, novedadItem, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { lineaAutorizacion, lineaRecepcion } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { lineaRecepcion } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './RecepcionTab.css';
 
 // Pestaña "Recepción" del detalle. Un solo componente con 4 modos según el
 // estado derivado de la canasta:
 //  - despachada     -> editar: verificar cada insumo y ajustar lo recibido.
-//  - en-preparacion -> vista de avance de farmacia (+ autorizar si es urgencia).
+//  - en-preparacion -> vista de avance de farmacia.
 //  - sin-solicitar  -> aviso vacío.
 //  - resto          -> lectura de lo recibido.
 // `draft` (borrador por cirugía) lo guarda el orquestador para no perderlo al
@@ -116,10 +116,8 @@ function renderEditar({
   );
 }
 
-function renderPreparacion({ cirugia, onAutorizar }) {
+function renderPreparacion({ cirugia }) {
   const { preparados, total } = resumenCanasta(cirugia);
-  const puedeAutorizar = gateCirugia(cirugia) === 'urgencia-puede-autorizar';
-  const autorizada = Boolean(cirugia.canasta.autorizacionUrgencia);
   return (
     <>
       <div className="cnc-tab-body">
@@ -145,10 +143,7 @@ function renderPreparacion({ cirugia, onAutorizar }) {
         </table>
       </div>
       <div className="cnc-tab-footer">
-        <span className="cnc-footer-msg">
-          {autorizada ? lineaAutorizacion(cirugia) : 'Podrás verificar la canasta cuando farmacia la despache.'}
-        </span>
-        {puedeAutorizar && <Button icon={LuShieldCheck} onClick={onAutorizar}>Autorizar inicio por urgencia</Button>}
+        <span className="cnc-footer-msg">Podrás verificar la canasta cuando farmacia la despache.</span>
       </div>
     </>
   );

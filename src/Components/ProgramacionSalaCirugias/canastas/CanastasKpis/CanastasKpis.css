@@ -11,6 +11,6 @@
 html[data-theme="dark"] .cnc-kpi-success{color:var(--green);}
 .cnc-kpi-info{background:var(--status-info-bg);color:var(--status-info-fg);}
 .cnc-kpi-neutral{background:var(--gray-bg);color:var(--ink-500);}
-.cnc-kpi-danger{background:var(--red-bg);color:var(--red);}
+.cnc-kpi-warn{background:var(--amber-bg);color:var(--amber-fg);}
 .cnc-kpi-value{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.1;}
 .cnc-kpi-label{font-size:var(--fs-sm);color:var(--ink-500);}

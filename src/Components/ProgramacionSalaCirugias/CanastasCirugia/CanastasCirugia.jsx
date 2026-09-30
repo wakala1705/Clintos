@@ -20,7 +20,7 @@ import CanastaAlerta from '../canastas/CanastaAlerta/CanastaAlerta';
 import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
-  HORA_DEMO, SALAS, ahoraDemo, autorizarInicioUrgencia, deshacerResolucion, fechaISO, fetchCanastasDia,
+  HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, fechaISO, fetchCanastasDia,
   registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { filtrarCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
@@ -127,14 +127,6 @@ export default function CanastasCirugia() {
     );
   }
 
-  function handleAutorizar(cirugia) {
-    aplicar(
-      cirugia,
-      () => autorizarInicioUrgencia(cirugia.id, { usuario: USUARIO }),
-      () => `Inicio de ${cirugia.paciente.nombre} autorizado por urgencia`,
-    );
-  }
-
   function handleRegistrarConsumo(cirugia, usados) {
     aplicar(
       cirugia,
@@ -193,7 +185,6 @@ export default function CanastasCirugia() {
               error={error}
               onDraftChange={(patch) => handleDraftChange(seleccion.id, patch)}
               onRecibir={(recibidos) => handleRecibir(seleccion, recibidos)}
-              onAutorizar={() => handleAutorizar(seleccion)}
               onRegistrarConsumo={(usados) => handleRegistrarConsumo(seleccion, usados)}
             />
           )}

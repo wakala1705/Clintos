@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  autorizarInicioUrgencia, cancelarSolicitudInsumos, cantidadDevuelta, despacharCanasta, gateCirugia,
+  cancelarSolicitudInsumos, cantidadDevuelta, despacharCanasta,
   registrarConsumo, registrarEntregaInsumos, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
   fetchCanastasDia, fechaISO,
 } from '../mockCirugiaData.js';
@@ -31,7 +31,6 @@ test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async
   assert.equal(c.canasta.recepcion.usuario, 'Ana');
   assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`); // hora de demostración fija
   assert.equal(c.canasta.recepcion.conNovedades, true);
-  assert.equal(gateCirugia(c), 'lista');
 });
 
 test('registrarRecepcion: despachada completa, sin faltantes → recibida sin novedades', () => {
@@ -39,16 +38,6 @@ test('registrarRecepcion: despachada completa, sin faltantes → recibida sin no
   assert.equal(resumenCanasta(c).estado, 'recibida');
   assert.equal(c.canasta.recepcion.conNovedades, false);
   assert.equal(c.canasta.items.some((i) => i.novedad), false);
-  assert.equal(gateCirugia(c), 'lista');
-});
-
-test('autorizarInicioUrgencia: solo urgencias sin canasta recibida, una vez', () => {
-  assert.throws(() => autorizarInicioUrgencia('12358', { usuario: 'Ana' }), /Solo las cirugías de urgencia/);
-  const c = autorizarInicioUrgencia('12357', { usuario: 'Ana' });
-  assert.equal(gateCirugia(c), 'urgencia-autorizada');
-  assert.equal(c.canasta.autorizacionUrgencia.usuario, 'Ana');
-  assert.equal(c.canasta.autorizacionUrgencia.fecha, `${HOY}T08:45`);
-  assert.throws(() => autorizarInicioUrgencia('12357', { usuario: 'Ana' }), /Solo las cirugías de urgencia/);
 });
 
 test('despacharCanasta + registrarRecepcion sin faltantes → recibida', () => {
@@ -57,7 +46,6 @@ test('despacharCanasta + registrarRecepcion sin faltantes → recibida', () => {
   const c = registrarRecepcion('12357', { recibidos: {}, usuario: 'Ana' });
   assert.equal(resumenCanasta(c).estado, 'recibida');
   assert.equal(c.canasta.recepcion.conNovedades, false);
-  assert.equal(gateCirugia(c), 'lista');
 });
 
 test('registrarConsumo: valida topes y exige cirugía realizada', () => {

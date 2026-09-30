@@ -2,8 +2,11 @@
 // KPIs y líneas de trazabilidad. Lógica pura (sin JSX) para poder probarla con
 // node:test y compartirla entre los componentes de canastas/. Imports con
 // extensión .js a propósito (node --test no resuelve sin ella).
+//
+// Esta pantalla solo RECIBE la canasta y registra consumo y devolución: no
+// decide si una cirugía puede iniciar (esa lógica se quitó, 2026-09-30).
 import {
-  CANASTA_ESTADOS_RECIBIDOS, bloqueoInicio, cantidadRecibida, fechaHoraTrazaLabel, gateCirugia, resumenCanasta,
+  CANASTA_ESTADOS_RECIBIDOS, cantidadRecibida, fechaHoraTrazaLabel, resumenCanasta,
 } from './mockCirugiaData.js';
 
 // `violet: true` -> <Badge> no trae tono violeta; se agrega la clase global
@@ -15,14 +18,6 @@ export const CANASTA_META = {
   recibida: { tone: 'success' },
   'con-novedades': { tone: 'warn' },
   'consumo-registrado': { tone: 'neutral', violet: true },
-};
-
-export const GATE_META = {
-  lista: { label: 'Lista para iniciar', tone: 'success' },
-  bloqueada: { label: 'Inicio bloqueado', tone: 'danger' },
-  'urgencia-puede-autorizar': { label: 'Urgencia · puede autorizar inicio', tone: 'neutral', violet: true },
-  'urgencia-autorizada': { label: 'Inicio autorizado por urgencia', tone: 'neutral', violet: true },
-  realizada: { label: 'Cirugía realizada', tone: 'neutral' },
 };
 
 // Valor del campo "Farmacia" del detalle.
@@ -44,8 +39,14 @@ export const ESTADO_FILTRO_OPTIONS = [
   { value: 'por-recibir', label: 'Despachadas por recibir' },
   { value: 'en-preparacion', label: 'En preparación' },
   { value: 'recibidas', label: 'Recibidas' },
-  { value: 'bloqueadas', label: 'Inicio bloqueado' },
+  { value: 'consumo-pendiente', label: 'Consumo pendiente' },
 ];
+
+// Cirugía ya realizada cuya canasta se recibió pero aún no tiene consumo y
+// devolución registrados.
+function tieneConsumoPendiente(cirugia) {
+  return cirugia.estado === 'realizada' && ['recibida', 'con-novedades'].includes(resumenCanasta(cirugia).estado);
+}
 
 export function filtrarCanastas(cirugias, { busqueda = '', estado = 'todas' } = {}) {
   const texto = busqueda.trim().toLowerCase();
@@ -54,56 +55,58 @@ export function filtrarCanastas(cirugias, { busqueda = '', estado = 'todas' } = 
     if (estado === 'por-recibir' && e !== 'despachada') return false;
     if (estado === 'en-preparacion' && e !== 'en-preparacion') return false;
     if (estado === 'recibidas' && !CANASTA_ESTADOS_RECIBIDOS.includes(e)) return false;
-    if (estado === 'bloqueadas' && !bloqueoInicio(c)) return false;
+    if (estado === 'consumo-pendiente' && !tieneConsumoPendiente(c)) return false;
     if (!texto) return true;
     return [c.paciente.nombre, c.paciente.documento, c.procedimientoPrincipal, c.farmacia?.numeroPedido ?? '']
       .some((v) => v.toLowerCase().includes(texto));
   });
 }
 
-// "Inicio bloqueado" cuenta solo la compuerta `bloqueada` (una urgencia que
-// aún puede autorizarse no es un bloqueo firme), igual que el artboard.
 export function kpisCanastas(cirugias) {
   const estados = cirugias.map((c) => resumenCanasta(c).estado);
   return {
     recibidas: estados.filter((e) => CANASTA_ESTADOS_RECIBIDOS.includes(e)).length,
     porRecibir: estados.filter((e) => e === 'despachada').length,
     enPreparacion: estados.filter((e) => e === 'en-preparacion').length,
-    bloqueadas: cirugias.filter((c) => gateCirugia(c) === 'bloqueada').length,
+    consumoPendiente: cirugias.filter(tieneConsumoPendiente).length,
   };
 }
 
-// Banner de estado bajo la cabecera del detalle. null si la cirugía ya no
-// aplica (cancelada/incumplida).
+// La primera cirugía (en el orden dado) con la canasta despachada por recibir:
+// alimenta la alerta de la fila de KPIs.
+export function primeraPorRecibir(cirugias) {
+  return cirugias.find((c) => resumenCanasta(c).estado === 'despachada');
+}
+
+// Banner bajo la cabecera del detalle: describe el estado de la CANASTA (y, si
+// la cirugía ya se realizó, el consumo), nunca si la cirugía puede iniciar.
+// null si la cirugía ya no aplica (cancelada/incumplida).
 export function bannerCanasta(cirugia) {
-  const gate = gateCirugia(cirugia);
+  if (!['programada', 'urgencia', 'realizada'].includes(cirugia.estado)) return null;
   const { estado } = resumenCanasta(cirugia);
-  switch (gate) {
-    case 'realizada':
-      return estado === 'consumo-registrado'
-        ? { tone: 'neutral', bloqueado: false, texto: 'Cirugía realizada. El consumo y la devolución de insumos ya fueron registrados.' }
-        : { tone: 'info', bloqueado: false, texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.' };
-    case 'lista':
-      if (cirugia.canasta.items.length === 0) {
-        return { tone: 'neutral', bloqueado: false, texto: 'Esta cirugía no tiene insumos en su canasta: puede iniciar.' };
-      }
-      return estado === 'con-novedades'
-        ? { tone: 'warn', bloqueado: false, texto: 'Canasta recibida con novedades: la cirugía puede iniciar y farmacia fue notificada.' }
-        : { tone: 'success', bloqueado: false, texto: 'Canasta recibida completa: la cirugía puede iniciar.' };
-    case 'urgencia-autorizada': {
-      const a = cirugia.canasta.autorizacionUrgencia;
-      return {
-        tone: 'violet',
-        bloqueado: false,
-        texto: `Inicio autorizado por urgencia (${a.usuario} · ${fechaHoraTrazaLabel(a.fecha)}). Recibe la canasta en cuanto farmacia la despache.`,
-      };
+  if (cirugia.estado === 'realizada') {
+    if (estado === 'consumo-registrado') {
+      return { tone: 'neutral', texto: 'Cirugía realizada. El consumo y la devolución de insumos ya fueron registrados.' };
     }
-    case 'urgencia-puede-autorizar':
-      return { tone: 'violet', bloqueado: false, texto: 'Cirugía de urgencia: puedes autorizar el inicio sin la canasta. La excepción queda registrada.' };
-    case 'bloqueada':
-      return { tone: 'danger', bloqueado: true, texto: 'Inicio bloqueado: confirma la recepción de la canasta para habilitar la cirugía.' };
+    if (CANASTA_ESTADOS_RECIBIDOS.includes(estado)) {
+      return { tone: 'info', texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.' };
+    }
+    return { tone: 'neutral', texto: 'Cirugía realizada, pero su canasta no fue recibida: no hay consumo que registrar.' };
+  }
+  if (cirugia.canasta.items.length === 0) {
+    return { tone: 'neutral', texto: 'Esta cirugía no tiene insumos en su canasta.' };
+  }
+  switch (estado) {
+    case 'despachada':
+      return { tone: 'info', texto: 'Canasta despachada: verifica y recibe los insumos.' };
+    case 'en-preparacion':
+      return { tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.' };
+    case 'recibida':
+      return { tone: 'success', texto: 'Canasta recibida completa.' };
+    case 'con-novedades':
+      return { tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.' };
     default:
-      return null;
+      return { tone: 'neutral', texto: 'Esta canasta todavía no fue solicitada a farmacia.' };
   }
 }
 
@@ -128,11 +131,6 @@ export function lineaRecepcion(cirugia) {
   if (!r) return 'Canasta recibida.';
   const base = `${r.conNovedades ? 'Recibida con novedades' : 'Recibida completa'} por ${r.usuario} · ${fechaHoraTrazaLabel(r.fecha)}`;
   return r.conNovedades ? `${base} · Farmacia notificada` : base;
-}
-
-export function lineaAutorizacion(cirugia) {
-  const a = cirugia.canasta.autorizacionUrgencia;
-  return `Excepción registrada por ${a.usuario} · ${fechaHoraTrazaLabel(a.fecha)}. La recepción sigue pendiente.`;
 }
 
 export function lineaConsumo(cirugia) {

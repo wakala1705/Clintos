@@ -1,30 +1,31 @@
 'use client';
 
-import { LuCircleCheck, LuTriangleAlert } from 'react-icons/lu';
+import { LuCircleCheck, LuPackage } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
-import { gateCirugia, iniciaEnLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { iniciaEnLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { primeraPorRecibir } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CanastaAlerta.css';
 
-// Primera cirugía con inicio bloqueado (compuerta `bloqueada`; una urgencia
-// que aún puede autorizarse no cuenta) o, si no hay ninguna, el estado verde.
+// Atajo a lo accionable: la primera cirugía (por hora) con la canasta
+// despachada por recibir, o el estado verde si no hay ninguna pendiente.
 export default function CanastaAlerta({ cirugias, ahora, onVerificar }) {
-  const bloqueada = cirugias.find((c) => gateCirugia(c) === 'bloqueada');
-  if (!bloqueada) {
+  const porRecibir = primeraPorRecibir(cirugias);
+  if (!porRecibir) {
     return (
       <div className="cnc-alerta cnc-alerta-ok" role="status">
         <LuCircleCheck className="cnc-alerta-icon" aria-hidden="true" />
-        <span>Ninguna cirugía programada está bloqueada por su canasta.</span>
+        <span>No hay canastas despachadas pendientes de recibir.</span>
       </div>
     );
   }
-  const cuando = iniciaEnLabel(bloqueada, ahora);
+  const cuando = iniciaEnLabel(porRecibir, ahora);
   return (
     <div className="cnc-alerta" role="status">
-      <LuTriangleAlert className="cnc-alerta-icon" aria-hidden="true" />
+      <LuPackage className="cnc-alerta-icon" aria-hidden="true" />
       <span className="cnc-alerta-text">
-        <strong>{bloqueada.paciente.nombre} · {bloqueada.horaInicio}</strong> — {cuando.charAt(0).toLowerCase() + cuando.slice(1)}. Bloqueada hasta recibir su canasta.
+        <strong>{porRecibir.paciente.nombre} · {porRecibir.horaInicio}</strong> — {cuando.charAt(0).toLowerCase() + cuando.slice(1)}. Tiene una canasta despachada por recibir.
       </span>
-      <Button variant="warning-outline" size="sm" onClick={() => onVerificar(bloqueada.id)}>Verificar ahora</Button>
+      <Button variant="outline" size="sm" onClick={() => onVerificar(porRecibir.id)}>Verificar ahora</Button>
     </div>
   );
 }

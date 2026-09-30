@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  LuClock, LuLock, LuPackage, LuPackageCheck,
+  LuClock, LuPackage, LuPackageCheck, LuPackageMinus,
 } from 'react-icons/lu';
 import { kpisCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CanastasKpis.css';
@@ -17,7 +17,7 @@ const KPIS = [
     key: 'enPreparacion', icon: LuClock, tone: 'neutral', label: 'En preparación',
   },
   {
-    key: 'bloqueadas', icon: LuLock, tone: 'danger', label: 'Inicio bloqueado',
+    key: 'consumoPendiente', icon: LuPackageMinus, tone: 'warn', label: 'Consumo pendiente',
   },
 ];
 

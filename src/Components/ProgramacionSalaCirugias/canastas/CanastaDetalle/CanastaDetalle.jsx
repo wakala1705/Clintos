@@ -1,6 +1,6 @@
 'use client';
 
-import { LuInfo, LuLock } from 'react-icons/lu';
+import { LuInfo } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import EstadoCirugiaBadge from '../../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import RecepcionTab from '../RecepcionTab/RecepcionTab';
@@ -15,13 +15,12 @@ import './CanastaDetalle.css';
 // pestañas Recepción / Consumo y devolución. El estado editable vive en
 // `draft` (lo guarda el orquestador por cirugía); esta capa no tiene estado.
 export default function CanastaDetalle({
-  cirugia, draft, error, onDraftChange, onRecibir, onAutorizar, onRegistrarConsumo,
+  cirugia, draft, error, onDraftChange, onRecibir, onRegistrarConsumo,
 }) {
   const { estado } = resumenCanasta(cirugia);
   const banner = bannerCanasta(cirugia);
   const consumoDisponible = cirugia.estado === 'realizada';
   const tab = consumoDisponible ? (draft.tab ?? 'consumo') : 'recepcion';
-  const BannerIcon = banner?.bloqueado ? LuLock : LuInfo;
 
   return (
     <section className="cnc-panel cnc-detalle" aria-label="Detalle de la canasta">
@@ -47,7 +46,7 @@ export default function CanastaDetalle({
 
       {banner && (
         <div className={`cnc-banner cnc-banner-${banner.tone}`}>
-          <BannerIcon className="icon" aria-hidden="true" />
+          <LuInfo className="icon" aria-hidden="true" />
           <span>{banner.texto}</span>
         </div>
       )}
@@ -82,7 +81,7 @@ export default function CanastaDetalle({
 
       <div className="cnc-tabpanel" role="tabpanel" id={`cnc-panel-${tab}`} aria-labelledby={`cnc-tab-${tab}`}>
         {tab === 'recepcion' ? (
-          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} onAutorizar={onAutorizar} />
+          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} />
         ) : (
           <ConsumoTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRegistrarConsumo={onRegistrarConsumo} />
         )}
