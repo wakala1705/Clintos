@@ -933,7 +933,7 @@ const cirugia = (items, { estado = 'programada', ...resto } = {}) => ({
 });
 const pend = () => item({ solicitudFarmacia: 'solicitado' });
 const desp = () => item({ solicitudFarmacia: 'solicitado', despachado: 4 });
-const ent = () => item({ solicitudFarmacia: 'entregado' });
+const ent = (extra = {}) => item({ solicitudFarmacia: 'entregado', ...extra });
 
 test('badgeProps: el tono violeta agrega la clase propia', () => {
   assert.deepEqual(badgeProps({ tone: 'success' }), { tone: 'success', className: '' });
