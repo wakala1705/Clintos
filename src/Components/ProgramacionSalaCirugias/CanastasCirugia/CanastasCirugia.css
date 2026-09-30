@@ -3,8 +3,6 @@
    ../shared/shared.css. Acá solo lo propio de esta página; cada panel tiene su
    CSS en ../canastas/<Componente>/. */
 
-.cnc-sala-select{width:220px;}
-
 /* KPIs (botones-filtro) + alerta opcional "siguiente por recibir": con alerta
    es la 5.ª celda de la fila en desktop; en tablet sube a su propia fila
    arriba (artboard Main). */
@@ -33,10 +31,9 @@
 html[data-theme="dark"] .cnc-toast-undo{color:var(--primary);}
 html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primary);}
 
-/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil): selector de
-   sala y "Ver agenda" del header. */
+/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil): "Ver agenda"
+   del header. */
 @media (max-width:1024px), (pointer:coarse){
-  .cnc-sala-select .form-select-trigger{min-height:44px;}
   .psc-page-header-actions > button{min-height:44px;}
 }
 

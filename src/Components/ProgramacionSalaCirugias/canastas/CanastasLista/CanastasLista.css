@@ -5,10 +5,20 @@
 .cnc-lista-titulo h2{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .cnc-lista-sub{font-size:var(--fs-sm);color:var(--ink-500);}
 /* Panel angosto: la fila de filtros no lleva el padding ni el borde propios
-   de .filter-bar (el header ya los aporta) y no envuelve. */
+   de .filter-bar (el header ya los aporta) y no envuelve. Sala y estado se
+   reparten el ancho; el ícono de buscar es un botón cuadrado. */
 .cnc-lista-filtros{padding:0;border-bottom:none;flex-wrap:nowrap;gap:8px;}
-.cnc-lista-filtros .search-field{flex:1;width:auto;min-width:0;}
-.cnc-lista-estado{width:180px;flex-shrink:0;}
+.cnc-lista-sala,.cnc-lista-estado{flex:1;min-width:0;}
+.cnc-lista-buscar{
+  width:var(--input-md);height:var(--input-md);flex-shrink:0;padding:0;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--ink-500);
+}
+.cnc-lista-buscar .icon{width:17px;height:17px;}
+.cnc-lista-buscar:hover{background:var(--bg);color:var(--ink-900);}
+.cnc-lista-buscar.activo{background:var(--primary-50);border-color:var(--primary);color:var(--primary);}
+.cnc-lista-buscar:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.cnc-lista-busqueda{width:100%;}
 .cnc-lista-items{flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;}
 .cnc-grupo{display:flex;flex-direction:column;gap:8px;}
 .cnc-grupo + .cnc-grupo{margin-top:6px;}
@@ -21,6 +31,7 @@
 @media (max-width:1024px){.cnc-lista{width:410px;}}
 /* Objetivos táctiles de 44px (ancho de tablet o puntero táctil). */
 @media (max-width:1024px), (pointer:coarse){
-  .cnc-lista-filtros .search-field input{height:44px;}
-  .cnc-lista-estado .form-select-trigger{min-height:44px;}
+  .cnc-lista-busqueda input{height:44px;}
+  .cnc-lista-buscar{width:44px;height:44px;}
+  .cnc-lista-sala .form-select-trigger,.cnc-lista-estado .form-select-trigger{min-height:44px;}
 }

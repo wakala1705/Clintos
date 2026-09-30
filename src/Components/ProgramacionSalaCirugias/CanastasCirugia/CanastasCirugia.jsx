@@ -13,7 +13,6 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
-import FormSelect from '@/Components/FormSelect/FormSelect';
 import CanastasFechaNav from '../canastas/CanastasFechaNav/CanastasFechaNav';
 import CanastasKpis from '../canastas/CanastasKpis/CanastasKpis';
 import CanastaAlerta from '../canastas/CanastaAlerta/CanastaAlerta';
@@ -169,17 +168,34 @@ export default function CanastasCirugia() {
   const esHoy = fecha === fechaISO(ahora);
   const salaLabel = SALA_OPTIONS.find((o) => o.value === salaId)?.label ?? salaId;
 
-  // El header (sala/fecha) se muestra siempre, aun sin resultados -- si se
-  // ocultara junto con el estado vacío, un día sin cirugías dejaría al usuario
-  // sin forma de cambiar de sala/fecha.
+  // La fecha (header) y la sala (panel de la lista) se muestran siempre, aun sin
+  // resultados -- si se ocultaran junto con el estado vacío, un día sin cirugías
+  // dejaría al usuario sin forma de cambiar de sala/fecha.
+  const panelLista = (props) => (
+    <CanastasLista
+      titulo={esHoy ? 'Cirugías de hoy' : 'Cirugías del día'}
+      subtitulo={`${lista.length} en ${salaLabel} · por prioridad`}
+      ahora={ahora}
+      filtros={filtros}
+      onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
+      onSelect={handleSelect}
+      salaId={salaId}
+      salaOptions={SALA_OPTIONS}
+      onSalaChange={setSalaId}
+      {...props}
+    />
+  );
   let cuerpo;
   if (cirugias === null) {
     cuerpo = <div className="cnc-estado" role="status">Cargando canastas…</div>;
   } else if (lista.length === 0) {
     cuerpo = (
-      <div className="cnc-estado">
-        <LuPackageSearch className="cnc-estado-icon" aria-hidden="true" />
-        <p className="cnc-estado-text">No hay cirugías programadas en esta sala para esta fecha.</p>
+      <div className="cnc-workspace">
+        {panelLista({ filtradas: [], seleccionId: null, mensajeVacio: 'Sin cirugías en esta sala.' })}
+        <div className="cnc-estado">
+          <LuPackageSearch className="cnc-estado-icon" aria-hidden="true" />
+          <p className="cnc-estado-text">No hay cirugías programadas en esta sala para esta fecha.</p>
+        </div>
       </div>
     );
   } else {
@@ -190,16 +206,7 @@ export default function CanastasCirugia() {
           {siguiente && <CanastaAlerta cirugia={siguiente} ahora={ahora} onVerificar={handleSelect} />}
         </div>
         <div className="cnc-workspace">
-          <CanastasLista
-            titulo={esHoy ? 'Cirugías de hoy' : 'Cirugías del día'}
-            subtitulo={`${lista.length} en ${salaLabel} · por prioridad`}
-            filtradas={filtradas}
-            seleccionId={seleccion?.id ?? null}
-            ahora={ahora}
-            filtros={filtros}
-            onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
-            onSelect={handleSelect}
-          />
+          {panelLista({ filtradas, seleccionId: seleccion?.id ?? null })}
           {seleccion && (
             <CanastaDetalle
               cirugia={seleccion}
@@ -234,9 +241,6 @@ export default function CanastasCirugia() {
               <p>Verifica, recibe y legaliza los insumos de las cirugías de tu sala.</p>
             </div>
             <div className="psc-page-header-actions">
-              <div className="cnc-sala-select">
-                <FormSelect id="cnc-sala" ariaLabel="Sala" value={salaId} onChange={setSalaId} options={SALA_OPTIONS} />
-              </div>
               <CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />
               <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/programacion-sala-cirugias')}>
                 Ver agenda
