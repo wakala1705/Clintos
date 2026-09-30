@@ -118,9 +118,15 @@ Reglas de UI:
 
 ### Responsive
 
-Un solo layout con `@media (max-width:1024px)`: controles interactivos a 44px, lista de 410px y
-novedad bajo el nombre del insumo (artboard Main). Desde 1024px: lista de 460px y columna de
-novedad propia (artboard Desktop).
+Un solo layout con `@media (max-width:1024px)`: lista de 410px, novedad bajo el nombre del
+insumo, alerta en su propia fila y scroll vertical de la página (artboard Main). Desde 1024px:
+lista de 460px y columna de novedad propia (artboard Desktop).
+
+**Objetivos táctiles de 44px (iteración 2026-09-30):** se aplican con
+`@media (max-width:1024px), (pointer:coarse)`. El artboard Main mide 1194px (desktop por ancho),
+pero representa un iPad en horizontal, que se maneja con el dedo: por eso los 44px dependen del
+tipo de puntero y no solo del ancho. `pointer:coarse` no es un breakpoint de ancho, así que no
+rompe el contrato de 768/1024/1440. Con ratón a 1194px el layout denso no cambia.
 
 ## Fuera de alcance
 

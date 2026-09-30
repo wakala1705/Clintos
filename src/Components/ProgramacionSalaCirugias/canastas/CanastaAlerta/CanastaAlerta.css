@@ -11,3 +11,6 @@
   border-color:color-mix(in srgb,#0d7a3d 30%,transparent);
 }
 html[data-theme="dark"] .cnc-alerta-ok{color:var(--green);}
+@media (max-width:1024px), (pointer:coarse){
+  .cnc-alerta button{min-height:44px;}
+}

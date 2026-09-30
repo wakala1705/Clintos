@@ -31,6 +31,13 @@
 html[data-theme="dark"] .cnc-toast-undo{color:var(--primary);}
 html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primary);}
 
+/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil): selector de
+   sala y "Ver agenda" del header. */
+@media (max-width:1024px), (pointer:coarse){
+  .cnc-sala-select .form-select-trigger{min-height:44px;}
+  .psc-page-header-actions > button{min-height:44px;}
+}
+
 @media (max-width:1024px){
   .cnc-resumen{grid-template-columns:repeat(4,minmax(0,1fr));}
   .cnc-resumen > .cnc-alerta{order:-1;grid-column:1 / -1;}

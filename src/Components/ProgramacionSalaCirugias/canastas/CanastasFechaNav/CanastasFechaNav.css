@@ -15,6 +15,9 @@
   font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
   min-width:150px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);
 }
-@media (max-width:1024px){
-  .cnc-date-nav .psc-agenda-nav-btn{width:40px;height:40px;}
+/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil). */
+@media (max-width:1024px), (pointer:coarse){
+  .cnc-date-nav{height:auto;}
+  .cnc-date-nav .psc-agenda-nav-btn{width:44px;height:44px;}
+  .cnc-date-nav-label,.cnc-date-nav-input{min-height:44px;}
 }

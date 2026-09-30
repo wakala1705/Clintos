@@ -12,3 +12,8 @@
 .cnc-lista-items{flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;}
 .cnc-lista-vacio{padding:32px 16px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);}
 @media (max-width:1024px){.cnc-lista{width:410px;}}
+/* Objetivos táctiles de 44px (ancho de tablet o puntero táctil). */
+@media (max-width:1024px), (pointer:coarse){
+  .cnc-lista-filtros .search-field input{height:44px;}
+  .cnc-lista-estado .form-select-trigger{min-height:44px;}
+}

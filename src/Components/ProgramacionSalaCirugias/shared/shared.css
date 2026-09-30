@@ -255,8 +255,15 @@ span.cnc-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
 .cnc-stepper .icon{width:14px;height:14px;}
 .cnc-stepper-valor{min-width:32px;text-align:center;font-size:var(--fs-lg);font-weight:var(--fw-bold);}
 
-@media (max-width:1024px){
+/* Objetivos táctiles de 44px: por ancho (tablet, contrato de breakpoints) Y por
+   tipo de puntero -- un iPad en horizontal mide 1194px (desktop por ancho)
+   pero se maneja con el dedo. `pointer:coarse` no es un breakpoint de ancho. */
+@media (max-width:1024px), (pointer:coarse){
   .cnc-stepper button{width:44px;height:44px;}
+  .cnc-tab-footer button{min-height:44px;}
+}
+/* Reflujo por espacio (solo ancho): la novedad baja bajo el nombre del insumo. */
+@media (max-width:1024px){
   .cnc-tabla .cnc-col-nov{display:none;}
   .cnc-nov-inline{display:block;}
   .cnc-tabla td{padding:6px 8px;}
