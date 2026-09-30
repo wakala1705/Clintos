@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  CANASTA_META, badgeProps, bannerCanasta, filtrarCanastas, kpisCanastas, lineaConsumo, lineaRecepcion,
+  CANASTA_META, KPI_FILTRO, agruparCanastas, badgeProps, bannerCanasta, filtrarCanastas, kpisCanastas, lineaConsumo, lineaRecepcion,
   primeraPorRecibir, resumenDevolucion,
 } from '../canastaPresentacion.js';
 
@@ -63,32 +63,51 @@ test('primeraPorRecibir: la primera cirugía con canasta despachada', () => {
   assert.equal(primeraPorRecibir([cirugia([pend()]), cirugia([ent()])]), undefined);
 });
 
-test('bannerCanasta describe el estado de la canasta, sin hablar de iniciar', () => {
-  assert.deepEqual(bannerCanasta(cirugia([item()])), {
-    tone: 'neutral', texto: 'Esta canasta todavía no fue solicitada a farmacia.',
-  });
+test('bannerCanasta: solo excepciones; el estado normal lo dice el badge', () => {
+  const recepcion = { usuario: 'Ana', fecha: '2026-09-29T08:10', conNovedades: true };
+  assert.equal(bannerCanasta(cirugia([item()])), null);
+  assert.equal(bannerCanasta(cirugia([desp()])), null);
+  assert.equal(bannerCanasta(cirugia([ent()])), null);
+  assert.equal(bannerCanasta(cirugia([])), null);
   assert.deepEqual(bannerCanasta(cirugia([pend()])), {
     tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.',
   });
-  assert.deepEqual(bannerCanasta(cirugia([desp()])), {
-    tone: 'info', texto: 'Canasta despachada: verifica y recibe los insumos.',
+  assert.deepEqual(bannerCanasta(cirugia([ent()], { recepcion })), {
+    tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.',
   });
-  assert.deepEqual(bannerCanasta(cirugia([ent()])), { tone: 'success', texto: 'Canasta recibida completa.' });
-  assert.deepEqual(
-    bannerCanasta(cirugia([ent()], { recepcion: { usuario: 'Ana', fecha: '2026-09-29T08:10', conNovedades: true } })),
-    { tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.' },
-  );
   assert.deepEqual(bannerCanasta(cirugia([ent()], { estado: 'realizada' })), {
     tone: 'info', texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.',
   });
-  assert.deepEqual(bannerCanasta(cirugia([ent()], { estado: 'realizada', consumo })), {
-    tone: 'neutral', texto: 'Cirugía realizada. El consumo y la devolución de insumos ya fueron registrados.',
-  });
+  assert.equal(bannerCanasta(cirugia([ent()], { estado: 'realizada', consumo })), null);
   assert.deepEqual(bannerCanasta(cirugia([pend()], { estado: 'realizada' })), {
     tone: 'neutral', texto: 'Cirugía realizada, pero su canasta no fue recibida: no hay consumo que registrar.',
   });
-  assert.deepEqual(bannerCanasta(cirugia([])), { tone: 'neutral', texto: 'Esta cirugía no tiene insumos en su canasta.' });
   assert.equal(bannerCanasta(cirugia([ent()], { estado: 'cancelada' })), null);
+});
+
+test('primeraPorRecibir omite la cirugía ya abierta', () => {
+  const lista = [{ ...cirugia([desp()]), id: 'a' }, { ...cirugia([desp()]), id: 'b' }];
+  assert.equal(primeraPorRecibir(lista, 'a').id, 'b');
+  assert.equal(primeraPorRecibir(lista.slice(0, 1), 'a'), undefined);
+});
+
+test('KPI_FILTRO usa las mismas claves que los filtros de estado', () => {
+  assert.deepEqual(Object.keys(KPI_FILTRO), ['recibidas', 'porRecibir', 'enPreparacion', 'consumoPendiente']);
+});
+
+test('agruparCanastas: acción primero, luego farmacia, luego completadas; orden por hora dentro', () => {
+  const lista = [
+    { ...cirugia([ent()], { estado: 'realizada', consumo }), id: 'hecha' },
+    { ...cirugia([pend()]), id: 'prep' },
+    { ...cirugia([desp()]), id: 'desp' },
+    { ...cirugia([ent()], { estado: 'realizada' }), id: 'consumo' },
+    { ...cirugia([ent()]), id: 'recibida' },
+  ];
+  const g = agruparCanastas(lista);
+  assert.deepEqual(g.map((x) => x.key), ['accion', 'farmacia', 'completadas']);
+  assert.deepEqual(g.map((x) => x.items.map((c) => c.id)), [['desp', 'consumo'], ['prep'], ['hecha', 'recibida']]);
+  assert.deepEqual(agruparCanastas([{ ...cirugia([desp()]) }]).map((x) => x.key), ['accion']);
+  assert.deepEqual(agruparCanastas([]), []);
 });
 
 test('resumenDevolucion: unidades e insumos a devolver', () => {

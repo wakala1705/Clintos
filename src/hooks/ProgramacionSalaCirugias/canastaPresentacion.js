@@ -20,16 +20,6 @@ export const CANASTA_META = {
   'consumo-registrado': { tone: 'neutral', violet: true },
 };
 
-// Valor del campo "Farmacia" del detalle.
-export const CANASTA_FARMACIA_LABEL = {
-  'sin-solicitar': 'Sin solicitar',
-  'en-preparacion': 'En preparación',
-  despachada: 'Despachada',
-  recibida: 'Entregada',
-  'con-novedades': 'Entregada',
-  'consumo-registrado': 'Entregada',
-};
-
 export function badgeProps(meta) {
   return { tone: meta.tone, className: meta.violet ? 'cnc-badge-violet' : '' };
 }
@@ -72,42 +62,62 @@ export function kpisCanastas(cirugias) {
   };
 }
 
-// La primera cirugía (en el orden dado) con la canasta despachada por recibir:
-// alimenta la alerta de la fila de KPIs.
-export function primeraPorRecibir(cirugias) {
-  return cirugias.find((c) => resumenCanasta(c).estado === 'despachada');
+// La primera cirugía (en el orden dado) con la canasta despachada por recibir,
+// distinta de `omitirId` (la que ya está abierta en el detalle): alimenta la
+// alerta "siguiente por recibir".
+export function primeraPorRecibir(cirugias, omitirId = null) {
+  return cirugias.find((c) => c.id !== omitirId && resumenCanasta(c).estado === 'despachada');
 }
 
-// Banner bajo la cabecera del detalle: describe el estado de la CANASTA (y, si
-// la cirugía ya se realizó, el consumo), nunca si la cirugía puede iniciar.
-// null si la cirugía ya no aplica (cancelada/incumplida).
+// Filtro de estado que activa cada KPI al hacer click (misma clave que
+// ESTADO_FILTRO_OPTIONS).
+export const KPI_FILTRO = {
+  recibidas: 'recibidas',
+  porRecibir: 'por-recibir',
+  enPreparacion: 'en-preparacion',
+  consumoPendiente: 'consumo-pendiente',
+};
+
+// Grupos de la lista, por prioridad de la tarea (recibir / legalizar primero).
+// Conserva el orden de entrada (por hora) dentro de cada grupo y omite los
+// vacíos.
+export function agruparCanastas(cirugias) {
+  const grupos = [
+    { key: 'accion', titulo: 'Requiere acción', items: [] },
+    { key: 'farmacia', titulo: 'Pendientes de farmacia', items: [] },
+    { key: 'completadas', titulo: 'Completadas', items: [] },
+  ];
+  cirugias.forEach((c) => {
+    const e = resumenCanasta(c).estado;
+    if (e === 'despachada' || tieneConsumoPendiente(c)) grupos[0].items.push(c);
+    else if (e === 'en-preparacion' || e === 'sin-solicitar') grupos[1].items.push(c);
+    else grupos[2].items.push(c);
+  });
+  return grupos.filter((g) => g.items.length > 0);
+}
+
+// Banner bajo la cabecera del detalle: solo para lo que el badge de estado no
+// dice por sí solo (novedades, preparación en curso, siguiente paso de una
+// cirugía realizada). El estado "normal" lo comunica el badge y la pestaña.
+// Describe la CANASTA, nunca si la cirugía puede iniciar. null si no aplica.
 export function bannerCanasta(cirugia) {
   if (!['programada', 'urgencia', 'realizada'].includes(cirugia.estado)) return null;
   const { estado } = resumenCanasta(cirugia);
   if (cirugia.estado === 'realizada') {
-    if (estado === 'consumo-registrado') {
-      return { tone: 'neutral', texto: 'Cirugía realizada. El consumo y la devolución de insumos ya fueron registrados.' };
-    }
+    if (estado === 'consumo-registrado') return null;
     if (CANASTA_ESTADOS_RECIBIDOS.includes(estado)) {
       return { tone: 'info', texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.' };
     }
     return { tone: 'neutral', texto: 'Cirugía realizada, pero su canasta no fue recibida: no hay consumo que registrar.' };
   }
-  if (cirugia.canasta.items.length === 0) {
-    return { tone: 'neutral', texto: 'Esta cirugía no tiene insumos en su canasta.' };
+  if (cirugia.canasta.items.length === 0) return null;
+  if (estado === 'en-preparacion') {
+    return { tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.' };
   }
-  switch (estado) {
-    case 'despachada':
-      return { tone: 'info', texto: 'Canasta despachada: verifica y recibe los insumos.' };
-    case 'en-preparacion':
-      return { tone: 'neutral', texto: 'Farmacia está preparando la canasta. Podrás recibirla cuando la despache.' };
-    case 'recibida':
-      return { tone: 'success', texto: 'Canasta recibida completa.' };
-    case 'con-novedades':
-      return { tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.' };
-    default:
-      return { tone: 'neutral', texto: 'Esta canasta todavía no fue solicitada a farmacia.' };
+  if (estado === 'con-novedades') {
+    return { tone: 'warn', texto: 'Canasta recibida con novedades: farmacia fue notificada.' };
   }
+  return null;
 }
 
 // Unidades e insumos a devolver a farmacia según lo usado (sin entrada en

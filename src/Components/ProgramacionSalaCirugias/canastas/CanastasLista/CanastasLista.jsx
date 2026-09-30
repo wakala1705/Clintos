@@ -3,11 +3,11 @@
 import { LuSearch } from 'react-icons/lu';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
-import { ESTADO_FILTRO_OPTIONS } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { ESTADO_FILTRO_OPTIONS, agruparCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CanastasLista.css';
 
 // Panel izquierdo: una sola fila de filtros (buscador + estado, ver AGENTS.md
-// "Barra de filtros de listado") y las cirugías del día ordenadas por hora.
+// "Barra de filtros de listado") y las cirugías del día agrupadas por prioridad (y por hora dentro de cada grupo).
 // `filtradas` es lo que se lista; `subtitulo` ya trae el total del día.
 export default function CanastasLista({
   titulo, subtitulo, filtradas, seleccionId, ahora, filtros, onFiltrosChange, onSelect,
@@ -43,8 +43,13 @@ export default function CanastasLista({
       </div>
       <div className="cnc-lista-items">
         {filtradas.length === 0 && <p className="cnc-lista-vacio">Ninguna cirugía coincide con los filtros.</p>}
-        {filtradas.map((c) => (
-          <CirugiaCard key={c.id} cirugia={c} ahora={ahora} seleccionada={c.id === seleccionId} onSelect={onSelect} />
+        {agruparCanastas(filtradas).map((g) => (
+          <div className="cnc-grupo" key={g.key} role="group" aria-label={g.titulo}>
+            <h3 className="cnc-grupo-titulo">{g.titulo} <span className="cnc-grupo-n">{g.items.length}</span></h3>
+            {g.items.map((c) => (
+              <CirugiaCard key={c.id} cirugia={c} ahora={ahora} seleccionada={c.id === seleccionId} onSelect={onSelect} />
+            ))}
+          </div>
         ))}
       </div>
     </section>

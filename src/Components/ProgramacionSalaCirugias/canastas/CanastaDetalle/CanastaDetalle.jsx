@@ -7,11 +7,11 @@ import RecepcionTab from '../RecepcionTab/RecepcionTab';
 import ConsumoTab from '../ConsumoTab/ConsumoTab';
 import { CANASTA_ESTADO_LABEL, resumenCanasta } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  CANASTA_FARMACIA_LABEL, CANASTA_META, badgeProps, bannerCanasta,
+  CANASTA_META, badgeProps, bannerCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CanastaDetalle.css';
 
-// Panel derecho: cabecera de la cirugía, banner del estado de la compuerta,
+// Panel derecho: cabecera de la cirugía, banner de excepciones (novedades, preparación),
 // pestañas Recepción / Consumo y devolución. El estado editable vive en
 // `draft` (lo guarda el orquestador por cirugía); esta capa no tiene estado.
 export default function CanastaDetalle({
@@ -39,8 +39,7 @@ export default function CanastaDetalle({
         <div className="cnc-det-grid">
           <div><span className="cnc-det-label">Procedimiento</span><span className="cnc-det-value">{cirugia.procedimientoPrincipal}</span></div>
           <div><span className="cnc-det-label">Horario</span><span className="cnc-det-value">{cirugia.horaInicio} – {cirugia.horaFin}</span></div>
-          <div><span className="cnc-det-label">Cirujano</span><span className="cnc-det-value">{cirugia.cirujano}</span></div>
-          <div><span className="cnc-det-label">Farmacia</span><span className="cnc-det-value">{CANASTA_FARMACIA_LABEL[estado]}</span></div>
+          <div><span className="cnc-det-label">Cirujano</span><span className="cnc-det-value">{cirugia.cirujano}</span></div>
         </div>
       </div>
 
