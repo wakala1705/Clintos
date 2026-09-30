@@ -1682,7 +1682,7 @@ export function cantidadDevuelta(cirugia, nombre, { excepto } = {}) {
 // Máximo que todavía se puede devolver de un insumo (0 si no fue entregado).
 export function cantidadDevolvible(cirugia, item, { excepto } = {}) {
   if (item.solicitudFarmacia !== 'entregado') return 0;
-  return item.cantidad - cantidadDevuelta(cirugia, item.nombre, { excepto });
+  return cantidadRecibida(item) - cantidadDevuelta(cirugia, item.nombre, { excepto });
 }
 
 export function estadoInsumo(cirugia, item) {
@@ -1690,32 +1690,118 @@ export function estadoInsumo(cirugia, item) {
   if (paso !== 'entregado') return paso;
   const devuelta = cantidadDevuelta(cirugia, item.nombre);
   if (devuelta === 0) return 'entregado';
-  return devuelta >= item.cantidad ? 'devuelto' : 'devuelto-parcial';
+  return devuelta >= cantidadRecibida(item) ? 'devuelto' : 'devuelto-parcial';
+}
+
+// ---------- Canastas de cirugía: estado derivado (encargo 2026-09-30) ----------
+// Cada ítem puede traer, además de `solicitudFarmacia`: `preparado` (farmacia
+// lo alistó), `despachado` (cantidad que farmacia despachó), `recibido`
+// (cantidad que quirófano recibió) y `novedad`. La canasta guarda
+// `recepcion`, `autorizacionUrgencia` y `consumo`. NADA de esto se guarda como
+// "estado": `resumenCanasta`/`gateCirugia` lo derivan, mismo criterio que
+// `estadoInsumo` -- así InsumosTab (que solo mueve `solicitudFarmacia`) y esta
+// pantalla no quedan desincronizados. Ítems legados sin estos campos caen a
+// `cantidad` (cantidadDespachada/cantidadRecibida).
+export const CANASTA_ESTADO_LABEL = {
+  'sin-solicitar': 'Sin solicitar',
+  'en-preparacion': 'En preparación en farmacia',
+  despachada: 'Despachada · por recibir',
+  recibida: 'Canasta recibida',
+  'con-novedades': 'Recibida con novedades',
+  'consumo-registrado': 'Consumo registrado',
+};
+
+export const CANASTA_ESTADOS_RECIBIDOS = ['recibida', 'con-novedades', 'consumo-registrado'];
+
+export function cantidadDespachada(item) {
+  return item.despachado ?? item.cantidad;
+}
+
+export function cantidadRecibida(item) {
+  return item.recibido ?? item.cantidad;
+}
+
+// Texto de novedad de un ítem: lo que farmacia despachó de menos y lo que
+// faltó en la entrega. '' si no hay novedad.
+export function novedadItem(item, recibido) {
+  const despachado = cantidadDespachada(item);
+  const partes = [];
+  if (despachado < item.cantidad) partes.push(`Farmacia despachó ${despachado} de ${item.cantidad}`);
+  if (recibido < despachado) partes.push(`Faltan ${despachado - recibido} en la entrega`);
+  return partes.join(' · ');
 }
 
 // Resumen agregado de la canasta COMPLETA de una cirugía (a diferencia de
-// estadoInsumo, que es por ítem) -- alimenta el listado de "Canastas de
-// cirugía" (recepción por quirófano, encargo explícito 2026-09-29). No usa
-// estadoInsumo/cantidadDevuelta a propósito: una devolución posterior no debe
-// volver a marcar la canasta como pendiente de recepción, esa es otra etapa
-// del flujo que se resuelve en DetalleCirugiaPanel, no acá.
-// `solicitarInsumosFarmacia`/`registrarEntregaInsumos` avanzan TODOS los
-// ítems de una canasta a la vez (ver avanzarCanasta abajo), así que en la
-// práctica nunca hay una mezcla real de pasos dentro de una misma canasta --
-// el `else` final (recibida) solo se alcanza cuando `recibidos === total`.
+// estadoInsumo, que es por ítem). No usa estadoInsumo/cantidadDevuelta a
+// propósito: una devolución posterior no debe volver a marcar la canasta como
+// pendiente de recepción.
 export function resumenCanasta(cirugia) {
-  const pasos = cirugia.canasta.items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
+  const { items } = cirugia.canasta;
+  const pasos = items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
   const total = pasos.length;
   const porSolicitar = pasos.filter((p) => p === 'sin-solicitar').length;
   const porRecibir = pasos.filter((p) => p === 'solicitado').length;
   const recibidos = total - porSolicitar - porRecibir;
+  const preparados = items.filter((i) => i.preparado).length;
   let estado;
-  if (porRecibir > 0) estado = 'pendiente-recepcion';
-  else if (porSolicitar === total) estado = 'sin-solicitar';
-  else estado = 'recibida';
+  if (cirugia.canasta.consumo) {
+    estado = 'consumo-registrado';
+  } else if (porRecibir > 0) {
+    const despachada = items
+      .filter((i) => i.solicitudFarmacia === 'solicitado')
+      .every((i) => i.despachado !== undefined);
+    estado = despachada ? 'despachada' : 'en-preparacion';
+  } else if (porSolicitar === total) {
+    estado = 'sin-solicitar';
+  } else {
+    estado = cirugia.canasta.recepcion?.conNovedades ? 'con-novedades' : 'recibida';
+  }
   return {
-    total, porSolicitar, porRecibir, recibidos, estado,
+    total, porSolicitar, porRecibir, recibidos, preparados, estado,
   };
+}
+
+// Compuerta de inicio de la cirugía según su canasta. 'no-aplica' para
+// cirugías que ya no se inician (canceladas, incumplidas).
+export function gateCirugia(cirugia) {
+  if (cirugia.estado === 'realizada') return 'realizada';
+  if (cirugia.estado !== 'programada' && cirugia.estado !== 'urgencia') return 'no-aplica';
+  if (CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado)) return 'lista';
+  if (cirugia.estado === 'urgencia') {
+    return cirugia.canasta.autorizacionUrgencia ? 'urgencia-autorizada' : 'urgencia-puede-autorizar';
+  }
+  return 'bloqueada';
+}
+
+// true mientras la cirugía NO puede iniciar (bloqueada, o urgencia todavía sin
+// autorizar). Solo informativo en "Canastas de cirugía"; la agenda y
+// DetalleCirugiaPanel aún no lo consumen (decisión explícita, spec 2026-09-30).
+export function bloqueoInicio(cirugia) {
+  const gate = gateCirugia(cirugia);
+  return gate === 'bloqueada' || gate === 'urgencia-puede-autorizar';
+}
+
+// "29.SEP.2026 - 08:10" -- fecha con hora (encargo explícito 2026-09-29).
+export function fechaHoraTrazaLabel(isoDateTimeStr) {
+  const [fecha, hora] = isoDateTimeStr.split('T');
+  const [y, m, d] = fecha.split('-').map(Number);
+  return `${pad2(d)}.${MES_CORTO[m - 1].toUpperCase()}.${y} - ${hora}`;
+}
+
+// "Inicia en 45 min" / "Inicia en 3 h 15 min" de una cirugía del mismo día.
+// `ahora` se recibe como argumento (no `new Date()` acá) para que el render
+// sea puro; de otro día devuelve solo la fecha.
+export function iniciaEnLabel(cirugia, ahora = new Date()) {
+  if (cirugia.estado === 'realizada') return 'Finalizada';
+  if (cirugia.fecha !== fechaISO(ahora)) return fechaLabel(cirugia.fecha);
+  const [h, m] = cirugia.horaInicio.split(':').map(Number);
+  const [y, mo, d] = cirugia.fecha.split('-').map(Number);
+  const minutos = Math.round((new Date(y, mo - 1, d, h, m) - ahora) / 60000);
+  if (minutos <= 0) return 'Hora de inicio superada';
+  if (minutos < 60) return `Inicia en ${minutos} min`;
+  const horas = Math.floor(minutos / 60);
+  const resto = minutos % 60;
+  return resto === 0 ? `Inicia en ${horas} h` : `Inicia en ${horas} h ${resto} min`;
 }
 
 function avanzarCanasta(id, desde, hasta) {
