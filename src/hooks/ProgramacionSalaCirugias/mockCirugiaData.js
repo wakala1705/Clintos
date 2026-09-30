@@ -1891,6 +1891,22 @@ export function bloqueoInicio(cirugia) {
   return gate === 'bloqueada' || gate === 'urgencia-puede-autorizar';
 }
 
+// Hora de demostración de "Canastas de cirugía": las semillas son horas fijas
+// del día (07:30, 09:30, 13:00...), así que con la hora real casi todo decía
+// "Hora de inicio superada". 08:45 es la hora de los artboards de diseño.
+// `null` vuelve a la hora real del sistema.
+export const HORA_DEMO = '08:45';
+
+// "Ahora" de la pantalla y de los sellos de trazabilidad de las acciones de
+// canasta: hoy a HORA_DEMO (o la hora real si HORA_DEMO es null).
+export function ahoraDemo() {
+  const ahora = new Date();
+  if (!HORA_DEMO) return ahora;
+  const [h, m] = HORA_DEMO.split(':').map(Number);
+  ahora.setHours(h, m, 0, 0);
+  return ahora;
+}
+
 // "29.SEP.2026 - 08:10" -- fecha con hora (encargo explícito 2026-09-29).
 export function fechaHoraTrazaLabel(isoDateTimeStr) {
   const [fecha, hora] = isoDateTimeStr.split('T');
@@ -2016,7 +2032,7 @@ export function registrarRecepcion(id, { recibidos, usuario = 'CLINTOS' }) {
     canasta: {
       ...actual.canasta,
       items,
-      recepcion: { usuario, fecha: fechaHoraLocalISO(new Date()), conNovedades },
+      recepcion: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), conNovedades },
     },
   });
 }
@@ -2029,7 +2045,7 @@ export function autorizarInicioUrgencia(id, { usuario = 'CLINTOS' } = {}) {
     throw new Error('Solo las cirugías de urgencia con la canasta sin recibir pueden autorizarse.');
   }
   return actualizarCirugia(id, {
-    canasta: { ...actual.canasta, autorizacionUrgencia: { usuario, fecha: fechaHoraLocalISO(new Date()) } },
+    canasta: { ...actual.canasta, autorizacionUrgencia: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()) } },
   });
 }
 
@@ -2056,7 +2072,7 @@ export function registrarConsumo(id, { usados, usuario = 'CLINTOS' }) {
   if (lineas.length > 0) guardarDevolucion(id, { lineas, usuario });
   const despues = CIRUGIAS.find((c) => c.id === id);
   return actualizarCirugia(id, {
-    canasta: { ...despues.canasta, consumo: { usuario, fecha: fechaHoraLocalISO(new Date()), usados: usadosFinal } },
+    canasta: { ...despues.canasta, consumo: { usuario, fecha: fechaHoraLocalISO(ahoraDemo()), usados: usadosFinal } },
   });
 }
 

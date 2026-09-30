@@ -29,6 +29,7 @@ test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async
   assert.equal(gasas.novedad, 'Farmacia despachó 5 de 6 · Faltan 1 en la entrega');
   assert.equal(c.canasta.items.every((i) => i.solicitudFarmacia === 'entregado'), true);
   assert.equal(c.canasta.recepcion.usuario, 'Ana');
+  assert.equal(c.canasta.recepcion.fecha, `${HOY}T08:45`); // hora de demostración fija
   assert.equal(c.canasta.recepcion.conNovedades, true);
   assert.equal(gateCirugia(c), 'lista');
 });
@@ -38,6 +39,7 @@ test('autorizarInicioUrgencia: solo urgencias sin canasta recibida, una vez', ()
   const c = autorizarInicioUrgencia('12357', { usuario: 'Ana' });
   assert.equal(gateCirugia(c), 'urgencia-autorizada');
   assert.equal(c.canasta.autorizacionUrgencia.usuario, 'Ana');
+  assert.equal(c.canasta.autorizacionUrgencia.fecha, `${HOY}T08:45`);
   assert.throws(() => autorizarInicioUrgencia('12357', { usuario: 'Ana' }), /Solo las cirugías de urgencia/);
 });
 
@@ -62,6 +64,7 @@ test('registrarConsumo: crea la devolución con recibido − usado y queda consu
   const c = registrarConsumo('12353', { usados: { 'Gasas estériles': 6, 'Trocar 5mm': 1 }, usuario: 'Ana' });
   assert.equal(resumenCanasta(c).estado, 'consumo-registrado');
   assert.equal(c.canasta.consumo.usuario, 'Ana');
+  assert.equal(c.canasta.consumo.fecha, `${HOY}T08:45`);
   assert.equal(c.canasta.consumo.usados['Gasas estériles'], 6);
   assert.equal(c.devoluciones.length, 1);
   assert.deepEqual(

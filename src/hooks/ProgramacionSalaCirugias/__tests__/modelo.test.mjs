@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  bloqueoInicio, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
-  gateCirugia, iniciaEnLabel, novedadItem, resumenCanasta,
+  HORA_DEMO, ahoraDemo, bloqueoInicio, cantidadDespachada, cantidadDevolvible, cantidadRecibida, fechaHoraTrazaLabel,
+  fechaISO, gateCirugia, iniciaEnLabel, novedadItem, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const item = (extra = {}) => ({ nombre: 'Gasas', cantidad: 4, ...extra });
@@ -101,6 +101,14 @@ test('novedadItem describe faltantes de farmacia y de la entrega', () => {
 test('fechaHoraTrazaLabel usa DD.MES.AAAA - HH:mm', () => {
   assert.equal(fechaHoraTrazaLabel('2026-09-29T08:10'), '29.SEP.2026 - 08:10');
   assert.equal(fechaHoraTrazaLabel('2026-08-01T17:05'), '01.AGO.2026 - 17:05');
+});
+
+test('ahoraDemo: hoy a la hora de demostración fija', () => {
+  assert.equal(HORA_DEMO, '08:45');
+  const d = ahoraDemo();
+  assert.equal(fechaISO(d), fechaISO(new Date()));
+  assert.equal(d.getHours() * 60 + d.getMinutes(), 8 * 60 + 45);
+  assert.equal(d.getSeconds(), 0);
 });
 
 test('iniciaEnLabel', () => {

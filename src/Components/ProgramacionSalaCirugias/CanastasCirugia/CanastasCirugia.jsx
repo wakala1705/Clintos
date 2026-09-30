@@ -20,8 +20,8 @@ import CanastaAlerta from '../canastas/CanastaAlerta/CanastaAlerta';
 import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
-  SALAS, autorizarInicioUrgencia, deshacerResolucion, fechaISO, fetchCanastasDia, registrarConsumo,
-  registrarRecepcion, resumenCanasta,
+  HORA_DEMO, SALAS, ahoraDemo, autorizarInicioUrgencia, deshacerResolucion, fechaISO, fetchCanastasDia,
+  registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { filtrarCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
@@ -47,7 +47,8 @@ export default function CanastasCirugia() {
   // { message, snapshot } -- con snapshot el toast ofrece "Deshacer".
   const [toast, setToast] = useState(null);
   // Reloj del render (no `new Date()` directo): alimenta "Inicia en N min".
-  const [ahora, setAhora] = useState(() => new Date());
+  // Hora de demostración fija (HORA_DEMO en el mock) o la real si es null.
+  const [ahora, setAhora] = useState(() => ahoraDemo());
   const toastTimerRef = useRef(null);
 
   useEffect(() => {
@@ -63,8 +64,10 @@ export default function CanastasCirugia() {
     return () => { cancelled = true; };
   }, [fecha, salaId]);
 
+  // Con hora fija no hay nada que refrescar.
   useEffect(() => {
-    const id = window.setInterval(() => setAhora(new Date()), 60000);
+    if (HORA_DEMO) return undefined;
+    const id = window.setInterval(() => setAhora(ahoraDemo()), 60000);
     return () => window.clearInterval(id);
   }, []);
 
