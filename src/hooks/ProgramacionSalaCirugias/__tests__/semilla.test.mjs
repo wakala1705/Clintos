@@ -6,17 +6,22 @@ import {
 
 const HOY = fechaISO(new Date());
 
-test('sala qx-1 de hoy: los 5 casos del diseño, por hora', async () => {
+test('sala qx-1 de hoy: los casos del diseño (+ una despachada completa), por hora', async () => {
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
-  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12355', '12357', '12358']);
+  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12355', '12357', '12358']);
   assert.deepEqual(
     items.map((c) => resumenCanasta(c).estado),
-    ['recibida', 'despachada', 'con-novedades', 'en-preparacion', 'en-preparacion'],
+    ['recibida', 'despachada', 'despachada', 'con-novedades', 'en-preparacion', 'en-preparacion'],
   );
   assert.deepEqual(
     items.map(gateCirugia),
-    ['realizada', 'bloqueada', 'lista', 'urgencia-puede-autorizar', 'bloqueada'],
+    ['realizada', 'bloqueada', 'bloqueada', 'lista', 'urgencia-puede-autorizar', 'bloqueada'],
   );
+});
+
+test('despachada sin novedades (12359): todo lo despachado es lo solicitado', async () => {
+  const c = (await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' })).find((x) => x.id === '12359');
+  assert.equal(c.canasta.items.every((i) => i.despachado === i.cantidad && i.preparado === true), true);
 });
 
 test('la cirugía realizada sigue en el listado (su canasta está abierta para consumo)', async () => {

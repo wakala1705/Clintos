@@ -34,6 +34,14 @@ test('registrarRecepcion: con faltantes → con-novedades y trazabilidad', async
   assert.equal(gateCirugia(c), 'lista');
 });
 
+test('registrarRecepcion: despachada completa, sin faltantes → recibida sin novedades', () => {
+  const c = registrarRecepcion('12359', { recibidos: {}, usuario: 'Ana' });
+  assert.equal(resumenCanasta(c).estado, 'recibida');
+  assert.equal(c.canasta.recepcion.conNovedades, false);
+  assert.equal(c.canasta.items.some((i) => i.novedad), false);
+  assert.equal(gateCirugia(c), 'lista');
+});
+
 test('autorizarInicioUrgencia: solo urgencias sin canasta recibida, una vez', () => {
   assert.throws(() => autorizarInicioUrgencia('12358', { usuario: 'Ana' }), /Solo las cirugías de urgencia/);
   const c = autorizarInicioUrgencia('12357', { usuario: 'Ana' });

@@ -694,7 +694,7 @@ const itemsDe = (catalogo, fn) => CANASTAS_CATALOGO[catalogo].items.map((i, n) =
 // Cirugía de sede '02'/sala 'qx-1' de hoy con los datos mínimos que consumen
 // las pantallas (mismo shape que las entradas literales de CIRUGIAS).
 function cirugiaHoy({
-  id, nombre, documento, edad, sexo, procedimiento, cirujano, horaInicio, horaFin, estado = 'programada', canasta, farmacia,
+  id, nombre, documento, edad, sexo, procedimiento, servicio = 'Cirugía general', cirujano, horaInicio, horaFin, estado = 'programada', canasta, farmacia,
 }) {
   return {
     id,
@@ -704,7 +704,7 @@ function cirugiaHoy({
       nombre, documento, edad, edadMeses: 0, edadDias: 0, sexo, aseguradora: 'Sura EPS', nivel: '1', tipoAfiliado: 'Cotizante', direccion: 'Bogotá', telAviso: '300 000 0000',
     },
     procedimientoPrincipal: procedimiento,
-    servicio: 'Cirugía general',
+    servicio,
     tipoCirugia: estado === 'urgencia' ? 'Urgencia' : 'Programada',
     cirujano,
     fecha: HOY_ISO,
@@ -1167,6 +1167,27 @@ let CIRUGIAS = [
     },
     farmacia: {
       numeroPedido: '4593', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:30`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
+    },
+  }),
+  // Despachada por recibir SIN novedades: farmacia despachó todo lo solicitado,
+  // así que la recepción se confirma como "completa" (contraste con 12356).
+  cirugiaHoy({
+    id: '12359',
+    nombre: 'Laura Gómez',
+    documento: 'CC 1.036.552.140',
+    edad: 31,
+    sexo: 'Femenino',
+    procedimiento: 'Artroscopia de rodilla izquierda',
+    servicio: 'Ortopedia',
+    cirujano: 'Dra. Paula Restrepo',
+    horaInicio: '11:00',
+    horaFin: '12:15',
+    canasta: {
+      nombre: 'Ortopedia menor',
+      items: itemsDe(3, (i) => ({ solicitudFarmacia: 'solicitado', preparado: true, despachado: i.cantidad })),
+    },
+    farmacia: {
+      numeroPedido: '4596', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:55`, medicamentos: [{ nombre: 'Ketorolaco', dosis: '30mg IV' }],
     },
   }),
   // Urgencia con la canasta a medio preparar (3 de 5): puede autorizar inicio.
