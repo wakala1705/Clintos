@@ -202,7 +202,20 @@ function renderLectura({ cirugia }) {
   );
 }
 
-function renderVacio() {
+function renderVacio({ cirugia }) {
+  // Canasta sin ítems: no hay nada que solicitar ni que recibir.
+  if (cirugia.canasta.items.length === 0) {
+    return (
+      <>
+        <div className="cnc-tab-body">
+          <p className="cnc-vacio">Esta cirugía no tiene insumos en su canasta.</p>
+        </div>
+        <div className="cnc-tab-footer">
+          <span className="cnc-footer-msg">Los insumos se agregan desde Programación.</span>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <div className="cnc-tab-body">
@@ -219,6 +232,6 @@ export default function RecepcionTab(props) {
   const { estado } = resumenCanasta(props.cirugia);
   if (estado === 'despachada') return renderEditar(props);
   if (estado === 'en-preparacion') return renderPreparacion(props);
-  if (estado === 'sin-solicitar') return renderVacio();
+  if (estado === 'sin-solicitar') return renderVacio(props);
   return renderLectura(props);
 }

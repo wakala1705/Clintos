@@ -1870,10 +1870,12 @@ export function resumenCanasta(cirugia) {
 }
 
 // Compuerta de inicio de la cirugía según su canasta. 'no-aplica' para
-// cirugías que ya no se inician (canceladas, incumplidas).
+// cirugías que ya no se inician (canceladas, incumplidas). Una canasta sin
+// ítems no tiene nada que recibir, así que nunca bloquea el inicio.
 export function gateCirugia(cirugia) {
   if (cirugia.estado === 'realizada') return 'realizada';
   if (cirugia.estado !== 'programada' && cirugia.estado !== 'urgencia') return 'no-aplica';
+  if (cirugia.canasta.items.length === 0) return 'lista';
   if (CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado)) return 'lista';
   if (cirugia.estado === 'urgencia') {
     return cirugia.canasta.autorizacionUrgencia ? 'urgencia-autorizada' : 'urgencia-puede-autorizar';

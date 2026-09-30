@@ -84,6 +84,9 @@ export function bannerCanasta(cirugia) {
         ? { tone: 'neutral', bloqueado: false, texto: 'Cirugía realizada. El consumo y la devolución de insumos ya fueron registrados.' }
         : { tone: 'info', bloqueado: false, texto: 'Cirugía realizada. Registra el consumo real y la devolución de insumos a farmacia.' };
     case 'lista':
+      if (cirugia.canasta.items.length === 0) {
+        return { tone: 'neutral', bloqueado: false, texto: 'Esta cirugía no tiene insumos en su canasta: puede iniciar.' };
+      }
       return estado === 'con-novedades'
         ? { tone: 'warn', bloqueado: false, texto: 'Canasta recibida con novedades: la cirugía puede iniciar y farmacia fue notificada.' }
         : { tone: 'success', bloqueado: false, texto: 'Canasta recibida completa: la cirugía puede iniciar.' };

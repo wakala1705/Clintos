@@ -67,6 +67,15 @@ test('bannerCanasta por compuerta', () => {
   assert.equal(bannerCanasta(cirugia([ent()], { estado: 'cancelada' })), null);
 });
 
+test('canasta sin ítems: banner propio y no cuenta como bloqueada', () => {
+  const vacia = cirugia([]);
+  assert.deepEqual(bannerCanasta(vacia), {
+    tone: 'neutral', bloqueado: false, texto: 'Esta cirugía no tiene insumos en su canasta: puede iniciar.',
+  });
+  assert.equal(kpisCanastas([vacia]).bloqueadas, 0);
+  assert.deepEqual(filtrarCanastas([vacia], { estado: 'bloqueadas' }), []);
+});
+
 test('resumenDevolucion: unidades e insumos a devolver', () => {
   const c = cirugia([ent({ nombre: 'A', cantidad: 4 }), ent({ nombre: 'B', cantidad: 2, recibido: 1 })]);
   assert.deepEqual(resumenDevolucion(c), { unidades: 0, insumos: 0 });

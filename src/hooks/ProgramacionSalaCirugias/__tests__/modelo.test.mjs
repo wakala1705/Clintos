@@ -71,6 +71,15 @@ test('gateCirugia cubre los 6 valores', () => {
   assert.equal(gateCirugia(cirugia(pend, { estado: 'cancelada' })), 'no-aplica');
 });
 
+test('canasta sin ítems: no hay nada que recibir, la cirugía no se bloquea', () => {
+  assert.equal(gateCirugia(cirugia([])), 'lista');
+  assert.equal(gateCirugia(cirugia([], { estado: 'urgencia' })), 'lista');
+  assert.equal(bloqueoInicio(cirugia([])), false);
+  assert.equal(bloqueoInicio(cirugia([], { estado: 'urgencia' })), false);
+  // Una cirugía ya realizada sigue siendo 'realizada' aunque no tenga canasta.
+  assert.equal(gateCirugia(cirugia([], { estado: 'realizada' })), 'realizada');
+});
+
 test('bloqueoInicio: bloqueada y urgencia sin autorizar', () => {
   assert.equal(bloqueoInicio(cirugia([solicitado()])), true);
   assert.equal(bloqueoInicio(cirugia([solicitado()], { estado: 'urgencia' })), true);
