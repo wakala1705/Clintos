@@ -2,10 +2,12 @@
 .cnc-detalle{flex:1;min-width:0;}
 .cnc-det-head{padding:16px 24px 12px;}
 .cnc-det-head-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
-.cnc-det-paciente-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+/* Desktop (artboard Desktop): nombre, urgencia y documento en una línea; a la
+   derecha solicitud + estado en fila. */
+.cnc-det-paciente-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
 .cnc-det-paciente-row h2{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cnc-det-doc{font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-.cnc-det-head-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.cnc-det-doc{font-size:var(--fs-sm);color:var(--ink-500);}
+.cnc-det-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .cnc-det-solicitud{font-size:var(--fs-xs);color:var(--ink-500);}
 .cnc-det-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:12px;}
 .cnc-det-label{display:block;font-size:var(--fs-xs);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;}
@@ -37,6 +39,9 @@ html[data-theme="dark"] .cnc-banner-success{color:var(--green);}
 .cnc-tabpanel{flex:1;min-height:0;display:flex;flex-direction:column;}
 
 @media (max-width:1024px){
+  /* Tablet (artboard Main): documento bajo el nombre; estado sobre la solicitud. */
+  .cnc-det-doc{flex-basis:100%;margin-top:-4px;}
+  .cnc-det-head-right{flex-direction:column-reverse;align-items:flex-end;gap:4px;}
   .cnc-det-head{padding:14px 20px 10px;}
   .cnc-banner,.cnc-error{margin-left:20px;margin-right:20px;}
   .cnc-tabs{padding:0 20px;}

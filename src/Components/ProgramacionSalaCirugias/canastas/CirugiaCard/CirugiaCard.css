@@ -12,7 +12,15 @@
 .cnc-cc-body{display:flex;flex-direction:column;gap:3px;min-width:0;}
 .cnc-cc-paciente-row{display:flex;align-items:center;gap:6px;min-width:0;}
 .cnc-cc-paciente{font-size:var(--fs-base);font-weight:var(--fw-semibold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cnc-cc-proc{font-size:var(--fs-base);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.cnc-cc-cirujano{font-size:var(--fs-sm);color:var(--ink-500);}
+/* Desktop (artboard Desktop): procedimiento · cirujano en una sola línea. */
+.cnc-cc-linea{font-size:var(--fs-base);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cnc-cc-cirujano{color:var(--ink-500);}
+/* Tablet (artboard Main): cada dato en su línea, cirujano más chico. */
+@media (max-width:1024px){
+  .cnc-cc-linea{display:flex;flex-direction:column;gap:3px;white-space:normal;overflow:visible;}
+  .cnc-cc-sep{display:none;}
+  .cnc-cc-proc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cnc-cc-cirujano{font-size:var(--fs-sm);}
+}
 .cnc-cc-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
 .cnc-badge-icon{width:11px;height:11px;margin-right:4px;}

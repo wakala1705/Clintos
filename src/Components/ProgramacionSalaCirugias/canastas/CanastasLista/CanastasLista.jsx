@@ -24,8 +24,8 @@ export default function CanastasLista({
             <LuSearch className="icon" aria-hidden="true" />
             <input
               type="search"
-              placeholder="Buscar paciente, documento o n.º de solicitud"
-              aria-label="Buscar cirugía"
+              placeholder="Paciente o solicitud"
+              aria-label="Buscar por paciente, documento o n.º de solicitud"
               value={filtros.busqueda}
               onChange={(e) => onFiltrosChange({ busqueda: e.target.value })}
             />

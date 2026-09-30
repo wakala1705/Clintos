@@ -14,10 +14,10 @@ const KPIS = [
     key: 'porRecibir', icon: LuPackage, tone: 'info', label: 'Despachadas por recibir',
   },
   {
-    key: 'enPreparacion', icon: LuClock, tone: 'neutral', label: 'En preparación en farmacia',
+    key: 'enPreparacion', icon: LuClock, tone: 'neutral', label: 'En preparación',
   },
   {
-    key: 'bloqueadas', icon: LuLock, tone: 'danger', label: 'Cirugías con inicio bloqueado',
+    key: 'bloqueadas', icon: LuLock, tone: 'danger', label: 'Inicio bloqueado',
   },
 ];
 

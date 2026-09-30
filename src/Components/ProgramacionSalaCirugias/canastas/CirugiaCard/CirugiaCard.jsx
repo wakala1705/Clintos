@@ -31,8 +31,11 @@ export default function CirugiaCard({
           <span className="cnc-cc-paciente">{cirugia.paciente.nombre}</span>
           {cirugia.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
         </div>
-        <span className="cnc-cc-proc">{cirugia.procedimientoPrincipal}</span>
-        <span className="cnc-cc-cirujano">{cirugia.cirujano}</span>
+        <div className="cnc-cc-linea">
+          <span className="cnc-cc-proc">{cirugia.procedimientoPrincipal}</span>
+          <span className="cnc-cc-sep" aria-hidden="true"> · </span>
+          <span className="cnc-cc-cirujano">{cirugia.cirujano}</span>
+        </div>
         <div className="cnc-cc-badges">
           <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
           {gateMeta && (

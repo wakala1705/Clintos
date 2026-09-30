@@ -27,16 +27,14 @@ export default function CanastaDetalle({
     <section className="cnc-panel cnc-detalle" aria-label="Detalle de la canasta">
       <div className="cnc-det-head">
         <div className="cnc-det-head-top">
-          <div>
-            <div className="cnc-det-paciente-row">
-              <h2>{cirugia.paciente.nombre}</h2>
-              {cirugia.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
-            </div>
-            <div className="cnc-det-doc">{cirugia.paciente.documento} · {cirugia.paciente.edad} años</div>
+          <div className="cnc-det-paciente-row">
+            <h2>{cirugia.paciente.nombre}</h2>
+            {cirugia.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
+            <span className="cnc-det-doc">{cirugia.paciente.documento} · {cirugia.paciente.edad} años</span>
           </div>
           <div className="cnc-det-head-right">
-            <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
             <span className="cnc-det-solicitud">Solicitud {cirugia.farmacia?.numeroPedido ?? '—'}</span>
+            <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
           </div>
         </div>
         <div className="cnc-det-grid">

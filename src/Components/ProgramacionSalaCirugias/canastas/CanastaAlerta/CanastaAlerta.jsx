@@ -22,8 +22,7 @@ export default function CanastaAlerta({ cirugias, ahora, onVerificar }) {
     <div className="cnc-alerta" role="status">
       <LuTriangleAlert className="cnc-alerta-icon" aria-hidden="true" />
       <span className="cnc-alerta-text">
-        <strong>{bloqueada.paciente.nombre} · {bloqueada.horaInicio}</strong> — {cuando.charAt(0).toLowerCase() + cuando.slice(1)}.
-        {' '}La cirugía está bloqueada hasta recibir su canasta.
+        <strong>{bloqueada.paciente.nombre} · {bloqueada.horaInicio}</strong> — {cuando.charAt(0).toLowerCase() + cuando.slice(1)}. Bloqueada hasta recibir su canasta.
       </span>
       <Button variant="warning-outline" size="sm" onClick={() => onVerificar(bloqueada.id)}>Verificar ahora</Button>
     </div>
