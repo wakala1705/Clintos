@@ -1,32 +1,16 @@
 /* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
-   ../ProgramacionSalaCirugias.css; .psc-toast de ../shared/shared.css. Acá
-   solo lo propio de esta página -- el navegador de fecha (.cnc-date-nav) vive
-   en ../canastas/CanastasFiltrosBar/, que es donde se monta. */
+   ../ProgramacionSalaCirugias.css; .psc-toast y el bloque .cnc-* compartido de
+   ../shared/shared.css. Acá solo lo propio de esta página; cada panel tiene su
+   CSS en ../canastas/<Componente>/. */
 
 .cnc-sala-select{width:220px;}
 
-/* KPIs del turno (sala + fecha seleccionados) -- estructura, no color de rol:
-   los 3 tonos calzan con ESTADO_TONE de CanastasTable.jsx (mismo criterio
-   semántico, no un color nuevo). */
-.cnc-kpis{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.cnc-kpi{
-  flex:1;min-width:200px;display:flex;align-items:center;gap:12px;
-  padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+/* KPIs + alerta: en desktop la alerta es la 5.ª celda de la fila; en tablet
+   sube a su propia fila arriba (artboard Main). */
+.cnc-resumen{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.6fr);gap:12px;flex-shrink:0;
 }
-.cnc-kpi-icon-wrap{
-  width:36px;height:36px;border-radius:10px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-}
-.cnc-kpi-icon-wrap .icon{width:18px;height:18px;}
-.cnc-kpi-success{background:var(--green-bg);color:#0d7a3d;}
-html[data-theme="dark"] .cnc-kpi-success{color:var(--green);}
-.cnc-kpi-warn{background:var(--amber-bg);color:var(--amber-fg);}
-.cnc-kpi-neutral{background:var(--gray-bg);color:var(--ink-500);}
-.cnc-kpi-value{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.1;}
-.cnc-kpi-label{font-size:var(--fs-sm);color:var(--ink-500);}
-
-.cnc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
-.cnc-list-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.cnc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
 
 .cnc-estado{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
@@ -44,6 +28,16 @@ html[data-theme="dark"] .cnc-kpi-success{color:var(--green);}
 }
 .cnc-toast-undo:hover{background:rgba(255,255,255,.12);}
 .cnc-toast-undo:focus-visible{outline:2px solid var(--primary-100);outline-offset:1px;}
-
 html[data-theme="dark"] .cnc-toast-undo{color:var(--primary);}
 html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primary);}
+
+@media (max-width:1024px){
+  .cnc-resumen{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .cnc-resumen > .cnc-alerta{order:-1;grid-column:1 / -1;}
+  /* Con la alerta en su propia fila, alerta + KPIs + cabecera dejan al
+     workspace sin altura útil en una tablet: la página hace scroll vertical y
+     el workspace conserva una altura mínima. Selector compuesto porque
+     .content (ProgramacionSalaCirugias.css) fija overflow:hidden. */
+  .content.cnc-content{overflow-y:auto;}
+  .cnc-workspace{min-height:640px;}
+}

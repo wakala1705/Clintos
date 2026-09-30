@@ -1,0 +1,20 @@
+/* .psc-agenda-nav-btn viene de ../../shared/shared.css. */
+.cnc-date-nav{
+  display:flex;align-items:center;gap:2px;flex-shrink:0;height:var(--input-lg);padding:0 2px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+.cnc-date-nav-label{
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+  white-space:nowrap;min-width:150px;text-align:center;
+  background:none;border:none;border-radius:6px;padding:4px 6px;cursor:pointer;
+}
+.cnc-date-nav-label:hover{background:var(--gray-bg);}
+/* Reemplaza al label mientras se elige una fecha puntual -- mismo ancho para
+   que la fila no salte. */
+.cnc-date-nav-input{
+  font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);
+  min-width:150px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);
+}
+@media (max-width:1024px){
+  .cnc-date-nav .psc-agenda-nav-btn{width:40px;height:40px;}
+}
