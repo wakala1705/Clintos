@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  LuCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert,
+  LuCheck, LuMinus, LuPackageCheck, LuPlus, LuTriangleAlert, LuTruck,
 } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -118,7 +118,7 @@ function renderEditar({
   );
 }
 
-function renderPreparacion({ cirugia }) {
+function renderPreparacion({ cirugia, onDespachar }) {
   const { preparados, total } = resumenCanasta(cirugia);
   return (
     <>
@@ -146,6 +146,9 @@ function renderPreparacion({ cirugia }) {
       </div>
       <div className="cnc-tab-footer">
         <span className="cnc-footer-msg">Podrás verificar la canasta cuando farmacia la despache.</span>
+        {onDespachar && (
+          <Button variant="secondary" icon={LuTruck} onClick={onDespachar}>Simular despacho de farmacia (demo)</Button>
+        )}
       </div>
     </>
   );

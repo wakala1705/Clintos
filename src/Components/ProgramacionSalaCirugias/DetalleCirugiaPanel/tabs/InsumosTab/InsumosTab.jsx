@@ -1,13 +1,13 @@
 'use client';
 
 import {
-  LuPackageCheck, LuPackageMinus, LuPackagePlus, LuPackageX,
+  LuPackageMinus, LuPackagePlus, LuPackageSearch, LuPackageX,
 } from 'react-icons/lu';
 import './InsumosTab.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import {
-  SOLICITUD_FARMACIA_LABEL, cantidadDevuelta, estadoInsumo,
+  SOLICITUD_FARMACIA_LABEL, cantidadDevuelta, estadoInsumo, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Tono de <Badge> por paso del flujo de insumos (ver "Flujo de insumos" en
@@ -35,21 +35,21 @@ const HEAD_ROW = (
 
 // El pie muestra el avance y UNA acción según el paso en que va la canasta:
 // 1. quedan insumos sin solicitar -> "Pedir insumos a farmacia"
-// 2. quedan solicitados sin entregar -> "Registrar entrega" (+ "Cancelar
-//    solicitud", que pide la causal y los devuelve a sin solicitar)
+// 2. quedan solicitados sin entregar -> "Ver en Canastas" (la recepción se
+//    registra allá, no acá) + "Cancelar solicitud", que pide la causal y los
+//    devuelve a sin solicitar
 // 3. todo entregado -> "Devolver insumos" (abre Devoluciones en Cirugías)
-// Pedir/Registrar se deshabilitan con la cirugía cerrada (`puedeAccionar`);
+// Pedir se deshabilita con la cirugía cerrada (`puedeAccionar`);
 // Devolver no: lo no usado se devuelve también después de realizada o
 // cancelada la cirugía.
 export default function InsumosTab({
-  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onRegistrarEntrega, onDevolverInsumos,
+  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onVerEnCanastas, onDevolverInsumos,
 }) {
   const { canasta } = cirugia;
   const total = canasta.items.length;
   const pasos = canasta.items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
   const porSolicitar = pasos.filter((p) => p === 'sin-solicitar').length;
   const porEntregar = pasos.filter((p) => p === 'solicitado').length;
-  const entregados = pasos.filter((p) => p === 'entregado').length;
 
   let resumen;
   let accion;
@@ -61,7 +61,10 @@ export default function InsumosTab({
       </Button>
     );
   } else if (porEntregar > 0) {
-    resumen = <><strong>{entregados}</strong> de {total} entregados por farmacia</>;
+    const { estado, preparados } = resumenCanasta(cirugia);
+    resumen = estado === 'despachada'
+      ? <>Farmacia <strong>despachó</strong> la canasta: recíbela en Canastas de cirugía</>
+      : <>Farmacia está preparando la canasta: <strong>{preparados}</strong> de {total} preparados</>;
     // Mientras farmacia no entregue, la solicitud se puede cancelar
     // (secundaria, ícono rojo: mismo criterio que Cancelar cirugía).
     accion = (
@@ -75,8 +78,8 @@ export default function InsumosTab({
         >
           Cancelar solicitud
         </Button>
-        <Button icon={LuPackageCheck} disabled={!puedeAccionar} onClick={() => onRegistrarEntrega(cirugia)}>
-          Registrar entrega
+        <Button icon={LuPackageSearch} onClick={() => onVerEnCanastas(cirugia)}>
+          Ver en Canastas
         </Button>
       </div>
     );

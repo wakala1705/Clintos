@@ -148,3 +148,10 @@ export function lineaConsumo(cirugia) {
   const { unidades } = resumenDevolucion(cirugia, c.usados);
   return `Consumo registrado por ${c.usuario} · ${fechaHoraTrazaLabel(c.fecha)} · ${unidades} unidades enviadas a devolución`;
 }
+
+// Enlace desde Programación (pestaña Insumos) a Canastas de cirugía: abre la
+// sala y el día de la cirugía con su canasta seleccionada.
+export function canastasHref(cirugia) {
+  const q = new URLSearchParams({ sala: cirugia.salaId, fecha: cirugia.fecha, cirugia: cirugia.id });
+  return `/programacion-sala-cirugias/canastas?${q.toString()}`;
+}

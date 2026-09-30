@@ -1351,7 +1351,9 @@ function vencidaLegacy([
 
 CIRUGIAS = [...CIRUGIAS, ...VENCIDAS_LEGACY.map(vencidaLegacy)];
 
-let nextIdSeq = 12356;
+// Parte del id numérico más alto ya sembrado (antes era un literal y chocaba
+// con las semillas de "hoy": una cirugía nueva salía con un id repetido).
+let nextIdSeq = Math.max(0, ...CIRUGIAS.map((c) => Number(c.id) || 0)) + 1;
 
 // Consecutivo de "No. Programación" de AgregarProcedimientoModal (encargo
 // explícito: "debe ser un consecutivo... pon un número real" -- ya no un
@@ -1750,8 +1752,8 @@ export function reprogramarCirugia(id, {
 // ---------- Flujo de insumos: solicitud -> entrega -> devolución ----------
 // (encargo explícito 2026-09-25). Cada insumo de la canasta guarda en
 // `solicitudFarmacia` su paso del flujo: 'sin-solicitar' (o ausente) ->
-// 'solicitado' ("Pedir insumos a farmacia") -> 'entregado' ("Registrar
-// entrega"). Las devoluciones viven en `cirugia.devoluciones` y el estado
+// 'solicitado' ("Pedir insumos a farmacia") -> 'entregado' (la recepción
+// se registra en Canastas de cirugía, no desde la agenda). Las devoluciones viven en `cirugia.devoluciones` y el estado
 // devuelto/devuelto parcial se DERIVA de ellas (estadoInsumo), no se guarda:
 // así anular o modificar una devolución no deja el insumo desincronizado.
 // Sin integración real con farmacia (mock): la devolución queda confirmada
@@ -1950,8 +1952,16 @@ function avanzarCanasta(id, desde, hasta) {
 }
 
 // "Pedir insumos a farmacia": los insumos sin solicitar pasan a solicitados.
+// Una cirugía creada desde el wizard nace con farmacia.numeroPedido '—': al
+// pedir los insumos se le asigna el siguiente número de solicitud (el que
+// muestra Canastas de cirugía).
 export function solicitarInsumosFarmacia(id) {
-  return avanzarCanasta(id, 'sin-solicitar', 'solicitado');
+  const actualizada = avanzarCanasta(id, 'sin-solicitar', 'solicitado');
+  if (actualizada.farmacia?.numeroPedido !== '—') return actualizada;
+  const mayor = Math.max(0, ...CIRUGIAS.map((c) => Number(c.farmacia?.numeroPedido) || 0));
+  return actualizarCirugia(id, {
+    farmacia: { ...actualizada.farmacia, numeroPedido: String(mayor + 1), fechaSolicitud: fechaHoraLocalISO(new Date()) },
+  });
 }
 
 // "Cancelar solicitud": deshace el pedido mientras farmacia no haya
@@ -1973,26 +1983,6 @@ export function cancelarSolicitudInsumos(id, { causal, observacion = '', usuario
 // "Registrar entrega" (InsumosTab): farmacia entregó lo solicitado al
 // quirófano, todo completo -- equivale a despachar y recibir sin novedades.
 // La recepción por cantidades (con novedades) vive en registrarRecepcion.
-export function registrarEntregaInsumos(id) {
-  const actual = CIRUGIAS.find((c) => c.id === id);
-  return actualizarCirugia(id, {
-    canasta: {
-      ...actual.canasta,
-      items: actual.canasta.items.map((i) => (
-        (i.solicitudFarmacia ?? 'sin-solicitar') === 'solicitado'
-          ? {
-            ...i,
-            solicitudFarmacia: 'entregado',
-            preparado: true,
-            despachado: i.despachado ?? i.cantidad,
-            recibido: i.despachado ?? i.cantidad,
-          }
-          : i
-      )),
-    },
-  });
-}
-
 // Farmacia despachó lo solicitado (mock: no hay integración real): todos los
 // solicitados quedan preparados y despachados por su cantidad completa.
 export function despacharCanasta(id) {

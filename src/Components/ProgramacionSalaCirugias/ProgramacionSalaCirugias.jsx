@@ -42,8 +42,9 @@ import {
   rangoSemanaLabel,
   reprogramarCirugia,
   resumenAgenda,
-  solicitarInsumosFarmacia, cancelarSolicitudInsumos, registrarEntregaInsumos, guardarDevolucion, anularDevolucion,
+  solicitarInsumosFarmacia, cancelarSolicitudInsumos, guardarDevolucion, anularDevolucion,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
 export default function ProgramacionSalaCirugias() {
   const router = useRouter();
@@ -357,10 +358,10 @@ export default function ProgramacionSalaCirugias() {
     applyUpdated(cancelarSolicitudInsumos(cirugia.id, { causal, observacion }));
     showToast('Solicitud de insumos cancelada.');
   }
-  // Siguiente paso del flujo de insumos: farmacia entregó lo solicitado.
-  function handleRegistrarEntrega(cirugia) {
-    applyUpdated(registrarEntregaInsumos(cirugia.id));
-    showToast('Entrega de insumos registrada.');
+  // La recepción de lo que farmacia despacha se registra en Canastas de
+  // cirugía: se abre allá con esta cirugía seleccionada.
+  function handleVerEnCanastas(cirugia) {
+    router.push(canastasHref(cirugia));
   }
   // Ventana "Devoluciones en Cirugías": crea/modifica una devolución.
   // Devuelve { error } con el mensaje de validación (la ventana lo muestra
@@ -512,7 +513,7 @@ export default function ProgramacionSalaCirugias() {
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
         onCancelarSolicitud={handleCancelarSolicitud}
-        onRegistrarEntrega={handleRegistrarEntrega}
+        onVerEnCanastas={handleVerEnCanastas}
         onGuardarDevolucion={handleGuardarDevolucion}
         onAnularDevolucion={handleAnularDevolucion}
       />

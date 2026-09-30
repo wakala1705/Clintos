@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  fechaISO, fetchCanastasDia, resumenCanasta,
+  crearCirugia, fechaISO, fetchCanastasDia, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const HOY = fechaISO(new Date());
@@ -41,4 +41,11 @@ test('canasta preparada parcialmente: 3 de 5 preparados en la urgencia', async (
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
   const r = resumenCanasta(items.find((c) => c.id === '12357'));
   assert.deepEqual([r.preparados, r.total], [3, 5]);
+});
+
+test('una cirugía nueva no repite el id de ninguna semilla', async () => {
+  const nueva = crearCirugia({ salaId: 'qx-1', fecha: HOY, horaInicio: '19:00', horaFin: '20:00', paciente: { nombre: 'X', documento: 'CC 1' } });
+  const ids = (await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' })).map((c) => c.id);
+  assert.equal(ids.filter((id) => id === nueva.id).length <= 1, true);
+  assert.equal(['12353', '12354', '12355', '12356', '12357', '12358', '12359'].includes(nueva.id), false);
 });

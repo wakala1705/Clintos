@@ -15,7 +15,7 @@ import './CanastaDetalle.css';
 // pestañas Recepción / Consumo y devolución. El estado editable vive en
 // `draft` (lo guarda el orquestador por cirugía); esta capa no tiene estado.
 export default function CanastaDetalle({
-  cirugia, draft, error, onDraftChange, onRecibir, onRegistrarConsumo,
+  cirugia, draft, error, onDraftChange, onRecibir, onRegistrarConsumo, onDespachar,
 }) {
   const { estado } = resumenCanasta(cirugia);
   const banner = bannerCanasta(cirugia);
@@ -80,7 +80,7 @@ export default function CanastaDetalle({
 
       <div className="cnc-tabpanel" role="tabpanel" id={`cnc-panel-${tab}`} aria-labelledby={`cnc-tab-${tab}`}>
         {tab === 'recepcion' ? (
-          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} />
+          <RecepcionTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRecibir={onRecibir} onDespachar={onDespachar} />
         ) : (
           <ConsumoTab cirugia={cirugia} draft={draft} onDraftChange={onDraftChange} onRegistrarConsumo={onRegistrarConsumo} />
         )}

@@ -45,7 +45,7 @@ function InfoItem({ label, value, wide = false }) {
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
-  onCancelarSolicitud, onRegistrarEntrega, onGuardarDevolucion, onAnularDevolucion,
+  onCancelarSolicitud, onVerEnCanastas, onGuardarDevolucion, onAnularDevolucion,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
   // Ventana "Devoluciones en Cirugías" (se abre desde
@@ -190,7 +190,7 @@ export default function DetalleCirugiaPanel({
                   puedeAccionar={puedeAccionar}
                   onPedirInsumos={onPedirInsumos}
                   onCancelarSolicitud={() => setCancelarSolicitudAbierto(true)}
-                  onRegistrarEntrega={onRegistrarEntrega}
+                  onVerEnCanastas={onVerEnCanastas}
                   onDevolverInsumos={() => setDevolucionesAbierto(true)}
                 />
               )}

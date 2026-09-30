@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  cancelarSolicitudInsumos, cantidadDevuelta, despacharCanasta,
-  registrarConsumo, registrarEntregaInsumos, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
+  actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, despacharCanasta,
+  registrarConsumo, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
   fetchCanastasDia, fechaISO,
 } from '../mockCirugiaData.js';
 
@@ -78,8 +78,14 @@ test('cancelar la solicitud borra preparado/despachado; volver a pedir → en-pr
   assert.equal(resumenCanasta(solicitarInsumosFarmacia('12358')).estado, 'en-preparacion');
 });
 
-test('registrarEntregaInsumos (InsumosTab): deja recibido = cantidad y estado recibida', () => {
-  const c = registrarEntregaInsumos('12358');
-  assert.equal(resumenCanasta(c).estado, 'recibida');
-  assert.equal(c.canasta.items.every((i) => i.recibido === i.cantidad && i.despachado === i.cantidad), true);
+test('pedir insumos a una cirugía sin número de pedido le asigna el siguiente', () => {
+  const causal = { idCausal: '1', descripcion: 'Cambio de plan' };
+  const previa = cancelarSolicitudInsumos('12358', { causal });
+  actualizarCirugia('12358', { farmacia: { ...previa.farmacia, numeroPedido: '—' } });
+  const c = solicitarInsumosFarmacia('12358');
+  assert.match(c.farmacia.numeroPedido, /^[0-9]+$/);
+  assert.ok(Number(c.farmacia.numeroPedido) > 4596);
+  // Con número ya asignado no se reasigna.
+  const otra = cancelarSolicitudInsumos('12358', { causal });
+  assert.equal(solicitarInsumosFarmacia('12358').farmacia.numeroPedido, otra.farmacia.numeroPedido);
 });

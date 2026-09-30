@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { LuCalendarDays, LuPackageSearch } from 'react-icons/lu';
 // Tokens (:root), reset del shell y reglas compartidas de la feature: los
 // mismos 2 archivos que carga RevisionVencidas.jsx, porque esta ruta es otra
@@ -20,7 +20,7 @@ import CanastaAlerta from '../canastas/CanastaAlerta/CanastaAlerta';
 import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
-  HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, fechaISO, fetchCanastasDia,
+  HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, despacharCanasta, fechaISO, fetchCanastasDia,
   registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { filtrarCanastas, primeraPorRecibir } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
@@ -37,11 +37,17 @@ const USUARIO = 'Camilo Grondona';
 // cirugía en `drafts` para no perderse al cambiar de selección.
 export default function CanastasCirugia() {
   const router = useRouter();
-  const [salaId, setSalaId] = useState('qx-1');
-  const [fecha, setFecha] = useState(() => fechaISO(new Date()));
+  // Llegar desde la pestaña Insumos de Programación (?sala=&fecha=&cirugia=)
+  // abre esa sala y ese día con la cirugía seleccionada. Parámetros inválidos
+  // se ignoran y queda el comportamiento por defecto.
+  const params = useSearchParams();
+  const salaParam = params.get('sala');
+  const fechaParam = params.get('fecha');
+  const [salaId, setSalaId] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'qx-1'));
+  const [fecha, setFecha] = useState(() => (/^d{4}-d{2}-d{2}$/.test(fechaParam ?? '') ? fechaParam : fechaISO(new Date())));
   const [filtros, setFiltros] = useState({ busqueda: '', estado: 'todas' });
   const [cirugias, setCirugias] = useState(null); // null = cargando
-  const [seleccionId, setSeleccionId] = useState(null);
+  const [seleccionId, setSeleccionId] = useState(() => params.get('cirugia'));
   const [drafts, setDrafts] = useState({});
   const [error, setError] = useState(null);
   // { message, snapshot } -- con snapshot el toast ofrece "Deshacer".
@@ -138,6 +144,16 @@ export default function CanastasCirugia() {
     );
   }
 
+  // Solo demo: no hay integración real con farmacia, así que este atajo
+  // simula que farmacia despachó la canasta para poder recibirla.
+  function handleDespachar(cirugia) {
+    aplicar(
+      cirugia,
+      () => despacharCanasta(cirugia.id),
+      () => `Farmacia despachó la canasta de ${cirugia.paciente.nombre} (simulado)`,
+    );
+  }
+
   function handleDeshacer() {
     const snapshot = toast?.snapshot;
     if (!snapshot) return;
@@ -189,6 +205,7 @@ export default function CanastasCirugia() {
               onDraftChange={(patch) => handleDraftChange(seleccion.id, patch)}
               onRecibir={(recibidos) => handleRecibir(seleccion, recibidos)}
               onRegistrarConsumo={(usados) => handleRegistrarConsumo(seleccion, usados)}
+              onDespachar={() => handleDespachar(seleccion)}
             />
           )}
         </div>

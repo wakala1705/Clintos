@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  CANASTA_META, KPI_FILTRO, agruparCanastas, badgeProps, bannerCanasta, filtrarCanastas, kpisCanastas, lineaConsumo, lineaRecepcion,
+  CANASTA_META, KPI_FILTRO, agruparCanastas, canastasHref, badgeProps, bannerCanasta, filtrarCanastas, kpisCanastas, lineaConsumo, lineaRecepcion,
   primeraPorRecibir, resumenDevolucion,
 } from '../canastaPresentacion.js';
 
@@ -126,4 +126,12 @@ test('líneas de trazabilidad', () => {
     estado: 'realizada', consumo: { usuario: 'Ana', fecha: '2026-09-29T10:00', usados: { A: 1 } },
   });
   assert.equal(lineaConsumo(cons), 'Consumo registrado por Ana · 29.SEP.2026 - 10:00 · 3 unidades enviadas a devolución');
+});
+
+test('canastasHref abre la sala, el día y la cirugía', () => {
+  const c = { id: '12358', salaId: 'qx-1', fecha: '2026-09-30' };
+  assert.equal(
+    canastasHref(c),
+    '/programacion-sala-cirugias/canastas?sala=qx-1&fecha=2026-09-30&cirugia=12358',
+  );
 });
