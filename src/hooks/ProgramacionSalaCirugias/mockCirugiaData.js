@@ -1917,9 +1917,16 @@ function avanzarCanasta(id, desde, hasta) {
   return actualizarCirugia(id, {
     canasta: {
       ...actual.canasta,
-      items: actual.canasta.items.map((i) => (
-        (i.solicitudFarmacia ?? 'sin-solicitar') === desde ? { ...i, solicitudFarmacia: hasta } : i
-      )),
+      items: actual.canasta.items.map((i) => {
+        if ((i.solicitudFarmacia ?? 'sin-solicitar') !== desde) return i;
+        const avanzado = { ...i, solicitudFarmacia: hasta };
+        // Volver a "sin solicitar" borra lo que farmacia ya había avanzado.
+        if (hasta === 'sin-solicitar') {
+          delete avanzado.preparado;
+          delete avanzado.despachado;
+        }
+        return avanzado;
+      }),
     },
   });
 }
@@ -1945,9 +1952,110 @@ export function cancelarSolicitudInsumos(id, { causal, observacion = '', usuario
   });
 }
 
-// "Registrar entrega": farmacia entregó lo solicitado al quirófano.
+// "Registrar entrega" (InsumosTab): farmacia entregó lo solicitado al
+// quirófano, todo completo -- equivale a despachar y recibir sin novedades.
+// La recepción por cantidades (con novedades) vive en registrarRecepcion.
 export function registrarEntregaInsumos(id) {
-  return avanzarCanasta(id, 'solicitado', 'entregado');
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    canasta: {
+      ...actual.canasta,
+      items: actual.canasta.items.map((i) => (
+        (i.solicitudFarmacia ?? 'sin-solicitar') === 'solicitado'
+          ? {
+            ...i,
+            solicitudFarmacia: 'entregado',
+            preparado: true,
+            despachado: i.despachado ?? i.cantidad,
+            recibido: i.despachado ?? i.cantidad,
+          }
+          : i
+      )),
+    },
+  });
+}
+
+// Farmacia despachó lo solicitado (mock: no hay integración real): todos los
+// solicitados quedan preparados y despachados por su cantidad completa.
+export function despacharCanasta(id) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    canasta: {
+      ...actual.canasta,
+      items: actual.canasta.items.map((i) => (
+        i.solicitudFarmacia === 'solicitado' ? { ...i, preparado: true, despachado: i.despachado ?? i.cantidad } : i
+      )),
+    },
+  });
+}
+
+// Recepción por cantidades en quirófano. `recibidos`: { [nombre]: cantidad };
+// un ítem sin entrada se toma completo (= lo despachado). Valida todo ANTES
+// de escribir, así un error no deja la canasta a medias.
+export function registrarRecepcion(id, { recibidos, usuario = 'CLINTOS' }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (resumenCanasta(actual).estado !== 'despachada') {
+    throw new Error('La canasta todavía no fue despachada por farmacia.');
+  }
+  let conNovedades = false;
+  const items = actual.canasta.items.map((i) => {
+    if (i.solicitudFarmacia !== 'solicitado') return i;
+    const despachado = cantidadDespachada(i);
+    const recibido = recibidos[i.nombre] ?? despachado;
+    if (!Number.isInteger(recibido) || recibido < 0 || recibido > despachado) {
+      throw new Error(`${i.nombre}: lo recibido debe estar entre 0 y ${despachado}.`);
+    }
+    if (recibido < i.cantidad) conNovedades = true;
+    return {
+      ...i, solicitudFarmacia: 'entregado', despachado, recibido, novedad: novedadItem(i, recibido) || undefined,
+    };
+  });
+  return actualizarCirugia(id, {
+    canasta: {
+      ...actual.canasta,
+      items,
+      recepcion: { usuario, fecha: fechaHoraLocalISO(new Date()), conNovedades },
+    },
+  });
+}
+
+// Excepción de urgencia: la cirugía puede iniciar sin la canasta. Queda
+// registrado quién y cuándo; la recepción sigue pendiente.
+export function autorizarInicioUrgencia(id, { usuario = 'CLINTOS' } = {}) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (gateCirugia(actual) !== 'urgencia-puede-autorizar') {
+    throw new Error('Solo las cirugías de urgencia con la canasta sin recibir pueden autorizarse.');
+  }
+  return actualizarCirugia(id, {
+    canasta: { ...actual.canasta, autorizacionUrgencia: { usuario, fecha: fechaHoraLocalISO(new Date()) } },
+  });
+}
+
+// Consumo real tras la cirugía. `usados`: { [nombre]: cantidad } (sin entrada
+// = se usó todo lo recibido). Lo no usado se devuelve a farmacia creando una
+// devolución con guardarDevolucion (reusa topes, código y lote).
+export function registrarConsumo(id, { usados, usuario = 'CLINTOS' }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (actual.estado !== 'realizada') throw new Error('El consumo se registra al finalizar la cirugía.');
+  if (!['recibida', 'con-novedades'].includes(resumenCanasta(actual).estado)) {
+    throw new Error('La canasta debe estar recibida para registrar el consumo.');
+  }
+  const lineas = [];
+  const usadosFinal = {};
+  actual.canasta.items.forEach((i) => {
+    const recibido = cantidadRecibida(i);
+    const usado = usados[i.nombre] ?? recibido;
+    if (!Number.isInteger(usado) || usado < 0 || usado > recibido) {
+      throw new Error(`${i.nombre}: lo usado debe estar entre 0 y ${recibido}.`);
+    }
+    usadosFinal[i.nombre] = usado;
+    if (recibido - usado > 0) lineas.push({ nombre: i.nombre, cantidad: recibido - usado });
+  });
+  if (lineas.length > 0) guardarDevolucion(id, { lineas, usuario });
+  const despues = CIRUGIAS.find((c) => c.id === id);
+  return actualizarCirugia(id, {
+    canasta: { ...despues.canasta, consumo: { usuario, fecha: fechaHoraLocalISO(new Date()), usados: usadosFinal } },
+  });
 }
 
 // Crea (sin `consecutivo`) o modifica (con `consecutivo`) una devolución.
