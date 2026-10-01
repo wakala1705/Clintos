@@ -34,7 +34,8 @@ function maskText(value) {
 //   { label, icon, onClick } al inicio/final de la fila 2, `statusBadge`
 //   { label, tone } dentro de la fila 2, `onClose` (quitar paciente) y
 //   `empty` (estado sin paciente). `secondRow` [{ label, value }] sigue como
-//   extensión libre al final de la fila 2.
+//   extensión libre al final de la fila 2 (solo lectura, también va al modal
+//   "Ver más"); `secondRowExtra` (ReactNode) para contenido interactivo.
 // - Colapsado (chevron, arranca en `defaultCollapsed` ?? el de la variante):
 //   oculta la fila 2, quita ASEGURADOR y suma Cama/Diagnóstico/Médico
 //   tratante a la fila 1. `compact` es otra cosa: una sola línea fija
@@ -42,7 +43,7 @@ function maskText(value) {
 // - El ojo enmascara nombre, documento y los campos `mask` de la variante;
 //   el valor real queda en data-patient-name/doc para legacy-app.js.
 export default function PatientBanner({
-  patient, variant, context, secondRow, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed,
+  patient, variant, context, secondRow, secondRowExtra, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed,
 }) {
   const variantCfg = variant ? PATIENT_BANNER_VARIANTS[variant] : null;
   const [allergyOpen, setAllergyOpen] = useState(false);
@@ -129,7 +130,7 @@ export default function PatientBanner({
   ];
 
   const mostrarSegundaFila = !collapsed && Boolean(
-    rows.length > 0 || leadingSelect || secondRowButton || statusBadge,
+    rows.length > 0 || leadingSelect || secondRowButton || statusBadge || secondRowExtra,
   );
 
   return (
@@ -238,6 +239,9 @@ export default function PatientBanner({
               <span className="lbl">{f.label}</span> <b>{f.mask && dataHidden ? maskText(f.value) : f.value}</b>
             </div>
           ))}
+          {/* `secondRowExtra`: contenido interactivo libre de la pantalla (ej. un
+              input) — no entra al modal "Ver más" como sí lo hace secondRow. */}
+          {secondRowExtra}
           {/* Encargo explícito (replicado desde CargosModal): el badge de
               estado vive en la fila de admisión, no en patient-banner-right. */}
           {statusBadge && (

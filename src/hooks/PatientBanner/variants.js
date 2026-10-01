@@ -44,13 +44,16 @@ export const PATIENT_BANNER_VARIANTS = {
   },
   // Hoja de gasto quirúrgico (Programación de sala de cirugías).
   cirugia: {
-    // Plegada: solo identidad del paciente (fila 1) siempre visible; en tablet el
-    // detalle de programación ya está en la sección Encabezado y ahorra alto.
+    // Plegada: solo identidad del paciente (fila 1) siempre visible; los datos de
+    // la hoja (fila 2) se despliegan con el chevron para ahorrar alto en tablet.
     defaultCollapsed: true,
     fields: [
+      { key: 'numeroHoja', label: 'N° Hoja' },
       { key: 'numeroProgramacion', label: 'N° Programación' },
       { key: 'procedimientoPrincipal', label: 'Procedimiento principal' },
       { key: 'sala', label: 'Sala' },
+      { key: 'servicio', label: 'Servicio' },
+      { key: 'tipoCirugia', label: 'Tipo de cirugía' },
       { key: 'fechaHoraProgramada', label: 'Fecha y hora programada' },
     ],
   },

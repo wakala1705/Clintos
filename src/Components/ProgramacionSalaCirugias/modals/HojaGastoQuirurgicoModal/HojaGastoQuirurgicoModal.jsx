@@ -9,7 +9,6 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
-import EncabezadoSection from './secciones/EncabezadoSection/EncabezadoSection';
 import TiemposSection from './secciones/TiemposSection/TiemposSection';
 import ProcedimientosSection from './secciones/ProcedimientosSection/ProcedimientosSection';
 import PersonalSection from './secciones/PersonalSection/PersonalSection';
@@ -34,7 +33,6 @@ import { SALAS, fechaHoraLocalISO, fechaHoraRangoLabel } from '@/hooks/Programac
 // marca con punto rojo si el último intento de cierre dejó un error en
 // alguna de las `secciones` de validarCierre que agrupa.
 const NAV = [
-  { id: 'hgq-encabezado', label: 'Encabezado', errores: [] },
   { id: 'hgq-tiempos', label: 'Tiempos y anestesia', errores: ['tiempos', 'anestesia'], progreso: 'tiempos' },
   { id: 'hgq-conteo', label: 'Conteo quirúrgico', errores: ['conteo'], progreso: 'conteo' },
   { id: 'hgq-personal', label: 'Equipo quirúrgico', errores: ['personal'], progreso: 'personal' },
@@ -63,6 +61,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   const [subventana, setSubventana] = useState(null);
   const hojaInicialRef = useRef(hoja);
   const readOnly = hoja.estado === 'cerrada';
+  const nReaperturas = hoja.reaperturas?.length ?? 0;
   const seccionesConError = errores.map((e) => e.seccion);
   const set = (clave, valor) => setHoja((h) => ({ ...h, [clave]: valor }));
   const nombreDe = (rol) => hoja.personal.find((f) => f.rol === rol)?.nombre ?? '';
@@ -166,7 +165,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
           tone="primary"
           title="Hoja de gasto quirúrgico"
           titleId="hgq-title"
-          subtitle={`Programación ${cirugia.id} · ${cirugia.paciente?.nombre ?? ''}`}
+          subtitle={`Programación ${cirugia.id} · ${cirugia.paciente?.nombre ?? ''}${nReaperturas > 0 ? ` · Reabierta ${nReaperturas} ${nReaperturas === 1 ? 'vez' : 'veces'}` : ''}`}
           onClose={cerrar}
           closeLabel="Cerrar hoja de gasto"
           trailing={<Badge tone={readOnly ? 'success' : 'warn'}>{HOJA_ESTADO_LABEL[hoja.estado]}</Badge>}
@@ -181,7 +180,22 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
               procedimientoPrincipal: hoja.procedimientos[0]?.nombre ?? cirugia.procedimientos?.[0]?.nombre,
               sala,
               fechaHoraProgramada: fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin),
+              numeroHoja: hoja.numero,
+              servicio: cirugia.servicio,
+              tipoCirugia: cirugia.tipoCirugia,
             }}
+            secondRowExtra={(
+              <div className="hgq-banner-admision">
+                <label htmlFor="hgq-admision" className="hgq-field-label">N° de admisión</label>
+                <input
+                  id="hgq-admision"
+                  className="hgq-input"
+                  value={hoja.admision ?? ''}
+                  disabled={readOnly}
+                  onChange={(e) => set('admision', e.target.value)}
+                />
+              </div>
+            )}
           />
         </div>
 
@@ -210,7 +224,6 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
             )}
             {aviso && <div className="hgq-aviso" role="status">{aviso}</div>}
 
-            <EncabezadoSection cirugia={cirugia} hoja={hoja} admision={hoja.admision} onChangeAdmision={(v) => set('admision', v)} readOnly={readOnly} />
             <TiemposSection
               tiempos={hoja.tiempos}
               anestesia={hoja.anestesia}
