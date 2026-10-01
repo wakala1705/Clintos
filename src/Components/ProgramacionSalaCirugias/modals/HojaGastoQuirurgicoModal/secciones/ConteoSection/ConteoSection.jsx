@@ -11,10 +11,12 @@ const ESTADO = {
   discrepancia: { tone: 'danger', label: 'Discrepancia' },
 };
 const esManual = (r) => r.manual;
+const enDiscrepancia = (r) => conteoEstado(r) === 'discrepancia';
 const COLUMNS = [
   { key: 'item', label: 'Elemento', editable: esManual },
-  { key: 'inicial', label: 'Conteo inicial', type: 'number', align: 'right' },
-  { key: 'final', label: 'Conteo final', type: 'number', align: 'right' },
+  { key: 'inicial', label: 'Conteo inicial', type: 'stepper', align: 'right' },
+  { key: 'previoCierre', label: 'Previo a cierre (opcional)', type: 'stepper', align: 'right' },
+  { key: 'final', label: 'Conteo final', type: 'stepper', align: 'right' },
   {
     key: 'estado',
     label: 'Estado',
@@ -24,11 +26,24 @@ const COLUMNS = [
       return <Badge tone={e.tone}>{e.label}</Badge>;
     },
   },
+  {
+    key: 'nota',
+    label: 'Nota',
+    placeholder: 'Documenta la discrepancia',
+    editable: enDiscrepancia,
+    render: (r) => (r.nota?.trim() ? r.nota : '—'),
+  },
 ];
 
 export default function ConteoSection({ rows, onChange, readOnly, error }) {
+  const hayDiscrepancia = rows.some(enDiscrepancia);
   return (
     <SeccionHoja id="hgq-conteo" icon={LuListChecks} titulo="Conteo quirúrgico" error={error}>
+      {hayDiscrepancia && (
+        <div className="hgq-conteo-alerta" role="alert">
+          Discrepancia en el conteo: documenta una nota para poder cerrar la hoja.
+        </div>
+      )}
       <HojaTabla
         ariaLabel="Conteo quirúrgico"
         columns={COLUMNS}
@@ -36,7 +51,7 @@ export default function ConteoSection({ rows, onChange, readOnly, error }) {
         readOnly={readOnly}
         onChangeRow={(id, campo, valor) => onChange(actualizarFila(rows, id, campo, valor))}
         onAddRow={() => onChange([...rows, {
-          id: nuevoId('con'), item: '', inicial: '', final: '', manual: true,
+          id: nuevoId('con'), item: '', inicial: '', previoCierre: '', final: '', nota: '', manual: true,
         }])}
         onRemoveRow={(id) => onChange(quitarFila(rows, id))}
         canRemove={esManual}

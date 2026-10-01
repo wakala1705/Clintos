@@ -27,9 +27,9 @@ export default function EncabezadoSection({
           <Badge tone={hoja.estado === 'cerrada' ? 'success' : 'warn'}>{HOJA_ESTADO_LABEL[hoja.estado]}</Badge>
         </Dato>
         <Dato label="Fecha y hora programada" wide>{fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)}</Dato>
-        <Dato label="Paciente" wide>{cirugia.paciente?.nombre}</Dato>
-        <Dato label="Documento">{cirugia.paciente?.documento}</Dato>
-        <Dato label="Aseguradora / contrato">{cirugia.paciente?.aseguradora}</Dato>
+        {hoja.reaperturas?.length > 0 && (
+          <Dato label="Reaperturas">Reabierta {hoja.reaperturas.length} {hoja.reaperturas.length === 1 ? 'vez' : 'veces'}</Dato>
+        )}
         <Dato label="Sala">{sala}</Dato>
         <Dato label="Servicio">{cirugia.servicio}</Dato>
         <Dato label="Tipo de cirugía">{cirugia.tipoCirugia}</Dato>

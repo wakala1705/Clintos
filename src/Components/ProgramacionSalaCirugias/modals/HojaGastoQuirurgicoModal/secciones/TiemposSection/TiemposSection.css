@@ -2,3 +2,5 @@
 .hgq-duraciones{display:flex;flex-wrap:wrap;gap:12px 32px;margin:16px 0 0;padding-top:12px;border-top:1px solid var(--border);}
 .hgq-duraciones dt{font-size:var(--fs-sm);color:var(--ink-500);}
 .hgq-duraciones dd{margin:2px 0 0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hgq-programado{margin:0 0 12px;font-size:var(--fs-sm);color:var(--ink-500);}
+.hgq-subtitulo{margin:20px 0 12px;padding-top:16px;border-top:1px solid var(--border);font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}

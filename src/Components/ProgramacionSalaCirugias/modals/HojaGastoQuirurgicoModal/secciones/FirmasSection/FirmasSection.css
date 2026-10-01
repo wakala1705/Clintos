@@ -5,4 +5,6 @@
 .hgq-firma.firmada{border-color:var(--primary);background:var(--primary-50);}
 .hgq-firma-rol{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
 .hgq-firma-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.hgq-reaperturas{margin-top:16px;font-size:var(--fs-base);color:var(--ink-700);}
+.hgq-reaperturas ul{margin:4px 0 0;padding-left:18px;}
 .hgq-firma-fecha{font-size:var(--fs-sm);color:var(--ink-500);margin-bottom:4px;}

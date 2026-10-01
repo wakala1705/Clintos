@@ -1,7 +1,8 @@
 import { cantidadDevuelta } from '../mockCirugiaData.js';
 
-// Hoja de gasto quirúrgico: modelo, tarifas mock, cálculos, validaciones de
-// cierre y store en memoria (sin persistencia real, ver spec).
+// Hoja de gasto quirúrgico: registro de consumo en sala (sin dinero). Modelo,
+// cálculos, validaciones de cierre y store en memoria (sin persistencia real,
+// ver spec).
 
 export const HOJA_ESTADO_LABEL = { borrador: 'Borrador', cerrada: 'Cerrada' };
 
@@ -11,33 +12,8 @@ export const VIAS_OPTIONS = [
   { value: 'distinta', label: 'Distinta vía' },
 ];
 
-export const ROLES_HONORARIOS = ['Cirujano', 'Ayudante', 'Anestesiólogo', 'Instrumentadora', 'Circulante'];
+export const ROLES_PERSONAL = ['Cirujano', 'Ayudante', 'Anestesiólogo', 'Instrumentadora', 'Circulante'];
 export const CONTEO_ITEMS = ['Gasas', 'Compresas', 'Agujas', 'Instrumental (sets)'];
-
-// ---------- Tarifas de ejemplo (COP) ----------
-const TARIFA_HORA_ROL = {
-  Cirujano: 450000, Ayudante: 180000, Anestesiólogo: 320000, Instrumentadora: 90000, Circulante: 60000,
-};
-const TARIFA_HORA_ROL_DEFECTO = 100000;
-const TARIFA_HORA_EQUIPO = 80000;
-const TARIFA_HORA_SALA = 250000;
-const VALOR_INSUMO = {
-  'Gasas estériles': 1800,
-  'Trocar 5mm': 95000,
-  'Trocar 10mm': 110000,
-  'Pinza Maryland': 240000,
-  'Sutura Vicryl 2-0': 18500,
-  'Clips de titanio': 12000,
-  'Aguja de Veress': 38000,
-  'Bolsa de extracción': 52000,
-  'Solución salina 1000ml': 6500,
-  'Campo quirúrgico': 14000,
-  'Guantes estériles talla 7': 3800,
-  'Hoja de bisturí #11': 2400,
-};
-const VALOR_INSUMO_DEFECTO = 15000;
-const VALOR_MEDICAMENTO = { Cefazolina: 9800, 'Ondansetrón': 4200 };
-const VALOR_MEDICAMENTO_DEFECTO = 8000;
 
 // ---------- Utilidades ----------
 let secuencia = 1000;
@@ -48,9 +24,6 @@ export function nuevoId(prefijo) {
 
 export const actualizarFila = (rows, id, campo, valor) => rows.map((r) => (r.id === id ? { ...r, [campo]: valor } : r));
 export const quitarFila = (rows, id) => rows.filter((r) => r.id !== id);
-
-const COP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
-export const formatoCOP = (n) => COP.format(Number(n) || 0);
 
 const MES = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
 // 'YYYY-MM-DDTHH:mm' -> 'DD.MES.AAAA - HH:mm'
@@ -67,7 +40,19 @@ const n0 = (v) => Number(v) || 0;
 export function aMinutos(hhmm) {
   if (!/^\d{2}:\d{2}$/.test(hhmm ?? '')) return null;
   const [h, m] = hhmm.split(':').map(Number);
+  if (h > 23 || m > 59) return null;
   return h * 60 + m;
+}
+
+const dos = (n) => String(n).padStart(2, '0');
+
+// Hora actual en 24 h, 'HH:mm'.
+export const horaAhora = (date = new Date()) => `${dos(date.getHours())}:${dos(date.getMinutes())}`;
+
+// Máscara progresiva para un input de texto: solo dígitos (máx. 4) y ':' tras los 2 primeros.
+export function formatearHora(texto) {
+  const d = String(texto ?? '').replace(/\D/g, '').slice(0, 4);
+  return d.length > 2 ? `${d.slice(0, 2)}:${d.slice(2)}` : d;
 }
 
 export function minutosEntre(desde, hasta) {
@@ -95,39 +80,16 @@ export function duracionTexto(min) {
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
 
-// ---------- Valores ----------
-export const valorPorTiempo = ({ minutos, tarifaHora }) => Math.round((n0(minutos) / 60) * n0(tarifaHora));
-// Derechos de sala: se facturan por bloques de 30 min iniciados.
-export const valorDerechosSala = ({ minutos, tarifaHora }) => Math.round((Math.ceil(n0(minutos) / 30) * 30 / 60) * n0(tarifaHora));
+// ---------- Insumos y conteo ----------
 export const devueltoInsumo = (i) => Math.max(n0(i.entregado) - n0(i.usado), 0);
-export const valorInsumo = (i) => n0(i.usado) * n0(i.valorUnitario);
-export const valorMedicamento = (m) => n0(m.cantidad) * n0(m.valorUnitario);
 
-export function conteoEstado({ inicial, final }) {
+// Conteo quirúrgico en 3 momentos: inicial, previo a cierre (opcional) y final.
+export function conteoEstado({ inicial, previoCierre, final }) {
   const a = num(inicial);
   const b = num(final);
   if (a === null || b === null) return 'pendiente';
-  return a === b ? 'correcto' : 'discrepancia';
-}
-
-const suma = (rows, fn) => rows.reduce((t, r) => t + fn(r), 0);
-
-export function totalesHoja(h) {
-  const honorarios = suma(h.honorarios, valorPorTiempo);
-  const insumos = suma(h.insumos, valorInsumo);
-  const medicamentos = suma(h.medicamentos, valorMedicamento);
-  const implantes = suma(h.implantes, (i) => n0(i.valor));
-  const equipos = suma(h.equipos, valorPorTiempo);
-  const derechosSala = valorDerechosSala(h.derechosSala);
-  return {
-    honorarios,
-    insumos,
-    medicamentos,
-    implantes,
-    equipos,
-    derechosSala,
-    total: honorarios + insumos + medicamentos + implantes + equipos + derechosSala,
-  };
+  const p = num(previoCierre);
+  return a === b && (p === null || p === a) ? 'correcto' : 'discrepancia';
 }
 
 // ---------- Cierre ----------
@@ -149,8 +111,8 @@ export function validarCierre(h) {
     err('procedimientos', 'Cada procedimiento necesita código CUPS y diagnóstico posoperatorio.');
   }
 
-  if (!h.honorarios.some((f) => f.rol === 'Cirujano' && n0(f.minutos) > 0)) {
-    err('honorarios', 'Registra el tiempo del cirujano.');
+  if (!h.personal.some((p) => p.rol === 'Cirujano' && p.nombre.trim())) {
+    err('personal', 'Registra al cirujano.');
   }
 
   if (h.insumos.some((i) => num(i.usado) === null)) {
@@ -163,8 +125,11 @@ export function validarCierre(h) {
     err('implantes', 'Cada implante necesita registro INVIMA y lote.');
   }
 
-  if (h.conteo.some((c) => conteoEstado(c) !== 'correcto')) {
-    err('conteo', 'El conteo quirúrgico debe estar completo y sin discrepancias.');
+  const estados = h.conteo.map((c) => conteoEstado(c));
+  if (estados.includes('pendiente')) {
+    err('conteo', 'Completa el conteo quirúrgico.');
+  } else if (h.conteo.some((c, i) => estados[i] === 'discrepancia' && !(c.nota ?? '').trim())) {
+    err('conteo', 'Documenta con una nota la discrepancia del conteo.');
   }
 
   [['circulante', 'del circulante'], ['instrumentadora', 'de la instrumentadora'], ['cirujano', 'del cirujano']].forEach(([clave, quien]) => {
@@ -174,10 +139,59 @@ export function validarCierre(h) {
   return errores;
 }
 
+const SECCIONES_PROGRESO = ['tiempos', 'procedimientos', 'personal', 'insumos', 'implantes', 'conteo', 'firmas'];
+
+// Progreso por sección verificable; los errores de anestesia cuentan contra tiempos.
+export function progresoHoja(h) {
+  const conError = new Set(validarCierre(h).map((e) => (e.seccion === 'anestesia' ? 'tiempos' : e.seccion)));
+  const porSeccion = Object.fromEntries(SECCIONES_PROGRESO.map((s) => [s, !conError.has(s)]));
+  return {
+    completas: SECCIONES_PROGRESO.filter((s) => porSeccion[s]).length,
+    total: SECCIONES_PROGRESO.length,
+    porSeccion,
+  };
+}
+
+// Resumen de conteos del registro (sin dinero).
+export function resumenRegistro(h) {
+  const estados = h.conteo.map((c) => conteoEstado(c));
+  let conteo = 'correcto';
+  if (estados.includes('discrepancia')) conteo = 'discrepancia';
+  else if (estados.includes('pendiente')) conteo = 'pendiente';
+  return {
+    insumosItems: h.insumos.length,
+    insumosUnidadesUsadas: h.insumos.reduce((t, i) => t + n0(i.usado), 0),
+    insumosUnidadesDevueltas: h.insumos.reduce((t, i) => t + devueltoInsumo(i), 0),
+    medicamentos: h.medicamentos.length,
+    implantes: h.implantes.length,
+    equipos: h.equipos.length,
+    conteo,
+    duraciones: duracionesHoja(h.tiempos),
+  };
+}
+
+// PIN simulado: 4 dígitos. La verificación real depende de la autenticación del producto.
+export const pinValido = (pin) => typeof pin === 'string' && /^\d{4}$/.test(pin);
+
 export function cerrarHoja(hoja, ahoraISO) {
   const errores = validarCierre(hoja);
   if (errores.length > 0) return { ok: false, errores, hoja };
   return { ok: true, errores: [], hoja: { ...hoja, estado: 'cerrada', cerradaEn: ahoraISO } };
+}
+
+export function reabrirHoja(hoja, motivo, ahoraISO) {
+  const m = (motivo ?? '').trim();
+  if (!m) return { ok: false, error: 'Escribe el motivo de la reapertura.', hoja };
+  return {
+    ok: true,
+    hoja: {
+      ...hoja,
+      estado: 'borrador',
+      cerradaEn: null,
+      firmas: { circulante: null, instrumentadora: null, cirujano: null },
+      reaperturas: [...hoja.reaperturas, { motivo: m, en: ahoraISO }],
+    },
+  };
 }
 
 export const firmarHoja = (hoja, rol, ahoraISO) => ({ ...hoja, firmas: { ...hoja.firmas, [rol]: ahoraISO } });
@@ -190,20 +204,16 @@ export function construirHojaInicial(cirugia) {
     programacionId: cirugia.id,
     estado: 'borrador',
     cerradaEn: null,
+    reaperturas: [],
     admision: '',
-    tiempos: {
-      ingresoSala: '',
-      inicioAnestesia: '',
-      inicioCirugia: cirugia.horaInicio ?? '',
-      finCirugia: cirugia.horaFin ?? '',
-      salidaSala: '',
-    },
+    programado: { inicio: cirugia.horaInicio ?? '', fin: cirugia.horaFin ?? '' },
+    tiempos: { ingresoSala: '', inicioAnestesia: '', inicioCirugia: '', finCirugia: '', salidaSala: '' },
     anestesia: { tipo: '', asa: '', complejidad: '' },
     procedimientos: cirugia.procedimientos.map((p, i) => ({
       id: `proc-${i}`, nombre: p.nombre, cups: '', via: 'unica', dxPre: '', dxPos: '',
     })),
-    honorarios: cirugia.personal.map((p, i) => ({
-      id: `hon-${i}`, rol: p.rol, nombre: p.nombre, registro: '', minutos: duracion, tarifaHora: TARIFA_HORA_ROL[p.rol] ?? TARIFA_HORA_ROL_DEFECTO,
+    personal: cirugia.personal.map((p, i) => ({
+      id: `per-${i}`, rol: p.rol, nombre: p.nombre, registro: '',
     })),
     insumos: cirugia.canasta.items
       .filter((i) => i.solicitudFarmacia === 'entregado')
@@ -214,20 +224,18 @@ export function construirHojaInicial(cirugia) {
           nombre: i.nombre,
           entregado,
           usado: Math.max(entregado - cantidadDevuelta(cirugia, i.nombre), 0),
-          valorUnitario: VALOR_INSUMO[i.nombre] ?? VALOR_INSUMO_DEFECTO,
           manual: false,
         };
       }),
     medicamentos: (cirugia.farmacia?.medicamentos ?? []).map((m, i) => ({
-      id: `med-${i}`, nombre: m.nombre, dosis: m.dosis ?? '', cantidad: 1, valorUnitario: VALOR_MEDICAMENTO[m.nombre] ?? VALOR_MEDICAMENTO_DEFECTO,
+      id: `med-${i}`, nombre: m.nombre, dosis: m.dosis ?? '', cantidad: 1,
     })),
     implantes: [],
     equipos: (cirugia.equipos ?? []).map((e, i) => ({
-      id: `eq-${i}`, nombre: e.nombre, identificacion: e.identificacion ?? '', minutos: duracion, tarifaHora: TARIFA_HORA_EQUIPO,
+      id: `eq-${i}`, nombre: e.nombre, identificacion: e.identificacion ?? '', minutos: duracion,
     })),
-    derechosSala: { minutos: duracion, tarifaHora: TARIFA_HORA_SALA },
     conteo: CONTEO_ITEMS.map((item, i) => ({
-      id: `con-${i}`, item, inicial: '', final: '', manual: false,
+      id: `con-${i}`, item, inicial: '', previoCierre: '', final: '', nota: '', manual: false,
     })),
     observaciones: '',
     firmas: { circulante: null, instrumentadora: null, cirujano: null },

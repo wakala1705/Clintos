@@ -4,6 +4,7 @@ import { LuPlus, LuTrash2 } from 'react-icons/lu';
 import './HojaTabla.css';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import NumeroStepper from '../NumeroStepper/NumeroStepper';
 
 function Celda({ col, row, editable, base, onChange }) {
   const valor = row[col.key];
@@ -20,6 +21,16 @@ function Celda({ col, row, editable, base, onChange }) {
         onChange={(v) => onChange(col.key, v)}
         options={col.options}
         placeholder={col.placeholder ?? 'Selecciona'}
+      />
+    );
+  }
+  if (col.type === 'stepper') {
+    return (
+      <NumeroStepper
+        value={valor}
+        min={col.min ?? 0}
+        label={aria}
+        onChange={(v) => onChange(col.key, v)}
       />
     );
   }

@@ -1,0 +1,7 @@
+/* .hgq-input se estilizan en ProgramacionSalaCirugias/shared/shared.css */
+.hgq-hora{display:flex;align-items:center;gap:8px;}
+.hgq-hora-input{min-height:44px;flex:1;min-width:0;font-variant-numeric:tabular-nums;}
+.hgq-hora-ahora{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--primary);font:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);cursor:pointer;white-space:nowrap;}
+.hgq-hora-ahora:hover{background:var(--primary-50);}
+.hgq-hora-ahora:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.hgq-hora-ahora .icon{width:16px;height:16px;}

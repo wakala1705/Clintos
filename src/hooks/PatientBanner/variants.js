@@ -42,6 +42,18 @@ export const PATIENT_BANNER_VARIANTS = {
       { key: 'citasFuturas', label: 'Citas futuras' },
     ],
   },
+  // Hoja de gasto quirúrgico (Programación de sala de cirugías).
+  cirugia: {
+    // Plegada: solo identidad del paciente (fila 1) siempre visible; en tablet el
+    // detalle de programación ya está en la sección Encabezado y ahorra alto.
+    defaultCollapsed: true,
+    fields: [
+      { key: 'numeroProgramacion', label: 'N° Programación' },
+      { key: 'procedimientoPrincipal', label: 'Procedimiento principal' },
+      { key: 'sala', label: 'Sala' },
+      { key: 'fechaHoraProgramada', label: 'Fecha y hora programada' },
+    ],
+  },
   // Cargos de una admisión (CargosModal, Admisiones).
   cargos: {
     defaultCollapsed: false,

@@ -1,1 +1,2 @@
-/* Estilos compartidos: shared/shared.css y comunes/HojaTabla. */
+/* Tabla e inputs: shared/shared.css y comunes/HojaTabla. */
+.hgq-conteo-alerta{margin-bottom:12px;padding:10px 16px;border:1px solid var(--red);border-radius:var(--radius);background:var(--red-bg);color:var(--red);font-size:var(--fs-base);font-weight:var(--fw-medium);}

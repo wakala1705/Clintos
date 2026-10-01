@@ -1,0 +1,8 @@
+/* .hgq-input / .hgq-input-num se estilizan en ProgramacionSalaCirugias/shared/shared.css */
+.hgq-stepper{display:inline-flex;align-items:center;gap:6px;}
+.hgq-stepper-btn{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink-700);cursor:pointer;}
+.hgq-stepper-btn:hover:not(:disabled){background:var(--gray-bg);color:var(--ink-900);}
+.hgq-stepper-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.hgq-stepper-btn:disabled{opacity:.45;cursor:not-allowed;}
+.hgq-stepper-input{width:64px;height:44px;text-align:center;-moz-appearance:textfield;appearance:textfield;}
+.hgq-stepper-input::-webkit-outer-spin-button,.hgq-stepper-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}

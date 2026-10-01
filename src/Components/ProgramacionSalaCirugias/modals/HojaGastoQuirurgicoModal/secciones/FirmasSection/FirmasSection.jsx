@@ -11,7 +11,7 @@ const FIRMAS = [
 ];
 
 export default function FirmasSection({
-  observaciones, onChangeObservaciones, nombres, firmas, onFirmar, ahoraISO, readOnly, error,
+  observaciones, onChangeObservaciones, nombres, firmas, onPedirFirma, onQuitarFirma, reaperturas, readOnly, error,
 }) {
   return (
     <SeccionHoja id="hgq-firmas" icon={LuPenLine} titulo="Observaciones y firmas" error={error}>
@@ -38,7 +38,7 @@ export default function FirmasSection({
                 <Button
                   variant={firmada ? 'secondary' : 'outline'}
                   size="sm"
-                  onClick={() => onFirmar?.(f.rol, firmada ? null : ahoraISO())}
+                  onClick={() => (firmada ? onQuitarFirma?.(f.rol) : onPedirFirma?.(f.rol))}
                 >
                   {firmada ? 'Quitar firma' : 'Firmar'}
                 </Button>
@@ -47,6 +47,16 @@ export default function FirmasSection({
           );
         })}
       </div>
+      {reaperturas?.length > 0 && (
+        <div className="hgq-reaperturas">
+          <div className="hgq-firma-rol">Historial de reaperturas</div>
+          <ul>
+            {reaperturas.map((r) => (
+              <li key={`${r.en}-${r.motivo}`}>{fechaHoraHoja(r.en)} · {r.motivo}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </SeccionHoja>
   );
 }

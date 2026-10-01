@@ -2,58 +2,70 @@
 
 import { useEffect, useRef, useState } from 'react';
 import {
-  LuClipboardList, LuLock, LuPrinter, LuSave,
+  LuCircle, LuCircleCheck, LuClipboardList, LuLock, LuLockOpen, LuPrinter,
 } from 'react-icons/lu';
 import './HojaGastoQuirurgicoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
+import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import EncabezadoSection from './secciones/EncabezadoSection/EncabezadoSection';
 import TiemposSection from './secciones/TiemposSection/TiemposSection';
 import ProcedimientosSection from './secciones/ProcedimientosSection/ProcedimientosSection';
-import HonorariosSection from './secciones/HonorariosSection/HonorariosSection';
+import PersonalSection from './secciones/PersonalSection/PersonalSection';
 import InsumosSection from './secciones/InsumosSection/InsumosSection';
 import MedicamentosSection from './secciones/MedicamentosSection/MedicamentosSection';
 import ImplantesSection from './secciones/ImplantesSection/ImplantesSection';
-import EquiposSalaSection from './secciones/EquiposSalaSection/EquiposSalaSection';
+import EquiposSection from './secciones/EquiposSection/EquiposSection';
 import ConteoSection from './secciones/ConteoSection/ConteoSection';
 import FirmasSection from './secciones/FirmasSection/FirmasSection';
 import ResumenSection from './secciones/ResumenSection/ResumenSection';
+import FirmaPinModal from './subventanas/FirmaPinModal/FirmaPinModal';
+import ConfirmarCierreModal from './subventanas/ConfirmarCierreModal/ConfirmarCierreModal';
+import ReabrirHojaModal from './subventanas/ReabrirHojaModal/ReabrirHojaModal';
 import {
-  HOJA_ESTADO_LABEL, cerrarHoja, construirHojaInicial, firmarHoja, formatoCOP, guardarHoja,
-  obtenerHojaGuardada, totalesHoja,
+  HOJA_ESTADO_LABEL, cerrarHoja, construirHojaInicial, firmarHoja, guardarHoja,
+  horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, validarCierre,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
-import { fechaHoraLocalISO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { SALAS, fechaHoraLocalISO, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
-// Índice lateral: cada entrada hace scroll a la sección con ese id y se
+// Índice lateral: `progreso` es la clave de progresoHoja().porSeccion (sin clave = sin
+// verificación, no muestra ícono). Cada entrada hace scroll a la sección con ese id y se
 // marca con punto rojo si el último intento de cierre dejó un error en
 // alguna de las `secciones` de validarCierre que agrupa.
 const NAV = [
   { id: 'hgq-encabezado', label: 'Encabezado', errores: [] },
-  { id: 'hgq-tiempos', label: 'Tiempos y anestesia', errores: ['tiempos', 'anestesia'] },
-  { id: 'hgq-procedimientos', label: 'Procedimientos', errores: ['procedimientos'] },
-  { id: 'hgq-honorarios', label: 'Equipo y honorarios', errores: ['honorarios'] },
-  { id: 'hgq-insumos', label: 'Insumos y materiales', errores: ['insumos'] },
+  { id: 'hgq-tiempos', label: 'Tiempos y anestesia', errores: ['tiempos', 'anestesia'], progreso: 'tiempos' },
+  { id: 'hgq-conteo', label: 'Conteo quirúrgico', errores: ['conteo'], progreso: 'conteo' },
+  { id: 'hgq-personal', label: 'Equipo quirúrgico', errores: ['personal'], progreso: 'personal' },
+  { id: 'hgq-procedimientos', label: 'Procedimientos', errores: ['procedimientos'], progreso: 'procedimientos' },
+  { id: 'hgq-insumos', label: 'Insumos y materiales', errores: ['insumos'], progreso: 'insumos' },
   { id: 'hgq-medicamentos', label: 'Medicamentos', errores: [] },
-  { id: 'hgq-implantes', label: 'Implantes', errores: ['implantes'] },
-  { id: 'hgq-equipos', label: 'Equipos y sala', errores: [] },
-  { id: 'hgq-conteo', label: 'Conteo quirúrgico', errores: ['conteo'] },
-  { id: 'hgq-firmas', label: 'Observaciones y firmas', errores: ['firmas'] },
+  { id: 'hgq-implantes', label: 'Implantes', errores: ['implantes'], progreso: 'implantes' },
+  { id: 'hgq-equipos', label: 'Equipos usados', errores: [] },
+  { id: 'hgq-firmas', label: 'Observaciones y firmas', errores: ['firmas'], progreso: 'firmas' },
   { id: 'hgq-resumen', label: 'Resumen', errores: [] },
 ];
 
-const ahoraISO = () => fechaHoraLocalISO(new Date());
+const iniciales = (nombre = '') => nombre.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+
+const FIRMA_ROL_LABEL = { circulante: 'Circulante', instrumentadora: 'Instrumentadora', cirujano: 'Cirujano' };
+
+const ahoraISO =() => fechaHoraLocalISO(new Date());
 const irA = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   const [hoja, setHoja] = useState(() => obtenerHojaGuardada(cirugia.id) ?? construirHojaInicial(cirugia));
   const [errores, setErrores] = useState([]);
   const [aviso, setAviso] = useState('');
+  const [guardadoEn, setGuardadoEn] = useState('');
+  // Subventana abierta: { tipo: 'firma', rol } | { tipo: 'cierre' } | { tipo: 'reabrir' } | null.
+  const [subventana, setSubventana] = useState(null);
+  const hojaInicialRef = useRef(hoja);
   const readOnly = hoja.estado === 'cerrada';
-  const totales = totalesHoja(hoja);
   const seccionesConError = errores.map((e) => e.seccion);
   const set = (clave, valor) => setHoja((h) => ({ ...h, [clave]: valor }));
-  const nombreDe = (rol) => hoja.honorarios.find((f) => f.rol === rol)?.nombre ?? '';
+  const nombreDe = (rol) => hoja.personal.find((f) => f.rol === rol)?.nombre ?? '';
 
   // Cerrar la ventana guarda el borrador: no se pierde lo digitado.
   function cerrar() {
@@ -67,35 +79,80 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   useEffect(() => {
     cerrarRef.current = cerrar;
   });
+  // Con una subventana abierta, Escape cierra solo esa (su propio listener).
   useEffect(() => {
+    if (subventana) return undefined;
     function onKeyDown(e) {
       if (e.key === 'Escape') cerrarRef.current?.();
     }
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [subventana]);
 
-  function guardarBorrador() {
-    guardarHoja(hoja);
-    setAviso('Borrador guardado.');
+  // Autoguardado: debounce de 800 ms ante cualquier cambio de la hoja.
+  useEffect(() => {
+    if (hoja.estado === 'cerrada' || hoja === hojaInicialRef.current) return undefined;
+    const t = setTimeout(() => {
+      guardarHoja(hoja);
+      setGuardadoEn(horaAhora());
+    }, 800);
+    return () => clearTimeout(t);
+  }, [hoja]);
+
+  const progreso = progresoHoja(hoja);
+  const sala = SALAS.find((x) => x.value === cirugia.salaId)?.descripcion;
+  const pac = cirugia.paciente;
+  const patientBanner = pac ? {
+    nombre: pac.nombre,
+    // PatientBanner ya antepone "CC": el dato de la cirugía viene como "CC 63.221.940".
+    documento: (pac.documento ?? '').replace(/^CC\s*/i, ''),
+    iniciales: iniciales(pac.nombre),
+    sexo: pac.sexo,
+    edad: pac.edad,
+    eps: pac.aseguradora,
+  } : null;
+
+  // Con errores: resumen + scroll al primero. Sin errores: pide confirmación.
+  function pedirCierre() {
+    const errs = validarCierre(hoja);
+    if (errs.length > 0) {
+      setErrores(errs);
+      setAviso('');
+      const primera = NAV.find((n) => n.errores.includes(errs[0]?.seccion));
+      if (primera) irA(primera.id);
+      return;
+    }
+    setSubventana({ tipo: 'cierre' });
   }
 
   function cerrarLaHoja() {
+    setSubventana(null);
     const r = cerrarHoja(hoja, ahoraISO());
     if (!r.ok) {
       setErrores(r.errores);
       setAviso('');
-      const primera = NAV.find((n) => n.errores.includes(r.errores[0]?.seccion));
-      if (primera) irA(primera.id);
       return;
     }
     setErrores([]);
     setHoja(r.hoja);
     guardarHoja(r.hoja);
-    setAviso('Hoja cerrada. Cargos generados en la cuenta de la admisión.');
+    setAviso('Hoja cerrada · pendiente de liquidación.');
   }
 
+  function reabrir(motivo) {
+    const r = reabrirHoja(hoja, motivo, ahoraISO());
+    if (!r.ok) return;
+    setSubventana(null);
+    setErrores([]);
+    setHoja(r.hoja);
+    guardarHoja(r.hoja);
+    setAviso('Hoja reabierta. Las firmas se invalidaron; vuelve a firmar al terminar.');
+  }
+
+  const cerrarSubventana = () => setSubventana(null);
+
   return (
+    <>
     <div className="modal-overlay open" role="presentation" onClick={cerrar}>
       <div
         className="modal-card hgq-card"
@@ -115,11 +172,30 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
           trailing={<Badge tone={readOnly ? 'success' : 'warn'}>{HOJA_ESTADO_LABEL[hoja.estado]}</Badge>}
         />
 
+        <div className="hgq-banner">
+          <PatientBanner
+            variant="cirugia"
+            patient={patientBanner}
+            context={{
+              numeroProgramacion: cirugia.id,
+              procedimientoPrincipal: hoja.procedimientos[0]?.nombre ?? cirugia.procedimientos?.[0]?.nombre,
+              sala,
+              fechaHoraProgramada: fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin),
+            }}
+          />
+        </div>
+
         <div className="hgq-layout">
           <nav className="hgq-nav" aria-label="Secciones de la hoja">
             {NAV.map((n) => (
               <button key={n.id} type="button" className="hgq-nav-item" onClick={() => irA(n.id)}>
-                {n.label}
+                <span className="hgq-nav-label">
+                  {n.progreso ? (progreso.porSeccion[n.progreso]
+                    ? <LuCircleCheck className="icon hgq-nav-ok" aria-label="Completa" />
+                    : <LuCircle className="icon hgq-nav-pend" aria-label="Pendiente" />)
+                    : <span className="hgq-nav-spacer" aria-hidden="true" />}
+                  {n.label}
+                </span>
                 {n.errores.some((s) => seccionesConError.includes(s)) && <span className="hgq-nav-dot" aria-label="Con errores" />}
               </button>
             ))}
@@ -138,51 +214,79 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
             <TiemposSection
               tiempos={hoja.tiempos}
               anestesia={hoja.anestesia}
+              programado={hoja.programado}
               onChangeTiempos={(v) => set('tiempos', v)}
               onChangeAnestesia={(v) => set('anestesia', v)}
               readOnly={readOnly}
               errorTiempos={seccionesConError.includes('tiempos')}
               errorAnestesia={seccionesConError.includes('anestesia')}
             />
+            <ConteoSection rows={hoja.conteo} onChange={(v) => set('conteo', v)} readOnly={readOnly} error={seccionesConError.includes('conteo')} />
+            <PersonalSection rows={hoja.personal} onChange={(v) => set('personal', v)} readOnly={readOnly} error={seccionesConError.includes('personal')} />
             <ProcedimientosSection rows={hoja.procedimientos} onChange={(v) => set('procedimientos', v)} readOnly={readOnly} error={seccionesConError.includes('procedimientos')} />
-            <HonorariosSection rows={hoja.honorarios} onChange={(v) => set('honorarios', v)} readOnly={readOnly} error={seccionesConError.includes('honorarios')} />
             <InsumosSection rows={hoja.insumos} onChange={(v) => set('insumos', v)} readOnly={readOnly} error={seccionesConError.includes('insumos')} />
             <MedicamentosSection rows={hoja.medicamentos} onChange={(v) => set('medicamentos', v)} readOnly={readOnly} />
             <ImplantesSection rows={hoja.implantes} onChange={(v) => set('implantes', v)} readOnly={readOnly} error={seccionesConError.includes('implantes')} />
-            <EquiposSalaSection
-              equipos={hoja.equipos}
-              derechosSala={hoja.derechosSala}
-              onChangeEquipos={(v) => set('equipos', v)}
-              onChangeDerechos={(v) => set('derechosSala', v)}
-              readOnly={readOnly}
-            />
-            <ConteoSection rows={hoja.conteo} onChange={(v) => set('conteo', v)} readOnly={readOnly} error={seccionesConError.includes('conteo')} />
+            <EquiposSection rows={hoja.equipos} onChange={(v) => set('equipos', v)} readOnly={readOnly} />
             <FirmasSection
               observaciones={hoja.observaciones}
               onChangeObservaciones={(v) => set('observaciones', v)}
               nombres={{ circulante: nombreDe('Circulante'), instrumentadora: nombreDe('Instrumentadora'), cirujano: nombreDe('Cirujano') }}
               firmas={hoja.firmas}
-              onFirmar={(rol, iso) => setHoja((h) => firmarHoja(h, rol, iso))}
-              ahoraISO={ahoraISO}
+              onPedirFirma={(rol) => setSubventana({ tipo: 'firma', rol })}
+              onQuitarFirma={(rol) => setHoja((h) => firmarHoja(h, rol, null))}
+              reaperturas={hoja.reaperturas}
               readOnly={readOnly}
               error={seccionesConError.includes('firmas')}
             />
-            <ResumenSection totales={totales} />
+            <ResumenSection hoja={hoja} />
           </div>
         </div>
 
         <div className="hgq-footer">
-          <div className="hgq-footer-total">
-            <span>Total de la hoja</span>
-            <strong>{formatoCOP(totales.total)}</strong>
+          <div className="hgq-progreso">
+            <span className="hgq-progreso-texto">{progreso.completas} de {progreso.total} secciones listas</span>
+            <div
+              className="hgq-progreso-barra"
+              role="progressbar"
+              aria-label="Secciones listas"
+              aria-valuemin={0}
+              aria-valuenow={progreso.completas}
+              aria-valuemax={progreso.total}
+            >
+              <div className="hgq-progreso-relleno" style={{ width: `${(progreso.completas / progreso.total) * 100}%` }} />
+            </div>
           </div>
+          {guardadoEn && !readOnly && <span className="hgq-guardado" role="status">Guardado · {guardadoEn}</span>}
           <div className="hgq-footer-acciones">
             <Button variant="secondary" icon={LuPrinter} onClick={() => window.print()}>Imprimir</Button>
-            {!readOnly && <Button variant="secondary" icon={LuSave} onClick={guardarBorrador}>Guardar borrador</Button>}
-            {!readOnly && <Button icon={LuLock} onClick={cerrarLaHoja}>Cerrar hoja</Button>}
+            {readOnly
+              ? <Button variant="secondary" icon={LuLockOpen} onClick={() => setSubventana({ tipo: 'reabrir' })}>Reabrir hoja</Button>
+              : <Button icon={LuLock} onClick={pedirCierre}>Cerrar hoja</Button>}
           </div>
         </div>
       </div>
     </div>
+
+    {/* Subventanas fuera del .modal-card (su transform rompe el position:fixed). */}
+    {subventana?.tipo === 'firma' && (
+      <FirmaPinModal
+        rol={FIRMA_ROL_LABEL[subventana.rol] ?? subventana.rol}
+        nombre={nombreDe(FIRMA_ROL_LABEL[subventana.rol])}
+        onClose={cerrarSubventana}
+        onConfirmar={() => {
+          const rol = subventana?.rol;
+          setSubventana(null);
+          if (rol) setHoja((h) => firmarHoja(h, rol, ahoraISO()));
+        }}
+      />
+    )}
+    {subventana?.tipo === 'cierre' && (
+      <ConfirmarCierreModal hoja={hoja} onClose={cerrarSubventana} onConfirmar={cerrarLaHoja} />
+    )}
+    {subventana?.tipo === 'reabrir' && (
+      <ReabrirHojaModal onClose={cerrarSubventana} onConfirmar={reabrir} />
+    )}
+    </>
   );
 }

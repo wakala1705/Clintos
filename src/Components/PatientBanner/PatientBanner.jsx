@@ -22,7 +22,7 @@ function maskText(value) {
 // asegurador, "Ver más", ojo, alergias) igual en todas las pantallas; fila 2
 // (admission-row) según la variante.
 //
-// - `variant` (hospitalizacion | consulta-externa | citas | cargos, ver
+// - `variant` (hospitalizacion | consulta-externa | citas | cargos | cirugia, ver
 //   @/hooks/PatientBanner/variants.js): campos de la fila 2, en orden, y si
 //   abre contraído. `context` trae los valores de esa fila que no son del
 //   paciente (la cita, citas futuras...); cada campo se busca primero en
