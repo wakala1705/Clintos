@@ -15,7 +15,6 @@
 .hgq-banner-admision .hgq-input{width:100%;}
 .hgq-nav-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
 .hgq-body{display:flex;flex-direction:column;gap:16px;padding:16px 24px;overflow-y:auto;}
-.hgq-body-acciones{display:flex;justify-content:flex-end;}
 .hgq-errores{padding:12px 16px;border:1px solid var(--red);border-radius:var(--radius);background:var(--red-bg);color:var(--red);font-size:var(--fs-base);}
 .hgq-errores ul{margin:6px 0 0;padding-left:18px;}
 .hgq-aviso{padding:10px 16px;border-radius:var(--radius);background:var(--primary-50);color:var(--primary);font-size:var(--fs-base);font-weight:var(--fw-medium);}
@@ -44,7 +43,7 @@
 @media (max-width:1024px), (pointer:coarse){
   .hgq-input{min-height:44px;}
   .hgq-nav-item{min-height:44px;}
-  .hgq-footer .btn,.hgq-footer button,.hgq-body-acciones button{min-height:44px;}
+  .hgq-footer .btn,.hgq-footer button{min-height:44px;}
   .hgq-table td,.hgq-table th{min-height:44px;height:44px;}
 }
 
@@ -55,7 +54,7 @@
   .modal-overlay{position:static;background:none;}
   .modal-card.hgq-card{position:absolute;inset:0;display:block;width:100%;height:auto;max-height:none;overflow:visible;box-shadow:none;}
   .hgq-footer{position:static;margin-top:8px;}
-  .hgq-nav,.hgq-body-acciones,.hgq-footer-acciones,.hgq-progreso,.hgq-guardado,.hgq-table-add,.hgq-col-accion{display:none;}
+  .hgq-nav,.hgq-footer-acciones,.hgq-progreso,.hgq-guardado,.hgq-table-add,.hgq-col-accion{display:none;}
   .hgq-layout{display:block;}
   .hgq-body{overflow:visible;}
 }

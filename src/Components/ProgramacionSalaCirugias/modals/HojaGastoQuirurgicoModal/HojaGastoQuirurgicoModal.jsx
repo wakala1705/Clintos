@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import {
-  LuChevronsDown, LuChevronsUp, LuCircle, LuCircleCheck, LuClipboardList, LuLock, LuLockOpen, LuPrinter,
+  LuCircle, LuCircleCheck, LuClipboardList, LuLock, LuLockOpen, LuPrinter,
 } from 'react-icons/lu';
 import './HojaGastoQuirurgicoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
@@ -119,9 +119,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   }, [hoja]);
 
   const progreso = progresoHoja(hoja);
-  const todasPlegadas = NAV.every((n) => plegadas[n.id]);
   const alternar = (id) => setPlegadas((p) => ({ ...p, [id]: !p[id] }));
-  const plegarTodo = () => setPlegadas(Object.fromEntries(NAV.map((n) => [n.id, !todasPlegadas])));
   const irAbriendo = (id) => {
     setPlegadas((p) => ({ ...p, [id]: false }));
     irA(id);
@@ -260,11 +258,6 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
 
           <div className="hgq-body">
             <SeccionesContext.Provider value={{ plegadas, tonos, alternar }}>
-            <div className="hgq-body-acciones">
-              <Button variant="secondary" size="sm" icon={todasPlegadas ? LuChevronsDown : LuChevronsUp} onClick={plegarTodo}>
-                {todasPlegadas ? 'Desplegar todo' : 'Plegar todo'}
-              </Button>
-            </div>
             {errores.length > 0 && (
               <div className="hgq-errores" role="alert">
                 <strong>No se puede cerrar la hoja:</strong>
