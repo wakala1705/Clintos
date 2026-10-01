@@ -12,9 +12,9 @@ const COLUMNS = [
   { key: 'dxPos', label: 'Dx posoperatorio', placeholder: 'CIE-10' },
 ];
 
-export default function ProcedimientosSection({ rows, onChange, readOnly, error }) {
+export default function ProcedimientosSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-procedimientos" icon={LuScissors} titulo="Procedimientos realizados" error={error}>
+    <SeccionHoja id="hgq-procedimientos" icon={LuScissors} titulo="Procedimientos realizados">
       <HojaTabla
         ariaLabel="Procedimientos"
         columns={COLUMNS}

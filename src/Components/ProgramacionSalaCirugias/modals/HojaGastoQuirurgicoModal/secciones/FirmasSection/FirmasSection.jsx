@@ -11,10 +11,10 @@ const FIRMAS = [
 ];
 
 export default function FirmasSection({
-  observaciones, onChangeObservaciones, nombres, firmas, onPedirFirma, onQuitarFirma, reaperturas, readOnly, error,
+  observaciones, onChangeObservaciones, nombres, firmas, onPedirFirma, onQuitarFirma, reaperturas, readOnly,
 }) {
   return (
-    <SeccionHoja id="hgq-firmas" icon={LuPenLine} titulo="Observaciones y firmas" error={error}>
+    <SeccionHoja id="hgq-firmas" icon={LuPenLine} titulo="Observaciones y firmas">
       <div className="form-field">
         <label htmlFor="hgq-observaciones" className="hgq-field-label">Observaciones</label>
         <textarea

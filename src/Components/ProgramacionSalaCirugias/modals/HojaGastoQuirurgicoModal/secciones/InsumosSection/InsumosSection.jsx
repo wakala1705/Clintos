@@ -17,9 +17,9 @@ const COLUMNS = [
   { key: 'devuelto', label: 'Devuelto', type: 'calc', align: 'right', render: (r) => devueltoInsumo(r) },
 ];
 
-export default function InsumosSection({ rows, onChange, readOnly, error }) {
+export default function InsumosSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-insumos" icon={LuPackage} titulo="Insumos y materiales" error={error}>
+    <SeccionHoja id="hgq-insumos" icon={LuPackage} titulo="Insumos y materiales">
       <HojaTabla
         ariaLabel="Insumos"
         columns={COLUMNS}

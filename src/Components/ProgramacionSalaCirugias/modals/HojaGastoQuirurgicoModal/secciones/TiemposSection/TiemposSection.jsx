@@ -16,11 +16,11 @@ const TIEMPOS = [
 const opciones = (lista) => lista.map((v) => ({ value: v, label: v }));
 
 export default function TiemposSection({
-  tiempos, anestesia, programado, onChangeTiempos, onChangeAnestesia, readOnly, errorTiempos, errorAnestesia,
+  tiempos, anestesia, programado, onChangeTiempos, onChangeAnestesia, readOnly,
 }) {
   const d = duracionesHoja(tiempos);
   return (
-    <SeccionHoja id="hgq-tiempos" icon={LuTimer} titulo="Tiempos y anestesia" error={errorTiempos || errorAnestesia}>
+    <SeccionHoja id="hgq-tiempos" icon={LuTimer} titulo="Tiempos y anestesia">
       {(programado?.inicio || programado?.fin) && (
         <p className="hgq-programado">Programado: {programado.inicio || '—'} – {programado.fin || '—'}</p>
       )}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import {
-  LuCircle, LuCircleCheck, LuClipboardList, LuLock, LuLockOpen, LuPrinter,
+  LuChevronsDown, LuChevronsUp, LuCircle, LuCircleCheck, LuClipboardList, LuLock, LuLockOpen, LuPrinter,
 } from 'react-icons/lu';
 import './HojaGastoQuirurgicoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
@@ -22,6 +22,7 @@ import ResumenSection from './secciones/ResumenSection/ResumenSection';
 import FirmaPinModal from './subventanas/FirmaPinModal/FirmaPinModal';
 import ConfirmarCierreModal from './subventanas/ConfirmarCierreModal/ConfirmarCierreModal';
 import ReabrirHojaModal from './subventanas/ReabrirHojaModal/ReabrirHojaModal';
+import { SeccionesContext } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/SeccionesContext';
 import {
   HOJA_ESTADO_LABEL, cerrarHoja, construirHojaInicial, firmarHoja, guardarHoja,
   horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, validarCierre,
@@ -50,7 +51,18 @@ const iniciales = (nombre = '') => nombre.split(/\s+/).filter(Boolean).slice(0, 
 const FIRMA_ROL_LABEL = { circulante: 'Circulante', instrumentadora: 'Instrumentadora', cirujano: 'Cirujano' };
 
 const ahoraISO =() => fechaHoraLocalISO(new Date());
-const irA = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// Scroll solo del cuerpo (.hgq-body), no scrollIntoView: cuando el cuerpo ya no puede
+// desplazarse más (secciones plegadas, poco contenido) scrollIntoView sigue con el
+// ancestro `.hgq-card` (overflow:hidden) y esconde banner y título. El retraso espera
+// la animación de apertura/cierre de las secciones (.2 s en SeccionHoja.css), que
+// mueve la posición del destino.
+const irA = (id) => setTimeout(() => {
+  const el = document.getElementById(id);
+  const cuerpo = el?.closest('.hgq-body');
+  if (!el || !cuerpo) return;
+  const delta = el.getBoundingClientRect().top - cuerpo.getBoundingClientRect().top - 8;
+  cuerpo.scrollTo({ top: cuerpo.scrollTop + delta, behavior: 'smooth' });
+}, 260);
 
 export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   const [hoja, setHoja] = useState(() => obtenerHojaGuardada(cirugia.id) ?? construirHojaInicial(cirugia));
@@ -59,6 +71,8 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   const [guardadoEn, setGuardadoEn] = useState('');
   // Subventana abierta: { tipo: 'firma', rol } | { tipo: 'cierre' } | { tipo: 'reabrir' } | null.
   const [subventana, setSubventana] = useState(null);
+  // Secciones plegadas { [id]: boolean }; solo en memoria (al reabrir todo arranca abierto).
+  const [plegadas, setPlegadas] = useState({});
   const hojaInicialRef = useRef(hoja);
   const readOnly = hoja.estado === 'cerrada';
   const nReaperturas = hoja.reaperturas?.length ?? 0;
@@ -99,6 +113,19 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   }, [hoja]);
 
   const progreso = progresoHoja(hoja);
+  const todasPlegadas = NAV.every((n) => plegadas[n.id]);
+  const alternar = (id) => setPlegadas((p) => ({ ...p, [id]: !p[id] }));
+  const plegarTodo = () => setPlegadas(Object.fromEntries(NAV.map((n) => [n.id, !todasPlegadas])));
+  const irAbriendo = (id) => {
+    setPlegadas((p) => ({ ...p, [id]: false }));
+    irA(id);
+  };
+  // Tono del ícono de cada sección: error > completa > por defecto.
+  const tonos = Object.fromEntries(NAV.map((n) => [
+    n.id,
+    n.errores.some((s) => seccionesConError.includes(s)) ? 'error'
+      : (n.progreso && progreso.porSeccion[n.progreso] ? 'ok' : 'default'),
+  ]));
   const sala = SALAS.find((x) => x.value === cirugia.salaId)?.descripcion;
   const pac = cirugia.paciente;
   const patientBanner = pac ? {
@@ -111,14 +138,25 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
     eps: pac.aseguradora,
   } : null;
 
+  // Abre las secciones con error y hace scroll a la primera.
+  function mostrarErrores(errs) {
+    setErrores(errs);
+    setAviso('');
+    const secs = errs.map((e) => e.seccion);
+    setPlegadas((p) => {
+      const sig = { ...p };
+      NAV.forEach((n) => { if (n.errores.some((s) => secs.includes(s))) sig[n.id] = false; });
+      return sig;
+    });
+    const primera = NAV.find((n) => n.errores.includes(errs[0]?.seccion));
+    if (primera) irA(primera.id);
+  }
+
   // Con errores: resumen + scroll al primero. Sin errores: pide confirmación.
   function pedirCierre() {
     const errs = validarCierre(hoja);
     if (errs.length > 0) {
-      setErrores(errs);
-      setAviso('');
-      const primera = NAV.find((n) => n.errores.includes(errs[0]?.seccion));
-      if (primera) irA(primera.id);
+      mostrarErrores(errs);
       return;
     }
     setSubventana({ tipo: 'cierre' });
@@ -128,8 +166,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
     setSubventana(null);
     const r = cerrarHoja(hoja, ahoraISO());
     if (!r.ok) {
-      setErrores(r.errores);
-      setAviso('');
+      mostrarErrores(r.errores);
       return;
     }
     setErrores([]);
@@ -202,7 +239,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
         <div className="hgq-layout">
           <nav className="hgq-nav" aria-label="Secciones de la hoja">
             {NAV.map((n) => (
-              <button key={n.id} type="button" className="hgq-nav-item" onClick={() => irA(n.id)}>
+              <button key={n.id} type="button" className="hgq-nav-item" onClick={() => irAbriendo(n.id)}>
                 <span className="hgq-nav-label">
                   {n.progreso ? (progreso.porSeccion[n.progreso]
                     ? <LuCircleCheck className="icon hgq-nav-ok" aria-label="Completa" />
@@ -216,6 +253,12 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
           </nav>
 
           <div className="hgq-body">
+            <SeccionesContext.Provider value={{ plegadas, tonos, alternar }}>
+            <div className="hgq-body-acciones">
+              <Button variant="secondary" size="sm" icon={todasPlegadas ? LuChevronsDown : LuChevronsUp} onClick={plegarTodo}>
+                {todasPlegadas ? 'Desplegar todo' : 'Plegar todo'}
+              </Button>
+            </div>
             {errores.length > 0 && (
               <div className="hgq-errores" role="alert">
                 <strong>No se puede cerrar la hoja:</strong>
@@ -231,15 +274,13 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
               onChangeTiempos={(v) => set('tiempos', v)}
               onChangeAnestesia={(v) => set('anestesia', v)}
               readOnly={readOnly}
-              errorTiempos={seccionesConError.includes('tiempos')}
-              errorAnestesia={seccionesConError.includes('anestesia')}
             />
-            <ConteoSection rows={hoja.conteo} onChange={(v) => set('conteo', v)} readOnly={readOnly} error={seccionesConError.includes('conteo')} />
-            <PersonalSection rows={hoja.personal} onChange={(v) => set('personal', v)} readOnly={readOnly} error={seccionesConError.includes('personal')} />
-            <ProcedimientosSection rows={hoja.procedimientos} onChange={(v) => set('procedimientos', v)} readOnly={readOnly} error={seccionesConError.includes('procedimientos')} />
-            <InsumosSection rows={hoja.insumos} onChange={(v) => set('insumos', v)} readOnly={readOnly} error={seccionesConError.includes('insumos')} />
+            <ConteoSection rows={hoja.conteo} onChange={(v) => set('conteo', v)} readOnly={readOnly} />
+            <PersonalSection rows={hoja.personal} onChange={(v) => set('personal', v)} readOnly={readOnly} />
+            <ProcedimientosSection rows={hoja.procedimientos} onChange={(v) => set('procedimientos', v)} readOnly={readOnly} />
+            <InsumosSection rows={hoja.insumos} onChange={(v) => set('insumos', v)} readOnly={readOnly} />
             <MedicamentosSection rows={hoja.medicamentos} onChange={(v) => set('medicamentos', v)} readOnly={readOnly} />
-            <ImplantesSection rows={hoja.implantes} onChange={(v) => set('implantes', v)} readOnly={readOnly} error={seccionesConError.includes('implantes')} />
+            <ImplantesSection rows={hoja.implantes} onChange={(v) => set('implantes', v)} readOnly={readOnly} />
             <EquiposSection rows={hoja.equipos} onChange={(v) => set('equipos', v)} readOnly={readOnly} />
             <FirmasSection
               observaciones={hoja.observaciones}
@@ -250,9 +291,10 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
               onQuitarFirma={(rol) => setHoja((h) => firmarHoja(h, rol, null))}
               reaperturas={hoja.reaperturas}
               readOnly={readOnly}
-              error={seccionesConError.includes('firmas')}
+             
             />
             <ResumenSection hoja={hoja} />
+            </SeccionesContext.Provider>
           </div>
         </div>
 

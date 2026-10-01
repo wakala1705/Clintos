@@ -12,9 +12,9 @@ const COLUMNS = [
   { key: 'registro', label: 'Registro profesional' },
 ];
 
-export default function PersonalSection({ rows, onChange, readOnly, error }) {
+export default function PersonalSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-personal" icon={LuUsers} titulo="Equipo quirúrgico" error={error}>
+    <SeccionHoja id="hgq-personal" icon={LuUsers} titulo="Equipo quirúrgico">
       <HojaTabla
         ariaLabel="Equipo quirúrgico"
         columns={COLUMNS}

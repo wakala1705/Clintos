@@ -12,9 +12,9 @@ const COLUMNS = [
   { key: 'proveedor', label: 'Proveedor' },
 ];
 
-export default function ImplantesSection({ rows, onChange, readOnly, error }) {
+export default function ImplantesSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-implantes" icon={LuBone} titulo="Implantes y material especial" error={error}>
+    <SeccionHoja id="hgq-implantes" icon={LuBone} titulo="Implantes y material especial">
       <HojaTabla
         ariaLabel="Implantes"
         columns={COLUMNS}
