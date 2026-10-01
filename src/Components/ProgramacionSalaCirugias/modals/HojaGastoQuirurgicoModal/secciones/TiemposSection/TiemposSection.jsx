@@ -4,23 +4,12 @@ import './TiemposSection.css';
 import SeccionHoja from '../../comunes/SeccionHoja/SeccionHoja';
 import HoraInput from '../../comunes/HoraInput/HoraInput';
 import Button from '@/Components/Button/Button';
-import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   HITOS_TIEMPOS, aMinutos, duracionesHoja, duracionTexto, hitosFueraDeOrden, horaAhora, siguienteHito,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
-import { ASA_CATALOGO, COMPLEJIDAD_CATALOGO, TIPOS_ANESTESIA_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-
-const opciones = (lista) => lista.map((v) => ({ value: v, label: v }));
-
-// "Programado: X" bajo un select cuyo valor difiere de lo cargado en la programación.
-function ProgramadoHint({ campo, anestesia, anestesiaProgramada }) {
-  const prog = anestesiaProgramada?.[campo] ?? '';
-  if (!prog || (anestesia?.[campo] ?? '') === prog) return null;
-  return <span className="hgq-programado">Programado: {prog}</span>;
-}
 
 export default function TiemposSection({
-  tiempos, anestesia, anestesiaProgramada, programado, onChangeTiempos, onChangeAnestesia, readOnly,
+  tiempos, programado, onChangeTiempos, readOnly,
 }) {
   const [editando, setEditando] = useState(null);
   const [anuncio, setAnuncio] = useState('');
@@ -107,25 +96,6 @@ export default function TiemposSection({
         <div><dt>Duración de anestesia</dt><dd>{duracionTexto(d.anestesia)}</dd></div>
         <div><dt>Ocupación de sala</dt><dd>{duracionTexto(d.sala)}</dd></div>
       </dl>
-
-      <h5 className="hgq-subtitulo">Anestesia y clasificación</h5>
-      <div className="hgq-grid">
-        <div className="form-field">
-          <label htmlFor="hgq-anestesia-tipo" className="hgq-field-label">Tipo de anestesia</label>
-          <FormSelect id="hgq-anestesia-tipo" value={anestesia?.tipo ?? ''} disabled={readOnly} options={opciones(TIPOS_ANESTESIA_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, tipo: v })} />
-          <ProgramadoHint campo="tipo" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
-        </div>
-        <div className="form-field wide">
-          <label htmlFor="hgq-anestesia-asa" className="hgq-field-label">ASA</label>
-          <FormSelect id="hgq-anestesia-asa" value={anestesia?.asa ?? ''} disabled={readOnly} options={opciones(ASA_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, asa: v })} />
-          <ProgramadoHint campo="asa" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
-        </div>
-        <div className="form-field">
-          <label htmlFor="hgq-anestesia-complejidad" className="hgq-field-label">Complejidad</label>
-          <FormSelect id="hgq-anestesia-complejidad" value={anestesia?.complejidad ?? ''} disabled={readOnly} options={opciones(COMPLEJIDAD_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, complejidad: v })} />
-          <ProgramadoHint campo="complejidad" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
-        </div>
-      </div>
     </SeccionHoja>
   );
 }

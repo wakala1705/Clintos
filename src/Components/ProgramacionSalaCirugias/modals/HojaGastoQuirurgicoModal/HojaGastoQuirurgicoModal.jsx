@@ -8,6 +8,7 @@ import './HojaGastoQuirurgicoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import TiemposSection from './secciones/TiemposSection/TiemposSection';
 import ProcedimientosSection from './secciones/ProcedimientosSection/ProcedimientosSection';
@@ -29,7 +30,9 @@ import {
   HOJA_ESTADO_LABEL, cerrarHoja, construirHojaInicial, firmarHoja, guardarHoja,
   horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, sincronizarConCirugia, validarCierre,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
-import { SALAS, fechaHoraLocalISO, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import {
+  ASA_CATALOGO, COMPLEJIDAD_CATALOGO, SALAS, TIPOS_ANESTESIA_CATALOGO, fechaHoraLocalISO, fechaHoraRangoLabel,
+} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Índice lateral: `progreso` es la clave de progresoHoja().porSeccion (sin clave = sin
 // verificación, no muestra ícono). Cada entrada hace scroll a la sección con ese id y se
@@ -244,16 +247,30 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
               tipoCirugia: cirugia.tipoCirugia,
             }}
             secondRowExtra={(
-              <div className="hgq-banner-admision">
-                <label htmlFor="hgq-admision" className="hgq-field-label">N° de admisión</label>
-                <input
-                  id="hgq-admision"
-                  className="hgq-input"
-                  value={hoja.admision ?? ''}
-                  disabled={readOnly}
-                  onChange={(e) => set('admision', e.target.value)}
-                />
-              </div>
+              <>
+                {[
+                  { campo: 'tipo', label: 'Tipo de anestesia', lista: TIPOS_ANESTESIA_CATALOGO },
+                  { campo: 'asa', label: 'ASA', lista: ASA_CATALOGO },
+                  { campo: 'complejidad', label: 'Complejidad', lista: COMPLEJIDAD_CATALOGO },
+                ].map(({ campo, label, lista }) => {
+                  const prog = hoja.anestesiaProgramada?.[campo] ?? '';
+                  const valor = hoja.anestesia?.[campo] ?? '';
+                  return (
+                    <div className="hgq-banner-campo" key={campo}>
+                      <label htmlFor={`hgq-anestesia-${campo}`} className="hgq-field-label">{label}</label>
+                      <FormSelect
+                        id={`hgq-anestesia-${campo}`}
+                        value={valor}
+                        disabled={readOnly}
+                        options={lista.map((v) => ({ value: v, label: v }))}
+                        placeholder="Selecciona"
+                        onChange={(v) => set('anestesia', { ...hoja.anestesia, [campo]: v })}
+                      />
+                      {prog && valor !== prog && <span className="hgq-programado">Programado: {prog}</span>}
+                    </div>
+                  );
+                })}
+              </>
             )}
           />
         </div>
@@ -287,11 +304,8 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
 
             <TiemposSection
               tiempos={hoja.tiempos}
-              anestesia={hoja.anestesia}
-              anestesiaProgramada={hoja.anestesiaProgramada}
               programado={hoja.programado}
               onChangeTiempos={(v) => set('tiempos', v)}
-              onChangeAnestesia={(v) => set('anestesia', v)}
               readOnly={readOnly}
             />
             <ConteoSection rows={hoja.conteo} onChange={(v) => set('conteo', v)} readOnly={readOnly} />
