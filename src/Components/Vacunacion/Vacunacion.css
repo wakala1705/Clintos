@@ -13,6 +13,9 @@
   --sidebar:#0065CD;
   --sidebar-active:rgba(255,255,255,.20);
   --accent-teal:#58c2dc;
+  /* Los consume KpiCard (variant="info"). */
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
   --ink-900:#101827;
   --ink-700:#374151;
   --ink-500:#6b7280;
@@ -41,6 +44,8 @@
   --input-lg:44px;
 }
 html[data-theme="dark"]{
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
   --primary-50:rgba(0,101,205,.16);
   --primary-100:rgba(0,101,205,.30);
   --ink-900:#f1f4f9;

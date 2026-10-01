@@ -267,8 +267,11 @@ function buildInitialForm(factura) {
   };
 }
 
+// `value ?? ''`: un picker/catálogo que devuelva undefined (campo ausente en
+// el mock) dejaría el <input value> sin definir y React avisaría de
+// "controlled → uncontrolled".
 function setField(setForm, key) {
-  return (value) => setForm((f) => ({ ...f, [key]: value }));
+  return (value) => setForm((f) => ({ ...f, [key]: value ?? '' }));
 }
 
 function toNumber(value) {
@@ -1557,7 +1560,10 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
           tipoTercero={form.regimen}
           fecha={form.fechaFactura}
           onSelect={({ noContrato, idContrato, tipoContrato }) => setForm((f) => ({
-            ...f, noContrato, idContrato, tipoContrato,
+            ...f,
+            noContrato: noContrato ?? '',
+            idContrato: idContrato ?? '',
+            tipoContrato: tipoContrato ?? '',
           }))}
           onClose={() => setCatalogoContratacionAbierto(false)}
         />

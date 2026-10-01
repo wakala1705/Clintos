@@ -34,3 +34,25 @@
   width:100%;height:6px;border-radius:999px;background:var(--gray-bg);overflow:hidden;margin-top:2px;
 }
 .pg-kpi-progress-fill{height:100%;border-radius:999px;background:var(--primary);}
+
+/* Tono gris para estados "en espera" (antes un .cnc-kpi-neutral propio en Canastas). */
+.pg-kpi-muted .pg-kpi-icon{background:var(--gray-bg);color:var(--ink-500);}
+
+/* Compacto: una sola línea. Valores únicos para todas las features (antes
+   duplicados como .pg-kpi-row.compact / .hh-kpi-row.compact / .hc-kpi-row.compact). */
+.pg-kpi-card.pg-kpi-compact{flex-direction:row;align-items:center;gap:10px;padding:10px 14px;}
+.pg-kpi-compact .pg-kpi-top{flex:1;min-width:0;}
+.pg-kpi-compact .pg-kpi-icon{width:28px;height:28px;}
+.pg-kpi-compact .pg-kpi-icon .icon{width:16px;height:16px;}
+.pg-kpi-compact .pg-kpi-value{font-size:var(--fs-xl);}
+.pg-kpi-compact .pg-kpi-desc,
+.pg-kpi-compact .pg-kpi-progress{display:none;}
+
+/* Botón-filtro (con onClick): mismo aspecto + hover/foco/activo. */
+.pg-kpi-action{
+  width:100%;font:inherit;text-align:left;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.pg-kpi-action:hover{border-color:var(--ink-400);}
+.pg-kpi-action:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.pg-kpi-action.active{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-50);}

@@ -110,6 +110,7 @@ export default function PanelGeneral() {
               <KpiCard
                 icon={LuUsers}
                 label="Total pacientes"
+                compact={tablaExpandida}
                 value={kpis.total}
                 description="En piso"
                 variant="neutral"
@@ -117,6 +118,7 @@ export default function PanelGeneral() {
               <KpiCard
                 icon={LuHourglass}
                 label="Estancias prolongadas"
+                compact={tablaExpandida}
                 value={kpis.prolongadas}
                 description="> 7 días ingresados"
                 variant="warning"
@@ -124,6 +126,7 @@ export default function PanelGeneral() {
               <KpiCard
                 icon={LuPill}
                 label="Medicación"
+                compact={tablaExpandida}
                 value={DOSIS_PROGRAMADAS_HOY}
                 description="Dosis programadas hoy"
                 variant="warning"
@@ -131,6 +134,7 @@ export default function PanelGeneral() {
               <KpiCard
                 icon={LuClipboardList}
                 label="Órdenes médicas"
+                compact={tablaExpandida}
                 value={ORDENES_PENDIENTES}
                 description="Órdenes pendientes"
                 variant="warning"
@@ -138,6 +142,7 @@ export default function PanelGeneral() {
               <KpiCard
                 icon={LuBedDouble}
                 label="Ocupación"
+                compact={tablaExpandida}
                 value={`${kpis.ocupacionPct}%`}
                 description={`${kpis.total}/${camasTotales} camas ocupadas`}
                 variant="neutral"

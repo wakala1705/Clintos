@@ -53,6 +53,9 @@
   --interactive-selected-text:var(--primary-dark);
   --status-info-bg:var(--primary-50);
   --status-info-fg:var(--primary-dark);
+  /* Los consume KpiCard (variant="info"), como en HC Hospitalización. */
+  --blue-bg:#e0f2fe;
+  --blue-fg:#0369a1;
 
   --space-1:4px;
   --space-2:8px;
@@ -81,6 +84,8 @@
   --z-modal:50;
 }
 html[data-theme="dark"]{
+  --blue-bg:rgba(2,132,199,.20);
+  --blue-fg:#7dd3fc;
   --primary-50:rgba(0,101,205,.16);
   --primary-100:rgba(0,101,205,.30);
   --ink-900:#f1f4f9;
@@ -130,7 +135,7 @@ html[data-theme="dark"][data-contrast="high"]{
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 
-/* Usado por WeekDatePicker (chevrones), KpiFilterCard (ícono de la tarjeta),
+/* Usado por WeekDatePicker (chevrones), KpiCard (ícono de la tarjeta),
    AgendaEmptyState y los botones/campo de búsqueda de HistoriaClinica.jsx —
    4+ consumidores reales, por eso vive acá y no en un .css individual. */
 .icon{
@@ -209,7 +214,7 @@ html[data-theme="dark"][data-contrast="high"]{
 /* Reset global de prefers-reduced-motion — antes era una lista de
    selectores a mano (solo los 4 chevrones giratorios conocidos en ese
    momento), que se desactualizaba cada vez que un componente nuevo sumaba
-   su propia `transition` (KpiFilterCard, RecomendacionCard, WeekDatePicker,
+   su propia `transition` (KpiCard, RecomendacionCard, WeekDatePicker,
    .rg-group-actions del propio RegistrosPanel... quedaron fuera). `*` cubre
    cualquier transition/animation presente o futura de todo el módulo sin
    mantenimiento manual. */

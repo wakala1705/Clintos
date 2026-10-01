@@ -29,6 +29,8 @@ html[data-theme="dark"] .cnc-resumen-lectura{color:var(--green);}
 .cnc-resumen-lectura strong{display:block;font-size:var(--fs-base);font-weight:var(--fw-semibold);}
 .cnc-resumen-lectura span{display:block;font-size:var(--fs-sm);color:var(--ink-700);}
 /* Texto solo para lectores de pantalla (encabezado de la columna de íconos). */
+/* Su padre debe ser position:relative: un absolute sin contenedor posicionado escapa del overflow
+   de la tabla y estira el scroll de TODA la página (un span por fila "Ajustar"). */
 .cnc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 
 /* Check de la cabecera (verificar todos): más bajo para no agrandar el encabezado; estado mixto con "−". */
@@ -39,7 +41,7 @@ html[data-theme="dark"] .cnc-resumen-lectura{color:var(--green);}
 .cnc-recibido-fijo{display:inline-flex;align-items:center;justify-content:center;gap:10px;}
 .cnc-recibido-valor{min-width:24px;text-align:center;font-size:var(--fs-lg);font-weight:var(--fw-bold);}
 .cnc-link{
-  border:none;background:none;padding:4px 6px;border-radius:6px;cursor:pointer;
+  position:relative;border:none;background:none;padding:4px 6px;border-radius:6px;cursor:pointer;
   font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--primary);text-decoration:underline;
 }
 .cnc-link:hover{background:var(--primary-50);}

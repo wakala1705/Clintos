@@ -15,14 +15,13 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import CanastasFechaNav from '../canastas/CanastasFechaNav/CanastasFechaNav';
 import CanastasKpis from '../canastas/CanastasKpis/CanastasKpis';
-import CanastaAlerta from '../canastas/CanastaAlerta/CanastaAlerta';
 import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
 import {
   HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, despacharCanasta, fechaISO, fetchCanastasDia,
   cerrarConFaltante, reabrirSolicitud, registrarConsumo, registrarRecepcion, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { filtrarCanastas, primeraPorRecibir } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { filtrarCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
 // Sede fija '02' en todo el módulo (ver VencidasFiltrosBar.jsx).
 const SALA_OPTIONS = SALAS.filter((s) => s.sedeId === '02').map((s) => ({ value: s.value, label: s.descripcion }));
@@ -87,9 +86,6 @@ export default function CanastasCirugia() {
     ?? lista.find((c) => resumenCanasta(c).estado === 'despachada')
     ?? lista[0]
     ?? null;
-
-  // Otra canasta despachada por recibir (la abierta ya está a la vista).
-  const siguiente = primeraPorRecibir(lista, seleccion?.id ?? null);
 
   function showToast(message, snapshot = null) {
     setToast({ message, snapshot });
@@ -224,9 +220,8 @@ export default function CanastasCirugia() {
   } else {
     cuerpo = (
       <>
-        <div className={`cnc-resumen${siguiente ? ' cnc-resumen-alerta' : ''}`}>
+        <div className="cnc-resumen">
           <CanastasKpis cirugias={lista} filtro={filtros.estado} onFiltrar={(estado) => setFiltros((f) => ({ ...f, estado }))} />
-          {siguiente && <CanastaAlerta cirugia={siguiente} ahora={ahora} onVerificar={handleSelect} />}
         </div>
         <div className="cnc-workspace">
           {panelLista({ filtradas, seleccionId: seleccion?.id ?? null })}

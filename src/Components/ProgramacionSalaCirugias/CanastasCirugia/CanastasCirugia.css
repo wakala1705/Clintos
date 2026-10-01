@@ -3,13 +3,10 @@
    ../shared/shared.css. Acá solo lo propio de esta página; cada panel tiene su
    CSS en ../canastas/<Componente>/. */
 
-/* KPIs (botones-filtro) + alerta opcional "siguiente por recibir": con alerta
-   es la 5.ª celda de la fila en desktop; en tablet sube a su propia fila
-   arriba (artboard Main). */
+/* KPIs (botones-filtro, compactos): 4 columnas iguales en todos los anchos. */
 .cnc-resumen{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;flex-shrink:0;
 }
-.cnc-resumen-alerta{grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.6fr);}
 .cnc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
 
 .cnc-estado{
@@ -50,12 +47,10 @@ html[data-theme="dark"] .cnc-toast-undo:focus-visible{outline-color:var(--primar
 }
 
 @media (max-width:1024px){
-  .cnc-resumen{grid-template-columns:repeat(4,minmax(0,1fr));}
-  .cnc-resumen > .cnc-alerta{order:-1;grid-column:1 / -1;}
-  /* Con la alerta en su propia fila, alerta + KPIs + cabecera dejan al
-     workspace sin altura útil en una tablet: la página hace scroll vertical y
-     el workspace conserva una altura mínima. Selector compuesto porque
-     .content (ProgramacionSalaCirugias.css) fija overflow:hidden. */
+  /* En una tablet, cabecera + KPIs dejan al workspace sin altura útil: la
+     página hace scroll vertical y el workspace conserva una altura mínima.
+     Selector compuesto porque .content (ProgramacionSalaCirugias.css) fija
+     overflow:hidden. */
   .content.cnc-content{overflow-y:auto;}
   .cnc-workspace{min-height:640px;}
 }

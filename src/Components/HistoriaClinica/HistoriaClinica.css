@@ -52,19 +52,11 @@ body{
    el espacio dentro de cada uno (regla de craft "espaciado en una escala"). */
 .hc-top-row{display:flex;align-items:stretch;gap:24px;flex-shrink:0;flex-wrap:wrap;}
 .hc-kpi-row{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:16px;flex:1;min-width:0;}
-
-/* Compact (botón expandir de hc-agenda-header, ver hc-expand-btn más abajo):
-   compacta KPIs + calendario para darle más alto a la tabla — mismo
-   comportamiento/valores que .pg-kpi-row.compact de Enfermería y
-   .hh-kpi-row.compact de HC Hospitalización, adaptado a que acá kpi-card ya
-   es una fila (icono | valor+label) en vez de una columna, así que no hace
-   falta cambiar flex-direction ni esconder un description aparte (kpi-label
-   ya cumple ese rol). El calendario compacta en WeekDatePicker.css. */
+/* Compact (botón expandir de hc-agenda-header): compacta KPIs + calendario para
+   darle más alto a la tabla. La tarjeta la compacta la prop `compact` de
+   @/Components/KpiCard; acá solo el gap de la fila. El calendario compacta en
+   WeekDatePicker.css. */
 .hc-kpi-row.compact{gap:10px;}
-.hc-kpi-row.compact .kpi-card{padding:10px 14px;gap:10px;}
-.hc-kpi-row.compact .kpi-icon{width:28px;height:28px;}
-.hc-kpi-row.compact .kpi-icon .icon{width:16px;height:16px;}
-.hc-kpi-row.compact .kpi-value{font-size:var(--fs-xl);}
 
 /* ---------- CARD: Agenda del día ---------- */
 .hc-card-shell{

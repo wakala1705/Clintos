@@ -20,9 +20,9 @@ const COLUMNS = [
   { key: 'fecha', label: 'F. Factura' },
   { key: 'fechaVencimiento', label: 'F. Vencimiento' },
   { key: 'valorTotal', label: 'Valor Total' },
-  { key: 'fElect', label: 'F.Elect' },
+  // Ocultas (encargo explícito): { key: 'fElect', label: 'F.Elect' } y
+  // { key: 'estado', label: 'Estado FE' } -- restaurar junto con sus <td>.
   { key: 'estadoPE', label: 'Estado de envío' },
-  { key: 'estado', label: 'Estado FE' },
   { key: 'acciones', label: 'Acciones' },
 ];
 
@@ -151,9 +151,8 @@ export default function FacturasGridClasica({
                 <td>{formatFechaClasica(f.fecha)}</td>
                 <td>{formatFechaClasica(f.fechaVencimiento)}</td>
                 <td className="fvc-num">{formatCOP(f.valorTotal)}</td>
-                <td>{f.estadoPE === 'enviada' ? 'Sí' : 'No'}</td>
+                {/* Ocultas (encargo explícito): <td>{f.estadoPE === 'enviada' ? 'Sí' : 'No'}</td> (F.Elect) y <td><EstadoFeIcon f={f} /></td> (Estado FE) */}
                 <td><Badge tone={ESTADO_PE[f.estadoPE].tone}>{ESTADO_PE[f.estadoPE].label}</Badge></td>
-                <td><EstadoFeIcon f={f} /></td>
                 <td className="fvc-actions-cell">
                   <div className="fvc-row-actions">
                     <button

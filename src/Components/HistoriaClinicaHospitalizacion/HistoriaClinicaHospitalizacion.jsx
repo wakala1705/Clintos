@@ -132,6 +132,7 @@ export default function HistoriaClinicaHospitalizacion() {
               <KpiCard
                 icon={LuUsers}
                 label="Mis pacientes"
+                compact={tablaExpandida}
                 value={kpis.total}
                 description="En piso"
                 variant="neutral"
@@ -139,6 +140,7 @@ export default function HistoriaClinicaHospitalizacion() {
               <KpiCard
                 icon={LuFilePen}
                 label="Evolución pendiente"
+                compact={tablaExpandida}
                 value={kpis.evolucionPendiente}
                 description="Sin nota del día"
                 variant="warning"
@@ -146,6 +148,7 @@ export default function HistoriaClinicaHospitalizacion() {
               <KpiCard
                 icon={LuFlaskConical}
                 label="Resultados nuevos"
+                compact={tablaExpandida}
                 value={kpis.resultadosNuevos}
                 description={kpis.resultadosCriticos > 0
                   ? `${kpis.resultadosCriticos} ${kpis.resultadosCriticos === 1 ? 'crítico' : 'críticos'}`
@@ -155,6 +158,7 @@ export default function HistoriaClinicaHospitalizacion() {
               <KpiCard
                 icon={LuLogOut}
                 label="Altas probables"
+                compact={tablaExpandida}
                 value={kpis.altasProbables}
                 description="Egreso hoy o mañana"
                 variant="success"

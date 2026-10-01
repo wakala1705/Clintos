@@ -8,7 +8,7 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
-import KpiFilterCard from './KpiFilterCard/KpiFilterCard';
+import KpiCard from '@/Components/KpiCard/KpiCard';
 import WeekDatePicker from './WeekDatePicker/WeekDatePicker';
 import AgendaTable from './AgendaTable/AgendaTable';
 import AgendaTableSkeleton from './AgendaTableSkeleton/AgendaTableSkeleton';
@@ -114,12 +114,13 @@ export default function HistoriaClinica() {
           <div className="hc-top-row">
             <div className={`hc-kpi-row${tablaExpandida ? ' compact' : ''}`}>
               {KPI_DEFS.map((kpi) => (
-                <KpiFilterCard
+                <KpiCard
                   key={kpi.key}
                   icon={kpi.icon}
                   label={kpi.label}
                   value={kpi.key === 'en-sala' ? counts.enSala : kpi.key === 'atendido' ? counts.atendidos : counts.delDia}
                   variant={kpi.variant}
+                  compact={tablaExpandida}
                   active={kpiFilter === kpi.key}
                   onClick={() => setKpiFilter(kpi.key)}
                 />

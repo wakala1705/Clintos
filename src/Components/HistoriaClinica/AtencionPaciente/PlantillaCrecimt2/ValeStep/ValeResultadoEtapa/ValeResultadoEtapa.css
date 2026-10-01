@@ -37,7 +37,7 @@
 .vale-res-conducta p{margin:0;font-size:var(--fs-base);line-height:1.6;color:var(--ink-900);}
 
 /* ---------- CARDS DE RESULTADO POR DIMENSIÓN ----------
-   Adapta el shell de .kpi-card (KpiFilterCard.css) como <div> NO
+   Adapta el shell de .kpi-card (KpiCard.css) como <div> NO
    interactivo — son tiles estáticos de resumen, no toggles de filtro: sin
    cursor:pointer, sin hover ni :focus-visible. */
 .vale-res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
