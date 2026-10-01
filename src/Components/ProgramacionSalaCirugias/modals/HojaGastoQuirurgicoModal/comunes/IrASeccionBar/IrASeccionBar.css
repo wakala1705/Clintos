@@ -1,0 +1,4 @@
+.hgq-irbar{display:none;padding:8px 16px;border-bottom:1px solid var(--border);}
+.hgq-irbar .form-select-trigger{min-height:44px;}
+@media (max-width:1024px){.hgq-irbar{display:block;}}
+@media print{.hgq-irbar{display:none;}}

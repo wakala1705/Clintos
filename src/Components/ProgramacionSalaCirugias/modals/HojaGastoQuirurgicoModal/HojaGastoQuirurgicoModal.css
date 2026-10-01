@@ -15,28 +15,21 @@
 .hgq-banner-admision .hgq-input{width:100%;}
 .hgq-nav-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
 .hgq-body{display:flex;flex-direction:column;gap:16px;padding:16px 24px;overflow-y:auto;}
-.hgq-errores{padding:12px 16px;border:1px solid var(--red);border-radius:var(--radius);background:var(--red-bg);color:var(--red);font-size:var(--fs-base);}
-.hgq-errores ul{margin:6px 0 0;padding-left:18px;}
 .hgq-aviso{padding:10px 16px;border-radius:var(--radius);background:var(--primary-50);color:var(--primary);font-size:var(--fs-base);font-weight:var(--fw-medium);}
 .hgq-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;border-top:1px solid var(--border);}
 .hgq-footer-acciones{display:flex;gap:10px;margin-left:auto;}
 .hgq-progreso{display:flex;align-items:center;gap:12px;min-width:0;}
 .hgq-progreso-texto{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);white-space:nowrap;}
-.hgq-progreso-barra{width:160px;height:8px;border-radius:4px;background:var(--gray-bg);overflow:hidden;}
+.hgq-progreso-barra{flex:0 0 160px;width:160px;height:8px;border-radius:4px;background:var(--gray-bg);overflow:hidden;}
 .hgq-progreso-relleno{height:100%;background:var(--primary);transition:width .2s;}
 .hgq-guardado{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
 
-/* Tablet: el índice pasa a una tira horizontal sobre el cuerpo. */
+/* Tablet: el índice lateral se reemplaza por la barra compacta IrASeccionBar. */
 @media (max-width:1024px){
   .hgq-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
-  .hgq-nav{flex-direction:row;border-right:0;border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;}
-  .hgq-nav-item{white-space:nowrap;}
+  .hgq-nav{display:none;}
   .hgq-body{padding:16px;}
   .hgq-banner{padding:8px 16px;}
-  .hgq-layout{position:relative;}
-  /* Pista de scroll: degradado en el borde derecho del índice horizontal. */
-  .hgq-nav{position:relative;}
-  .hgq-nav::after{content:'';position:sticky;right:0;flex:none;width:32px;margin-left:-32px;align-self:stretch;background:linear-gradient(to right,transparent,var(--surface));pointer-events:none;}
 }
 
 /* Táctil: objetivos de 44 px. */
@@ -57,4 +50,9 @@
   .hgq-nav,.hgq-footer-acciones,.hgq-progreso,.hgq-guardado,.hgq-table-add,.hgq-col-accion{display:none;}
   .hgq-layout{display:block;}
   .hgq-body{overflow:visible;}
+}
+
+/* Tablet: el pie es angosto; el texto "X de Y obligatorias listas" ya comunica el avance, la barra se oculta para no pisar "Guardado". */
+@media (max-width:1024px){
+  .hgq-progreso-barra{display:none;}
 }

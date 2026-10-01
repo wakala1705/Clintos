@@ -19,6 +19,8 @@ import EquiposSection from './secciones/EquiposSection/EquiposSection';
 import ConteoSection from './secciones/ConteoSection/ConteoSection';
 import FirmasSection from './secciones/FirmasSection/FirmasSection';
 import ResumenSection from './secciones/ResumenSection/ResumenSection';
+import ErroresCierreBar from './comunes/ErroresCierreBar/ErroresCierreBar';
+import IrASeccionBar from './comunes/IrASeccionBar/IrASeccionBar';
 import FirmaPinModal from './subventanas/FirmaPinModal/FirmaPinModal';
 import ConfirmarCierreModal from './subventanas/ConfirmarCierreModal/ConfirmarCierreModal';
 import ReabrirHojaModal from './subventanas/ReabrirHojaModal/ReabrirHojaModal';
@@ -72,7 +74,8 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
     obtenerHojaGuardada(cirugia.id) ?? construirHojaInicial(cirugia),
     cirugia,
   ));
-  const [errores, setErrores] = useState([]);
+  // Los errores son vivos: solo se guarda si hubo un intento de cierre fallido.
+  const [intentoCierre, setIntentoCierre] = useState(false);
   const [aviso, setAviso] = useState('');
   const [guardadoEn, setGuardadoEn] = useState('');
   // Subventana abierta: { tipo: 'firma', rol } | { tipo: 'cierre' } | { tipo: 'reabrir' } | null.
@@ -82,6 +85,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
   const hojaInicialRef = useRef(hoja);
   const readOnly = hoja.estado === 'cerrada';
   const nReaperturas = hoja.reaperturas?.length ?? 0;
+  const errores = intentoCierre ? validarCierre(hoja) : [];
   const seccionesConError = errores.map((e) => e.seccion);
   const set = (clave, valor) => setHoja((h) => ({ ...h, [clave]: valor }));
   const nombreDe = (rol) => hoja.personal.find((f) => f.rol === rol)?.nombre ?? '';
@@ -130,6 +134,17 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
     n.errores.some((s) => seccionesConError.includes(s)) ? 'error'
       : (n.progreso && progreso.porSeccion[n.progreso] ? 'ok' : 'default'),
   ]));
+  const pendientes = progreso.total - progreso.completas;
+  const erroresBar = errores.map((e) => ({
+    mensaje: e.mensaje,
+    navId: NAV.find((n) => n.errores.includes(e.seccion))?.id,
+  }));
+  const opcionesNav = NAV.map((n) => {
+    let estado = '';
+    if (n.errores.some((s) => seccionesConError.includes(s))) estado = ' · Con errores';
+    else if (n.progreso) estado = progreso.porSeccion[n.progreso] ? ' · Completa' : ' · Pendiente';
+    return { value: n.id, label: `${n.label}${estado}` };
+  });
   const sala = SALAS.find((x) => x.value === cirugia.salaId)?.descripcion;
   const pac = cirugia.paciente;
   const patientBanner = pac ? {
@@ -144,7 +159,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
 
   // Abre las secciones con error y hace scroll a la primera.
   function mostrarErrores(errs) {
-    setErrores(errs);
+    setIntentoCierre(true);
     setAviso('');
     const secs = errs.map((e) => e.seccion);
     setPlegadas((p) => {
@@ -173,7 +188,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
       mostrarErrores(r.errores);
       return;
     }
-    setErrores([]);
+    setIntentoCierre(false);
     setHoja(r.hoja);
     guardarHoja(r.hoja);
     setAviso('Hoja cerrada · pendiente de liquidación.');
@@ -183,7 +198,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
     const r = reabrirHoja(hoja, motivo, ahoraISO());
     if (!r.ok) return;
     setSubventana(null);
-    setErrores([]);
+    setIntentoCierre(false);
     setHoja(r.hoja);
     guardarHoja(r.hoja);
     setAviso('Hoja reabierta. Las firmas se invalidaron; vuelve a firmar al terminar.');
@@ -206,7 +221,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
           tone="primary"
           title="Hoja de gasto quirúrgico"
           titleId="hgq-title"
-          subtitle={`Programación ${cirugia.id} · ${cirugia.paciente?.nombre ?? ''}${nReaperturas > 0 ? ` · Reabierta ${nReaperturas} ${nReaperturas === 1 ? 'vez' : 'veces'}` : ''}`}
+          subtitle={nReaperturas > 0 ? `Reabierta ${nReaperturas} ${nReaperturas === 1 ? 'vez' : 'veces'}` : undefined}
           onClose={cerrar}
           closeLabel="Cerrar hoja de gasto"
           trailing={<Badge tone={readOnly ? 'success' : 'warn'}>{HOJA_ESTADO_LABEL[hoja.estado]}</Badge>}
@@ -240,7 +255,14 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
           />
         </div>
 
+        <ErroresCierreBar
+          errores={erroresBar}
+          onIr={(id) => id && irAbriendo(id)}
+          onDescartar={() => setIntentoCierre(false)}
+        />
+
         <div className="hgq-layout">
+          <IrASeccionBar options={opcionesNav} onIr={(id) => id && irAbriendo(id)} />
           <nav className="hgq-nav" aria-label="Secciones de la hoja">
             {NAV.map((n) => (
               <button key={n.id} type="button" className="hgq-nav-item" onClick={() => irAbriendo(n.id)}>
@@ -258,12 +280,6 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
 
           <div className="hgq-body">
             <SeccionesContext.Provider value={{ plegadas, tonos, alternar }}>
-            {errores.length > 0 && (
-              <div className="hgq-errores" role="alert">
-                <strong>No se puede cerrar la hoja:</strong>
-                <ul>{errores.map((e) => <li key={e.mensaje}>{e.mensaje}</li>)}</ul>
-              </div>
-            )}
             {aviso && <div className="hgq-aviso" role="status">{aviso}</div>}
 
             <TiemposSection
@@ -298,12 +314,15 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
         </div>
 
         <div className="hgq-footer">
-          <div className="hgq-progreso">
-            <span className="hgq-progreso-texto">{progreso.completas} de {progreso.total} secciones listas</span>
+          <div
+            className="hgq-progreso"
+            title="Obligatorias para cerrar: Tiempos y anestesia, Conteo quirúrgico, Equipo quirúrgico, Procedimientos, Insumos y materiales, Implantes, Observaciones y firmas"
+          >
+            <span className="hgq-progreso-texto">{progreso.completas} de {progreso.total} obligatorias listas</span>
             <div
               className="hgq-progreso-barra"
               role="progressbar"
-              aria-label="Secciones listas"
+              aria-label="Obligatorias listas"
               aria-valuemin={0}
               aria-valuenow={progreso.completas}
               aria-valuemax={progreso.total}
@@ -316,7 +335,11 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
             <Button variant="secondary" icon={LuPrinter} onClick={() => window.print()}>Imprimir</Button>
             {readOnly
               ? <Button variant="secondary" icon={LuLockOpen} onClick={() => setSubventana({ tipo: 'reabrir' })}>Reabrir hoja</Button>
-              : <Button icon={LuLock} onClick={pedirCierre}>Cerrar hoja</Button>}
+              : (
+                <Button icon={LuLock} variant={pendientes > 0 ? 'secondary' : 'primary'} onClick={pedirCierre}>
+                  {pendientes > 0 ? `Cerrar hoja · ${pendientes} ${pendientes === 1 ? 'pendiente' : 'pendientes'}` : 'Cerrar hoja'}
+                </Button>
+              )}
           </div>
         </div>
       </div>
