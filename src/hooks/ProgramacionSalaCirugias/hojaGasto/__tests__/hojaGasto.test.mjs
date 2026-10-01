@@ -4,7 +4,7 @@ import * as mod from '../hojaGasto.js';
 import {
   aMinutos, minutosEntre, duracionesHoja, duracionTexto, horaAhora, formatearHora,
   conteoEstado, validarCierre, progresoHoja, resumenRegistro, pinValido, reabrirHoja,
-  cerrarHoja, firmarHoja, construirHojaInicial, ROLES_PERSONAL,
+  cerrarHoja, firmarHoja, construirHojaInicial, sincronizarConCirugia, ROLES_PERSONAL,
   obtenerHojaGuardada, guardarHoja, actualizarFila, quitarFila, fechaHoraHoja,
 } from '../hojaGasto.js';
 
@@ -109,8 +109,12 @@ test('construirHojaInicial: nueva forma sin dinero', () => {
   assert.equal(h.personal[0].rol, 'Cirujano');
   assert.equal(h.honorarios, undefined);
   assert.equal(h.derechosSala, undefined);
-  // solo los insumos ya entregados; usado = entregado - devuelto
-  assert.deepEqual(h.insumos.map((i) => [i.nombre, i.entregado, i.usado]), [['Gasas estériles', 10, 8], ['Trocar 5mm', 2, 2]]);
+  // toda la canasta; usado = entregado - devuelto (0 si no entregado)
+  assert.deepEqual(
+    h.insumos.map((i) => [i.nombre, i.entregado, i.usado, i.manual, i.estadoFarmacia]),
+    [['Gasas estériles', 10, 8, false, 'devuelto-parcial'], ['Trocar 5mm', 2, 2, false, 'entregado'], ['Clips de titanio', 0, 0, false, 'solicitado']],
+  );
+  assert.equal(h.equipos[0].tipo, '');
   assert.ok(h.insumos.every((i) => !('valorUnitario' in i)));
   assert.equal(h.medicamentos[0].nombre, 'Cefazolina');
   assert.equal(h.medicamentos[0].cantidad, 1);
@@ -218,7 +222,7 @@ test('resumenRegistro: conteos y peor estado del conteo', () => {
   const h = hojaLista();
   h.implantes = [{ id: 'i', nombre: 'Malla', invima: 'X', lote: 'L', serie: '', proveedor: '' }];
   const r = resumenRegistro(h);
-  assert.equal(r.insumosItems, 2);
+  assert.equal(r.insumosItems, 3);
   assert.equal(r.insumosUnidadesUsadas, 10);
   assert.equal(r.insumosUnidadesDevueltas, 2);
   assert.equal(r.medicamentos, 1);
@@ -294,6 +298,75 @@ test('actualizarFila / quitarFila no mutan', () => {
   assert.deepEqual(actualizarFila(rows, 'b', 'v', 9), [{ id: 'a', v: 1 }, { id: 'b', v: 9 }]);
   assert.deepEqual(quitarFila(rows, 'a'), [{ id: 'b', v: 2 }]);
   assert.equal(rows[1].v, 2);
+});
+
+test('validarCierre: usado > 0 con entregado 0 en fila no manual falla', () => {
+  const h = hojaLista();
+  h.insumos[2].usado = 1; // Clips: no entregados
+  assert.deepEqual(validarCierre(h).map((x) => x.seccion), ['insumos']);
+});
+
+test('sincronizarConCirugia: agrega personal/equipos nuevos, no pisa lo editado y no muta', () => {
+  const h = construirHojaInicial(cirugia());
+  h.personal[0].registro = 'RM-1';
+  h.equipos[0].minutos = 77;
+  const c = cirugia();
+  c.personal.push({ rol: 'Ayudante', nombre: 'Dr. Nuevo' });
+  c.equipos.push({ nombre: 'Electrobisturí', identificacion: '', tipo: 'Energía' });
+  c.equipos[0].tipo = 'Imagen';
+  const antes = JSON.stringify(h);
+  const s = sincronizarConCirugia(h, c);
+  assert.equal(JSON.stringify(h), antes);
+  assert.notEqual(s, h);
+  assert.equal(s.personal.length, 5);
+  assert.equal(s.personal[0].registro, 'RM-1');
+  assert.deepEqual([s.personal[4].rol, s.personal[4].nombre], ['Ayudante', 'Dr. Nuevo']);
+  assert.equal(s.equipos.length, 2);
+  assert.equal(s.equipos[0].minutos, 77);
+  assert.equal(s.equipos[0].tipo, 'Imagen');
+  assert.equal(s.equipos[1].nombre, 'Electrobisturí');
+  assert.equal(s.equipos[1].tipo, 'Energía');
+  const h2 = structuredClone(h);
+  h2.personal[1].nombre = 'Otra persona';
+  const s2 = sincronizarConCirugia(h2, cirugia());
+  assert.ok(s2.personal.some((p) => p.nombre === 'Otra persona'));
+  assert.ok(s2.personal.some((p) => p.nombre === 'Dra. Ana López'));
+});
+
+test('sincronizarConCirugia: insumos actualizan entregado/estado, conservan usado, agregan y respetan manuales', () => {
+  const h = construirHojaInicial(cirugia());
+  h.insumos[0].usado = 5;
+  h.insumos.push({ id: 'ins-m', nombre: 'Manual', entregado: 0, usado: 1, manual: true });
+  h.insumos.push({ id: 'ins-x', nombre: 'Ya no está', entregado: 3, usado: 3, manual: false });
+  const c = cirugia();
+  c.canasta.items[2] = { nombre: 'Clips de titanio', cantidad: 6, solicitudFarmacia: 'entregado', recibido: 6 };
+  c.canasta.items.push({ nombre: 'Sutura', cantidad: 4, solicitudFarmacia: 'sin-solicitar' });
+  const s = sincronizarConCirugia(h, c);
+  const por = (n) => s.insumos.find((i) => i.nombre === n);
+  assert.equal(por('Gasas estériles').usado, 5);
+  assert.equal(por('Clips de titanio').entregado, 6);
+  assert.equal(por('Clips de titanio').estadoFarmacia, 'entregado');
+  assert.equal(por('Clips de titanio').usado, 0);
+  assert.deepEqual([por('Sutura').entregado, por('Sutura').usado, por('Sutura').estadoFarmacia, por('Sutura').manual], [0, 0, 'sin-solicitar', false]);
+  assert.ok(por('Manual'));
+  assert.ok(por('Ya no está'));
+  assert.equal(h.insumos.length, 5);
+  assert.equal(s.insumos.length, 6);
+});
+
+test('sincronizarConCirugia: idempotente, respeta cerrada y el resto de la hoja', () => {
+  const h = hojaLista();
+  const c = cirugia();
+  c.personal.push({ rol: 'Ayudante', nombre: 'Dr. Nuevo' });
+  const una = sincronizarConCirugia(h, c);
+  const dos = sincronizarConCirugia(una, c);
+  assert.deepEqual(dos, una);
+  assert.deepEqual(una.tiempos, h.tiempos);
+  assert.deepEqual(una.firmas, h.firmas);
+  assert.deepEqual(una.programado, h.programado);
+  assert.deepEqual(una.conteo, h.conteo);
+  const cerrada = { ...h, estado: 'cerrada' };
+  assert.equal(sincronizarConCirugia(cerrada, c), cerrada);
 });
 
 test('fechaHoraHoja: DD.MES.AAAA - HH:mm', () => {

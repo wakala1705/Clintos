@@ -60,14 +60,14 @@ function Celda({ col, row, editable, base, onChange }) {
 
 export default function HojaTabla({
   ariaLabel, columns, rows, onChangeRow, onAddRow, onRemoveRow, canRemove,
-  addLabel = 'Agregar fila', emptyLabel = 'Sin registros', readOnly = false,
+  addLabel = 'Agregar fila', emptyLabel = 'Sin registros', readOnly = false, minWidth,
 }) {
   const editable = !readOnly;
   const conAcciones = editable && Boolean(onRemoveRow);
   return (
     <div className="hgq-table-block">
       <div className="hgq-table-wrap">
-        <table className="hgq-table" aria-label={ariaLabel}>
+        <table className="hgq-table" aria-label={ariaLabel} style={minWidth ? { minWidth } : undefined}>
           <thead>
             <tr>
               {columns.map((c) => <th key={c.key} className={c.align === 'right' ? 'hgq-num' : undefined}>{c.label}</th>)}

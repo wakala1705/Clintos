@@ -25,7 +25,7 @@ import ReabrirHojaModal from './subventanas/ReabrirHojaModal/ReabrirHojaModal';
 import { SeccionesContext } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/SeccionesContext';
 import {
   HOJA_ESTADO_LABEL, cerrarHoja, construirHojaInicial, firmarHoja, guardarHoja,
-  horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, validarCierre,
+  horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, sincronizarConCirugia, validarCierre,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
 import { SALAS, fechaHoraLocalISO, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
@@ -65,7 +65,13 @@ const irA = (id) => setTimeout(() => {
 }, 260);
 
 export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
-  const [hoja, setHoja] = useState(() => obtenerHojaGuardada(cirugia.id) ?? construirHojaInicial(cirugia));
+  // Al abrir se refleja lo que cambió en el detalle (insumos, personal, equipos). El
+  // estado inicial ya sincronizado es la referencia de `hojaInicialRef`: sincronizar sin
+  // editar no dispara el autoguardado ni el "Guardado".
+  const [hoja, setHoja] = useState(() => sincronizarConCirugia(
+    obtenerHojaGuardada(cirugia.id) ?? construirHojaInicial(cirugia),
+    cirugia,
+  ));
   const [errores, setErrores] = useState([]);
   const [aviso, setAviso] = useState('');
   const [guardadoEn, setGuardadoEn] = useState('');
