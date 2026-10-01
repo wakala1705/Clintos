@@ -7,7 +7,7 @@
 /* Panel angosto: la fila de filtros no lleva el padding ni el borde propios
    de .filter-bar (el header ya los aporta) y no envuelve. Sala y estado se
    reparten el ancho; el ícono de buscar es un botón cuadrado. */
-.cnc-lista-filtros{padding:0;border-bottom:none;flex-wrap:nowrap;gap:8px;}
+.filter-bar.cnc-lista-filtros{padding:0;border-bottom:none;flex-wrap:nowrap;gap:8px;}
 .cnc-lista-sala,.cnc-lista-estado{flex:1;min-width:0;}
 .cnc-lista-buscar{
   width:var(--input-md);height:var(--input-md);flex-shrink:0;padding:0;
