@@ -1,0 +1,8 @@
+/* .hgq-input / .hgq-field-label se estilizan en ProgramacionSalaCirugias/shared/shared.css */
+.hgq-textarea{height:auto;padding:8px 10px;resize:vertical;}
+.hgq-firmas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;}
+.hgq-firma{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:var(--radius);}
+.hgq-firma.firmada{border-color:var(--primary);background:var(--primary-50);}
+.hgq-firma-rol{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
+.hgq-firma-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.hgq-firma-fecha{font-size:var(--fs-sm);color:var(--ink-500);margin-bottom:4px;}

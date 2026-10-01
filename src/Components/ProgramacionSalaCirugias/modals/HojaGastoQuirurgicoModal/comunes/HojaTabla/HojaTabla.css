@@ -1,0 +1,13 @@
+/* .hgq-input / .hgq-input-num se estilizan en ProgramacionSalaCirugias/shared/shared.css */
+.hgq-table-wrap{overflow-x:auto;}
+.hgq-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.hgq-table th{padding:8px 10px;text-align:left;white-space:nowrap;background:var(--table-header-bg);border-bottom:1px solid var(--border);font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);}
+.hgq-table td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.hgq-table .hgq-num{text-align:right;}
+.hgq-static{color:var(--ink-700);}
+.hgq-empty{padding:16px 10px;text-align:center;color:var(--ink-500);}
+.hgq-col-accion{width:44px;text-align:center;}
+.hgq-row-remove{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--ink-500);cursor:pointer;}
+.hgq-row-remove:hover{background:var(--gray-bg);color:var(--red);}
+.hgq-row-remove:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.hgq-table-add{padding-top:12px;}

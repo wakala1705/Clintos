@@ -290,3 +290,13 @@ span.cnc-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
   .cnc-tabla td{padding:6px 8px;}
   .cnc-tabla th{padding:10px 8px;}
 }
+
+/* ---------- Hoja de gasto quirúrgico (HojaGastoQuirurgicoModal y sus secciones) ---------- */
+/* Reutilizado por 2+ secciones; las reglas exclusivas viven en cada .css. */
+.hgq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 16px;}
+.hgq-grid .wide{grid-column:span 2;}
+.hgq-input{width:100%;box-sizing:border-box;height:var(--input-sm, 34px);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--ink-900);font:inherit;font-size:var(--fs-base);}
+.hgq-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.hgq-input:disabled{background:var(--gray-bg);color:var(--ink-500);}
+.hgq-input-num{text-align:right;}
+.hgq-field-label{display:block;margin-bottom:4px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}

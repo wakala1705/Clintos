@@ -1,0 +1,7 @@
+.hgq-section{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);scroll-margin-top:8px;}
+.hgq-section.has-error{border-color:var(--red);}
+.hgq-section-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.hgq-section-head h4{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hgq-section-icon{width:18px;height:18px;color:var(--ink-500);}
+.hgq-section-total{margin-left:auto;font-size:var(--fs-base);font-weight:var(--fw-bold);color:var(--ink-900);}
+.hgq-section-body{padding:16px;}

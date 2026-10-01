@@ -1,0 +1,3 @@
+/* .hgq-grid / .hgq-input / .hgq-field-label se estilizan en ProgramacionSalaCirugias/shared/shared.css */
+.hgq-derechos{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);align-items:end;}
+.hgq-derechos-valor{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}

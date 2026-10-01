@@ -1,0 +1,2 @@
+/* La última fila (total) se destaca por peso, no por color (ver AGENTS.md "Tipografía"). */
+#hgq-resumen .hgq-table tbody tr:last-child td{font-weight:var(--fw-bold);border-bottom:0;}

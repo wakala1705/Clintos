@@ -10,11 +10,12 @@ import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
+import HojaGastoQuirurgicoModal from '../modals/HojaGastoQuirurgicoModal/HojaGastoQuirurgicoModal';
 import {
   ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuPencil, LuUser,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuClipboardList, LuPencil, LuUser,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo).
@@ -55,7 +56,8 @@ export default function DetalleCirugiaPanel({
   // Ventana "Causal de Cancelación de Programación" (se abre desde
   // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
   const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
-  const subventanaAbierta = cancelarSolicitudAbierto;
+  const [hojaGastoAbierta, setHojaGastoAbierta] = useState(false);
+  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAbierta;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -73,6 +75,7 @@ export default function DetalleCirugiaPanel({
     setActiveDetailTab('insumos');
     setPacienteExpandido(false);
     setCancelarSolicitudAbierto(false);
+    setHojaGastoAbierta(false);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
 
@@ -100,6 +103,7 @@ export default function DetalleCirugiaPanel({
   if (!cirugia) return null;
 
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
+  const puedeVerHojaGasto = !['cancelada', 'incumplida'].includes(cirugia.estado);
   // Incumplida solo aplica cuando la hora de inicio ya pasó.
   const puedeMarcarIncumplida = cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
   // Una cirugía programada solo se cierra como realizada cuando ya empezó (igual que incumplida);
@@ -232,7 +236,8 @@ export default function DetalleCirugiaPanel({
       <div className="dcp-actions">
         <Button variant="secondary-accent" icon={LuBan} className="dcp-cancelar-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
         <div className="dcp-actions-estado">
-          <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
+          <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAbierta(true)}>Hoja de gasto</Button>
+          <Button variant="secondary-accent" icon={LuPencil}disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
           <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
           <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
           <Button variant={realizadaEsPrincipal ? 'primary' : 'secondary-accent'} icon={LuCheckCheck} disabled={!puedeMarcarRealizada} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
@@ -262,6 +267,9 @@ export default function DetalleCirugiaPanel({
           }}
           onClose={() => setCancelarSolicitudAbierto(false)}
         />
+      )}
+      {hojaGastoAbierta && (
+        <HojaGastoQuirurgicoModal cirugia={cirugia} onClose={() => setHojaGastoAbierta(false)} />
       )}
     </>
   );

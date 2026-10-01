@@ -1,0 +1,36 @@
+/* .modal-overlay/.modal-card/.modal-body y los tokens viven en shared/shared.css. */
+.modal-card.hgq-card{width:min(1180px,96vw);height:min(860px,94vh);display:flex;flex-direction:column;overflow:hidden;}
+.hgq-layout{display:grid;grid-template-columns:208px 1fr;flex:1;min-height:0;}
+.hgq-nav{display:flex;flex-direction:column;gap:2px;padding:12px 8px;border-right:1px solid var(--border);overflow-y:auto;}
+.hgq-nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:0;border-radius:8px;background:transparent;color:var(--ink-700);font:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);text-align:left;cursor:pointer;}
+.hgq-nav-item:hover{background:var(--gray-bg);}
+.hgq-nav-item:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.hgq-nav-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
+.hgq-body{display:flex;flex-direction:column;gap:16px;padding:16px 24px;overflow-y:auto;}
+.hgq-errores{padding:12px 16px;border:1px solid var(--red);border-radius:var(--radius);background:var(--red-bg);color:var(--red);font-size:var(--fs-base);}
+.hgq-errores ul{margin:6px 0 0;padding-left:18px;}
+.hgq-aviso{padding:10px 16px;border-radius:var(--radius);background:var(--primary-50);color:var(--primary);font-size:var(--fs-base);font-weight:var(--fw-medium);}
+.hgq-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;border-top:1px solid var(--border);}
+.hgq-footer-total{display:flex;flex-direction:column;font-size:var(--fs-sm);color:var(--ink-500);}
+.hgq-footer-total strong{font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--ink-900);}
+.hgq-footer-acciones{display:flex;gap:10px;}
+
+/* Tablet: el índice pasa a una tira horizontal sobre el cuerpo. */
+@media (max-width:1024px){
+  .hgq-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+  .hgq-nav{flex-direction:row;border-right:0;border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;}
+  .hgq-nav-item{white-space:nowrap;}
+  .hgq-body{padding:16px;}
+}
+
+/* Imprimir: solo la hoja, sin índice ni acciones. */
+@media print{
+  body *{visibility:hidden;}
+  .hgq-card,.hgq-card *{visibility:visible;}
+  .modal-overlay{position:static;background:none;}
+  .modal-card.hgq-card{position:absolute;inset:0;display:block;width:100%;height:auto;max-height:none;overflow:visible;box-shadow:none;}
+  .hgq-footer{position:static;margin-top:8px;}
+  .hgq-nav,.hgq-footer-acciones,.hgq-table-add,.hgq-col-accion{display:none;}
+  .hgq-layout{display:block;}
+  .hgq-body{overflow:visible;}
+}
