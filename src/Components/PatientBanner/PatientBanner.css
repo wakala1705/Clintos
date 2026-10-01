@@ -122,6 +122,32 @@
 .ar-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 .ar-toggle .icon{width:16px;height:16px;}
 
+/* ---------- Modificadores opt-in: toggleLabel / privacyLabel ----------
+   Solo aplican con la clase .pb-labeled / .ar-toggle-labeled / .pb-icon-btn-labeled
+   (ver PatientBanner.jsx); sin esos props el layout base no cambia. */
+.patient-banner.pb-labeled{max-width:100%;}
+.patient-banner.pb-labeled .patient-banner-right{flex-wrap:wrap;flex-shrink:1;}
+.patient-banner.pb-labeled .patient-meta{min-width:0;}
+.ar-toggle.ar-toggle-labeled{
+  width:auto;height:auto;min-height:32px;gap:6px;padding:4px 10px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+  border:1px solid var(--border);background:var(--surface);border-radius:8px;white-space:nowrap;
+}
+.ar-toggle.ar-toggle-labeled:hover{background:var(--gray-bg);color:var(--ink-900);}
+.pb-icon-btn.pb-icon-btn-labeled{
+  width:auto;min-width:30px;gap:6px;padding:0 8px;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);
+}
+.pb-icon-btn-text{display:none;}
+@media (min-width:1025px){
+  .pb-icon-btn.pb-icon-btn-labeled{min-height:32px;}
+  .pb-icon-btn-labeled .pb-icon-btn-text{display:inline;white-space:nowrap;}
+}
+@media (max-width:1024px), (pointer:coarse){
+  .ar-toggle.ar-toggle-labeled{min-height:44px;padding:4px 14px;}
+  .pb-icon-btn.pb-icon-btn-labeled{min-height:44px;min-width:44px;}
+}
+
 /* leadingSelect (ver PatientBanner.jsx) — mismo lenguaje visual que
    .pc-select-wrap/.pc-picker-trigger de ProgramarCita/AgendaToolbar.css
    (label + control con chevron), reimplementado con clases propias porque

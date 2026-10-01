@@ -570,6 +570,16 @@ con una variante — no armar la fila 2 a mano por pantalla ni un banner propio
 - **Lo interactivo no es parte de la variante** (depende de callbacks de la
   pantalla): `leadingSelect`, `secondRowButton`, `statusBadge`, `onClose`,
   `empty`. `secondRow` queda como extensión libre para casos puntuales.
+- **Props opt-in de UI** (sin ellas el banner no cambia; hoy los usa la hoja
+  de gasto quirúrgico):
+  - `ocultarVerMas` (bool): no renderiza "Ver más" ni `PatientDetailModal`.
+  - `toggleLabel` (string): el chevron de expandir pasa a botón texto+chevron
+    y el de contraer dice "Ocultar <texto>"; ≥44px en táctil.
+  - `privacyLabel` (string): texto del `aria-label`/`title` del ojo
+    ("Mostrar datos del paciente" al estar oculto) y etiqueta "Ocultar
+    nombre"/"Mostrar nombre" visible solo en ≥1025px (no solo "Ocultar", para
+    no confundirse con "Ocultar <toggleLabel>"); con éste o `toggleLabel` la
+    fila 1 envuelve (clase `pb-labeled`).
 - **Nunca leer el banner por su texto visible** desde código imperativo: el
   ojo enmascara nombre/documento y los campos cambian de lugar. El valor real
   está en `data-patient-name`/`data-patient-doc` del contenedor (así lo leen

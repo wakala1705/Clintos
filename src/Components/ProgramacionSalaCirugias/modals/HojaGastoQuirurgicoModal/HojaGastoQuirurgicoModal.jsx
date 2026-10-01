@@ -230,6 +230,9 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
         <div className="hgq-banner">
           <PatientBanner
             variant="cirugia"
+            ocultarVerMas
+            toggleLabel="Datos de la hoja"
+            privacyLabel="Ocultar datos del paciente"
             patient={patientBanner}
             context={{
               numeroProgramacion: cirugia.id,

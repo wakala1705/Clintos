@@ -33,7 +33,16 @@ function maskText(value) {
 //   `leadingSelect` { label, value, options, onChange } y `secondRowButton`
 //   { label, icon, onClick } al inicio/final de la fila 2, `statusBadge`
 //   { label, tone } dentro de la fila 2, `onClose` (quitar paciente) y
-//   `empty` (estado sin paciente). `secondRow` [{ label, value }] sigue como
+//   `empty` (estado sin paciente). Props opt-in de UI (sin ellas el banner
+//   queda igual): `ocultarVerMas` (bool, no renderiza "Ver más" ni
+//   PatientDetailModal), `toggleLabel` (string, el chevron de expandir pasa a
+//   botón "texto + chevron" y el de contraer dice "Ocultar <texto>"; táctil
+//   ≥44px) y `privacyLabel` (string, el ojo usa ese texto como aria-label/
+//   title —"Mostrar datos del paciente" al estar oculto— y suma la etiqueta
+//   "Ocultar nombre"/"Mostrar nombre" solo en ≥1025px; no dice solo "Ocultar"
+//   para no confundirse con "Ocultar <toggleLabel>"). Con alguna de las dos últimas el
+//   banner suma la clase `pb-labeled` (fila 1 envuelve a 768px).
+//   `secondRow` [{ label, value }] sigue como
 //   extensión libre al final de la fila 2 (solo lectura, también va al modal
 //   "Ver más"); `secondRowExtra` (ReactNode) para contenido interactivo.
 // - Colapsado (chevron, arranca en `defaultCollapsed` ?? el de la variante):
@@ -44,6 +53,7 @@ function maskText(value) {
 //   el valor real queda en data-patient-name/doc para legacy-app.js.
 export default function PatientBanner({
   patient, variant, context, secondRow, secondRowExtra, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed,
+  ocultarVerMas, toggleLabel, privacyLabel,
 }) {
   const variantCfg = variant ? PATIENT_BANNER_VARIANTS[variant] : null;
   const [allergyOpen, setAllergyOpen] = useState(false);
@@ -133,8 +143,14 @@ export default function PatientBanner({
     rows.length > 0 || leadingSelect || secondRowButton || statusBadge || secondRowExtra,
   );
 
+  const eyeLabel = privacyLabel
+    ? (dataHidden ? 'Mostrar datos del paciente' : privacyLabel)
+    : (dataHidden ? 'Mostrar datos sensibles' : 'Ocultar datos sensibles');
+  const hideLabel = toggleLabel ? `Ocultar ${toggleLabel.toLowerCase()}` : null;
+  const bannerClass = `patient-banner${toggleLabel || privacyLabel ? ' pb-labeled' : ''}`;
+
   return (
-    <div className="patient-banner" {...dataAttrs}>
+    <div className={bannerClass} {...dataAttrs}>
       <PatientAvatar iniciales={patient.iniciales} className="patient-avatar" />
       {/* Nombre + documento agrupados en una columna (encargo explícito,
           replicado desde CargosModal) en vez de nombre solo + CC como chip
@@ -157,7 +173,9 @@ export default function PatientBanner({
         {collapsed && patient.cama && <div className="pm-item"><span className="lbl">CAMA</span> <b>{patient.cama}</b></div>}
         {collapsed && patient.diagnostico && <div className="pm-item"><span className="lbl">DIAGNÓSTICO</span> <b>{patient.diagnostico}</b></div>}
         {collapsed && patient.medicoTratante && <div className="pm-item"><span className="lbl">MÉDICO TRATANTE</span> <b>{patient.medicoTratante}</b></div>}
-        <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
+        {!ocultarVerMas && (
+          <button type="button" className="pm-item-more" onClick={() => setDetailOpen(true)}>Ver más</button>
+        )}
       </div>
       <div className="patient-banner-right">
         {/* No navega (encargo explícito, replicado desde CargosModal):
@@ -165,12 +183,14 @@ export default function PatientBanner({
             mismo patrón que el toggle de un campo de contraseña. */}
         <button
           type="button"
-          className="pb-icon-btn"
+          className={`pb-icon-btn${privacyLabel ? ' pb-icon-btn-labeled' : ''}`}
           onClick={() => setDataHidden((v) => !v)}
           aria-pressed={dataHidden}
-          aria-label={dataHidden ? 'Mostrar datos sensibles' : 'Ocultar datos sensibles'}
+          aria-label={eyeLabel}
+          title={eyeLabel}
         >
           {dataHidden ? <LuEyeOff className="icon" aria-hidden="true" /> : <LuEye className="icon" aria-hidden="true" />}
+          {privacyLabel && <span className="pb-icon-btn-text" aria-hidden="true">{dataHidden ? 'Mostrar nombre' : 'Ocultar nombre'}</span>}
         </button>
         {patient.allergies && patient.allergies.length > 0 && (
           <div className="pb-popover-wrap" ref={allergyRef}>
@@ -200,12 +220,13 @@ export default function PatientBanner({
         {collapsed && (
           <button
             type="button"
-            className="ar-toggle"
+            className={`ar-toggle${toggleLabel ? ' ar-toggle-labeled' : ''}`}
             onClick={() => setCollapsed(false)}
             aria-expanded="false"
-            aria-label="Expandir banner"
-            title="Expandir banner"
+            aria-label={toggleLabel ?? 'Expandir banner'}
+            title={toggleLabel ?? 'Expandir banner'}
           >
+            {toggleLabel && <span>{toggleLabel}</span>}
             <LuChevronDown className="icon" aria-hidden="true" />
           </button>
         )}
@@ -255,17 +276,18 @@ export default function PatientBanner({
           )}
           <button
             type="button"
-            className="ar-toggle"
+            className={`ar-toggle${toggleLabel ? ' ar-toggle-labeled' : ''}`}
             onClick={() => setCollapsed(true)}
             aria-expanded="true"
-            aria-label="Contraer banner"
-            title="Contraer banner"
+            aria-label={hideLabel ?? 'Contraer banner'}
+            title={hideLabel ?? 'Contraer banner'}
           >
+            {hideLabel && <span>{hideLabel}</span>}
             <LuChevronUp className="icon" aria-hidden="true" />
           </button>
         </div>
       )}
-      {detailOpen && (
+      {detailOpen && !ocultarVerMas && (
         <PatientDetailModal patient={patient} secondRow={rows} onClose={() => setDetailOpen(false)} />
       )}
     </div>
