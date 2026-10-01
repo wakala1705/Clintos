@@ -112,7 +112,7 @@ export default function HojaTabla({
       </div>
       {editable && onAddRow && (
         <div className="hgq-table-add">
-          <Button variant="secondary" size="sm" icon={LuPlus} onClick={onAddRow}>{addLabel}</Button>
+          <Button variant="secondary-accent" size="sm" icon={LuPlus} onClick={onAddRow}>{addLabel}</Button>
         </div>
       )}
     </div>
