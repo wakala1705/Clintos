@@ -6,7 +6,7 @@ import {
   conteoEstado, validarCierre, progresoHoja, resumenRegistro, pinValido, reabrirHoja,
   cerrarHoja, firmarHoja, construirHojaInicial, sincronizarConCirugia, ROLES_PERSONAL,
   obtenerHojaGuardada, guardarHoja, actualizarFila, quitarFila, fechaHoraHoja,
-  HITOS_TIEMPOS, siguienteHito, hitosFueraDeOrden,
+  HITOS_TIEMPOS, siguienteHito, hitosFueraDeOrden, anestesiaDeCirugia,
 } from '../hojaGasto.js';
 
 const tiemposCompletos = () => ({
@@ -397,4 +397,61 @@ test('sincronizarConCirugia: idempotente, respeta cerrada y el resto de la hoja'
 test('fechaHoraHoja: DD.MES.AAAA - HH:mm', () => {
   assert.equal(fechaHoraHoja('2026-08-21T07:00'), '21.AGO.2026 - 07:00');
   assert.equal(fechaHoraHoja('2026-10-01T09:05'), '01.OCT.2026 - 09:05');
+});
+
+// ---------- Anestesia heredada de la programación ----------
+const conAnestesia = (extra = {}) => ({ ...cirugia(), tipoAnestesia: 'General', asa: 'Clase 2', complejidad: 'Media', ...extra });
+
+test('anestesiaDeCirugia: nivel superior, luego wizardDatos, luego vacío', () => {
+  assert.deepEqual(anestesiaDeCirugia(conAnestesia()), { tipo: 'General', asa: 'Clase 2', complejidad: 'Media' });
+  assert.deepEqual(
+    anestesiaDeCirugia({ wizardDatos: { tipoAnestesia: 'Local', asa: 'Clase 3', complejidad: 'Alta' } }),
+    { tipo: 'Local', asa: 'Clase 3', complejidad: 'Alta' },
+  );
+  assert.deepEqual(anestesiaDeCirugia(cirugia()), { tipo: '', asa: '', complejidad: '' });
+});
+
+test('construirHojaInicial: precarga anestesia y anestesiaProgramada', () => {
+  const h = construirHojaInicial(conAnestesia());
+  assert.deepEqual(h.anestesia, { tipo: 'General', asa: 'Clase 2', complejidad: 'Media' });
+  assert.deepEqual(h.anestesiaProgramada, h.anestesia);
+  assert.notEqual(h.anestesiaProgramada, h.anestesia);
+});
+
+test('sincronizarConCirugia: campo no tocado sigue a la programación editada', () => {
+  const h = construirHojaInicial(conAnestesia());
+  const s = sincronizarConCirugia(h, conAnestesia({ tipoAnestesia: 'Raquídea', asa: 'Clase 3' }));
+  assert.deepEqual(s.anestesia, { tipo: 'Raquídea', asa: 'Clase 3', complejidad: 'Media' });
+  assert.deepEqual(s.anestesiaProgramada, s.anestesia);
+});
+
+test('sincronizarConCirugia: campo editado por la circulante se respeta', () => {
+  const h = construirHojaInicial(conAnestesia());
+  h.anestesia.tipo = 'Local';
+  const s = sincronizarConCirugia(h, conAnestesia({ tipoAnestesia: 'Raquídea', complejidad: 'Alta' }));
+  assert.equal(s.anestesia.tipo, 'Local');
+  assert.equal(s.anestesia.complejidad, 'Alta');
+  assert.equal(s.anestesiaProgramada.tipo, 'Raquídea');
+});
+
+test('sincronizarConCirugia: hoja cerrada intacta con anestesia', () => {
+  const h = { ...construirHojaInicial(conAnestesia()), estado: 'cerrada' };
+  assert.equal(sincronizarConCirugia(h, conAnestesia({ tipoAnestesia: 'Local' })), h);
+});
+
+test('sincronizarConCirugia: hoja guardada sin anestesiaProgramada con campo vacío se llena', () => {
+  const h = construirHojaInicial(cirugia());
+  delete h.anestesiaProgramada;
+  h.anestesia.asa = 'Clase 3';
+  const s = sincronizarConCirugia(h, conAnestesia());
+  assert.deepEqual(s.anestesia, { tipo: 'General', asa: 'Clase 3', complejidad: 'Media' });
+  assert.deepEqual(s.anestesiaProgramada, { tipo: 'General', asa: 'Clase 2', complejidad: 'Media' });
+});
+
+test('sincronizarConCirugia: anestesia idempotente', () => {
+  const h = construirHojaInicial(conAnestesia());
+  h.anestesia.tipo = 'Local';
+  const c = conAnestesia({ tipoAnestesia: 'Raquídea' });
+  const una = sincronizarConCirugia(h, c);
+  assert.deepEqual(sincronizarConCirugia(una, c), una);
 });

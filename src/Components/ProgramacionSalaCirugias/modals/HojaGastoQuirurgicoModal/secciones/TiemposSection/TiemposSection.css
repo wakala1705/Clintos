@@ -47,3 +47,4 @@
   .hgq-hito-hora{font-size:var(--fs-base);}
 }
 .hgq-subtitulo{margin:20px 0 12px;padding-top:16px;border-top:1px solid var(--border);font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hgq-programado{display:block;margin-top:4px;font-size:var(--fs-sm);color:var(--ink-500);}

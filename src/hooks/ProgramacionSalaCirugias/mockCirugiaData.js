@@ -707,7 +707,7 @@ const itemsDe = (catalogo, fn) => CANASTAS_CATALOGO[catalogo].items.map((i, n) =
 // las pantallas (mismo shape que las entradas literales de CIRUGIAS).
 function cirugiaHoy({
   id, nombre, documento, edad, sexo, procedimiento, servicio = 'Cirugía general', cirujano, horaInicio, horaFin, estado = 'programada', canasta, farmacia,
-  salaId = 'qx-1', procedimientos, personal, equipos,
+  salaId = 'qx-1', procedimientos, personal, equipos, tipoAnestesia = '', asa = '', complejidad = '',
 }) {
   return {
     id,
@@ -719,6 +719,9 @@ function cirugiaHoy({
     procedimientoPrincipal: procedimiento,
     servicio,
     tipoCirugia: estado === 'urgencia' ? 'Urgencia' : 'Programada',
+    tipoAnestesia,
+    asa,
+    complejidad,
     cirujano,
     fecha: HOY_ISO,
     horaInicio,
@@ -1046,6 +1049,9 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Colecistectomía laparoscópica',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
+    tipoAnestesia: 'General',
+    asa: 'Paciente sano listo para cirugía programada',
+    complejidad: 'Media',
     cirujano: 'Dr. Juan García',
     fecha: HOY_ISO,
     horaInicio: '07:30',
@@ -1088,6 +1094,9 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Apendicectomía',
     servicio: 'Cirugía general',
     tipoCirugia: 'Urgencia',
+    tipoAnestesia: 'General',
+    asa: 'Clase 2',
+    complejidad: 'Baja',
     cirujano: 'Dr. Carlos Martínez',
     fecha: HOY_ISO,
     horaInicio: '10:00',
@@ -1124,6 +1133,9 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Hernia inguinal',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
+    tipoAnestesia: 'Raquídea',
+    asa: 'Clase 2',
+    complejidad: 'Media',
     cirujano: 'Dr. Andrés López',
     fecha: HOY_ISO,
     horaInicio: '13:00',
@@ -1166,6 +1178,9 @@ let CIRUGIAS = [
   // Despachada por recibir: farmacia despachó 5 de 6 gasas.
   cirugiaHoy({
     id: '12356',
+    tipoAnestesia: 'Raquídea',
+    asa: 'Clase 2',
+    complejidad: 'Baja',
     nombre: 'Juan Rodríguez',
     documento: 'CC 71.334.902',
     edad: 47,
@@ -1189,6 +1204,9 @@ let CIRUGIAS = [
   // Canasta sin solicitar todavía (flujo "Pedir insumos a farmacia").
   cirugiaHoy({
     id: '12361',
+    tipoAnestesia: 'General',
+    asa: 'Clase 2',
+    complejidad: 'Alta',
     nombre: 'Marta Elena Cifuentes',
     documento: 'CC 39.552.871',
     edad: 54,
@@ -1233,6 +1251,9 @@ let CIRUGIAS = [
   // así que la recepción se confirma como "completa" (contraste con 12356).
   cirugiaHoy({
     id: '12359',
+    tipoAnestesia: 'Bloqueo',
+    asa: 'Clase 2',
+    complejidad: 'Media',
     nombre: 'Laura Gómez',
     documento: 'CC 1.036.552.140',
     edad: 31,
@@ -1253,6 +1274,9 @@ let CIRUGIAS = [
   // Urgencia con la canasta a medio preparar en farmacia (3 de 5 preparados).
   cirugiaHoy({
     id: '12357',
+    tipoAnestesia: 'General',
+    asa: 'Clase 3',
+    complejidad: 'Media',
     nombre: 'Andrés Mejía',
     documento: 'CC 1.017.228.391',
     edad: 22,
@@ -1273,6 +1297,9 @@ let CIRUGIAS = [
   // Programada con la canasta todavía en preparación en farmacia.
   cirugiaHoy({
     id: '12358',
+    tipoAnestesia: 'General',
+    asa: 'Clase 2',
+    complejidad: 'Alta',
     nombre: 'Sofía Castro',
     documento: 'CC 32.118.640',
     edad: 46,
@@ -1614,6 +1641,9 @@ export function armarCirugiaDesdeWizard(datos, patient, salaId) {
     farmacia: {
       numeroPedido: '—', estado: 'en-preparacion', fechaSolicitud: `${datos.fechaSolicitud}T${datos.horaSolicitud}`, medicamentos: [],
     },
+    tipoAnestesia: datos.tipoAnestesia ?? '',
+    asa: datos.asa ?? '',
+    complejidad: datos.complejidad ?? '',
     wizardDatos: datos,
   };
 }
@@ -1664,6 +1694,9 @@ export function editarCirugiaDesdeWizard(id, datos, salaId) {
       nombre: actual.canasta?.nombre ?? 'Canasta de la cirugía',
       items: insumos.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })),
     },
+    tipoAnestesia: datos.tipoAnestesia ?? '',
+    asa: datos.asa ?? '',
+    complejidad: datos.complejidad ?? '',
     wizardDatos: datos,
   });
 }
@@ -1680,7 +1713,9 @@ export function editarCirugiaDesdeWizard(id, datos, salaId) {
 // arma un `datos` best-effort con solo lo recuperable de forma confiable del
 // registro guardado. ~15 campos administrativos del Paso 1 (dx. ingreso,
 // autorización, ASA, clase, tipo anestesia, observaciones...) nunca se
-// guardaron en el registro final y quedan en blanco -- igual que un
+// guardaron en el registro final (salvo tipo de anestesia/ASA/complejidad, que
+// desde 2026-10-01 también se copian al nivel superior del registro y solo
+// traen valor las semilla "de hoy", ver cirugiaHoy) y quedan en blanco -- igual que un
 // registro migrado de un sistema viejo sin esos datos (decisión explícita,
 // no hay forma de recuperarlos). Procedimientos/insumos reconstruidos usan
 // el nombre plano como id/código en vez de buscar el código real del

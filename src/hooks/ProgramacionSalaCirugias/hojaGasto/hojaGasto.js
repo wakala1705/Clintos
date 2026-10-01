@@ -243,6 +243,17 @@ function filaInsumo(cirugia, item) {
   };
 }
 
+// Tipo de anestesia, ASA y complejidad cargados en la programación (nivel
+// superior del registro, o en el snapshot del asistente). '' si no hay.
+export function anestesiaDeCirugia(cirugia) {
+  const w = cirugia?.wizardDatos;
+  return {
+    tipo: cirugia?.tipoAnestesia ?? w?.tipoAnestesia ?? '',
+    asa: cirugia?.asa ?? w?.asa ?? '',
+    complejidad: cirugia?.complejidad ?? w?.complejidad ?? '',
+  };
+}
+
 export function construirHojaInicial(cirugia) {
   const duracion = Math.max(minutosEntre(cirugia.horaInicio, cirugia.horaFin) ?? 0, 0);
   return {
@@ -254,7 +265,8 @@ export function construirHojaInicial(cirugia) {
     admision: '',
     programado: { inicio: cirugia.horaInicio ?? '', fin: cirugia.horaFin ?? '' },
     tiempos: { ingresoSala: '', inicioAnestesia: '', inicioCirugia: '', finCirugia: '', salidaSala: '' },
-    anestesia: { tipo: '', asa: '', complejidad: '' },
+    anestesia: anestesiaDeCirugia(cirugia),
+    anestesiaProgramada: anestesiaDeCirugia(cirugia),
     procedimientos: cirugia.procedimientos.map((p, i) => ({
       id: `proc-${i}`, nombre: p.nombre, cups: '', via: 'unica', dxPre: '', dxPos: '',
     })),
@@ -316,7 +328,18 @@ export function sincronizarConCirugia(hoja, cirugia) {
     }
   });
 
-  return { ...hoja, personal, equipos, insumos };
+  // Anestesia: un campo vacío o igual a lo heredado la vez anterior sigue a la
+  // programación; si la circulante lo cambió a otra cosa, se respeta.
+  const programada = anestesiaDeCirugia(cirugia);
+  const previa = hoja.anestesiaProgramada ?? {};
+  const actual = hoja.anestesia ?? {};
+  const anestesia = { ...actual };
+  Object.keys(programada).forEach((campo) => {
+    const valor = actual[campo] ?? '';
+    if (valor === '' || valor === (previa[campo] ?? '')) anestesia[campo] = programada[campo];
+  });
+
+  return { ...hoja, personal, equipos, insumos, anestesia, anestesiaProgramada: programada };
 }
 
 // ---------- Store en memoria ----------

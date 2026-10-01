@@ -12,8 +12,15 @@ import { ASA_CATALOGO, COMPLEJIDAD_CATALOGO, TIPOS_ANESTESIA_CATALOGO } from '@/
 
 const opciones = (lista) => lista.map((v) => ({ value: v, label: v }));
 
+// "Programado: X" bajo un select cuyo valor difiere de lo cargado en la programación.
+function ProgramadoHint({ campo, anestesia, anestesiaProgramada }) {
+  const prog = anestesiaProgramada?.[campo] ?? '';
+  if (!prog || (anestesia?.[campo] ?? '') === prog) return null;
+  return <span className="hgq-programado">Programado: {prog}</span>;
+}
+
 export default function TiemposSection({
-  tiempos, anestesia, programado, onChangeTiempos, onChangeAnestesia, readOnly,
+  tiempos, anestesia, anestesiaProgramada, programado, onChangeTiempos, onChangeAnestesia, readOnly,
 }) {
   const [editando, setEditando] = useState(null);
   const [anuncio, setAnuncio] = useState('');
@@ -106,14 +113,17 @@ export default function TiemposSection({
         <div className="form-field">
           <label htmlFor="hgq-anestesia-tipo" className="hgq-field-label">Tipo de anestesia</label>
           <FormSelect id="hgq-anestesia-tipo" value={anestesia?.tipo ?? ''} disabled={readOnly} options={opciones(TIPOS_ANESTESIA_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, tipo: v })} />
+          <ProgramadoHint campo="tipo" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
         </div>
         <div className="form-field wide">
           <label htmlFor="hgq-anestesia-asa" className="hgq-field-label">ASA</label>
           <FormSelect id="hgq-anestesia-asa" value={anestesia?.asa ?? ''} disabled={readOnly} options={opciones(ASA_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, asa: v })} />
+          <ProgramadoHint campo="asa" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
         </div>
         <div className="form-field">
           <label htmlFor="hgq-anestesia-complejidad" className="hgq-field-label">Complejidad</label>
           <FormSelect id="hgq-anestesia-complejidad" value={anestesia?.complejidad ?? ''} disabled={readOnly} options={opciones(COMPLEJIDAD_CATALOGO)} placeholder="Selecciona una opción" onChange={(v) => onChangeAnestesia({ ...anestesia, complejidad: v })} />
+          <ProgramadoHint campo="complejidad" anestesia={anestesia} anestesiaProgramada={anestesiaProgramada} />
         </div>
       </div>
     </SeccionHoja>

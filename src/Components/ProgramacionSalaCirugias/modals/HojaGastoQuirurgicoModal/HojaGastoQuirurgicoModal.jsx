@@ -288,6 +288,7 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
             <TiemposSection
               tiempos={hoja.tiempos}
               anestesia={hoja.anestesia}
+              anestesiaProgramada={hoja.anestesiaProgramada}
               programado={hoja.programado}
               onChangeTiempos={(v) => set('tiempos', v)}
               onChangeAnestesia={(v) => set('anestesia', v)}
