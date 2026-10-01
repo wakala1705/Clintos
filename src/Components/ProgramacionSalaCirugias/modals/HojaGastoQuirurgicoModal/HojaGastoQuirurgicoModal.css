@@ -11,10 +11,6 @@
 .hgq-nav-ok{color:var(--green);}
 .hgq-nav-pend{color:var(--ink-400);}
 .hgq-banner{flex:none;max-height:45%;min-width:0;padding:12px 24px;border-bottom:1px solid var(--border);overflow-x:hidden;overflow-y:auto;}
-.hgq-banner-campo{display:flex;flex-direction:column;gap:3px;min-width:170px;}
-/* Misma etiqueta que los demás datos de la fila 2 (.ar-item .lbl) */
-.hgq-banner-campo .hgq-field-label{color:var(--ink-500);font-weight:var(--fw-semibold);text-transform:uppercase;font-size:var(--fs-xs);letter-spacing:.03em;}
-.hgq-banner-campo .hgq-programado{display:block;font-size:var(--fs-sm);color:var(--ink-500);}
 .hgq-nav-dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
 .hgq-body{display:flex;flex-direction:column;gap:16px;padding:16px 24px;overflow-y:auto;}
 .hgq-aviso{padding:10px 16px;border-radius:var(--radius);background:var(--primary-50);color:var(--primary);font-size:var(--fs-base);font-weight:var(--fw-medium);}

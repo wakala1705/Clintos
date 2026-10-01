@@ -8,7 +8,6 @@ import './HojaGastoQuirurgicoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
-import FormSelect from '@/Components/FormSelect/FormSelect';
 import PatientBanner from '@/Components/PatientBanner/PatientBanner';
 import TiemposSection from './secciones/TiemposSection/TiemposSection';
 import ProcedimientosSection from './secciones/ProcedimientosSection/ProcedimientosSection';
@@ -31,7 +30,7 @@ import {
   horaAhora, obtenerHojaGuardada, progresoHoja, reabrirHoja, sincronizarConCirugia, validarCierre,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
 import {
-  ASA_CATALOGO, COMPLEJIDAD_CATALOGO, SALAS, TIPOS_ANESTESIA_CATALOGO, fechaHoraLocalISO, fechaHoraRangoLabel,
+  SALAS, fechaHoraLocalISO, fechaHoraRangoLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Índice lateral: `progreso` es la clave de progresoHoja().porSeccion (sin clave = sin
@@ -246,32 +245,11 @@ export default function HojaGastoQuirurgicoModal({ cirugia, onClose }) {
               servicio: cirugia.servicio,
               tipoCirugia: cirugia.tipoCirugia,
             }}
-            secondRowExtra={(
-              <>
-                {[
-                  { campo: 'tipo', label: 'Tipo de anestesia', lista: TIPOS_ANESTESIA_CATALOGO },
-                  { campo: 'asa', label: 'ASA', lista: ASA_CATALOGO },
-                  { campo: 'complejidad', label: 'Complejidad', lista: COMPLEJIDAD_CATALOGO },
-                ].map(({ campo, label, lista }) => {
-                  const prog = hoja.anestesiaProgramada?.[campo] ?? '';
-                  const valor = hoja.anestesia?.[campo] ?? '';
-                  return (
-                    <div className="hgq-banner-campo" key={campo}>
-                      <label htmlFor={`hgq-anestesia-${campo}`} className="hgq-field-label">{label}</label>
-                      <FormSelect
-                        id={`hgq-anestesia-${campo}`}
-                        value={valor}
-                        disabled={readOnly}
-                        options={lista.map((v) => ({ value: v, label: v }))}
-                        placeholder="Selecciona"
-                        onChange={(v) => set('anestesia', { ...hoja.anestesia, [campo]: v })}
-                      />
-                      {prog && valor !== prog && <span className="hgq-programado">Programado: {prog}</span>}
-                    </div>
-                  );
-                })}
-              </>
-            )}
+            secondRow={[
+              { label: 'Tipo de anestesia', value: hoja.anestesia?.tipo || '—' },
+              { label: 'ASA', value: hoja.anestesia?.asa || '—' },
+              { label: 'Complejidad', value: hoja.anestesia?.complejidad || '—' },
+            ]}
           />
         </div>
 
