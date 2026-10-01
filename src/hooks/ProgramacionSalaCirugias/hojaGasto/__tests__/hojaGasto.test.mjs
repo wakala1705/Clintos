@@ -6,6 +6,7 @@ import {
   conteoEstado, validarCierre, progresoHoja, resumenRegistro, pinValido, reabrirHoja,
   cerrarHoja, firmarHoja, construirHojaInicial, ROLES_PERSONAL,
   obtenerHojaGuardada, guardarHoja, actualizarFila, quitarFila, fechaHoraHoja,
+  insumosPorConciliar, conciliarTodos, marcarInsumo,
 } from '../hojaGasto.js';
 
 const cirugia = () => ({
@@ -39,6 +40,7 @@ function hojaLista() {
   h.anestesia.tipo = 'General';
   h.procedimientos[0].cups = '511101';
   h.procedimientos[0].dxPos = 'K80.1';
+  h.insumos = conciliarTodos(h.insumos);
   h.conteo.forEach((c) => { c.inicial = 10; c.final = 10; });
   h.firmas = { circulante: '2026-10-01T09:50', instrumentadora: '2026-10-01T09:50', cirujano: '2026-10-01T09:55' };
   return h;
@@ -192,6 +194,41 @@ test('validarCierre: insumo sin cantidad usada cuenta como sin conciliar', () =>
   const e = validarCierre(h);
   assert.equal(e.length, 1);
   assert.equal(e[0].seccion, 'insumos');
+});
+
+test('construirHojaInicial: insumos de canasta arrancan por conciliar y con lote vacío', () => {
+  const h = construirHojaInicial(cirugia());
+  assert.ok(h.insumos.every((i) => i.conciliado === false && i.lote === '' && i.manual === false));
+});
+
+test('insumosPorConciliar / conciliarTodos / marcarInsumo', () => {
+  const h = construirHojaInicial(cirugia());
+  assert.equal(insumosPorConciliar(h.insumos), 2);
+  const todos = conciliarTodos(h.insumos);
+  assert.equal(insumosPorConciliar(todos), 0);
+  assert.deepEqual(todos.map((i) => i.usado), h.insumos.map((i) => i.usado));
+  assert.equal(h.insumos[0].conciliado, false); // no muta
+  const t = marcarInsumo(h.insumos[0], 'todo');
+  assert.equal(t.usado, 10);
+  assert.equal(t.conciliado, true);
+  const n = marcarInsumo(h.insumos[0], 'nada');
+  assert.equal(n.usado, 0);
+  assert.equal(n.conciliado, true);
+});
+
+test('validarCierre: insumos por conciliar bloquean el cierre con N real', () => {
+  const h = hojaLista();
+  h.insumos[0].conciliado = false;
+  h.insumos[1].conciliado = false;
+  assert.deepEqual(validarCierre(h).map((e) => [e.seccion, e.mensaje]), [['insumos', 'Concilia los insumos entregados (2 por conciliar).']]);
+  assert.equal(progresoHoja(h).porSeccion.insumos, false);
+});
+
+test('validarCierre: usado > entregado tiene prioridad sobre por conciliar', () => {
+  const h = hojaLista();
+  h.insumos[0].conciliado = false;
+  h.insumos[1].usado = 99;
+  assert.equal(validarCierre(h)[0].mensaje, 'Un insumo tiene más cantidad usada que entregada.');
 });
 
 test('progresoHoja: 7 secciones, anestesia cuenta contra tiempos', () => {

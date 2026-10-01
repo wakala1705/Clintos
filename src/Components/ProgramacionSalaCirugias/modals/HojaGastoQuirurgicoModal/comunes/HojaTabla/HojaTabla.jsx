@@ -6,11 +6,14 @@ import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import NumeroStepper from '../NumeroStepper/NumeroStepper';
 
-function Celda({ col, row, editable, base, onChange }) {
+function Celda({ col, row, editable, base, onChange, patch }) {
   const valor = row[col.key];
+  if (col.type === 'calc') {
+    return <span className="hgq-static">{col.render ? col.render(row, { patch }) : valor}</span>;
+  }
   const esEditable = editable && col.type !== 'calc' && (col.editable ? col.editable(row) : true);
   if (!esEditable) {
-    return <span className="hgq-static">{col.render ? col.render(row) : (valor === '' || valor === null || valor === undefined ? '—' : valor)}</span>;
+    return <span className="hgq-static">{col.render ? col.render(row, { patch }) : (valor === '' || valor === null || valor === undefined ? '—' : valor)}</span>;
   }
   const aria = `${col.label} (${base})`;
   if (col.type === 'select') {
@@ -59,7 +62,7 @@ function Celda({ col, row, editable, base, onChange }) {
 }
 
 export default function HojaTabla({
-  ariaLabel, columns, rows, onChangeRow, onAddRow, onRemoveRow, canRemove,
+  ariaLabel, columns, rows, onChangeRow, onPatchRow, onAddRow, onRemoveRow, canRemove,
   addLabel = 'Agregar fila', emptyLabel = 'Sin registros', readOnly = false,
 }) {
   const editable = !readOnly;
@@ -87,7 +90,11 @@ export default function HojaTabla({
                       row={row}
                       editable={editable}
                       base={`${ariaLabel} fila ${idx + 1}`}
-                      onChange={(campo, valor) => onChangeRow(row.id, campo, valor)}
+                      patch={editable && onPatchRow ? (cambios) => onPatchRow(row.id, cambios) : null}
+                      onChange={(campo, valor) => {
+                        if (c.toPatch && onPatchRow) onPatchRow(row.id, c.toPatch(valor, row));
+                        else onChangeRow(row.id, campo, valor);
+                      }}
                     />
                   </td>
                 ))}
