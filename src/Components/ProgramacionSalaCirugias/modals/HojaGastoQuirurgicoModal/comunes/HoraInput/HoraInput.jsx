@@ -4,7 +4,7 @@ import { formatearHora, horaAhora } from '@/hooks/ProgramacionSalaCirugias/hojaG
 
 // Hora 'HH:mm' en 24 h con máscara progresiva + botón "Ahora".
 export default function HoraInput({
-  id, label, value, onChange, disabled = false,
+  id, label, value, onChange, disabled = false, sinAhora = false,
 }) {
   return (
     <div className="hgq-hora">
@@ -20,7 +20,7 @@ export default function HoraInput({
         disabled={disabled}
         onChange={(e) => onChange(formatearHora(e.target.value))}
       />
-      {!disabled && (
+      {!disabled && !sinAhora && (
         <button
           type="button"
           className="hgq-hora-ahora"

@@ -6,7 +6,32 @@ import {
   conteoEstado, validarCierre, progresoHoja, resumenRegistro, pinValido, reabrirHoja,
   cerrarHoja, firmarHoja, construirHojaInicial, sincronizarConCirugia, ROLES_PERSONAL,
   obtenerHojaGuardada, guardarHoja, actualizarFila, quitarFila, fechaHoraHoja,
+  HITOS_TIEMPOS, siguienteHito, hitosFueraDeOrden,
 } from '../hojaGasto.js';
+
+const tiemposCompletos = () => ({
+  ingresoSala: '07:00', inicioAnestesia: '07:15', inicioCirugia: '07:30', finCirugia: '09:00', salidaSala: '09:20',
+});
+
+test('HITOS_TIEMPOS: 5 hitos en orden cronológico', () => {
+  assert.deepEqual(HITOS_TIEMPOS.map((h) => h.key), ['ingresoSala', 'inicioAnestesia', 'inicioCirugia', 'finCirugia', 'salidaSala']);
+  assert.equal(HITOS_TIEMPOS[0].label, 'Ingreso a sala');
+});
+
+test('siguienteHito: primer hito vacío o inválido, null si todos están', () => {
+  assert.equal(siguienteHito({ ingresoSala: '', inicioAnestesia: '', inicioCirugia: '', finCirugia: '', salidaSala: '' }), 'ingresoSala');
+  assert.equal(siguienteHito({ ...tiemposCompletos(), inicioAnestesia: '', finCirugia: '' }), 'inicioAnestesia');
+  assert.equal(siguienteHito({ ...tiemposCompletos(), inicioCirugia: '7:3' }), 'inicioCirugia');
+  assert.equal(siguienteHito(tiemposCompletos()), null);
+  assert.equal(siguienteHito({}), 'ingresoSala');
+});
+
+test('hitosFueraDeOrden: compara contra el último hito válido previo', () => {
+  assert.deepEqual(hitosFueraDeOrden(tiemposCompletos()), []);
+  assert.deepEqual(hitosFueraDeOrden({ ...tiemposCompletos(), finCirugia: '09:30', salidaSala: '09:00' }), ['salidaSala']);
+  assert.deepEqual(hitosFueraDeOrden({ ...tiemposCompletos(), inicioAnestesia: '', inicioCirugia: '06:00' }), ['inicioCirugia']);
+  assert.deepEqual(hitosFueraDeOrden({ ingresoSala: '', inicioAnestesia: '', inicioCirugia: '', finCirugia: '', salidaSala: '' }), []);
+});
 
 const cirugia = () => ({
   id: '99001',

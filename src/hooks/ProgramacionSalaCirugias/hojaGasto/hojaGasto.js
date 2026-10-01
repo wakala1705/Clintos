@@ -72,6 +72,34 @@ export function duracionesHoja(t) {
   };
 }
 
+// Hitos de la cirugía en orden cronológico.
+export const HITOS_TIEMPOS = [
+  { key: 'ingresoSala', label: 'Ingreso a sala' },
+  { key: 'inicioAnestesia', label: 'Inicio de anestesia' },
+  { key: 'inicioCirugia', label: 'Inicio de cirugía' },
+  { key: 'finCirugia', label: 'Fin de cirugía' },
+  { key: 'salidaSala', label: 'Salida de sala' },
+];
+
+// Key del primer hito sin hora válida, o null si todos están registrados.
+export function siguienteHito(tiempos) {
+  const h = HITOS_TIEMPOS.find((x) => aMinutos(tiempos?.[x.key]) === null);
+  return h ? h.key : null;
+}
+
+// Keys de hitos válidos cuya hora es menor a la del último hito válido previo.
+export function hitosFueraDeOrden(tiempos) {
+  const fuera = [];
+  let previo = null;
+  HITOS_TIEMPOS.forEach((h) => {
+    const min = aMinutos(tiempos?.[h.key]);
+    if (min === null) return;
+    if (previo !== null && min < previo) fuera.push(h.key);
+    previo = min;
+  });
+  return fuera;
+}
+
 export function duracionTexto(min) {
   if (min === null || min === undefined) return '—';
   const h = Math.floor(min / 60);
