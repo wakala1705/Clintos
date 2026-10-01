@@ -33,7 +33,7 @@ export default function ResumenSection({ hoja }) {
     { id: 'sala', concepto: 'Ocupación de sala', detalle: duracionTexto(r.duraciones.sala) },
   ];
   return (
-    <SeccionHoja id="hgq-resumen" icon={LuReceipt} titulo="Resumen del registro">
+    <SeccionHoja flush id="hgq-resumen" icon={LuReceipt} titulo="Resumen del registro">
       <HojaTabla ariaLabel="Resumen del registro" columns={COLUMNS} rows={rows} readOnly onChangeRow={() => {}} />
     </SeccionHoja>
   );

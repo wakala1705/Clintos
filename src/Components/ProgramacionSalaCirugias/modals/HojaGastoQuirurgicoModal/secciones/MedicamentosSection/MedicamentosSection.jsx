@@ -14,7 +14,7 @@ const COLUMNS = [
 
 export default function MedicamentosSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-medicamentos" icon={LuPill} titulo="Medicamentos y anestésicos">
+    <SeccionHoja flush id="hgq-medicamentos" icon={LuPill} titulo="Medicamentos y anestésicos">
       <HojaTabla
         ariaLabel="Medicamentos"
         columns={COLUMNS}

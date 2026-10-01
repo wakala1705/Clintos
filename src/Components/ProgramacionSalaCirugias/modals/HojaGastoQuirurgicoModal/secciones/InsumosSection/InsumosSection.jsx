@@ -60,7 +60,7 @@ const COLUMNS = [
 
 export default function InsumosSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-insumos" icon={LuPackage} titulo="Insumos y materiales">
+    <SeccionHoja flush id="hgq-insumos" icon={LuPackage} titulo="Insumos y materiales">
       <HojaTabla
         ariaLabel="Insumos"
         columns={COLUMNS}

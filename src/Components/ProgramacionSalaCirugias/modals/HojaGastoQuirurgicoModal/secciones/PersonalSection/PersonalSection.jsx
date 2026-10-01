@@ -17,7 +17,7 @@ const COLUMNS = [
 
 export default function PersonalSection({ rows, onChange, readOnly }) {
   return (
-    <SeccionHoja id="hgq-personal" icon={LuUsers} titulo="Equipo quirúrgico">
+    <SeccionHoja flush id="hgq-personal" icon={LuUsers} titulo="Equipo quirúrgico">
       <HojaTabla
         ariaLabel="Equipo quirúrgico"
         columns={COLUMNS}

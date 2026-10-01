@@ -38,7 +38,7 @@ const COLUMNS = [
 export default function ConteoSection({ rows, onChange, readOnly }) {
   const hayDiscrepancia = rows.some(enDiscrepancia);
   return (
-    <SeccionHoja id="hgq-conteo" icon={LuListChecks} titulo="Conteo quirúrgico">
+    <SeccionHoja flush id="hgq-conteo" icon={LuListChecks} titulo="Conteo quirúrgico">
       {hayDiscrepancia && (
         <div className="hgq-conteo-alerta" role="alert">
           Discrepancia en el conteo: documenta una nota para poder cerrar la hoja.

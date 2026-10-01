@@ -10,7 +10,7 @@ const TONO_TEXTO = { ok: 'completa', error: 'con errores' };
 // (h4 > button) con ícono tonal, título y chevron. `id` es el ancla del índice lateral
 // del modal y la clave de su estado de plegado (context).
 export default function SeccionHoja({
-  id, icon: Icon, titulo, children,
+  id, icon: Icon, titulo, children, flush = false,
 }) {
   const { abierta, alternar, tono } = useSeccion(id);
   return (
@@ -42,7 +42,7 @@ export default function SeccionHoja({
         inert={!abierta}
       >
         <div className="hgq-section-clip">
-          <div className="hgq-section-body">{children}</div>
+          <div className={`hgq-section-body${flush ? ' is-flush' : ''}`}>{children}</div>
         </div>
       </div>
     </section>

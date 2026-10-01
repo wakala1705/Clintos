@@ -12,8 +12,10 @@
 .hgq-section.is-collapsed .hgq-section-chevron{transform:rotate(0deg);}
 .hgq-section-collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .2s;border-top:1px solid var(--border);}
 .hgq-section.is-collapsed .hgq-section-collapse{grid-template-rows:0fr;border-top-color:transparent;}
-.hgq-section-clip{overflow:hidden;min-height:0;}
+.hgq-section-clip{overflow:hidden;min-height:0;border-radius:0 0 var(--radius) var(--radius);}
 .hgq-section-body{padding:16px;}
+/* flush: el cuerpo no tiene padding (tablas de borde a borde) */
+.hgq-section-body.is-flush{padding:0;}
 .hgq-sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 
 @media (max-width:1024px), (pointer:coarse){
