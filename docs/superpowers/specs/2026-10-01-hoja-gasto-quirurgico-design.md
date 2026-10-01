@@ -5,7 +5,9 @@
 > fuera de esta pantalla. Se eliminó todo el dinero (tarifas, valores, totales,
 > derechos de sala valorizados) y se agregaron controles de seguridad (firma con
 > PIN, confirmación y reapertura con motivo, conteo en 3 momentos). La iteración
-> C (atajos de conciliación de insumos) queda pendiente. Detalle en
+> C (hecha) agrega la conciliación rápida de insumos: filtro "Por conciliar",
+> "Confirmar todos como usados", atajos "Todo"/"Nada" por fila y lote opcional;
+> cerrar exige que no queden insumos por conciliar. Detalle en
 > `docs/superpowers/plans/2026-10-01-hoja-gasto-iteracion-ab.md`.
 
 ## Objetivo
@@ -25,7 +27,7 @@ con progreso.
 3. **Conteo quirúrgico**: gasas, compresas, agujas, instrumental, en 3 momentos (inicial, previo a cierre de cavidad —opcional—, final). Discrepancia = alerta + nota obligatoria.
 4. **Equipo quirúrgico**: rol, nombre, registro profesional (sin tiempos ni tarifas).
 5. **Procedimientos**: nombre, CUPS, vía, Dx pre/pos.
-6. **Insumos y materiales**: entregado / usado / devuelto (calculado); lo entregado se asume usado salvo corrección; ítems manuales permitidos.
+6. **Insumos y materiales**: entregado / usado / devuelto (calculado) / lote opcional / estado (por conciliar o conciliado); lo entregado se precarga como usado y se concilia con atajos por fila, "Confirmar todos" o ajustando la cantidad; ítems manuales permitidos.
 7. **Medicamentos y anestésicos**: nombre, dosis, cantidad.
 8. **Implantes y material especial**: nombre, INVIMA, lote, serie, proveedor.
 9. **Equipos usados**: nombre, identificación, tiempo de uso.
