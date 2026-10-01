@@ -5,11 +5,11 @@ import HojaTabla from '../../comunes/HojaTabla/HojaTabla';
 import { actualizarFila, nuevoId, quitarFila } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
 
 const COLUMNS = [
-  { key: 'nombre', label: 'Implante / material' },
-  { key: 'invima', label: 'Registro INVIMA' },
-  { key: 'lote', label: 'Lote' },
-  { key: 'serie', label: 'Serie' },
-  { key: 'proveedor', label: 'Proveedor' },
+  { key: 'nombre', label: 'Implante / material', placeholder: 'Descripción' },
+  { key: 'invima', label: 'Registro INVIMA', placeholder: 'INVIMA' },
+  { key: 'lote', label: 'Lote', placeholder: 'Lote' },
+  { key: 'serie', label: 'Serie', placeholder: 'Serie' },
+  { key: 'proveedor', label: 'Proveedor', placeholder: 'Proveedor' },
 ];
 
 export default function ImplantesSection({ rows, onChange, readOnly }) {

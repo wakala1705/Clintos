@@ -6,10 +6,13 @@ import {
   ROLES_PERSONAL, actualizarFila, nuevoId, quitarFila,
 } from '@/hooks/ProgramacionSalaCirugias/hojaGasto/hojaGasto';
 
+// Las filas del detalle de la cirugía (sin `manual`) muestran rol y profesional como texto.
+const esManual = (r) => r.manual === true;
+
 const COLUMNS = [
-  { key: 'rol', label: 'Rol', type: 'select', options: ROLES_PERSONAL.map((r) => ({ value: r, label: r })) },
-  { key: 'nombre', label: 'Profesional' },
-  { key: 'registro', label: 'Registro profesional' },
+  { key: 'rol', label: 'Rol', type: 'select', editable: esManual, options: ROLES_PERSONAL.map((r) => ({ value: r, label: r })) },
+  { key: 'nombre', label: 'Profesional', placeholder: 'Nombre', editable: esManual },
+  { key: 'registro', label: 'Registro profesional', placeholder: 'N° de registro' },
 ];
 
 export default function PersonalSection({ rows, onChange, readOnly }) {
@@ -21,7 +24,7 @@ export default function PersonalSection({ rows, onChange, readOnly }) {
         rows={rows}
         readOnly={readOnly}
         onChangeRow={(id, campo, valor) => onChange(actualizarFila(rows, id, campo, valor))}
-        onAddRow={() => onChange([...rows, { id: nuevoId('per'), rol: 'Ayudante', nombre: '', registro: '' }])}
+        onAddRow={() => onChange([...rows, { id: nuevoId('per'), manual: true, rol: 'Ayudante', nombre: '', registro: '' }])}
         onRemoveRow={(id) => onChange(quitarFila(rows, id))}
         addLabel="Agregar profesional"
       />

@@ -13,7 +13,7 @@ const ESTADO = {
 const esManual = (r) => r.manual;
 const enDiscrepancia = (r) => conteoEstado(r) === 'discrepancia';
 const COLUMNS = [
-  { key: 'item', label: 'Elemento', editable: esManual },
+  { key: 'item', label: 'Elemento', placeholder: 'Elemento', editable: esManual },
   { key: 'inicial', label: 'Conteo inicial', type: 'stepper', align: 'right' },
   { key: 'previoCierre', label: 'Previo a cierre (opcional)', type: 'stepper', align: 'right' },
   { key: 'final', label: 'Conteo final', type: 'stepper', align: 'right' },

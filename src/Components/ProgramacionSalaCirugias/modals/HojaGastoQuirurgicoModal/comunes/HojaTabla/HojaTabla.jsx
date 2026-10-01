@@ -10,7 +10,7 @@ function Celda({ col, row, editable, base, onChange }) {
   const valor = row[col.key];
   const esEditable = editable && col.type !== 'calc' && (col.editable ? col.editable(row) : true);
   if (!esEditable) {
-    return <span className="hgq-static">{col.render ? col.render(row) : (valor === '' || valor === null || valor === undefined ? '—' : valor)}</span>;
+    return <span className={`hgq-static${col.key === 'nombre' ? ' hgq-static-main' : ''}`}>{col.render ? col.render(row) : (valor === '' || valor === null || valor === undefined ? '—' : valor)}</span>;
   }
   const aria = `${col.label} (${base})`;
   if (col.type === 'select') {

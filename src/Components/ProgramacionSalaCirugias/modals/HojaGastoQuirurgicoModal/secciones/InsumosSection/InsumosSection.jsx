@@ -29,6 +29,7 @@ const COLUMNS = [
   {
     key: 'nombre',
     label: 'Insumo',
+    placeholder: 'Insumo',
     editable: esManual,
     render: (r) => (
       <>

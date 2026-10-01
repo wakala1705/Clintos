@@ -11,3 +11,25 @@
 .hgq-row-remove:hover{background:var(--gray-bg);color:var(--red);}
 .hgq-row-remove:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .hgq-table-add{padding-top:12px;}
+
+/* ---- Reducción de ruido: celdas "fantasma" (solo dentro de la tabla) ---- */
+.hgq-table tbody tr:hover{background:var(--bg);}
+.hgq-table .hgq-input{border:1px solid transparent;background:transparent;border-radius:var(--radius);}
+.hgq-table .hgq-input:hover{background:var(--gray-bg);}
+.hgq-table .hgq-input:focus-visible{border-color:var(--primary);background:var(--surface);outline:2px solid var(--primary);outline-offset:1px;}
+.hgq-table .hgq-input:placeholder-shown{border-bottom:1px dashed var(--border);border-radius:0;}
+.hgq-table .hgq-input:placeholder-shown:hover{border-radius:var(--radius);}
+.hgq-table .hgq-input:placeholder-shown:focus-visible{border-bottom-style:solid;border-radius:var(--radius);}
+.hgq-table .hgq-input::placeholder{color:var(--ink-400);}
+/* FormSelect en celda: mismo tratamiento sobre su trigger (el dropdown va en document.body, no se ve afectado) */
+.hgq-table .form-select .form-select-trigger{border-color:transparent;background:transparent;}
+.hgq-table .form-select .form-select-trigger:hover{background:var(--gray-bg);}
+.hgq-table .form-select .form-select-trigger:focus-visible,
+.hgq-table .form-select .form-select-trigger.open{border-color:var(--primary);background:var(--surface);}
+/* Texto estático: mismo alto/padding que un input para que la fila no salte */
+.hgq-table .hgq-static{display:flex;align-items:center;min-height:var(--input-sm, 34px);padding:0 11px;font-size:var(--fs-base);color:var(--ink-700);}
+.hgq-table .hgq-num .hgq-static{justify-content:flex-end;}
+.hgq-table .hgq-static.hgq-static-main{color:var(--ink-900);}
+@media (max-width:1024px), (pointer:coarse){
+  .hgq-table .hgq-input{min-height:44px;}
+}
