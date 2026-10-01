@@ -1,13 +1,1 @@
 /* Estilos compartidos: shared/shared.css y comunes/HojaTabla. */
-.hgq-insumos-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
-/* .chip-group.segmented se estiliza en ProgramacionSalaCirugias/shared/shared.css */
-.hgq-atajos{display:flex;gap:8px;}
-.hgq-atajos .hgq-atajo.hgq-atajo{min-height:44px;min-width:44px;}
-.hgq-insumos-bar .hgq-bar-confirmar.hgq-bar-confirmar{min-height:44px;}
-
-/* Tablet: 7 columnas con steppers no caben; la tabla conserva su ancho y
-   scrollea dentro de su contenedor (nunca la página, ver AGENTS.md "Responsive"). */
-@media (max-width:1024px){
-  #hgq-insumos .hgq-table{min-width:820px;}
-  #hgq-insumos .hgq-table input[type="text"]{min-width:112px;}
-}

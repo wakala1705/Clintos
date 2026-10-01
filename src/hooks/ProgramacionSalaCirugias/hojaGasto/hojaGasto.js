@@ -83,15 +83,6 @@ export function duracionTexto(min) {
 // ---------- Insumos y conteo ----------
 export const devueltoInsumo = (i) => Math.max(n0(i.entregado) - n0(i.usado), 0);
 
-export const insumosPorConciliar = (insumos) => insumos.filter((i) => i.conciliado === false).length;
-export const conciliarTodos = (insumos) => insumos.map((i) => ({ ...i, conciliado: true }));
-// 'todo': se usó todo lo entregado; 'nada': no se usó nada. Ambos concilian la fila.
-export const marcarInsumo = (insumo, modo) => ({
-  ...insumo,
-  usado: modo === 'todo' ? n0(insumo.entregado) : 0,
-  conciliado: true,
-});
-
 // Conteo quirúrgico en 3 momentos: inicial, previo a cierre (opcional) y final.
 export function conteoEstado({ inicial, previoCierre, final }) {
   const a = num(inicial);
@@ -128,8 +119,6 @@ export function validarCierre(h) {
     err('insumos', 'Hay insumos sin cantidad usada: concilia todos los insumos.');
   } else if (h.insumos.some((i) => !i.manual && n0(i.usado) > n0(i.entregado))) {
     err('insumos', 'Un insumo tiene más cantidad usada que entregada.');
-  } else if (insumosPorConciliar(h.insumos) > 0) {
-    err('insumos', `Concilia los insumos entregados (${insumosPorConciliar(h.insumos)} por conciliar).`);
   }
 
   if (h.implantes.some((i) => !i.invima.trim() || !i.lote.trim())) {
@@ -235,8 +224,6 @@ export function construirHojaInicial(cirugia) {
           nombre: i.nombre,
           entregado,
           usado: Math.max(entregado - cantidadDevuelta(cirugia, i.nombre), 0),
-          lote: '',
-          conciliado: false,
           manual: false,
         };
       }),
