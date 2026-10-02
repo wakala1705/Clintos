@@ -7,11 +7,11 @@ import Button from '@/Components/Button/Button';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
 import DetalleRealizada from './DetalleRealizada/DetalleRealizada';
+import { obtenerHojaConsumo } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
-import HojaConsumoModal from '../modals/HojaConsumoModal/HojaConsumoModal';
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import {
   ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
@@ -58,9 +58,11 @@ export default function DetalleCirugiaPanel({
   // Ventana "Causal de Cancelación de Programación" (se abre desde
   // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
   const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
-  const [hojaGastoAbierta, setHojaGastoAbierta] = useState(false);
   const [hojaGastoAltAbierta, setHojaGastoAltAbierta] = useState(false);
-  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAbierta || hojaGastoAltAbierta;
+  // Hoja de consumo guardada de la cirugía: vive en un almacén fuera de React, así que se
+  // relee en eventos (al cambiar de cirugía y al cerrar su modal), no en el render.
+  const [hoja, setHoja] = useState(() => (cirugia ? obtenerHojaConsumo(cirugia.id) : null));
+  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAltAbierta;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -78,8 +80,8 @@ export default function DetalleCirugiaPanel({
     setActiveDetailTab('insumos');
     setPacienteExpandido(false);
     setCancelarSolicitudAbierto(false);
-    setHojaGastoAbierta(false);
     setHojaGastoAltAbierta(false);
+    setHoja(cirugia ? obtenerHojaConsumo(cirugia.id) : null);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
 
@@ -240,8 +242,7 @@ export default function DetalleCirugiaPanel({
       <div className="dcp-actions">
         <Button variant="secondary-accent" icon={LuBan} className="dcp-cancelar-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
         <div className="dcp-actions-estado">
-          <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAbierta(true)}>Hoja de consumo</Button>
-          <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAltAbierta(true)}>Hoja de consumo (alternativa)</Button>
+          <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAltAbierta(true)}>Hoja de consumo</Button>
           {onEditar && <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>}
           <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
           <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
@@ -257,10 +258,10 @@ export default function DetalleCirugiaPanel({
   const body = esRealizada ? (
     <DetalleRealizada
       cirugia={cirugia}
+      hoja={hoja}
       onClose={onClose}
       onVerEnCanastas={onVerEnCanastas}
-      onAbrirHoja={() => setHojaGastoAbierta(true)}
-      onAbrirHojaAlt={() => setHojaGastoAltAbierta(true)}
+      onAbrirHoja={() => setHojaGastoAltAbierta(true)}
     />
   ) : bodyAbierta;
 
@@ -286,11 +287,14 @@ export default function DetalleCirugiaPanel({
           onClose={() => setCancelarSolicitudAbierto(false)}
         />
       )}
-      {hojaGastoAbierta && (
-        <HojaConsumoModal cirugia={cirugia} onClose={() => setHojaGastoAbierta(false)} />
-      )}
       {hojaGastoAltAbierta && (
-        <HojaConsumoAltModal cirugia={cirugia} onClose={() => setHojaGastoAltAbierta(false)} />
+        <HojaConsumoAltModal
+          cirugia={cirugia}
+          onClose={() => {
+            setHojaGastoAltAbierta(false);
+            setHoja(obtenerHojaConsumo(cirugia.id));
+          }}
+        />
       )}
     </>
   );

@@ -2,3 +2,10 @@
 .cnc-dev-cero{color:var(--ink-400);}
 .cnc-dev-uno{color:var(--status-info-fg);font-weight:var(--fw-bold);}
 .cnc-usado-fijo{font-weight:var(--fw-bold);}
+
+/* Nota sobre la hoja de consumo (precarga o falta de registro). */
+.cnc-hoja-nota{
+  display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:var(--radius);
+  background:var(--status-info-bg);color:var(--status-info-fg);font-size:var(--fs-base);
+}
+.cnc-hoja-nota .icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;}

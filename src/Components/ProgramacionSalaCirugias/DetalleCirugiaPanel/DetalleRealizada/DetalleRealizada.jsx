@@ -12,6 +12,7 @@ import {
   SALAS, duracionLabel, edadDetalleLabel, fechaHoraRangoLabel, fechaHoraTrazaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { balanceInsumos, hitosCierre } from '@/hooks/ProgramacionSalaCirugias/detalleRealizada/detalleRealizada';
+import { estadoCierre } from '@/hooks/ProgramacionSalaCirugias/cierre/cierre';
 
 function Fact({ label, value }) {
   return (
@@ -39,10 +40,11 @@ function Stat({ label, value, hint }) {
 // lectura; lo único accionable es lo que falta cerrar (registrar consumo) y
 // las hojas de consumo. Se monta dentro del mismo modal de DetalleCirugiaPanel.
 export default function DetalleRealizada({
-  cirugia, onClose, onVerEnCanastas, onAbrirHoja, onAbrirHojaAlt,
+  cirugia, hoja, onClose, onVerEnCanastas, onAbrirHoja,
 }) {
   const balance = balanceInsumos(cirugia);
-  const hitos = hitosCierre(cirugia);
+  const cierre = estadoCierre(cirugia, hoja);
+  const hitos = hitosCierre(cirugia, hoja);
   const { paciente } = cirugia;
   const sala = SALAS.find((s) => s.value === cirugia.salaId)?.descripcion;
   const duracionMin = duracionLabel(cirugia.horaInicio, cirugia.horaFin);
@@ -62,9 +64,9 @@ export default function DetalleRealizada({
           <div className="dcr-hero-main">
             <div className="dcr-kicker">
               <span>Programación {cirugia.id}</span>
-              {balance.consumoRegistrado
-                ? <Badge tone="success">Consumo registrado</Badge>
-                : <Badge tone="warn">Falta registrar consumo</Badge>}
+              {cierre.completo
+                ? <Badge tone="success">Cierre completo</Badge>
+                : <Badge tone="warn">{`Falta: ${cierre.faltan.join(' y ')}`}</Badge>}
             </div>
             <h4 className="dcr-title">{cirugia.procedimientoPrincipal}</h4>
             <p className="dcr-when">
@@ -194,10 +196,12 @@ export default function DetalleRealizada({
 
       <div className="dcp-actions dcr-actions">
         <div className="dcp-actions-estado">
-          <Button variant="secondary-accent" icon={LuClipboardList} onClick={onAbrirHoja}>Hoja de consumo</Button>
-          <Button variant="secondary-accent" icon={LuClipboardList} onClick={onAbrirHojaAlt}>Hoja de consumo (alternativa)</Button>
+          {/* Orden del cierre: primero la hoja de consumo (precarga el uso de la canasta), después el consumo y la devolución. */}
+          <Button variant={cierre.hojaRegistrada ? 'secondary-accent' : 'primary'} icon={LuClipboardList} onClick={onAbrirHoja}>
+            {cierre.hojaRegistrada ? 'Hoja de consumo' : 'Registrar hoja de consumo'}
+          </Button>
           <Button
-            variant={balance.consumoRegistrado ? 'secondary-accent' : 'primary'}
+            variant={cierre.hojaRegistrada && !balance.consumoRegistrado ? 'primary' : 'secondary-accent'}
             icon={LuPackageMinus}
             onClick={() => onVerEnCanastas(cirugia)}
           >

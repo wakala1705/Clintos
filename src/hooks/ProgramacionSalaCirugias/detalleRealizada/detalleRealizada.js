@@ -2,6 +2,7 @@
 // (entregado / usado / devuelto) y línea de tiempo del cierre. Sin React; usa
 // solo las funciones de cantidades del mock (ver __tests__/).
 import { cantidadDevuelta, cantidadRecibida } from '../mockCirugiaData.js';
+import { hojaRegistrada } from '../cierre/cierre.js';
 
 // Cantidades por insumo de la canasta. `usado` es null mientras el consumo no
 // se registra (no se asume que se usó todo): la UI muestra "—".
@@ -27,10 +28,11 @@ export function balanceInsumos(cirugia) {
 }
 
 // Hitos del cierre administrativo de la cirugía, en orden. Los que ya
-// ocurrieron llevan quién y cuándo (`hecho`); recepción y consumo, si faltan,
-// salen como `pendiente`. No hay registro de quién marcó la cirugía como
+// ocurrieron llevan quién y cuándo (`hecho`); recepción, hoja de consumo y
+// consumo, si faltan, salen como `pendiente`. `hoja` es la hoja de consumo
+// guardada de la cirugía (o null); registrarla no lleva usuario, solo fecha. No hay registro de quién marcó la cirugía como
 // realizada, así que no es un hito.
-export function hitosCierre(cirugia) {
+export function hitosCierre(cirugia, hoja = null) {
   const hitos = [];
   const { canasta, farmacia } = cirugia;
   if (farmacia?.fechaSolicitud) {
@@ -49,6 +51,15 @@ export function hitosCierre(cirugia) {
   } else {
     hitos.push({
       key: 'recepcion', estado: 'pendiente', label: 'Canasta por recibir', usuario: null, fecha: null,
+    });
+  }
+  if (hojaRegistrada(hoja)) {
+    hitos.push({
+      key: 'hoja', estado: 'hecho', label: 'Hoja de consumo registrada', usuario: null, fecha: hoja.registradaEn ?? null,
+    });
+  } else {
+    hitos.push({
+      key: 'hoja', estado: 'pendiente', label: 'Hoja de consumo por registrar', usuario: null, fecha: null,
     });
   }
   if (canasta?.consumo) {

@@ -1,18 +1,25 @@
 'use client';
 
-import { LuMinus, LuPackageCheck, LuPlus } from 'react-icons/lu';
+import {
+  LuInfo, LuMinus, LuPackageCheck, LuPlus,
+} from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 import InsumosBuscador from '../InsumosBuscador/InsumosBuscador';
 import {
   CANASTA_ESTADOS_RECIBIDOS, cantidadRecibida, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { lineaConsumo, resumenDevolucion } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { hojaRegistrada, precargaConsumoDesdeHoja } from '@/hooks/ProgramacionSalaCirugias/cierre/cierre';
+import { obtenerHojaConsumo } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
 import './ConsumoTab.css';
 
 // Pestaña "Consumo y devolución": por insumo, lo recibido, lo usado (editable
 // hasta registrar) y lo que vuelve a farmacia (recibido − usado). Registrar
 // crea la devolución (registrarConsumo -> guardarDevolucion), que también se ve
-// en la ventana "Devoluciones en Cirugías" de Programación.
+// en la ventana "Devoluciones en Cirugías" de Programación. Si la hoja de
+// consumo de la cirugía ya está registrada, precarga lo usado por nombre de
+// insumo (ver precargaConsumoDesdeHoja): el usuario lo confirma o corrige antes
+// de registrar; lo que edite a mano manda sobre la precarga.
 export default function ConsumoTab({
   cirugia, draft, onDraftChange, onRegistrarConsumo,
 }) {
@@ -30,7 +37,9 @@ export default function ConsumoTab({
 
   const consumo = cirugia.canasta.consumo;
   const usadoDraft = draft.usado ?? {};
-  const usados = consumo ? consumo.usados : usadoDraft;
+  const hoja = obtenerHojaConsumo(cirugia.id);
+  const precarga = precargaConsumoDesdeHoja(cirugia, hoja);
+  const usados = consumo ? consumo.usados : { ...precarga.usados, ...usadoDraft };
   const filas = cirugia.canasta.items.map((item) => {
     const recibido = cantidadRecibida(item);
     const usado = usados[item.nombre] ?? recibido;
@@ -52,6 +61,16 @@ export default function ConsumoTab({
   return (
     <>
       <div className="cnc-tab-body">
+        {!consumo && (
+          <p className="cnc-hoja-nota" role="status">
+            <LuInfo className="icon" aria-hidden="true" />
+            {!hojaRegistrada(hoja)
+              ? 'La hoja de consumo aún no está registrada. Regístrala primero: precarga lo usado de esta canasta.'
+              : precarga.coincidencias === 0
+                ? 'La hoja de consumo usa otro listado de materiales: ningún insumo coincide. Revisa lo usado a mano.'
+                : `Lo usado se precargó desde la hoja de consumo (${precarga.coincidencias} de ${precarga.total} insumos). Confírmalo o corrígelo.`}
+          </p>
+        )}
         {filas.length > 8 && (
           <InsumosBuscador value={busqueda} onChange={(v) => onDraftChange({ busquedaInsumo: v })} />
         )}

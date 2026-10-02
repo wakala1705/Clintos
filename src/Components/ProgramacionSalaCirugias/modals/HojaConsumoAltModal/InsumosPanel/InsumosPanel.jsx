@@ -1,6 +1,6 @@
 'use client';
 
-import { LuCheckCheck, LuInfo, LuPlus, LuTrash2, LuTriangleAlert } from 'react-icons/lu';
+import { LuCheckCheck, LuInfo, LuPlus, LuTriangleAlert } from 'react-icons/lu';
 import './InsumosPanel.css';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
@@ -13,7 +13,6 @@ import {
 // Columna derecha: paquete, progreso del consumo y tabla de insumos con consumido editable.
 export default function InsumosPanel({ materiales, onChange }) {
   const set = (id, campo, valor) => onChange(materiales.map((m) => (m.id === id ? { ...m, [campo]: valor } : m)));
-  const quitar = (id) => onChange(materiales.filter((m) => m.id !== id));
   const registrados = materialesConConsumo(materiales).length;
   const completo = consumoCompleto(materiales);
   const tot = totales(materiales);
@@ -58,7 +57,6 @@ export default function InsumosPanel({ materiales, onChange }) {
               <th className="hca-num">Entregado</th>
               <th className="hca-num">Consumido</th>
               <th className="hca-num">Devuelto</th>
-              <th className="hca-col-accion"><span className="hca-sr-only">Acciones</span></th>
             </tr>
           </thead>
           <tbody>
@@ -118,11 +116,6 @@ export default function InsumosPanel({ materiales, onChange }) {
                     />
                   </td>
                   <td className="hca-num">{celdaDevuelto}</td>
-                  <td className="hca-col-accion">
-                    <button type="button" className="hca-quitar" aria-label={`Quitar ${nombre}`} onClick={() => quitar(m.id)}>
-                      <LuTrash2 className="icon" aria-hidden="true" />
-                    </button>
-                  </td>
                 </tr>
               );
             })}
@@ -133,7 +126,6 @@ export default function InsumosPanel({ materiales, onChange }) {
               <td className="hca-num">{tot.entregado}</td>
               <td className="hca-num">{registrados ? tot.consumido : '—'}</td>
               <td className="hca-num">{registrados ? tot.devuelto : '—'}</td>
-              <td />
             </tr>
           </tfoot>
         </table>

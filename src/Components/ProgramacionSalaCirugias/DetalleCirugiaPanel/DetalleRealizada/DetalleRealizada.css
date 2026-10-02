@@ -40,9 +40,14 @@
 .dcr-stat-hint{font-size:var(--fs-xs);color:var(--ink-500);}
 
 .dcr-grid{
-  display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:12px;align-items:start;
+  /* Las dos columnas miden lo mismo y ocupan al menos el alto que queda. El alto mínimo lo da
+   la columna izquierda (qué se hizo + cierre, que crece con los hitos): la tarjeta de insumos
+   (contain:size) no empuja la fila y su tabla scrollea por dentro. */
+  flex:1 0 auto;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr);gap:12px;align-items:stretch;
 }
-.dcr-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.dcr-col{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0;}
+.dcr-col > .dcr-card:last-child{flex:1;}
+.dcr-grid > .dcr-card{min-height:0;contain:size;}
 .dcr-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
   padding:14px 20px;min-width:0;display:flex;flex-direction:column;gap:10px;
@@ -85,7 +90,7 @@
 .dcr-alert .icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;}
 .dcr-empty{margin:0;padding:16px 0;color:var(--ink-500);font-size:var(--fs-base);}
 
-.dcr-table-wrap{overflow:auto;max-height:300px;border:1px solid var(--border);border-radius:var(--radius);}
+.dcr-table-wrap{overflow:auto;flex:1;min-height:0;border:1px solid var(--border);border-radius:var(--radius);}
 .dcr-table{width:100%;border-collapse:collapse;}
 .dcr-table th{
   position:sticky;top:0;z-index:var(--z-sticky);text-align:left;padding:10px 14px;

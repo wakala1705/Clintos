@@ -13,6 +13,7 @@ import InsumosPanel from './InsumosPanel/InsumosPanel';
 import {
   construirHojaConsumo, guardarHojaConsumo, materialesConExceso, obtenerHojaConsumo,
 } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
+import { ahoraDemo, fechaHoraLocalISO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Versión alternativa de la hoja de consumo (ver HojaConsumoModal): contexto en una barra,
 // formulario a la izquierda e insumos a la derecha. Comparte datos guardados con la otra.
@@ -33,7 +34,7 @@ export default function HojaConsumoAltModal({ cirugia, onClose }) {
 
   function registrar() {
     if (hayExceso) return;
-    guardarHojaConsumo({ ...hoja, estado: 'registrada' });
+    guardarHojaConsumo({ ...hoja, estado: 'registrada', registradaEn: fechaHoraLocalISO(ahoraDemo()) });
     onClose();
   }
 

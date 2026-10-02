@@ -49,7 +49,7 @@ test('balanceInsumos: una cirugía sin canasta no falla', () => {
 test('hitosCierre: marca como pendiente lo que falta (consumo)', () => {
   const h = hitosCierre(base());
   assert.deepEqual(h.map((x) => [x.key, x.estado]), [
-    ['solicitud', 'hecho'], ['recepcion', 'hecho'], ['consumo', 'pendiente'],
+    ['solicitud', 'hecho'], ['recepcion', 'hecho'], ['hoja', 'pendiente'], ['consumo', 'pendiente'],
   ]);
   assert.equal(h[1].usuario, 'Ana');
   assert.equal(h[1].label, 'Canasta recibida');
@@ -63,14 +63,15 @@ test('hitosCierre: con novedades, consumo y devoluciones, en orden', () => {
     { consecutivo: 7, usuario: 'Luis', fecha: '2026-10-02T10:05', items: [] },
     { consecutivo: 8, usuario: 'Luis', fecha: '2026-10-02T11:00', items: [] },
   ];
-  const h = hitosCierre(c);
-  assert.deepEqual(h.map((x) => x.key), ['solicitud', 'recepcion', 'consumo', 'devolucion-7', 'devolucion-8']);
+  const h = hitosCierre(c, { estado: 'registrada', registradaEn: '2026-10-02T09:50', materiales: [] });
+  assert.deepEqual(h.map((x) => x.key), ['solicitud', 'recepcion', 'hoja', 'consumo', 'devolucion-7', 'devolucion-8']);
+  assert.equal(h[2].fecha, '2026-10-02T09:50');
   assert.equal(h[1].label, 'Canasta recibida con novedades');
   assert.ok(h.every((x) => x.estado === 'hecho'));
-  assert.equal(h[3].label, 'Devolución a farmacia · N.º 7');
+  assert.equal(h[4].label, 'Devolución a farmacia · N.º 7');
 });
 
 test('hitosCierre: sin recepción ni farmacia deja recepción y consumo pendientes', () => {
   const h = hitosCierre({ canasta: { items: [] } });
-  assert.deepEqual(h.map((x) => [x.key, x.estado]), [['recepcion', 'pendiente'], ['consumo', 'pendiente']]);
+  assert.deepEqual(h.map((x) => [x.key, x.estado]), [['recepcion', 'pendiente'], ['hoja', 'pendiente'], ['consumo', 'pendiente']]);
 });
