@@ -1,0 +1,4 @@
+/* Ícono dentro de la píldora de <Badge> (Badge.module.css solo define el
+   texto). */
+.edb-badge{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.edb-badge .icon{width:13px;height:13px;flex-shrink:0;}

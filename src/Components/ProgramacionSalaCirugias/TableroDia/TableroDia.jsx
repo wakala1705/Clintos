@@ -1,18 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuCalendarDays } from 'react-icons/lu';
-// Tokens (:root), reset del shell y reglas compartidas de la feature: los
-// mismos 2 archivos que carga CanastasCirugia.jsx, porque esta ruta es otra
-// página de la misma feature (ProgramacionSalaCirugias).
-import '../ProgramacionSalaCirugias.css';
-import '../shared/shared.css';
+import { LuLayoutDashboard } from 'react-icons/lu';
 import './TableroDia.css';
-import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
-import Sidebar from '@/Components/Sidebar/Sidebar';
-import Topbar from '@/Components/Topbar/Topbar';
-import Button from '@/Components/Button/Button';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CanastasFechaNav from '../canastas/CanastasFechaNav/CanastasFechaNav';
 import DetalleCirugiaPanel from '../DetalleCirugiaPanel/DetalleCirugiaPanel';
@@ -26,25 +18,24 @@ import {
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import { agruparPorSala, kpisDelDia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 
-// "Tablero de cirugías del día" (coordinación): una columna por sala de la
-// sede con las cirugías del día en orden horario, KPIs arriba y las acciones
-// de la agenda (reprogramar, cancelar, marcar realizada/incumplida) desde el
-// "⋯" de cada tarjeta. Editar no se ofrece acá: pasa por el wizard de la
-// agenda. Spec: docs/superpowers/specs/2026-10-02-tablero-cirugias-dia-design.md
-export default function TableroDia() {
+// "Tablero del día" (coordinación), en un modal grande (90% de alto y ancho)
+// que abre el Panel general: una columna por sala de la sede con las cirugías
+// del día en orden horario, KPIs arriba y las acciones de la agenda
+// (reprogramar, cancelar, marcar realizada/incumplida) desde el "⋯" de cada
+// tarjeta. Editar no se ofrece acá: pasa por el wizard de Programación.
+// `onCirugiaActualizada` avisa al Panel general de cada cambio para que su
+// tabla quede al día sin re-fetch.
+export default function TableroDia({ onClose, onCirugiaActualizada }) {
   const router = useRouter();
+  const cardRef = useRef(null);
   const [sedeId, setSedeId] = useState('02');
   const [fecha, setFecha] = useState(() => fechaISO(new Date()));
   const [cirugias, setCirugias] = useState(null); // null = cargando
   const [selectedId, setSelectedId] = useState(null);
 
   const salasSede = SALAS.filter((s) => s.sedeId === sedeId);
-
-  useEffect(() => {
-    const cleanupChrome = initShellChrome({ startCollapsed: true });
-    return () => cleanupChrome?.();
-  }, []);
 
   // fetchAgendaRango filtra por una sola sala: se pide una por sala de la sede.
   useEffect(() => {
@@ -71,6 +62,7 @@ export default function TableroDia() {
         ? lista.map((c) => (c.id === actualizada.id ? actualizada : c))
         : [...lista, actualizada];
     });
+    onCirugiaActualizada?.(actualizada);
   }
 
   const {
@@ -80,6 +72,19 @@ export default function TableroDia() {
     handleMarcarRealizada, handleMarcarIncumplida,
     handlePedirInsumos, handleCancelarSolicitud,
   } = useCirugiasAcciones({ applyUpdated });
+
+  // Con el detalle o un modal de acción encima, el foco y Escape son de ese
+  // diálogo, no de este.
+  const subdialogoAbierto = selectedId !== null || modal !== null;
+  useModalFocusTrap(cardRef, !subdialogoAbierto);
+  useEffect(() => {
+    if (subdialogoAbierto) return undefined;
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [subdialogoAbierto, onClose]);
 
   function handleSedeChange(v) {
     setSedeId(v);
@@ -100,62 +105,65 @@ export default function TableroDia() {
   const selectedCirugia = lista.find((c) => c.id === selectedId) ?? null;
 
   return (
-    <div className="app">
-      <Sidebar />
-
-      <div className="main">
-        <Topbar
-          section="Cirugía"
-          page="Tablero de cirugías"
-          user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
-        />
-
-        <div className="content td-content">
-          <div className="psc-page-header">
-            <div>
-              <h1>Tablero de cirugías</h1>
-              <p>Supervisa las cirugías del día por sala y atiende las que requieren acción.</p>
-            </div>
-            <div className="psc-page-header-actions">
-              <div className="td-sede">
-                <FormSelect
-                  id="td-sede"
-                  ariaLabel="Sede"
-                  value={sedeId}
-                  onChange={handleSedeChange}
-                  options={SEDES}
-                />
+    <>
+      <div className="modal-overlay open" role="presentation" onClick={onClose}>
+        <div
+          ref={cardRef}
+          className="modal-card td-modal-card"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="td-title"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ModalHeader
+            icon={LuLayoutDashboard}
+            tone="primary"
+            title="Tablero del día"
+            titleId="td-title"
+            subtitle="Supervisa las cirugías del día por sala y atiende las que requieren acción."
+            onClose={onClose}
+            closeLabel="Cerrar tablero"
+            trailing={(
+              <div className="td-controls">
+                <div className="td-sede">
+                  <FormSelect
+                    id="td-sede"
+                    ariaLabel="Sede"
+                    value={sedeId}
+                    onChange={handleSedeChange}
+                    options={SEDES}
+                  />
+                </div>
+                <CanastasFechaNav fecha={fecha} onFechaChange={handleFechaChange} />
               </div>
-              <CanastasFechaNav fecha={fecha} onFechaChange={handleFechaChange} />
-              <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/cirugia/programacion')}>
-                Ver agenda
-              </Button>
-            </div>
-          </div>
+            )}
+          />
 
-          <div className="td-kpis">
-            <TableroKpis kpis={kpis} />
-          </div>
-
-          {cirugias === null ? (
-            <p className="td-estado" role="status">Cargando cirugías…</p>
-          ) : (
-            <div className="td-board">
-              {grupos.map((grupo) => (
-                <ColumnaSala
-                  key={grupo.sala.value}
-                  grupo={grupo}
-                  ahora={ahora}
-                  selectedId={selectedId}
-                  onSelect={setSelectedId}
-                  onReprogramar={handleReprogramarCirugia}
-                  onMarcarRealizada={handleMarcarRealizada}
-                  onMarcarIncumplida={handleMarcarIncumplida}
-                  onCancelar={handleCancelarCirugia}
-                />
-              ))}
+          <div className="td-body">
+            <div className="td-kpis">
+              <TableroKpis kpis={kpis} />
             </div>
-          )}
+
+            {cirugias === null ? (
+              <p className="td-estado" role="status">Cargando cirugías…</p>
+            ) : (
+              <div className="td-board">
+                {grupos.map((grupo) => (
+                  <ColumnaSala
+                    key={grupo.sala.value}
+                    grupo={grupo}
+                    ahora={ahora}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                    onReprogramar={handleReprogramarCirugia}
+                    onMarcarRealizada={handleMarcarRealizada}
+                    onMarcarIncumplida={handleMarcarIncumplida}
+                    onCancelar={handleCancelarCirugia}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -182,6 +190,6 @@ export default function TableroDia() {
         <span className="psc-toast-dot" />
         <span>{toast}</span>
       </div>
-    </div>
+    </>
   );
 }

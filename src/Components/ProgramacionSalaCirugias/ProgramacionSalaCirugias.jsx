@@ -4,7 +4,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuHistory, LuLayoutDashboard, LuPackage } from 'react-icons/lu';
+import { LuHistory, LuPackage } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -355,13 +355,6 @@ export default function ProgramacionSalaCirugias() {
                   a /cirugia/canastas -- por ahora una
                   página en blanco (ver CanastasCirugia.jsx), el contenido
                   real se construye en un paso aparte. */}
-              <Button
-                variant="secondary-accent"
-                icon={LuLayoutDashboard}
-                onClick={() => router.push('/cirugia/tablero')}
-              >
-                Tablero del día
-              </Button>
               <Button
                 variant="secondary-accent"
                 icon={LuPackage}

@@ -10,6 +10,8 @@
    con 12) -- encargo explícito para que no "salte" de tamaño al cambiar de
    tab. */
 .modal-card.dcp-modal-card{width:95vw;max-width:1400px;height:90vh;max-height:90vh;}
+/* Cirugía realizada (DetalleRealizada.jsx): 90% de ancho y de alto (encargo explícito). */
+.modal-card.dcp-modal-card.dcp-modal-realizada{width:90vw;max-width:none;}
 
 /* Caja de datos (mismo fondo/borde que .apm-patient-info en
    AgregarProcedimientoModal.css) partida en 2 bloques: Programación (lo que

@@ -6,6 +6,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
+import DetalleRealizada from './DetalleRealizada/DetalleRealizada';
 import PersonalTab from './tabs/PersonalTab/PersonalTab';
 import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
@@ -117,7 +118,7 @@ export default function DetalleCirugiaPanel({
   // ya recibida y la cirugía en condiciones de cerrarse, "Marcar como realizada" es la azul.
   const realizadaEsPrincipal = puedeMarcarRealizada && CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado);
 
-  const body = (
+  const bodyAbierta = (
     <>
       <ModalHeader
         title="Detalle de la cirugía"
@@ -250,11 +251,24 @@ export default function DetalleCirugiaPanel({
     </>
   );
 
+  // Una cirugía realizada ya no se prepara ni se reprograma: se muestra su resultado y
+  // su cierre (ver DetalleRealizada.jsx) en el mismo modal, a 90% de ancho y alto.
+  const esRealizada = cirugia.estado === 'realizada';
+  const body = esRealizada ? (
+    <DetalleRealizada
+      cirugia={cirugia}
+      onClose={onClose}
+      onVerEnCanastas={onVerEnCanastas}
+      onAbrirHoja={() => setHojaGastoAbierta(true)}
+      onAbrirHojaAlt={() => setHojaGastoAltAbierta(true)}
+    />
+  ) : bodyAbierta;
+
   return (
     <>
       <div className="modal-overlay open" role="presentation" onClick={onClose}>
         <div
-          className="modal-card dcp-modal-card"
+          className={`modal-card dcp-modal-card${esRealizada ? ' dcp-modal-realizada' : ''}`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="dcp-title"

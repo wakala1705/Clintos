@@ -23,7 +23,7 @@ import { ESTADOS_TERMINALES_CIRUGIA, ahoraDemo, cirugiaYaInicio } from '@/hooks/
 // (CirugiaCard.css); mientras el menú está abierto se fuerza visible, porque
 // el mouse sale de la tarjeta hacia el menú portado a document.body.
 export default function CirugiaCardMenu({
-  cirugia, onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
+  cirugia, onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar, size = 'sm',
 }) {
   const [open, setOpen] = useState(false);
   const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
@@ -39,7 +39,7 @@ export default function CirugiaCardMenu({
     <div className={`ccm-wrap${open ? ' open' : ''}`}>
       <DropdownMenu
         label={`Más opciones para la cirugía de ${cirugia.paciente.nombre}`}
-        size="sm"
+        size={size}
         onOpenChange={setOpen}
         items={[
           // Sin `onEditar` (tablero del día) la acción no se ofrece.

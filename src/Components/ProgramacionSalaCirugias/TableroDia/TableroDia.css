@@ -1,8 +1,17 @@
-/* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
-   ../ProgramacionSalaCirugias.css; .psc-toast y .psc-agenda-nav-btn de
-   ../shared/shared.css. Acá solo lo propio de esta página. */
+/* Base de modal (.modal-overlay/.modal-card), .psc-toast y .psc-agenda-nav-btn
+   vienen de ../shared/shared.css (importado por la página que lo monta).
+   Acá solo lo propio del tablero. */
 
+/* 90% de alto y ancho del viewport (encargo explícito). */
+.modal-card.td-modal-card{width:90vw;max-width:none;height:90vh;max-height:90vh;}
+
+/* Sede + navegador de día, a la derecha del título dentro del header. */
+.td-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
 .td-sede{width:220px;flex-shrink:0;}
+
+.td-body{
+  flex:1;min-height:0;padding:16px 24px 24px;display:flex;flex-direction:column;gap:16px;
+}
 
 /* KPIs: 6 columnas en desktop, 3 en tablet. */
 .td-kpis{
@@ -21,6 +30,6 @@
 
 @media (max-width:1024px){
   .td-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}
-  .td-content{overflow-y:auto;}
-  .td-board{min-height:420px;}
+  .td-body{overflow-y:auto;}
+  .td-board{min-height:420px;flex:none;}
 }

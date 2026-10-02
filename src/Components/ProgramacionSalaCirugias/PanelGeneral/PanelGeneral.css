@@ -1,0 +1,29 @@
+/* Shell (.app/.main/.content), tokens, .psc-page-header, .filter-bar,
+   .search-field y .filter-spacer vienen de ../ProgramacionSalaCirugias.css y
+   ../shared/shared.css. Acá solo lo propio de esta página; cada bloque tiene
+   su CSS en su carpeta. */
+
+/* La tarjeta de la tabla ocupa el alto restante y scrollea por dentro. */
+.pg-cir-content{overflow:hidden;}
+
+/* KPIs: 5 columnas en desktop, 3 en tablet. */
+.pg-cir-kpis{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;flex-shrink:0;
+}
+
+.pg-cir-panel{
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+
+.pg-cir-estado{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  margin:0;padding:48px 24px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);
+}
+.pg-cir-estado p{margin:0;}
+
+@media (max-width:1024px){
+  .pg-cir-content{overflow-y:auto;}
+  .pg-cir-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .pg-cir-panel{min-height:480px;flex:none;}
+}

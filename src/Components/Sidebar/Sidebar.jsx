@@ -10,7 +10,7 @@ import {
   LuBoxes,
   LuCalendarClock,
   LuCalendarDays,
-  LuLayoutDashboard,
+  LuLayoutGrid,
   LuPackage,
   LuCalendarPlus,
   LuChartBar,
@@ -66,10 +66,10 @@ export default function Sidebar() {
   const isAdmisiones = pathname === '/admisiones';
   // Cirugía: su propio módulo (antes un enlace dentro de Hospitalización). El
   // historial quirúrgico y la revisión de vencidas cuelgan de Programación.
-  const isCirugiaTablero = pathname.startsWith('/cirugia/tablero');
+  const isCirugiaPanel = pathname === '/cirugia';
   const isCirugiaCanastas = pathname.startsWith('/cirugia/canastas');
   const isCirugiaProgramacion = pathname.startsWith('/cirugia/programacion') || pathname.startsWith('/cirugia/historial-quirurgico');
-  const isCirugia = isCirugiaProgramacion || isCirugiaTablero || isCirugiaCanastas;
+  const isCirugia = isCirugiaPanel || isCirugiaProgramacion || isCirugiaCanastas;
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
   const isTriage = pathname.startsWith('/hospitalizacion/triage');
@@ -133,8 +133,8 @@ export default function Sidebar() {
           <LuChevronDown className="icon chev" />
         </div>
         <div className="nav-body">
+          <Link href="/cirugia" className={`nav-subitem${isCirugiaPanel ? ' active' : ''}`}><LuLayoutGrid className="icon" />Panel general</Link>
           <Link href="/cirugia/programacion" className={`nav-subitem${isCirugiaProgramacion ? ' active' : ''}`}><LuCalendarDays className="icon" />Programación</Link>
-          <Link href="/cirugia/tablero" className={`nav-subitem${isCirugiaTablero ? ' active' : ''}`}><LuLayoutDashboard className="icon" />Tablero</Link>
           <Link href="/cirugia/canastas" className={`nav-subitem${isCirugiaCanastas ? ' active' : ''}`}><LuPackage className="icon" />Canastas</Link>
         </div>
       </div>

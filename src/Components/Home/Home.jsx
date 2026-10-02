@@ -14,7 +14,6 @@ import {
   LuBed,
   LuCalendarClock,
   LuCalendarDays,
-  LuLayoutDashboard,
   LuPackage,
   LuCalendarPlus,
   LuClipboardCheck,
@@ -165,17 +164,17 @@ const MODULE_GROUPS = [
     module: 'asistencial',
     items: [
       {
+        title: 'Panel general',
+        description: 'Estado de las salas y programación quirúrgica del día.',
+        icon: LuLayoutGrid,
+        href: '/cirugia',
+        enabled: true,
+      },
+      {
         title: 'Programación',
         description: 'Agenda y gestiona la ocupación de las salas de cirugía.',
         icon: LuCalendarDays,
         href: '/cirugia/programacion',
-        enabled: true,
-      },
-      {
-        title: 'Tablero',
-        description: 'Supervisa las cirugías del día por sala y atiende las que requieren acción.',
-        icon: LuLayoutDashboard,
-        href: '/cirugia/tablero',
         enabled: true,
       },
       {

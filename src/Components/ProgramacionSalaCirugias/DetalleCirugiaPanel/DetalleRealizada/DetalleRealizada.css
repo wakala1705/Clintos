@@ -1,0 +1,123 @@
+/* .dcp-actions / .dcp-actions-estado (barra de acciones) vienen de
+   ../DetalleCirugiaPanel.css. Acá solo el cuerpo propio de la vista de una
+   cirugía realizada. Color de acento = el de "realizada" en las tarjetas
+   (--blue-bg / --blue-fg, ver CirugiaCard.css). */
+
+.dcr-body{
+  flex:1;min-height:0;overflow-y:auto;padding:12px 24px;display:flex;flex-direction:column;gap:12px;
+}
+
+/* Resumen: datos a la izquierda, balance de insumos a la derecha. */
+.dcr-hero{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;flex-shrink:0;
+  background:var(--blue-bg);border:1px solid var(--border);border-left:4px solid var(--blue-fg);
+  border-radius:var(--radius-lg);padding:14px 20px;
+}
+.dcr-hero-main{min-width:0;display:flex;flex-direction:column;gap:6px;}
+.dcr-kicker{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--blue-fg);
+}
+.dcr-title{margin:0;font-size:var(--fs-2xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.dcr-when{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
+.dcr-facts{
+  margin:8px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 24px;
+}
+.dcr-fact{min-width:0;}
+.dcr-fact dt{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.dcr-fact dd{margin:2px 0 0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+
+.dcr-stats{display:flex;align-items:stretch;gap:12px;}
+.dcr-stat{
+  min-width:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;
+}
+.dcr-stat-value{font-size:var(--fs-4xl);font-weight:var(--fw-bold);color:var(--ink-900);line-height:1.1;}
+.dcr-stat-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.dcr-stat-hint{font-size:var(--fs-xs);color:var(--ink-500);}
+
+.dcr-grid{
+  display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:12px;align-items:start;
+}
+.dcr-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.dcr-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px 20px;min-width:0;display:flex;flex-direction:column;gap:10px;
+}
+.dcr-card-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.dcr-sub{
+  margin:4px 0 0;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+
+.dcr-procs,.dcr-personal,.dcr-equipos ul{list-style:none;margin:0;padding:0;}
+.dcr-procs,.dcr-equipos ul{display:flex;flex-direction:column;}
+.dcr-procs{gap:10px;}
+.dcr-proc-head{display:flex;justify-content:space-between;gap:12px;}
+.dcr-proc-head strong{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.dcr-proc-head span{font-size:var(--fs-base);color:var(--ink-500);white-space:nowrap;}
+.dcr-proc-notas{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+/* Equipo humano en 2 columnas (rol arriba, nombre abajo): ocupa la mitad del alto. */
+.dcr-personal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;}
+.dcr-personal li{display:flex;flex-direction:column;gap:1px;font-size:var(--fs-base);}
+.dcr-personal li span{font-size:var(--fs-sm);color:var(--ink-500);}
+.dcr-personal li strong{font-weight:var(--fw-medium);color:var(--ink-900);}
+.dcr-equipos li{
+  display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);
+  font-size:var(--fs-base);
+}
+.dcr-equipos li:last-child{border-bottom:none;}
+.dcr-equipos li span{color:var(--ink-500);}
+.dcr-equipos li strong{font-weight:var(--fw-medium);color:var(--ink-900);}
+.dcr-equipos summary{
+  cursor:pointer;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--primary);padding:4px 0;
+}
+.dcr-equipos summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.dcr-equipos[open] summary{margin-bottom:4px;}
+
+.dcr-alert{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--radius);
+  background:var(--amber-bg);color:var(--amber-fg);font-size:var(--fs-base);
+}
+.dcr-alert .icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;}
+.dcr-empty{margin:0;padding:16px 0;color:var(--ink-500);font-size:var(--fs-base);}
+
+.dcr-table-wrap{overflow:auto;max-height:300px;border:1px solid var(--border);border-radius:var(--radius);}
+.dcr-table{width:100%;border-collapse:collapse;}
+.dcr-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);text-align:left;padding:10px 14px;
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);white-space:nowrap;
+}
+.dcr-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:var(--fs-base);color:var(--ink-700);}
+.dcr-table tbody tr:last-child td{border-bottom:none;}
+.dcr-table .dcr-num{text-align:right;white-space:nowrap;}
+.dcr-table .dcr-cell-main{color:var(--ink-900);font-weight:var(--fw-medium);}
+
+/* Línea de tiempo del cierre: vertical, con la línea de unión a la izquierda. */
+.dcr-timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+.dcr-hito{
+  position:relative;display:grid;grid-template-columns:20px minmax(0,1fr);column-gap:10px;row-gap:2px;align-items:start;
+  padding-bottom:12px;
+}
+.dcr-hito:last-child{padding-bottom:0;}
+.dcr-hito::before{
+  content:'';position:absolute;left:9px;top:20px;bottom:0;width:2px;background:var(--green);
+}
+.dcr-hito:last-child::before{display:none;}
+.dcr-hito.pendiente::before{background:var(--border);}
+.dcr-hito .icon{width:18px;height:18px;grid-row:1 / span 2;color:var(--green);margin-top:1px;}
+.dcr-hito.pendiente .icon{color:var(--ink-400);}
+.dcr-hito-label{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.dcr-hito.pendiente .dcr-hito-label{color:var(--ink-500);}
+.dcr-hito-meta{font-size:var(--fs-sm);color:var(--ink-500);}
+
+@media (max-width:1024px){
+  .dcr-hero{grid-template-columns:minmax(0,1fr);}
+  .dcr-stats{justify-content:flex-start;}
+  .dcr-facts{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dcr-grid{grid-template-columns:minmax(0,1fr);}
+}
