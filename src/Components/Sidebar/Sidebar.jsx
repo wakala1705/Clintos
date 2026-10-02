@@ -17,6 +17,7 @@ import {
   LuChevronDown,
   LuChevronLeft,
   LuClipboardCheck,
+  LuFileInput,
   LuFileText,
   LuFlaskConical,
   LuFolder,
@@ -78,7 +79,8 @@ export default function Sidebar() {
   const isTrazabilidad = pathname === '/trazabilidad';
   const isFinanzas = isFacturas || isTrazabilidad;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
-  const isInsumosFarmacia = isSolicitudesInsumosFarmacia;
+  const isEntradasInsumosFarmacia = pathname === '/insumos-farmacia/entradas';
+  const isInsumosFarmacia = isSolicitudesInsumosFarmacia || isEntradasInsumosFarmacia;
   const isUtilitarios = pathname === '/utilitarios';
   const isConfiguracion = pathname === '/configuracion';
   const isKora = pathname === '/kora';
@@ -190,6 +192,7 @@ export default function Sidebar() {
         </div>
         <div className="nav-body">
           <Link href="/insumos-farmacia/solicitudes" className={`nav-subitem${isSolicitudesInsumosFarmacia ? ' active' : ''}`}><LuFileText className="icon" />Salidas asistenciales</Link>
+          <Link href="/insumos-farmacia/entradas" className={`nav-subitem${isEntradasInsumosFarmacia ? ' active' : ''}`}><LuFileInput className="icon" />Entradas asistenciales</Link>
         </div>
       </div>
 

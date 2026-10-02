@@ -43,10 +43,43 @@ test('precarga: un paquete con otro listado que la canasta no coincide con nada'
 
 test('estadoCierre: completo solo con hoja registrada Y consumo registrado', () => {
   const consumo = { usuario: 'Ana', fecha: '2026-10-02T10:00', usados: {} };
-  assert.deepEqual(estadoCierre(cirugia(), null).faltan, ['hoja de consumo', 'consumo y devolución']);
+  assert.deepEqual(estadoCierre(cirugia(), null).faltan, ['registro de consumo']);
   assert.deepEqual(estadoCierre(cirugia(), hoja([])).faltan, ['consumo y devolución']);
   assert.deepEqual(estadoCierre(cirugia({ consumo }), null).faltan, ['hoja de consumo']);
   const completo = estadoCierre(cirugia({ consumo }), hoja([]));
   assert.equal(completo.completo, true);
   assert.deepEqual(completo.faltan, []);
+});
+
+import { planRegistroConsumo, usadosDesdeMateriales } from '../cierre.js';
+
+const realizada = (extra = {}) => ({ ...cirugia(extra), estado: 'realizada' });
+
+test('usadosDesdeMateriales: funciona con el borrador (sin exigir hoja registrada)', () => {
+  const u = usadosDesdeMateriales(cirugia(), [mat('Gasas estériles', '7')]);
+  assert.deepEqual(u.usados, { 'Gasas estériles': 7 });
+});
+
+test('planRegistroConsumo: realizada con canasta recibida genera la devolución de lo no consumido', () => {
+  const p = planRegistroConsumo(realizada({ recepcion: { usuario: 'Ana', fecha: '2026-10-02T06:48', conNovedades: false } }), [mat('Gasas estériles', '7'), mat('Guantes', '1')]);
+  assert.equal(p.bloqueo, null);
+  assert.equal(p.generaDevolucion, true);
+  assert.equal(p.unidades, 3 + 3); // 10-7 y 4-1
+  assert.equal(p.insumos, 2);
+  assert.equal(p.sinDato, 1); // Clips: la hoja no lo informa -> usado completo
+});
+
+test('planRegistroConsumo: bloquea si la cirugía no está realizada o la canasta no se recibió', () => {
+  const recepcion = { usuario: 'Ana', fecha: '2026-10-02T06:48', conNovedades: false };
+  assert.match(planRegistroConsumo(cirugia({ recepcion }), []).bloqueo, /realizada/);
+  const sinRecibir = { estado: 'realizada', canasta: { items: [{ nombre: 'Gasas', cantidad: 2, solicitudFarmacia: 'solicitado' }] } };
+  assert.match(planRegistroConsumo(sinRecibir, []).bloqueo, /recibida/);
+});
+
+test('planRegistroConsumo: con el consumo ya registrado (p. ej. desde Canastas) no genera otra devolución', () => {
+  const consumo = { usuario: 'Ana', fecha: '2026-10-02T10:00', usados: {} };
+  const p = planRegistroConsumo(realizada({ recepcion: { usuario: 'Ana', fecha: 'x', conNovedades: false }, consumo }), [mat('Gasas estériles', '7')]);
+  assert.equal(p.bloqueo, null);
+  assert.equal(p.yaRegistrado, true);
+  assert.equal(p.generaDevolucion, false);
 });

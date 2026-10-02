@@ -65,7 +65,7 @@ export default function ConsumoTab({
           <p className="cnc-hoja-nota" role="status">
             <LuInfo className="icon" aria-hidden="true" />
             {!hojaRegistrada(hoja)
-              ? 'La hoja de consumo aún no está registrada. Regístrala primero: precarga lo usado de esta canasta.'
+              ? 'Lo habitual es registrar el consumo desde la hoja de consumo (en el detalle de la cirugía): registra el consumo y genera esta devolución en un solo paso.'
               : precarga.coincidencias === 0
                 ? 'La hoja de consumo usa otro listado de materiales: ningún insumo coincide. Revisa lo usado a mano.'
                 : `Lo usado se precargó desde la hoja de consumo (${precarga.coincidencias} de ${precarga.total} insumos). Confírmalo o corrígelo.`}

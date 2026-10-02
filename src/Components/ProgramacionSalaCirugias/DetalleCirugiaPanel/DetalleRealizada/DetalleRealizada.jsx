@@ -196,16 +196,12 @@ export default function DetalleRealizada({
 
       <div className="dcp-actions dcr-actions">
         <div className="dcp-actions-estado">
-          {/* Orden del cierre: primero la hoja de consumo (precarga el uso de la canasta), después el consumo y la devolución. */}
-          <Button variant={cierre.hojaRegistrada ? 'secondary-accent' : 'primary'} icon={LuClipboardList} onClick={onAbrirHoja}>
-            {cierre.hojaRegistrada ? 'Hoja de consumo' : 'Registrar hoja de consumo'}
+          {/* Una sola acción de cierre: la hoja de consumo registra el consumo y genera la devolución a farmacia. */}
+          <Button variant={cierre.completo ? 'secondary-accent' : 'primary'} icon={LuClipboardList} onClick={onAbrirHoja}>
+            {cierre.hojaRegistrada ? 'Hoja de consumo' : 'Registrar consumo'}
           </Button>
-          <Button
-            variant={cierre.hojaRegistrada && !balance.consumoRegistrado ? 'primary' : 'secondary-accent'}
-            icon={LuPackageMinus}
-            onClick={() => onVerEnCanastas(cirugia)}
-          >
-            {balance.consumoRegistrado ? 'Ver en Canastas' : 'Registrar consumo y devolución'}
+          <Button variant="secondary-accent" icon={LuPackageMinus} onClick={() => onVerEnCanastas(cirugia)}>
+            Ver en Canastas
           </Button>
         </div>
       </div>

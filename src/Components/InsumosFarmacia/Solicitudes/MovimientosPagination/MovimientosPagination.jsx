@@ -10,7 +10,7 @@ import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 // mayores, ver su comentario). .icon-btn-circle: vive en Topbar.css, ya
 // cargado por <Topbar> en Solicitudes.jsx.
 export default function MovimientosPagination({
-  page, pageSize, total, onChangePage,
+  page, pageSize, total, onChangePage, etiqueta = 'movimientos',
 }) {
   if (total === 0) return null;
 
@@ -21,7 +21,7 @@ export default function MovimientosPagination({
   return (
     <div className="mig-pagination">
       <span className="mig-pagination-label">
-        Mostrando <b>{start}–{end}</b> de <b>{total}</b> movimientos
+        Mostrando <b>{start}–{end}</b> de <b>{total}</b> {etiqueta}
       </span>
       <div className="mig-pagination-controls">
         <button

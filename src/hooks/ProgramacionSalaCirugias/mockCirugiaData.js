@@ -2484,3 +2484,21 @@ export function deshacerResolucion(snapshot) {
   const previos = new Map(snapshot.map((c) => [c.id, c]));
   CIRUGIAS = CIRUGIAS.map((c) => previos.get(c.id) ?? c);
 }
+
+// Todas las devoluciones a farmacia registradas desde Cirugía, con el contexto de su
+// cirugía (alimenta "Entradas asistenciales" del módulo contable: ahí se
+// registran todas las devoluciones). Devuelve copias: no expone el array interno.
+export function listarDevolucionesCirugia() {
+  return CIRUGIAS.flatMap((c) => (c.devoluciones ?? []).map((d) => ({
+    ...d,
+    items: d.items.map((i) => ({ ...i })),
+    cirugia: {
+      id: c.id,
+      sedeId: c.sedeId,
+      sala: SALAS.find((s) => s.value === c.salaId)?.descripcion ?? c.salaId,
+      paciente: c.paciente.nombre,
+      documento: c.paciente.documento,
+      procedimiento: c.procedimientoPrincipal,
+    },
+  })));
+}

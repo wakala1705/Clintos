@@ -82,7 +82,7 @@ export default function PanelGeneral() {
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
     handleMarcarRealizada, handleMarcarIncumplida,
-    handlePedirInsumos, handleCancelarSolicitud,
+    handlePedirInsumos, handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
 
   const lista = cirugias ?? [];
@@ -209,6 +209,7 @@ export default function PanelGeneral() {
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
         onCancelarSolicitud={handleCancelarSolicitud}
+        onConsumoRegistrado={handleConsumoRegistrado}
         onVerEnCanastas={(cirugia) => router.push(canastasHref(cirugia))}
       />
 

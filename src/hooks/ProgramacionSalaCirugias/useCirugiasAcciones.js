@@ -63,6 +63,18 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     showToast('Solicitud de insumos cancelada.');
   }
 
+  // "Registrar consumo" en la hoja de consumo: ya registró el consumo de la canasta y, si
+  // había algo sin usar, generó la devolución a farmacia (`devolucion`, o null).
+  function handleConsumoRegistrado(actualizada, devolucion) {
+    applyUpdated(actualizada);
+    if (!devolucion) {
+      showToast('Consumo registrado. No hay insumos por devolver a farmacia.');
+      return;
+    }
+    const unidades = devolucion.items.reduce((t, i) => t + i.cantidad, 0);
+    showToast(`Consumo registrado. Devolución N.º ${devolucion.consecutivo} generada: ${unidades} ${unidades === 1 ? 'unidad' : 'unidades'} a farmacia.`);
+  }
+
   return {
     modal,
     setModal,
@@ -76,5 +88,6 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleMarcarIncumplida,
     handlePedirInsumos,
     handleCancelarSolicitud,
+    handleConsumoRegistrado,
   };
 }

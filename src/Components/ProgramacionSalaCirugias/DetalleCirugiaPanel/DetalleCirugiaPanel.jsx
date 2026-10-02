@@ -48,7 +48,7 @@ function InfoItem({ label, value, wide = false }) {
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
   onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
-  onCancelarSolicitud, onVerEnCanastas,
+  onCancelarSolicitud, onVerEnCanastas, onConsumoRegistrado,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
   // Datos de contacto del paciente (tel., nivel, tipo de afiliado, dirección): se consultan poco, van plegados.
@@ -290,6 +290,7 @@ export default function DetalleCirugiaPanel({
       {hojaGastoAltAbierta && (
         <HojaConsumoAltModal
           cirugia={cirugia}
+          onConsumoRegistrado={onConsumoRegistrado}
           onClose={() => {
             setHojaGastoAltAbierta(false);
             setHoja(obtenerHojaConsumo(cirugia.id));

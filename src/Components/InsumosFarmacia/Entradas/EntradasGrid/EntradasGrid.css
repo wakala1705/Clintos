@@ -1,0 +1,5 @@
+/* .mig-grid/.mig-strong/.mig-num/.mig-ellipsis/.mig-grid-empty viven en
+   ../../Solicitudes/shared/shared.css. La grilla scrollea dentro de su
+   contenedor, con el encabezado fijo. */
+.mig-grid-scroll{flex:1;min-height:0;overflow:auto;}
+.ent-sep{color:var(--ink-400);}
