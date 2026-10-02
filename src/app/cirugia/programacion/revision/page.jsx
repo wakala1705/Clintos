@@ -6,5 +6,5 @@ import { redirect } from 'next/navigation';
 // implementada en @/Components/ProgramacionSalaCirugias/RevisionVencidas/
 // RevisionVencidas -- para reactivarla, volver a renderizar ese componente acá.
 export default function RevisionVencidasPage() {
-  redirect('/programacion-sala-cirugias');
+  redirect('/cirugia/programacion');
 }

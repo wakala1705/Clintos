@@ -38,7 +38,7 @@ export function paqueteDeCirugia(cirugia) {
   if (conocido) return { nombre: conocido.codigo, materiales: conocido.materiales };
   return {
     nombre: nombreCanasta || 'Sin paquete',
-    materiales: (cirugia?.canasta?.items ?? []).map((i) => ({ nombre: i.nombre, cantidad: i.cantidad })),
+    materiales: (cirugia?.canasta?.items ?? []).map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, receta: Boolean(i.receta) })),
   };
 }
 
@@ -91,6 +91,21 @@ export const excedeEntregado = (m) => {
 };
 
 export const materialesConExceso = (materiales) => materiales.filter(excedeEntregado);
+
+// Atajo "Todo consumido": consumido = entregado en cada material con una cantidad entregada válida.
+export const marcarTodoConsumido = (materiales) => materiales.map((m) => {
+  const entregado = aNumero(m.entregado);
+  return entregado === null || Number.isNaN(entregado) || entregado < 0 ? m : { ...m, consumido: String(entregado) };
+});
+
+// Stepper de consumo: siguiente valor (como texto) al sumar o restar 1, entre 0 y `max`
+// (`max` null = sin tope). Un valor vacío cuenta como 0.
+export function pasoConsumo(valor, delta, max = null) {
+  const actual = aNumero(valor);
+  const base = actual === null || Number.isNaN(actual) ? 0 : actual;
+  const tope = max === null || max === undefined || Number.isNaN(Number(max)) ? Infinity : Number(max);
+  return String(Math.min(Math.max(base + delta, 0), tope));
+}
 
 // Materiales con un consumo válido digitado (incluye 0): numérico, ≥ 0 y sin exceder lo entregado.
 export const materialesConConsumo = (materiales) => materiales.filter((m) => {

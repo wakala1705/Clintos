@@ -4,7 +4,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuHistory, LuPackage } from 'react-icons/lu';
+import { LuHistory, LuLayoutDashboard, LuPackage } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -25,10 +25,8 @@ import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/List
 import { ESTADO_PROGRAMACION_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockListadoProgramaciones';
 import {
   SALAS,
-  actualizarEstadoCirugia,
   addDias,
   addMeses,
-  cancelarCirugia,
   datosWizardDesdeCirugia,
   diaLabel,
   diaUnico,
@@ -40,11 +38,10 @@ import {
   lunesDeSemana,
   mesLabel,
   rangoSemanaLabel,
-  reprogramarCirugia,
   resumenAgenda,
-  solicitarInsumosFarmacia, cancelarSolicitudInsumos, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
 export default function ProgramacionSalaCirugias() {
   const router = useRouter();
@@ -86,15 +83,17 @@ export default function ProgramacionSalaCirugias() {
 
   const [cirugias, setCirugias] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  const [modal, setModal] = useState(null);
-
-  const [toast, setToast] = useState(null);
-  const toastTimerRef = useRef(null);
-  function showToast(message) {
-    setToast(message);
-    window.clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = window.setTimeout(() => setToast(null), 2600);
-  }
+  // Acciones sobre una cirugía (reprogramar/cancelar/realizada/incumplida/
+  // insumos), su `modal` y el toast: compartidas con el tablero del día
+  // (ver useCirugiasAcciones.js). `applyUpdated` es una declaración de función
+  // más abajo (hoisted).
+  const {
+    modal, setModal, toast, showToast,
+    handleSubmitReprogramar, handleSubmitCancelar,
+    handleReprogramarCirugia, handleCancelarCirugia,
+    handleMarcarRealizada, handleMarcarIncumplida,
+    handlePedirInsumos, handleCancelarSolicitud,
+  } = useCirugiasAcciones({ applyUpdated });
 
   // Mismo flujo compartido de búsqueda/alta de pacientes que Asignación de
   // citas/Programar cita/Admisiones (.ps-overlay/.ap-overlay, ver
@@ -143,7 +142,7 @@ export default function ProgramacionSalaCirugias() {
   // dentro de HistorialQuirurgico.jsx (contenido clínico siempre fijo, ver
   // ese componente), así que cualquier identificador único sirve acá.
   function handleSeleccionarPacienteHistorial(paciente) {
-    router.push(`/historial-quirurgico/${encodeURIComponent(paciente.documento)}`);
+    router.push(`/cirugia/historial-quirurgico/${encodeURIComponent(paciente.documento)}`);
   }
   function handleAbrirProgramarCirugia() {
     patientSearchIntentRef.current = 'cirugia';
@@ -306,61 +305,6 @@ export default function ProgramacionSalaCirugias() {
     ? diasDeSemana(inicioSemana)
     : diasDeSemana(inicioSemana).filter((d) => d.label !== 'Sáb' && d.label !== 'Dom');
 
-  function handleSubmitReprogramar(datos) {
-    const actualizada = reprogramarCirugia(modal?.cirugia?.id, datos);
-    applyUpdated(actualizada);
-    setModal(null);
-    showToast('Cirugía reprogramada correctamente.');
-  }
-
-  function handleSubmitCancelar(motivo) {
-    const actualizada = cancelarCirugia(modal?.cirugia?.id, motivo);
-    applyUpdated(actualizada);
-    setModal(null);
-    showToast('Cirugía cancelada correctamente.');
-  }
-
-  // De acá para abajo, los handlers de acciones sobre una cirugía puntual
-  // reciben `cirugia` como parámetro en vez de cerrar sobre `selectedCirugia`
-  // (encargo explícito, 2026-09-07: menú "..." de CirugiaCard con Editar/
-  // Reprogramar/Marcar como realizada/Marcar como incumplida/Cancelar) --
-  // así los mismos handlers sirven tanto al menú "Más acciones"/botones de
-  // DetalleCirugiaPanel (que ya tiene la cirugía seleccionada a mano) como al
-  // menú de la card en la grilla (que actúa sobre la cirugía de esa card
-  // puntual, esté o no seleccionada).
-  function handleReprogramarCirugia(cirugia) {
-    setModal({ type: 'reprogramar', cirugia });
-  }
-  function handleCancelarCirugia(cirugia) {
-    setModal({ type: 'cancelar', cirugia });
-  }
-  // "realizada" es un estado nuevo (encargo explícito, mismo momento que el
-  // menú "..." de arriba) -- antes solo existían programada/urgencia/
-  // cancelada/incumplida (ver ESTADOS_TERMINALES_CIRUGIA/ESTADO_FILTRO_OPTIONS
-  // en mockCirugiaData.js y EstadoCirugiaBadge.jsx para el resto de lugares
-  // que necesitaban conocerlo).
-  function handleMarcarRealizada(cirugia) {
-    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'realizada'));
-    // Solo advierte (no bloquea): con saldo pendiente en farmacia la solicitud sigue abierta.
-    showToast(resumenCanasta(cirugia).estado === 'despacho-parcial'
-      ? 'Cirugía marcada como realizada. Su solicitud de insumos sigue abierta: farmacia tiene un saldo pendiente.'
-      : 'Cirugía marcada como realizada.');
-  }
-  function handleMarcarIncumplida(cirugia) {
-    applyUpdated(actualizarEstadoCirugia(cirugia.id, 'incumplida'));
-    showToast('Cirugía marcada como incumplida.');
-  }
-  // "Pedir insumos a farmacia" (acción principal del detalle): pasa los
-  // insumos de la canasta a "Solicitado" -- el detalle se re-renderiza solo
-  // porque selectedCirugia sale de `cirugias`.
-  function handlePedirInsumos(cirugia) {
-    applyUpdated(solicitarInsumosFarmacia(cirugia.id));
-    showToast('Insumos solicitados a farmacia.');
-  }
-  function handleCancelarSolicitud(cirugia, { causal, observacion }) {
-    applyUpdated(cancelarSolicitudInsumos(cirugia.id, { causal, observacion }));
-    showToast('Solicitud de insumos cancelada.');
-  }
   // La recepción de lo que farmacia despacha se registra en Canastas de
   // cirugía: se abre allá con esta cirugía seleccionada.
   function handleVerEnCanastas(cirugia) {
@@ -377,8 +321,8 @@ export default function ProgramacionSalaCirugias() {
 
       <div className="main">
         <Topbar
-          section="Hospitalización"
-          page="Programación sala de cirugías"
+          section="Cirugía"
+          page="Programación"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
@@ -408,13 +352,20 @@ export default function ProgramacionSalaCirugias() {
                 Historial de cirugías
               </Button>
               {/* "Canastas de cirugía" (encargo explícito, 2026-09-29): navega
-                  a /programacion-sala-cirugias/canastas -- por ahora una
+                  a /cirugia/canastas -- por ahora una
                   página en blanco (ver CanastasCirugia.jsx), el contenido
                   real se construye en un paso aparte. */}
               <Button
                 variant="secondary-accent"
+                icon={LuLayoutDashboard}
+                onClick={() => router.push('/cirugia/tablero')}
+              >
+                Tablero del día
+              </Button>
+              <Button
+                variant="secondary-accent"
                 icon={LuPackage}
-                onClick={() => router.push('/programacion-sala-cirugias/canastas')}
+                onClick={() => router.push('/cirugia/canastas')}
               >
                 Canastas de cirugía
               </Button>

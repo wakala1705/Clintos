@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   paqueteDeCirugia, construirHojaConsumo, materialManual, calcularDevuelto, excedeEntregado,
   materialesConExceso, totales, dxDeIngreso, formatearMiles, fechaDDMMAAAA,
-  obtenerHojaConsumo, guardarHojaConsumo, materialesConConsumo, consumoCompleto,
+  obtenerHojaConsumo, guardarHojaConsumo, materialesConConsumo, consumoCompleto, marcarTodoConsumido, pasoConsumo,
 } from '../hojaConsumo.js';
 
 const cirugia = (extra = {}) => ({
@@ -28,7 +28,7 @@ test('paqueteDeCirugia: la canasta de colecistectomía usa el paquete COLE-LAP c
 test('paqueteDeCirugia: una canasta sin paquete propio usa sus ítems', () => {
   const p = paqueteDeCirugia(cirugia({ canasta: { nombre: 'Hernia inguinal estándar', items: [{ nombre: 'Malla', cantidad: 1 }] } }));
   assert.equal(p.nombre, 'Hernia inguinal estándar');
-  assert.deepEqual(p.materiales, [{ nombre: 'Malla', cantidad: 1 }]);
+  assert.deepEqual(p.materiales, [{ nombre: 'Malla', cantidad: 1, receta: false }]);
 });
 
 test('construirHojaConsumo: tipo, equipo desde el personal y materiales sin consumo', () => {
@@ -103,4 +103,25 @@ test('materialesConConsumo / consumoCompleto: exige consumo válido en todos y s
   assert.equal(consumoCompleto([...ok, { entregado: '1', consumido: '' }]), false);
   assert.equal(consumoCompleto([...ok, { entregado: '1', consumido: '3' }]), false);
   assert.equal(consumoCompleto([]), false);
+});
+
+test('marcarTodoConsumido: consumido = entregado; no toca filas sin cantidad válida', () => {
+  const r = marcarTodoConsumido([
+    { id: 'a', entregado: '4', consumido: '1' },
+    { id: 'b', entregado: '', consumido: '2' },
+    { id: 'c', entregado: 'x', consumido: '' },
+  ]);
+  assert.equal(r[0].consumido, '4');
+  assert.equal(r[1].consumido, '2');
+  assert.equal(r[2].consumido, '');
+});
+
+test('pasoConsumo: suma/resta 1 entre 0 y el tope; vacío cuenta como 0', () => {
+  assert.equal(pasoConsumo('', 1, 3), '1');
+  assert.equal(pasoConsumo('2', 1, 3), '3');
+  assert.equal(pasoConsumo('3', 1, 3), '3');
+  assert.equal(pasoConsumo('1', -1, 3), '0');
+  assert.equal(pasoConsumo('0', -1, 3), '0');
+  assert.equal(pasoConsumo('', -1, 3), '0');
+  assert.equal(pasoConsumo('5', 1, null), '6');
 });

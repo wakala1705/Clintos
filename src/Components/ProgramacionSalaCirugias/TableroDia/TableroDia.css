@@ -1,0 +1,26 @@
+/* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
+   ../ProgramacionSalaCirugias.css; .psc-toast y .psc-agenda-nav-btn de
+   ../shared/shared.css. Acá solo lo propio de esta página. */
+
+.td-sede{width:220px;flex-shrink:0;}
+
+/* KPIs: 6 columnas en desktop, 3 en tablet. */
+.td-kpis{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;flex-shrink:0;
+}
+
+/* Tablero: una columna por sala, scroll horizontal si no caben. */
+.td-board{
+  display:flex;gap:12px;flex:1;min-height:0;overflow-x:auto;padding-bottom:4px;
+}
+
+.td-estado{
+  flex:1;display:flex;align-items:center;justify-content:center;margin:0;
+  font-size:var(--fs-base);color:var(--ink-500);
+}
+
+@media (max-width:1024px){
+  .td-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .td-content{overflow-y:auto;}
+  .td-board{min-height:420px;}
+}

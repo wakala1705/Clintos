@@ -235,7 +235,7 @@ export default function RevisionVencidas() {
         <LuCircleCheck className="rv-estado-icon rv-estado-icon-ok" aria-hidden="true" />
         <h2 className="rv-estado-title">No hay programaciones vencidas</h2>
         <p className="rv-estado-text">La agenda está al día.</p>
-        <Button variant="secondary" icon={LuArrowLeft} onClick={() => router.push('/programacion-sala-cirugias')}>
+        <Button variant="secondary" icon={LuArrowLeft} onClick={() => router.push('/cirugia/programacion')}>
           Volver a la agenda
         </Button>
       </div>
@@ -317,14 +317,14 @@ export default function RevisionVencidas() {
 
       <div className="main">
         <Topbar
-          section="Hospitalización"
+          section="Cirugía"
           page="Revisión de programaciones vencidas"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 
         <div className="content">
           <nav className="rv-breadcrumb" aria-label="Ruta de navegación">
-            <Link href="/programacion-sala-cirugias">Programación sala de cirugías</Link>
+            <Link href="/cirugia/programacion">Programación</Link>
             <LuChevronRight className="icon" aria-hidden="true" />
             <span aria-current="page">Revisión de vencidas</span>
           </nav>

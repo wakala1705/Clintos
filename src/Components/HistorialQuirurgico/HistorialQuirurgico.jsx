@@ -22,7 +22,7 @@ import { PACIENTE_DEMO, INTERVENCIONES } from '@/hooks/HistorialQuirurgico/mockH
 // para el resto de la lógica de selección de procedimiento. El único modal
 // que quedaba antes de este cambio era "Ver más" de PatientBanner
 // (PatientDetailModal, propio de ese componente global). El `id` de la ruta
-// (src/app/historial-quirurgico/[id]/page.jsx) no llega hasta acá a
+// (src/app/cirugia/historial-quirurgico/[id]/page.jsx) no llega hasta acá a
 // propósito: el contenido clínico es siempre el mismo dataset de demo fijo
 // (encargo explícito -- no existe historial real por cada uno de los ~46
 // pacientes mock de ListaPacientes).
@@ -42,7 +42,7 @@ export default function HistorialQuirurgico() {
 
       <div className="main">
         <Topbar
-          section={['Hospitalización', { label: 'Programación sala de cirugías', href: '/programacion-sala-cirugias' }]}
+          section={['Cirugía', { label: 'Programación', href: '/cirugia/programacion' }]}
           page="Historial quirúrgico"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
@@ -57,7 +57,7 @@ export default function HistorialQuirurgico() {
             size="sm"
             icon={LuArrowLeft}
             className="hq-back-btn"
-            onClick={() => router.push('/programacion-sala-cirugias')}
+            onClick={() => router.push('/cirugia/programacion')}
           >
             Volver
           </Button>

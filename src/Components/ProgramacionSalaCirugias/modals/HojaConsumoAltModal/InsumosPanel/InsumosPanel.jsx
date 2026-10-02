@@ -1,16 +1,17 @@
 'use client';
 
-import { LuInfo, LuPlus, LuTrash2, LuTriangleAlert } from 'react-icons/lu';
+import { LuCheckCheck, LuInfo, LuPlus, LuTrash2, LuTriangleAlert } from 'react-icons/lu';
 import './InsumosPanel.css';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
-import FormSelect from '@/Components/FormSelect/FormSelect';
+import StepperConsumo from '../StepperConsumo/StepperConsumo';
 import {
-  calcularDevuelto, consumoCompleto, excedeEntregado, materialManual, materialesConConsumo, totales,
+  calcularDevuelto, consumoCompleto, excedeEntregado, marcarTodoConsumido, materialManual, materialesConConsumo,
+  totales,
 } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
 
 // Columna derecha: paquete, progreso del consumo y tabla de insumos con consumido editable.
-export default function InsumosPanel({ materiales, onChange, paquete }) {
+export default function InsumosPanel({ materiales, onChange }) {
   const set = (id, campo, valor) => onChange(materiales.map((m) => (m.id === id ? { ...m, [campo]: valor } : m)));
   const quitar = (id) => onChange(materiales.filter((m) => m.id !== id));
   const registrados = materialesConConsumo(materiales).length;
@@ -22,15 +23,6 @@ export default function InsumosPanel({ materiales, onChange, paquete }) {
     <div className="hca-insumos">
       <div className="hca-insumos-top">
         <div className="hca-paquete">
-          <div className="form-field">
-            <label htmlFor="hca-paquete">Paquete / canasta</label>
-            <FormSelect
-              id="hca-paquete"
-              value={paquete.nombre}
-              onChange={() => {}}
-              options={[{ value: paquete.nombre, label: `Paquete ${paquete.nombre}` }]}
-            />
-          </div>
           <div className="hca-progreso">
             <div className="hca-progreso-texto">
               <span>Consumo registrado</span>
@@ -48,9 +40,14 @@ export default function InsumosPanel({ materiales, onChange, paquete }) {
             </div>
           </div>
         </div>
-        <Button variant="outline" icon={LuPlus} onClick={() => onChange([...materiales, materialManual()])}>
-          Agregar insumo
-        </Button>
+        <div className="hca-insumos-acciones">
+          <Button variant="tinted" icon={LuCheckCheck} onClick={() => onChange(marcarTodoConsumido(materiales))}>
+            Todo consumido
+          </Button>
+          <Button variant="outline" icon={LuPlus} onClick={() => onChange([...materiales, materialManual()])}>
+            Agregar insumo
+          </Button>
+        </div>
       </div>
 
       <div className="hca-tabla-card">
@@ -112,16 +109,12 @@ export default function InsumosPanel({ materiales, onChange, paquete }) {
                     )}
                   </td>
                   <td className="hca-num">
-                    <input
-                      className="hca-input hca-input-num"
-                      type="number"
-                      inputMode="numeric"
-                      min="0"
-                      placeholder="0"
+                    <StepperConsumo
                       value={m.consumido}
-                      aria-label={`Consumido de ${nombre}`}
-                      aria-invalid={exceso || undefined}
-                      onChange={(e) => set(m.id, 'consumido', e.target.value)}
+                      max={m.entregado === '' || Number.isNaN(Number(m.entregado)) ? null : Number(m.entregado)}
+                      label={nombre}
+                      invalid={exceso}
+                      onChange={(v) => set(m.id, 'consumido', v)}
                     />
                   </td>
                   <td className="hca-num">{celdaDevuelto}</td>

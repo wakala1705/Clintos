@@ -249,7 +249,7 @@ export default function CanastasCirugia() {
 
       <div className="main">
         <Topbar
-          section="Hospitalización"
+          section="Cirugía"
           page="Canastas de cirugía"
           user={{ name: USUARIO, role: 'Administrador', initials: 'CG' }}
         />
@@ -267,11 +267,11 @@ export default function CanastasCirugia() {
                 className="cnc-historial-btn"
                 aria-label="Historial de canastas"
                 title="Historial de canastas"
-                onClick={() => router.push('/programacion-sala-cirugias/canastas/historial')}
+                onClick={() => router.push('/cirugia/canastas/historial')}
               >
                 <LuHistory className="icon" aria-hidden="true" />
               </button>
-              <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/programacion-sala-cirugias')}>
+              <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/cirugia/programacion')}>
                 Ver agenda
               </Button>
             </div>

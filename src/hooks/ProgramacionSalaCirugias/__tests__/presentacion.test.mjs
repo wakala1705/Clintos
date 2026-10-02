@@ -142,6 +142,6 @@ test('canastasHref abre la sala, el día y la cirugía', () => {
   const c = { id: '12358', salaId: 'qx-1', fecha: '2026-09-30' };
   assert.equal(
     canastasHref(c),
-    '/programacion-sala-cirugias/canastas?sala=qx-1&fecha=2026-09-30&cirugia=12358',
+    '/cirugia/canastas?sala=qx-1&fecha=2026-09-30&cirugia=12358',
   );
 });

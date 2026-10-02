@@ -1,5 +1,5 @@
 /* .hco-section/.hco-section-head/.hco-kicker y .form-field viven en shared/shared.css. */
-.hca-col{display:flex;flex-direction:column;gap:24px;padding:24px 32px;}
+.hca-col{display:flex;flex-direction:column;gap:24px;padding:24px 32px;border-right:1px solid var(--border);}
 .hca-panel{display:flex;flex-direction:column;gap:12px;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);margin:0;}
 .hca-badge-icon{width:12px;height:12px;margin-right:4px;vertical-align:-1px;}
 .hca-campo{display:flex;flex-direction:column;gap:4px;}
@@ -15,6 +15,24 @@
 
 .hca-tiempos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
 
+/* Tablet: cada sección es un acordeón (details) cerrado por defecto; el bloque va debajo de los insumos. */
+.hca-acordeon{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-modal);}
+.hca-acordeon-resumen{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:0 16px;
+  list-style:none;cursor:pointer;border-radius:var(--radius-lg);
+}
+.hca-acordeon-resumen::-webkit-details-marker{display:none;}
+.hca-acordeon-resumen:hover{background:var(--bg);}
+.hca-acordeon-resumen:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.hca-acordeon-resumen .hco-kicker{margin:0;}
+.hca-acordeon-chev{flex:none;width:18px;height:18px;color:var(--ink-500);transition:transform .15s ease;}
+.hca-acordeon[open] .hca-acordeon-chev{transform:rotate(180deg);}
+.hca-acordeon-cuerpo{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px;}
+.hca-acordeon-accion{display:flex;justify-content:flex-end;}
+@media (prefers-reduced-motion:reduce){
+  .hca-acordeon-chev{transition:none;}
+}
+
 @media (max-width:1024px){
-  .hca-col{padding:16px;}
+  .hca-col{padding:16px;gap:12px;border-right:0;border-top:1px solid var(--border);}
 }

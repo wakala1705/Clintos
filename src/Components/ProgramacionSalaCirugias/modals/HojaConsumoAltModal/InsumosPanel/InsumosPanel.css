@@ -1,9 +1,9 @@
 .hca-insumos{display:flex;flex-direction:column;gap:16px;padding:24px 32px;}
 .hca-insumos-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.hca-paquete{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;}
-.hca-paquete .form-field{width:260px;}
-.hca-progreso{display:flex;flex-direction:column;gap:8px;width:220px;padding-bottom:4px;}
-.hca-progreso-texto{display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--ink-500);}
+.hca-insumos-acciones{display:flex;gap:8px;flex-wrap:wrap;}
+.hca-paquete{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.hca-progreso{display:flex;flex-direction:column;gap:8px;width:190px;padding-bottom:4px;}
+.hca-progreso-texto{display:flex;justify-content:space-between;gap:12px;white-space:nowrap;font-size:var(--fs-sm);color:var(--ink-500);}
 .hca-progreso-texto b{font-weight:var(--fw-semibold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
 .hca-progreso-barra{height:6px;border-radius:3px;background:var(--gray-bg);overflow:hidden;}
 .hca-progreso-relleno{height:100%;background:var(--primary);transform-origin:left;transition:transform .2s ease;}

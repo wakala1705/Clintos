@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { LuCheck, LuClipboardList, LuLock } from 'react-icons/lu';
 import './HojaConsumoAltModal.css';
+import { useMediaQuery } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/useMediaQuery';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
@@ -11,7 +12,6 @@ import ColumnaFormulario from './ColumnaFormulario/ColumnaFormulario';
 import InsumosPanel from './InsumosPanel/InsumosPanel';
 import {
   construirHojaConsumo, guardarHojaConsumo, materialesConExceso, obtenerHojaConsumo,
-  paqueteDeCirugia,
 } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
 
 // Versión alternativa de la hoja de consumo (ver HojaConsumoModal): contexto en una barra,
@@ -19,9 +19,9 @@ import {
 // "Registrar consumo" se puede usar con consumo parcial; solo se bloquea si algún insumo excede lo entregado.
 export default function HojaConsumoAltModal({ cirugia, onClose }) {
   const [hoja, setHoja] = useState(() => obtenerHojaConsumo(cirugia.id) ?? construirHojaConsumo(cirugia));
-  const paquete = paqueteDeCirugia(cirugia);
   const hayExceso = materialesConExceso(hoja.materiales).length > 0;
   const set = (clave, valor) => setHoja((h) => ({ ...h, [clave]: valor }));
+  const esTablet = useMediaQuery('(max-width:1024px)');
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -36,6 +36,16 @@ export default function HojaConsumoAltModal({ cirugia, onClose }) {
     guardarHojaConsumo({ ...hoja, estado: 'registrada' });
     onClose();
   }
+
+  const formulario = (
+    <ColumnaFormulario
+      cirugia={cirugia}
+      equipo={hoja.equipo}
+      tiempos={hoja.tiempos}
+      onTiempos={(k, v) => set('tiempos', { ...hoja.tiempos, [k]: v })}
+      plegable={esTablet}
+    />
+  );
 
   const mensaje = hayExceso
     ? 'Hay insumos con consumo mayor a lo entregado. Corrígelos para continuar.'
@@ -56,14 +66,12 @@ export default function HojaConsumoAltModal({ cirugia, onClose }) {
 
         <ContextoBarra cirugia={cirugia} />
 
+        {/* Desktop: formulario a la izquierda e insumos a la derecha. Tablet: los insumos van primero
+            (es la tarea principal) y el formulario queda debajo, plegado en acordeones. */}
         <div className="hca-cuerpo">
-          <ColumnaFormulario
-            cirugia={cirugia}
-            equipo={hoja.equipo}
-            tiempos={hoja.tiempos}
-            onTiempos={(k, v) => set('tiempos', { ...hoja.tiempos, [k]: v })}
-          />
-          <InsumosPanel materiales={hoja.materiales} onChange={(v) => set('materiales', v)} paquete={paquete} />
+          {!esTablet && formulario}
+          <InsumosPanel materiales={hoja.materiales} onChange={(v) => set('materiales', v)} />
+          {esTablet && formulario}
         </div>
 
         <div className="modal-footer hca-footer">

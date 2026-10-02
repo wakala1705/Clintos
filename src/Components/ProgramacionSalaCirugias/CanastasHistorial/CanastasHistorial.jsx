@@ -41,7 +41,7 @@ export default function CanastasHistorial() {
       <Sidebar />
       <div className="main">
         <Topbar
-          section="Hospitalización"
+          section="Cirugía"
           page="Historial de canastas"
           user={{ name: USUARIO, role: 'Administrador', initials: 'CG' }}
         />
@@ -52,7 +52,7 @@ export default function CanastasHistorial() {
               <p>Consulta las solicitudes de canastas a farmacia y su estado.</p>
             </div>
             <div className="psc-page-header-actions">
-              <Button variant="secondary-accent" icon={LuArrowLeft} onClick={() => router.push('/programacion-sala-cirugias/canastas')}>
+              <Button variant="secondary-accent" icon={LuArrowLeft} onClick={() => router.push('/cirugia/canastas')}>
                 Volver a canastas
               </Button>
             </div>

@@ -10,6 +10,8 @@ import {
   LuBoxes,
   LuCalendarClock,
   LuCalendarDays,
+  LuLayoutDashboard,
+  LuPackage,
   LuCalendarPlus,
   LuChartBar,
   LuChevronDown,
@@ -62,11 +64,16 @@ export default function Sidebar() {
   const isConsultaExterna = isAsignacionCitas || isProgramarCita || isListaPacientes || isHistoriaClinica || isVacunacion;
   const isGestionEnfermeria = pathname.startsWith('/gestion-enfermeria');
   const isAdmisiones = pathname === '/admisiones';
-  const isProgramacionSalaCirugias = pathname.startsWith('/programacion-sala-cirugias');
+  // Cirugía: su propio módulo (antes un enlace dentro de Hospitalización). El
+  // historial quirúrgico y la revisión de vencidas cuelgan de Programación.
+  const isCirugiaTablero = pathname.startsWith('/cirugia/tablero');
+  const isCirugiaCanastas = pathname.startsWith('/cirugia/canastas');
+  const isCirugiaProgramacion = pathname.startsWith('/cirugia/programacion') || pathname.startsWith('/cirugia/historial-quirurgico');
+  const isCirugia = isCirugiaProgramacion || isCirugiaTablero || isCirugiaCanastas;
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
   const isTriage = pathname.startsWith('/hospitalizacion/triage');
-  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isProgramacionSalaCirugias || isHistoriaClinicaHosp || isInterconsulta || isTriage;
+  const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isHistoriaClinicaHosp || isInterconsulta || isTriage;
   const isFacturas = pathname === '/facturas';
   const isTrazabilidad = pathname === '/trazabilidad';
   const isFinanzas = isFacturas || isTrazabilidad;
@@ -115,8 +122,20 @@ export default function Sidebar() {
           <Link href="/gestion-enfermeria" className={`nav-subitem${isGestionEnfermeria ? ' active' : ''}`}><LuHeartPulse className="icon" />Gestión de Enfermería</Link>
           <Link href="/hospitalizacion/triage" className={`nav-subitem${isTriage ? ' active' : ''}`}><LuActivity className="icon" />Triage</Link>
           <Link href="/admisiones" className={`nav-subitem${isAdmisiones ? ' active' : ''}`}><LuClipboardCheck className="icon" />Admisiones</Link>
-          <Link href="/programacion-sala-cirugias" className={`nav-subitem${isProgramacionSalaCirugias ? ' active' : ''}`}><LuScissors className="icon" />Programación sala de cirugías</Link>
           <Link href="/hospitalizacion/interconsulta" className={`nav-subitem${isInterconsulta ? ' active' : ''}`}><LuMessagesSquare className="icon" />Interconsulta</Link>
+        </div>
+      </div>
+
+      <div className={`${subGroupClass}${isCirugia ? ' open' : ''}`}>
+        <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+          <LuScissors className="icon nav-icon" />
+          <span className="label">Cirugía</span>
+          <LuChevronDown className="icon chev" />
+        </div>
+        <div className="nav-body">
+          <Link href="/cirugia/programacion" className={`nav-subitem${isCirugiaProgramacion ? ' active' : ''}`}><LuCalendarDays className="icon" />Programación</Link>
+          <Link href="/cirugia/tablero" className={`nav-subitem${isCirugiaTablero ? ' active' : ''}`}><LuLayoutDashboard className="icon" />Tablero</Link>
+          <Link href="/cirugia/canastas" className={`nav-subitem${isCirugiaCanastas ? ' active' : ''}`}><LuPackage className="icon" />Canastas</Link>
         </div>
       </div>
 

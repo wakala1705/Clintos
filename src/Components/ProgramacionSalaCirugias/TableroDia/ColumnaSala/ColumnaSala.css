@@ -1,0 +1,27 @@
+/* Tarjetas (.cc-*) vienen de ../../CirugiaCard/CirugiaCard.css. */
+.td-col{
+  flex:1 0 240px;min-width:240px;max-width:360px;display:flex;flex-direction:column;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.td-col-off{background:var(--bg);}
+.td-col-header{
+  display:flex;flex-direction:column;gap:2px;padding:12px 14px;flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.td-col-title{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.td-col-title h3{
+  margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.td-col-meta{font-size:var(--fs-sm);color:var(--ink-500);}
+.td-col-body{
+  flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px;
+}
+.td-col-empty{
+  margin:auto 0;padding:24px 8px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);
+}
+.td-item{display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
+.td-item .cc-card{align-self:stretch;margin:0;}
+/* Con el menú "⋯" encima del texto, deja aire a la derecha de la tarjeta. */
+.td-item .cc-card .cc-paciente,
+.td-item .cc-card .cc-horario{padding-right:26px;}

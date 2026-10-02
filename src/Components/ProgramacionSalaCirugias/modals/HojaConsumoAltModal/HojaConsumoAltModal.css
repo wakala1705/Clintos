@@ -2,7 +2,6 @@
 .modal-card.hca-card{width:min(1240px,96vw);height:min(860px,94vh);overflow:hidden;}
 /* Formulario a la izquierda, insumos a la derecha; cada columna hace su propio scroll. */
 .hca-cuerpo{display:grid;grid-template-columns:420px minmax(0,1fr);flex:1;min-height:0;}
-.hca-cuerpo > :first-child{border-right:1px solid var(--border);}
 .hca-cuerpo > *{min-height:0;overflow-y:auto;}
 /* Insumos: el scroll lo hace la tabla (InsumosPanel), no la columna. */
 .hca-cuerpo > .hca-insumos{overflow:hidden;}
@@ -12,9 +11,9 @@
 .hca-footer-acciones{display:flex;gap:10px;margin-left:auto;}
 
 @media (max-width:1024px){
-  .hca-cuerpo{grid-template-columns:minmax(0,1fr);overflow-y:auto;}
-  .hca-cuerpo > *,.hca-cuerpo > .hca-insumos{overflow-y:visible;}
-  .hca-cuerpo > :first-child{border-right:0;border-bottom:1px solid var(--border);}
+  /* Tablet: bloque con un solo scroll (los hijos no se comprimen ni scrollean por su cuenta). */
+  .hca-cuerpo{display:block;overflow-y:auto;}
+  .hca-cuerpo > *,.hca-cuerpo > .hca-insumos{min-height:auto;overflow:visible;}
   .hca-footer{flex-wrap:wrap;}
 }
 @media (max-width:1024px), (pointer:coarse){

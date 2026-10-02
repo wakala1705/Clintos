@@ -42,9 +42,10 @@ export default function CirugiaCardMenu({
         size="sm"
         onOpenChange={setOpen}
         items={[
-          {
+          // Sin `onEditar` (tablero del día) la acción no se ofrece.
+          ...(onEditar ? [{
             id: 'editar', label: 'Editar', icon: LuPencil, disabled: !puedeAccionar, onSelect: () => onEditar(cirugia),
-          },
+          }] : []),
           {
             id: 'reprogramar', label: 'Reprogramar', icon: LuCalendarClock, disabled: !puedeAccionar, onSelect: () => onReprogramar(cirugia),
           },

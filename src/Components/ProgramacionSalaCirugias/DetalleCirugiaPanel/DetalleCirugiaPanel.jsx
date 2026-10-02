@@ -241,7 +241,7 @@ export default function DetalleCirugiaPanel({
         <div className="dcp-actions-estado">
           <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAbierta(true)}>Hoja de consumo</Button>
           <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAltAbierta(true)}>Hoja de consumo (alternativa)</Button>
-          <Button variant="secondary-accent" icon={LuPencil}disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>
+          {onEditar && <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>}
           <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
           <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
           <Button variant={realizadaEsPrincipal ? 'primary' : 'secondary-accent'} icon={LuCheckCheck} disabled={!puedeMarcarRealizada} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>

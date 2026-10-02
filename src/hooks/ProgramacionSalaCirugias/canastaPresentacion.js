@@ -184,7 +184,7 @@ export function lineaConsumo(cirugia) {
 // sala y el día de la cirugía con su canasta seleccionada.
 export function canastasHref(cirugia) {
   const q = new URLSearchParams({ sala: cirugia.salaId, fecha: cirugia.fecha, cirugia: cirugia.id });
-  return `/programacion-sala-cirugias/canastas?${q.toString()}`;
+  return `/cirugia/canastas?${q.toString()}`;
 }
 
 // Movimientos de una solicitud con despacho parcial (despachos de farmacia y
