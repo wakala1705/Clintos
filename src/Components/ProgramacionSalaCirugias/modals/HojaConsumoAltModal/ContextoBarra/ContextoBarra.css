@@ -1,0 +1,12 @@
+.hca-contexto{
+  display:grid;grid-template-columns:2fr .7fr 1fr 1fr 1fr;gap:12px 24px;align-items:start;
+  padding:16px 32px;background:var(--bg);border-bottom:1px solid var(--border);
+}
+.hca-dato{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.hca-dato-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.hca-dato-valor{font-size:var(--fs-base);color:var(--ink-900);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.hca-dato.is-fuerte .hca-dato-valor{font-weight:var(--fw-semibold);}
+
+@media (max-width:1024px){
+  .hca-contexto{grid-template-columns:repeat(3,minmax(0,1fr));padding:16px;}
+}

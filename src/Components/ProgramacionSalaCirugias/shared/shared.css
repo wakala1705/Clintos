@@ -291,12 +291,25 @@ span.cnc-badge-violet{background:var(--violet-bg);color:var(--violet-fg);}
   .cnc-tabla th{padding:10px 8px;}
 }
 
-/* ---------- Hoja de gasto quirúrgico (HojaGastoQuirurgicoModal y sus secciones) ---------- */
+/* ---------- Hoja de consumo (HojaConsumoModal y sus secciones) ---------- */
 /* Reutilizado por 2+ secciones; las reglas exclusivas viven en cada .css. */
-.hgq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 16px;}
-.hgq-grid .wide{grid-column:span 2;}
-.hgq-input{width:100%;box-sizing:border-box;height:var(--input-sm, 34px);padding:0 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--ink-900);font:inherit;font-size:var(--fs-base);}
-.hgq-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.hgq-input:disabled{background:var(--gray-bg);color:var(--ink-500);}
-.hgq-input-num{text-align:right;}
-.hgq-field-label{display:block;margin-bottom:4px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.hco-section{display:flex;flex-direction:column;gap:12px;}
+.hco-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;}
+.hco-kicker{margin:0;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+
+/* ---------- Selector de hora nativo (<input type="time">) ---------- */
+/* El popup del navegador no se puede estilizar; sí el campo: segmentos, ícono y color-scheme (el resaltado del segmento enfocado lo pinta el navegador y no se puede cambiar)
+   (con éste el popup y el ícono siguen el tema claro/oscuro). El formato 12/24 h lo fija el idioma del navegador. */
+input[type="time"]{color-scheme:light;font-variant-numeric:tabular-nums;}
+html[data-theme="dark"] input[type="time"]{color-scheme:dark;}
+input[type="time"]::-webkit-datetime-edit{padding:0;}
+input[type="time"]::-webkit-datetime-edit-text{padding:0 1px;color:var(--ink-400);}
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field,
+input[type="time"]::-webkit-datetime-edit-ampm-field{padding:2px 4px;border-radius:4px;color:var(--ink-900);}
+input[type="time"]::-webkit-calendar-picker-indicator{margin-left:4px;padding:4px;border-radius:6px;opacity:.6;cursor:pointer;transition:opacity .15s ease,background-color .15s ease;}
+input[type="time"]::-webkit-calendar-picker-indicator:hover{opacity:1;background-color:var(--gray-bg);}
+input[type="time"]:disabled{background:var(--gray-bg);color:var(--ink-500);}
+@media (prefers-reduced-motion:reduce){
+  input[type="time"]::-webkit-calendar-picker-indicator{transition:none;}
+}

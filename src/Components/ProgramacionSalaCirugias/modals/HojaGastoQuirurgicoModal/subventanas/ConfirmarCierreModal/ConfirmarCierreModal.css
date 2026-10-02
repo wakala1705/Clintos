@@ -1,7 +1,0 @@
-/* .modal-overlay/.modal-card/.modal-body/.modal-footer viven en shared/shared.css. */
-.modal-card.ccm-card{width:440px;max-width:calc(100vw - 32px);}
-.ccm-resumen{margin:0 0 12px;display:flex;flex-direction:column;}
-.ccm-fila{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--border);font-size:var(--fs-base);}
-.ccm-fila dt{color:var(--ink-500);}
-.ccm-fila dd{margin:0;font-weight:var(--fw-medium);color:var(--ink-900);text-align:right;}
-.ccm-texto{margin:0;font-size:var(--fs-base);color:var(--ink-700);}

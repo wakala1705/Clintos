@@ -1,3 +1,0 @@
-/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field viven en shared/shared.css. */
-.modal-card.rhm-card{width:440px;max-width:calc(100vw - 32px);}
-.rhm-error{margin-top:6px;font-size:var(--fs-sm);color:var(--red);}

@@ -1,0 +1,10 @@
+/* .hco-section/.hco-kicker viven en shared/shared.css. */
+.hco-firmas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.hco-firma{display:flex;flex-direction:column;gap:8px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-modal);}
+.hco-firma-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hco-firma-rol{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hco-firma-detalle{font-size:var(--fs-sm);color:var(--ink-500);}
+
+@media (max-width:1024px){
+  .hco-firmas{grid-template-columns:1fr;}
+}

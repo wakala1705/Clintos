@@ -31,6 +31,7 @@
   --violet-fg:#6d3fd6;
   --blue-bg:#e0f2fe;
   --blue-fg:#0369a1;
+  --amber:#e08a00;
   --amber-bg:#fff4e0;
   --amber-fg:#a45a05;
   --status-info-bg:var(--primary-50);
@@ -71,6 +72,7 @@ html[data-theme="dark"]{
   --violet-fg:#b79bf7;
   --blue-bg:rgba(2,132,199,.20);
   --blue-fg:#7dd3fc;
+  --amber:#f5b942;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
 }

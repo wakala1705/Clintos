@@ -17,6 +17,19 @@ function maskText(value) {
   return String(value).replace(/\S/g, '•');
 }
 
+// Agrupa filas consecutivas con el mismo `group` (solo lo usa layout="rail"). Las filas
+// sin `group` quedan en un bloque sin título.
+function groupRows(rows) {
+  const out = [];
+  rows.forEach((r) => {
+    const title = r.group ?? null;
+    const last = out[out.length - 1];
+    if (last && last.title === title) last.items.push(r);
+    else out.push({ title, items: [r] });
+  });
+  return out;
+}
+
 // Banner de identidad del paciente — único en el proyecto (ver AGENTS.md
 // "Banner de paciente"). Fila 1 (avatar, nombre + CC, sexo, fecha nac./edad,
 // asegurador, "Ver más", ojo, alergias) igual en todas las pantallas; fila 2
@@ -42,6 +55,10 @@ function maskText(value) {
 //   "Ocultar nombre"/"Mostrar nombre" solo en ≥1025px; no dice solo "Ocultar"
 //   para no confundirse con "Ocultar <toggleLabel>"). Con alguna de las dos últimas el
 //   banner suma la clase `pb-labeled` (fila 1 envuelve a 768px).
+//   `layout="rail"` (columna lateral): filas label/valor compactas agrupadas por `group`
+//   (en variantes y en `secondRow`), con título plegable; `groupOptions`
+//   { [título]: { collapsed, hint } } fija qué bloques arrancan plegados y su leyenda;
+//   `strong: true` en una fila la apila (valor completo en su propia línea) y la resalta.
 //   `secondRow` [{ label, value }] sigue como
 //   extensión libre al final de la fila 2 (solo lectura, también va al modal
 //   "Ver más"); `secondRowExtra` (ReactNode) para contenido interactivo.
@@ -53,13 +70,20 @@ function maskText(value) {
 //   el valor real queda en data-patient-name/doc para legacy-app.js.
 export default function PatientBanner({
   patient, variant, context, secondRow, secondRowExtra, leadingSelect, secondRowButton, statusBadge, onClose, empty, compact, defaultCollapsed,
-  ocultarVerMas, toggleLabel, privacyLabel,
+  ocultarVerMas, toggleLabel, privacyLabel, layout, groupOptions,
 }) {
   const variantCfg = variant ? PATIENT_BANNER_VARIANTS[variant] : null;
+  // `layout="rail"`: columna vertical para un rail lateral — todos los datos apilados,
+  // siempre expandido (sin chevron de contraer/expandir).
+  const rail = layout === 'rail';
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(defaultCollapsed ?? variantCfg?.defaultCollapsed ?? false);
+  const [collapsed, setCollapsed] = useState(rail ? false : (defaultCollapsed ?? variantCfg?.defaultCollapsed ?? false));
   const [dataHidden, setDataHidden] = useState(false);
+  // Bloques del rail plegados: arrancan los `groupOptions[título].collapsed`.
+  const [closedGroups, setClosedGroups] = useState(() => Object.fromEntries(
+    Object.entries(groupOptions ?? {}).filter(([, o]) => o.collapsed).map(([t]) => [t, true]),
+  ));
   const allergyRef = useRef(null);
 
   useEffect(() => {
@@ -136,7 +160,7 @@ export default function PatientBanner({
     .filter((f) => f.value !== undefined && f.value !== null && f.value !== '');
   const rows = [
     ...fieldRows,
-    ...(secondRow ?? []).map((item) => ({ key: `extra-${item.label}`, label: item.label, value: item.value })),
+    ...(secondRow ?? []).map((item) => ({ key: `extra-${item.label}`, label: item.label, value: item.value, group: item.group, strong: item.strong })),
   ];
 
   const mostrarSegundaFila = !collapsed && Boolean(
@@ -147,7 +171,7 @@ export default function PatientBanner({
     ? (dataHidden ? 'Mostrar datos del paciente' : privacyLabel)
     : (dataHidden ? 'Mostrar datos sensibles' : 'Ocultar datos sensibles');
   const hideLabel = toggleLabel ? `Ocultar ${toggleLabel.toLowerCase()}` : null;
-  const bannerClass = `patient-banner${toggleLabel || privacyLabel ? ' pb-labeled' : ''}`;
+  const bannerClass = `patient-banner${toggleLabel || privacyLabel ? ' pb-labeled' : ''}${rail ? ' patient-banner-rail' : ''}`;
 
   return (
     <div className={bannerClass} {...dataAttrs}>
@@ -160,6 +184,7 @@ export default function PatientBanner({
         <div className="pdoc">CC {documentoMostrado}</div>
       </div>
       <div className="patient-meta">
+        {patient.hcl && <div className="pm-item"><span className="lbl">N° HCL</span> <b>{dataHidden ? maskText(patient.hcl) : patient.hcl}</b></div>}
         {patient.sexo && <div className="pm-item"><span className="lbl">SEXO</span> <b>{patient.sexo}</b></div>}
         {/* FECHA NAC. (encargo explícito, homologado con CargosModal) — si la
             pantalla no tiene fecha de nacimiento real, sigue mostrando EDAD
@@ -255,11 +280,37 @@ export default function PatientBanner({
           )}
           {/* Campos de la variante (ver @/hooks/PatientBanner/variants.js)
               + secondRow — cada uno se omite si no tiene valor. */}
-          {rows.map((f) => (
-            <div className="ar-item" key={f.key}>
-              <span className="lbl">{f.label}</span> <b>{f.mask && dataHidden ? maskText(f.value) : f.value}</b>
-            </div>
-          ))}
+          {(() => {
+            const renderRow = (f) => (
+              <div className={`ar-item${f.strong ? ' is-strong' : ''}`} key={f.key}>
+                <span className="lbl">{f.label}</span> <b>{f.mask && dataHidden ? maskText(f.value) : f.value}</b>
+              </div>
+            );
+            if (!rail) return rows.map(renderRow);
+            return groupRows(rows).map((g) => {
+              const closed = g.title ? Boolean(closedGroups[g.title]) : false;
+              const hint = g.title ? groupOptions?.[g.title]?.hint : null;
+              return (
+                <div className="ar-group" key={g.title ?? 'sin-titulo'}>
+                  {g.title && (
+                    <h4 className="ar-group-head">
+                      <button
+                        type="button"
+                        className="ar-group-toggle"
+                        aria-expanded={!closed}
+                        onClick={() => setClosedGroups((c) => ({ ...c, [g.title]: !c[g.title] }))}
+                      >
+                        <span className="ar-group-title">{g.title}</span>
+                        {hint && <span className="ar-group-hint">{hint}</span>}
+                        <LuChevronDown className={`icon ar-group-chev${closed ? '' : ' is-open'}`} aria-hidden="true" />
+                      </button>
+                    </h4>
+                  )}
+                  {!closed && <div className="ar-group-rows">{g.items.map(renderRow)}</div>}
+                </div>
+              );
+            });
+          })()}
           {/* `secondRowExtra`: contenido interactivo libre de la pantalla (ej. un
               input) — no entra al modal "Ver más" como sí lo hace secondRow. */}
           {secondRowExtra}
@@ -274,17 +325,19 @@ export default function PatientBanner({
               {secondRowButton.label}
             </button>
           )}
-          <button
-            type="button"
-            className={`ar-toggle${toggleLabel ? ' ar-toggle-labeled' : ''}`}
-            onClick={() => setCollapsed(true)}
-            aria-expanded="true"
-            aria-label={hideLabel ?? 'Contraer banner'}
-            title={hideLabel ?? 'Contraer banner'}
-          >
-            {hideLabel && <span>{hideLabel}</span>}
-            <LuChevronUp className="icon" aria-hidden="true" />
-          </button>
+          {!rail && (
+            <button
+              type="button"
+              className={`ar-toggle${toggleLabel ? ' ar-toggle-labeled' : ''}`}
+              onClick={() => setCollapsed(true)}
+              aria-expanded="true"
+              aria-label={hideLabel ?? 'Contraer banner'}
+              title={hideLabel ?? 'Contraer banner'}
+            >
+              {hideLabel && <span>{hideLabel}</span>}
+              <LuChevronUp className="icon" aria-hidden="true" />
+            </button>
+          )}
         </div>
       )}
       {detailOpen && !ocultarVerMas && (

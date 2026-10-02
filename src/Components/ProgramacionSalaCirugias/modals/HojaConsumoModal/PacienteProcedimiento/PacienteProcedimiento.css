@@ -1,0 +1,16 @@
+/* .hco-section/.hco-kicker viven en shared/shared.css. */
+/* Líneas de la grilla con gap:1px sobre el fondo del borde. */
+.hco-pp-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0;
+  background:var(--border);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+.hco-pp-celda{display:flex;flex-direction:column;gap:2px;min-width:0;padding:8px 12px;background:var(--surface-modal);}
+.hco-pp-celda.span-2{grid-column:span 2;}
+.hco-pp-celda.span-3{grid-column:span 3;}
+.hco-pp-celda dt{font-size:var(--fs-xs);color:var(--ink-500);}
+.hco-pp-celda dd{margin:0;font-size:var(--fs-base);color:var(--ink-900);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+
+@media (max-width:1024px){
+  .hco-pp-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .hco-pp-celda.span-3{grid-column:span 2;}
+}

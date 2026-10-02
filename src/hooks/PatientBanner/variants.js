@@ -48,13 +48,15 @@ export const PATIENT_BANNER_VARIANTS = {
     // la hoja (fila 2) se despliegan con el chevron para ahorrar alto en tablet.
     defaultCollapsed: true,
     fields: [
-      { key: 'numeroHoja', label: 'N° Hoja' },
-      { key: 'numeroProgramacion', label: 'N° Programación' },
-      { key: 'procedimientoPrincipal', label: 'Procedimiento principal' },
-      { key: 'sala', label: 'Sala' },
-      { key: 'servicio', label: 'Servicio' },
-      { key: 'tipoCirugia', label: 'Tipo de cirugía' },
-      { key: 'fechaHoraProgramada', label: 'Fecha y hora programada' },
+      // `group`: título del bloque en layout="rail" (filas consecutivas con el mismo
+      // grupo; la pantalla agrega el resto de los bloques vía `secondRow`).
+      { key: 'numeroHoja', label: 'N° Hoja', group: 'Programación' },
+      { key: 'numeroProgramacion', label: 'N° Programación', group: 'Programación' },
+      { key: 'fechaHoraProgramada', label: 'Fecha y hora programada', group: 'Programación' },
+      { key: 'sala', label: 'Sala', group: 'Programación' },
+      { key: 'tipoCirugia', label: 'Tipo de cirugía', group: 'Programación' },
+      { key: 'servicio', label: 'Servicio', group: 'Programación' },
+      { key: 'procedimientoPrincipal', label: 'Procedimiento principal', group: 'Diagnóstico y procedimiento', strong: true },
     ],
   },
   // Cargos de una admisión (CargosModal, Admisiones).

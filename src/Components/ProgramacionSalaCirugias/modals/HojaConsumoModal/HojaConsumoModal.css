@@ -1,0 +1,13 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field y los tokens viven en shared/shared.css. */
+.modal-card.hco-card{width:min(1040px,96vw);height:min(860px,94vh);}
+.hco-body{flex:1;min-height:0;gap:24px;}
+.hco-footer{justify-content:space-between;}
+.hco-footer-nota{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.hco-footer-acciones{display:flex;gap:10px;margin-left:auto;}
+
+@media (max-width:1024px), (pointer:coarse){
+  .hco-footer .btn,.hco-footer button{min-height:44px;}
+}
+@media (max-width:1024px){
+  .hco-footer{flex-wrap:wrap;}
+}

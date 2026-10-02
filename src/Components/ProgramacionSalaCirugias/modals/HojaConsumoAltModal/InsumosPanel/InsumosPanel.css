@@ -1,0 +1,64 @@
+.hca-insumos{display:flex;flex-direction:column;gap:16px;padding:24px 32px;}
+.hca-insumos-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.hca-paquete{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+.hca-paquete .form-field{width:260px;}
+.hca-progreso{display:flex;flex-direction:column;gap:8px;width:220px;padding-bottom:4px;}
+.hca-progreso-texto{display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--ink-500);}
+.hca-progreso-texto b{font-weight:var(--fw-semibold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.hca-progreso-barra{height:6px;border-radius:3px;background:var(--gray-bg);overflow:hidden;}
+.hca-progreso-relleno{height:100%;background:var(--primary);transform-origin:left;transition:transform .2s ease;}
+.hca-progreso-relleno.is-completo{background:var(--green);}
+
+/* La tarjeta ocupa el alto que sobra y hace scroll propio; encabezado y totales quedan fijos. */
+.hca-tabla-card{flex:1 1 auto;min-height:0;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface-modal);}
+.hca-tabla{width:100%;border-collapse:collapse;font-size:var(--fs-base);font-variant-numeric:tabular-nums;}
+.hca-tabla th{
+  padding:8px 12px;text-align:left;white-space:nowrap;background:var(--table-header-bg);
+  border-bottom:1px solid var(--border);font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.hca-tabla td{padding:6px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink-900);}
+.hca-tabla thead th{position:sticky;top:0;z-index:var(--z-sticky);}
+.hca-tabla .hca-num{text-align:right;}
+.hca-tabla .hca-col-accion{width:48px;text-align:center;}
+.hca-tabla tbody tr:hover{background:var(--bg);}
+.hca-tabla tbody tr.is-error,.hca-tabla tbody tr.is-error:hover{background:var(--red-bg);}
+.hca-tabla tfoot td{position:sticky;bottom:0;border-bottom:0;border-top:1px solid var(--border);background:var(--table-header-bg);font-weight:var(--fw-bold);}
+
+.hca-nombre{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-weight:var(--fw-medium);}
+.hca-formula{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;background:var(--amber-bg);color:var(--amber-fg);font-size:var(--fs-xs);font-weight:var(--fw-semibold);}
+.hca-formula .icon{width:12px;height:12px;flex:none;}
+.hca-entregado{color:var(--ink-700);}
+.hca-vacio{color:var(--ink-400);}
+
+.hca-input{
+  width:100%;box-sizing:border-box;height:var(--input-md,36px);padding:0 10px;border:1px solid var(--border);
+  border-radius:var(--radius);background:var(--surface);color:var(--ink-900);font:inherit;font-size:var(--fs-base);
+}
+.hca-input:hover{border-color:var(--ink-400);}
+.hca-input:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.hca-input[aria-invalid="true"]{border-color:var(--red);}
+.hca-input-num{width:88px;text-align:right;}
+
+.hca-quitar{
+  display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:0;border-radius:8px;
+  background:transparent;color:var(--ink-500);cursor:pointer;
+}
+.hca-quitar:hover{background:var(--red-bg);color:var(--red);}
+.hca-quitar:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.hca-quitar .icon{width:16px;height:16px;}
+
+.hca-nota{display:flex;align-items:center;gap:8px;margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.hca-nota .icon{width:16px;height:16px;flex:none;color:var(--primary);}
+.hca-sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+@media (prefers-reduced-motion:reduce){
+  .hca-progreso-relleno{transition:none;}
+}
+@media (max-width:1024px){
+  .hca-insumos{padding:16px;}
+  .hca-tabla-card{flex:none;overflow:visible;}
+}
+@media (max-width:1024px), (pointer:coarse){
+  .hca-input{height:44px;}
+  .hca-quitar{width:44px;height:44px;}
+}

@@ -182,6 +182,63 @@
 .pb-row-btn:hover{background:var(--bg);border-color:var(--ink-400);color:var(--ink-900);}
 .pb-row-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
 
+/* ---------- layout="rail" (columna lateral, ver PatientBanner.jsx) ----------
+   Avatar + nombre/CC + ojo en la cabecera; debajo, sexo/edad/asegurador y los
+   campos de la variante apilados (label arriba, valor abajo). Sin borde ni
+   fondo propios: los pone el contenedor del rail. */
+.patient-banner.patient-banner-rail{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;
+  padding:16px;border:0;border-radius:0;background:transparent;
+}
+.patient-banner-rail .patient-name-block{min-width:0;}
+.patient-banner-rail .patient-name-block .pname{white-space:normal;overflow-wrap:anywhere;}
+.patient-banner-rail .patient-name-block .pdoc{white-space:normal;}
+.patient-banner-rail .patient-banner-right{margin-left:0;flex-wrap:wrap;}
+.patient-banner-rail .pb-icon-btn-text{display:none;}
+/* Ojo de privacidad oculto en el rail (encargo explícito); el estado interno no cambia. */
+.patient-banner-rail .pb-icon-btn{display:none;}
+.patient-banner-rail .patient-meta{
+  grid-column:1 / -1;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:12px;
+  padding-top:12px;border-top:1px solid var(--border);
+}
+.patient-banner-rail .patient-meta .pm-item,
+.patient-banner-rail .admission-row .ar-item{white-space:normal;}
+.patient-banner-rail .patient-meta .pm-item b,
+.patient-banner-rail .admission-row .ar-item b{overflow-wrap:anywhere;}
+.patient-banner-rail .admission-row{
+  grid-column:1 / -1;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:12px;
+  padding-top:0;margin-top:0;border-top:0;
+}
+/* Bloques por `group` (ver groupRows en PatientBanner.jsx): título plegable + filas, separados por línea. */
+.patient-banner-rail .ar-group{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--border);}
+.patient-banner-rail .ar-group-head{margin:0;font-size:var(--fs-sm);}
+.patient-banner-rail .ar-group-toggle{
+  display:flex;align-items:center;gap:8px;width:100%;padding:4px 0;border:0;background:transparent;
+  font:inherit;text-align:left;cursor:pointer;color:var(--ink-900);border-radius:6px;
+}
+.patient-banner-rail .ar-group-toggle:hover .ar-group-chev{color:var(--ink-900);}
+.patient-banner-rail .ar-group-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.patient-banner-rail .ar-group-title{flex:1;font-size:var(--fs-sm);font-weight:var(--fw-semibold);}
+.patient-banner-rail .ar-group-hint{font-size:var(--fs-xs);color:var(--ink-500);}
+.patient-banner-rail .ar-group-chev{flex:none;width:16px;height:16px;color:var(--ink-500);transform:rotate(-90deg);transition:transform .15s ease;}
+.patient-banner-rail .ar-group-chev.is-open{transform:rotate(0deg);}
+.patient-banner-rail .ar-group-rows{display:flex;flex-direction:column;gap:8px;}
+/* Filas compactas: etiqueta a la izquierda, valor a la derecha; `is-strong` apila y resalta. */
+.patient-banner-rail .patient-meta,.patient-banner-rail .admission-row{font-size:var(--fs-base);}
+.patient-banner-rail .patient-meta{gap:8px;}
+.patient-banner-rail .patient-meta .pm-item,
+.patient-banner-rail .admission-row .ar-item{flex-direction:row;justify-content:space-between;align-items:baseline;gap:12px;}
+.patient-banner-rail .patient-meta .pm-item .lbl,
+.patient-banner-rail .admission-row .ar-item .lbl{flex:none;max-width:50%;}
+.patient-banner-rail .patient-meta .pm-item b,
+.patient-banner-rail .admission-row .ar-item b{min-width:0;text-align:right;}
+.patient-banner-rail .admission-row .ar-item.is-strong{flex-direction:column;align-items:stretch;gap:2px;}
+.patient-banner-rail .admission-row .ar-item.is-strong .lbl{max-width:none;}
+.patient-banner-rail .admission-row .ar-item.is-strong b{text-align:left;font-weight:var(--fw-semibold);}
+@media (prefers-reduced-motion:reduce){
+  .patient-banner-rail .ar-group-chev{transition:none;}
+}
+
 /* ---------- ESTADO VACÍO (sin paciente seleccionado) ---------- */
 .patient-banner-empty{
   background:var(--surface);
