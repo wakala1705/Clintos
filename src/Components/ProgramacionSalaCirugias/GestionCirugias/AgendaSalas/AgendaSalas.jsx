@@ -1,24 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { LuCalendarCheck, LuChevronLeft, LuChevronRight, LuCircleCheck, LuWrench } from 'react-icons/lu';
 import './AgendaSalas.css';
-import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import VistaAgenda from '../VistaAgenda/VistaAgenda';
+import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   JORNADAS, duracionLabel, horaFranja, rangoLabel,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
-import { diaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { diaCortoLabel, rangoSemanaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
-const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
-  value,
-  label: value === 'operativa' ? `${j.label} (${horaFranja(j.desde).slice(0, 2)}–${horaFranja(j.hasta).slice(0, 2)} h)` : j.label,
-}));
-
-// Agenda de salas del día: una columna por sala. Los índices de franja son
+// Tras el bloque de esta cirugía se dibujan, más tenues, el tiempo postquirúrgico
+// y el de recuperación: no ocupan el quirófano, pero muestran el proceso completo.
+// Agenda semanal de una sala: una columna por día (lunes a domingo; con
+// `soloHabiles` el modal ya entrega solo de lunes a viernes). Los índices de franja son
 // siempre los del día completo (48 de 30 min); `jornada` (24h | operativa)
 // solo decide qué filas se ven. Las franjas libres son botones; la cirugía que
 // se programa es el bloque destacado (interactive-selected).
-// `salas` = [{ id, nombre, bloques, mapa }] (null mientras carga).
+// `dias` = [{ id: 'YYYY-MM-DD', bloques, mapa }] (null mientras carga); la
+// selección usa ese `id` como `colId`.
 export default function AgendaSalas({
-  fecha, date, onDia, salas, seleccion, duracion, onElegir, jornada, onJornada,
+  lunes, onSemana, salas, salaId, onSala, dias, soloHabiles, onSoloHabiles, hoy, postFranjas, recupFranjas, children, seleccion, duracion, onElegir, jornada, onJornada,
 }) {
   const { desde, hasta } = JORNADAS[jornada];
   const filas = Array.from({ length: hasta - desde }, (_, k) => desde + k);
@@ -26,7 +26,9 @@ export default function AgendaSalas({
   // Mantiene a la vista el bloque de esta cirugía al moverlo, cambiar de día o de jornada.
   useEffect(() => {
     estaRef.current?.scrollIntoView({ block: 'center' });
-  }, [seleccion, duracion, fecha, jornada]);
+  }, [seleccion, duracion, jornada]);
+
+  const fueraDeJornada = (i) => i < JORNADAS.operativa.desde || i >= JORNADAS.operativa.hasta;
 
   // Un bloque se recorta a la ventana visible; fuera de ella no se dibuja.
   const visible = (inicio, dur) => {
@@ -36,56 +38,72 @@ export default function AgendaSalas({
   };
 
   return (
-    <section className="as2-card" aria-label="Agenda de salas">
+    <section className="as2-card" aria-label="Agenda semanal de la sala">
       <header className="as2-header">
         <div className="as2-nav">
-          <button type="button" className="as2-nav-btn" aria-label="Día anterior" onClick={() => onDia(-1)}>
+          <button type="button" className="as2-nav-btn" aria-label="Semana anterior" onClick={() => onSemana(-1)}>
             <LuChevronLeft className="icon" aria-hidden="true" />
           </button>
-          <h3 className="as2-fecha" aria-live="polite">{diaLabel(date)}</h3>
-          <button type="button" className="as2-nav-btn" aria-label="Día siguiente" onClick={() => onDia(1)}>
+          <h3 className="as2-fecha" aria-live="polite">{rangoSemanaLabel(lunes)}</h3>
+          <button type="button" className="as2-nav-btn" aria-label="Semana siguiente" onClick={() => onSemana(1)}>
             <LuChevronRight className="icon" aria-hidden="true" />
           </button>
         </div>
-        <SegmentedFilterBar
-          options={OPCIONES_JORNADA}
-          value={jornada}
-          onChange={onJornada}
-          ariaLabel="Horas que muestra la agenda"
-        />
+        <div className="as2-controles">
+          <div className="as2-sala">
+            <FormSelect
+              id="as2-sala"
+              ariaLabel="Sala"
+              value={salaId}
+              onChange={onSala}
+              options={salas.map((x) => ({ value: x.value, label: x.descripcion }))}
+            />
+          </div>
+          <VistaAgenda
+            jornada={jornada}
+            onJornada={onJornada}
+            soloHabiles={soloHabiles}
+            onSoloHabiles={onSoloHabiles}
+          />
+        </div>
       </header>
-      <div className="as2-subheader">
-        <p className="as2-ayuda">
-          Selecciona una franja libre. La duración estimada es de {duracionLabel(duracion)}.
-        </p>
-        <ul className="as2-leyenda" aria-label="Leyenda">
-          <li><span className="as2-sw as2-sw-ocupado" aria-hidden="true"><LuCalendarCheck className="icon" /></span>Ocupado</li>
-          <li><span className="as2-sw as2-sw-nd" aria-hidden="true"><LuWrench className="icon" /></span>No disponible</li>
-          <li><span className="as2-sw as2-sw-esta" aria-hidden="true"><LuCircleCheck className="icon" /></span>Esta cirugía</li>
-        </ul>
-      </div>
-
-      {salas === null ? (
+      {children}
+      {dias === null ? (
         <p className="as2-cargando" role="status">Cargando agenda…</p>
       ) : (
         <div className="as2-scroll">
-          <div className="as2-grid" style={{ '--as2-cols': salas.length, '--as2-filas': filas.length }}>
+          <div className="as2-grid" style={{ '--as2-cols': dias.length, '--as2-filas': filas.length }}>
             <div className="as2-esquina" />
-            {salas.map((s) => (
-              <div key={s.id} className="as2-sala-head">{s.nombre}</div>
-            ))}
+            {dias.map((d) => {
+              const [dow, num, mes] = diaCortoLabel(d.id).split(' ');
+              return (
+                <div
+                  key={d.id}
+                  className={`as2-sala-head${d.id === seleccion?.colId ? ' as2-head-sel' : ''}`}
+                  aria-label={diaCortoLabel(d.id)}
+                >
+                  <span className="as2-dow">{dow}</span>
+                  <span className={`as2-num${d.id === hoy ? ' as2-hoy' : ''}`}>{num}</span>
+                  <span className="as2-mes">{mes}</span>
+                </div>
+              );
+            })}
 
             <div className="as2-horas" aria-hidden="true">
               {filas.map((i) => (
-                <div key={i} className="as2-hora">{i % 2 === 0 ? horaFranja(i) : ''}</div>
+                <div key={i} className={`as2-hora${i % 2 === 1 ? ' as2-media' : ''}`}>{i % 2 === 0 ? horaFranja(i) : ''}</div>
               ))}
             </div>
 
-            {salas.map((s) => {
-              const aqui = seleccion?.salaId === s.id;
+            {dias.map((s) => {
+              const aqui = seleccion?.colId === s.id;
               const esta = aqui ? visible(seleccion.inicio, duracion) : null;
+              const colaInicio = aqui ? seleccion.inicio + duracion : 0;
+              const post = aqui && postFranjas > 0 ? visible(colaInicio, postFranjas) : null;
+              const recup = aqui && recupFranjas > 0 ? visible(colaInicio + postFranjas, recupFranjas) : null;
+              const finde = [0, 6].includes(new Date(`${s.id}T00:00:00`).getDay());
               return (
-                <div key={s.id} className="as2-col" role="group" aria-label={s.nombre}>
+                <div key={s.id} className={`as2-col${aqui ? ' as2-col-sel' : ''}${finde ? ' as2-col-finde' : ''}`} role="group" aria-label={diaCortoLabel(s.id)}>
                   {filas.map((i) => {
                     const enSeleccion = aqui && i >= seleccion.inicio && i < seleccion.inicio + duracion;
                     if (s.mapa[i] || enSeleccion) return null;
@@ -93,13 +111,24 @@ export default function AgendaSalas({
                       <button
                         key={i}
                         type="button"
-                        className="as2-libre"
+                        className={`as2-libre${i % 2 === 1 ? ' as2-media' : ''}${fueraDeJornada(i) ? ' as2-fuera' : ''}`}
                         style={{ gridRow: i - desde + 1 }}
-                        aria-label={`${s.nombre}, ${horaFranja(i)}, libre`}
+                        aria-label={`${diaCortoLabel(s.id)}, ${horaFranja(i)}, libre`}
                         onClick={() => onElegir(s.id, i)}
                       />
                     );
                   })}
+
+                  {post && (
+                    <div className="as2-cola" style={{ gridRow: post.fila }}>
+                      Postquirúrgico · {duracionLabel(postFranjas)}
+                    </div>
+                  )}
+                  {recup && (
+                    <div className="as2-cola" style={{ gridRow: recup.fila }}>
+                      Recuperación · {duracionLabel(recupFranjas)}
+                    </div>
+                  )}
 
                   {s.bloques.map((b) => {
                     const v = visible(b.inicio, b.dur);
@@ -140,6 +169,13 @@ export default function AgendaSalas({
           </div>
         </div>
       )}
+      <div className="as2-pie">
+        <ul className="as2-leyenda" aria-label="Leyenda">
+          <li><span className="as2-sw as2-sw-ocupado" aria-hidden="true"><LuCalendarCheck className="icon" /></span>Ocupado</li>
+          <li><span className="as2-sw as2-sw-nd" aria-hidden="true"><LuWrench className="icon" /></span>No disponible</li>
+          <li><span className="as2-sw as2-sw-esta" aria-hidden="true"><LuCircleCheck className="icon" /></span>Esta cirugía</li>
+        </ul>
+      </div>
     </section>
   );
 }

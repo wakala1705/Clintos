@@ -1,5 +1,8 @@
-.as2-card{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-.as2-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 24px 8px;flex-shrink:0;}
+.as2-card{
+  flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;position:relative;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+}
+.as2-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 24px;flex-shrink:0;border-bottom:1px solid var(--border);}
 .as2-nav{display:flex;align-items:center;gap:6px;}
 .as2-nav-btn{
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
@@ -10,6 +13,8 @@
 .as2-nav-btn .icon{width:18px;height:18px;}
 .as2-fecha{margin:0;min-width:180px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
+.as2-controles{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.as2-sala{width:200px;}
 .as2-leyenda{list-style:none;margin:0;padding:0;display:flex;gap:16px;flex-wrap:wrap;}
 .as2-leyenda li{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-700);}
 .as2-sw{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
@@ -18,18 +23,27 @@
 .as2-sw-nd{background:var(--bg);border:1px dashed var(--ink-400);color:var(--ink-500);}
 .as2-sw-esta{background:var(--interactive-selected-bg);border:2px solid var(--primary);color:var(--interactive-selected-text);}
 
-.as2-subheader{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;padding:0 24px 10px;flex-shrink:0;border-bottom:1px solid var(--border);}
-.as2-ayuda{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.as2-pie{display:flex;align-items:center;justify-content:flex-end;padding:10px 24px;flex-shrink:0;border-top:1px solid var(--border);}
 .as2-cargando{margin:0;padding:48px 24px;text-align:center;color:var(--ink-500);}
 
 .as2-scroll{flex:1;min-height:0;overflow:auto;position:relative;}
 .as2-grid{
-  display:grid;grid-template-columns:56px repeat(var(--as2-cols),minmax(150px,1fr));
-  grid-template-rows:auto auto;min-width:560px;
+  display:grid;grid-template-columns:56px repeat(var(--as2-cols),minmax(104px,1fr));
+  grid-template-rows:auto auto;min-width:760px;
 }
 .as2-esquina,.as2-sala-head{
-  position:sticky;top:0;z-index:2;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;padding:8px 12px;color:var(--th-color);
+  border-left:1px solid var(--border);
 }
+.as2-dow{font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);}
+.as2-num{
+  min-width:30px;height:30px;padding:0 4px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);font-variant-numeric:tabular-nums;
+}
+.as2-num.as2-hoy{background:var(--primary);color:#fff;}
+.as2-mes{font-size:var(--fs-sm);color:var(--ink-500);}
+.as2-head-sel{background:var(--interactive-selected-bg);}
+.as2-head-sel .as2-dow,.as2-head-sel .as2-mes{color:var(--interactive-selected-text);}
 .as2-sala-head{
   padding:10px 12px;font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
   border-left:1px solid var(--border);
@@ -39,6 +53,8 @@
   padding:2px 8px 0 0;text-align:right;font-size:var(--fs-xs);color:var(--ink-500);
   font-variant-numeric:tabular-nums;border-top:1px solid var(--border);
 }
+/* Línea de la hora marcada; la de la media hora, apenas insinuada. */
+.as2-hora.as2-media,.as2-libre.as2-media{border-top:1px dotted color-mix(in srgb,var(--border) 70%,transparent);}
 .as2-col{display:grid;grid-template-rows:repeat(var(--as2-filas),44px);border-left:1px solid var(--border);position:relative;}
 .as2-libre{
   grid-column:1;min-height:44px;border:none;border-top:1px solid var(--border);background:var(--surface);
@@ -61,3 +77,17 @@
 .as2-nd .as2-bloque-sub{color:var(--ink-500);}
 .as2-esta{background:var(--interactive-selected-bg);border:2px solid var(--primary);color:var(--interactive-selected-text);z-index:1;}
 .as2-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+/* Fuera de la jornada operativa y fines de semana: un tono más apagado (--bg). El día elegido lleva un tinte de selección. */
+.as2-libre.as2-fuera,.as2-col-finde .as2-libre{background:var(--bg);}
+.as2-col-sel{background:color-mix(in srgb,var(--interactive-selected-bg) 40%,var(--surface));}
+.as2-col-sel .as2-libre{background:transparent;}
+.as2-col-sel .as2-libre.as2-fuera{background:color-mix(in srgb,var(--interactive-selected-bg) 40%,var(--bg));}
+.as2-col-sel .as2-libre:hover,.as2-libre:hover{background:var(--interactive-selected-bg);}
+
+/* Tiempo postquirúrgico y de recuperación tras esta cirugía (informativo, no ocupa la sala). */
+.as2-cola{
+  grid-column:1;margin:0 4px;padding:6px 8px;border-radius:var(--radius);overflow:hidden;pointer-events:none;
+  background:color-mix(in srgb,var(--interactive-selected-bg) 45%,var(--surface));border:1px dashed var(--primary);
+  color:var(--interactive-selected-text);font-size:var(--fs-xs);font-weight:var(--fw-medium);line-height:1.3;
+}

@@ -42,19 +42,19 @@ test('cabe / primeraLibre respetan la ventana', () => {
 
 test('una cirugía nueva se ubica primero en la jornada operativa', () => {
   const salas = [sala('a', [{ inicio: 14, dur: 4 }]), sala('b')];
-  assert.deepEqual(ubicarEnPrimeraLibre(salas, 4), { salaId: 'a', inicio: 18 });
+  assert.deepEqual(ubicarEnPrimeraLibre(salas, 4), { colId: 'a', inicio: 18 });
   // Sin espacio operativo en ninguna sala: cae al resto del día.
   const llenas = [sala('a', [{ inicio: 14, dur: 24 }])];
-  assert.deepEqual(ubicarEnPrimeraLibre(llenas, 2), { salaId: 'a', inicio: 0 });
+  assert.deepEqual(ubicarEnPrimeraLibre(llenas, 2), { colId: 'a', inicio: 0 });
   assert.equal(ubicarEnPrimeraLibre([{ id: 'a', mapa: Array(48).fill(true) }], 1), null);
 });
 
 test('reubicar: conserva, mueve en la sala, respeta la ventana o devuelve null', () => {
   const salas = [sala('a', [{ inicio: 16, dur: 2 }]), sala('b')];
-  assert.deepEqual(reubicar(salas, { salaId: 'a', inicio: 20 }, 4), { salaId: 'a', inicio: 20 });
-  assert.deepEqual(reubicar(salas, { salaId: 'a', inicio: 14 }, 4), { salaId: 'a', inicio: 18 });
+  assert.deepEqual(reubicar(salas, { colId: 'a', inicio: 20 }, 4), { colId: 'a', inicio: 20 });
+  assert.deepEqual(reubicar(salas, { colId: 'a', inicio: 14 }, 4), { colId: 'a', inicio: 18 });
   // Al pasar a jornada operativa, una selección fuera de la ventana se acomoda dentro.
-  assert.deepEqual(reubicar(salas, { salaId: 'a', inicio: 2 }, 2, JORNADAS.operativa), { salaId: 'a', inicio: 14 });
+  assert.deepEqual(reubicar(salas, { colId: 'a', inicio: 2 }, 2, JORNADAS.operativa), { colId: 'a', inicio: 14 });
   assert.equal(reubicar([{ id: 'a', mapa: Array(48).fill(true) }], null, 1, JORNADAS.operativa), null);
 });
 

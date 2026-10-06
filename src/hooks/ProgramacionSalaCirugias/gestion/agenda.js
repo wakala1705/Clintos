@@ -105,7 +105,7 @@ export function ubicarEnPrimeraLibre(salas, dur) {
   for (const ventana of [JORNADAS.operativa, JORNADAS['24h']]) {
     for (const s of salas) {
       const inicio = primeraLibre(s.mapa, dur, ventana);
-      if (inicio !== -1) return { salaId: s.id, inicio };
+      if (inicio !== -1) return { colId: s.id, inicio };
     }
   }
   return null;
@@ -116,18 +116,18 @@ export function ubicarEnPrimeraLibre(salas, dur) {
 // sala. `ventana` limita dónde se busca; null si no hay espacio.
 export function reubicar(salas, seleccion, dur, ventana = JORNADAS['24h']) {
   if (seleccion) {
-    const sala = salas.find((s) => s.id === seleccion.salaId);
+    const sala = salas.find((s) => s.id === seleccion.colId);
     const dentro = seleccion.inicio >= ventana.desde && seleccion.inicio + dur <= ventana.hasta;
     if (sala && dentro && cabe(sala.mapa, seleccion.inicio, dur)) return seleccion;
     if (sala) {
       const libre = primeraLibrePreferida(sala.mapa, dur, ventana);
-      if (libre !== -1) return { salaId: sala.id, inicio: libre };
+      if (libre !== -1) return { colId: sala.id, inicio: libre };
     }
   }
   if (ventana === JORNADAS['24h']) return ubicarEnPrimeraLibre(salas, dur);
   for (const s of salas) {
     const inicio = primeraLibre(s.mapa, dur, ventana);
-    if (inicio !== -1) return { salaId: s.id, inicio };
+    if (inicio !== -1) return { colId: s.id, inicio };
   }
   return null;
 }

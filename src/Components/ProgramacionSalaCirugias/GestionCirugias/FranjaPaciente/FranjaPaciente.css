@@ -1,6 +1,6 @@
 .fp-franja{
   display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:14px 24px;flex-shrink:0;
-  border-bottom:1px solid var(--border);background:var(--surface);
+  border-bottom:1px solid var(--border);background:var(--bg);
 }
 .fp-datos{margin:0;flex:1;min-width:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 24px;}
 .fp-dato dt{

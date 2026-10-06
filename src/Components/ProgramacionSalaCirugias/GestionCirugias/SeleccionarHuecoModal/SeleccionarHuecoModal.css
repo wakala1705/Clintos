@@ -1,22 +1,18 @@
 /* .modal-overlay/.modal-card en ../../shared/shared.css y reglas .gc-* en
-   ../shared/shared.css. Modal ancho con alto fijo: la agenda y la columna de
-   datos scrollean por dentro. Selector compuesto (mismo criterio que
+   ../shared/shared.css. Modal ancho con alto fijo: la agenda scrollea por dentro y
+   la barra inferior (resumen, tiempos y acciones) queda fija. Selector compuesto (mismo criterio que
    .dcp-modal-card) para ganarle a la regla base de .modal-card. */
 .modal-card.shm-card{width:95vw;max-width:1360px;height:92vh;max-height:92vh;}
-.shm-workspace{flex:1;min-height:0;display:flex;}
-.shm-datos{width:440px;flex-shrink:0;min-height:0;display:flex;flex-direction:column;border-left:1px solid var(--border);}
-.shm-datos-cuerpo{flex:1;min-height:0;overflow-y:auto;position:relative;}
-.shm-footer{flex-shrink:0;padding:12px 20px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
-.shm-bloqueo{margin:0;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--clinical-status-pending-fg);}
-.shm-siguiente{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
-.shm-botones{display:flex;gap:10px;}
+.shm-workspace{flex:1;min-height:0;display:flex;padding:16px;background:var(--bg);}
+.shm-pie{flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:12px 24px;flex-wrap:wrap;padding:10px 20px;border-top:1px solid var(--border);background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+.shm-botones{display:flex;gap:10px;margin-left:auto;}
 .shm-botones button{min-height:44px;}
-.shm-continuar{flex:1;justify-content:center;}
+.shm-continuar{justify-content:center;min-width:160px;}
 
 @media (max-width:1024px){
   .modal-card.shm-card{height:96vh;max-height:96vh;overflow-y:auto;}
   .shm-workspace{flex-direction:column;flex:none;}
-  .shm-datos{width:100%;border-left:none;border-top:1px solid var(--border);}
-  .shm-datos-cuerpo{overflow:visible;}
-  .shm-workspace > .as2-card{min-height:640px;}
+  .shm-botones{width:100%;}
+  .shm-continuar{flex:1;}
+  .shm-workspace > .as2-card{min-height:560px;}
 }

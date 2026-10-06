@@ -1,0 +1,11 @@
+/* Panel e ítems: apariencia de @/Components/DropdownPanel. Acá solo posición y el switch. */
+.va-panel{position:fixed;z-index:calc(var(--z-modal) + 1);width:280px;display:flex;flex-direction:column;}
+.va-habil{justify-content:space-between;min-height:44px;}
+.va-nota{margin:0;padding:0 10px 6px;font-size:var(--fs-sm);color:var(--ink-500);}
+.va-switch{
+  width:38px;height:22px;border-radius:999px;border:1px solid var(--ink-400);background:var(--gray-bg);
+  position:relative;flex-shrink:0;transition:background .15s ease,border-color .15s ease;
+}
+.va-switch.on{background:var(--primary);border-color:var(--primary);}
+.va-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(16,24,39,.25);transition:transform .15s ease;}
+.va-switch.on .va-thumb{transform:translateX(16px);}
