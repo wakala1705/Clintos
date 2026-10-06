@@ -21,7 +21,7 @@
 .sp-conteo{font-size:var(--fs-sm);color:var(--ink-500);}
 .sp-conteo strong{color:var(--ink-900);font-weight:var(--fw-semibold);}
 
-.sp-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:20px;}
+.sp-body{position:relative;flex:1;min-height:0;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:20px;}
 .sp-seccion{margin:0 0 10px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 /* Datos: caja 2x2 */
@@ -40,6 +40,7 @@
 /* Pasos */
 .sp-pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
 .sp-paso{
+  position:relative;
   display:flex;flex-direction:column;gap:8px;padding:12px 14px;
   border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
 }

@@ -1,5 +1,6 @@
 /* Tokens --clinical-status-* declarados en ../../ProgramacionSalaCirugias.css. */
 .ec-chip{
+  position:relative; /* contiene a .ec-sr (texto solo para lector de pantalla) */
   display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
   padding:4px 10px;border-radius:20px;
   font-size:var(--fs-xs);font-weight:var(--fw-semibold);line-height:1.2;

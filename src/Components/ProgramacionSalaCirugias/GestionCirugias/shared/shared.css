@@ -48,3 +48,8 @@
 @media (max-width:1024px){
   .gc-grid-2{grid-template-columns:minmax(0,1fr);}
 }
+
+/* Sección de un panel/tarjeta (modal "Programar cirugía"). */
+.gc-seccion{display:flex;flex-direction:column;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);}
+.gc-seccion:last-child{border-bottom:none;}
+.gc-seccion-titulo{margin:0;font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);}

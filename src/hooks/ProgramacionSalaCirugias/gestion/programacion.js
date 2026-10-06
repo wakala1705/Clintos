@@ -29,21 +29,28 @@ export function pacienteDeSolicitud(solicitud, hoy) {
   };
 }
 
-export function datosWizardDesdeSolicitud(solicitud, fechaInicioHora = '07:00') {
+// `hueco` (opcional) es lo elegido en el modal "Programar cirugía": fecha y
+// hora del slot, duración, personal y equipos. Sin él se usa la fecha
+// tentativa a las 07:00 y la duración estimada de los procedimientos.
+export function datosWizardDesdeSolicitud(solicitud, hueco = {}) {
   const autorizada = solicitud.checklist.autorizacion.estado === 'ok';
+  const cirujano = hueco.cirujano ?? solicitud.cirujano ?? '';
   return {
-    fechaInicio: `${solicitud.fechaTentativa}T${fechaInicioHora}`,
-    duracionEstimada: String(duracionEstimadaMin(solicitud)),
+    fechaInicio: `${hueco.fecha ?? solicitud.fechaTentativa}T${hueco.hora ?? '07:00'}`,
+    duracionEstimada: String(hueco.duracionMin ?? duracionEstimadaMin(solicitud)),
+    duracionPostquirurgica: String(hueco.duracionPostquirurgicaMin ?? ''),
+    duracionRecuperacion: String(hueco.duracionRecuperacionMin ?? ''),
     dxIngreso: solicitud.dxOrden ?? '',
     idAseguradora: solicitud.eps,
     noAutorizacion: autorizada ? '[N° autorización]' : '',
     procedimientos: listaProcedimientos(solicitud).map((p) => ({
       idCirugia: `${p.cups} - ${p.nombre}`,
-      idCirujano: solicitud.cirujano ?? '',
-      idAnestesiologo: '',
+      idCirujano: cirujano,
+      idAnestesiologo: hueco.anestesiologo ?? '',
       tipoCirugia: '',
       insumos: [],
     })),
+    equipos: hueco.equipos ?? [],
     // Vínculo que queda guardado en la cirugía (ver armarCirugiaDesdeWizard).
     solicitud: {
       id: solicitud.id,

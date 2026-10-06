@@ -1,6 +1,6 @@
 /* Tokens, .filter-bar y .search-field vienen de ../../ProgramacionSalaCirugias.css
    y ../../shared/shared.css. */
-.sct-scroll{overflow:auto;min-height:0;flex:1;}
+.sct-scroll{position:relative;overflow:auto;min-height:0;flex:1;}
 .sct-table{width:100%;border-collapse:separate;border-spacing:0;min-width:0;}
 .sct-table th{
   position:sticky;top:0;z-index:var(--z-sticky);

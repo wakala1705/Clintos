@@ -82,3 +82,51 @@ export const COBERTURA_LABEL = {
   'no-cubierto': 'No cubierto',
 };
 export const TONO_COBERTURA = { cubierto: 'complete', autorizacion: 'pending', 'no-cubierto': 'rejected' };
+
+// ---------- Programar cirugía (modal de Gestión) ----------
+// Personal: `ocupado` son rangos {inicio, dur} en franjas de 30 min desde las
+// 00:00 (índice 0 = 00:00, 14 = 07:00) en los que ya tiene otra cirugía ese día.
+export const PERSONAL = {
+  cirujano: [
+    { value: 'Dr. Andrés Villamizar', ocupado: [{ inicio: 16, dur: 4 }] },
+    { value: 'Dra. Marcela Echeverri', ocupado: [{ inicio: 22, dur: 3 }] },
+    { value: 'Dr. Mauricio Salamanca', ocupado: [{ inicio: 14, dur: 3 }] },
+    { value: 'Dr. Ricardo Naranjo', ocupado: [{ inicio: 17, dur: 5 }] },
+    { value: 'Dr. Héctor Lozano', ocupado: [] },
+    { value: 'Dra. Natalia Escobar', ocupado: [] },
+  ],
+  anestesiologo: [
+    { value: 'Dra. Paula Becerra', ocupado: [{ inicio: 16, dur: 4 }] },
+    { value: 'Dr. Felipe Gaitán', ocupado: [] },
+    { value: 'Dr. Julián Arango', ocupado: [{ inicio: 24, dur: 4 }] },
+  ],
+  ayudante: [
+    { value: 'Dr. Camilo Prieto', ocupado: [] },
+    { value: 'Dra. Laura Sarmiento', ocupado: [{ inicio: 14, dur: 6 }] },
+  ],
+  instrumentador: [
+    { value: 'Inst. Diana Cañón', ocupado: [{ inicio: 22, dur: 3 }] },
+    { value: 'Inst. Jhon Murcia', ocupado: [] },
+  ],
+  circulante: [
+    { value: 'Enf. Martha Rincón', ocupado: [] },
+    { value: 'Enf. Yesid Camargo', ocupado: [{ inicio: 17, dur: 5 }] },
+  ],
+};
+
+export const ROLES_PERSONAL = [
+  { key: 'cirujano', label: 'Cirujano' },
+  { key: 'anestesiologo', label: 'Anestesiólogo' },
+  { key: 'ayudante', label: 'Ayudante quirúrgico' },
+  { key: 'instrumentador', label: 'Instrumentador quirúrgico' },
+  { key: 'circulante', label: 'Enfermera circulante' },
+];
+
+// Equipos ofrecidos al programar (mismo shape que EQUIPOS_QX_CATALOGO del
+// wizard: nombre/tipo/identificacion) + su ocupación del día.
+export const EQUIPOS_PROG = [
+  { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', ocupado: [{ inicio: 14, dur: 2 }] },
+  { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', ocupado: [] },
+  { nombre: 'Torre de artroscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0399', ocupado: [{ inicio: 18, dur: 4 }] },
+  { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', ocupado: [] },
+];

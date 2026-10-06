@@ -16,7 +16,12 @@ import KpiCard from '@/Components/KpiCard/KpiCard';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
-import { consumirAviso, getSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
+import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal';
+import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
+import { consumirAviso, getSolicitudes, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
+import {
+  datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud,
+} from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import { contarPorEstado, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
@@ -36,7 +41,12 @@ const opciones = (todas, valores) => [
 // @/hooks/ProgramacionSalaCirugias/gestion/gestion.
 export default function GestionCirugias() {
   const router = useRouter();
-  const [solicitudes] = useState(() => getSolicitudes());
+  const [solicitudes, setSolicitudes] = useState(() => getSolicitudes());
+  // Programar una solicitud: 1) modal con la agenda para elegir sala/fecha/hora
+  // (`programando`), 2) wizard "Nueva cirugía" precargado (`hueco` elegido).
+  // Ambos son modales sobre esta pantalla; no se navega a Programación.
+  const [programando, setProgramando] = useState(null);
+  const [hueco, setHueco] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
@@ -77,6 +87,15 @@ export default function GestionCirugias() {
   }
 
   function cerrarPanel() { setSelectedId(null); }
+
+  function handleCirugiaGuardada(solicitud) {
+    marcarProgramada(solicitud.id);
+    setSolicitudes(getSolicitudes());
+    setSelectedId(null);
+    setProgramando(null);
+    setHueco(null);
+    showToast(`Cirugía programada desde la orden ${solicitud.ordenNumero}. Canasta solicitada a farmacia${solicitud.origen === 'internacion' ? '' : ' y admisión creada'}.`);
+  }
 
   return (
     <div className="app">
@@ -209,12 +228,30 @@ export default function GestionCirugias() {
                 solicitud={seleccionada}
                 onClose={cerrarPanel}
                 onAccion={(accion, item) => showToast(`${accion} · ${item}: pantalla por conectar`)}
-                onProgramar={(s) => router.push(`/cirugia/programacion?solicitud=${s.id}`)}
+                onProgramar={setProgramando}
               />
             )}
           </div>
         </div>
       </div>
+
+      {programando && (
+        <SeleccionarHuecoModal
+          solicitud={programando}
+          duracionMin={duracionEstimadaMin(programando)}
+          onClose={() => setProgramando(null)}
+          onElegir={setHueco}
+        />
+      )}
+      {programando && hueco && (
+        <NuevaCirugiaWizard
+          patient={pacienteDeSolicitud(programando, new Date())}
+          salaId={hueco.salaId}
+          initialDatos={datosWizardDesdeSolicitud(programando, hueco)}
+          onGuardar={() => handleCirugiaGuardada(programando)}
+          onClose={() => setHueco(null)}
+        />
+      )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`} role="status">
         <span className="psc-toast-dot" />

@@ -1,6 +1,6 @@
 .po-wrap{display:flex;flex-direction:column;gap:16px;}
 .po-fecha{width:100%;}
-.po-adjunto{display:flex;flex-direction:column;gap:8px;}
+.po-adjunto{position:relative;display:flex;flex-direction:column;gap:8px;}
 .po-archivo,
 .po-vacio{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;

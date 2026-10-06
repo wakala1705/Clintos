@@ -38,6 +38,14 @@ test('solicitud -> datos del wizard: precarga y vínculo', () => {
     [datos.solicitud.id, datos.solicitud.origen, datos.solicitud.ambulatorio],
     ['SC-1041', 'consulta-externa', true],
   );
+  const conHueco = datosWizardDesdeSolicitud(s, {
+    fecha: '2026-10-08', hora: '09:30', duracionMin: 90, cirujano: 'Dr. Z', anestesiologo: 'Dra. A', equipos: [{ identificacion: 'EQ-1' }],
+  });
+  assert.equal(conHueco.fechaInicio, '2026-10-08T09:30');
+  assert.equal(conHueco.duracionEstimada, '90');
+  assert.equal(conHueco.procedimientos[0].idCirujano, 'Dr. Z');
+  assert.equal(conHueco.procedimientos[0].idAnestesiologo, 'Dra. A');
+  assert.equal(conHueco.equipos.length, 1);
   const paciente = pacienteDeSolicitud(s, new Date(2026, 9, 6));
   assert.equal(paciente.fechaNacimiento, '1974-01-01');
 });
