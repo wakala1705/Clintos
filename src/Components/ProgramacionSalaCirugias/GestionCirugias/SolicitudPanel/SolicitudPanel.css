@@ -1,0 +1,115 @@
+/* Tokens (--link, --clinical-status-*, --status-info-*) en
+   ../../ProgramacionSalaCirugias.css. */
+.sp-panel{
+  width:460px;flex-shrink:0;display:flex;flex-direction:column;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+.sp-panel:focus{outline:none;}
+.sp-scrim{display:none;}
+
+.sp-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+.sp-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.sp-titulo{margin:0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.3;}
+.sp-close{
+  width:44px;height:44px;margin:-8px -10px 0 0;flex-shrink:0;border:none;border-radius:var(--radius);background:none;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-500);cursor:pointer;
+}
+.sp-close:hover{background:var(--gray-bg);color:var(--ink-900);}
+.sp-close:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.sp-close .icon{width:20px;height:20px;}
+.sp-header-estado{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.sp-conteo{font-size:var(--fs-sm);color:var(--ink-500);}
+.sp-conteo strong{color:var(--ink-900);font-weight:var(--fw-semibold);}
+
+.sp-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:20px;}
+.sp-seccion{margin:0 0 10px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+/* Datos: caja 2x2 */
+.sp-datos{
+  margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;
+  padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.sp-dato{min-width:0;display:flex;flex-direction:column;gap:2px;}
+.sp-dato dt{
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);
+  text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+.sp-dato dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
+.sp-dato-sub{display:block;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);margin-top:2px;}
+
+/* Pasos */
+.sp-pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+.sp-paso{
+  display:flex;flex-direction:column;gap:8px;padding:12px 14px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+}
+.sp-paso-head{display:flex;align-items:center;gap:10px;}
+.sp-num{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:var(--gray-bg);color:var(--ink-700);font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+}
+.sp-paso-titulo{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.sp-paso-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:36px;}
+.sp-paso > .sp-detalle,
+.sp-paso > .sp-link{margin-left:36px;}
+.sp-paso > .sp-link{align-self:flex-start;}
+
+/* Etiqueta Obligatorio / Opcional: texto + borde, no depende del color. */
+.sp-req{
+  padding:3px 8px;border:1px solid var(--border);border-radius:20px;
+  font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-700);white-space:nowrap;
+}
+.sp-req-obligatorio{font-weight:var(--fw-semibold);color:var(--ink-900);border-color:var(--ink-400);}
+
+.sp-detalle{margin:0;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.45;}
+
+/* Acción de texto: rol `link`. 44px de alto táctil. */
+.sp-link{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 4px;margin-left:-4px;
+  border:none;border-radius:6px;background:none;cursor:pointer;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--link);
+  text-decoration:underline;text-underline-offset:3px;
+}
+.sp-link:hover{text-decoration-thickness:2px;}
+.sp-link:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+
+/* Subítems del paso 4 */
+.sp-sub{list-style:none;margin:0 0 0 36px;padding:0;display:flex;flex-direction:column;gap:6px;}
+.sp-subitem{
+  display:flex;flex-direction:column;gap:6px;padding:10px 12px;
+  background:var(--bg);border-radius:var(--radius);
+}
+.sp-subitem-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sp-subitem-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-right:auto;}
+
+/* Pie fijo */
+.sp-footer{
+  flex-shrink:0;padding:14px 20px;border-top:1px solid var(--border);background:var(--surface);
+  display:flex;flex-direction:column;gap:10px;
+}
+.sp-mensaje{
+  margin:0;display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.45;
+}
+.sp-mensaje .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+.sp-mensaje-ok{background:var(--clinical-status-complete-bg);color:var(--clinical-status-complete-fg);}
+.sp-mensaje-pendiente{background:var(--clinical-status-pending-bg);color:var(--clinical-status-pending-fg);}
+.sp-mensaje-bloqueada{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
+/* status-info: solo mensajes informativos. */
+.sp-mensaje-info{background:var(--status-info-bg);color:var(--status-info-fg);}
+.sp-programar{width:100%;justify-content:center;min-height:44px;}
+
+/* Tablet: el panel se superpone a la tabla en vez de quitarle ancho. */
+@media (max-width:1024px){
+  .sp-scrim{
+    display:block;position:fixed;inset:0;z-index:calc(var(--z-modal) - 1);background:rgba(16,24,39,.45);
+  }
+  .sp-panel{
+    position:fixed;top:0;right:0;bottom:0;z-index:var(--z-modal);width:min(460px,100%);
+    border-radius:0;border-width:0 0 0 1px;box-shadow:0 24px 64px rgba(16,24,39,.32);
+  }
+}
+
+.sp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+.sp-dato-proc{display:block;}

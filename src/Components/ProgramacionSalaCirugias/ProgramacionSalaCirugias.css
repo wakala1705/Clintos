@@ -50,6 +50,25 @@
   --input-sm:32px;
   --input-md:36px;
   --input-lg:44px;
+
+  /* Roles de azul separados (Gestión de cirugías): action-primary = botones
+     principales, link = acciones de texto; interactive-selected y
+     status-info ya están arriba. */
+  --action-primary:var(--primary);
+  --link:var(--primary);
+
+  /* clinical-status: estados de la lista de chequeo previa a programar
+     (Completo / Pendiente / Rechazada-Vencida / No requerido) y su resumen
+     (Lista / Con pendientes / Bloqueada). Semánticos: alias de los tokens de
+     color de arriba, así heredan el tema oscuro. */
+  --clinical-status-complete-bg:var(--green-bg);
+  --clinical-status-complete-fg:#0d7a3d;
+  --clinical-status-pending-bg:var(--amber-bg);
+  --clinical-status-pending-fg:var(--amber-fg);
+  --clinical-status-rejected-bg:var(--red-bg);
+  --clinical-status-rejected-fg:var(--red);
+  --clinical-status-notrequired-bg:var(--gray-bg);
+  --clinical-status-notrequired-fg:var(--ink-700);
 }
 html[data-theme="dark"]{
   --primary-50:rgba(0,101,205,.16);
@@ -75,6 +94,8 @@ html[data-theme="dark"]{
   --amber:#f5b942;
   --amber-bg:rgba(224,138,0,.18);
   --amber-fg:#f5b942;
+  --link:#7db4ff;
+  --clinical-status-complete-fg:var(--green);
 }
 html[data-contrast="high"]{
   --border:#cbd3dd;

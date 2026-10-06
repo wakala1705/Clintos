@@ -1,0 +1,8 @@
+.pc-wrap{display:flex;flex-direction:column;gap:6px;min-width:140px;}
+.pc-bar{height:6px;border-radius:999px;background:var(--gray-bg);overflow:hidden;}
+.pc-fill{height:100%;border-radius:999px;background:currentColor;}
+.pc-complete{color:var(--clinical-status-complete-fg);}
+.pc-pending{color:var(--clinical-status-pending-fg);}
+.pc-rejected{color:var(--clinical-status-rejected-fg);}
+.pc-count{font-size:var(--fs-sm);color:var(--ink-500);max-width:130px;}
+.pc-count strong{color:var(--ink-900);font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;}

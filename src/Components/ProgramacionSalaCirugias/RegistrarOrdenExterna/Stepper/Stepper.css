@@ -1,0 +1,30 @@
+.st-lista{
+  list-style:none;margin:0;padding:8px 12px;display:flex;align-items:center;gap:4px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);flex-shrink:0;
+}
+.st-paso{flex:1;min-width:0;position:relative;}
+.st-btn{
+  width:100%;min-height:44px;display:flex;align-items:center;gap:10px;padding:0 12px;
+  border:none;border-radius:var(--radius);background:none;font-family:inherit;text-align:left;cursor:default;
+}
+button.st-btn{cursor:pointer;}
+button.st-btn:hover{background:var(--bg);}
+button.st-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.st-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);
+  background:var(--gray-bg);color:var(--ink-700);
+}
+.st-num .icon{width:15px;height:15px;}
+.st-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-actual .st-btn{background:var(--interactive-selected-bg);}
+.st-actual .st-num{background:var(--primary);color:#fff;}
+.st-actual .st-nombre{color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.st-hecho .st-num{background:var(--clinical-status-complete-bg);color:var(--clinical-status-complete-fg);}
+.st-hecho .st-nombre{color:var(--ink-900);}
+.st-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+@media (max-width:1024px){
+  .st-nombre{font-size:var(--fs-sm);}
+  .st-btn{padding:0 8px;gap:8px;}
+}

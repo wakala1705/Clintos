@@ -165,6 +165,13 @@ const MODULE_GROUPS = [
     module: 'asistencial',
     items: [
       {
+        title: 'Gestión de cirugías',
+        description: 'Verifica la lista de chequeo de cada solicitud antes de programar.',
+        icon: LuClipboardCheck,
+        href: '/cirugia/gestion',
+        enabled: true,
+      },
+      {
         title: 'Panel general',
         description: 'Estado de las salas y programación quirúrgica del día.',
         icon: LuLayoutGrid,

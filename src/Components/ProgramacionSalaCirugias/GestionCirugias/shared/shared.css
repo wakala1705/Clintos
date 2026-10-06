@@ -1,0 +1,55 @@
+/* Reglas compartidas por las 3 pantallas del flujo Gestión de cirugías
+   (lista, Registrar orden externa, Programar cirugía). Se importa una sola vez
+   desde cada page.jsx de la ruta. Tokens y shell vienen de
+   ../../ProgramacionSalaCirugias.css. */
+.gc-breadcrumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
+.gc-breadcrumb a{
+  display:inline-flex;align-items:center;min-height:32px;color:var(--link);font-weight:var(--fw-medium);text-decoration:underline;
+  text-underline-offset:3px;
+}
+.gc-breadcrumb a:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
+.gc-breadcrumb .icon{width:14px;height:14px;}
+.gc-breadcrumb [aria-current]{color:var(--ink-700);}
+
+.gc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.gc-card-titulo{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.gc-card-sub{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+/* Aviso informativo (status-info): precarga de datos, admisión. */
+.gc-aviso{
+  display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius);
+  background:var(--status-info-bg);color:var(--status-info-fg);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.45;
+}
+.gc-aviso .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+
+/* Acción de texto: rol `link`, 44px de alto táctil. */
+.gc-link{
+  display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;
+  border:none;border-radius:6px;background:none;cursor:pointer;
+  font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--link);
+  text-decoration:underline;text-underline-offset:3px;
+}
+.gc-link:hover{text-decoration-thickness:2px;}
+.gc-link:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.gc-link .icon{width:16px;height:16px;}
+
+/* Campos de formulario a 44px (--input-lg), también FormSelect/DatePicker. */
+.gc-form .form-field input,
+.gc-form .form-select-trigger,
+.gc-form .dp-trigger{height:var(--input-lg);}
+.gc-form .form-field label,
+.gc-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);}
+.gc-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.gc-req{color:var(--clinical-status-rejected-fg);}
+
+.gc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+@media (max-width:1024px){
+  .gc-grid-2{grid-template-columns:minmax(0,1fr);}
+}
+
+/* Sección de un panel/tarjeta (Programar cirugía y similares). */
+.gc-seccion{display:flex;flex-direction:column;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);}
+.gc-seccion:last-child{border-bottom:none;}
+.gc-seccion-titulo{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}

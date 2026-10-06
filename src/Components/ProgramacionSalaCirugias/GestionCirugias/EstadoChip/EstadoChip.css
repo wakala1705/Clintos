@@ -1,0 +1,18 @@
+/* Tokens --clinical-status-* declarados en ../../ProgramacionSalaCirugias.css. */
+.ec-chip{
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  padding:4px 10px;border-radius:20px;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);line-height:1.2;
+}
+.ec-icon{width:14px;height:14px;flex-shrink:0;}
+.ec-mini{padding:3px 8px;gap:4px;}
+.ec-mini .ec-icon{width:12px;height:12px;}
+
+.ec-complete{background:var(--clinical-status-complete-bg);color:var(--clinical-status-complete-fg);}
+.ec-pending{background:var(--clinical-status-pending-bg);color:var(--clinical-status-pending-fg);}
+.ec-rejected{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
+.ec-notrequired{background:var(--clinical-status-notrequired-bg);color:var(--clinical-status-notrequired-fg);}
+
+.ec-sr{
+  position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}

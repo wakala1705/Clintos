@@ -1,0 +1,17 @@
+.pv-wrap{display:flex;flex-direction:column;gap:16px;}
+.pv-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:var(--radius);font-size:var(--fs-base);}
+.pv-complete{background:var(--clinical-status-complete-bg);color:var(--clinical-status-complete-fg);}
+.pv-pending{background:var(--clinical-status-pending-bg);color:var(--clinical-status-pending-fg);}
+.pv-rejected{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
+.pv-banner .ec-chip{background:var(--surface);}
+.pv-banner-texto strong{font-weight:var(--fw-semibold);}
+
+.pv-filas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.pv-fila{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);}
+.pv-fila-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pv-fila-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);margin-right:auto;}
+.pv-req{padding:3px 8px;border:1px solid var(--border);border-radius:20px;font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--ink-700);}
+.pv-req-obligatorio{font-weight:var(--fw-semibold);color:var(--ink-900);border-color:var(--ink-400);}
+.pv-detalle{margin:0;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.45;}
+.pv-fila .gc-link{align-self:flex-start;margin-left:-4px;}
+.pv-banner-icono{width:20px;height:20px;flex-shrink:0;}

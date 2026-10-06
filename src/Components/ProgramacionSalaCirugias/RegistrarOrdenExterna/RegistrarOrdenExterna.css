@@ -1,0 +1,17 @@
+/* Shell, tokens y .psc-page-header en ../ProgramacionSalaCirugias.css; reglas
+   compartidas del flujo (.gc-*) en ../GestionCirugias/shared/shared.css. */
+.ro-content{overflow:hidden;}
+.ro-workspace{display:flex;gap:16px;flex:1;min-height:0;}
+.ro-form{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
+.ro-form-cuerpo{flex:1;min-height:0;overflow-y:auto;padding:20px 24px;}
+.ro-footer{flex-shrink:0;padding:14px 24px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
+.ro-faltante{margin:0;font-size:var(--fs-sm);color:var(--clinical-status-pending-fg);}
+.ro-botones{display:flex;align-items:center;gap:10px;}
+.ro-botones button{min-height:44px;}
+
+@media (max-width:1024px){
+  .ro-content{overflow-y:auto;}
+  .ro-workspace{flex-direction:column;flex:none;}
+  .ro-form{overflow:visible;}
+  .ro-form-cuerpo{overflow:visible;}
+}

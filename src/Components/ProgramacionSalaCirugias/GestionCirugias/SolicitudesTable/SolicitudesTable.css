@@ -1,0 +1,45 @@
+/* Tokens, .filter-bar y .search-field vienen de ../../ProgramacionSalaCirugias.css
+   y ../../shared/shared.css. */
+.sct-scroll{overflow:auto;min-height:0;flex:1;}
+.sct-table{width:100%;border-collapse:separate;border-spacing:0;min-width:0;}
+.sct-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.sct-table td{
+  padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle;
+  font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.sct-table tbody tr{cursor:pointer;}
+.sct-table tbody tr:hover td{background:var(--bg);}
+/* Fila seleccionada: interactive-selected (el td lleva su propio fondo
+   porque la columna Paciente es sticky y no puede ser transparente). */
+.sct-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+
+/* Paciente queda fija a la izquierda al desplazar en horizontal. */
+.sct-table .sct-sticky{position:sticky;left:0;border-right:1px solid var(--border);min-width:170px;}
+.sct-table th.sct-sticky{z-index:calc(var(--z-sticky) + 1);}
+.sct-table td.sct-sticky{z-index:1;}
+
+.sct-main{display:block;font-weight:var(--fw-semibold);}
+.sct-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.sct-fecha{white-space:nowrap;font-variant-numeric:tabular-nums;}
+.sct-estudios{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sct-chequeo{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
+.sct-accion{width:1%;text-align:right;}
+/* Área táctil mínima de 44px (el tamaño sm del Button es más bajo). */
+.sct-revisar{min-height:44px;padding-left:14px;padding-right:12px;}
+
+.sct-sr{
+  position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}
+
+/* Con el panel lateral abierto (desktop) los 4 pasos se leen ahí: la tabla
+   conserva paciente, procedimiento, fecha y estado general para no
+   desplazarse en horizontal. En tablet el panel se superpone, no aplica. */
+@media (min-width:1025px){
+  .sct-compacta{min-width:0;}
+  .sct-compacta .sct-paso,
+  .sct-compacta .sct-origen{display:none;}
+}

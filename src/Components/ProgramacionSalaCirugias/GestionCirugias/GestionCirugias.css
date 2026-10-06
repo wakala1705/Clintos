@@ -1,0 +1,39 @@
+/* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
+   ../ProgramacionSalaCirugias.css; .filter-bar/.search-field/.psc-toast de
+   ../shared/shared.css. Acá solo lo propio de la página; cada bloque tiene su
+   CSS en su carpeta. */
+.gc-content{overflow:hidden;}
+
+.gc-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;flex-shrink:0;}
+
+/* Lista + panel lateral en una fila; la lista cede el ancho al panel. */
+.gc-workspace{display:flex;gap:16px;flex:1;min-height:0;}
+.gc-lista{
+  flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+
+/* Filtros: alto táctil de 44px (--input-lg). */
+.gc-toolbar .search-field{width:330px;}
+.gc-toolbar .search-field input{height:var(--input-lg);}
+.gc-toolbar .gc-filtro{width:176px;}
+.gc-toolbar .form-select-trigger{height:var(--input-lg);}
+.gc-toolbar .gc-fecha{height:var(--input-lg);width:176px;}
+
+.gc-vacio{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  padding:48px 24px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);
+}
+.gc-vacio p{margin:0;}
+.gc-resumen{
+  flex-shrink:0;margin:0;padding:10px 20px;border-top:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+
+@media (max-width:1024px){
+  .gc-content{overflow-y:auto;}
+  .gc-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .gc-workspace{flex:none;min-height:480px;}
+  .gc-lista{min-height:480px;}
+  .gc-toolbar .search-field{width:100%;}
+}

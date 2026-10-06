@@ -1,0 +1,9 @@
+.sper-lista{display:flex;flex-direction:column;gap:12px;}
+.sper-fila{display:flex;align-items:flex-end;gap:12px;}
+.sper-campo{flex:1;min-width:0;}
+.sper-estado{width:150px;flex-shrink:0;min-height:var(--input-lg);display:flex;align-items:center;}
+
+@media (max-width:1024px){
+  .sper-fila{flex-direction:column;align-items:stretch;gap:6px;}
+  .sper-estado{width:auto;min-height:0;}
+}

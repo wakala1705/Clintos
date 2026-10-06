@@ -1,0 +1,13 @@
+.po-wrap{display:flex;flex-direction:column;gap:16px;}
+.po-fecha{width:100%;}
+.po-adjunto{display:flex;flex-direction:column;gap:8px;}
+.po-archivo,
+.po-vacio{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+}
+.po-vacio{border-style:dashed;justify-content:space-between;}
+.po-vacio p{margin:0;font-size:var(--fs-sm);color:var(--ink-700);flex:1;min-width:200px;}
+.po-archivo-icono{width:20px;height:20px;color:var(--ink-500);flex-shrink:0;}
+.po-archivo-nombre{flex:1;min-width:120px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
+.po-btn{min-height:44px;}
