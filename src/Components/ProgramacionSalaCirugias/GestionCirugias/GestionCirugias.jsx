@@ -14,14 +14,14 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import DatePicker from '@/Components/DatePicker/DatePicker';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
 import { consumirAviso, getSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
+import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import { contarPorEstado, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 const FILTROS_INICIALES = {
-  busqueda: '', eps: 'todas', especialidad: 'todas', fecha: '', estado: 'todas',
+  busqueda: '', origen: 'todas', eps: 'todas', especialidad: 'todas', estado: 'todas',
 };
 
 const opciones = (todas, valores) => [
@@ -56,6 +56,7 @@ export default function GestionCirugias() {
   // `todas` es el valor del select/chip "sin filtro"; los helpers puros usan ''.
   const efectivos = {
     ...filtros,
+    origen: filtros.origen === 'todas' ? '' : filtros.origen,
     eps: filtros.eps === 'todas' ? '' : filtros.eps,
     especialidad: filtros.especialidad === 'todas' ? '' : filtros.especialidad,
   };
@@ -157,6 +158,15 @@ export default function GestionCirugias() {
                 <div className="filter-cluster">
                   <div className="gc-filtro">
                     <FormSelect
+                      id="gc-origen"
+                      ariaLabel="Origen"
+                      value={filtros.origen}
+                      onChange={(origen) => setFiltro({ origen })}
+                      options={[{ value: 'todas', label: 'Todos los orígenes' }, ...Object.entries(ORIGEN_LABEL).map(([value, label]) => ({ value, label }))]}
+                    />
+                  </div>
+                  <div className="gc-filtro">
+                    <FormSelect
                       id="gc-eps"
                       ariaLabel="EPS"
                       value={filtros.eps}
@@ -173,15 +183,6 @@ export default function GestionCirugias() {
                       options={opciones('Todas las especialidades', solicitudes.map((s) => s.especialidad))}
                     />
                   </div>
-                  <DatePicker
-                    id="gc-fecha"
-                    ariaLabel="Fecha tentativa"
-                    value={filtros.fecha}
-                    onChange={(fecha) => setFiltro({ fecha })}
-                    triggerClassName="gc-fecha"
-                    clearable
-                    placeholder="Fecha tentativa"
-                  />
                 </div>
                 {hayFiltros && (
                   <Button variant="secondary" onClick={() => setFiltros(FILTROS_INICIALES)}>
@@ -208,7 +209,7 @@ export default function GestionCirugias() {
                 solicitud={seleccionada}
                 onClose={cerrarPanel}
                 onAccion={(accion, item) => showToast(`${accion} · ${item}: pantalla por conectar`)}
-                onProgramar={(s) => router.push(`/cirugia/gestion/programar?id=${s.id}`)}
+                onProgramar={(s) => router.push(`/cirugia/programacion?solicitud=${s.id}`)}
               />
             )}
           </div>

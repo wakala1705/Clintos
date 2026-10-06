@@ -1,4 +1,4 @@
-import { addDias, fechaISO } from '../mockCirugiaData';
+import { addDias, fechaISO } from '../mockCirugiaData.js';
 
 const ok = (detalle, obligatorio = true) => ({ estado: 'ok', obligatorio, detalle });
 const pendiente = (detalle, obligatorio = true) => ({ estado: 'pendiente', obligatorio, detalle });
@@ -11,6 +11,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
   return [
     {
       id: 'SC-1041',
+      dxOrden: '[CIE-10] · Colelitiasis sintomática',
       origen: 'consulta-externa',
       medicoOrdena: 'Dr. Andrés Villamizar',
       regimen: 'Contributivo',
@@ -33,6 +34,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1042',
+      dxOrden: '[CIE-10] · Gonartrosis primaria',
       origen: 'internacion',
       medicoOrdena: 'Dr. Mauricio Salamanca',
       regimen: 'Contributivo',
@@ -55,6 +57,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1043',
+      dxOrden: '[CIE-10] · Leiomioma uterino',
       origen: 'externa',
       medicoOrdena: 'Dra. Marcela Echeverri',
       regimen: 'Contributivo',
@@ -82,6 +85,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1044',
+      dxOrden: '[CIE-10] · Hernia inguinal unilateral',
       origen: 'consulta-externa',
       medicoOrdena: 'Dr. Andrés Villamizar',
       regimen: 'Contributivo',
@@ -104,6 +108,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1045',
+      dxOrden: '[CIE-10] · Catarata senil',
       origen: 'consulta-externa',
       medicoOrdena: 'Dr. Ricardo Naranjo',
       regimen: 'Subsidiado',
@@ -126,6 +131,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1046',
+      dxOrden: '[CIE-10] · Neoplasia maligna de próstata',
       origen: 'internacion',
       medicoOrdena: 'Dr. Héctor Lozano',
       regimen: 'Contributivo',
@@ -148,6 +154,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
     },
     {
       id: 'SC-1047',
+      dxOrden: '[CIE-10] · Bocio multinodular',
       origen: 'externa',
       medicoOrdena: 'Dra. Natalia Escobar',
       regimen: 'Contributivo',

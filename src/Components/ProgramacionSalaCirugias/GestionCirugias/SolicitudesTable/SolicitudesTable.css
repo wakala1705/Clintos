@@ -24,7 +24,6 @@
 
 .sct-main{display:block;font-weight:var(--fw-semibold);}
 .sct-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
-.sct-fecha{white-space:nowrap;font-variant-numeric:tabular-nums;}
 .sct-estudios{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .sct-chequeo{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
 .sct-accion{width:1%;text-align:right;}
@@ -36,7 +35,7 @@
 }
 
 /* Con el panel lateral abierto (desktop) los 4 pasos se leen ahí: la tabla
-   conserva paciente, procedimiento, fecha y estado general para no
+   conserva paciente, procedimiento y estado general para no
    desplazarse en horizontal. En tablet el panel se superpone, no aplica. */
 @media (min-width:1025px){
   .sct-compacta{min-width:0;}

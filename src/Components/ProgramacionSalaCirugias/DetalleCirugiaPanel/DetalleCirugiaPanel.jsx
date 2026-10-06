@@ -5,6 +5,7 @@ import './DetalleCirugiaPanel.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import EstadoCirugiaBadge from '../EstadoCirugiaBadge/EstadoCirugiaBadge';
+import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import ProcedimientosSideList from './ProcedimientosSideList/ProcedimientosSideList';
 import DetalleRealizada from './DetalleRealizada/DetalleRealizada';
 import { obtenerHojaConsumo } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
@@ -144,6 +145,20 @@ export default function DetalleCirugiaPanel({
             <InfoItem label="Fecha" value={fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)} wide />
             <InfoItem label="Sala" value={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'} />
             <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} />
+            {cirugia.solicitud && (
+              <>
+                <InfoItem
+                  label={`Orden · ${ORIGEN_LABEL[cirugia.solicitud.origen]}`}
+                  value={`${cirugia.solicitud.ordenNumero} · ${cirugia.solicitud.medicoOrdena}`}
+                  wide
+                />
+                <InfoItem
+                  label="Admisión"
+                  value={cirugia.solicitud.ambulatorio ? 'Creada con la programación' : 'Internación (admisión existente)'}
+                  wide
+                />
+              </>
+            )}
           </div>
         </section>
         <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">

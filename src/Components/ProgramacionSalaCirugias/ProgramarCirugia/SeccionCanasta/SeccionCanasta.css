@@ -1,9 +1,0 @@
-.scn-card{
-  display:flex;align-items:center;gap:12px;padding:12px 14px;flex-wrap:wrap;
-  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
-}
-.scn-icono{width:22px;height:22px;color:var(--ink-500);flex-shrink:0;}
-.scn-info{flex:1;min-width:160px;display:flex;flex-direction:column;gap:2px;}
-.scn-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.scn-sub{font-size:var(--fs-sm);color:var(--ink-500);}
-.scn-btn{min-height:44px;}

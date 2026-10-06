@@ -8,7 +8,6 @@ import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
   enmascararDocumento, evaluarSolicitud,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
-import { fechaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 const PASOS = ['orden', 'autorizacion', 'valoracion'];
 
@@ -39,7 +38,6 @@ export default function SolicitudesTable({
             <th scope="col" className="sct-sticky">Paciente</th>
             <th scope="col">Procedimiento (CUPS)</th>
             <th scope="col" className="sct-origen">Origen</th>
-            <th scope="col">Fecha tentativa</th>
             <th scope="col" className="sct-paso">Orden médica</th>
             <th scope="col" className="sct-paso">Autorización EPS</th>
             <th scope="col" className="sct-paso">Valoración preanestésica</th>
@@ -70,7 +68,6 @@ export default function SolicitudesTable({
                   <span className="sct-sub">{s.cups} · {s.especialidad}</span>
                 </td>
                 <td className="sct-origen"><OrigenTag origen={s.origen} /></td>
-                <td className="sct-fecha">{fechaLabel(s.fechaTentativa)}</td>
                 {PASOS.map((clave) => {
                   const item = s.checklist[clave];
                   return (

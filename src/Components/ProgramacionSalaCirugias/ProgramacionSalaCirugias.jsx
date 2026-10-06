@@ -3,7 +3,7 @@
 import {
   useEffect, useRef, useState,
 } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { LuHistory, LuPackage } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
@@ -42,6 +42,9 @@ import {
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
+import { evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import { datosWizardDesdeSolicitud, pacienteDeSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
+import { getSolicitud, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 
 export default function ProgramacionSalaCirugias() {
   const router = useRouter();
@@ -116,6 +119,17 @@ export default function ProgramacionSalaCirugias() {
   // cada trigger (nunca se asume el default) para que un clic residual no
   // reabra el flujo equivocado si el usuario ya usó otro botón antes.
   const nuevaCirugiaPatientRef = useRef(null);
+  // Desde Gestión de cirugías ("Programar cirugía" de una solicitud con la
+  // lista de chequeo completa, ?solicitud=<id>): el mismo wizard se abre ya
+  // con paciente, procedimientos, aseguradora, dx y duración precargados
+  // (ver gestion/programacion.js). Se resuelve una sola vez al montar.
+  const solicitudId = useSearchParams().get('solicitud');
+  const [desdeSolicitud, setDesdeSolicitud] = useState(() => {
+    const s = solicitudId ? getSolicitud(solicitudId) : null;
+    if (!s || evaluarSolicitud(s).estado !== 'lista') return null;
+    return { solicitud: s, patient: pacienteDeSolicitud(s, new Date()), datos: datosWizardDesdeSolicitud(s) };
+  });
+  const solicitudGuardadaRef = useRef(false);
   const [nuevaCirugiaWizardPatient, setNuevaCirugiaWizardPatient] = useState(null);
   // "Editar" (encargo explícito) reabre el mismo NuevaCirugiaWizard en modo
   // edición -- comparte el mismo montaje que "+ Programar cirugía" más abajo
@@ -454,27 +468,44 @@ export default function ProgramacionSalaCirugias() {
           la cirugía seleccionada en vez de venir del buscador de pacientes,
           y `initialFechaHora` no aplica (el wizard ya arranca con la
           fecha/hora real de la cirugía vía initialDatos). */}
-      {(nuevaCirugiaWizardPatient || editCirugia) && (
+      {(nuevaCirugiaWizardPatient || editCirugia || desdeSolicitud) && (
         <NuevaCirugiaWizard
           patient={editCirugia ? {
             nombre: editCirugia.paciente.nombre,
             documento: editCirugia.paciente.documento,
             telefono: editCirugia.paciente.telAviso,
-          } : nuevaCirugiaWizardPatient}
+          } : (desdeSolicitud?.patient ?? nuevaCirugiaWizardPatient)}
           salaId={editCirugia ? editCirugia.salaId : salaId}
           cirugiaId={editCirugia?.id}
-          initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : undefined}
+          initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : desdeSolicitud?.datos}
           initialFechaHora={editCirugia
             ? null
             : (nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null)}
           onGuardar={(resultado) => {
             applyUpdated(resultado);
-            showToast(editCirugia ? 'Cirugía actualizada correctamente' : 'Cirugía guardada correctamente');
+            const origen = desdeSolicitud?.solicitud;
+            if (origen) {
+              // La solicitud sale de Gestión; la agenda salta a la cirugía creada.
+              solicitudGuardadaRef.current = true;
+              marcarProgramada(origen.id);
+              setSalaId(resultado.salaId);
+              const [y, m, d] = resultado.fecha.split('-').map(Number);
+              setFechaAncla(new Date(y, m - 1, d));
+              showToast(`Cirugía programada desde la orden ${origen.ordenNumero}. Canasta solicitada a farmacia${origen.origen === 'internacion' ? '' : ' y admisión creada'}.`);
+            } else {
+              showToast(editCirugia ? 'Cirugía actualizada correctamente' : 'Cirugía guardada correctamente');
+            }
           }}
           onClose={() => {
             setNuevaCirugiaWizardPatient(null);
             setNuevaCirugiaInitialFechaHora(null);
             setEditCirugia(null);
+            if (desdeSolicitud) {
+              // Guardada: se queda en la agenda (sin ?solicitud); cancelada: vuelve a Gestión.
+              setDesdeSolicitud(null);
+              if (solicitudGuardadaRef.current) router.replace('/cirugia/programacion');
+              else router.push('/cirugia/gestion');
+            }
           }}
         />
       )}

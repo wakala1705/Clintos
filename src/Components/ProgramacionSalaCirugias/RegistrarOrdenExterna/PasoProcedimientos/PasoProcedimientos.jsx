@@ -6,11 +6,16 @@ import DatePicker from '@/Components/DatePicker/DatePicker';
 import EstadoChip from '../../GestionCirugias/EstadoChip/EstadoChip';
 import { CATALOGO_CUPS, COBERTURA_LABEL, TONO_COBERTURA } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
 import { LATERALIDAD_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
-import { duracionLabel } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
+const tiempoLabel = (min) => {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  if (h === 0) return `${m} min`;
+  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+};
 const TIEMPOS = Array.from({ length: 8 }, (_, i) => {
   const min = (i + 1) * 30;
-  return { value: String(min), label: duracionLabel(min / 30) };
+  return { value: String(min), label: tiempoLabel(min) };
 });
 
 const norm = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();

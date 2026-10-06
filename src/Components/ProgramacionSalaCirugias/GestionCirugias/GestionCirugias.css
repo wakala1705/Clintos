@@ -13,12 +13,10 @@
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
 }
 
-/* Filtros: alto táctil de 44px (--input-lg). */
-.gc-toolbar .search-field{width:330px;}
-.gc-toolbar .search-field input{height:var(--input-lg);}
+/* Filtros al tamaño estándar del proyecto (--input-md vía .filter-bar/FormSelect);
+   solo se fija el ancho de cada control. */
+.gc-toolbar .search-field{width:300px;}
 .gc-toolbar .gc-filtro{width:176px;}
-.gc-toolbar .form-select-trigger{height:var(--input-lg);}
-.gc-toolbar .gc-fecha{height:var(--input-lg);width:176px;}
 
 .gc-vacio{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;

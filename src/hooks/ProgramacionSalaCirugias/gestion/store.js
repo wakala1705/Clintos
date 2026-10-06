@@ -1,8 +1,8 @@
-// Estado en memoria compartido entre las 3 pantallas del flujo (Gestión de
-// cirugías -> Registrar orden externa / Programar cirugía). Es un prototipo:
+// Estado en memoria compartido entre las pantallas del flujo (Gestión de
+// cirugías -> Registrar orden externa; la programación la hace el wizard de Programación). Es un prototipo:
 // vive en el módulo JS del cliente, así que sobrevive a la navegación entre
 // rutas pero no a recargar la página.
-import { crearSolicitudesMock } from './mockSolicitudes';
+import { crearSolicitudesMock } from './mockSolicitudes.js';
 
 let solicitudes = null;
 let aviso = null;

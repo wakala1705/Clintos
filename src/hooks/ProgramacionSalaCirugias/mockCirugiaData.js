@@ -1692,6 +1692,9 @@ export function armarCirugiaDesdeWizard(datos, patient, salaId) {
     asa: datos.asa ?? '',
     complejidad: datos.complejidad ?? '',
     dxIngreso: datos.dxIngreso ?? '',
+    // Vínculo con la solicitud de Gestión de cirugías (orden, origen, médico
+    // que ordena); null si la cirugía no nació de una solicitud.
+    solicitud: datos.solicitud ?? null,
     wizardDatos: datos,
   };
 }
