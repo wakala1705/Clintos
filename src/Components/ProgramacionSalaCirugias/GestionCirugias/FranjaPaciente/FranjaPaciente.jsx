@@ -19,6 +19,7 @@ export default function FranjaPaciente({ solicitud }) {
   const ev = evaluarSolicitud(solicitud);
   return (
     <section className="fp-franja" aria-label="Paciente y procedimiento">
+      <EstadoChip tone="complete">Lista de chequeo completa · {ev.completos}/{ev.total}</EstadoChip>
       <dl className="fp-datos">
         <Dato label="Paciente">
           <span className="fp-valor">{paciente.nombre}</span>
@@ -41,7 +42,6 @@ export default function FranjaPaciente({ solicitud }) {
           <span className="fp-sub">Orden {solicitud.ordenNumero}</span>
         </Dato>
       </dl>
-      <EstadoChip tone="complete">Lista de chequeo completa · {ev.completos}/{ev.total}</EstadoChip>
     </section>
   );
 }

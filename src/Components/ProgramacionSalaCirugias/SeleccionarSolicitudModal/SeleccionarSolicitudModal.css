@@ -1,0 +1,47 @@
+/* .modal-overlay/.modal-card, .filter-bar y .search-field en ../shared/shared.css.
+   Selector compuesto (mismo criterio que .shm-card) para ganarle a la regla
+   base de .modal-card. */
+.modal-card.sso-card{width:95vw;max-width:1100px;max-height:88vh;display:flex;flex-direction:column;}
+.sso-toolbar{background:var(--surface);}
+.sso-toolbar .search-field{width:340px;}
+.sso-scroll{position:relative;overflow:auto;min-height:0;flex:1;padding:16px 24px 24px;background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+.sso-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:var(--radius);}
+.sso-table th:first-child{border-top-left-radius:var(--radius);}
+.sso-table th:last-child{border-top-right-radius:var(--radius);}
+.sso-table tbody tr:last-child td{border-bottom:0;}
+.sso-table tbody tr:last-child td:first-child{border-bottom-left-radius:var(--radius);}
+.sso-table tbody tr:last-child td:last-child{border-bottom-right-radius:var(--radius);}
+.sso-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.sso-table td{
+  padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle;
+  font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.sso-table th:first-child,.sso-table td:first-child{padding-left:16px;}
+.sso-table th:last-child,.sso-table td:last-child{padding-right:16px;}
+.sso-table tbody tr{cursor:pointer;}
+.sso-table tbody tr:hover td{background:var(--bg);}
+
+.sso-main{display:block;font-weight:var(--fw-semibold);}
+.sso-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
+.sso-accion{width:1%;text-align:right;white-space:nowrap;}
+/* Área táctil mínima de 44px (el tamaño sm del Button es más bajo). */
+.sso-programar{min-height:44px;}
+
+.sso-vacio{
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+  padding:48px 24px;background:var(--surface);color:var(--ink-500);font-size:var(--fs-base);
+  border-radius:0 0 var(--radius-lg) var(--radius-lg);
+}
+.sso-vacio strong{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.sso-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+@media (max-width:1024px){
+  .modal-card.sso-card{max-height:94vh;}
+  .sso-toolbar .search-field{width:100%;}
+  .sso-toolbar .filter-spacer{display:none;}
+}

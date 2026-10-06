@@ -138,3 +138,63 @@ export const solapan = (a, b) => a.inicio < b.inicio + b.dur && b.inicio < a.ini
 export function disponibilidad(ocupado, inicio, dur) {
   return ocupado.some((r) => solapan(r, { inicio, dur })) ? 'cruce' : 'disponible';
 }
+
+// ---------- Días visibles de la agenda ----------
+// Fechas "YYYY-MM-DD". Las vistas de días son: semana (lunes a domingo) y 3 días
+// hábiles (el día pedido, o el siguiente hábil, y los 2 hábiles que le siguen).
+const MES_CORTO = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+export function parseISO(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+const aISO = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+export const esDiaHabil = (iso) => ![0, 6].includes(parseISO(iso).getDay());
+
+// Primer día hábil desde `iso` (inclusive).
+export function primerHabil(iso) {
+  const d = parseISO(iso);
+  while (![1, 2, 3, 4, 5].includes(d.getDay())) d.setDate(d.getDate() + 1);
+  return aISO(d);
+}
+
+// Avanza (n > 0) o retrocede (n < 0) `n` días hábiles.
+export function desplazarHabiles(iso, n) {
+  const paso = n < 0 ? -1 : 1;
+  const d = parseISO(iso);
+  let faltan = Math.abs(n);
+  while (faltan > 0) {
+    d.setDate(d.getDate() + paso);
+    if (esDiaHabil(aISO(d))) faltan -= 1;
+  }
+  return aISO(d);
+}
+
+export function tresDiasHabiles(iso) {
+  const a = primerHabil(iso);
+  return [a, desplazarHabiles(a, 1), desplazarHabiles(a, 2)];
+}
+
+// Los 7 días (lunes a domingo) de la semana que contiene `iso`.
+export function semanaDe(iso) {
+  const d = parseISO(iso);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return Array.from({ length: 7 }, (_, k) => {
+    const x = new Date(d);
+    x.setDate(d.getDate() + k);
+    return aISO(x);
+  });
+}
+
+export const fechasDeVista = (tres, iso) => (tres ? tresDiasHabiles(iso) : semanaDe(iso));
+
+// "6 - 8 Oct 2026" (mismo mes) o "30 Oct - 3 Nov 2026".
+export function rangoFechasLabel(inicio, fin) {
+  const a = parseISO(inicio);
+  const b = parseISO(fin);
+  const mesFin = MES_CORTO[b.getMonth()];
+  if (a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear()) return `${a.getDate()} - ${b.getDate()} ${mesFin} ${b.getFullYear()}`;
+  const anio = a.getFullYear() === b.getFullYear() ? '' : ` ${a.getFullYear()}`;
+  return `${a.getDate()} ${MES_CORTO[a.getMonth()]}${anio} - ${b.getDate()} ${mesFin} ${b.getFullYear()}`;
+}

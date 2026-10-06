@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  JORNADAS, bloquesDeSala, cabe, disponibilidad, franjaDeHora, horaFranja, mapaOcupado, primeraLibre, reubicar,
+  JORNADAS, desplazarHabiles, fechasDeVista, rangoFechasLabel, tresDiasHabiles, bloquesDeSala, cabe, disponibilidad, franjaDeHora, horaFranja, mapaOcupado, primeraLibre, reubicar,
   ubicarEnPrimeraLibre,
 } from '../agenda.js';
 
@@ -61,4 +61,19 @@ test('reubicar: conserva, mueve en la sala, respeta la ventana o devuelve null',
 test('disponibilidad detecta cruces', () => {
   assert.equal(disponibilidad([{ inicio: 16, dur: 4 }], 19, 2), 'cruce');
   assert.equal(disponibilidad([{ inicio: 16, dur: 4 }], 20, 2), 'disponible');
+});
+
+test('3 días hábiles: hoy + 2 siguientes, saltando el fin de semana', () => {
+  assert.deepEqual(tresDiasHabiles('2026-10-06'), ['2026-10-06', '2026-10-07', '2026-10-08']);
+  assert.deepEqual(tresDiasHabiles('2026-10-08'), ['2026-10-08', '2026-10-09', '2026-10-12']);
+  assert.deepEqual(tresDiasHabiles('2026-10-10'), ['2026-10-12', '2026-10-13', '2026-10-14']); // sábado
+  assert.equal(desplazarHabiles('2026-10-12', -3), '2026-10-07');
+  assert.equal(desplazarHabiles('2026-10-06', 3), '2026-10-09');
+});
+
+test('fechasDeVista y rango', () => {
+  assert.deepEqual(fechasDeVista(false, '2026-10-09').slice(0, 2), ['2026-10-05', '2026-10-06']);
+  assert.equal(fechasDeVista(false, '2026-10-11')[6], '2026-10-11');
+  assert.equal(rangoFechasLabel('2026-10-06', '2026-10-08'), '6 - 8 Oct 2026');
+  assert.equal(rangoFechasLabel('2026-10-29', '2026-11-02'), '29 Oct - 2 Nov 2026');
 });

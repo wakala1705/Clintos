@@ -27,11 +27,11 @@ function EstudioChip({ clave, abreviatura, item }) {
 // lectores de pantalla el control real es el botón "Revisar" de la última
 // columna (un solo tab stop por fila).
 export default function SolicitudesTable({
-  solicitudes, selectedId, onSelect, compacta = false,
+  solicitudes, selectedId, onSelect,
 }) {
   return (
     <div className="sct-scroll">
-      <table className={`sct-table${compacta ? ' sct-compacta' : ''}`}>
+      <table className="sct-table">
         <caption className="sct-sr">Solicitudes de cirugía y su lista de chequeo</caption>
         <thead>
           <tr>

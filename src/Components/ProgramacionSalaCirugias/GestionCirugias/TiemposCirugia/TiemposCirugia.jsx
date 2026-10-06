@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { LuTriangleAlert } from 'react-icons/lu';
 import './TiemposCirugia.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
@@ -8,15 +9,19 @@ const etiqueta = (min) => (min >= 60 && min % 60 === 0 ? `${min / 60} h` : `${mi
 // Mismo catálogo para las tres duraciones; el valor del select son minutos.
 const DURACIONES = DURACIONES_CIRUGIA_CATALOGO.map((min) => ({ value: String(min), label: etiqueta(min) }));
 
-// Tiempos de la cirugía, junto a la agenda. La estimada (en franjas) mueve el
+// Tarjeta "Tiempos" de la columna izquierda del modal; el aviso va debajo de los campos.
+// La estimada (en franjas) mueve el
 // bloque; si no cabe donde está, el modal la reubica y `aviso` lo comunica.
 export default function TiemposCirugia({
   duracion, onDuracion, post, onPost, recuperacion, onRecuperacion, aviso,
 }) {
+  const avisoRef = useRef(null);
+  // La columna tiene scroll propio: el aviso se trae a la vista al aparecer.
+  useEffect(() => { avisoRef.current?.scrollIntoView({ block: 'nearest' }); }, [aviso]);
   return (
-    <div className="tc">
-      <div className="tc-fila gc-form" role="group" aria-label="Tiempos de la cirugía">
-        <span className="tc-titulo">Tiempos</span>
+    <section className="tc" aria-labelledby="tc-titulo">
+      <h3 className="tc-titulo" id="tc-titulo">Tiempos</h3>
+      <div className="tc-fila gc-form">
         <div className="tc-campo">
           <label htmlFor="pc-duracion">Estimada</label>
           <FormSelect
@@ -39,16 +44,17 @@ export default function TiemposCirugia({
             options={DURACIONES}
           />
         </div>
-        <p className="tc-total">
-          Total del proceso: <strong>{duracionLabel(duracion + (post + recuperacion) / MINUTOS_FRANJA)}</strong>
-        </p>
+        <div className="tc-campo tc-total">
+          <span className="tc-etiqueta">Total del proceso</span>
+          <strong>{duracionLabel(duracion + (post + recuperacion) / MINUTOS_FRANJA)}</strong>
+        </div>
       </div>
       {aviso && (
-        <p className="tc-aviso" role="status">
+        <p ref={avisoRef} className="tc-aviso" role="status">
           <LuTriangleAlert className="icon" aria-hidden="true" />
           <span>{aviso}</span>
         </p>
       )}
-    </div>
+    </section>
   );
 }

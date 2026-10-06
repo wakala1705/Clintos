@@ -33,12 +33,3 @@
 .sct-sr{
   position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
 }
-
-/* Con el panel lateral abierto (desktop) los 4 pasos se leen ahí: la tabla
-   conserva paciente, procedimiento y estado general para no
-   desplazarse en horizontal. En tablet el panel se superpone, no aplica. */
-@media (min-width:1025px){
-  .sct-compacta{min-width:0;}
-  .sct-compacta .sct-paso,
-  .sct-compacta .sct-origen{display:none;}
-}

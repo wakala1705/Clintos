@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { LuCalendarPlus, LuCircleAlert, LuCircleCheck, LuInfo, LuX } from 'react-icons/lu';
+import { LuCalendarPlus, LuCircleAlert, LuCircleCheck, LuInfo } from 'react-icons/lu';
 import './SolicitudPanel.css';
 import Button from '@/Components/Button/Button';
+import ModalHeader from '@/Components/ModalHeader/ModalHeader';
+import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import { ORIGEN_LABEL, listaProcedimientos } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import {
@@ -61,19 +63,19 @@ function Dato({ label, children }) {
   );
 }
 
-// Panel lateral derecho (≈460px) con el detalle del chequeo de una solicitud.
-// En tablet (<=1024px) pasa a superponerse a la tabla con un velo detrás.
+// Modal con el detalle del chequeo de una solicitud: datos, los 4 pasos y la
+// acción "Programar cirugía" (que abre el modal de la agenda encima).
 export default function SolicitudPanel({
   solicitud, onClose, onAccion, onProgramar,
 }) {
   const panelRef = useRef(null);
+  useModalFocusTrap(panelRef);
   const ev = evaluarSolicitud(solicitud);
   const { checklist } = solicitud;
   const puedeProgramar = ev.estado === 'lista';
   const estudiosObligatorio = checklist.laboratorios.obligatorio || checklist.imagenes.obligatorio;
 
-  // Al abrir (o cambiar de solicitud) el foco va al panel; Escape lo cierra.
-  useEffect(() => { panelRef.current?.focus(); }, [solicitud.id]);
+  // Escape cierra (el foco queda atrapado en el modal por useModalFocusTrap).
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose(); }
     document.addEventListener('keydown', onKey);
@@ -81,28 +83,26 @@ export default function SolicitudPanel({
   }, [onClose]);
 
   return (
-    <>
-      <div className="sp-scrim" onClick={onClose} aria-hidden="true" />
-      <aside
+    <div className="modal-overlay open">
+      <div
         ref={panelRef}
-        tabIndex={-1}
-        className="sp-panel"
+        className="modal-card sp-modal"
+        role="dialog"
+        aria-modal="true"
         aria-labelledby="sp-titulo"
       >
-        <header className="sp-header">
-          <div className="sp-header-top">
-            <h2 id="sp-titulo" className="sp-titulo">{solicitud.paciente.nombre}</h2>
-            <button type="button" className="sp-close" onClick={onClose} aria-label="Cerrar panel de chequeo">
-              <LuX className="icon" aria-hidden="true" />
-            </button>
-          </div>
-          <div className="sp-header-estado">
-            <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>
-            <span className="sp-conteo">
-              <strong>{ev.completos} de {ev.total}</strong> obligatorios completos
-            </span>
-          </div>
-        </header>
+        <ModalHeader
+          title={solicitud.paciente.nombre}
+          titleId="sp-titulo"
+          onClose={onClose}
+          closeLabel="Cerrar chequeo de la solicitud"
+        />
+        <div className="sp-estado">
+          <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>
+          <span className="sp-conteo">
+            <strong>{ev.completos} de {ev.total}</strong> obligatorios completos
+          </span>
+        </div>
 
         <div className="sp-body">
           <section aria-labelledby="sp-datos-titulo">
@@ -199,7 +199,7 @@ export default function SolicitudPanel({
             Programar cirugía
           </Button>
         </footer>
-      </aside>
-    </>
+      </div>
+    </div>
   );
 }

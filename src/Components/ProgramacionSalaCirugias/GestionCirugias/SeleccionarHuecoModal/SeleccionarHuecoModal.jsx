@@ -10,10 +10,11 @@ import AgendaSalas from '../AgendaSalas/AgendaSalas';
 import TiemposCirugia from '../TiemposCirugia/TiemposCirugia';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
-  JORNADAS, MINUTOS_FRANJA, bloquesDeSala, cabe, horaFranja, mapaOcupado, rangoLabel, reubicar,
+  JORNADAS, MINUTOS_FRANJA, bloquesDeSala, cabe, desplazarHabiles, fechasDeVista, horaFranja, mapaOcupado, parseISO,
+  primerHabil, rangoFechasLabel, rangoLabel, reubicar,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 import {
-  SALAS, addDias, diaCortoLabel, fechaISO, fetchAgendaRango, lunesDeSemana,
+  SALAS, addDias, diaCortoLabel, fechaISO, fetchAgendaRango, rangoSemanaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx); se ofrecen los
@@ -34,15 +35,14 @@ export default function SeleccionarHuecoModal({
   useModalFocusTrap(modalRef);
 
   const [salaId, setSalaId] = useState(SALAS_MODAL[0].value);
-  const [date, setDate] = useState(() => {
-    // Arranca en la fecha tentativa de la solicitud.
-    const [y, m, d] = solicitud.fechaTentativa.split('-').map(Number);
-    return new Date(y, m - 1, d);
-  });
-  // La agenda muestra la semana (lunes a domingo) que contiene `date`.
-  const lunes = lunesDeSemana(date);
-  const semana = fechaISO(lunes);
-  const claveCarga = `${semana}|${salaId}`;
+  const [date, setDate] = useState(() => parseISO(solicitud.fechaTentativa)); // arranca en la fecha tentativa
+  // Días visibles: 'habil' (lunes a viernes, por defecto), 'semana' (lunes a
+  // domingo) o 'tres' (3 días hábiles desde hoy).
+  const [vistaDias, setVistaDias] = useState('habil');
+  const esTres = vistaDias === 'tres';
+  const anchorIso = fechaISO(date);
+  const fechasVista = fechasDeVista(esTres, anchorIso);
+  const claveCarga = `${fechasVista[0]}|${fechasVista.length}|${salaId}`;
   const [datos, setDatos] = useState(null); // { clave, dias }
   const [duracion, setDuracion] = useState(() => Math.max(1, Math.round(duracionMin / MINUTOS_FRANJA)));
   const [seleccion, setSeleccion] = useState(null);
@@ -52,27 +52,26 @@ export default function SeleccionarHuecoModal({
   const [durPost, setDurPost] = useState(30);
   const [durRecup, setDurRecup] = useState(60);
   const [aviso, setAviso] = useState(null);
-  // Vista de la agenda (por defecto jornada operativa y semana hábil): horas
-  // visibles (día completo o jornada operativa). Es solo de
+  // Horas visibles (jornada operativa por defecto o 24 h). Es solo de
   // visualización: no cambia los datos ni las franjas.
   const [jornada, setJornada] = useState('operativa');
-  // Semana hábil: oculta sábado y domingo (las 5 primeras columnas del lunes).
-  const [soloHabiles, setSoloHabiles] = useState(true);
-  // La carga de la agenda es asíncrona; su `.then` necesita la duración vigente.
+  // La carga de la agenda es asíncrona; su `.then` necesita lo vigente.
   const duracionRef = useRef(duracion);
   const jornadaRef = useRef(jornada);
-  const habilesRef = useRef(soloHabiles);
+  const vistaDiasRef = useRef(vistaDias);
+  const seleccionRef = useRef(seleccion);
+  const avisarRef = useRef(false); // avisar si el cambio de vista mueve la selección
+  useEffect(() => { seleccionRef.current = seleccion; }, [seleccion]);
 
   useEffect(() => {
     let cancelled = false;
+    const fechas = fechasDeVista(esTres, anchorIso);
     const sala = SALAS_MODAL.find((x) => x.value === salaId);
-    const inicio = new Date(`${semana}T00:00:00`);
     fetchAgendaRango({
-      sedeId: SEDE_ID, salaId, inicio: semana, fin: fechaISO(addDias(inicio, 6)),
+      sedeId: SEDE_ID, salaId, inicio: fechas[0], fin: fechas[fechas.length - 1],
     }).then((cirugias) => {
       if (cancelled) return;
-      const dias = Array.from({ length: 7 }, (_, k) => {
-        const fechaDia = fechaISO(addDias(inicio, k));
+      const dias = fechas.map((fechaDia) => {
         const bloques = bloquesDeSala(cirugias.filter((c) => c.fecha === fechaDia), sala.estado === 'Mantenimiento');
         return {
           id: fechaDia, bloques, mapa: mapaOcupado(bloques),
@@ -80,16 +79,21 @@ export default function SeleccionarHuecoModal({
       });
       setDatos({ clave: claveCarga, dias });
       // Conserva la selección si sigue libre; la primera vez prefiere la fecha
-      // tentativa. Si no, la reubica en la primera franja libre de la semana.
-      setSeleccion((prev) => reubicar(
-        habilesRef.current ? dias.slice(0, 5) : dias,
-        prev ?? ((habilesRef.current ? dias.slice(0, 5) : dias).some((d) => d.id === solicitud.fechaTentativa) ? { colId: solicitud.fechaTentativa, inicio: -1 } : null),
-        duracionRef.current,
-        JORNADAS[jornadaRef.current],
-      ));
+      // tentativa. Si no, la reubica en la primera franja libre de lo visible.
+      const visibles = vistaDiasRef.current === 'habil' ? dias.slice(0, 5) : dias;
+      const prev = seleccionRef.current;
+      const sugerida = prev ?? (visibles.some((d) => d.id === solicitud.fechaTentativa) ? { colId: solicitud.fechaTentativa, inicio: -1 } : null);
+      const nueva = reubicar(visibles, sugerida, duracionRef.current, JORNADAS[jornadaRef.current]);
+      setSeleccion(nueva);
+      if (avisarRef.current) {
+        avisarRef.current = false;
+        if (prev && nueva && (nueva.colId !== prev.colId || nueva.inicio !== prev.inicio)) {
+          setAviso(`La cirugía quedaba fuera de los días visibles: se reubicó al ${diaCortoLabel(nueva.colId)} a las ${rangoLabel(nueva.inicio, duracionRef.current).slice(0, 5)}.`);
+        }
+      }
     });
     return () => { cancelled = true; };
-  }, [claveCarga, semana, salaId, solicitud.fechaTentativa]);
+  }, [claveCarga, esTres, anchorIso, salaId, solicitud.fechaTentativa]);
 
   // Escape cierra (el foco queda atrapado en el modal por useModalFocusTrap).
   useEffect(() => {
@@ -99,7 +103,10 @@ export default function SeleccionarHuecoModal({
   }, [onClose]);
 
   const diasSemana = datos?.clave === claveCarga ? datos.dias : null;
-  const dias = soloHabiles ? diasSemana?.slice(0, 5) ?? null : diasSemana;
+  const dias = vistaDias === 'habil' ? diasSemana?.slice(0, 5) ?? null : diasSemana;
+  const etiquetaRango = esTres
+    ? rangoFechasLabel(fechasVista[0], fechasVista[2])
+    : rangoSemanaLabel(parseISO(fechasVista[0]));
   const salaElegida = SALAS_MODAL.find((x) => x.value === salaId);
 
   function handleElegir(colId, inicio) {
@@ -143,14 +150,25 @@ export default function SeleccionarHuecoModal({
     }
   }
 
-  // Al ocultar el fin de semana, una selección en sábado o domingo se acomoda
-  // en la primera franja libre de lunes a viernes.
-  function handleSoloHabiles(nuevo) {
-    habilesRef.current = nuevo;
-    setSoloHabiles(nuevo);
+  // Cambiar los días visibles. Entre semana completa y hábil solo se oculta o
+  // muestra el fin de semana; con "3 días" (que parte de hoy) cambia el rango
+  // cargado y la selección, si queda fuera, se reubica al llegar los datos.
+  function handleDiasVista(nueva) {
+    if (nueva === vistaDias) return;
+    vistaDiasRef.current = nueva;
+    setVistaDias(nueva);
     setAviso(null);
+    if (nueva === 'tres') {
+      avisarRef.current = true;
+      setDate(parseISO(primerHabil(hoy)));
+      return;
+    }
+    if (esTres) {
+      avisarRef.current = true;
+      return;
+    }
     if (!diasSemana) return;
-    const visibles = nuevo ? diasSemana.slice(0, 5) : diasSemana;
+    const visibles = nueva === 'habil' ? diasSemana.slice(0, 5) : diasSemana;
     const nuevaSel = reubicar(visibles, seleccion, duracion, JORNADAS[jornada]);
     if (nuevaSel && (nuevaSel.colId !== seleccion?.colId || nuevaSel.inicio !== seleccion?.inicio)) {
       setSeleccion(nuevaSel);
@@ -158,9 +176,11 @@ export default function SeleccionarHuecoModal({
     }
   }
 
+  // Semana siguiente/anterior; con "3 días", los 3 días hábiles siguientes/anteriores.
   function handleSemana(delta) {
     setAviso(null);
-    setDate((d) => addDias(d, 7 * delta));
+    if (esTres) setDate(parseISO(desplazarHabiles(fechasVista[0], 3 * delta)));
+    else setDate((d) => addDias(d, 7 * delta));
   }
 
   function handleSala(nueva) {
@@ -197,27 +217,9 @@ export default function SeleccionarHuecoModal({
           onClose={onClose}
           closeLabel="Cerrar programación"
         />
-        <FranjaPaciente solicitud={solicitud} />
-
         <div className="shm-workspace">
-          <AgendaSalas
-            lunes={lunes}
-            onSemana={handleSemana}
-            salas={SALAS_MODAL}
-            salaId={salaId}
-            onSala={handleSala}
-            dias={dias}
-            soloHabiles={soloHabiles}
-            onSoloHabiles={handleSoloHabiles}
-            hoy={hoy}
-            postFranjas={durPost / MINUTOS_FRANJA}
-            recupFranjas={durRecup / MINUTOS_FRANJA}
-            seleccion={seleccion}
-            duracion={duracion}
-            onElegir={handleElegir}
-            jornada={jornada}
-            onJornada={handleJornada}
-          >
+          <aside className="shm-lateral" aria-label="Paciente y tiempos de la cirugía">
+            <FranjaPaciente solicitud={solicitud} />
             <TiemposCirugia
               duracion={duracion}
               onDuracion={handleDuracion}
@@ -227,8 +229,26 @@ export default function SeleccionarHuecoModal({
               onRecuperacion={setDurRecup}
               aviso={aviso}
             />
-          </AgendaSalas>
+          </aside>
 
+          <AgendaSalas
+            etiqueta={etiquetaRango}
+            onSemana={handleSemana}
+            salas={SALAS_MODAL}
+            salaId={salaId}
+            onSala={handleSala}
+            dias={dias}
+            diasVista={vistaDias}
+            onDiasVista={handleDiasVista}
+            hoy={hoy}
+            postFranjas={durPost / MINUTOS_FRANJA}
+            recupFranjas={durRecup / MINUTOS_FRANJA}
+            seleccion={seleccion}
+            duracion={duracion}
+            onElegir={handleElegir}
+            jornada={jornada}
+            onJornada={handleJornada}
+          />
         </div>
 
         <footer className="shm-pie">

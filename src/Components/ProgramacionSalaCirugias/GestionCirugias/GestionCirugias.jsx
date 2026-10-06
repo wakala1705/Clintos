@@ -216,14 +216,14 @@ export default function GestionCirugias() {
                   <Button variant="secondary" onClick={() => setFiltros(FILTROS_INICIALES)}>Limpiar filtros</Button>
                 </div>
               ) : (
-                <SolicitudesTable solicitudes={filas} selectedId={selectedId} onSelect={setSelectedId} compacta={seleccionada !== null} />
+                <SolicitudesTable solicitudes={filas} selectedId={selectedId} onSelect={setSelectedId} />
               )}
               <p className="gc-resumen" aria-live="polite">
                 {filas.length} de {solicitudes.length} solicitudes
               </p>
             </section>
 
-            {seleccionada && (
+            {seleccionada && !programando && (
               <SolicitudPanel
                 solicitud={seleccionada}
                 onClose={cerrarPanel}

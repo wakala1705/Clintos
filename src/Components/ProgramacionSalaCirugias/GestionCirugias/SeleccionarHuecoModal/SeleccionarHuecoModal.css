@@ -1,9 +1,10 @@
 /* .modal-overlay/.modal-card en ../../shared/shared.css y reglas .gc-* en
    ../shared/shared.css. Modal ancho con alto fijo: la agenda scrollea por dentro y
-   la barra inferior (resumen, tiempos y acciones) queda fija. Selector compuesto (mismo criterio que
+   la columna izquierda (paciente y tiempos) tiene su propio scroll. Selector compuesto (mismo criterio que
    .dcp-modal-card) para ganarle a la regla base de .modal-card. */
 .modal-card.shm-card{width:95vw;max-width:1360px;height:92vh;max-height:92vh;}
-.shm-workspace{flex:1;min-height:0;display:flex;padding:16px;background:var(--bg);}
+.shm-workspace{flex:1;min-height:0;display:flex;gap:16px;padding:16px;background:var(--bg);}
+.shm-lateral{width:340px;flex-shrink:0;min-height:0;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
 .shm-pie{flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:12px 24px;flex-wrap:wrap;padding:10px 20px;border-top:1px solid var(--border);background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);}
 .shm-botones{display:flex;gap:10px;margin-left:auto;}
 .shm-botones button{min-height:44px;}
@@ -12,6 +13,7 @@
 @media (max-width:1024px){
   .modal-card.shm-card{height:96vh;max-height:96vh;overflow-y:auto;}
   .shm-workspace{flex-direction:column;flex:none;}
+  .shm-lateral{width:100%;overflow:visible;}
   .shm-botones{width:100%;}
   .shm-continuar{flex:1;}
   .shm-workspace > .as2-card{min-height:560px;}

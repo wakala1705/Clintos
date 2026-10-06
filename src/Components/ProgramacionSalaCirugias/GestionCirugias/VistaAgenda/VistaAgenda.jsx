@@ -8,18 +8,24 @@ import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import Button from '@/Components/Button/Button';
 import { JORNADAS, horaFranja } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
+const OPCIONES_DIAS = [
+  { value: 'semana', label: 'Semana completa' },
+  { value: 'habil', label: 'Semana hábil (lun–vie)' },
+  { value: 'tres', label: '3 días hábiles (hoy + 2)' },
+];
+
 const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
   value,
   label: value === 'operativa' ? `${j.label} (${horaFranja(j.desde).slice(0, 2)}–${horaFranja(j.hasta).slice(0, 2)} h)` : j.label,
 }));
 
 // Configuración de vista de la agenda: horas visibles (jornada operativa o 24
-// horas) y días visibles (semana hábil = sin sábado ni domingo). Solo cambia
+// horas) y días visibles (semana completa, semana hábil o 3 días hábiles). Solo cambia
 // lo que se ve. El panel se porta a document.body (la tarjeta de la agenda
 // recorta lo que se sale) y mantiene el Escape dentro del menú para no cerrar
 // el modal que lo contiene.
 export default function VistaAgenda({
-  jornada, onJornada, soloHabiles, onSoloHabiles,
+  jornada, onJornada, diasVista, onDiasVista,
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, right: 0 });
@@ -100,17 +106,19 @@ export default function VistaAgenda({
           ))}
           <div className={panel.divider} role="separator" />
           <div className={panel.groupLabel}>Días visibles</div>
-          <button
-            type="button"
-            role="menuitemcheckbox"
-            aria-checked={soloHabiles}
-            className={`${panel.item} va-habil`}
-            onClick={() => onSoloHabiles(!soloHabiles)}
-          >
-            <span>Semana hábil</span>
-            <span className={`va-switch${soloHabiles ? ' on' : ''}`} aria-hidden="true"><span className="va-thumb" /></span>
-          </button>
-          <p className="va-nota">Oculta sábados y domingos.</p>
+          {OPCIONES_DIAS.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              role="menuitemradio"
+              aria-checked={diasVista === o.value}
+              className={[panel.item, diasVista === o.value && panel.selected].filter(Boolean).join(' ')}
+              onClick={() => onDiasVista(o.value)}
+            >
+              {o.label}
+              {diasVista === o.value && <LuCheck className={panel.check} aria-hidden="true" />}
+            </button>
+          ))}
         </div>,
         document.body,
       )}

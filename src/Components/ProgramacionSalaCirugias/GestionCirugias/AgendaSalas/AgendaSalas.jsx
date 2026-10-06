@@ -6,19 +6,19 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   JORNADAS, duracionLabel, horaFranja, rangoLabel,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
-import { diaCortoLabel, rangoSemanaLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { diaCortoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Tras el bloque de esta cirugía se dibujan, más tenues, el tiempo postquirúrgico
 // y el de recuperación: no ocupan el quirófano, pero muestran el proceso completo.
 // Agenda semanal de una sala: una columna por día (lunes a domingo; con
-// `soloHabiles` el modal ya entrega solo de lunes a viernes). Los índices de franja son
+// la vista de días el modal ya entrega solo los días a mostrar). Los índices de franja son
 // siempre los del día completo (48 de 30 min); `jornada` (24h | operativa)
 // solo decide qué filas se ven. Las franjas libres son botones; la cirugía que
 // se programa es el bloque destacado (interactive-selected).
 // `dias` = [{ id: 'YYYY-MM-DD', bloques, mapa }] (null mientras carga); la
 // selección usa ese `id` como `colId`.
 export default function AgendaSalas({
-  lunes, onSemana, salas, salaId, onSala, dias, soloHabiles, onSoloHabiles, hoy, postFranjas, recupFranjas, children, seleccion, duracion, onElegir, jornada, onJornada,
+  etiqueta, onSemana, salas, salaId, onSala, dias, diasVista, onDiasVista, hoy, postFranjas, recupFranjas, seleccion, duracion, onElegir, jornada, onJornada,
 }) {
   const { desde, hasta } = JORNADAS[jornada];
   const filas = Array.from({ length: hasta - desde }, (_, k) => desde + k);
@@ -44,7 +44,7 @@ export default function AgendaSalas({
           <button type="button" className="as2-nav-btn" aria-label="Semana anterior" onClick={() => onSemana(-1)}>
             <LuChevronLeft className="icon" aria-hidden="true" />
           </button>
-          <h3 className="as2-fecha" aria-live="polite">{rangoSemanaLabel(lunes)}</h3>
+          <h3 className="as2-fecha" aria-live="polite">{etiqueta}</h3>
           <button type="button" className="as2-nav-btn" aria-label="Semana siguiente" onClick={() => onSemana(1)}>
             <LuChevronRight className="icon" aria-hidden="true" />
           </button>
@@ -62,12 +62,11 @@ export default function AgendaSalas({
           <VistaAgenda
             jornada={jornada}
             onJornada={onJornada}
-            soloHabiles={soloHabiles}
-            onSoloHabiles={onSoloHabiles}
+            diasVista={diasVista}
+            onDiasVista={onDiasVista}
           />
         </div>
       </header>
-      {children}
       {dias === null ? (
         <p className="as2-cargando" role="status">Cargando agenda…</p>
       ) : (

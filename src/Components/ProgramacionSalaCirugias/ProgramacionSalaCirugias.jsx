@@ -21,6 +21,7 @@ import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/Reprograma
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
+import SeleccionarSolicitudModal from './SeleccionarSolicitudModal/SeleccionarSolicitudModal';
 import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/ListadoProgramacionesModal';
 import { ESTADO_PROGRAMACION_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockListadoProgramaciones';
 import {
@@ -44,7 +45,7 @@ import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentaci
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 import { evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { datosWizardDesdeSolicitud, pacienteDeSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
-import { getSolicitud, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
+import { getSolicitud, getSolicitudes, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 
 export default function ProgramacionSalaCirugias() {
   const router = useRouter();
@@ -158,9 +159,31 @@ export default function ProgramacionSalaCirugias() {
   function handleSeleccionarPacienteHistorial(paciente) {
     router.push(`/cirugia/historial-quirurgico/${encodeURIComponent(paciente.documento)}`);
   }
+  // "Programar cirugía" ya no pasa por el buscador de afiliados: abre el
+  // listado de solicitudes de Gestión de cirugías con la lista de chequeo
+  // completa (SeleccionarSolicitudModal). Se toma una foto de la lista al
+  // abrir (el store vive en memoria). Elegir una solicitud reutiliza el mismo
+  // estado `desdeSolicitud` que el acceso por ?solicitud=<id>.
+  const [solicitudesParaProgramar, setSolicitudesParaProgramar] = useState(null);
   function handleAbrirProgramarCirugia() {
     patientSearchIntentRef.current = 'cirugia';
-    window.openPatientSearch();
+    setSolicitudesParaProgramar(getSolicitudes());
+  }
+  function handleElegirSolicitud(solicitud) {
+    const slot = nuevaCirugiaSlotRef.current;
+    nuevaCirugiaSlotRef.current = null;
+    setSolicitudesParaProgramar(null);
+    setDesdeSolicitud({
+      solicitud,
+      patient: pacienteDeSolicitud(solicitud, new Date()),
+      datos: datosWizardDesdeSolicitud(solicitud, slot ?? {}),
+      // Cancelar el wizard vuelve a la agenda, no a Gestión de cirugías.
+      desdeAgenda: true,
+    });
+  }
+  function handleCerrarSolicitudes() {
+    nuevaCirugiaSlotRef.current = null;
+    setSolicitudesParaProgramar(null);
   }
   function handleAbrirNuevaUrgencia() {
     patientSearchIntentRef.current = 'urgencia';
@@ -193,8 +216,12 @@ export default function ProgramacionSalaCirugias() {
   // fechaCirugia/horaCirugia en NuevaUrgenciaModal.jsx).
   function handleSlotClick(fecha, hora, tipo) {
     nuevaCirugiaSlotRef.current = { fecha, hora };
-    patientSearchIntentRef.current = tipo === 'urgencia' ? 'urgencia' : 'cirugia';
-    window.openPatientSearch();
+    if (tipo === 'urgencia') {
+      patientSearchIntentRef.current = 'urgencia';
+      window.openPatientSearch();
+      return;
+    }
+    handleAbrirProgramarCirugia();
   }
 
   useEffect(() => {
@@ -461,6 +488,14 @@ export default function ProgramacionSalaCirugias() {
 
       <NuevaCitaFlow />
 
+      {solicitudesParaProgramar && (
+        <SeleccionarSolicitudModal
+          solicitudes={solicitudesParaProgramar}
+          onClose={handleCerrarSolicitudes}
+          onElegir={handleElegirSolicitud}
+        />
+      )}
+
       {/* "Editar" (encargo explícito) comparte este mismo montaje con "+
           Programar cirugía" -- `editCirugia` presente es lo que activa el
           modo edición del wizard (`cirugiaId`/`initialDatos`, ver
@@ -501,10 +536,15 @@ export default function ProgramacionSalaCirugias() {
             setNuevaCirugiaInitialFechaHora(null);
             setEditCirugia(null);
             if (desdeSolicitud) {
-              // Guardada: se queda en la agenda (sin ?solicitud); cancelada: vuelve a Gestión.
+              // Abierto desde la agenda: siempre se queda en ella. Abierto desde
+              // Gestión (?solicitud): guardada se queda en la agenda (sin
+              // ?solicitud); cancelada vuelve a Gestión.
+              const desdeAgenda = desdeSolicitud.desdeAgenda;
               setDesdeSolicitud(null);
-              if (solicitudGuardadaRef.current) router.replace('/cirugia/programacion');
-              else router.push('/cirugia/gestion');
+              if (!desdeAgenda) {
+                if (solicitudGuardadaRef.current) router.replace('/cirugia/programacion');
+                else router.push('/cirugia/gestion');
+              }
             }
           }}
         />
