@@ -43,6 +43,7 @@ export function datosWizardDesdeSolicitud(solicitud, hueco = {}) {
     dxIngreso: solicitud.dxOrden ?? '',
     idAseguradora: solicitud.eps,
     noAutorizacion: autorizada ? '[N° autorización]' : '',
+    quienAutoriza: autorizada ? 'Marcela Ortiz (Auditoría médica)' : '',
     procedimientos: listaProcedimientos(solicitud).map((p) => ({
       idCirugia: `${p.cups} - ${p.nombre}`,
       idCirujano: cirujano,

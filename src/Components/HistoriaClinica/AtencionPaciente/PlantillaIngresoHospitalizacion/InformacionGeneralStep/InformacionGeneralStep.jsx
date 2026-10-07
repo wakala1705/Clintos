@@ -20,7 +20,6 @@ export default function InformacionGeneralStep({ inicial }) {
   return (
     <div>
       <h3 className="pih-section-title">Información general</h3>
-      <p className="pih-section-desc">Motivo de la consulta, enfermedad actual y revisión por sistema del ingreso.</p>
 
       <div className="pih-fields">
         <div className="form-field">

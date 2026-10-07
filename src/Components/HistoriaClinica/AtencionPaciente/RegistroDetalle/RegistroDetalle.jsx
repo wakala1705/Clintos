@@ -8,6 +8,8 @@ import {
 } from '@/hooks/HistoriaClinica/ingresoHospitalizacionCampos';
 import { calcularDerivados, descripcionRango, evaluarRango } from '@/hooks/HistoriaClinica/signosVitales';
 
+// (Los bloques de presentación -- Campo, Seccion, ListaEtiquetada, etc. -- se
+// exportan para RegistroDetalleEvapre, la vista de lectura de EVAPRE.)
 // Vista de lectura de un registro INGHOSP ("Ver detalle" de
 // HistoriaClinicaTab, encargo explícito): el mismo `contenido` que abre
 // "Editar" en la plantilla, pero como texto plano jerarquizado en una sola
@@ -40,7 +42,7 @@ function LineaConEtiqueta({ texto }) {
   return texto;
 }
 
-function lineas(texto) {
+export function lineas(texto) {
   return (texto || '').split('\n').map((l) => l.trim()).filter(Boolean);
 }
 
@@ -51,7 +53,7 @@ function Parrafos({ texto }) {
   ));
 }
 
-function ListaEtiquetada({ texto }) {
+export function ListaEtiquetada({ texto }) {
   return (
     <ul className="rd-list">
       {lineas(texto).map((l, i) => <li key={i}><LineaConEtiqueta texto={l} /></li>)}
@@ -61,7 +63,7 @@ function ListaEtiquetada({ texto }) {
 
 // Plan: agrupa las líneas "N. ..." consecutivas en un <ol> y deja el resto
 // como párrafos, en el orden en que vienen.
-function TextoConPasos({ texto }) {
+export function TextoConPasos({ texto }) {
   const bloques = [];
   lineas(texto).forEach((l) => {
     const m = l.match(/^(\d+)\.\s+(.*)$/);
@@ -80,7 +82,7 @@ function TextoConPasos({ texto }) {
   ) : <p key={i} className="rd-text">{b.texto}</p>));
 }
 
-function Campo({ label, children }) {
+export function Campo({ label, children }) {
   return (
     <div className="rd-field">
       <h5 className="rd-field-label">{label}</h5>
@@ -89,7 +91,7 @@ function Campo({ label, children }) {
   );
 }
 
-function Seccion({ titulo, children }) {
+export function Seccion({ titulo, children }) {
   return (
     <section className="rd-section">
       <h4 className="rd-section-title">{titulo}</h4>
@@ -98,7 +100,7 @@ function Seccion({ titulo, children }) {
   );
 }
 
-function SignosResumen({ signos }) {
+export function SignosResumen({ signos }) {
   const { imc } = calcularDerivados(signos);
   const items = [
     { campos: ['temperatura'], label: 'T', valor: signos.temperatura, unit: '°C' },

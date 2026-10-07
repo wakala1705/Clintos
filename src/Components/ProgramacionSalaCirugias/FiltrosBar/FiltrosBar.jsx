@@ -5,7 +5,6 @@ import './FiltrosBar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CatalogPickerTrigger from '../CatalogPickerTrigger/CatalogPickerTrigger';
 import CatalogoSalasModal from '../modals/CatalogoSalasModal/CatalogoSalasModal';
-import VistaDropdown from '../VistaDropdown/VistaDropdown';
 import VistaAgenda from '../GestionCirugias/VistaAgenda/VistaAgenda';
 import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
@@ -43,14 +42,14 @@ export default function FiltrosBar({
         ariaLabel="Sala / Quirófano"
       />
       <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
-      <VistaDropdown value={vista} onChange={onChangeVista} />
       {onJornada && (
         <VistaAgenda
+          vista={vista}
+          onVista={onChangeVista}
           jornada={jornada}
           onJornada={onJornada}
           diasVista={diasVista}
           onDiasVista={onDiasVista}
-          ocultarDias={vista !== 'semana'}
         />
       )}
 

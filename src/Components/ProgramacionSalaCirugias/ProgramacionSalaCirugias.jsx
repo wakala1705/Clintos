@@ -22,6 +22,7 @@ import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaM
 import NuevaCirugiaWizard from './modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import NuevaUrgenciaModal from './modals/NuevaUrgenciaModal/NuevaUrgenciaModal';
 import SeleccionarSolicitudModal from './SeleccionarSolicitudModal/SeleccionarSolicitudModal';
+import SeleccionarHuecoModal from './GestionCirugias/SeleccionarHuecoModal/SeleccionarHuecoModal';
 import ListadoProgramacionesModal from './modals/ListadoProgramacionesModal/ListadoProgramacionesModal';
 import { ESTADO_PROGRAMACION_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockListadoProgramaciones';
 import {
@@ -47,7 +48,7 @@ import { evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gesti
 import {
   desplazarHabiles, parseISO, rangoFechasLabel, tresDiasHabiles,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
-import { datosWizardDesdeSolicitud, pacienteDeSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
+import { datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
 import { getSolicitud, getSolicitudes, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 
 export default function ProgramacionSalaCirugias() {
@@ -72,7 +73,7 @@ export default function ProgramacionSalaCirugias() {
   // visibles en la vista Semana ('semana' | 'habil' | 'tres'). Solo cambia lo
   // que se dibuja, no los datos.
   const [jornada, setJornada] = useState('24h');
-  const [diasVista, setDiasVista] = useState('semana');
+  const [diasVista, setDiasVista] = useState('habil');
 
   const inicioSemana = lunesDeSemana(fechaAncla);
   const grillaMesActual = vista === 'mes' ? grillaMes(fechaAncla) : null;
@@ -182,17 +183,30 @@ export default function ProgramacionSalaCirugias() {
     patientSearchIntentRef.current = 'cirugia';
     setSolicitudesParaProgramar(getSolicitudes());
   }
+  // Solicitud elegida que espera su hueco (SeleccionarHuecoModal): mismo paso
+  // que en Gestión de cirugías, para ver qué bloques de la sala ya están
+  // ocupados antes de abrir el wizard (antes el wizard arrancaba a las 07:00
+  // sin avisar de cruces).
+  const [huecoSolicitud, setHuecoSolicitud] = useState(null);
+  function abrirWizardDesdeSolicitud(solicitud, hueco) {
+    setDesdeSolicitud({
+      solicitud,
+      patient: pacienteDeSolicitud(solicitud, new Date()),
+      datos: datosWizardDesdeSolicitud(solicitud, hueco),
+      // El hueco elegido trae su sala; sin él, la del filtro de la agenda.
+      salaId: hueco.salaId,
+      // Cancelar el wizard vuelve a la agenda, no a Gestión de cirugías.
+      desdeAgenda: true,
+    });
+  }
   function handleElegirSolicitud(solicitud) {
     const slot = nuevaCirugiaSlotRef.current;
     nuevaCirugiaSlotRef.current = null;
     setSolicitudesParaProgramar(null);
-    setDesdeSolicitud({
-      solicitud,
-      patient: pacienteDeSolicitud(solicitud, new Date()),
-      datos: datosWizardDesdeSolicitud(solicitud, slot ?? {}),
-      // Cancelar el wizard vuelve a la agenda, no a Gestión de cirugías.
-      desdeAgenda: true,
-    });
+    // Desde una celda de la grilla el usuario ya eligió fecha/hora viendo la
+    // agenda: va directo al wizard. Desde el botón, elige el hueco primero.
+    if (slot) abrirWizardDesdeSolicitud(solicitud, slot);
+    else setHuecoSolicitud(solicitud);
   }
   function handleCerrarSolicitudes() {
     nuevaCirugiaSlotRef.current = null;
@@ -512,6 +526,18 @@ export default function ProgramacionSalaCirugias() {
         />
       )}
 
+      {huecoSolicitud && (
+        <SeleccionarHuecoModal
+          solicitud={huecoSolicitud}
+          duracionMin={duracionEstimadaMin(huecoSolicitud)}
+          onClose={() => setHuecoSolicitud(null)}
+          onElegir={(hueco) => {
+            abrirWizardDesdeSolicitud(huecoSolicitud, hueco);
+            setHuecoSolicitud(null);
+          }}
+        />
+      )}
+
       {/* "Editar" (encargo explícito) comparte este mismo montaje con "+
           Programar cirugía" -- `editCirugia` presente es lo que activa el
           modo edición del wizard (`cirugiaId`/`initialDatos`, ver
@@ -526,7 +552,7 @@ export default function ProgramacionSalaCirugias() {
             documento: editCirugia.paciente.documento,
             telefono: editCirugia.paciente.telAviso,
           } : (desdeSolicitud?.patient ?? nuevaCirugiaWizardPatient)}
-          salaId={editCirugia ? editCirugia.salaId : salaId}
+          salaId={editCirugia ? editCirugia.salaId : (desdeSolicitud?.salaId ?? salaId)}
           cirugiaId={editCirugia?.id}
           initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : desdeSolicitud?.datos}
           initialFechaHora={editCirugia

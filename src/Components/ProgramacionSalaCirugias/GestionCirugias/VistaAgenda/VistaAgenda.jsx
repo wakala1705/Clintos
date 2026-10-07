@@ -8,8 +8,12 @@ import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
 import Button from '@/Components/Button/Button';
 import { JORNADAS, horaFranja } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
+// `key`: atajo de teclado global (D = Día, S = Semana completa), solo en la
+// agenda de Programación (cuando hay `onVista`). La vista "Mes" sigue oculta
+// del selector (encargo explícito, 2026-09-29); el resto del feature la conserva.
+const OPCION_DIA = { value: 'dia', label: 'Día', key: 'D' };
 const OPCIONES_DIAS = [
-  { value: 'semana', label: 'Semana completa' },
+  { value: 'semana', label: 'Semana completa', key: 'S' },
   { value: 'habil', label: 'Semana hábil (lun–vie)' },
   { value: 'tres', label: '3 días hábiles (hoy + 2)' },
 ];
@@ -23,14 +27,25 @@ const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
 // horas) y días visibles (semana completa, semana hábil o 3 días hábiles). Solo cambia
 // lo que se ve. El panel se porta a document.body (la tarjeta de la agenda
 // recorta lo que se sale) y mantiene el Escape dentro del menú para no cerrar
-// el modal que lo contiene. `ocultarDias`: sin el grupo "Días visibles" (vista
-// Día de Programación, donde no aplica).
+// el modal que lo contiene. `vista`/`onVista`: en la agenda de Programación,
+// "Día" es una opción más de "Días visibles" (junto a semana completa/hábil/3
+// días); elegirla cambia `vista` a 'dia', y elegir otra, a 'semana' + su
+// `diasVista`. Sin `onVista` (modal de Programar cirugía) no hay opción Día.
 export default function VistaAgenda({
-  jornada, onJornada, diasVista, onDiasVista, ocultarDias = false,
+  jornada, onJornada, diasVista, onDiasVista, vista, onVista,
 }) {
+  const opcionesDias = onVista ? [OPCION_DIA, ...OPCIONES_DIAS] : OPCIONES_DIAS;
+  const diasActual = onVista && vista === 'dia' ? 'dia' : diasVista;
+  function elegirDias(value) {
+    if (!onVista) { onDiasVista(value); return; }
+    if (value === 'dia') { onVista('dia'); return; }
+    onDiasVista(value);
+    onVista('semana');
+  }
+
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, right: 0 });
-  const triggerRef = useRef(null);
+  const triggerRef = useRef(undefined);
   const panelRef = useRef(null);
 
   function abrir() {
@@ -54,6 +69,21 @@ export default function VistaAgenda({
       window.removeEventListener('resize', cerrar);
     };
   }, [open]);
+
+  // Atajos D/S (solo cuando la agenda maneja `vista`).
+  useEffect(() => {
+    if (!onVista) return undefined;
+    function onShortcut(e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = document.activeElement;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(el?.tagName) || el?.isContentEditable) return;
+      const match = [OPCION_DIA, ...OPCIONES_DIAS].find((o) => o.key.toLowerCase() === e.key.toLowerCase());
+      if (match) elegirDias(match.value);
+    }
+    document.addEventListener('keydown', onShortcut);
+    return () => document.removeEventListener('keydown', onShortcut);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onVista, onDiasVista]);
 
   function onKeyDown(e) {
     if (e.key === 'Escape') {
@@ -105,23 +135,21 @@ export default function VistaAgenda({
               {jornada === o.value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
-          {!ocultarDias && (
-            <>
-              <div className={panel.divider} role="separator" />
-              <div className={panel.groupLabel}>Días visibles</div>
-            </>
-          )}
-          {!ocultarDias && OPCIONES_DIAS.map((o) => (
+          <div className={panel.divider} role="separator" />
+          <div className={panel.groupLabel}>Días visibles</div>
+          {opcionesDias.map((o) => (
             <button
               key={o.value}
               type="button"
               role="menuitemradio"
-              aria-checked={diasVista === o.value}
-              className={[panel.item, diasVista === o.value && panel.selected].filter(Boolean).join(' ')}
-              onClick={() => onDiasVista(o.value)}
+              aria-checked={diasActual === o.value}
+              className={[panel.item, diasActual === o.value && panel.selected].filter(Boolean).join(' ')}
+              onClick={() => elegirDias(o.value)}
             >
               {o.label}
-              {diasVista === o.value && <LuCheck className={panel.check} aria-hidden="true" />}
+              {diasActual === o.value
+                ? <LuCheck className={panel.check} aria-hidden="true" />
+                : o.key && onVista && <span className="va-shortcut">{o.key}</span>}
             </button>
           ))}
         </div>,

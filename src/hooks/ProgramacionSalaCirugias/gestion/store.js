@@ -3,6 +3,7 @@
 // vive en el módulo JS del cliente, así que sobrevive a la navegación entre
 // rutas pero no a recargar la página.
 import { crearSolicitudesMock } from './mockSolicitudes.js';
+import { aplicarValoracion } from './valoracion.js';
 
 let solicitudes = null;
 let aviso = null;
@@ -28,6 +29,11 @@ export function agregarSolicitud(solicitud) {
 // Una solicitud programada sale de la lista de chequeo.
 export function marcarProgramada(id) {
   solicitudes = getSolicitudes().filter((s) => s.id !== id);
+}
+
+// Registra la valoración preanestésica de una solicitud (paso 3 del chequeo).
+export function registrarValoracion(id, datos) {
+  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarValoracion(s, datos) : s));
 }
 
 // Mensaje de una sola lectura para la lista (toast tras volver de otra pantalla).

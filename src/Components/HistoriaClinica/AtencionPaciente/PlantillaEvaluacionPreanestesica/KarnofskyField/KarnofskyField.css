@@ -1,0 +1,13 @@
+/* .pea-field / .pea-field-label viven en shared/shared.css. */
+.pea-karnofsky{
+  max-height:152px;overflow-y:auto;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:4px;
+}
+.pea-karnofsky-option{
+  display:flex;align-items:flex-start;gap:8px;padding:8px;border-radius:var(--radius);
+  font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;
+}
+.pea-karnofsky-option:hover{background:var(--gray-bg);}
+.pea-karnofsky-option.selected{background:var(--primary-50);color:var(--primary-dark);}
+.pea-karnofsky-option input{margin:2px 0 0;width:16px;height:16px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
+.pea-karnofsky-option:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:-2px;}

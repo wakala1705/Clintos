@@ -1,0 +1,7 @@
+/* Reglas reutilizadas por FactoresRiesgoField y KarnofskyField (campos que no
+   son .form-field porque `.form-field input` fuerza alto/ancho de input de
+   texto, que rompería checkboxes y radios) -- importado una sola vez desde
+   PlantillaEvaluacionPreanestesica.jsx. El resto de estilos (titlebar, nav,
+   .form-field, grilla de 2 columnas) los toma de PlantillaIngresoHospitalizacion. */
+.pea-field{display:flex;flex-direction:column;gap:6px;}
+.pea-field-label{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}

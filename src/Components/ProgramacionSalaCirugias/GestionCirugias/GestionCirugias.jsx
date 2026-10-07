@@ -17,8 +17,13 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
 import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal';
+// RegistrarValoracionModal (formulario manual) queda oculto: 'Registrar valoración'
+// ahora vincula una EVAPRE (VincularEvapreModal).
+import VincularEvapreModal from './VincularEvapreModal/VincularEvapreModal';
 import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
-import { consumirAviso, getSolicitudes, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
+import {
+  consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion,
+} from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 import {
   datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
@@ -47,6 +52,8 @@ export default function GestionCirugias() {
   // Ambos son modales sobre esta pantalla; no se navega a Programación.
   const [programando, setProgramando] = useState(null);
   const [hueco, setHueco] = useState(null);
+  // Solicitud cuya valoración preanestésica se está registrando (modal sobre el panel).
+  const [valorando, setValorando] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
@@ -87,6 +94,22 @@ export default function GestionCirugias() {
   }
 
   function cerrarPanel() { setSelectedId(null); }
+
+  // Acciones del chequeo: "Registrar valoración" abre el modal que vincula una EVAPRE; el resto aún no
+  // tiene pantalla y avisa.
+  function handleAccion(accion, item, clave) {
+    if (clave === 'valoracion' && accion === 'Registrar valoración') setValorando(seleccionada);
+    else showToast(`${accion} · ${item}: pantalla por conectar`);
+  }
+
+  function handleValoracionGuardada(datos) {
+    registrarValoracion(valorando.id, datos);
+    setSolicitudes(getSolicitudes());
+    setValorando(null);
+    showToast(datos.concepto === 'no-apto'
+      ? 'Valoración registrada: no apto. La solicitud quedó bloqueada.'
+      : 'Valoración preanestésica vinculada a la EVAPRE.');
+  }
 
   function handleCirugiaGuardada(solicitud) {
     marcarProgramada(solicitud.id);
@@ -227,7 +250,7 @@ export default function GestionCirugias() {
               <SolicitudPanel
                 solicitud={seleccionada}
                 onClose={cerrarPanel}
-                onAccion={(accion, item) => showToast(`${accion} · ${item}: pantalla por conectar`)}
+                onAccion={handleAccion}
                 onProgramar={setProgramando}
               />
             )}
@@ -235,6 +258,13 @@ export default function GestionCirugias() {
         </div>
       </div>
 
+      {valorando && (
+        <VincularEvapreModal
+          solicitud={valorando}
+          onClose={() => setValorando(null)}
+          onVincular={handleValoracionGuardada}
+        />
+      )}
       {programando && (
         <SeleccionarHuecoModal
           solicitud={programando}

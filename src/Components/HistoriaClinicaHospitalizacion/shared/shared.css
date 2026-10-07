@@ -261,6 +261,6 @@ html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
 .data-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink-700);}
 .data-table tbody tr:last-child td{border-bottom:none;}
 .data-table tbody tr:hover{background:var(--bg);}
-.data-table .cell-primary{font-weight:var(--fw-regular);color:var(--ink-900);}
+.data-table .cell-primary{font-weight:var(--fw-medium);color:var(--ink-900);}
 .data-table .cell-sub{display:block;color:var(--ink-500);font-size:var(--fs-sm);font-weight:var(--fw-regular);margin-top:2px;}
 .data-table .cell-muted{color:var(--ink-500);}

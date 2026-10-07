@@ -2,6 +2,7 @@ import {
   LuCircleCheck, LuCircleX, LuClock, LuMinus,
 } from 'react-icons/lu';
 import './EstadoChip.css';
+import Badge from '@/Components/Badge/Badge';
 
 const ICONOS = {
   complete: LuCircleCheck,
@@ -10,8 +11,16 @@ const ICONOS = {
   notrequired: LuMinus,
 };
 
-// Chip de estado clinical-status de la lista de chequeo: tono (color) + ícono
-// + texto, para que el estado nunca dependa solo del color. `tone` es
+// Tono de <Badge> de cada estado clinical-status.
+const TONOS_BADGE = {
+  complete: 'success',
+  pending: 'warn',
+  rejected: 'danger',
+  notrequired: 'neutral',
+};
+
+// Chip de estado clinical-status de la lista de chequeo: <Badge> + ícono +
+// texto, para que el estado nunca dependa solo del color. `tone` es
 // complete | pending | rejected | notrequired (ver TONO_ITEM/TONO_GENERAL en
 // @/hooks/ProgramacionSalaCirugias/gestion/gestion). `mini` es la versión
 // compacta de la columna Estudios (Lab / Img); como su texto visible es una
@@ -21,7 +30,7 @@ export default function EstadoChip({
 }) {
   const Icono = ICONOS[tone];
   return (
-    <span className={`ec-chip ec-${tone}${mini ? ' ec-mini' : ''}`}>
+    <Badge tone={TONOS_BADGE[tone]} className={`ec-chip${mini ? ' ec-mini' : ''}`}>
       <Icono className="ec-icon" aria-hidden="true" />
       {srLabel ? (
         <>
@@ -29,6 +38,6 @@ export default function EstadoChip({
           <span className="ec-sr">{srLabel}</span>
         </>
       ) : children}
-    </span>
+    </Badge>
   );
 }

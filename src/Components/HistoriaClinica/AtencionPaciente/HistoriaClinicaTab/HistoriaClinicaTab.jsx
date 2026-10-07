@@ -5,6 +5,7 @@ import './HistoriaClinicaTab.css';
 import RegistrosPanel from '../RegistrosPanel/RegistrosPanel';
 import AgendaEmptyState from '../../AgendaEmptyState/AgendaEmptyState';
 import RegistroDetalle from '../RegistroDetalle/RegistroDetalle';
+import RegistroDetalleEvapre from '../RegistroDetalleEvapre/RegistroDetalleEvapre';
 import CreandoPlantillaModal from '../CreandoPlantillaModal/CreandoPlantillaModal';
 import Button from '@/Components/Button/Button';
 import { LuEye, LuEyeOff, LuFileText, LuLoaderCircle, LuPencil, LuPrinter, LuSparkles } from 'react-icons/lu';
@@ -77,7 +78,7 @@ function renderDetalle({
             Imprimir
           </Button>
           {/* "Editar" abre la plantilla ya diligenciada cuando el registro
-              trae `contenido` (hoy solo el INGHOSP de ejemplo, ver
+              trae `contenido` (hoy el INGHOSP y el EVAPRE de ejemplo, ver
               mockIngresoHospitalizacionEjemplo.js). "Ver detalle" muestra el
               registro en lectura debajo de esta cabecera (RegistroDetalle),
               tras el modal de carga; si ya está visible, lo oculta. */}
@@ -112,7 +113,9 @@ function renderDetalle({
         </div>
       )}
 
-      {detalleStatus === 'ready' && <RegistroDetalle registro={registro} />}
+      {detalleStatus === 'ready' && (registro.plantilla === 'EVAPRE' && registro.contenido
+        ? <RegistroDetalleEvapre registro={registro} />
+        : <RegistroDetalle registro={registro} />)}
     </div>
   );
 }

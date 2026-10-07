@@ -1,0 +1,15 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field en ../../shared/shared.css.
+   Selector compuesto para ganarle a la regla base de .modal-card. */
+.modal-card.rvm-card{width:560px;max-width:100%;}
+.rvm-body{overflow:visible;}
+.rvm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.rvm-label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.rvm-error{font-size:var(--fs-sm);color:var(--red);}
+.rvm-aviso{
+  margin:0;padding:10px 12px;border-radius:var(--radius);
+  background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.45;
+}
+@media (max-width:1024px){
+  .rvm-grid{grid-template-columns:minmax(0,1fr);}
+}

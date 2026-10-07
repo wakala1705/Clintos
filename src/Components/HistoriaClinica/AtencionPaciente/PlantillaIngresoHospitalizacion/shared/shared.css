@@ -9,8 +9,7 @@
    es el momento de promoverlas a un shared.css de AtencionPaciente, no
    antes. */
 
-.pih-section-title{margin:0 0 4px 0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.pih-section-desc{margin:0 0 20px 0;font-size:var(--fs-base);color:var(--ink-500);}
+.pih-section-title{margin:0 0 16px 0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 
 /* Subtítulo intermedio dentro de una sección (ej. "Signos vitales" vs
    "Examen físico por sistemas" en Examen físico) — un peldaño más chico que

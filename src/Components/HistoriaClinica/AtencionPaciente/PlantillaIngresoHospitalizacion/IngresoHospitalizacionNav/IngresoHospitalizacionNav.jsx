@@ -12,9 +12,12 @@ import './IngresoHospitalizacionNav.css';
 // PlantillaIngresoHospitalizacion.jsx, encargo explícito: "un solo
 // formulario" con las 4 secciones siempre visibles en vez de mostrar/ocultar
 // una a la vez).
-export default function IngresoHospitalizacionNav({ secciones, activeSeccion, onSelectSeccion }) {
+// `ariaLabel` (opcional): también lo monta PlantillaEvaluacionPreanestesica.
+export default function IngresoHospitalizacionNav({
+  secciones, activeSeccion, onSelectSeccion, ariaLabel = 'Secciones del ingreso a hospitalización',
+}) {
   return (
-    <nav className="pihn-nav" aria-label="Secciones del ingreso a hospitalización">
+    <nav className="pihn-nav" aria-label={ariaLabel}>
       <ul className="pihn-list">
         {secciones.map((seccion) => {
           const isCurrent = seccion.id === activeSeccion;

@@ -33,7 +33,6 @@ export default function AntecedentesStep({ inicial }) {
   return (
     <div>
       <h3 className="pih-section-title">Antecedentes</h3>
-      <p className="pih-section-desc">Antecedentes personales, gineco-obstétricos y social/económicos del paciente.</p>
 
       <div className="pih-fields">
         {CAMPOS_ANTECEDENTES.map((campo) => (

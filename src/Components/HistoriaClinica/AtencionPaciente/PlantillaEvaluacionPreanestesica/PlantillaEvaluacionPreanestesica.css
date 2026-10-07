@@ -1,0 +1,11 @@
+/* Plantilla EVAPRE: titlebar, body, content, footer, nav y aside son los de
+   PlantillaIngresoHospitalizacion (.pih-*, mismo patrón estructural). Lo único
+   exclusivo: el aside va a la IZQUIERDA del formulario, así que su borde
+   divisor pasa de izquierda a derecha (en tablet, donde el body apila en
+   columna, de arriba a abajo). Los estilos de sus campos viven en
+   shared/shared.css. */
+.pea-aside{border-left:none;border-right:1px solid var(--border);}
+
+@media (max-width:1024px){
+  .pea-aside{border-right:none;border-bottom:1px solid var(--border);}
+}

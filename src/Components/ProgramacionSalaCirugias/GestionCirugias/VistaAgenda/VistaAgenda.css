@@ -1,3 +1,5 @@
 /* Panel e ítems: apariencia de @/Components/DropdownPanel. Acá solo la posición. */
 .va-panel{position:fixed;z-index:calc(var(--z-modal) + 1);width:280px;display:flex;flex-direction:column;}
 .va-trigger{height:var(--input-md);padding-top:0;padding-bottom:0;}
+
+.va-shortcut{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-400);}

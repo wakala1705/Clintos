@@ -6,6 +6,7 @@
 // vacío del panel de Registros.
 
 import { INGHOSP_EJEMPLO, INGHOSP_EJEMPLO_RESUMEN } from './mockIngresoHospitalizacionEjemplo';
+import { EVAPRE_REGISTRO_MARIA_FERNANDA } from './mockEvapreRegistros';
 
 const REGISTROS_BY_DOCUMENTO = {
   // Isabella Daniela Rodríguez Paternina — mismo documento que el paciente
@@ -50,7 +51,7 @@ export function getRegistrosGrupos(documento) {
 // que todos muestran el mismo set de registros de ejemplo de Isabella
 // (EVO, NOTAS DE ENFERMERÍA, EVONU, EVOPSI) — igual que Consulta Externa —
 // más los registros de plantillas de Hospitalización tomados de la captura
-// del sistema legado (INGHOSP, HIC, INFOQX, ERICK, HCURG y una EVO más),
+// del sistema legado (INGHOSP, HIC, INFOQX, EVAPRE, HCURG y una EVO más),
 // hasta que haya registros reales por paciente. Todos los registros llevan
 // `numero` (folio, ver .rg-subrow-numero en RegistrosPanel.jsx) — encargo
 // explícito de sumarlo al resto de las cards, no solo a HCURG.
@@ -58,7 +59,7 @@ export function getRegistrosGrupos(documento) {
 // Orden final (ver getRegistrosGruposHospitalizacion): EVO, HCURG, INFOQX
 // (encargo explícito de ubicar ambos justo después de EVO, en ese orden,
 // antes que el resto de grupos compartidos con Consulta Externa), NOTAS DE
-// ENFERMERÍA, EVONU, EVOPSI, INGHOSP, HIC, ERICK.
+// ENFERMERÍA, EVONU, EVOPSI, INGHOSP, HIC, EVAPRE.
 const EVO_HOSPITALIZACION = {
   id: 'evo-h1', fecha: '18.SEP.2026', hora: '10:19 AM', numero: '0201295607', tituloNota: 'EVOLUCION',
   autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'EVO',
@@ -128,9 +129,12 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
     ],
   },
   {
-    tipo: 'ERICK',
+    tipo: 'EVAPRE',
     registros: [
-      { id: 'erick-1', fecha: '18.SEP.2026', hora: '10:20 AM', numero: '0201295611', tituloNota: 'HISTORIA CLINICA-PRUEBAS', autor: 'MARTINEZ MORENO DIEGO FERNANDO', rol: 'Médico', especialidad: 'HEMATO-ONCOLOGÍA', ambito: 'QX', plantilla: 'ERICK' },
+      // Evaluación preanestésica diligenciada de ejemplo: "Editar" abre la
+      // plantilla ya llena y "Ver detalle" la muestra en lectura (ver
+      // mockEvaluacionPreanestesicaEjemplo.js y mockEvapreRegistros.js).
+      EVAPRE_REGISTRO_MARIA_FERNANDA,
     ],
   },
 ];

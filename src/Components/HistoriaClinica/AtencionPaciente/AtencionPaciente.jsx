@@ -19,6 +19,7 @@ import PlantillaModal from './PlantillaModal/PlantillaModal';
 import CreandoPlantillaModal from './CreandoPlantillaModal/CreandoPlantillaModal';
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
 import PlantillaIngresoHospitalizacion from './PlantillaIngresoHospitalizacion/PlantillaIngresoHospitalizacion';
+import PlantillaEvaluacionPreanestesica from './PlantillaEvaluacionPreanestesica/PlantillaEvaluacionPreanestesica';
 import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
 import { getRegistrosGrupos, getRegistrosGruposHospitalizacion } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
 import { getOrdenesMedicas } from '@/hooks/HistoriaClinica/mockOrdenesMedicas';
@@ -38,6 +39,9 @@ import {
 // Delay simulado al elegir/crear una plantilla (ver handleElegirPlantilla) —
 // mismo criterio que PRINT_LOADING_DELAY_MS en FacturaVistaClasica.jsx.
 const CREAR_PLANTILLA_DELAY_MS = 1200;
+
+// Códigos del catálogo que ya tienen formulario -> valor de `plantillaActiva`.
+const PLANTILLA_ACTIVA_POR_CODIGO = { CRECIMT2: 'crecimt2', INGHOSP: 'inghosp', EVAPRE: 'evapre' };
 
 // Pestañas de la atención — "Historia clínica" y "Órdenes médicas" tienen
 // contenido hoy; el resto queda deshabilitada con "Próximamente", mismo patrón que Monitoreo/
@@ -113,7 +117,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   );
   const [plantillaModalOpen, setPlantillaModalOpen] = useState(false);
   const tabRefs = useRef(new Map());
-  const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp'
+  const [plantillaActiva, setPlantillaActiva] = useState(null); // null | 'crecimt2' | 'inghosp' | 'evapre'
   // Registro guardado abierto desde "Editar" (ver handleEditarRegistro) --
   // null cuando la plantilla activa es un registro nuevo.
   const [registroAbierto, setRegistroAbierto] = useState(null);
@@ -161,11 +165,12 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   // "Editar" de un registro con `contenido` (HistoriaClinicaTab.jsx):
   // abre la plantilla de ese registro ya diligenciada, sin el delay de
   // "creación" (no se crea nada nuevo). Hoy solo INGHOSP tiene formulario
-  // que acepte contenido guardado.
+  // que acepte contenido guardado (INGHOSP y EVAPRE).
   function handleEditarRegistro(registro) {
-    if (registro.plantilla !== 'INGHOSP') return;
+    const activa = PLANTILLA_ACTIVA_POR_CODIGO[registro.plantilla];
+    if (activa !== 'inghosp' && activa !== 'evapre') return;
     setRegistroAbierto(registro);
-    setPlantillaActiva('inghosp');
+    setPlantillaActiva(activa);
   }
 
   // Sin backend real (mock: "solo pinta el front"), crear la plantilla
@@ -178,13 +183,14 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   // agrupador (ver handleAgregarRegistro abajo), que no pasa por el
   // catálogo.
   function handleElegirPlantilla(plantilla) {
-    if (plantilla.codigo !== 'CRECIMT2' && plantilla.codigo !== 'INGHOSP') {
+    const activa = PLANTILLA_ACTIVA_POR_CODIGO[plantilla.codigo];
+    if (!activa) {
       window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
       return;
     }
     setCreandoPlantilla(plantilla);
     creandoPlantillaTimeoutRef.current = setTimeout(() => {
-      setPlantillaActiva(plantilla.codigo === 'CRECIMT2' ? 'crecimt2' : 'inghosp');
+      setPlantillaActiva(activa);
       setCreandoPlantilla(null);
     }, CREAR_PLANTILLA_DELAY_MS);
   }
@@ -365,6 +371,13 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                     />
                   ) : plantillaActiva === 'inghosp' ? (
                     <PlantillaIngresoHospitalizacion
+                      onSalir={handleSalirPlantilla}
+                      registro={registroAbierto}
+                      maximizada={plantillaMaximizada}
+                      onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                    />
+                  ) : plantillaActiva === 'evapre' ? (
+                    <PlantillaEvaluacionPreanestesica
                       onSalir={handleSalirPlantilla}
                       registro={registroAbierto}
                       maximizada={plantillaMaximizada}

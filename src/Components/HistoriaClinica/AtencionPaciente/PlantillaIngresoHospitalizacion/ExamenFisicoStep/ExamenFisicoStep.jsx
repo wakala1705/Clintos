@@ -38,7 +38,6 @@ export default function ExamenFisicoStep({ inicial }) {
   return (
     <div>
       <h3 className="pih-section-title">Examen físico</h3>
-      <p className="pih-section-desc">Inspección general, signos vitales y examen físico por sistemas.</p>
 
       <div className="pih-fields">
         <div className="form-field">

@@ -1,1 +1,13 @@
 .ot-icon{width:13px;height:13px;margin-right:5px;vertical-align:-2px;}
+
+/* Tonos propios del origen (tokens violet y blue de ProgramacionSalaCirugias.css,
+   con variante oscura). Selector de 2 clases para ganarle al tono neutral del
+   CSS Module de <Badge>. */
+.ot-violeta.ot-violeta{
+  background:var(--violet-bg);color:var(--violet-fg);
+  border-color:color-mix(in srgb, var(--violet-fg) 45%, transparent);
+}
+.ot-celeste.ot-celeste{
+  background:var(--blue-bg);color:var(--blue-fg);
+  border-color:color-mix(in srgb, var(--blue-fg) 45%, transparent);
+}

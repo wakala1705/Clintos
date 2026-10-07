@@ -1,0 +1,15 @@
+/* Reglas exclusivas de la vista de lectura de EVAPRE; el resto (.rd-*) viene de
+   RegistroDetalle.css, importado por RegistroDetalle.jsx. */
+.rde-badges{display:flex;flex-wrap:wrap;gap:6px;}
+
+/* Laboratorios cortos (HB, HCTO, TP...): grilla de pares etiqueta/valor. */
+.rde-labs{
+  margin:0;display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:12px 24px;
+}
+.rde-lab{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rde-lab dt{font-size:var(--fs-sm);color:var(--ink-500);}
+.rde-lab dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
+
+@media (max-width:1024px){
+  .rde-labs{grid-template-columns:repeat(2, 1fr);}
+}

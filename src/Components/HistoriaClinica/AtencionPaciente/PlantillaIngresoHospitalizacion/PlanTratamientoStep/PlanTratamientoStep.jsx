@@ -27,7 +27,6 @@ export default function PlanTratamientoStep({ inicial }) {
   return (
     <div>
       <h3 className="pih-section-title">Plan de tratamiento</h3>
-      <p className="pih-section-desc">Análisis clínico, opinión del plan de tratamiento y tamizaje nutricional.</p>
 
       <div className="pih-fields">
         <div className="form-field">

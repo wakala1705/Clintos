@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LuArrowRight } from 'react-icons/lu';
 import './SeleccionarHuecoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -255,7 +254,6 @@ export default function SeleccionarHuecoModal({
           <div className="shm-botones">
             <Button variant="secondary" onClick={onClose}>Cancelar</Button>
             <Button
-              icon={LuArrowRight}
               className="shm-continuar"
               disabled={!puedeContinuar}
               onClick={handleContinuar}

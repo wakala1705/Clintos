@@ -91,7 +91,7 @@
 .sp-mensaje-bloqueada{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
 /* status-info: solo mensajes informativos. */
 .sp-mensaje-info{background:var(--status-info-bg);color:var(--status-info-fg);}
-.sp-programar{flex-shrink:0;justify-content:center;min-height:44px;}
+.sp-programar{flex-shrink:0;justify-content:center;}
 
 /* Tablet: una sola columna (con scroll del cuerpo si hace falta). */
 @media (max-width:1024px){

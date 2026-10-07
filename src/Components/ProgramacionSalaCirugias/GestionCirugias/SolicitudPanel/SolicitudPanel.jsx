@@ -28,7 +28,7 @@ function Detalle({ clave, item, onAccion }) {
     <>
       <p className="sp-detalle">{item.detalle}</p>
       {accion && (
-        <button type="button" className="sp-link" onClick={() => onAccion(accion, ITEM_LABEL[clave])}>
+        <button type="button" className="sp-link" onClick={() => onAccion(accion, ITEM_LABEL[clave], clave)}>
           {accion}
         </button>
       )}

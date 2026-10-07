@@ -1,0 +1,38 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer en ../../shared/shared.css.
+   Selector compuesto para ganarle a la regla base de .modal-card. */
+.modal-card.vem-card{width:960px;max-width:100%;}
+.vem-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.vem-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
+
+.vem-table-wrap{border:1px solid var(--border);border-radius:var(--radius);max-height:320px;overflow:auto;}
+.vem-table{width:100%;border-collapse:separate;border-spacing:0;}
+.vem-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.vem-table td{
+  padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle;
+  font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.vem-table tbody tr:last-child td{border-bottom:none;}
+.vem-table tbody tr{cursor:pointer;}
+.vem-table tbody tr:hover td{background:var(--bg);}
+.vem-table tbody tr.selected td{background:var(--interactive-selected-bg);}
+.vem-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.vem-nowrap{white-space:nowrap;}
+.vem-proc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.vem-concepto{
+  margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  font-size:var(--fs-base);color:var(--ink-700);
+}
+.vem-aviso{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--clinical-status-rejected-fg);}
+
+.vem-empty{padding:28px 16px;text-align:center;}
+.vem-empty-title{margin:0 0 4px 0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.vem-empty-sub{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+
+@media (max-width:1024px){
+  .vem-proc{max-width:160px;}
+}
