@@ -5,8 +5,9 @@ import './InsumosStep.css';
 import CatalogoInsumosModal from '../../CatalogoInsumosModal/CatalogoInsumosModal';
 import { agregarInsumosPrecargados } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuCheck, LuPencil, LuPlus, LuPrinter, LuTrash2, LuX,
+  LuCheck, LuLink, LuPencil, LuPlus, LuPrinter, LuTrash2, LuX,
 } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 
 // Paso 3 del wizard "Nueva cirugía" -- arranca con la canasta consolidada de
 // los procedimientos agregados en el Paso 2 (mismo cálculo que el preview
@@ -60,6 +61,8 @@ export default function InsumosStep({ datos, onChange }) {
       <div className="is-header">
         <h4 className="ncw-section-title">Canasta de insumos</h4>
         <div className="is-header-actions">
+          {/* Sin acción por ahora: abrirá el vínculo de canastas de cirugía. */}
+          <Button type="button" size="sm" icon={LuLink}>Vincular canastas</Button>
           <button
             type="button"
             className="ncw-icon-btn"
