@@ -6,7 +6,7 @@
 // vacío del panel de Registros.
 
 import { INGHOSP_EJEMPLO, INGHOSP_EJEMPLO_RESUMEN } from './mockIngresoHospitalizacionEjemplo';
-import { EVAPRE_REGISTRO_MARIA_FERNANDA } from './mockEvapreRegistros';
+import { EVAPRE_REGISTRO_MARIA_FERNANDA, getEvapreRegistros } from './mockEvapreRegistros';
 
 const REGISTROS_BY_DOCUMENTO = {
   // Isabella Daniela Rodríguez Paternina — mismo documento que el paciente
@@ -139,12 +139,19 @@ const GRUPOS_HOSPITALIZACION_EXTRA = [
   },
 ];
 
-export function getRegistrosGruposHospitalizacion() {
+// `data` (opcional) es el paciente hospitalizado: si tiene EVAPRE propias (por
+// documento, ver mockEvapreRegistros.js) reemplazan las del agrupador EVAPRE
+// compartido; el resto de agrupadores sigue siendo el mismo set de ejemplo.
+export function getRegistrosGruposHospitalizacion(data) {
+  const evapres = getEvapreRegistros(data?.patient?.documento);
+  const extras = evapres.length > 0
+    ? GRUPOS_HOSPITALIZACION_EXTRA.map((g) => (g.tipo === 'EVAPRE' ? { ...g, registros: evapres } : g))
+    : GRUPOS_HOSPITALIZACION_EXTRA;
   const base = REGISTROS_BY_DOCUMENTO['1234567890'].map((grupo) => (
     grupo.tipo === 'EVO' ? { ...grupo, registros: [EVO_HOSPITALIZACION, ...grupo.registros] } : grupo
   ));
   // HCURG e INFOQX van justo después de EVO, no al final con el resto de
   // GRUPOS_HOSPITALIZACION_EXTRA (encargo explícito).
   const [evoGrupo, ...restoBase] = base;
-  return [evoGrupo, GRUPO_HCURG, GRUPO_INFOQX, ...restoBase, ...GRUPOS_HOSPITALIZACION_EXTRA];
+  return [evoGrupo, GRUPO_HCURG, GRUPO_INFOQX, ...restoBase, ...extras];
 }

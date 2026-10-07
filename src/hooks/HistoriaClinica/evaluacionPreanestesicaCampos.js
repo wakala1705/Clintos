@@ -218,6 +218,14 @@ export const SECCIONES_EVAPRE = [
   },
 ];
 
+// Campos de la sección Laboratorios que son resultados de laboratorio (no EKG,
+// Rx ni imágenes), en el orden de la plantilla: los que consume "Adjuntar
+// resultados" de Gestión de cirugías.
+const CLAVES_LAB_TEXTO = ['parcialOrina', 'gasesArteriales', 'otrosQuimica'];
+export const CAMPOS_LABORATORIO_EVAPRE = SECCIONES_EVAPRE.find((s) => s.id === 'laboratorios').campos
+  .filter((c) => c.type === 'text' || CLAVES_LAB_TEXTO.includes(c.key))
+  .map(({ key, label }) => ({ key, label }));
+
 // Etiqueta legible del `value` de un campo select (vista de lectura).
 export function etiquetaOpcionEvapre(key, value) {
   for (const s of SECCIONES_EVAPRE) {

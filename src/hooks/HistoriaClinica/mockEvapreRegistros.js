@@ -20,8 +20,9 @@ export const EVAPRE_REGISTRO_MARIA_FERNANDA = {
 };
 
 // Claudia Patricia Ospina Henao (solicitud de tiroidectomía total en Gestión
-// de cirugías): ASA II, sin predictores de vía aérea difícil. Los TSH/T4/calcio
-// siguen pendientes, igual que en el paso 4 de su chequeo.
+// de cirugías): ASA II, sin predictores de vía aérea difícil. Sus laboratorios
+// (incluidos TSH/T4/calcio) son los que "Adjuntar resultados" del paso 4 de su
+// chequeo toma de esta EVAPRE.
 const EVAPRE_CLAUDIA = {
   valores: {
     procedimiento:
@@ -56,7 +57,7 @@ const EVAPRE_CLAUDIA = {
     albumina: '4,2 g/dL',
     parcialOrina: 'SIN ALTERACIONES. EMBARAZO DESCARTADO (BHCG NEGATIVA).',
     gasesArteriales: 'NO SE REQUIEREN GASES ARTERIALES. SPO2 98 % AL AIRE AMBIENTE.',
-    otrosQuimica: 'TSH, T4 LIBRE Y CALCIO: PENDIENTES DE RESULTADO. CONFIRMAR EUTIROIDISMO Y CALCEMIA ANTES DE LA CIRUGIA.',
+    otrosQuimica: 'TSH 1,8 mUI/L (0,4-4,0)\nT4 LIBRE 1,1 ng/dL (0,8-1,8)\nCALCIO TOTAL 9,4 mg/dL (8,6-10,2)\nEUTIROIDISMO Y CALCEMIA NORMAL.',
     ekg: 'RITMO SINUSAL A 72 LPM, EJE NORMAL, SIN ISQUEMIA, NI BLOQUEO DE RAMA. QTc 410 ms.',
     rxTorax: 'SIN INFILTRADOS NI DERRAME. DESVIACION TRAQUEAL LEVE A LA DERECHA. SILUETA CARDIACA NORMAL.',
     otrosImagenes:
@@ -105,7 +106,7 @@ const EVAPRE_CLAUDIA = {
       '1. AYUNO 8 HORAS SOLIDOS, 6 HORAS LIQUIDOS CLAROS\n'
       + '2. SE EXPLICAN RIESGOS Y BENEFICIOS DE LA ANESTESIA GENERAL (INCLUIDA LA DISFONIA TRANSITORIA POR INTUBACION), SE RESUELVEN DUDAS Y SE FIRMA CONSENTIMIENTO INFORMADO\n'
       + '3. SUSPENDER LOSARTAN 24 HORAS ANTES DE LA CIRUGIA\n'
-      + '4. CONFIRMAR TSH, T4 LIBRE Y CALCIO ANTES DE PROGRAMAR; SIN EUTIROIDISMO NO SE ANESTESIA\n'
+      + '4. EUTIROIDISMO Y CALCEMIA NORMAL CONFIRMADOS (TSH, T4 LIBRE, CALCIO); REPETIR CALCIO A LAS 24 HORAS DEL POSTOPERATORIO\n'
       + '5. NEUROMONITOREO DEL NERVIO LARINGEO RECURRENTE: TUBO ENDOTRAQUEAL CON ELECTRODOS Y RELAJANTE MUSCULAR DE ACCION CORTA, SIN REPETIR DOSIS\n'
       + '6. PROFILAXIS DE NVPO (MUJER, NO FUMADORA, OPIOIDES POSTOPERATORIOS): DEXAMETASONA 8 MG Y ONDANSETRON 4 MG IV\n'
       + '7. POSTOPERATORIO: VIGILAR HEMATOMA CERVICAL Y SIGNOS DE HIPOCALCEMIA\n\n'
@@ -133,7 +134,7 @@ const EVAPRE_REGISTRO_CLAUDIA = {
     'Paciente femenina de 49 años, ASA II (HTA controlada, obesidad grado I), sin alergias, programada para tiroidectomía total '
     + 'con neuromonitoreo. Sin predictores de vía aérea difícil (Mallampati II, apertura oral > 3 cm, DTM 6-6,5 cm); bocio con '
     + 'desviación traqueal leve. Riesgo cardiovascular bajo (Lee revisado clase I, NYHA I, > 10 METs). Hemograma, coagulación, '
-    + 'glicemia y creatinina normales; TSH, T4 libre y calcio pendientes. Plan: anestesia general balanceada con intubación '
+    + 'glicemia y creatinina normales; TSH 1,8, T4 libre 1,1 y calcio 9,4 normales. Plan: anestesia general balanceada con intubación '
     + 'orotraqueal, relajante de acción corta, suspender losartán 24 h antes y profilaxis de NVPO. Apta para el procedimiento.',
 };
 

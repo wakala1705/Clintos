@@ -152,12 +152,20 @@ export const PACIENTES_PISO = [
     paciente: 'Felipe Gómez', diagnostico: 'Postoperatorio de hernia', edad: 57, genero: 'masculino',
     estadoMedicacion: 'al-dia', prolongada: false,
   },
+  // Paciente de la solicitud de tiroidectomía total de Gestión de cirugías
+  // (origen internación, ver mockSolicitudes.js): ocupa la cama 101-C, que era
+  // una de las 4 libres del piso.
+  {
+    id: 'HC-48402', cama: '101-C', ...ingresoHace(3),
+    paciente: 'Claudia Ospina', diagnostico: 'Bocio multinodular', edad: 49, genero: 'femenino',
+    estadoMedicacion: 'al-dia', prolongada: false,
+  },
 ];
 
 // ---------- Área operativa (Todo el área / Sector norte / Sector sur) ----------
 // Encargo explícito: Sector norte = habitaciones 101-104, Sector sur =
-// 105-107 — cubren exactamente las 7 habitaciones/14 camas ocupadas de
-// PACIENTES_PISO (Norte 8 camas: 101 a 104; Sur 6 camas: 105 a 107), sin
+// 105-107 — cubren exactamente las 7 habitaciones/15 camas ocupadas de
+// PACIENTES_PISO (Norte 9 camas: 101 a 104; Sur 6 camas: 105 a 107), sin
 // solapamiento ni huecos. `sectorDeCama` deriva el sector del número de
 // habitación de `cama` ("101-A" -> 101) en vez de guardar un campo `sector`
 // aparte en cada paciente — una sola fuente de verdad (el número de cama),
@@ -180,8 +188,8 @@ export function sectorDeCama(cama) {
 // camas vacías con su propio número real (las 4 camas libres de las 18 no
 // tienen fila en PACIENTES_PISO, así que no hay de dónde derivar a qué
 // sector pertenecen). Repartidas proporcional a la cantidad de habitaciones
-// de cada sector (Norte 4 habitaciones, Sur 3): Norte 10 camas (8 ocupadas +
-// 2 libres), Sur 8 camas (6 ocupadas + 2 libres) — suman los mismos 18 de
+// de cada sector (Norte 4 habitaciones, Sur 3): Norte 10 camas (9 ocupadas +
+// 1 libre), Sur 8 camas (6 ocupadas + 2 libres) — suman los mismos 18 de
 // CAMAS_TOTALES.
 export const CAMAS_POR_AREA = {
   todo: CAMAS_TOTALES,
@@ -218,13 +226,18 @@ export const NOMBRE_COMPLETO = {
   'HC-48302': 'Diego Armando Pérez Londoño',
   'HC-47765': 'Carmen Rosa Ruiz Henao',
   'HC-48254': 'Felipe Andrés Gómez Herrera',
+  'HC-48402': 'Claudia Patricia Ospina Henao',
 };
 
 // Documento (CC) ficticio derivado del id de historia — PACIENTES_PISO no
 // trae documento real. Mismo valor en la tabla del Panel General y en el
 // PatientBanner de Historia Clínica de Hospitalización.
+// Excepción: Claudia Ospina usa el documento real de su solicitud en Gestión de
+// cirugías (31.902.576), para que su EVAPRE se encuentre por documento.
+const DOCUMENTO_PROPIO = { 'HC-48402': '31902576' };
+
 export function documentoDe(id) {
-  return `10${id.replace(/\D/g, '')}`;
+  return DOCUMENTO_PROPIO[id] ?? `10${id.replace(/\D/g, '')}`;
 }
 
 // N° de admisión ficticio (10 dígitos como los de Admisiones), derivado del

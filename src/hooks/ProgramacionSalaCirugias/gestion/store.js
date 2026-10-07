@@ -4,6 +4,7 @@
 // rutas pero no a recargar la página.
 import { crearSolicitudesMock } from './mockSolicitudes.js';
 import { aplicarValoracion } from './valoracion.js';
+import { aplicarLaboratorios } from './laboratorios.js';
 
 let solicitudes = null;
 let aviso = null;
@@ -34,6 +35,11 @@ export function marcarProgramada(id) {
 // Registra la valoración preanestésica de una solicitud (paso 3 del chequeo).
 export function registrarValoracion(id, datos) {
   solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarValoracion(s, datos) : s));
+}
+
+// Adjunta los resultados de laboratorio de una solicitud (paso 4 del chequeo).
+export function adjuntarLaboratorios(id, datos) {
+  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarLaboratorios(s, datos) : s));
 }
 
 // Mensaje de una sola lectura para la lista (toast tras volver de otra pantalla).

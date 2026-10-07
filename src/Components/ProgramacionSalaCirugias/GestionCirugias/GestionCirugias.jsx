@@ -20,9 +20,10 @@ import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal
 // RegistrarValoracionModal (formulario manual) queda oculto: 'Registrar valoración'
 // ahora vincula una EVAPRE (VincularEvapreModal).
 import VincularEvapreModal from './VincularEvapreModal/VincularEvapreModal';
+import AdjuntarLaboratoriosModal from './AdjuntarLaboratoriosModal/AdjuntarLaboratoriosModal';
 import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import {
-  consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion,
+  adjuntarLaboratorios, consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 import {
   datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud,
@@ -54,6 +55,7 @@ export default function GestionCirugias() {
   const [hueco, setHueco] = useState(null);
   // Solicitud cuya valoración preanestésica se está registrando (modal sobre el panel).
   const [valorando, setValorando] = useState(null);
+  const [adjuntando, setAdjuntando] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
@@ -95,11 +97,20 @@ export default function GestionCirugias() {
 
   function cerrarPanel() { setSelectedId(null); }
 
-  // Acciones del chequeo: "Registrar valoración" abre el modal que vincula una EVAPRE; el resto aún no
-  // tiene pantalla y avisa.
+  // Acciones del chequeo: "Registrar valoración" abre el modal que vincula una
+  // EVAPRE y "Adjuntar resultados" de laboratorios el que toma los resultados de
+  // esa EVAPRE; el resto aún no tiene pantalla y avisa.
   function handleAccion(accion, item, clave) {
     if (clave === 'valoracion' && accion === 'Registrar valoración') setValorando(seleccionada);
+    else if (clave === 'laboratorios' && accion === 'Adjuntar resultados') setAdjuntando(seleccionada);
     else showToast(`${accion} · ${item}: pantalla por conectar`);
+  }
+
+  function handleLaboratoriosAdjuntos(datos) {
+    adjuntarLaboratorios(adjuntando.id, datos);
+    setSolicitudes(getSolicitudes());
+    setAdjuntando(null);
+    showToast('Resultados de laboratorio adjuntados desde la EVAPRE.');
   }
 
   function handleValoracionGuardada(datos) {
@@ -263,6 +274,13 @@ export default function GestionCirugias() {
           solicitud={valorando}
           onClose={() => setValorando(null)}
           onVincular={handleValoracionGuardada}
+        />
+      )}
+      {adjuntando && (
+        <AdjuntarLaboratoriosModal
+          solicitud={adjuntando}
+          onClose={() => setAdjuntando(null)}
+          onAdjuntar={handleLaboratoriosAdjuntos}
         />
       )}
       {programando && (
