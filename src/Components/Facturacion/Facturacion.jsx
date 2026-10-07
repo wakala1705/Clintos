@@ -117,7 +117,7 @@ export default function Facturacion() {
 
       <div className="main">
         <Topbar
-          section="Facturación"
+          section="Finanzas"
           page="Facturas"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />

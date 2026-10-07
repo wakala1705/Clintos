@@ -44,6 +44,9 @@ import {
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 import { evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import {
+  desplazarHabiles, parseISO, rangoFechasLabel, tresDiasHabiles,
+} from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 import { datosWizardDesdeSolicitud, pacienteDeSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
 import { getSolicitud, getSolicitudes, marcarProgramada } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 
@@ -64,10 +67,17 @@ export default function ProgramacionSalaCirugias() {
   });
   const [estado, setEstado] = useState('todos');
   const [vista, setVista] = useState('semana');
-  const [mostrarFinesDeSemana, setMostrarFinesDeSemana] = useState(true);
+  // Configuración "Vista" de la agenda (mismo menú que el modal de Programar
+  // cirugía, ver VistaAgenda.jsx): horas visibles ('24h' | 'operativa') y días
+  // visibles en la vista Semana ('semana' | 'habil' | 'tres'). Solo cambia lo
+  // que se dibuja, no los datos.
+  const [jornada, setJornada] = useState('24h');
+  const [diasVista, setDiasVista] = useState('semana');
 
   const inicioSemana = lunesDeSemana(fechaAncla);
   const grillaMesActual = vista === 'mes' ? grillaMes(fechaAncla) : null;
+  // "3 días hábiles": el día ancla (o el siguiente hábil) y los 2 hábiles que le siguen.
+  const tresDias = vista === 'semana' && diasVista === 'tres' ? tresDiasHabiles(fechaISO(fechaAncla)) : null;
 
   // Rango de fechas (ISO) que la vista activa necesita cargar -- en `mes`
   // cubre toda la grilla visible (incluye días mudos del mes ant./sig.) para
@@ -80,6 +90,9 @@ export default function ProgramacionSalaCirugias() {
   } else if (vista === 'mes') {
     rangoInicio = fechaISO(grillaMesActual.days[0].date);
     rangoFin = fechaISO(grillaMesActual.days[grillaMesActual.days.length - 1].date);
+  } else if (tresDias) {
+    rangoInicio = tresDias[0];
+    rangoFin = tresDias[2];
   } else {
     rangoInicio = fechaISO(inicioSemana);
     rangoFin = fechaISO(addDias(inicioSemana, 6));
@@ -309,11 +322,13 @@ export default function ProgramacionSalaCirugias() {
   function handlePrev() {
     if (vista === 'dia') handleFechaAnclaChange(addDias(fechaAncla, -1));
     else if (vista === 'mes') handleFechaAnclaChange(addMeses(fechaAncla, -1));
+    else if (tresDias) handleFechaAnclaChange(parseISO(desplazarHabiles(tresDias[0], -3)));
     else handleFechaAnclaChange(addDias(fechaAncla, -7));
   }
   function handleNext() {
     if (vista === 'dia') handleFechaAnclaChange(addDias(fechaAncla, 1));
     else if (vista === 'mes') handleFechaAnclaChange(addMeses(fechaAncla, 1));
+    else if (tresDias) handleFechaAnclaChange(parseISO(desplazarHabiles(tresDias[2], 1)));
     else handleFechaAnclaChange(addDias(fechaAncla, 7));
   }
   // Clickear un día en el mini-calendario lateral: en vista Semana navega a
@@ -321,7 +336,7 @@ export default function ProgramacionSalaCirugias() {
   // handleSelectMiniCalDate en ProgramarCita.jsx); en Día/Mes salta directo
   // a esa fecha.
   function handleSelectMiniCalDate(date) {
-    handleFechaAnclaChange(vista === 'semana' ? lunesDeSemana(date) : date);
+    handleFechaAnclaChange(vista === 'semana' && diasVista !== 'tres' ? lunesDeSemana(date) : date);
   }
   // Clic en un día de la grilla mensual (AgendaMes): navega a la vista Día
   // de esa fecha -- decisión confirmada con el encargo.
@@ -339,12 +354,13 @@ export default function ProgramacionSalaCirugias() {
   const resumen = resumenAgenda({
     cirugias, sedeId, inicio: rangoInicio, fin: rangoFin, estado,
   });
-  // Sáb/Dom se ocultan por defecto vía el toggle del header (encargo
-  // explícito) filtrando por `label` en vez de recalcular el día de semana
-  // -- diasDeSemana ya lo trae calculado (ver mockCirugiaData.js).
-  const diasVisibles = mostrarFinesDeSemana
-    ? diasDeSemana(inicioSemana)
-    : diasDeSemana(inicioSemana).filter((d) => d.label !== 'Sáb' && d.label !== 'Dom');
+  // Días visibles de la vista Semana (menú "Vista"): semana completa, solo
+  // lun-vie (se filtra por `label` en vez de recalcular el día de semana --
+  // diasDeSemana ya lo trae calculado, ver mockCirugiaData.js) o 3 días hábiles.
+  let diasVisibles;
+  if (tresDias) diasVisibles = tresDias.map((iso) => diaUnico(parseISO(iso)));
+  else if (diasVista === 'habil') diasVisibles = diasDeSemana(inicioSemana).filter((d) => d.label !== 'Sáb' && d.label !== 'Dom');
+  else diasVisibles = diasDeSemana(inicioSemana);
 
   // La recepción de lo que farmacia despacha se registra en Canastas de
   // cirugía: se abre allá con esta cirugía seleccionada.
@@ -436,12 +452,10 @@ export default function ProgramacionSalaCirugias() {
                   onEstadoChange={handleEstadoChange}
                   vista={vista}
                   onChangeVista={handleChangeVista}
-                  mostrarFinesDeSemana={mostrarFinesDeSemana}
-                  onToggleFinesDeSemana={setMostrarFinesDeSemana}
                 />
               ) : (
                 <AgendaSemana
-                  label={vista === 'dia' ? diaLabel(fechaAncla) : rangoSemanaLabel(inicioSemana)}
+                  label={vista === 'dia' ? diaLabel(fechaAncla) : (tresDias ? rangoFechasLabel(tresDias[0], tresDias[2]) : rangoSemanaLabel(inicioSemana))}
                   days={vista === 'dia' ? [diaUnico(fechaAncla)] : diasVisibles}
                   cirugias={cirugias}
                   selectedId={selectedId}
@@ -449,8 +463,8 @@ export default function ProgramacionSalaCirugias() {
                   onSlotClick={handleSlotClick}
                   onPrevWeek={handlePrev}
                   onNextWeek={handleNext}
-                  navPrevLabel={vista === 'dia' ? 'Día anterior' : 'Semana anterior'}
-                  navNextLabel={vista === 'dia' ? 'Día siguiente' : 'Semana siguiente'}
+                  navPrevLabel={vista === 'dia' ? 'Día anterior' : (tresDias ? 'Días anteriores' : 'Semana anterior')}
+                  navNextLabel={vista === 'dia' ? 'Día siguiente' : (tresDias ? 'Días siguientes' : 'Semana siguiente')}
                   sedeId={sedeId}
                   salaId={salaId}
                   onSalaChange={handleSalaChange}
@@ -463,8 +477,10 @@ export default function ProgramacionSalaCirugias() {
                   onCancelarCirugia={handleCancelarCirugia}
                   vista={vista}
                   onChangeVista={handleChangeVista}
-                  mostrarFinesDeSemana={mostrarFinesDeSemana}
-                  onToggleFinesDeSemana={setMostrarFinesDeSemana}
+                  jornada={jornada}
+                  onJornada={setJornada}
+                  diasVista={diasVista}
+                  onDiasVista={setDiasVista}
                 />
               )}
             </div>

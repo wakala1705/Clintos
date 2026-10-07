@@ -10,8 +10,6 @@ import OrigenTag from '../GestionCirugias/OrigenTag/OrigenTag';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
-import { duracionEstimadaMin } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
-import { MINUTOS_FRANJA, duracionLabel } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
 const OPCIONES_ORIGEN = [
   { value: '', label: 'Todos' },
@@ -63,7 +61,6 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
         <ModalHeader
           title="Programar cirugía"
           titleId="sso-title"
-          subtitle={`${totalListas} ${totalListas === 1 ? 'solicitud lista' : 'solicitudes listas'} para programar`}
           onClose={onClose}
           closeLabel="Cerrar selección de solicitud"
         />
@@ -111,7 +108,6 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
                   <th scope="col">Procedimiento</th>
                   <th scope="col">Origen</th>
                   <th scope="col">Médico</th>
-                  <th scope="col">Duración estimada</th>
                   <th scope="col"><span className="sso-sr">Acciones</span></th>
                 </tr>
               </thead>
@@ -130,11 +126,8 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
                     </td>
                     <td><OrigenTag origen={s.origen} /></td>
                     <td>{s.cirujano ?? s.medicoOrdena}</td>
-                    <td>{duracionLabel(duracionEstimadaMin(s) / MINUTOS_FRANJA)}</td>
                     <td className="sso-accion">
                       <Button
-                        size="sm"
-                        className="sso-programar"
                         aria-label={`Programar cirugía de ${s.paciente.nombre}`}
                         onClick={(e) => { e.stopPropagation(); onElegir(s); }}
                       >
@@ -147,6 +140,10 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
             </table>
           </div>
         )}
+
+        <p className="sso-pie">
+          {visibles.length} de {totalListas} {totalListas === 1 ? 'solicitud lista' : 'solicitudes listas'} para programar
+        </p>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ function EstudioChip({ clave, abreviatura, item }) {
 }
 
 // Tabla de solicitudes. Cada fila es clicable con el mouse; para teclado y
-// lectores de pantalla el control real es el botón "Revisar" de la última
+// lectores de pantalla el control real es el botón "Gestionar" de la última
 // columna (un solo tab stop por fila).
 export default function SolicitudesTable({
   solicitudes, selectedId, onSelect,
@@ -91,14 +91,12 @@ export default function SolicitudesTable({
                 <td className="sct-accion">
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="sct-revisar"
                     icon={LuChevronRight}
-                    aria-label={`Revisar solicitud de ${s.paciente.nombre}`}
+                    aria-label={`Gestionar solicitud de ${s.paciente.nombre}`}
                     aria-pressed={seleccionada}
                     onClick={(e) => { e.stopPropagation(); onSelect(s.id); }}
                   >
-                    Revisar
+                    Gestionar
                   </Button>
                 </td>
               </tr>

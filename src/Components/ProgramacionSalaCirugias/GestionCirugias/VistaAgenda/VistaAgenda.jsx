@@ -23,9 +23,10 @@ const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
 // horas) y días visibles (semana completa, semana hábil o 3 días hábiles). Solo cambia
 // lo que se ve. El panel se porta a document.body (la tarjeta de la agenda
 // recorta lo que se sale) y mantiene el Escape dentro del menú para no cerrar
-// el modal que lo contiene.
+// el modal que lo contiene. `ocultarDias`: sin el grupo "Días visibles" (vista
+// Día de Programación, donde no aplica).
 export default function VistaAgenda({
-  jornada, onJornada, diasVista, onDiasVista,
+  jornada, onJornada, diasVista, onDiasVista, ocultarDias = false,
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, right: 0 });
@@ -104,9 +105,13 @@ export default function VistaAgenda({
               {jornada === o.value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
-          <div className={panel.divider} role="separator" />
-          <div className={panel.groupLabel}>Días visibles</div>
-          {OPCIONES_DIAS.map((o) => (
+          {!ocultarDias && (
+            <>
+              <div className={panel.divider} role="separator" />
+              <div className={panel.groupLabel}>Días visibles</div>
+            </>
+          )}
+          {!ocultarDias && OPCIONES_DIAS.map((o) => (
             <button
               key={o.value}
               type="button"

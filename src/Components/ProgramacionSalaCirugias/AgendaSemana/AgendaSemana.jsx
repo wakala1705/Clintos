@@ -6,22 +6,23 @@ import CirugiaCard from '../CirugiaCard/CirugiaCard';
 import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import SlotAccionesMenu from '../SlotAccionesMenu/SlotAccionesMenu';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { JORNADAS } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
-const HORA_INICIO = 0;
-const HORA_FIN = 24;
+// Franjas de 30 min (mismas que gestion/agenda.js: índice 0 = 00:00). La
+// "jornada" (horas visibles) es solo una ventana sobre ellas, así que cambiarla
+// no mueve ni recalcula cirugías.
 const SLOTS_POR_HORA = 2;
-const SLOTS = (HORA_FIN - HORA_INICIO) * SLOTS_POR_HORA;
-const HORAS = Array.from({ length: HORA_FIN - HORA_INICIO }, (_, i) => HORA_INICIO + i);
 
-function horaASlot(hora) {
+// Slot absoluto del día (0-47) de una hora "HH:mm".
+function horaASlotAbs(hora) {
   const [h, m] = hora.split(':').map(Number);
-  return (h - HORA_INICIO) * SLOTS_POR_HORA + (m >= 30 ? 1 : 0);
+  return h * SLOTS_POR_HORA + (m >= 30 ? 1 : 0);
 }
 
-// Inversa de horaASlot -- traduce el slot clickeado de vuelta a "HH:mm" para
+// Inversa -- traduce el slot absoluto clickeado de vuelta a "HH:mm" para
 // precargar la hora de inicio del wizard "Nueva cirugía" (ver onSlotClick).
-function slotAHora(slot) {
-  const h = HORA_INICIO + Math.floor(slot / SLOTS_POR_HORA);
+function slotAbsAHora(slot) {
+  const h = Math.floor(slot / SLOTS_POR_HORA);
   const m = (slot % SLOTS_POR_HORA) * (60 / SLOTS_POR_HORA);
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
@@ -31,8 +32,13 @@ export default function AgendaSemana({
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
-  vista, onChangeVista, mostrarFinesDeSemana, onToggleFinesDeSemana,
+  vista, onChangeVista, jornada = '24h', onJornada, diasVista, onDiasVista,
 }) {
+  const ventana = JORNADAS[jornada] ?? JORNADAS['24h'];
+  const SLOTS = ventana.hasta - ventana.desde;
+  const HORAS = Array.from({ length: SLOTS / SLOTS_POR_HORA }, (_, i) => ventana.desde / SLOTS_POR_HORA + i);
+  const slotAHora = (slot) => slotAbsAHora(slot + ventana.desde);
+
   // Slot clickeado a la espera de que el usuario elija tipo de programación
   // en SlotAccionesMenu (null = menú cerrado) -- guarda fecha/hora + el
   // <button> que se clickeó (anchorEl del menú) en vez de disparar
@@ -77,8 +83,10 @@ export default function AgendaSemana({
           onEstadoChange={onEstadoChange}
           vista={vista}
           onChangeVista={onChangeVista}
-          mostrarFinesDeSemana={mostrarFinesDeSemana}
-          onToggleFinesDeSemana={onToggleFinesDeSemana}
+          jornada={jornada}
+          onJornada={onJornada}
+          diasVista={diasVista}
+          onDiasVista={onDiasVista}
         />
       </div>
 
@@ -126,9 +134,15 @@ export default function AgendaSemana({
           {cirugias.map((c) => {
             const dayIdx = days.findIndex((d) => d.fecha === c.fecha);
             if (dayIdx === -1) return null;
-            const startSlot = horaASlot(c.horaInicio);
-            const endSlot = horaASlot(c.horaFin);
-            const spanSlots = Math.max(endSlot - startSlot, 1);
+            // Se recorta a la ventana visible; una cirugía fuera de ella no se
+            // dibuja (sigue existiendo, solo no se ve con esta jornada).
+            const inicioAbs = horaASlotAbs(c.horaInicio);
+            const finAbs = Math.max(horaASlotAbs(c.horaFin), inicioAbs + 1);
+            const desde = Math.max(inicioAbs, ventana.desde);
+            const hasta = Math.min(finAbs, ventana.hasta);
+            if (hasta <= desde) return null;
+            const startSlot = desde - ventana.desde;
+            const spanSlots = hasta - desde;
             return (
               <CirugiaCard
                 key={c.id}

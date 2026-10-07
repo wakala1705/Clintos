@@ -29,10 +29,9 @@ const OPTIONS = [
 // solo para lo que no cubre FormSelect.css: el wrapper, el ícono líder y el
 // menú/atajo de teclado. `onChange` recibe el id elegido y el orquestador
 // (ProgramacionSalaCirugias.jsx) decide qué agenda renderizar.
-// "Mostrar fines de semana" vive como item dentro de este menú (estilo
-// Google Calendar) en vez de un checkbox suelto en el header — solo
-// aplica a la vista Semana, igual que su visibilidad anterior.
-export default function VistaDropdown({ value, onChange, mostrarFinesDeSemana, onToggleFinesDeSemana }) {
+// Los días visibles (semana completa/hábil/3 días) y las horas visibles viven
+// en VistaAgenda (menú "Vista" de FiltrosBar), no acá.
+export default function VistaDropdown({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -106,21 +105,6 @@ export default function VistaDropdown({ value, onChange, mostrarFinesDeSemana, o
               )}
             </button>
           ))}
-
-          {value === 'semana' && (
-            <>
-              <div className={panel.divider} role="separator" />
-              <button
-                type="button"
-                className={panel.item}
-                aria-pressed={mostrarFinesDeSemana}
-                onClick={() => onToggleFinesDeSemana(!mostrarFinesDeSemana)}
-              >
-                <span>Mostrar fines de semana</span>
-                {mostrarFinesDeSemana && <LuCheck className={panel.check} aria-hidden="true" />}
-              </button>
-            </>
-          )}
         </div>
       )}
     </div>

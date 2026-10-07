@@ -103,7 +103,7 @@ export default function GestionCirugias() {
 
       <div className="main">
         <Topbar
-          section="Programación sala de cirugías"
+          section="Cirugía"
           page="Gestión de cirugías"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />

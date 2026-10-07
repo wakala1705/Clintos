@@ -2,7 +2,9 @@
 
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
+import { MODULE_MENUS } from '@/hooks/Topbar/moduleMenus';
 import './Topbar.css';
 import HamburgerMenu from '@/Components/HamburgerMenu/HamburgerMenu';
 import UserMenu from '@/Components/UserMenu/UserMenu';
@@ -37,6 +39,7 @@ export default function Topbar({ section, page, user, pickers, children }) {
   const roleLabel = useActiveModuleLabel();
   const activeModule = useActiveModule();
   const pathname = usePathname();
+  const router = useRouter();
   const isAdmin = activeModule === 'administrador';
   const mostrarPickers = pickers
     ?? (activeModule === 'asistencial' || (isAdmin && !pathname.startsWith('/insumos-farmacia')));
@@ -56,7 +59,17 @@ export default function Topbar({ section, page, user, pickers, children }) {
       <div className="breadcrumb">
         {crumbs.map((crumb) => (
           <Fragment key={crumb.label}>
-            {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
+            {MODULE_MENUS[crumb.label] ? (
+              <DropdownMenu
+                triggerVariant="breadcrumb"
+                align="start"
+                triggerLabel={crumb.label}
+                label={`Páginas de ${crumb.label}`}
+                items={MODULE_MENUS[crumb.label].map((p) => ({
+                  id: p.id, label: p.label, icon: p.icon, onSelect: () => router.push(p.href),
+                }))}
+              />
+            ) : crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
             <span className="sep">/</span>
           </Fragment>
         ))}

@@ -88,6 +88,29 @@
 }
 .triggerOpen .labeledChevron { transform: rotate(180deg); }
 
+/* Variante breadcrumb: texto + chevron, sin borde/fondo; mismo color y tamaño
+   que un nivel de .breadcrumb (Topbar.css). */
+.labeled.breadcrumbTrigger {
+  gap: 4px;
+  padding: 2px 6px;
+  margin: 0 -6px;
+  border-color: transparent;
+  background: transparent;
+  border-radius: 6px;
+  font-weight: var(--fw-regular);
+  color: var(--ink-500);
+}
+.labeled.breadcrumbTrigger:hover,
+.labeled.breadcrumbTrigger.triggerOpen {
+  background: var(--gray-bg);
+  border-color: transparent;
+  color: var(--ink-900);
+}
+.breadcrumbTrigger .labeledChevron {
+  width: 14px;
+  height: 14px;
+}
+
 /* ---------- Menú ----------
    Apariencia (panel, ítems, tonos, separador, vacío) en
    @/Components/DropdownPanel/DropdownPanel.module.css, compartida con las

@@ -41,9 +41,14 @@ import styles from './DropdownMenu.module.css';
 // triggerLabel/triggerIcon: opcionales — en vez del "⋯", un botón con texto +
 // chevron con la apariencia de Button variant="secondary-accent" (ej.
 // "Cambiar estado" en el pie de DetalleCirugiaPanel).
+// triggerVariant="breadcrumb": con triggerLabel, el botón se ve como un nivel
+// de breadcrumb (texto + chevron, sin borde ni fondo) -- Topbar lo usa para el
+// menú de páginas del módulo.
+// align: 'end' (default: borde derecho del menú con el del botón) | 'start'
+// (borde izquierdo con el del botón, como un menú de breadcrumb).
 export default function DropdownMenu({
   label, items, emptyLabel = 'Sin acciones disponibles', size = 'base', className = '', onOpenChange,
-  triggerLabel, triggerIcon: TriggerIcon,
+  triggerLabel, triggerIcon: TriggerIcon, triggerVariant, align = 'end',
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
@@ -69,9 +74,12 @@ export default function DropdownMenu({
     const cabeAbajo = r.bottom + gap + menu.offsetHeight <= window.innerHeight - 8;
     setPos({
       top: cabeAbajo ? r.bottom + gap : Math.max(8, r.top - gap - menu.offsetHeight),
-      left: Math.max(8, Math.min(r.right - menu.offsetWidth, window.innerWidth - menu.offsetWidth - 8)),
+      left: Math.max(8, Math.min(
+        align === 'start' ? r.left : r.right - menu.offsetWidth,
+        window.innerWidth - menu.offsetWidth - 8,
+      )),
     });
-  }, []);
+  }, [align]);
 
   // Al abrir: posicionar antes del paint y, ya visible (siguiente frame),
   // foco en el primer ítem habilitado. Solo al abrir — no en cada
@@ -141,7 +149,7 @@ export default function DropdownMenu({
       <button
         ref={triggerRef}
         type="button"
-        className={[triggerLabel ? styles.labeled : styles.trigger, !triggerLabel && size === 'sm' && styles.sm, open && styles.triggerOpen, className].filter(Boolean).join(' ')}
+        className={[triggerLabel ? styles.labeled : styles.trigger, !triggerLabel && size === 'sm' && styles.sm, open && styles.triggerOpen, triggerLabel && triggerVariant === 'breadcrumb' && styles.breadcrumbTrigger, className].filter(Boolean).join(' ')}
         onClick={(e) => {
           e.stopPropagation();
           if (!open) setPos(null);

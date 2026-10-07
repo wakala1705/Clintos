@@ -138,7 +138,7 @@ export default function RegistrarOrdenExterna() {
 
       <div className="main">
         <Topbar
-          section="Programación sala de cirugías"
+          section="Cirugía"
           page="Registrar orden externa"
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />

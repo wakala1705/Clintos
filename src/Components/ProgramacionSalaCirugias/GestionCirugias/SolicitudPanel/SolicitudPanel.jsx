@@ -86,7 +86,7 @@ export default function SolicitudPanel({
     <div className="modal-overlay open">
       <div
         ref={panelRef}
-        className="modal-card sp-modal"
+        className="modal-card sp-panel"
         role="dialog"
         aria-modal="true"
         aria-labelledby="sp-titulo"
@@ -104,7 +104,7 @@ export default function SolicitudPanel({
           </span>
         </div>
 
-        <div className="sp-body">
+        <div className="sp-cuerpo">
           <section aria-labelledby="sp-datos-titulo">
             <h3 id="sp-datos-titulo" className="sp-seccion">Datos</h3>
             <dl className="sp-datos">
@@ -166,7 +166,8 @@ export default function SolicitudPanel({
           </section>
         </div>
 
-        <footer className="sp-footer">
+        <footer className="sp-pie">
+          <div className="sp-mensajes">
           {puedeProgramar ? (
             <p className="sp-mensaje sp-mensaje-ok" id="sp-mensaje">
               <LuCircleCheck className="icon" aria-hidden="true" />
@@ -189,6 +190,7 @@ export default function SolicitudPanel({
               </span>
             </p>
           )}
+          </div>
           <Button
             icon={LuCalendarPlus}
             className="sp-programar"
