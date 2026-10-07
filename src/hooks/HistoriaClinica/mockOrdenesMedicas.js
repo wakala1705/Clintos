@@ -50,9 +50,32 @@ const ORDENES = [
   },
 ];
 
-// Todas las órdenes del paciente, más recientes primero. Igual que
-// getRegistrosGruposHospitalizacion, el mismo set se devuelve para cualquier
-// paciente hasta que haya órdenes reales.
-export function getOrdenesMedicas() {
-  return ORDENES;
+// Orden de la cirugía de Claudia Patricia Ospina Henao (CC 31.902.576): es la
+// orden que respalda su solicitud de Tiroidectomía total en Gestión de cirugías
+// (paso 1 del chequeo, ver mockSolicitudes.js -- mismo N° y fecha de emisión).
+// Sin `fechaProgramada`: la cirugía todavía no tiene fecha ("SIN FECHA" hasta
+// que se programe).
+const ORDEN_CIRUGIA_CLAUDIA = {
+  id: 'om-1861', numero: '1861', fecha: '01.OCT.2026', hora: '10:15', tituloNota: 'ORDEN MÉDICA',
+  autor: 'NATALIA ESCOBAR', especialidad: 'CABEZA Y CUELLO', ambito: 'QX',
+  cirugias: [
+    {
+      id: 'ci1', descripcion: 'TIROIDECTOMIA TOTAL VIA ABIERTA', servicioContratado: true, cantidad: '1', prioritario: false,
+      observaciones: 'Bocio multinodular con nódulo dominante TIRADS 4. Con neuromonitoreo del nervio laríngeo recurrente.',
+    },
+  ],
+};
+
+// Órdenes propias de un paciente, por número de documento (solo dígitos).
+const ORDENES_POR_DOCUMENTO = {
+  31902576: [ORDEN_CIRUGIA_CLAUDIA],
+};
+
+// Todas las órdenes del paciente, más recientes primero. Los pacientes con
+// órdenes propias (ver ORDENES_POR_DOCUMENTO) ven solo las suyas; para el
+// resto, igual que getRegistrosGruposHospitalizacion, se devuelve el mismo set
+// de ejemplo hasta que haya órdenes reales.
+export function getOrdenesMedicas(documento) {
+  const propias = ORDENES_POR_DOCUMENTO[Number(String(documento ?? '').replace(/\D/g, ''))];
+  return propias ?? ORDENES;
 }

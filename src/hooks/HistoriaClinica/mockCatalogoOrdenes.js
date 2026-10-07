@@ -62,6 +62,7 @@ const CATALOGO = {
     mkItem('cat-cir-1', 'COLECISTECTOMIA LAPAROSCOPICA'),
     mkItem('cat-cir-2', 'APENDICECTOMIA'),
     mkItem('cat-cir-3', 'HERNIORRAFIA INGUINAL'),
+    mkItem('cat-cir-4', 'TIROIDECTOMIA TOTAL VIA ABIERTA'),
   ],
   consultas: [
     mkItem('cat-con-1', 'INTERCONSULTA POR CIRUGIA DE LA MANO'),

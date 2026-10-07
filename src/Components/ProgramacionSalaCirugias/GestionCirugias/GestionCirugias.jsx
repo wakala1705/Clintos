@@ -21,6 +21,7 @@ import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal
 // ahora vincula una EVAPRE (VincularEvapreModal).
 import VincularEvapreModal from './VincularEvapreModal/VincularEvapreModal';
 import AdjuntarLaboratoriosModal from './AdjuntarLaboratoriosModal/AdjuntarLaboratoriosModal';
+import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import {
   adjuntarLaboratorios, consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion,
@@ -56,6 +57,7 @@ export default function GestionCirugias() {
   // Solicitud cuya valoración preanestésica se está registrando (modal sobre el panel).
   const [valorando, setValorando] = useState(null);
   const [adjuntando, setAdjuntando] = useState(null);
+  const [visorPdf, setVisorPdf] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
@@ -97,11 +99,16 @@ export default function GestionCirugias() {
 
   function cerrarPanel() { setSelectedId(null); }
 
-  // Acciones del chequeo: "Registrar valoración" abre el modal que vincula una
-  // EVAPRE y "Adjuntar resultados" de laboratorios el que toma los resultados de
-  // esa EVAPRE; el resto aún no tiene pantalla y avisa.
+  // Acciones del chequeo: "Ver orden" abre el PDF de la orden (`archivoUrl`) en un visor,
+  // "Registrar valoración" abre el modal que vincula una EVAPRE y "Adjuntar
+  // resultados" de laboratorios el que toma los resultados de esa EVAPRE; el
+  // resto aún no tiene pantalla y avisa.
   function handleAccion(accion, item, clave) {
-    if (clave === 'valoracion' && accion === 'Registrar valoración') setValorando(seleccionada);
+    const archivoUrl = seleccionada?.checklist[clave]?.archivoUrl;
+    if (clave === 'orden' && accion === 'Ver orden' && archivoUrl) {
+      setVisorPdf({ src: archivoUrl, title: 'Orden médica', subtitle: `${seleccionada.paciente.nombre} · ${seleccionada.ordenNumero}` });
+    }
+    else if (clave === 'valoracion' && accion === 'Registrar valoración') setValorando(seleccionada);
     else if (clave === 'laboratorios' && accion === 'Adjuntar resultados') setAdjuntando(seleccionada);
     else showToast(`${accion} · ${item}: pantalla por conectar`);
   }
@@ -276,6 +283,7 @@ export default function GestionCirugias() {
           onVincular={handleValoracionGuardada}
         />
       )}
+      {visorPdf && <PdfViewerModal {...visorPdf} onClose={() => setVisorPdf(null)} />}
       {adjuntando && (
         <AdjuntarLaboratoriosModal
           solicitud={adjuntando}

@@ -421,7 +421,7 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                         )}
                         {activeTab === 'ordenes-medicas' && (
                           <OrdenesMedicasTab
-                            ordenes={getOrdenesMedicas()}
+                            ordenes={getOrdenesMedicas(data.patient.documento)}
                             usuarioActual={DOCTOR.nombre}
                           />
                         )}

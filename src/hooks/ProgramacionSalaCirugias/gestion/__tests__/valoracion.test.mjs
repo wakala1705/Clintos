@@ -83,13 +83,14 @@ test('conceptoDesdeAsa: I-II apto, III-IV con condiciones, V-VI no apto, sin ASA
 
 const evapre = (asa) => ({
   id: 'evapre-1', fecha: '07.OCT.2026', hora: '09:30 AM', numero: '0201295702', autor: 'VARGAS LOZANO JUAN PABLO',
-  contenido: { valores: { estadoFisicoAsa: asa } },
+  contenido: { valores: { estadoFisicoAsa: asa, tipoAnestesia: 'general' } },
 });
 
 test('datosDesdeEvapre: ASA II -> apto, sin observaciones, con vínculo', () => {
   const d = datosDesdeEvapre(evapre('II'));
   assert.deepEqual(d, {
     fecha: '2026-10-07', anestesiologo: 'VARGAS LOZANO JUAN PABLO', asa: 'II', concepto: 'apto', observaciones: '',
+    tipoAnestesia: 'general',
     evapre: { id: 'evapre-1', numero: '0201295702' },
   });
   assert.deepEqual(validarValoracion(d), {});

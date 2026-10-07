@@ -82,6 +82,9 @@ export function datosDesdeEvapre(registro) {
     fecha: fechaISODeRegistro(registro.fecha),
     anestesiologo: registro.autor,
     asa,
+    // Tipo de anestesia planeado en la EVAPRE (value de la plantilla); lo usa el
+    // wizard "Nueva cirugía" para precargar el paso 1 (ver datosWizardDesdeSolicitud).
+    tipoAnestesia: registro.contenido.valores.tipoAnestesia ?? '',
     concepto,
     observaciones: concepto === 'apto' ? '' : `Ver recomendaciones de la EVAPRE N° ${registro.numero}`,
     evapre: { id: registro.id, numero: registro.numero },

@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LuFileCheck } from 'react-icons/lu';
+import { LuEye, LuFileCheck } from 'react-icons/lu';
 import './VincularEvapreModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
+import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { getEvapreRegistros } from '@/hooks/HistoriaClinica/mockEvapreRegistros';
 import { etiquetaOpcionEvapre } from '@/hooks/HistoriaClinica/evaluacionPreanestesicaCampos';
@@ -29,6 +30,7 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
     [solicitud.paciente.numeroDocumento],
   );
   const [selectedId, setSelectedId] = useState(null);
+  const [verPdf, setVerPdf] = useState(null);
   const selected = registros.find((r) => r.id === selectedId) ?? null;
   const datos = selected ? datosDesdeEvapre(selected) : null;
 
@@ -45,6 +47,7 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
   }
 
   return (
+    <>
     <div className="modal-overlay open">
       <div
         ref={modalRef}
@@ -58,12 +61,16 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
           tone="primary"
           title="Vincular evaluación preanestésica"
           titleId="vem-title"
-          subtitle={solicitud.paciente.nombre}
           onClose={onClose}
           closeLabel="Cerrar vinculación de evaluación"
         />
 
         <div className="modal-body vem-body">
+          <p className="vem-paciente">
+            <span className="vem-paciente-label">Paciente</span>
+            {solicitud.paciente.nombre} · {solicitud.paciente.tipoDocumento} {solicitud.paciente.numeroDocumento}
+          </p>
+
           {registros.length === 0 ? (
             <div className="vem-empty" role="status">
               <p className="vem-empty-title">Este paciente no tiene evaluaciones preanestésicas</p>
@@ -78,12 +85,12 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
                 <table className="vem-table">
                   <thead>
                     <tr>
-                      <th scope="col">Fecha</th>
                       <th scope="col">N° registro</th>
+                      <th scope="col">Fecha</th>
                       <th scope="col">Anestesiólogo</th>
-                      <th scope="col">Procedimiento</th>
                       <th scope="col">ASA</th>
                       <th scope="col">Anestesia</th>
+                      <th scope="col" className="vem-col-acciones">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -99,18 +106,37 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
                           onClick={() => setSelectedId(r.id)}
                           onDoubleClick={() => vincular(r)}
                           onKeyDown={(e) => {
+                            if (e.target !== e.currentTarget) return;
                             if (e.key !== 'Enter' && e.key !== ' ') return;
                             e.preventDefault();
                             if (isSelected) vincular(r);
                             else setSelectedId(r.id);
                           }}
                         >
-                          <td className="vem-nowrap">{r.fecha} · {r.hora}</td>
                           <td className="vem-nowrap">{r.numero}</td>
-                          <td className="vem-nowrap">{r.autor}</td>
-                          <td className="vem-proc">{(v.procedimiento ?? '').split('\n')[0]}</td>
+                          <td className="vem-nowrap">{r.fecha} · {r.hora}</td>
+                          <td>{r.autor}</td>
                           <td>{v.estadoFisicoAsa ? <Badge tone="neutral">ASA {v.estadoFisicoAsa}</Badge> : '—'}</td>
                           <td>{etiquetaOpcionEvapre('tipoAnestesia', v.tipoAnestesia) || '—'}</td>
+                          {/* Ver detalle: abre el PDF de la EVAPRE en el visor. Corta la propagación para que ni el
+                              clic ni el doble clic seleccionen/vinculen la fila. */}
+                          <td className="vem-col-acciones" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+                            <Button
+                              type="button"
+                              variant="secondary-accent"
+                              size="sm"
+                              icon={LuEye}
+                              aria-label={`Ver detalle de la EVAPRE N° ${r.numero}`}
+                              disabled={!r.archivoUrl}
+                              onClick={() => setVerPdf({
+                                src: r.archivoUrl,
+                                title: `Evaluación preanestésica N° ${r.numero}`,
+                                subtitle: `${solicitud.paciente.nombre} · ${r.fecha} · ${r.hora}`,
+                              })}
+                            >
+                              Ver detalle
+                            </Button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -143,5 +169,7 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
         </div>
       </div>
     </div>
+    {verPdf && <PdfViewerModal {...verPdf} onClose={() => setVerPdf(null)} />}
+    </>
   );
 }

@@ -56,3 +56,19 @@ test('duración estimada se redondea hacia arriba al catálogo del wizard', () =
   assert.equal(duracionEstimadaMin({ ...base, procedimientos: [{ nombre: 'a', tiempo: 150 }, { nombre: 'b', tiempo: 60 }] }), 240);
   assert.equal(duracionEstimadaMin({ ...base, procedimientos: [{ nombre: 'a', tiempo: 900 }] }), 240);
 });
+
+test('wizard: Asa y Tipo anestesia se precargan desde la valoración vinculada a una EVAPRE', () => {
+  const [s] = crearSolicitudesMock(new Date(2026, 9, 6));
+  const conValoracion = (registro) => ({
+    ...s, checklist: { ...s.checklist, valoracion: { ...s.checklist.valoracion, estado: 'ok', registro } },
+  });
+  // Sin registro (valoración de ejemplo escrita a mano): quedan vacíos.
+  assert.deepEqual([datosWizardDesdeSolicitud(s).asa, datosWizardDesdeSolicitud(s).tipoAnestesia], ['', '']);
+  const d = datosWizardDesdeSolicitud(conValoracion({ asa: 'II', tipoAnestesia: 'general' }));
+  assert.deepEqual([d.asa, d.tipoAnestesia], ['Clase 2', 'General']);
+  const sano = datosWizardDesdeSolicitud(conValoracion({ asa: 'I', tipoAnestesia: 'sedacion' }));
+  assert.deepEqual([sano.asa, sano.tipoAnestesia], ['Paciente sano listo para cirugía programada', 'Local asistida']);
+  // Sin equivalente en el catálogo ('combinada') o valoración manual sin tipo: solo precarga el Asa.
+  const parcial = datosWizardDesdeSolicitud(conValoracion({ asa: 'III', tipoAnestesia: 'combinada' }));
+  assert.deepEqual([parcial.asa, parcial.tipoAnestesia], ['Clase 3', '']);
+});

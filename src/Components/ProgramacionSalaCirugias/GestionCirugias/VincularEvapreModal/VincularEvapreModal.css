@@ -1,7 +1,9 @@
 /* .modal-overlay/.modal-card/.modal-body/.modal-footer en ../../shared/shared.css.
    Selector compuesto para ganarle a la regla base de .modal-card. */
-.modal-card.vem-card{width:960px;max-width:100%;}
+.modal-card.vem-card{width:800px;max-width:100%;}
 .vem-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.vem-paciente{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.vem-paciente-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
 .vem-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
 
 .vem-table-wrap{border:1px solid var(--border);border-radius:var(--radius);max-height:320px;overflow:auto;}
@@ -21,7 +23,7 @@
 .vem-table tbody tr.selected td{background:var(--interactive-selected-bg);}
 .vem-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .vem-nowrap{white-space:nowrap;}
-.vem-proc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vem-col-acciones{width:1%;white-space:nowrap;text-align:right;}
 
 .vem-concepto{
   margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;
@@ -33,6 +35,3 @@
 .vem-empty-title{margin:0 0 4px 0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .vem-empty-sub{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
 
-@media (max-width:1024px){
-  .vem-proc{max-width:160px;}
-}

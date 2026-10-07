@@ -275,7 +275,7 @@ export const CONTRATOS_CATALOGO = [
 export const CLASE_CIRUGIA_CATALOGO = ['CE', 'Quirófano'];
 export const TIPOS_ANESTESIA_CATALOGO = ['Local', 'General', 'Raquídea', 'Peridural', 'General IV', 'Local asistida', 'Bloqueo', 'No aplica'];
 export const COMPLEJIDAD_CATALOGO = ['Alta', 'Baja', 'Media'];
-export const ASA_CATALOGO = ['Paciente sano listo para cirugía programada', 'Clase 2', 'Clase 3'];
+export const ASA_CATALOGO = ['Paciente sano listo para cirugía programada', 'Clase 2', 'Clase 3', 'Clase 4', 'Clase 5', 'Clase 6'];
 
 // Duraciones preestablecidas para Dur. estimada/postquirúrgica/recuperación
 // (ver DuracionInput.jsx): atajos de un input numérico libre (`type=number`

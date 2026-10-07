@@ -163,12 +163,13 @@ export function crearSolicitudesMock(hoy = new Date()) {
       eps: 'Sura',
       especialidad: 'Cabeza y cuello',
       procedimiento: 'Tiroidectomía total',
-      cups: '[Código CUPS]',
+      cups: '064101',
       cirujano: 'Dra. Natalia Escobar',
-      ordenNumero: 'OM-2026-08455',
+      ordenNumero: 'OM-2026-1861',
       fechaTentativa: f(8),
       checklist: {
-        orden: ok('Orden emitida el 01/10/2026 por Dra. Natalia Escobar.'),
+        // `archivoUrl`: PDF de la orden médica, lo abre "Ver orden" (paso 1).
+        orden: { ...ok('Orden emitida el 01/10/2026 por Dra. Natalia Escobar.'), archivoUrl: '/mock/orden-medica-tiroidectomia.pdf' },
         autorizacion: ok('Autorización [N° autorización] vigente hasta el 20/12/2026.'),
         valoracion: pendiente('Valoración agendada para el 08/10/2026.'),
         laboratorios: pendiente('TSH, T4 libre y calcio pendientes de resultado.'),

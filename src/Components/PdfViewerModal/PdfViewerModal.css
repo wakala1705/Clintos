@@ -1,0 +1,4 @@
+/* Selector compuesto para ganarle a la regla base de .modal-card (width/max-height). */
+.modal-card.pvm-card{width:1040px;max-width:100%;height:calc(100vh - 48px);}
+.pvm-body{flex:1;min-height:0;display:flex;}
+.pvm-frame{flex:1;width:100%;height:100%;border:0;display:block;background:var(--gray-bg);}

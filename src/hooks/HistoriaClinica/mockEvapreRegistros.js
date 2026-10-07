@@ -16,6 +16,7 @@ export const EVAPRE_REGISTRO_MARIA_FERNANDA = {
   id: 'evapre-ejemplo', fecha: '30.SEP.2026', hora: '04:15 PM', numero: '0201295631', tituloNota: 'EVALUACIÓN PREANESTESICA',
   autor: 'VARGAS LOZANO JUAN PABLO', rol: 'Médico', especialidad: 'ANESTESIOLOGÍA', ambito: 'QX', plantilla: 'EVAPRE',
   contenido: EVAPRE_EJEMPLO,
+  archivoUrl: '/mock/evapre-0201295631.pdf',
   resumen: EVAPRE_EJEMPLO_RESUMEN,
 };
 
@@ -130,6 +131,7 @@ const EVAPRE_REGISTRO_CLAUDIA = {
   id: 'evapre-claudia', fecha: '07.OCT.2026', hora: '09:30 AM', numero: '0201295702', tituloNota: 'EVALUACIÓN PREANESTESICA',
   autor: 'VARGAS LOZANO JUAN PABLO', rol: 'Médico', especialidad: 'ANESTESIOLOGÍA', ambito: 'QX', plantilla: 'EVAPRE',
   contenido: EVAPRE_CLAUDIA,
+  archivoUrl: '/mock/evapre-0201295702.pdf',
   resumen:
     'Paciente femenina de 49 años, ASA II (HTA controlada, obesidad grado I), sin alergias, programada para tiroidectomía total '
     + 'con neuromonitoreo. Sin predictores de vía aérea difícil (Mallampati II, apertura oral > 3 cm, DTM 6-6,5 cm); bocio con '
