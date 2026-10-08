@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   canastaPedida, canastaVinculada, conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, rangoFechas, resumenOcupacion,
 } from '../panel.js';
+import { motivoNoIniciable } from '../../mockCirugiaData.js';
 
 const c = (id, salaId, estado, horaInicio, horaFin, extra = {}) => ({
   id,
@@ -23,10 +24,13 @@ const SALAS = [
   { value: 'm', estado: 'Mantenimiento' },
 ];
 
-test('estadoVisual: deriva pendiente / en curso / retrasada de la hora', () => {
+test('estadoVisual: pendiente / retrasada salen de la hora; en curso, del inicio real', () => {
   assert.equal(estadoVisual(c('1', 'a', 'programada', '09:00', '10:00'), AHORA), 'pendiente');
-  assert.equal(estadoVisual(c('2', 'a', 'programada', '08:00', '09:30'), AHORA), 'en-curso');
-  assert.equal(estadoVisual(c('3', 'a', 'urgencia', '08:45', '09:30'), AHORA), 'en-curso');
+  assert.equal(estadoVisual(c('2', 'a', 'programada', '08:00', '09:30'), AHORA), 'retrasada');
+  assert.equal(estadoVisual(c('2', 'a', 'programada', '08:00', '09:30', { horaInicioReal: '08:05' }), AHORA), 'en-curso');
+  assert.equal(estadoVisual(c('3', 'a', 'urgencia', '08:45', '09:30', { horaInicioReal: '08:45' }), AHORA), 'en-curso');
+  // Iniciada y pasada de su hora de fin: sigue en curso hasta que se cierre.
+  assert.equal(estadoVisual(c('6', 'a', 'programada', '07:00', '08:00', { horaInicioReal: '07:10' }), AHORA), 'en-curso');
   assert.equal(estadoVisual(c('4', 'a', 'programada', '07:00', '08:45'), AHORA), 'retrasada');
   assert.equal(estadoVisual(c('5', 'a', 'programada', '07:00', '08:00'), AHORA), 'retrasada');
 });
@@ -39,7 +43,7 @@ test('estadoVisual: los estados cerrados no dependen de la hora', () => {
 
 const LISTA = [
   c('1', 'a', 'realizada', '07:00', '08:00'),
-  c('2', 'a', 'programada', '08:00', '09:30'), // en curso
+  c('2', 'a', 'programada', '08:00', '09:30', { horaInicioReal: '08:05' }), // en curso
   c('3', 'b', 'programada', '10:00', '11:00'), // pendiente
   c('4', 'b', 'urgencia', '06:00', '07:00'), // retrasada
   c('5', 'a', 'cancelada', '12:00', '13:00'),
@@ -138,4 +142,23 @@ test('resumenOcupacion: la capacidad escala con los días del rango', () => {
   const una = [c('1', 'a', 'programada', '07:00', '19:00')];
   assert.equal(resumenOcupacion(una, SALAS, 1).ocupacionPct, 50);
   assert.equal(resumenOcupacion(una, SALAS, 7).ocupacionPct, 7);
+});
+
+const canasta = (estado) => ({
+  nombre: 'C',
+  items: [{ nombre: 'Gasas', cantidad: 2, ...(estado === 'recibida' ? { solicitudFarmacia: 'entregado', despachado: 2, recibido: 2 } : {}) }],
+});
+
+test('motivoNoIniciable: canasta recibida, día, ventana de 30 min y sala libre', () => {
+  const lista = [];
+  const ok = c('1', 'a', 'programada', '09:00', '10:00', { canasta: canasta('recibida'), sedeId: '02' });
+  assert.equal(motivoNoIniciable(ok, AHORA, lista), null);
+  assert.match(motivoNoIniciable({ ...ok, canasta: canasta('sin') }, AHORA, lista), /canasta debe estar recibida/);
+  assert.match(motivoNoIniciable({ ...ok, horaInicio: '10:00' }, AHORA, lista), /Se habilita 30 minutos antes \(09:30\)/);
+  assert.equal(motivoNoIniciable({ ...ok, estado: 'urgencia', horaInicio: '15:00' }, AHORA, lista), null);
+  assert.match(motivoNoIniciable({ ...ok, fecha: '2026-10-03' }, AHORA, lista), /el día de la cirugía/);
+  assert.match(motivoNoIniciable({ ...ok, estado: 'realizada' }, AHORA, lista), /programada o de urgencia/);
+  const enCurso = c('9', 'a', 'programada', '07:00', '09:00', { horaInicioReal: '07:10', sedeId: '02' });
+  assert.match(motivoNoIniciable(ok, AHORA, [enCurso]), /sala ya tiene una cirugía en curso/);
+  assert.match(motivoNoIniciable(enCurso, AHORA, lista), /ya está en curso/);
 });

@@ -6,7 +6,9 @@ import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import {
   LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
 } from 'react-icons/lu';
-import { ESTADOS_TERMINALES_CIRUGIA, ahoraDemo, cirugiaYaInicio } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import {
+  ESTADOS_TERMINALES_CIRUGIA, ahoraDemo, cirugiaYaInicio, estaIniciada,
+} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Menú "⋯" de CirugiaCard (encargo explícito, 2026-09-07) —
 // @/Components/DropdownMenu (ver AGENTS.md "Dropdowns"), size="sm" por el
@@ -26,14 +28,15 @@ export default function CirugiaCardMenu({
   cirugia, onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar, size = 'sm',
 }) {
   const [open, setOpen] = useState(false);
-  const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
+  // Una cirugía en curso ya no se edita, reprograma, cancela ni incumple: solo se cierra.
+  const puedeMarcarRealizada = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
+  const puedeAccionar = puedeMarcarRealizada && !estaIniciada(cirugia);
   // Mismo criterio que puedeMarcarIncumplida en DetalleCirugiaPanel.jsx: una
   // cirugía en curso/futura solo puede "incumplirse" si estaba programada
   // (urgencia se resuelve o no en el momento, no queda pendiente de
   // cumplirse después).
   const [ahora] = useState(() => ahoraDemo());
-  const puedeMarcarRealizada = puedeAccionar;
-  const puedeMarcarIncumplida = cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
+  const puedeMarcarIncumplida = puedeAccionar && cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
 
   return (
     <div className={`ccm-wrap${open ? ' open' : ''}`}>

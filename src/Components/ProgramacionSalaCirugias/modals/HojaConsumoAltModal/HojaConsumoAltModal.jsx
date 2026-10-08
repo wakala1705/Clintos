@@ -26,7 +26,19 @@ const USUARIO = 'Camilo Grondona';
 // consumo parcial; se bloquea si algún insumo excede lo entregado o si la cirugía aún no está realizada
 // con la canasta recibida.
 export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistrado }) {
-  const [hoja, setHoja] = useState(() => obtenerHojaConsumo(cirugia.id) ?? construirHojaConsumo(cirugia));
+  // Los tiempos reales de inicio/fin de la cirugía (botones Iniciar/Finalizar) se
+  // reflejan en "Inicio cirugía"/"Fin cirugía" si la hoja aún no los tiene.
+  const [hoja, setHoja] = useState(() => {
+    const base = obtenerHojaConsumo(cirugia.id) ?? construirHojaConsumo(cirugia);
+    return {
+      ...base,
+      tiempos: {
+        ...base.tiempos,
+        inicioOperac: base.tiempos.inicioOperac || cirugia.horaInicioReal || '',
+        termOperac: base.tiempos.termOperac || cirugia.horaFinReal || '',
+      },
+    };
+  });
   const hayExceso = materialesConExceso(hoja.materiales).length > 0;
   const plan = planRegistroConsumo(cirugia, hoja.materiales);
   const [error, setError] = useState('');

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { obtenerHojaConsumo, registrarTiempoEnHoja } from '../hojaConsumo/hojaConsumo.js';
 import {
-  crearCirugia, fechaISO, fetchCanastasDia, resumenCanasta,
+  crearCirugia, estaIniciada, fechaISO, fetchCanastasDia, finalizarCirugia, iniciarCirugia, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 const HOY = fechaISO(new Date());
@@ -48,4 +49,37 @@ test('una cirugía nueva no repite el id de ninguna semilla', async () => {
   const ids = (await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' })).map((c) => c.id);
   assert.equal(ids.filter((id) => id === nueva.id).length <= 1, true);
   assert.equal(['12353', '12354', '12355', '12356', '12357', '12358', '12359'].includes(nueva.id), false);
+});
+
+test('iniciar cirugía: 12414 (canasta recibida) se inicia; sin canasta recibida, no', async () => {
+  const hoy = await fetchCanastasDia({ fecha: HOY, salaId: 'proc-menores' });
+  const lista = hoy.map((c) => c.id);
+  assert.equal(lista.includes('12414'), true);
+  const iniciada = iniciarCirugia('12414', { horaInicioReal: '08:50' });
+  assert.equal(iniciada.horaInicioReal, '08:50');
+  assert.equal(estaIniciada(iniciada), true);
+  assert.equal(iniciada.estado, 'programada');
+  assert.throws(() => iniciarCirugia('12414', { horaInicioReal: '08:50' }), /ya está en curso/);
+  assert.throws(() => iniciarCirugia('12415', { horaInicioReal: '10:00' }), /canasta debe estar recibida/);
+});
+
+test('finalizar cirugía: exige estar en curso, hora válida y cierra como realizada con la hora real', () => {
+  assert.throws(() => finalizarCirugia('12415', { horaFinReal: '11:00' }), /solo se puede finalizar una cirugía en curso/i);
+  // 12416 (gastroenterología) viene iniciada a las 08:05 en la semilla.
+  assert.throws(() => finalizarCirugia('12416', { horaFinReal: '07:50' }), /anterior a la de inicio/);
+  const fin = finalizarCirugia('12416', { horaFinReal: '08:40' });
+  assert.equal(fin.estado, 'realizada');
+  assert.equal(fin.horaFinReal, '08:40');
+  assert.equal(fin.horaInicioReal, '08:05');
+  assert.equal(estaIniciada(fin), false);
+});
+
+test('registrarTiempoEnHoja: crea la hoja y deja inicio y fin en sus tiempos', () => {
+  const c = { id: 'hoja-t-1', tipoCirugia: 'Programada', canasta: { nombre: 'X', items: [] }, personal: [] };
+  registrarTiempoEnHoja(c, 'inicioOperac', '08:05');
+  registrarTiempoEnHoja(c, 'termOperac', '08:40');
+  const hoja = obtenerHojaConsumo('hoja-t-1');
+  assert.equal(hoja.tiempos.inicioOperac, '08:05');
+  assert.equal(hoja.tiempos.termOperac, '08:40');
+  assert.equal(hoja.estado, 'borrador');
 });

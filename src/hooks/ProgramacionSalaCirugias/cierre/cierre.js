@@ -3,7 +3,7 @@
 // y genera la devolución a farmacia de lo no consumido (registrarConsumo en
 // mockCirugiaData.js). Aquí vive la lógica pura de ese registro: qué se usó, qué se
 // devuelve y cuándo se puede registrar. Sin React ni store.
-import { cantidadRecibida, resumenCanasta } from '../mockCirugiaData.js';
+import { cantidadRecibida, estaIniciada, resumenCanasta } from '../mockCirugiaData.js';
 
 const normalizar = (texto) => String(texto ?? '').trim().toLowerCase();
 
@@ -49,7 +49,8 @@ export function precargaConsumoDesdeHoja(cirugia, hoja) {
 export function planRegistroConsumo(cirugia, materiales) {
   const { usados, coincidencias, total } = usadosDesdeMateriales(cirugia, materiales);
   let bloqueo = null;
-  if (cirugia.estado !== 'realizada') bloqueo = 'La cirugía debe estar realizada para registrar el consumo.';
+  if (estaIniciada(cirugia)) bloqueo = 'Marca la cirugía como realizada para registrar el consumo. Mientras tanto guarda el borrador.';
+  else if (cirugia.estado !== 'realizada') bloqueo = 'La cirugía debe estar realizada para registrar el consumo.';
   else if (!['recibida', 'con-novedades', 'consumo-registrado'].includes(resumenCanasta(cirugia).estado)) {
     bloqueo = 'La canasta debe estar recibida para registrar el consumo.';
   }

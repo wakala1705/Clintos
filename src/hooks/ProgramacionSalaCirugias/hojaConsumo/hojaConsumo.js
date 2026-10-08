@@ -158,3 +158,10 @@ export const obtenerHojaConsumo = (programacionId) => {
 export const guardarHojaConsumo = (hoja) => {
   hojasGuardadas.set(hoja.programacionId, structuredClone(hoja));
 };
+
+// Registra un tiempo de la cirugía real en su hoja (la crea como borrador si aún
+// no existe): al iniciar -> 'inicioOperac'; al finalizar -> 'termOperac'.
+export function registrarTiempoEnHoja(cirugia, clave, hora) {
+  const hoja = obtenerHojaConsumo(cirugia.id) ?? construirHojaConsumo(cirugia);
+  guardarHojaConsumo({ ...hoja, tiempos: { ...hoja.tiempos, [clave]: hora } });
+}

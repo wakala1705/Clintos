@@ -15,11 +15,14 @@ import Button from '@/Components/Button/Button';
 import DetalleCirugiaPanel from '../DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from '../modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from '../modals/CancelarCirugiaModal/CancelarCirugiaModal';
+import IniciarCirugiaModal from '../modals/IniciarCirugiaModal/IniciarCirugiaModal';
+import FinalizarCirugiaModal from '../modals/FinalizarCirugiaModal/FinalizarCirugiaModal';
+import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import PanelKpis from './PanelKpis/PanelKpis';
 import CirugiasDiaTable from './CirugiasDiaTable/CirugiasDiaTable';
 import TableroDia from '../TableroDia/TableroDia';
 import {
-  SALAS, ahoraDemo, fechaISO, fetchAgendaRango,
+  SALAS, ahoraDemo, fechaISO, fetchAgendaRango, motivoNoIniciable,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import {
@@ -93,6 +96,7 @@ export default function PanelGeneral() {
     modal, setModal, toast,
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
+    handleIniciarCirugia, handleAbrirHoja, handleSubmitIniciar, handleFinalizarCirugia, handleSubmitFinalizar,
     handleMarcarRealizada, handleMarcarIncumplida,
     handlePedirInsumos, handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
@@ -141,6 +145,10 @@ export default function PanelGeneral() {
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
         onCancelar={handleCancelarCirugia}
+        motivoNoIniciable={(c) => motivoNoIniciable(c, ahora, lista)}
+        onIniciar={handleIniciarCirugia}
+        onAbrirHoja={handleAbrirHoja}
+        onFinalizar={handleFinalizarCirugia}
       />
     );
   }
@@ -226,6 +234,19 @@ export default function PanelGeneral() {
 
       {modal?.type === 'reprogramar' && (
         <ReprogramarCirugiaModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitReprogramar} />
+      )}
+      {modal?.type === 'iniciar' && (
+        <IniciarCirugiaModal cirugia={modal.cirugia} salaLabel={salaLabel(modal.cirugia.salaId)} onClose={() => setModal(null)} onSubmit={handleSubmitIniciar} />
+      )}
+      {modal?.type === 'finalizar' && (
+        <FinalizarCirugiaModal cirugia={modal.cirugia} salaLabel={salaLabel(modal.cirugia.salaId)} onClose={() => setModal(null)} onSubmit={handleSubmitFinalizar} />
+      )}
+      {modal?.type === 'hoja' && (
+        <HojaConsumoAltModal
+          cirugia={lista.find((c) => c.id === modal.cirugia.id) ?? modal.cirugia}
+          onConsumoRegistrado={handleConsumoRegistrado}
+          onClose={() => setModal(null)}
+        />
       )}
       {modal?.type === 'cancelar' && (
         <CancelarCirugiaModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />

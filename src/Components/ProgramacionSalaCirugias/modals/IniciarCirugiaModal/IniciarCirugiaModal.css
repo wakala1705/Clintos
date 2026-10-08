@@ -1,0 +1,7 @@
+/* .modal-*, .form-field y botones vienen de ../../shared/shared.css. */
+.icm-modal-card{width:460px;}
+.icm-resumen{margin:0 0 16px;display:grid;gap:8px;}
+.icm-fila{display:flex;gap:12px;font-size:var(--fs-base);}
+.icm-fila dt{flex:0 0 130px;color:var(--ink-500);}
+.icm-fila dd{margin:0;color:var(--ink-900);font-weight:var(--fw-medium);}
+.icm-nota{margin:12px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}

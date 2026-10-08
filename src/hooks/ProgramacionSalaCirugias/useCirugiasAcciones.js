@@ -1,8 +1,9 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { registrarTiempoEnHoja } from './hojaConsumo/hojaConsumo';
 import {
-  actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, reprogramarCirugia,
+  actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, finalizarCirugia, iniciarCirugia, reprogramarCirugia,
   resumenCanasta, solicitarInsumosFarmacia,
 } from './mockCirugiaData';
 
@@ -37,6 +38,45 @@ export default function useCirugiasAcciones({ applyUpdated }) {
   // Reciben `cirugia` como parámetro (no cierran sobre la seleccionada): los
   // usa tanto el detalle como el menú "⋯" de la tarjeta, que actúa sobre su
   // propia cirugía esté o no seleccionada.
+  // Iniciar: confirma la hora real y, al iniciar, abre la hoja de gasto (flujo
+  // del circulante). `hoja` también se abre sola desde la fila de una en curso.
+  function handleIniciarCirugia(cirugia) {
+    setModal({ type: 'iniciar', cirugia });
+  }
+  function handleFinalizarCirugia(cirugia) {
+    setModal({ type: 'finalizar', cirugia });
+  }
+  // Finalizar: cierra la cirugía con su hora real de fin, la registra en la hoja
+  // ("Fin cirugía") y abre la hoja: con la cirugía realizada ya se puede registrar
+  // el consumo.
+  function handleSubmitFinalizar(horaFinReal) {
+    try {
+      const finalizada = finalizarCirugia(modal?.cirugia?.id, { horaFinReal });
+      applyUpdated(finalizada);
+      registrarTiempoEnHoja(finalizada, 'termOperac', horaFinReal);
+      setModal({ type: 'hoja', cirugia: finalizada });
+      showToast('Cirugía finalizada. Registra el consumo en la hoja de gasto.');
+    } catch (e) {
+      setModal(null);
+      showToast(e.message);
+    }
+  }
+  function handleAbrirHoja(cirugia) {
+    setModal({ type: 'hoja', cirugia });
+  }
+  function handleSubmitIniciar(horaInicioReal) {
+    try {
+      const iniciada = iniciarCirugia(modal?.cirugia?.id, { horaInicioReal });
+      applyUpdated(iniciada);
+      // La hoja de consumo registra el inicio real (tiempo "Inicio cirugía").
+      registrarTiempoEnHoja(iniciada, 'inicioOperac', horaInicioReal);
+      setModal({ type: 'hoja', cirugia: iniciada });
+      showToast('Cirugía iniciada.');
+    } catch (e) {
+      setModal(null);
+      showToast(e.message);
+    }
+  }
   function handleReprogramarCirugia(cirugia) {
     setModal({ type: 'reprogramar', cirugia });
   }
@@ -84,6 +124,11 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleSubmitCancelar,
     handleReprogramarCirugia,
     handleCancelarCirugia,
+    handleIniciarCirugia,
+    handleAbrirHoja,
+    handleSubmitIniciar,
+    handleFinalizarCirugia,
+    handleSubmitFinalizar,
     handleMarcarRealizada,
     handleMarcarIncumplida,
     handlePedirInsumos,

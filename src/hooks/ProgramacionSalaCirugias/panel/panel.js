@@ -3,7 +3,7 @@
 // Sin React ni acceso al mock (ver __tests__/panel.test.mjs).
 import { minutosCirugia } from '../tablero/tablero.js';
 import {
-  addDias, fechaISO, lunesDeSemana, resumenCanasta,
+  addDias, estaIniciada, fechaISO, lunesDeSemana, resumenCanasta,
 } from '../mockCirugiaData.js';
 
 // Jornada operativa asumida por sala para el % de ocupación: la misma que
@@ -39,22 +39,19 @@ export function rangoFechas(rango, base = new Date()) {
 }
 
 // El modelo solo guarda programada/urgencia/realizada/cancelada/incumplida.
-// "En curso" y "retrasada" se DERIVAN de la hora para el día de hoy: una
-// cirugía abierta (programada/urgencia) está pendiente antes de su hora de
-// inicio, en curso entre inicio y fin, y retrasada si ya pasó su hora de fin
-// sin cerrarse. `ahora` es el reloj del render (ver ahoraDemo en el mock).
+// 'En curso' sale del sello de inicio real (botón 'Iniciar cirugía', ver
+// estaIniciada); 'retrasada' se DERIVA de la hora: abierta sin iniciar y con su
+// hora de inicio ya pasada (o de un día anterior). Antes del inicio: pendiente.
+// `ahora` es el reloj del render (ver ahoraDemo en el mock).
 export function estadoVisual(cirugia, ahora) {
   if (cirugia.estado === 'cancelada') return 'cancelada';
   if (cirugia.estado === 'incumplida') return 'incumplida';
   if (cirugia.estado === 'realizada') return 'finalizada';
-  // Otro día: una abierta de un día anterior quedó sin cerrar; una futura aún no empieza.
+  if (estaIniciada(cirugia)) return 'en-curso';
   const hoyISO = fechaISO(ahora);
   if (cirugia.fecha < hoyISO) return 'retrasada';
   if (cirugia.fecha > hoyISO) return 'pendiente';
-  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
-  if (minutosAhora < minutosDe(cirugia.horaInicio)) return 'pendiente';
-  if (minutosAhora < minutosDe(cirugia.horaFin)) return 'en-curso';
-  return 'retrasada';
+  return ahora.getHours() * 60 + ahora.getMinutes() < minutosDe(cirugia.horaInicio) ? 'pendiente' : 'retrasada';
 }
 
 // Qué estados visuales agrupa cada pestaña del filtro.

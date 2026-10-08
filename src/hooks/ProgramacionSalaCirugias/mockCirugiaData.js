@@ -1516,7 +1516,7 @@ function minutosEntre(horaInicio, horaFin) {
 function cirugiaOnco({
   id, dia, salaId = 'qx-1', horaInicio, horaFin, nombre, documento, edad, sexo, aseguradora = 'Sura EPS', procedimiento, dx, servicio = 'Oncología quirúrgica',
   cirujano, ayudante, anestesiologo = 'Dra. Ana López', tipoAnestesia = 'General', asa = 'Clase 2', complejidad = 'Alta', notas = '', adicionales = [],
-  equipos = [], insumos = [], estado, tipoCirugia, ...resto
+  equipos = [], insumos = [], estado, tipoCirugia, canastaRecibida = false, ...resto
 }) {
   const fecha = fechaISO(addDias(LUNES_SEMANA, dia));
   const par = Number(id) % 2 === 0;
@@ -1555,9 +1555,13 @@ function cirugiaOnco({
     })),
     canasta: {
       nombre: insumos.length ? `Canasta ${procedimiento}` : 'Sin canasta asignada',
-      items: insumos.map(([n, cantidad]) => ({ nombre: n, cantidad, estado: 'disponible' })),
+      items: insumos.map(([n, cantidad]) => ({
+        nombre: n, cantidad, estado: 'disponible', ...(canastaRecibida ? { solicitudFarmacia: 'entregado', preparado: true, despachado: cantidad, recibido: cantidad } : {}),
+      })),
+      // Canasta ya recibida en quirófano: habilita "Iniciar cirugía" (ver motivoNoIniciable).
+      ...(canastaRecibida ? { recepcion: { usuario: 'Camilo Grondona', fecha: `${fecha}T07:20`, conNovedades: false } } : {}),
     },
-    farmacia: null,
+    farmacia: canastaRecibida ? { numeroPedido: String(4700 + Number(id) % 100), estado: 'entregado', fechaSolicitud: `${fecha}T06:30`, medicamentos: [] } : null,
     ...resto,
   };
 }
@@ -1660,7 +1664,7 @@ const SEMANA_ONCOLOGIA = [
   cirugiaOnco({
     id: '12414', dia: 3, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Aura Cristina Mejía', documento: 'CC 66.910.347', edad: 54, sexo: 'Femenino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
-    cirujano: 'Dr. Héctor Villamizar', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR],
+    cirujano: 'Dr. Héctor Villamizar', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR], canastaRecibida: true,
     insumos: [['Reservorio venoso implantable', 1], ['Aguja de Huber', 1], ['Guía metálica 0.035', 1], ['Apósito transparente 10x12cm', 2]],
   }),
   cirugiaOnco({
@@ -1672,7 +1676,7 @@ const SEMANA_ONCOLOGIA = [
     id: '12416', dia: 3, salaId: 'gastroenterologia', horaInicio: '08:00', horaFin: '09:00', nombre: 'Clemencia Sarmiento', documento: 'CC 41.288.653', edad: 62, sexo: 'Femenino',
     procedimiento: 'Esofagogastroduodenoscopia con biopsias', dx: 'C160 - TUMOR MALIGNO DEL CARDIAS', servicio: 'Gastroenterología', cirujano: 'Dr. Andrés López',
     anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Estadificación: lesión ulcerada en cardias, toma de biopsias múltiples.',
-    equipos: [EQ_MONITOR], insumos: [['Pinza de biopsia', 4], ['Frascos de patología', 4]],
+    equipos: [EQ_MONITOR], insumos: [['Pinza de biopsia', 4], ['Frascos de patología', 4]], canastaRecibida: true, horaInicioReal: '08:05',
   }),
   cirugiaOnco({
     id: '12417', dia: 3, salaId: 'hemodinamia', horaInicio: '13:00', horaFin: '15:00', nombre: 'Gustavo Adolfo Prieto', documento: 'CC 79.440.116', edad: 67, sexo: 'Masculino',
@@ -2108,6 +2112,32 @@ export function actualizarCirugia(id, datos) {
   return CIRUGIAS.find((c) => c.id === id);
 }
 
+// Inicia la cirugía: registra la hora real. Revalida las reglas (la pantalla ya
+// deshabilita el botón, pero el mock no confía en eso).
+export function iniciarCirugia(id, { horaInicioReal, ahora = ahoraDemo() }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  const motivo = motivoNoIniciable(actual, ahora, CIRUGIAS);
+  if (motivo) throw new Error(motivo);
+  if (!/^\d{2}:\d{2}$/.test(horaInicioReal ?? '')) throw new Error('Indica la hora real de inicio.');
+  return actualizarCirugia(id, { horaInicioReal });
+}
+
+// Finaliza una cirugía en curso: registra la hora real de fin y la cierra como
+// realizada (mismo efecto sobre el pedido de insumos que marcarRealizadas).
+export function finalizarCirugia(id, { horaFinReal }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  if (!estaIniciada(actual)) throw new Error('Solo se puede finalizar una cirugía en curso.');
+  if (!/^\d{2}:\d{2}$/.test(horaFinReal ?? '')) throw new Error('Indica la hora real de fin.');
+  if (horaFinReal < actual.horaInicioReal) throw new Error('La hora de fin no puede ser anterior a la de inicio.');
+  return actualizarCirugia(id, {
+    estado: 'realizada',
+    horaFinReal,
+    farmacia: conResolucionInsumos(actual, 'consumido'),
+  });
+}
+
 export function actualizarEstadoCirugia(id, nuevoEstado) {
   return actualizarCirugia(id, { estado: nuevoEstado });
 }
@@ -2326,6 +2356,35 @@ export function resumenCanasta(cirugia) {
 // "Hora de inicio superada". 08:45 es la hora de los artboards de diseño.
 // `null` vuelve a la hora real del sistema.
 export const HORA_DEMO = '08:45';
+
+// Inicio real de la cirugía (botón 'Iniciar cirugía'): no es un estado nuevo del
+// modelo sino un sello `horaInicioReal` sobre una cirugía abierta
+// (programada/urgencia) -- así agenda, filtros y vencidas siguen leyendo los
+// mismos 5 estados. 'En curso' del panel sale de este sello.
+export const estaIniciada = (c) => Boolean(c.horaInicioReal) && ['programada', 'urgencia'].includes(c.estado);
+
+// Una cirugía programada se habilita para iniciar desde 30 min antes de su hora.
+export const MIN_ANTICIPO_INICIO = 30;
+
+// null si se puede iniciar; si no, el motivo (se muestra como tooltip y como
+// error). `cirugias` = las del mismo día/sede para validar la sala.
+export function motivoNoIniciable(cirugia, ahora, cirugias = []) {
+  if (estaIniciada(cirugia)) return 'La cirugía ya está en curso.';
+  if (!['programada', 'urgencia'].includes(cirugia.estado)) return 'Solo se puede iniciar una cirugía programada o de urgencia.';
+  if (cirugia.fecha !== fechaISO(ahora)) return 'Solo se puede iniciar el día de la cirugía.';
+  if (!CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado)) return 'La canasta debe estar recibida para iniciar la cirugía.';
+  if (cirugia.estado === 'programada') {
+    const [h, m] = cirugia.horaInicio.split(':').map(Number);
+    const desde = h * 60 + m - MIN_ANTICIPO_INICIO;
+    if (ahora.getHours() * 60 + ahora.getMinutes() < desde) {
+      return `Se habilita ${MIN_ANTICIPO_INICIO} minutos antes (${pad2(Math.floor(desde / 60))}:${pad2(desde % 60)}).`;
+    }
+  }
+  if (cirugias.some((o) => o.id !== cirugia.id && o.sedeId === cirugia.sedeId && o.salaId === cirugia.salaId && estaIniciada(o))) {
+    return 'La sala ya tiene una cirugía en curso.';
+  }
+  return null;
+}
 
 // true si la hora de inicio de la cirugía ya pasó respecto de `ahora`: solo
 // entonces tiene sentido marcarla como incumplida.

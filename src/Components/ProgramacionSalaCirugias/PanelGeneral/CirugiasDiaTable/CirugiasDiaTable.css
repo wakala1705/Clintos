@@ -19,5 +19,6 @@
 .cdt-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);}
 .cdt-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .cdt-actions{width:1%;text-align:right;}
-.cdt-menu{display:inline-flex;}
+.cdt-menu{display:inline-flex;align-items:center;gap:8px;}
+.cdt-iniciar{display:inline-flex;}
 .cdt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}

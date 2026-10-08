@@ -1,12 +1,14 @@
 'use client';
 
 import './CirugiasDiaTable.css';
+import { LuCircleCheck, LuClipboardList, LuPlay } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
+import Button from '@/Components/Button/Button';
 import CirugiaCardMenu from '../../CirugiaCardMenu/CirugiaCardMenu';
 import EstadoDiaBadge from '../EstadoDiaBadge/EstadoDiaBadge';
 import { canastaPedida, canastaVinculada, estadoVisual } from '@/hooks/ProgramacionSalaCirugias/panel/panel';
 import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
-import { diaCortoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { diaCortoLabel, estaIniciada } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
 
 // Tabla de las cirugías de hoy (el cirujano va bajo el procedimiento). Clic (o Enter) en una fila abre el detalle;
@@ -16,6 +18,7 @@ import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero
 export default function CirugiasDiaTable({
   filas, ahora, salaLabel, mostrarFecha = false, selectedId, onSelect,
   onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
+  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar,
 }) {
   return (
     <div className="cdt-scroll">
@@ -37,6 +40,10 @@ export default function CirugiasDiaTable({
           {filas.map((c) => {
             const vinculada = canastaVinculada(c);
             const pedida = canastaPedida(c);
+            const iniciada = estaIniciada(c);
+            // Abierta y sin iniciar: se ofrece "Iniciar" (deshabilitado con su motivo si no se cumple una regla).
+            const puedeIniciar = !iniciada && ['programada', 'urgencia'].includes(c.estado);
+            const motivoIniciar = puedeIniciar ? motivoNoIniciable(c) : null;
             return (
             <tr
               key={c.id}
@@ -83,6 +90,17 @@ export default function CirugiasDiaTable({
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
                 >
+                  {iniciada && (
+                    <>
+                      <Button size="sm" variant="outline" icon={LuClipboardList} onClick={() => onAbrirHoja(c)}>Hoja de gasto</Button>
+                      <Button size="sm" icon={LuCircleCheck} onClick={() => onFinalizar(c)}>Finalizar</Button>
+                    </>
+                  )}
+                  {puedeIniciar && (
+                    <span className="cdt-iniciar" title={motivoIniciar ?? undefined}>
+                      <Button size="sm" icon={LuPlay} disabled={Boolean(motivoIniciar)} onClick={() => onIniciar(c)}>Iniciar</Button>
+                    </span>
+                  )}
                   <CirugiaCardMenu
                     cirugia={c}
                     size="base"

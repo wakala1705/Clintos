@@ -1,0 +1,8 @@
+/* .modal-*, .form-field y botones vienen de ../../shared/shared.css. */
+.fcm-modal-card{width:460px;}
+.fcm-resumen{margin:0 0 16px;display:grid;gap:8px;}
+.fcm-fila{display:flex;gap:12px;font-size:var(--fs-base);}
+.fcm-fila dt{flex:0 0 130px;color:var(--ink-500);}
+.fcm-fila dd{margin:0;color:var(--ink-900);font-weight:var(--fw-medium);}
+.fcm-error{display:block;margin-top:4px;font-size:var(--fs-sm);color:var(--red);}
+.fcm-nota{margin:12px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}

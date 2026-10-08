@@ -15,7 +15,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import {
-  ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
+  ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuClipboardList, LuPencil, LuUser,
@@ -109,13 +109,14 @@ export default function DetalleCirugiaPanel({
 
   if (!cirugia) return null;
 
-  const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
+  const puedeMarcarRealizada = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
+  // En curso (iniciada) ya no se edita, reprograma, cancela ni incumple: solo se cierra.
+  const puedeAccionar = puedeMarcarRealizada && !estaIniciada(cirugia);
   const puedeVerHojaGasto = !['cancelada', 'incumplida'].includes(cirugia.estado);
   // Incumplida solo aplica cuando la hora de inicio ya pasó.
-  const puedeMarcarIncumplida = cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
+  const puedeMarcarIncumplida = puedeAccionar && cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
   // Una cirugía programada solo se cierra como realizada cuando ya empezó (igual que incumplida);
   // una urgencia se resuelve en el momento.
-  const puedeMarcarRealizada = puedeAccionar;
   // Una sola acción principal por vista, la que sigue en el flujo: pedir insumos -> recibir la
   // canasta (Ver en Canastas, en la pestaña Insumos) -> marcar como realizada. Solo con la canasta
   // ya recibida y la cirugía en condiciones de cerrarse, "Marcar como realizada" es la azul.
