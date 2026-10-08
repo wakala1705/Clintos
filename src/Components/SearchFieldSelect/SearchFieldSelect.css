@@ -1,0 +1,12 @@
+.sfs-select{position:relative;flex-shrink:0;}
+.sfs-select-trigger{
+  display:flex;align-items:center;gap:6px;
+  border:none;background:none;font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);
+  color:var(--ink-900);cursor:pointer;padding:0;
+}
+.sfs-select-trigger .chev{width:14px;height:14px;color:var(--ink-500);flex-shrink:0;}
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición (absoluto bajo el trigger). */
+.sfs-select-dropdown{
+  position:absolute;top:calc(100% + 10px);left:-38px;min-width:190px;z-index:var(--z-popover);
+}
