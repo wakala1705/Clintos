@@ -3,9 +3,10 @@
 import { useMemo, useState } from 'react';
 import './PacienteStep.css';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
-import { LuSearch, LuUserRoundSearch } from 'react-icons/lu';
+import { LuUserRoundSearch } from 'react-icons/lu';
 import { ESQUEMA_LABEL, MOCK_PACIENTES, normalize } from '@/hooks/Vacunacion/mockVacunacionData';
 
+import SearchField from '@/Components/SearchField/SearchField';
 function initials(nombre) {
   return nombre.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 }
@@ -29,17 +30,7 @@ export default function PacienteStep({ onSelect }) {
 
   return (
     <div className="rv-paciente-step">
-      <div className="search-field rv-paciente-search">
-        <LuSearch className="icon" aria-hidden="true" />
-        <input
-          type="text"
-          placeholder="Buscar paciente por nombre o documento..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-label="Buscar paciente por nombre o documento"
-          autoFocus
-        />
-      </div>
+      <SearchField className="vac-search rv-paciente-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar paciente por nombre o documento..." ariaLabel="Buscar paciente por nombre o documento" autoFocus />
 
       {resultados.length === 0 ? (
         <div className="rv-empty-state">

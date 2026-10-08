@@ -6,6 +6,7 @@ import Badge from '@/Components/Badge/Badge';
 import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import { LuEye, LuPencil, LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Card maestra de reposiciones: buscador (por consecutivo) + tabla + footer
 // con el conteo y la fila seleccionada. El menú "⋯" de cada fila es
 // @/Components/DropdownMenu (ver AGENTS.md "Dropdowns").
@@ -19,15 +20,7 @@ export default function ReposicionesCard({ repos, selectedId, onSelect, onNuevo,
   return (
     <section className="card">
       <div className="card-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" aria-hidden="true" />
-          <input
-            type="text"
-            placeholder="Buscar por consecutivo..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+        <SearchField className="sc-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por consecutivo..." />
         <div className="toolbar-actions">
           <button type="button" className="btn btn-primary" onClick={onNuevo}>
             <LuPlus className="icon" aria-hidden="true" />

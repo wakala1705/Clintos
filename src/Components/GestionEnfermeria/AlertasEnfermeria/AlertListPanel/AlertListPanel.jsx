@@ -11,8 +11,9 @@ import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterB
 import {
   AREAS_ALERTA, FECHA_ALERTAS, PRIORIDADES_ALERTA, TIPOS_ALERTA,
 } from '@/hooks/GestionEnfermeria/mockAlertasData';
-import { LuFilterX, LuSearch } from 'react-icons/lu';
+import { LuFilterX } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 export const TABS = [
   { key: 'todas', label: 'Todas' },
   { key: 'pendientes', label: 'Pendientes' },
@@ -111,16 +112,7 @@ export default function AlertListPanel({ alertas, initialTab = 'todas', selected
           separados (tabs arriba, filtros abajo); se unificaron para no
           divergir del resto del proyecto. */}
       <div className="filter-bar alert-list-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar alerta, paciente, cama..."
-            value={query}
-            onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-            aria-label="Buscar alerta, paciente, cama o medicamento"
-          />
-        </div>
+        <SearchField className="ge-search" value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Buscar alerta, paciente, cama..." ariaLabel="Buscar alerta, paciente, cama o medicamento" />
 
         <div className="filter-spacer" />
 

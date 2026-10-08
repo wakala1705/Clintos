@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LuSearch } from 'react-icons/lu';
+
 import './SeleccionarSolicitudModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -11,6 +11,7 @@ import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTra
 import { enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const OPCIONES_ORIGEN = [
   { value: '', label: 'Todos' },
   ...Object.entries(ORIGEN_LABEL).map(([value, label]) => ({ value, label })),
@@ -66,16 +67,7 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
         />
 
         <div className="filter-bar sso-toolbar">
-          <div className="search-field">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="search"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Paciente, documento o procedimiento"
-              aria-label="Buscar por paciente, documento o procedimiento"
-            />
-          </div>
+          <SearchField className="psc-search" value={busqueda} onChange={(v) => setBusqueda(v)} placeholder="Paciente, documento o procedimiento" ariaLabel="Buscar por paciente, documento o procedimiento" />
           <span className="filter-spacer" />
           <SegmentedFilterBar
             options={opciones}

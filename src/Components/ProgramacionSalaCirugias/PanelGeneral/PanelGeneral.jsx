@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  LuDownload, LuLayoutDashboard, LuPlus, LuSearch,
+  LuDownload, LuLayoutDashboard, LuMaximize2, LuMinimize2, LuPlus,
 } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
@@ -12,7 +12,6 @@ import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
-import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import DetalleCirugiaPanel from '../DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from '../modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from '../modals/CancelarCirugiaModal/CancelarCirugiaModal';
@@ -24,10 +23,12 @@ import {
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import {
-  conteosFiltros, filasACsv, filtrarFilas, kpisPanel,
+  RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, rangoFechas,
 } from '@/hooks/ProgramacionSalaCirugias/panel/panel';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
+import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import SearchField from '@/Components/SearchField/SearchField';
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx).
 const SEDE_ID = '02';
 const SALAS_SEDE = SALAS.filter((s) => s.sedeId === SEDE_ID);
@@ -39,11 +40,18 @@ const salaLabel = (salaId) => SALAS_SEDE.find((s) => s.value === salaId)?.descri
 // Crear una cirugía (wizard) vive en Programación.
 export default function PanelGeneral() {
   const router = useRouter();
-  const [cirugias, setCirugias] = useState(null); // null = cargando
+  // Datos cargados + el rango al que pertenecen: si no coincide con el rango
+  // elegido, se está cargando (sin setState síncrono en el efecto).
+  const [datos, setDatos] = useState({ rango: null, items: [] });
   const [filtro, setFiltro] = useState('todas');
+  const [rango, setRango] = useState('hoy');
   const [busqueda, setBusqueda] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const [tableroAbierto, setTableroAbierto] = useState(false);
+  // Botón expandir de la barra de la tabla: compacta los KPIs a una línea y la
+  // tabla (flex:1) gana ese alto.
+  const [tablaExpandida, setTablaExpandida] = useState(false);
+  const ExpandIcon = tablaExpandida ? LuMinimize2 : LuMaximize2;
   // Reloj del render: define "en curso"/"retrasada" (ver estadoVisual).
   const [ahora] = useState(() => ahoraDemo());
 
@@ -54,26 +62,30 @@ export default function PanelGeneral() {
 
   useEffect(() => {
     let cancelled = false;
-    const hoy = fechaISO(new Date());
+    const { inicio, fin } = rangoFechas(rango);
     Promise.all(SALAS_SEDE.map((s) => fetchAgendaRango({
-      sedeId: SEDE_ID, salaId: s.value, inicio: hoy, fin: hoy,
+      sedeId: SEDE_ID, salaId: s.value, inicio, fin,
     }))).then((porSala) => {
-      if (!cancelled) setCirugias(porSala.flat());
+      if (!cancelled) setDatos({ rango, items: porSala.flat() });
     });
     return () => { cancelled = true; };
-  }, []);
+  }, [rango]);
+
+  const cirugias = datos.rango === rango ? datos.items : null; // null = cargando
+  const rangoActual = rangoFechas(rango);
+  const { periodo } = RANGOS_PANEL[rango];
 
   // La respuesta de cada mutación ya trae el registro completo: se refleja en
-  // la lista sin re-fetch (sale del panel si cambió de día).
+  // la lista sin re-fetch (sale del panel si quedó fuera del rango).
   function applyUpdated(actualizada) {
-    setCirugias((prev) => {
-      const lista = prev ?? [];
-      if (actualizada.sedeId !== SEDE_ID || actualizada.fecha !== fechaISO(new Date())) {
-        return lista.filter((c) => c.id !== actualizada.id);
-      }
-      return lista.some((c) => c.id === actualizada.id)
-        ? lista.map((c) => (c.id === actualizada.id ? actualizada : c))
-        : [...lista, actualizada];
+    const fuera = actualizada.sedeId !== SEDE_ID
+      || actualizada.fecha < rangoActual.inicio || actualizada.fecha > rangoActual.fin;
+    setDatos((prev) => {
+      let items;
+      if (fuera) items = prev.items.filter((c) => c.id !== actualizada.id);
+      else if (prev.items.some((c) => c.id === actualizada.id)) items = prev.items.map((c) => (c.id === actualizada.id ? actualizada : c));
+      else items = [...prev.items, actualizada];
+      return { ...prev, items };
     });
   }
 
@@ -86,18 +98,9 @@ export default function PanelGeneral() {
   } = useCirugiasAcciones({ applyUpdated });
 
   const lista = cirugias ?? [];
-  const conteos = conteosFiltros(lista, ahora);
   const filas = filtrarFilas(lista, ahora, { filtro, busqueda });
   const selectedCirugia = lista.find((c) => c.id === selectedId) ?? null;
   const hayFiltros = filtro !== 'todas' || busqueda.trim() !== '';
-
-  const opcionesFiltro = [
-    { value: 'todas', label: 'Todas', count: conteos.todas },
-    { value: 'pendientes', label: 'Pendientes', count: conteos.pendientes },
-    { value: 'en-curso', label: 'En curso', count: conteos['en-curso'] },
-    { value: 'finalizadas', label: 'Finalizadas', count: conteos.finalizadas },
-    { value: 'canceladas', label: 'Canceladas', count: conteos.canceladas },
-  ];
 
   // Exporta lo que muestra la tabla (con los filtros aplicados).
   function handleExportar() {
@@ -105,7 +108,7 @@ export default function PanelGeneral() {
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cirugias-${fechaISO(new Date())}.csv`;
+    a.download = `cirugias-${rango}-${fechaISO(new Date())}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -121,7 +124,7 @@ export default function PanelGeneral() {
   } else if (filas.length === 0) {
     listado = (
       <div className="pg-cir-estado" role="status">
-        <p>{lista.length === 0 ? 'No hay cirugías programadas para hoy.' : 'Ninguna cirugía coincide con los filtros.'}</p>
+        <p>{lista.length === 0 ? `No hay cirugías programadas ${periodo}.` : 'Ninguna cirugía coincide con los filtros.'}</p>
         {hayFiltros && <Button variant="secondary" size="sm" onClick={limpiarFiltros}>Limpiar filtros</Button>}
       </div>
     );
@@ -131,6 +134,7 @@ export default function PanelGeneral() {
         filas={filas}
         ahora={ahora}
         salaLabel={salaLabel}
+        mostrarFecha={rango !== 'hoy'}
         selectedId={selectedId}
         onSelect={setSelectedId}
         onReprogramar={handleReprogramarCirugia}
@@ -168,32 +172,39 @@ export default function PanelGeneral() {
             </div>
           </div>
 
-          <div className="pg-cir-kpis">
-            <PanelKpis kpis={kpisPanel(lista, ahora, SALAS_SEDE)} />
+          <div className={`pg-cir-kpis${tablaExpandida ? ' compact' : ''}`}>
+            <PanelKpis
+              kpis={kpisPanel(lista, ahora, SALAS_SEDE, rangoActual.dias)}
+              compact={tablaExpandida}
+              filtro={filtro}
+              periodo={periodo}
+              onFiltro={setFiltro}
+            />
           </div>
 
-          <section className="pg-cir-panel" aria-label="Cirugías de hoy">
+          <section className="pg-cir-panel" aria-label={`Cirugías de ${periodo}`}>
             <div className="filter-bar pg-cir-toolbar">
-              <div className="search-field">
-                <LuSearch className="icon" aria-hidden="true" />
-                <input
-                  type="search"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                  placeholder="Buscar paciente, procedimiento..."
-                  aria-label="Buscar cirugías"
-                />
-              </div>
+              <SearchField className="psc-search" value={busqueda} onChange={(v) => setBusqueda(v)} placeholder="Buscar paciente, procedimiento..." ariaLabel="Buscar cirugías" />
               <span className="filter-spacer" />
               <SegmentedFilterBar
-                options={opcionesFiltro}
-                value={filtro}
-                onChange={setFiltro}
-                ariaLabel="Filtrar cirugías por estado"
+                options={Object.entries(RANGOS_PANEL).map(([value, { label }]) => ({ value, label }))}
+                value={rango}
+                onChange={setRango}
+                ariaLabel="Filtrar cirugías por fecha"
               />
               <Button variant="secondary-accent" icon={LuLayoutDashboard} onClick={() => setTableroAbierto(true)}>
                 Tablero del día
               </Button>
+              <button
+                type="button"
+                className="pg-cir-expand-btn"
+                onClick={() => setTablaExpandida((v) => !v)}
+                aria-pressed={tablaExpandida}
+                aria-label={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
+                title={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
+              >
+                <ExpandIcon className="icon" aria-hidden="true" />
+              </button>
             </div>
             {listado}
           </section>

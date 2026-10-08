@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './CatalogoCentroCostoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoAseguradorasModal.jsx (no
 // compartido entre features, ver AGENTS.md "Component organization").
@@ -111,16 +112,7 @@ export default function CatalogoCentroCostoModal({ onSelect, onClose }) {
         />
 
         <div className="modal-body">
-          <div className="cco-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por código, descripción o estado..."
-              aria-label="Buscar por código, descripción o estado"
-            />
-          </div>
+          <SearchField className="cco-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por código, descripción o estado..." ariaLabel="Buscar por código, descripción o estado" />
 
           <div className="cco-table">
             <div className="cco-row cco-row-head">

@@ -26,11 +26,7 @@
 
 .cam-search-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;}
 
-.cam-search{
-  display:flex;align-items:center;gap:8px;flex:1;min-width:180px;
-  height:var(--input-md,36px);padding:0 12px;
-  border:1px solid var(--border);border-radius:var(--radius,8px);background:var(--bg);
-}
+.cam-search{flex:1;min-width:180px;}
 .cam-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
 .cam-search input{
   flex:1;min-width:0;border:none;background:transparent;

@@ -1,5 +1,3 @@
-/* .filter-bar/.search-field/.filter-spacer/.filter-cluster: definidas en
-   ../shared/shared.css. .mig-toolbar solo overridea .search-field{width:...}
-   -- mismo criterio que .pg-patients-toolbar (ver AGENTS.md "Barra de
-   filtros de listado"). */
-.mig-toolbar .search-field{width:220px;}
+/* .filter-bar/.filter-spacer/.filter-cluster: definidas en
+   ../shared/shared.css. El buscador es @/Components/SearchField (CSS Module
+   propio); sin reglas propias por ahora. */

@@ -19,14 +19,13 @@ import ConfiguracionFiltrosPopover from './ConfiguracionFiltrosPopover/Configura
 import ConfiguracionSkeleton from './ConfiguracionSkeleton/ConfiguracionSkeleton';
 import ConfiguracionEmptyState from './ConfiguracionEmptyState/ConfiguracionEmptyState';
 import Button from '@/Components/Button/Button';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   CATALOGOS, CAMBIOS_RECIENTES_INICIALES, SEDES, SEDE_LABEL, SERVICIOS, SERVICIO_LABEL, ESTADOS,
   PUEDE_EDITAR, PUEDE_IMPORTAR, PUEDE_EXPORTAR, PUEDE_DUPLICAR, PUEDE_RESTABLECER,
   fetchConfiguracion, formatFechaHora,
 } from '@/hooks/GestionCamas/mockConfiguracionData';
-import {
-  LuArrowRight, LuCircleAlert, LuCopy, LuDownload, LuRotateCcw, LuSearch, LuSearchX, LuUpload,
-} from 'react-icons/lu';
+import { LuArrowRight, LuCircleAlert, LuCopy, LuDownload, LuRotateCcw, LuSearchX, LuUpload } from 'react-icons/lu';
 
 function clonarCatalogos() {
   return CATALOGOS.map((c) => (
@@ -210,16 +209,7 @@ export default function GestionCamasConfiguracion() {
 
             <div className="card cbc-filterbar-card">
               <div className="filter-bar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar catálogos..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar catálogos por nombre, descripción o ejemplo"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar catálogos..." ariaLabel="Buscar catálogos por nombre, descripción o ejemplo" />
                 <AreaSelector label="Sede" options={SEDES} value={sede} onChange={handleChangeSede} />
                 <AreaSelector label="Servicio" options={SERVICIOS} value={servicio} onChange={handleChangeServicio} />
                 <AreaSelector label="Estado" options={ESTADOS} value={estado} onChange={handleChangeEstado} />

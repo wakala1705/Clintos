@@ -8,7 +8,6 @@
    columnas (sin un tercer dato propio como "Estado"/"Centro de costo"). */
 .cpfm-modal{width:640px;max-width:95vw;}
 
-.cpfm-search{position:relative;flex-shrink:0;}
 .cpfm-search .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
 .cpfm-search input{
   width:100%;height:var(--input-md);padding:0 12px 0 34px;

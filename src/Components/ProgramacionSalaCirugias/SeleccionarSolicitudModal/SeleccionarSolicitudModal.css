@@ -1,9 +1,9 @@
-/* .modal-overlay/.modal-card, .filter-bar y .search-field en ../shared/shared.css.
+/* .modal-overlay/.modal-card, .filter-bar y .psc-search en ../shared/shared.css.
    Selector compuesto (mismo criterio que .shm-card) para ganarle a la regla
    base de .modal-card. */
 .modal-card.sso-card{width:95vw;max-width:1100px;height:640px;max-height:88vh;display:flex;flex-direction:column;}
 .sso-toolbar{background:var(--surface);}
-.sso-toolbar .search-field{width:340px;}
+.sso-toolbar .psc-search{width:340px;}
 .sso-scroll{position:relative;overflow:auto;min-height:0;flex:1;padding:16px 24px;background:var(--surface);}
 .sso-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:var(--radius);}
 .sso-table th:first-child{border-top-left-radius:var(--radius);}
@@ -44,6 +44,6 @@
 
 @media (max-width:1024px){
   .modal-card.sso-card{max-height:94vh;}
-  .sso-toolbar .search-field{width:100%;}
+  .sso-toolbar .psc-search{width:100%;}
   .sso-toolbar .filter-spacer{display:none;}
 }

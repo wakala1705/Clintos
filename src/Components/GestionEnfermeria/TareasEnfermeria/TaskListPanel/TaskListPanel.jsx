@@ -9,8 +9,9 @@ import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 import {
   ESTADOS, PRIORIDADES, RESPONSABLES, TIPOS_TAREA, TURNOS, USUARIO_ACTUAL, fechaDeTarea,
 } from '@/hooks/GestionEnfermeria/mockTareasData';
-import { LuFilterX, LuSearch } from 'react-icons/lu';
+import { LuFilterX } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const TABS = [
   { key: 'todas', label: 'Todas' },
   { key: 'mis-tareas', label: 'Mis tareas' },
@@ -117,16 +118,7 @@ export default function TaskListPanel({
       </div>
 
       <div className="filter-bar task-list-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar tarea, paciente o habitación..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Buscar tarea, paciente o habitación"
-          />
-        </div>
+        <SearchField className="ge-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar tarea, paciente o habitación..." ariaLabel="Buscar tarea, paciente o habitación" />
 
         <div className="filter-cluster">
           <FilterDropdown label="Estado" options={OPCIONES_ESTADO} value={filtros.estado} onChange={(v) => setFiltros((f) => ({ ...f, estado: v }))} />

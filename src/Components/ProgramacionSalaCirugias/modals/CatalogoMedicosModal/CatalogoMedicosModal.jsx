@@ -6,7 +6,8 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { MEDICOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
@@ -105,16 +106,7 @@ export default function CatalogoMedicosModal({
           closeLabel={`Cerrar búsqueda de ${tipo.toLowerCase()}`}
         />
         <div className="modal-body cmm-body">
-          <div className="cmm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleQuery(e.target.value)}
-              placeholder="Buscar por nombre del profesional"
-              aria-label="Buscar por nombre del profesional"
-            />
-          </div>
+          <SearchField className="cmm-search" value={query} onChange={(v) => handleQuery(v)} placeholder="Buscar por nombre del profesional" ariaLabel="Buscar por nombre del profesional" />
 
           <div className="cmm-table">
             <div className="cmm-row cmm-row-head">

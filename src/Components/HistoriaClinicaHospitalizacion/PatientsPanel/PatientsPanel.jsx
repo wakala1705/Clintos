@@ -6,9 +6,8 @@ import ListFooter from '@/Components/ListFooter/ListFooter';
 import PatientsTable from './PatientsTable/PatientsTable';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
-import {
-  LuMaximize2, LuMinimize2, LuSearch,
-} from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
+import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 
 // Filtro "Con pendientes" oculto mientras la columna Pendientes también lo
 // esté (encargo explícito: todavía no está definido de qué son esos
@@ -73,16 +72,7 @@ export default function PatientsPanel({
   return (
     <section className="card hh-patients-card">
       <div className="filter-bar hh-patients-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar paciente, cama, diagnóstico..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Buscar paciente, cama o diagnóstico"
-          />
-        </div>
+        <SearchField className="hh-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar paciente, cama, diagnóstico..." ariaLabel="Buscar paciente, cama o diagnóstico" />
 
         <div className="filter-spacer" />
 

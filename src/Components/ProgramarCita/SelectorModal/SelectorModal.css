@@ -15,11 +15,7 @@
    que la variante de tamaño (md, ver --input-md) se aplica acá y no en el
    input; .pc-selector-search ya es flex+align-items:center, por eso el
    contenido queda centrado igual sin padding vertical. */
-.pc-selector-search{
-  display:flex;align-items:center;gap:8px;flex-shrink:0;
-  height:var(--input-md);margin:16px 24px 0;padding:0 12px;
-  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
-}
+.pc-selector-search{margin:16px 24px 0;}
 .pc-selector-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
 .pc-selector-search input{
   flex:1;min-width:0;border:none;background:transparent;

@@ -17,12 +17,11 @@ import NuevaReservaModal from './NuevaReservaModal/NuevaReservaModal';
 import EstadoReservaBadge from './EstadoReservaBadge/EstadoReservaBadge';
 import Button from '@/Components/Button/Button';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   AREAS, AREA_LABEL, ESTADOS, KPIS, RESERVAS_SEED, SEDES, USUARIO_ACTUAL,
 } from '@/hooks/GestionCamas/mockReservasData';
-import {
-  LuBan, LuBedDouble, LuCalendarClock, LuCirclePlus, LuFilterX, LuSearch, LuTriangleAlert,
-} from 'react-icons/lu';
+import { LuBan, LuBedDouble, LuCalendarClock, LuCirclePlus, LuFilterX, LuTriangleAlert } from 'react-icons/lu';
 
 const FILTROS_AVANZADOS_INICIALES = { piso: 'todos', sector: 'todos' };
 // Fecha "de hoy" del universo mock (ver mockReservasData.js: los 15 registros
@@ -203,16 +202,7 @@ export default function GestionCamasReservas() {
 
             <div className="card cbr-table-card">
               <div className="filter-bar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar paciente, HC o cama..."
-                    value={query}
-                    onChange={(e) => { setPage(1); setQuery(e.target.value); }}
-                    aria-label="Buscar paciente, historia clínica o cama"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => { setPage(1); setQuery(v); }} placeholder="Buscar paciente, HC o cama..." ariaLabel="Buscar paciente, historia clínica o cama" />
 
                 <div className="filter-spacer" />
 

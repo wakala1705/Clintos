@@ -23,8 +23,9 @@ import {
   SPLIT_RATIO_DEFAULT, setSplitRatio, setVistaModo, useSplitRatio, useVistaModo,
 } from '@/hooks/Facturacion/vistaClasicaPrefs';
 import { resetFacturasStore, useFacturasStore } from '@/hooks/Facturacion/facturasStore';
-import { LuRefreshCw, LuSearch } from 'react-icons/lu';
+import { LuRefreshCw } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Delay artificial del paso 1 del flujo de impresión (ver handleImprimir más
 // abajo) -- sin backend real (mockFacturasData.js: "solo pinta el front"),
 // simula el tiempo de generación antes de mostrar el visor de PDF.
@@ -257,16 +258,7 @@ export default function FacturaVistaClasica() {
   return (
     <div className="fvc-shell">
       <div className="fvc-toolbar">
-        <div className="search-field fvc-search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar por factura, NIT, tercero o afiliado..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Buscar por factura, NIT, tercero o afiliado"
-          />
-        </div>
+        <SearchField className="fact-search fvc-search-field" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por factura, NIT, tercero o afiliado..." ariaLabel="Buscar por factura, NIT, tercero o afiliado" />
 
         <div className="filter-spacer" />
 

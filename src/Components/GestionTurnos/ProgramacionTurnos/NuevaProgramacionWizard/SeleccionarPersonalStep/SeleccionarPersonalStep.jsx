@@ -5,8 +5,9 @@ import './SeleccionarPersonalStep.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { AREA_TURNO_LABEL, NURSES } from '@/hooks/GestionTurnos/mockProgramacionData';
 import { CARGO_OPTIONS } from '@/hooks/GestionTurnos/mockEnfermerasData';
-import { LuSearch } from 'react-icons/lu';
 
+
+import SearchField from '@/Components/SearchField/SearchField';
 // Paso 2 del wizard — lista de personal seleccionable con checkbox. Solo se
 // ofrece personal elegible para el área elegida en el paso 1 (encargo
 // sección 3: "mostrar únicamente personal elegible para el área
@@ -60,16 +61,7 @@ export default function SeleccionarPersonalStep({
 
       <div className="sps-block">
         <div className="sps-toolbar">
-          <div className="search-field">
-            <LuSearch className="icon" />
-            <input
-              type="text"
-              placeholder="Buscar personal..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar personal"
-            />
-          </div>
+          <SearchField className="gt-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar personal..." ariaLabel="Buscar personal" />
           <div className="sps-cargo-select">
             <FormSelect id="sps-cargo" value={cargoFiltro} onChange={setCargoFiltro} options={CARGO_OPTIONS} />
           </div>

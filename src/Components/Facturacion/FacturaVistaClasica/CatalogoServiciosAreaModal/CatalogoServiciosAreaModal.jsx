@@ -5,8 +5,9 @@ import './CatalogoServiciosAreaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import { LuSearch } from 'react-icons/lu';
+
 import { ITEMS_CATALOGO } from '@/hooks/Facturacion/mockFacturasData';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoAseguradorasModal.jsx/
 // CatalogoCentroCostoModal.jsx (no compartido entre features, ver
@@ -122,27 +123,15 @@ export default function CatalogoServiciosAreaModal({
             <Field label="Fecha" value={fecha} />
           </div>
 
-          <div className="csam-search">
-            <div className="csam-search-scope">
-              <FormSelect
-                id="csam-search-scope"
-                value={activeScope}
-                onChange={setActiveScope}
-                options={SEARCH_SCOPES.map((s) => ({ value: s.key, label: s.label }))}
-                ariaLabel="Buscar por"
-              />
-            </div>
-            <div className="csam-search-input">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={scope.placeholder}
-                aria-label={scope.placeholder}
-              />
-            </div>
-          </div>
+          <SearchField
+            fields={SEARCH_SCOPES.map((sc) => ({ value: sc.key, label: sc.label }))}
+            field={activeScope}
+            onChangeField={setActiveScope}
+            value={query}
+            onChange={setQuery}
+            placeholder={scope.placeholder}
+            ariaLabel={scope.placeholder}
+          />
 
           <div className="csam-table">
             <div className="csam-row csam-row-head">

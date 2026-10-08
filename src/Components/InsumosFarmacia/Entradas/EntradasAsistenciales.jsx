@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { LuSearch } from 'react-icons/lu';
+
 // Tokens (:root), shell y estilos .mig-*/.filter-bar/.card: los de Solicitudes (Salidas
 // asistenciales), porque es otra pantalla del mismo submódulo Inventario.
 import '../Solicitudes/Solicitudes.css';
@@ -16,6 +16,7 @@ import MovimientosPagination from '../Solicitudes/MovimientosPagination/Movimien
 import EntradasGrid from './EntradasGrid/EntradasGrid';
 import EntradaDetalle from './EntradaDetalle/EntradaDetalle';
 import { listarDevolucionesCirugia } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   ENTRADAS_HISTORICAS, ESTADO_ENTRADA_OPTIONS, ORIGEN_ENTRADA_OPTIONS, conteosEstado,
   entradasDesdeDevoluciones, filtrarEntradas, ordenarEntradas, totalesEntradas,
@@ -94,16 +95,7 @@ export default function EntradasAsistenciales() {
           <div className="card">
             <div className="mig-shell">
               <div className="filter-bar mig-toolbar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por consecutivo, paciente o referencia"
-                    aria-label="Buscar entradas"
-                    value={filtros.busqueda}
-                    onChange={(e) => handleFiltrosChange({ busqueda: e.target.value })}
-                  />
-                </div>
+                <SearchField className="mig-search" value={filtros.busqueda} onChange={(v) => handleFiltrosChange({ busqueda: v })} placeholder="Buscar por consecutivo, paciente o referencia" ariaLabel="Buscar entradas" />
 
                 <div className="filter-spacer" />
 

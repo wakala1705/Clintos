@@ -22,13 +22,12 @@ import FinalizarMantenimientoModal from './FinalizarMantenimientoModal/Finalizar
 import ReprogramarMantenimientoModal from './ReprogramarMantenimientoModal/ReprogramarMantenimientoModal';
 import CancelarMantenimientoModal from './CancelarMantenimientoModal/CancelarMantenimientoModal';
 import RegistrarObservacionModal from './RegistrarObservacionModal/RegistrarObservacionModal';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   AREAS, AREA_LABEL, ESTADOS, MANTENIMIENTOS_SEED, OFFSETS, PRIORIDADES, SEDES, SEDE_LABEL,
   TIPOS, TIPO_LABEL, USUARIO_ACTUAL, formatFecha, formatHoraCorta,
 } from '@/hooks/GestionCamas/mockMantenimientoData';
-import {
-  LuCalendarClock, LuCircleCheck, LuEye, LuFilterX, LuSearch, LuTriangleAlert, LuWrench,
-} from 'react-icons/lu';
+import { LuCalendarClock, LuCircleCheck, LuEye, LuFilterX, LuTriangleAlert, LuWrench } from 'react-icons/lu';
 
 const FILTROS_AVANZADOS_INICIALES = { piso: 'todos', sector: 'todos' };
 const RANGO_FECHA_INICIAL = { desde: '', hasta: '' };
@@ -308,16 +307,7 @@ export default function GestionCamasMantenimiento() {
 
             <div className="card cbm-table-card">
               <div className="filter-bar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar cama, mantenimiento, responsable..."
-                    value={query}
-                    onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-                    aria-label="Buscar cama, mantenimiento o responsable"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Buscar cama, mantenimiento, responsable..." ariaLabel="Buscar cama, mantenimiento o responsable" />
 
                 <div className="filter-spacer" />
 

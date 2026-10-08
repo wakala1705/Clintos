@@ -8,10 +8,10 @@ const HOY = fechaISO(new Date());
 
 test('sala qx-1 de hoy: los casos del diseño (+ una despachada completa), por hora', async () => {
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
-  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12357', '12355', '12358']);
+  assert.deepEqual(items.map((c) => c.id), ['12353', '12356', '12359', '12355', '12357']);
   assert.deepEqual(
     items.map((c) => resumenCanasta(c).estado),
-    ['recibida', 'despacho-parcial', 'despachada', 'en-preparacion', 'con-novedades', 'en-preparacion'],
+    ['recibida', 'despacho-parcial', 'despachada', 'con-novedades', 'en-preparacion'],
   );
 });
 
@@ -32,9 +32,9 @@ test('la cirugía realizada sigue en el listado (su canasta está abierta para c
   assert.equal(items.find((c) => c.id === '12353').estado, 'realizada');
 });
 
-test('sala qx-2: la urgencia sin solicitar', async () => {
+test('sala qx-2: histerectomía en preparación, la urgencia y la resección combinada sin solicitar', async () => {
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-2' });
-  assert.deepEqual(items.map((c) => [c.id, resumenCanasta(c).estado]), [['12354', 'sin-solicitar']]);
+  assert.deepEqual(items.map((c) => [c.id, resumenCanasta(c).estado]), [['12358', 'en-preparacion'], ['12354', 'sin-solicitar'], ['12361', 'sin-solicitar']]);
 });
 
 test('canasta preparada parcialmente: 3 de 5 preparados en la urgencia', async () => {

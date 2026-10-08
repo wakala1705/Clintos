@@ -16,13 +16,12 @@ import IniciarLimpiezaModal from './IniciarLimpiezaModal/IniciarLimpiezaModal';
 import FinalizarLimpiezaModal from './FinalizarLimpiezaModal/FinalizarLimpiezaModal';
 import { EstadoLimpiezaBadge, SlaBadge } from './LimpiezaBadges/LimpiezaBadges';
 import { formatHora, horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   AREAS, AREA_LABEL, calcularSlaInfo, ESTADOS, OFFSETS, SEDES, SEDE_LABEL, SLA_MINUTOS,
   TAREAS_SEED, USUARIO_ACTUAL,
 } from '@/hooks/GestionCamas/mockLimpiezaData';
-import {
-  LuCircleCheck, LuClock, LuEye, LuFilterX, LuSearch, LuSprayCan, LuTriangleAlert,
-} from 'react-icons/lu';
+import { LuCircleCheck, LuClock, LuEye, LuFilterX, LuSprayCan, LuTriangleAlert } from 'react-icons/lu';
 
 // "Tiempo" vive acá adentro (dentro de "Más filtros", junto a Piso/Sector) en
 // vez de ser un AreaSelector propio del filter-bar — encargo explícito de
@@ -234,16 +233,7 @@ export default function GestionCamasLimpieza() {
 
             <div className="card cbl-table-card">
               <div className="filter-bar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar cama, paciente, HC o admisión..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar cama, paciente, historia clínica o admisión"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar cama, paciente, HC o admisión..." ariaLabel="Buscar cama, paciente, historia clínica o admisión" />
 
                 <div className="filter-spacer" />
 

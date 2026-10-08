@@ -1,4 +1,4 @@
-/* .card (base)/.chip-group.segmented/.chip-filter/.filter-bar/.search-field/
+/* .card (base)/.chip-group.segmented/.chip-filter/.filter-bar/.ge-search/
    .filter-cluster/.filter-spacer/.btn: definidas en ../../shared/shared.css
    (shared del feature) — acá solo el layout propio de esta card. Toolbar de
    una sola fila (buscador + tabs + filtros), mismo patrón que
@@ -9,7 +9,7 @@
 /* Tabs+4 filtros+búsqueda+limpiar en una fila: más denso que
    .pg-patients-toolbar (1 solo dropdown), mismo criterio de wrap que
    .task-list-toolbar. */
-.alert-list-toolbar .search-field{width:260px;}
+.alert-list-toolbar .ge-search{width:260px;}
 .alert-list-toolbar .filter-cluster{flex-wrap:wrap;row-gap:8px;}
 
 /* Indicador de filtros activos — mismo .badge-count pill que

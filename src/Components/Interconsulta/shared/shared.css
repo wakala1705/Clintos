@@ -229,15 +229,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
   flex-shrink:0;border-bottom:1px solid var(--border);
 }
-.search-field{position:relative;width:320px;flex-shrink:0;}
-.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
-.search-field input{
-  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:var(--fs-base);background:var(--bg);color:var(--ink-900);
-}
-.search-field input::placeholder{color:var(--ink-400);}
-.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
-
+.ic-search{width:320px;flex-shrink:0;}
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 
 /* Segmented control: los chips viven en una única píldora, la opción activa

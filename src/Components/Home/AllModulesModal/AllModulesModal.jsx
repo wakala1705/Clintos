@@ -5,7 +5,8 @@ import Link from 'next/link';
 import './AllModulesModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import PillTabs from '@/Components/Home/PillTabs/PillTabs';
-import { LuLayoutGrid, LuLock, LuSearch } from 'react-icons/lu';
+import { LuLayoutGrid, LuLock } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Mismos 4 valores que MODULE_OPTIONS de Home.jsx — duplicado acá (no
 // importado desde ahí) para no crear un import circular Home.jsx ->
@@ -86,16 +87,7 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
         <div className="amm-toolbar">
           <PillTabs options={MODULE_TABS} value={activeTab} onChange={setActiveTab} ariaLabel="Módulo" />
 
-          <div className="amm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar módulo o submódulo..."
-              aria-label="Buscar módulo o submódulo"
-            />
-          </div>
+          <SearchField className="amm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar módulo o submódulo..." ariaLabel="Buscar módulo o submódulo" />
         </div>
 
         <div className="amm-list">

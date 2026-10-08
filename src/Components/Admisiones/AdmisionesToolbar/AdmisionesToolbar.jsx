@@ -1,8 +1,7 @@
 import './AdmisionesToolbar.css';
-import SearchFieldSelect from './SearchFieldSelect/SearchFieldSelect';
+import SearchField from '@/Components/SearchField/SearchField';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { ESTADO_FILTER_OPTIONS, SEARCH_FIELD_OPTIONS } from '@/hooks/Admisiones/mockAdmisionesData';
-import { LuSearch } from 'react-icons/lu';
 
 // Los CTA principales ("Nueva"/"Pre ingreso") viven en adm-page-header (ver
 // Admisiones.jsx), mismo patrón que el resto de páginas de nivel superior
@@ -13,23 +12,14 @@ export default function AdmisionesToolbar({
 }) {
   return (
     <div className="adm-toolbar">
-      <div className="adm-search-field">
-        <LuSearch className="icon" />
-        <SearchFieldSelect
-          options={SEARCH_FIELD_OPTIONS}
-          value={searchField}
-          onChange={onChangeSearchField}
-          label="Buscar por"
-        />
-        <span className="adm-search-field-divider"></span>
-        <input
-          type="text"
-          placeholder="Buscar"
-          value={query}
-          onChange={(e) => onChangeQuery(e.target.value)}
-          aria-label="Buscar admisión"
-        />
-      </div>
+      <SearchField
+        fields={SEARCH_FIELD_OPTIONS}
+        field={searchField}
+        onChangeField={onChangeSearchField}
+        value={query}
+        onChange={onChangeQuery}
+        ariaLabel="Buscar admisión"
+      />
 
       <div className="adm-estado-select">
         <FormSelect

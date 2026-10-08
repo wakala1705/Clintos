@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './CatalogoSalasModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes para que la búsqueda encuentre "quirofano" al escribir
 // "quirófano" o viceversa — mismo helper que FiltroPickerModal.jsx de
@@ -60,16 +61,7 @@ export default function CatalogoSalasModal({
           closeLabel="Cerrar catálogo de salas"
         />
         <div className="modal-body csm-body">
-          <div className="csm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por nombre o ID..."
-              aria-label="Buscar por nombre o ID..."
-            />
-          </div>
+          <SearchField className="csm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por nombre o ID..." ariaLabel="Buscar por nombre o ID..." />
 
           <div className="csm-table">
             <div className="csm-row csm-row-head">

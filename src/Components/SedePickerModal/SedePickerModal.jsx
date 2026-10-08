@@ -5,7 +5,8 @@ import './SedePickerModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { SEDES_CATALOGO } from '@/hooks/Sede/sede';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que AreaFuncionalPickerModal.jsx (no
 // compartido entre features, ver AGENTS.md "Component organization").
@@ -58,16 +59,7 @@ export default function SedePickerModal({ sede, onSelect, onClose }) {
         />
 
         <div className="sp-body">
-          <div className="sp-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar sede por ID o descripción..."
-              aria-label="Buscar sede por ID o descripción"
-            />
-          </div>
+          <SearchField className="sp-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar sede por ID o descripción..." ariaLabel="Buscar sede por ID o descripción" />
 
           <div className="sp-table">
             <div className="sp-row sp-row-head">

@@ -7,7 +7,8 @@ import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { PROCEDIMIENTOS_QX_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const PREFIJO_OPTIONS = [
@@ -123,26 +124,8 @@ export default function CatalogoProcedimientosModal({ onSelect, onClose }) {
         />
         <div className="modal-body cpm-body">
           <div className="cpm-search-row">
-            <div className="cpm-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryId}
-                onChange={(e) => handleQueryId(e.target.value)}
-                placeholder="Buscar por Id. servicio"
-                aria-label="Buscar por Id. servicio"
-              />
-            </div>
-            <div className="cpm-search cpm-search-wide">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryDescripcion}
-                onChange={(e) => handleQueryDescripcion(e.target.value)}
-                placeholder="Buscar por descripción del servicio"
-                aria-label="Buscar por descripción del servicio"
-              />
-            </div>
+            <SearchField className="cpm-search" value={queryId} onChange={(v) => handleQueryId(v)} placeholder="Buscar por Id. servicio" ariaLabel="Buscar por Id. servicio" />
+            <SearchField className="cpm-search cpm-search-wide" value={queryDescripcion} onChange={(v) => handleQueryDescripcion(v)} placeholder="Buscar por descripción del servicio" ariaLabel="Buscar por descripción del servicio" />
             <FormSelect
               value={prefijo}
               onChange={handlePrefijo}

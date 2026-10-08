@@ -2,10 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import './AlistarPedidoModal.css';
-import {
-  LuPackage, LuRefreshCw, LuThumbsUp, LuSearch, LuCalendar, LuBoxes, LuTriangleAlert, LuChevronDown,
-  LuBuilding2, LuFileText,
-} from 'react-icons/lu';
+import { LuPackage, LuRefreshCw, LuThumbsUp, LuCalendar, LuBoxes, LuTriangleAlert, LuChevronDown, LuBuilding2, LuFileText } from 'react-icons/lu';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
@@ -15,6 +12,7 @@ import ConfirmarAlistamientoModal from './ConfirmarAlistamientoModal/ConfirmarAl
 import { formatFecha } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 import { useBodegaSeleccionada } from '@/hooks/Bodega/bodega';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Mismo mapa tono/label que MovimientosGrid.jsx (estado del movimiento
 // completo, no del ítem) -- se muestra junto al título en mig-alistar-identity,
 // réplica del "Estado: 0-Sin Confirmado" de la referencia.
@@ -28,9 +26,9 @@ const ESTADO_BADGE = {
 // metadatos a la derecha: fecha solicitud/bodega/tipo") -- no existe como
 // campo en el mock (ver mockSolicitudesData.js), se deriva de `trns`. Hoy
 // esta pantalla solo lista movimientos 'sal' (FILTROS_INICIALES.trns en
-// Solicitudes.jsx), pero se cubre 'ent' también (ver TRNS_OPTIONS del mock)
-// por si ese filtro se habilita más adelante.
-const TRNS_TIPO_LABEL = { sal: 'Salida asistencial', ent: 'Entrada asistencial' };
+// Solicitudes.jsx), pero el filtro TRNS del toolbar también permite 'dev'/'tra'
+// (ver TRNS_OPTIONS del mock).
+const TRNS_TIPO_LABEL = { sal: 'Salida asistencial', dev: 'Devolución', tra: 'Traslado' };
 
 // Un movimiento "Sin Confirmar" todavía no entregó nada de verdad (encargo
 // explícito) -- aunque cantidadEntregada venga > 0 en el mock, se muestra
@@ -358,15 +356,7 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
                 </div>
               </div>
               <div className="mig-articulos-toolbar">
-                <div className="search-field mig-articulos-search">
-                  <LuSearch className="icon" aria-hidden="true" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por código o descripción..."
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                  />
-                </div>
+                <SearchField className="mig-search mig-articulos-search" value={busqueda} onChange={(v) => setBusqueda(v)} placeholder="Buscar por código o descripción..." />
                 <Button
                   variant="outline"
                   size="sm"
@@ -410,9 +400,6 @@ export default function AlistarPedidoModal({ movimiento, onClose, onConfirmar })
                 <div className="mig-articulo-seleccionado-card">
                   <div className="mig-asc-top">
                     <div className="mig-asc-info">
-                      <div className="mig-alistar-icon">
-                        <LuPackage className="icon" aria-hidden="true" />
-                      </div>
                       <div className="mig-asc-text">
                         <span className="mig-asc-kicker">Artículo {indiceSeleccionado + 1} de {articulosFiltrados.length}</span>
                         <span className="mig-asc-descripcion" title={effectiveSelected.descripcion}>{effectiveSelected.descripcion}</span>

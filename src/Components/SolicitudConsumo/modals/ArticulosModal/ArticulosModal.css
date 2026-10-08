@@ -68,6 +68,7 @@ html[data-theme="dark"] .qty-input.invalid{background:rgba(192,43,43,.16);}
 html[data-theme="dark"] .qty-error{color:#ff8a8a;}
 
 .search-toolbar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex:none;}
+.search-toolbar-row .sc-search{flex:1;max-width:100%;}
 .filter-chips{display:flex;gap:8px;flex-shrink:0;}
 .filter-chip{
   padding:8px 16px;border-radius:20px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);

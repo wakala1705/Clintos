@@ -72,7 +72,7 @@ export default function ProgramacionSalaCirugias() {
   // cirugía, ver VistaAgenda.jsx): horas visibles ('24h' | 'operativa') y días
   // visibles en la vista Semana ('semana' | 'habil' | 'tres'). Solo cambia lo
   // que se dibuja, no los datos.
-  const [jornada, setJornada] = useState('24h');
+  const [jornada, setJornada] = useState('operativa');
   const [diasVista, setDiasVista] = useState('habil');
 
   const inicioSemana = lunesDeSemana(fechaAncla);

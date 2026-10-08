@@ -891,3 +891,58 @@ markup for an icon.
   (`import { Mars } from 'lucide-react'`, no `Lu` prefix). Prefer `react-icons/lu`
   whenever the icon is available there; only reach for `lucide-react` for the
   specific icons missing from it.
+
+# Buscador
+
+Todo buscador nuevo usa `@/Components/SearchField/SearchField`, no un
+`<div className="search-field">` armado a mano. Antes había ~16 copias de
+`.search-field` global (una por feature, con alturas `--input-sm`/`--input-md`,
+paddings y anchos propios) y ~20 cajas `.xx-search` de modales de catálogo.
+
+```jsx
+<SearchField
+  value={query}
+  onChange={setQuery}          // recibe el valor directo, no un evento
+  placeholder="Buscar paciente"
+  ariaLabel="Buscar paciente"  // opcional, default = placeholder
+  size="md"                    // md (default) | sm
+  clearable                    // default true — X al final cuando hay texto
+  fields={OPTIONS}             // opcional — [{ value, label }], muestra "Buscar por"
+  field={campo}
+  onChangeField={setCampo}
+  className="mi-ancho"         // el ancho lo pone el contexto; el componente solo fija estructura
+/>
+```
+
+- **Spec fija**: contenedor con el borde (no el input), `--input-md`
+  (`sm` = `--input-sm`), `--radius`, fondo `--surface`, ancho de input 180px
+  (se estira con `className`). Foco único vía `:focus-within`: borde
+  `--border` + outline 2px `--primary`, igual para input, selector de campo y X.
+- **CSS Module** (mismo motivo que `Button`/`Badge`): las `.search-field`
+  globales de cada feature chocarían.
+- **Migración**:
+  - **Hecha**: Admisiones (también Enfermería → Pacientes, que reusa
+    `AdmisionesToolbar`), Salidas asistenciales y las barras de listado/modales
+    que usaban `.search-field` global (Vacunación, Facturación, Gestión de
+    Turnos/Camas, HC y HC Hospitalización, Lista de pacientes, Triage,
+    Interconsulta, Insumos, Enfermería, Trazabilidad, Programación Sala de
+    Cirugías, Solicitud de Consumo). Cada feature conserva una clase propia
+    `<feature>-search` (`vac-search`, `ge-search`...) solo con el ancho, que se
+    pasa por `className`; el `.search-field` global (y sus reglas
+    `.icon`/`input`/foco) se borró de cada CSS — reintroducirlo es una regresión.
+  - **Bloqueada**: los buscadores de Enfermería que lee `legacy-app.js` por id
+    con input no controlado (Medicamentos, Órdenes médicas, Pedidos →
+    Solicitudes/Recepción/Devoluciones, `CatalogModal`) conservan `.search-field`
+    global en `GestionEnfermeria/shared/shared.css` (mismo bloqueo que
+    `<Badge>`/`ChipFilter`). También `NuevaCitaFlow` (strings de
+    `legacy-nueva-cita.js`).
+  - **Hecha (fase 3)**: los modales de catálogo/picker (`AreaFuncionalPicker`,
+    `BodegaPicker`, `SedePicker`, `FiltroPicker`, `AllModules`, `SelectorModal`,
+    catálogos de Facturación, Programación Sala de Cirugías, Aseguradoras y
+    Diagnósticos), `BuscarPacienteModal` e `HistorialCamaModal`. Su clase propia
+    (`.afp-search`, `.cdm-search`...) quedó solo con layout (`flex`/`min-width`/
+    `margin`), sin borde/altura/icono/input. `CatalogoServiciosAreaModal` pasó su
+    selector de alcance a `fields`/`field`/`onChangeField`.
+  - **Pendiente**: `ContractPanel` (Programar cita, input sin estado).
+  - **Fuera de alcance**: `Typeahead`, `SearchableSelect`, `DiagnosticoField`,
+    `InsumosBuscador` (tienen listbox/resultados propios).

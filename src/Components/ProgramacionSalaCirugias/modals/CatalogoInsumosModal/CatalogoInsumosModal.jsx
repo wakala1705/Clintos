@@ -6,7 +6,8 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { INSUMOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
@@ -101,16 +102,7 @@ export default function CatalogoInsumosModal({ onSelect, onClose }) {
           closeLabel="Cerrar búsqueda de insumo"
         />
         <div className="modal-body cim-body">
-          <div className="cim-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleQuery(e.target.value)}
-              placeholder="Buscar por Id. servicio o nombre del insumo"
-              aria-label="Buscar por Id. servicio o nombre del insumo"
-            />
-          </div>
+          <SearchField className="cim-search" value={query} onChange={(v) => handleQuery(v)} placeholder="Buscar por Id. servicio o nombre del insumo" ariaLabel="Buscar por Id. servicio o nombre del insumo" />
 
           <div className="cim-table">
             <div className="cim-row cim-row-head">

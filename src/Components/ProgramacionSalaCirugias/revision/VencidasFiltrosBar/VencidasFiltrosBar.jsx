@@ -1,6 +1,6 @@
 'use client';
 
-import { LuSearch, LuX } from 'react-icons/lu';
+import { LuX } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
@@ -8,6 +8,7 @@ import { SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { INCONSISTENCIAS, INCONSISTENCIA_ORDEN } from '@/hooks/ProgramacionSalaCirugias/revisionVencidas';
 import './VencidasFiltrosBar.css';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Sede fija '02' en todo el módulo (ver ProgramacionSalaCirugias.jsx).
 const SALA_OPTIONS = [
   { value: 'todas', label: 'Todas las salas' },
@@ -29,16 +30,7 @@ export default function VencidasFiltrosBar({
 
   return (
     <div className="filter-bar rv-filter-bar">
-      <div className="search-field">
-        <LuSearch className="icon" aria-hidden="true" />
-        <input
-          type="search"
-          placeholder="Buscar paciente, documento o No. programación"
-          aria-label="Buscar paciente, documento o número de programación"
-          value={filtros.busqueda}
-          onChange={(e) => onChange({ busqueda: e.target.value })}
-        />
-      </div>
+      <SearchField className="psc-search" value={filtros.busqueda} onChange={(v) => onChange({ busqueda: v })} placeholder="Buscar paciente, documento o No. programación" ariaLabel="Buscar paciente, documento o número de programación" />
       <div className="filter-spacer" />
       <SegmentedFilterBar
         options={tipoOptions}

@@ -1,7 +1,7 @@
-/* .card/.filter-bar/.search-field/.filter-spacer/.chip-group.segmented:
+/* .card/.filter-bar/.hh-search/.filter-spacer/.chip-group.segmented:
    definidas en ../shared/shared.css — acá solo el layout propio de esta
    card. */
-.hh-patients-toolbar .search-field{width:280px;}
+.hh-patients-toolbar .hh-search{width:280px;}
 /* Sin border-bottom propio: el encabezado sticky de la tabla ya trae su
    border-top (.data-table thead th, shared.css) — con los dos se dibujaba
    una doble línea entre la barra de filtros y la tabla. Selector compuesto

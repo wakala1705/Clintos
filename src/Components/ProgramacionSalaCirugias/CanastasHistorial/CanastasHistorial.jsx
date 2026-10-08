@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LuArrowLeft, LuEye, LuSearch } from 'react-icons/lu';
+import { LuArrowLeft, LuEye } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
 import './CanastasHistorial.css';
@@ -17,6 +17,7 @@ import { CANASTA_ESTADO_LABEL } from '@/hooks/ProgramacionSalaCirugias/mockCirug
 import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import { HISTORIAL_CANASTAS, fechaHoraHistorial, filtrarHistorial } from '@/hooks/ProgramacionSalaCirugias/canastasHistorial';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const USUARIO = 'Camilo Grondona';
 const ESTADO_OPTIONS = [
   { value: 'todas', label: 'Todos los estados' },
@@ -60,16 +61,7 @@ export default function CanastasHistorial() {
 
           <section className="cnc-panel cnc-hist">
             <div className="filter-bar cnc-hist-filtros">
-              <div className="search-field">
-                <LuSearch className="icon" aria-hidden="true" />
-                <input
-                  type="search"
-                  placeholder="Paciente o solicitud"
-                  aria-label="Buscar en el historial"
-                  value={filtros.busqueda}
-                  onChange={(e) => setFiltros((f) => ({ ...f, busqueda: e.target.value }))}
-                />
-              </div>
+              <SearchField className="psc-search" value={filtros.busqueda} onChange={(v) => setFiltros((f) => ({ ...f, busqueda: v }))} placeholder="Paciente o solicitud" ariaLabel="Buscar en el historial" />
               <div className="filter-spacer" />
               <div className="cnc-hist-estado">
                 <FormSelect

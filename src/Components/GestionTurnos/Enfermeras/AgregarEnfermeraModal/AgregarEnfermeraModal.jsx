@@ -4,8 +4,9 @@ import { useState } from 'react';
 import './AgregarEnfermeraModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch, LuUserRoundPlus } from 'react-icons/lu';
+import { LuUserRoundPlus } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // "Agregar enfermera a programación" (encargo sección 2) — selecciona una
 // enfermera EXISTENTE para incorporarla a la configuración de turnos, nunca
 // crea un registro de persona nuevo. `disponibles` es el pool de personal
@@ -31,17 +32,7 @@ export default function AgregarEnfermeraModal({ disponibles, onAgregar, onClose 
           onClose={onClose}
         />
         <div className="modal-body">
-          <div className="search-field">
-            <LuSearch className="icon" />
-            <input
-              type="text"
-              placeholder="Buscar personal..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar personal"
-              autoFocus
-            />
-          </div>
+          <SearchField className="gt-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar personal..." ariaLabel="Buscar personal" autoFocus />
 
           <div className="data-table-wrap ae-table-wrap">
             <table className="data-table">

@@ -3,6 +3,8 @@ import './SolicitudesTable.css';
 import Button from '@/Components/Button/Button';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import OrigenTag from '../OrigenTag/OrigenTag';
+import PrioridadTag from '../PrioridadTag/PrioridadTag';
+import DiagnosticoTag from '../DiagnosticoTag/DiagnosticoTag';
 import ProgresoChequeo from '../ProgresoChequeo/ProgresoChequeo';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
@@ -37,10 +39,12 @@ export default function SolicitudesTable({
           <tr>
             <th scope="col" className="sct-sticky">Paciente</th>
             <th scope="col">Procedimiento (CUPS)</th>
+            <th scope="col" className="sct-origen">Prioridad</th>
+            <th scope="col" className="sct-origen">Diagnóstico</th>
             <th scope="col" className="sct-origen">Origen</th>
-            <th scope="col" className="sct-paso">Orden médica</th>
-            <th scope="col" className="sct-paso">Autorización EPS</th>
-            <th scope="col" className="sct-paso">Valoración preanestésica</th>
+            <th scope="col" className="sct-paso" title="Orden médica">Orden</th>
+            <th scope="col" className="sct-paso" title="Autorización EPS">Autoriz.</th>
+            <th scope="col" className="sct-paso" title="Valoración preanestésica">Valoración</th>
             <th scope="col" className="sct-paso">Estudios</th>
             <th scope="col">Estado del chequeo</th>
             <th scope="col"><span className="sct-sr">Acciones</span></th>
@@ -67,12 +71,14 @@ export default function SolicitudesTable({
                   <span className="sct-main">{s.procedimiento}</span>
                   <span className="sct-sub">{s.cups} · {s.especialidad}</span>
                 </td>
+                <td className="sct-origen"><PrioridadTag prioritaria={s.prioritaria} /></td>
+                <td className="sct-origen"><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                 <td className="sct-origen"><OrigenTag origen={s.origen} /></td>
                 {PASOS.map((clave) => {
                   const item = s.checklist[clave];
                   return (
                     <td key={clave} className="sct-paso">
-                      <EstadoChip tone={TONO_ITEM[item.estado]}>{ESTADO_ITEM_LABEL[item.estado]}</EstadoChip>
+                      <EstadoChip tone={TONO_ITEM[item.estado]} iconOnly srLabel={`${ITEM_LABEL[clave]}: ${ESTADO_ITEM_LABEL[item.estado]}`} />
                     </td>
                   );
                 })}

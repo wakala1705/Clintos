@@ -1,5 +1,5 @@
 /* Shell (.app/.main/.content), tokens y .psc-page-header vienen de
-   ../ProgramacionSalaCirugias.css; .filter-bar/.search-field/.psc-toast de
+   ../ProgramacionSalaCirugias.css; .filter-bar/.psc-search/.psc-toast de
    ../shared/shared.css. Acá solo lo propio de la página; cada bloque tiene su
    CSS en su carpeta. */
 .gc-content{overflow:hidden;}
@@ -15,7 +15,7 @@
 
 /* Filtros al tamaño estándar del proyecto (--input-md vía .filter-bar/FormSelect);
    solo se fija el ancho de cada control. */
-.gc-toolbar .search-field{width:300px;}
+.gc-toolbar .psc-search{width:300px;}
 .gc-toolbar .gc-filtro{width:176px;}
 
 .gc-vacio{
@@ -33,5 +33,5 @@
   .gc-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
   .gc-workspace{flex:none;min-height:480px;}
   .gc-lista{min-height:480px;}
-  .gc-toolbar .search-field{width:100%;}
+  .gc-toolbar .psc-search{width:100%;}
 }

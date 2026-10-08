@@ -18,8 +18,9 @@ import { TIPOS_TURNO_INICIALES } from '@/hooks/GestionTurnos/mockTurnosData';
 import {
   AREAS_ENFERMERA, CARGO_OPTIONS, ENFERMERAS_INICIALES, ENFERMERAS_DISPONIBLES, ESTADO_CONFIG_OPTIONS, estadoConfiguracion,
 } from '@/hooks/GestionTurnos/mockEnfermerasData';
-import { LuPlus, LuSearch } from 'react-icons/lu';
+import { LuPlus } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const TURNO_LABEL = Object.fromEntries(TIPOS_TURNO_INICIALES.map((t) => [t.id, t.nombre]));
 
 // Página dedicada "Personal de enfermería" (encargo sección 4) — lista completa +
@@ -112,16 +113,7 @@ export default function Enfermeras() {
 
             <div className="card">
               <div className="filter-bar">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar personal..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar personal"
-                  />
-                </div>
+                <SearchField className="gt-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar personal..." ariaLabel="Buscar personal" />
                 <div className="filter-spacer" />
                 <SegmentedFilterBar
                   options={opcionesEstado}

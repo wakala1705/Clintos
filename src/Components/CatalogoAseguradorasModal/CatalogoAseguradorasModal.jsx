@@ -5,7 +5,8 @@ import './CatalogoAseguradorasModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { ASEGURADORAS_CATALOGO } from '@/hooks/CatalogoAseguradorasModal/mockAseguradorasData';
-import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
@@ -127,26 +128,8 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
         />
         <div className="cam-body">
           <div className="cam-search-row">
-            <div className="cam-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryId}
-                onChange={(e) => handleQueryId(e.target.value)}
-                placeholder="Buscar por Id."
-                aria-label="Buscar por Id."
-              />
-            </div>
-            <div className="cam-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryRazonSocial}
-                onChange={(e) => handleQueryRazonSocial(e.target.value)}
-                placeholder="Buscar por razón social"
-                aria-label="Buscar por razón social"
-              />
-            </div>
+            <SearchField className="cam-search" value={queryId} onChange={(v) => handleQueryId(v)} placeholder="Buscar por Id." ariaLabel="Buscar por Id." />
+            <SearchField className="cam-search" value={queryRazonSocial} onChange={(v) => handleQueryRazonSocial(v)} placeholder="Buscar por razón social" ariaLabel="Buscar por razón social" />
           </div>
 
           <div className="cam-table">

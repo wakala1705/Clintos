@@ -1,4 +1,4 @@
-/* .cnc-panel, .filter-bar y .search-field vienen de ../../shared/shared.css. */
+/* .cnc-panel, .filter-bar y .psc-search vienen de ../../shared/shared.css. */
 .cnc-lista{width:460px;flex-shrink:0;}
 .cnc-lista-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
 .cnc-lista-titulo{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
@@ -31,7 +31,7 @@
 @media (max-width:1024px){.cnc-lista{width:410px;}}
 /* Objetivos táctiles de 44px (ancho de tablet o puntero táctil). */
 @media (max-width:1024px), (pointer:coarse){
-  .cnc-lista-busqueda input{height:44px;}
+  .cnc-lista-busqueda{height:44px;}
   .cnc-lista-buscar{width:44px;height:44px;}
   .cnc-lista-sala .form-select-trigger,.cnc-lista-estado .form-select-trigger{min-height:44px;}
 }

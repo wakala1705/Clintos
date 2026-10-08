@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import './SelectorModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
-import { LuSearch } from 'react-icons/lu';
+
 import Button from '@/Components/Button/Button';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes para que la búsqueda encuentre "cardiologia" al escribir
 // "cardiología" o viceversa (compara por rango de código en vez de una
@@ -59,16 +60,7 @@ export default function SelectorModal({
       <div className="pc-modal pc-modal-sm">
         <ModalHeader title={title} onClose={onClose} />
 
-        <div className="pc-selector-search">
-          <LuSearch className="icon" aria-hidden="true" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
-            aria-label={searchPlaceholder}
-          />
-        </div>
+        <SearchField className="pc-selector-search" value={query} onChange={(v) => setQuery(v)} placeholder={searchPlaceholder} ariaLabel={searchPlaceholder} />
 
         <div className="pc-selector-table">
           <div className="pc-selector-row pc-selector-row-head">

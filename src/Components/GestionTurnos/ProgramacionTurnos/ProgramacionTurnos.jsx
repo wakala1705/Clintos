@@ -16,12 +16,11 @@ import ReasignarTurnoModal from './ReasignarTurnoModal/ReasignarTurnoModal';
 import AsignarTurnoModal from './AsignarTurnoModal/AsignarTurnoModal';
 import NuevaProgramacionWizard from './NuevaProgramacionWizard/NuevaProgramacionWizard';
 import RevisionProgramacionModal from './RevisionProgramacionModal/RevisionProgramacionModal';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   AREAS_TURNOS, NURSES, PROGRAMACIONES_SEED, SEMANA_ANCLA, addDias, diasDeSemana, rangoSemanaLabel, resolverProgramacion,
 } from '@/hooks/GestionTurnos/mockProgramacionData';
-import {
-  LuCalendarPlus, LuCalendarRange, LuChevronLeft, LuChevronRight, LuClipboardCheck, LuPlus, LuSearch, LuTriangleAlert, LuUserRoundX, LuUsers,
-} from 'react-icons/lu';
+import { LuCalendarPlus, LuCalendarRange, LuChevronLeft, LuChevronRight, LuClipboardCheck, LuPlus, LuTriangleAlert, LuUserRoundX, LuUsers } from 'react-icons/lu';
 
 const TIPO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
@@ -305,16 +304,7 @@ export default function ProgramacionTurnos() {
 
             <div className="card tu-calendar-card">
               <div className="tu-calendar-header">
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar personal..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar personal"
-                  />
-                </div>
+                <SearchField className="gt-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar personal..." ariaLabel="Buscar personal" />
 
                 <div className="day-nav">
                   <button type="button" className="day-nav-btn" aria-label="Semana anterior" onClick={() => setWeekStart((w) => addDias(w, -7))}>

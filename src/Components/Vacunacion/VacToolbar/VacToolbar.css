@@ -5,9 +5,9 @@
    "Filtros" — antes eran 2 filas (selects arriba, chips abajo), encargo
    explícito de consolidar. */
 .vac-toolbar-row{display:flex;align-items:center;gap:12px;}
-/* .search-field (barra de búsqueda): definida en ../Vacunacion.css — mismo
+/* .vac-search (barra de búsqueda): definida en ../Vacunacion.css — mismo
    patrón que el resto del proyecto (ver AGENTS.md). */
-.vac-toolbar-row .search-field{flex:0 1 360px;min-width:220px;}
+.vac-toolbar-row .vac-search{flex:0 1 360px;min-width:220px;}
 
 /* .filter-spacer empuja chips + botón "Filtros" al extremo derecho — mismo
    patrón search-left/filters-right que FiltersRow.jsx (Lista de Pacientes) y

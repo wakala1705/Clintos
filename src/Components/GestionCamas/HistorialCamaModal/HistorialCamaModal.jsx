@@ -11,7 +11,8 @@ import {
   AHORA_HISTORIAL, EVENTOS_HISTORIAL, EVENTO_LABEL, ESTADOS_HISTORIAL, FECHA_PRESETS_HISTORIAL,
   formatFechaHistorial, generarHistorialCama,
 } from '@/hooks/GestionCamas/mockHistorialCamaData';
-import { LuFilterX, LuHistory, LuSearch } from 'react-icons/lu';
+import { LuFilterX, LuHistory } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const FILTROS_INICIALES = {
   fecha: 'todos', usuario: 'todos', evento: 'todos', estado: 'todos', paciente: '', admision: '',
@@ -108,29 +109,11 @@ export default function HistorialCamaModal({ cama, onClose }) {
             </div>
             <div className="form-field">
               <label htmlFor="hcm-paciente">Paciente</label>
-              <div className="hcm-search-field">
-                <LuSearch className="icon" aria-hidden="true" />
-                <input
-                  id="hcm-paciente"
-                  type="text"
-                  placeholder="Buscar paciente..."
-                  value={filtros.paciente}
-                  onChange={(e) => handleChangeFiltro('paciente', e.target.value)}
-                />
-              </div>
+              <SearchField className="hcm-search-field" value={filtros.paciente} onChange={(v) => handleChangeFiltro('paciente', v)} id="hcm-paciente" placeholder="Buscar paciente..." />
             </div>
             <div className="form-field">
               <label htmlFor="hcm-admision">Admisión</label>
-              <div className="hcm-search-field">
-                <LuSearch className="icon" aria-hidden="true" />
-                <input
-                  id="hcm-admision"
-                  type="text"
-                  placeholder="Buscar admisión..."
-                  value={filtros.admision}
-                  onChange={(e) => handleChangeFiltro('admision', e.target.value)}
-                />
-              </div>
+              <SearchField className="hcm-search-field" value={filtros.admision} onChange={(v) => handleChangeFiltro('admision', v)} id="hcm-admision" placeholder="Buscar admisión..." />
             </div>
             {cantidadFiltrosActivos > 0 && (
               <Button

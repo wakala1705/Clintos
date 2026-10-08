@@ -1,7 +1,7 @@
-/* .card/.filter-bar/.search-field/.filter-spacer/.chip-group.segmented:
+/* .card/.filter-bar/.ic-search/.filter-spacer/.chip-group.segmented:
    definidas en ../shared/shared.css — acá solo el layout propio de esta
    card. */
-.ic-toolbar .search-field{width:380px;}
+.ic-toolbar .ic-search{width:380px;}
 /* Sin border-bottom propio: el encabezado sticky de la tabla ya trae su
    border-top (.data-table thead th, shared.css) — con los dos se dibujaba
    una doble línea. Selector compuesto para no depender del orden de

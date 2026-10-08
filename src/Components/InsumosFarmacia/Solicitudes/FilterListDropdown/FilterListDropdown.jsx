@@ -16,7 +16,9 @@ import './FilterListDropdown.css';
 // "Sin Confirmar", no "Todos") -- resaltar el trigger habría quedado
 // permanentemente "activo" incluso sin que el usuario tocara nada, distinto
 // de cómo se usa en el resto de los droplist del proyecto.
-export default function FilterListDropdown({ label, options, value, onChange }) {
+// `showLabel`: antepone "<label>: " al valor elegido en el trigger -- para
+// filtros cuya opción neutra ("Todos") no dice a qué dimensión pertenece.
+export default function FilterListDropdown({ label, options, value, onChange, showLabel = false }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -52,7 +54,7 @@ export default function FilterListDropdown({ label, options, value, onChange }) 
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        {selected?.label ?? label}
+        {showLabel ? `${label}: ${selected?.label ?? ''}` : (selected?.label ?? label)}
         <LuChevronDown className="icon chev" aria-hidden="true" />
       </button>
 

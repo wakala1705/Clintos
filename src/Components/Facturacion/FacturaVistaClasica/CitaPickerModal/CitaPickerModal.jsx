@@ -8,7 +8,8 @@ import Badge from '@/Components/Badge/Badge';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DateRangeFilter from '../DateRangeFilter/DateRangeFilter';
 import { CITAS, ESTADO_LABEL, ESTADO_TONE } from '@/hooks/Facturacion/mockCitasData';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 const ESTADO_FILTER_OPTIONS = [
   { value: 'todos', label: 'Todos' },
@@ -157,16 +158,7 @@ export default function CitaPickerModal({ onSelect, onClose }) {
 
         <div className="modal-body">
           <div className="cip-toolbar">
-            <div className="cip-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar por consecutivo, documento o nombre del afiliado"
-                aria-label="Buscar cita"
-              />
-            </div>
+            <SearchField className="cip-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por consecutivo, documento o nombre del afiliado" ariaLabel="Buscar cita" />
             <div className="cip-estado-filter">
               <FormSelect
                 id="cip-estado"

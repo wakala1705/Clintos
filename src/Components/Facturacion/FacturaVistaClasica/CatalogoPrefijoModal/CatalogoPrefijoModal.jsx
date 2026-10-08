@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './CatalogoPrefijoModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoCentroCostoModal.jsx/
 // CatalogoAreaFuncionalModal.jsx (no compartido entre features, ver
@@ -125,16 +126,7 @@ export default function CatalogoPrefijoModal({ onSelect, onClose }) {
         />
 
         <div className="modal-body">
-          <div className="cpfm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por prefijo o descripción..."
-              aria-label="Buscar por prefijo o descripción"
-            />
-          </div>
+          <SearchField className="cpfm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por prefijo o descripción..." ariaLabel="Buscar por prefijo o descripción" />
 
           <div className="cpfm-table">
             <div className="cpfm-row cpfm-row-head">

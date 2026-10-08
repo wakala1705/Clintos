@@ -96,6 +96,14 @@ export function filtrarSolicitudes(solicitudes, filtros, { ignorarEstado = false
   });
 }
 
+// Orden de la lista de Gestión de cirugías: 1) prioritarias primero, 2) dentro
+// de cada grupo, diagnóstico de primera vez primero. Sort estable: a igual
+// prioridad se conserva el orden original. No muta el arreglo recibido.
+export function ordenarPorPrioridad(solicitudes) {
+  const peso = (s) => (s.prioritaria ? 2 : 0) + (s.primeraVez ? 1 : 0);
+  return [...solicitudes].sort((a, b) => peso(b) - peso(a));
+}
+
 export function contarPorEstado(solicitudes) {
   const conteo = {
     todas: solicitudes.length, lista: 0, pendientes: 0, bloqueada: 0,

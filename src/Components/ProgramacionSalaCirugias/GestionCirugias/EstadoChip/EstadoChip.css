@@ -7,6 +7,7 @@
 }
 .ec-icon{width:14px;height:14px;flex-shrink:0;}
 .ec-chip.ec-mini{padding:3px 8px;gap:4px;}
+.ec-chip.ec-icon-only{padding:4px 6px;}
 .ec-mini .ec-icon{width:12px;height:12px;}
 
 .ec-sr{

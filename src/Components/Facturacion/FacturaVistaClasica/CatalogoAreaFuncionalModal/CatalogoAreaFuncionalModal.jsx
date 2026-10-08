@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './CatalogoAreaFuncionalModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoCentroCostoModal.jsx/
 // CatalogoAseguradorasModal.jsx (no compartido entre features, ver
@@ -113,16 +114,7 @@ export default function CatalogoAreaFuncionalModal({ onSelect, onClose }) {
         />
 
         <div className="modal-body">
-          <div className="cafm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por id., descripción o centro de costo..."
-              aria-label="Buscar por id., descripción o centro de costo"
-            />
-          </div>
+          <SearchField className="cafm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por id., descripción o centro de costo..." ariaLabel="Buscar por id., descripción o centro de costo" />
 
           <div className="cafm-table">
             <div className="cafm-row cafm-row-head">

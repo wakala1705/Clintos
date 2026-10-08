@@ -57,11 +57,10 @@ html[data-theme="dark"] .mig-items-table-scroll::-webkit-scrollbar-thumb:hover{b
 
 /* Encargo explícito: descripción en mayúscula solo en esta tabla (no la de
    lotes) -- transform visual, no toca el dato original (el title del <span>
-   conserva el texto tal cual para el tooltip). Trunca a una línea (antes lo
-   resolvía .mig-ellipsis sobre el <td>; acá el <span> vive dentro de un
-   flex column, así que la regla se define directo). */
+   conserva el texto tal cual para el tooltip). Encargo explícito: se muestra
+   completa, envolviendo a 2+ líneas si hace falta, nunca truncada con "…". */
 .mig-items-descripcion{
-  text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+  text-transform:uppercase;white-space:normal;overflow-wrap:anywhere;max-width:100%;
 }
 
 /* Jerarquía de peso invertida (encargo explícito) -- Descripción pasa a

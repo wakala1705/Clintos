@@ -2,8 +2,9 @@ import './TrazabilidadToolbar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
 import { ESTADO_OPTIONS, TIPO_OPTIONS } from '@/hooks/Trazabilidad/mockTrazabilidadData';
-import { LuSearch, LuWrench } from 'react-icons/lu';
+import { LuWrench } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Filtrado en vivo (mismo criterio que el resto del proyecto, ver AGENTS.md
 // "Barra de filtros de listado" y GestionCamasAuditoria.jsx) -- cada control
 // dispara onFiltrosChange directo, sin botones "Buscar"/"Limpiar" (se
@@ -14,16 +15,7 @@ export default function TrazabilidadToolbar({
 }) {
   return (
     <div className="filter-bar traz-toolbar">
-      <div className="search-field traz-search-field">
-        <LuSearch className="icon" />
-        <input
-          type="text"
-          placeholder="Buscar por Admisión, Cns, Factura, Job ID, Usuario..."
-          value={filtros.query}
-          onChange={(e) => onFiltrosChange({ query: e.target.value })}
-          aria-label="Buscar por referencia"
-        />
-      </div>
+      <SearchField className="traz-search traz-search-field" value={filtros.query} onChange={(v) => onFiltrosChange({ query: v })} placeholder="Buscar por Admisión, Cns, Factura, Job ID, Usuario..." ariaLabel="Buscar por referencia" />
 
       <div className="filter-spacer" />
 

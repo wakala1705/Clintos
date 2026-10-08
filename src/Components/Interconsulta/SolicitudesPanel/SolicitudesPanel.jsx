@@ -1,13 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { LuMaximize2, LuMinimize2, LuSearch } from 'react-icons/lu';
+import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import './SolicitudesPanel.css';
 import Badge from '@/Components/Badge/Badge';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudesFooter from './SolicitudesFooter/SolicitudesFooter';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   ESTADOS, PAGE_SIZE, VISTAS, VISTA_DESCRIPCION,
 } from '@/hooks/Interconsulta/interconsultaData';
@@ -58,16 +59,7 @@ export default function SolicitudesPanel({
   return (
     <section className="card ic-panel">
       <div className="filter-bar ic-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar por paciente, documento o número..."
-            value={query}
-            onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-            aria-label="Buscar por paciente, documento o número"
-          />
-        </div>
+        <SearchField className="ic-search" value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Buscar por paciente, documento o número..." ariaLabel="Buscar por paciente, documento o número" />
 
         <div className="filter-spacer" />
 

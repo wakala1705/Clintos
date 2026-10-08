@@ -17,9 +17,8 @@ import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import { DOCTOR, fetchAgenda, fullDateLabel, todayISO } from '@/hooks/HistoriaClinica/mockAgendaData';
-import {
-  LuCalendarDays, LuCircleCheckBig, LuClipboardList, LuMaximize2, LuMinimize2, LuRefreshCw, LuSearch, LuUser,
-} from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
+import { LuCalendarDays, LuCircleCheckBig, LuClipboardList, LuMaximize2, LuMinimize2, LuRefreshCw, LuUser } from 'react-icons/lu';
 
 const KPI_DEFS = [
   { key: 'en-sala', label: 'Pacientes en sala', icon: LuClipboardList, variant: 'warning' },
@@ -136,16 +135,7 @@ export default function HistoriaClinica() {
 
               <div className="hc-agenda-header-spacer" />
 
-              <div className="search-field">
-                <LuSearch className="icon" />
-                <input
-                  type="text"
-                  placeholder="Buscar"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  aria-label="Buscar en la agenda del día"
-                />
-              </div>
+              <SearchField className="hc-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar" ariaLabel="Buscar en la agenda del día" />
               <div className="hc-actions-bar-buttons">
                 <Button variant="secondary-accent" icon={LuRefreshCw} onClick={handleRefresh}>
                   Refrescar

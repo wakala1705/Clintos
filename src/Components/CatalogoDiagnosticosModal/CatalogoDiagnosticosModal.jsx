@@ -6,7 +6,8 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import { DIAGNOSTICOS_CATALOGO } from '@/hooks/CatalogoDiagnosticosModal/mockDiagnosticosData';
-import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 const SEXO_OPTIONS = [
@@ -127,26 +128,8 @@ export default function CatalogoDiagnosticosModal({ onSelect, onClose }) {
         />
         <div className="cdm-body">
           <div className="cdm-search-row">
-            <div className="cdm-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryDescripcion}
-                onChange={(e) => handleQueryDescripcion(e.target.value)}
-                placeholder="Buscar por descripción"
-                aria-label="Buscar por descripción"
-              />
-            </div>
-            <div className="cdm-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={queryCodigo}
-                onChange={(e) => handleQueryCodigo(e.target.value)}
-                placeholder="Buscar por código"
-                aria-label="Buscar por código"
-              />
-            </div>
+            <SearchField className="cdm-search" value={queryDescripcion} onChange={(v) => handleQueryDescripcion(v)} placeholder="Buscar por descripción" ariaLabel="Buscar por descripción" />
+            <SearchField className="cdm-search" value={queryCodigo} onChange={(v) => handleQueryCodigo(v)} placeholder="Buscar por código" ariaLabel="Buscar por código" />
             <FormSelect
               value={sexo}
               onChange={handleSexo}

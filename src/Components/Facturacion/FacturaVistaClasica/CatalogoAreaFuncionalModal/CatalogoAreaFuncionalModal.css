@@ -7,7 +7,6 @@
    (sin paginación: el catálogo entero cabe en un solo scroll). */
 .cafm-modal{width:640px;max-width:95vw;}
 
-.cafm-search{position:relative;flex-shrink:0;}
 .cafm-search .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
 .cafm-search input{
   width:100%;height:var(--input-md);padding:0 12px 0 34px;

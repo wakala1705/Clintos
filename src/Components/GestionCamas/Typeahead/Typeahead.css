@@ -1,6 +1,6 @@
 /* Trigger dimensionado igual que .form-field input (mismo --input-md/
    border/radius/font-size) — ver comentario de FormSelect.css, mismo
-   criterio. Ícono a la derecha (a propósito, distinto de .search-field en
+   criterio. Ícono a la derecha (a propósito, distinto de .cb-search en
    GestionCamas.css que lo trae a la izquierda): encargo explícito de este
    formulario puntual. */
 .cbta-field{position:relative;}

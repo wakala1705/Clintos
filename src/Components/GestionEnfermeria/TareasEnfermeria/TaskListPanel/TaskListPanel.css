@@ -1,4 +1,4 @@
-/* .card (base)/.chip-group.segmented/.chip-filter/.filter-bar/.search-field/
+/* .card (base)/.chip-group.segmented/.chip-filter/.filter-bar/.ge-search/
    .filter-cluster/.filter-spacer/.btn: definidas en ../../shared/shared.css
    (shared del feature) — acá solo el layout propio de esta card. */
 .task-list-card{flex:1;min-width:0;}
@@ -10,7 +10,7 @@
    necesita su propio wrap para no forzar scroll horizontal en viewports de
    ~1280-1366px, el mismo piso de resolución que el resto del wizard/paneles
    de la app. */
-.task-list-toolbar .search-field{width:260px;}
+.task-list-toolbar .ge-search{width:260px;}
 .task-list-toolbar .filter-cluster{flex-wrap:wrap;row-gap:8px;}
 
 /* Indicador de filtros activos (encargo explícito) — mismo .badge-count

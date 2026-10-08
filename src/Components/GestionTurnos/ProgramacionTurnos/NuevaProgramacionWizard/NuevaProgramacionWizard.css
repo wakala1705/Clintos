@@ -1,5 +1,5 @@
 /* .modal-overlay/.btn/.form-field/.chip-group.segmented/.day-nav/
-   .search-field/.ct-empty-cell: ver ../../GestionTurnos.css.
+   .gt-search/.ct-empty-cell: ver ../../GestionTurnos.css.
    .npw-nurse-row* viven acá (no en SeleccionarPersonalStep.css/
    ConfirmarStep.css) porque los reusan ambos pasos — mismo criterio de
    shared.css de AGENTS.md, acotado al subárbol de este wizard en vez de a

@@ -5,8 +5,9 @@ import './PlantillaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { PLANTILLAS } from '@/hooks/HistoriaClinica/mockPlantillas';
-import { LuSearch } from 'react-icons/lu';
 
+
+import SearchField from '@/Components/SearchField/SearchField';
 // Selector de elementos que pueden recibir foco de teclado dentro del modal
 // — usado para el focus trap (ver efecto de Tab más abajo) y para decidir a
 // quién devolver el foco no aplica acá (eso lo maneja AtencionPaciente.jsx,
@@ -101,18 +102,7 @@ export default function PlantillaModal({ open, onClose, onElegir, plantillas = P
         />
 
         <div className="modal-body pm-body">
-          <div className="search-field pm-search">
-            <LuSearch className="icon" />
-            <input
-              type="text"
-              placeholder="Buscar por código o descripción"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar plantilla"
-              autoFocus
-              autoComplete="off"
-            />
-          </div>
+          <SearchField className="hc-search pm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por código o descripción" ariaLabel="Buscar plantilla" autoFocus autoComplete="off" />
 
           <div className="pm-table-wrap">
             <table className="data-table">

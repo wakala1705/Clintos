@@ -11,9 +11,6 @@
    CatalogoCentroCostoModal.jsx: colisionaba con CatalogoContratacionModal). */
 .cco-modal{width:640px;max-width:95vw;}
 
-.cco-search{
-  position:relative;flex-shrink:0;
-}
 .cco-search .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:16px;height:16px;}
 .cco-search input{
   width:100%;height:var(--input-md);padding:0 12px 0 34px;

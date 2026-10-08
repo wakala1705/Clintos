@@ -24,14 +24,13 @@ import CorregirInconsistenciaModal from './CorregirInconsistenciaModal/CorregirI
 import IgnorarInconsistenciaModal from './IgnorarInconsistenciaModal/IgnorarInconsistenciaModal';
 import InconsistenciaHistorialModal from './InconsistenciaHistorialModal/InconsistenciaHistorialModal';
 import HistorialVerificacionesModal from './HistorialVerificacionesModal/HistorialVerificacionesModal';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   ESTADOS, IMPACTOS, INCONSISTENCIAS_INICIALES, HISTORIAL_VERIFICACIONES_INICIAL, SEDES, TIPOS,
   ULTIMA_VERIFICACION_INICIAL, SEDE_LABEL, SERVICIO_LABEL, TIPO_LABEL,
   fetchInconsistencias, formatHoraRelativa, formatFecha,
 } from '@/hooks/GestionCamas/mockIntegridadData';
-import {
-  LuCircleAlert, LuCircleCheck, LuFilterX, LuHistory, LuInfo, LuRefreshCw, LuSearch, LuSearchX, LuShieldCheck, LuTriangleAlert,
-} from 'react-icons/lu';
+import { LuCircleAlert, LuCircleCheck, LuFilterX, LuHistory, LuInfo, LuRefreshCw, LuSearchX, LuShieldCheck, LuTriangleAlert } from 'react-icons/lu';
 
 const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', detectado: 'cualquiera' };
 
@@ -273,16 +272,7 @@ export default function GestionCamasIntegridad() {
                     (margin-left:auto en vez de .filter-spacer suelto — con 5
                     controles + buscador el grupo necesita moverse como
                     unidad si no entra en una sola línea). */}
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar inconsistencia..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar inconsistencia por descripción, cama, paciente, habitación, servicio o sede"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar inconsistencia..." ariaLabel="Buscar inconsistencia por descripción, cama, paciente, habitación, servicio o sede" />
 
                 <div className="cbi-filters-group">
                   <AreaSelector label="Tipo" options={TIPOS} value={tipo} onChange={handleChangeTipo} />

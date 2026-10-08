@@ -478,6 +478,10 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
   display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;padding:14px 20px;
   ;flex-shrink:0;border-bottom:1px solid var(--border);
 }
+/* Legado: .search-field global solo lo usan los buscadores que arma/lee
+   legacy-app.js por id (Medicamentos, Órdenes médicas, Pedidos, CatalogModal)
+   -- no se pueden pasar a <SearchField> (input no controlado). El resto de
+   Enfermería usa @/Components/SearchField con .ge-search (solo ancho). */
 .search-field{position:relative;width:320px;flex-shrink:0;}
 .search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
 .search-field input{
@@ -486,6 +490,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
 }
 .search-field input::placeholder{color:var(--ink-400);}
 .search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:#fff;}
+.ge-search{width:320px;flex-shrink:0;}
 
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 /* .chip-filter global: solo para los chips que maneja legacy-app.js

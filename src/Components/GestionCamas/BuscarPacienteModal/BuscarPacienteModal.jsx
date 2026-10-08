@@ -6,7 +6,8 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { ADMISIONES } from '@/hooks/Admisiones/mockAdmisionesData';
-import { LuCheck, LuSearch, LuUsers } from 'react-icons/lu';
+import { LuCheck, LuUsers } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Mismo cálculo que BedDetailModal.jsx (GestionCamas y GestionEnfermeria/
 // PanelGeneral/BedBoardModal, feature hermana, mismo criterio de no
@@ -62,16 +63,7 @@ export default function BuscarPacienteModal({ onClose, onSelect }) {
         />
 
         <div className="bp-search-row">
-          <div className="bp-search-field">
-            <LuSearch className="icon" />
-            <input
-              type="text"
-              placeholder="Buscar por nombre, documento o N° de admisión..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              autoFocus
-            />
-          </div>
+          <SearchField className="bp-search-field" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por nombre, documento o N° de admisión..." autoFocus />
         </div>
 
         <div className="bp-table-wrap">

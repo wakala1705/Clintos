@@ -6,7 +6,8 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { EQUIPOS_QX_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoInsumosModal.jsx/
 // CatalogoMedicosModal.jsx (no compartido entre los 3, ver AGENTS.md
@@ -63,16 +64,7 @@ export default function CatalogoEquiposModal({ onSelect, onClose }) {
           closeLabel="Cerrar búsqueda de equipo"
         />
         <div className="modal-body ceq-body">
-          <div className="ceq-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por nombre o identificación del equipo"
-              aria-label="Buscar por nombre o identificación del equipo"
-            />
-          </div>
+          <SearchField className="ceq-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por nombre o identificación del equipo" ariaLabel="Buscar por nombre o identificación del equipo" />
 
           <div className="ceq-table">
             <div className="ceq-row ceq-row-head">

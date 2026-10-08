@@ -9,7 +9,8 @@ import FormSelect from '@/Components/FormSelect/FormSelect';
 import {
   ESTADO_LABEL, ESTADO_FILTER_OPTIONS, fetchAdmisiones,
 } from '@/hooks/Admisiones/mockAdmisionesData';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 const ESTADO_TONE = {
   admitido: 'success',
@@ -113,16 +114,7 @@ export default function AdmisionPickerModal({ onSelect, onClose }) {
 
         <div className="modal-body">
           <div className="apm-toolbar">
-            <div className="apm-search">
-              <LuSearch className="icon" aria-hidden="true" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar por N° de admisión, documento o nombre del afiliado"
-                aria-label="Buscar admisión"
-              />
-            </div>
+            <SearchField className="apm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por N° de admisión, documento o nombre del afiliado" ariaLabel="Buscar admisión" />
             <div className="apm-estado-filter">
               <FormSelect
                 id="apm-estado"

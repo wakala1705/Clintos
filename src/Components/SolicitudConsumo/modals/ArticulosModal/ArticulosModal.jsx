@@ -21,6 +21,7 @@ import {
   LuWarehouse,
   LuX,
 } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Cabecera de los items de un carrito, según el modo: vacía para una
 // solicitud nueva, precargada desde la reposición para edición.
@@ -173,15 +174,12 @@ export default function ArticulosModal({ mode, rep, tipoArticuloNuevo, onBack, o
               </div>
 
               <div className="search-toolbar-row">
-                <div className="search-field" style={{ maxWidth: '100%', flex: 1 }}>
-                  <LuSearch className="icon" aria-hidden="true" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por código o descripción..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
+                <SearchField
+                  className="sc-search"
+                  placeholder="Buscar por código o descripción..."
+                  value={search}
+                  onChange={setSearch}
+                />
                 <div className="filter-chips">
                   <button type="button" className={`filter-chip${filtro === 'todos' ? ' active' : ''}`} onClick={() => setFiltro('todos')}>
                     Todos <span className="count">{porTermino.length}</span>

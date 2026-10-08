@@ -1,0 +1,27 @@
+/* Contenedor con el borde (no el input): el foco se resuelve con
+   :focus-within, igual para el input, el selector de campo y la X. Ancho:
+   lo define el contexto vía `className` (el componente solo fija estructura). */
+.root{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  height:var(--input-md);padding:0 12px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);
+}
+.sm{height:var(--input-sm);}
+.root:focus-within{border-color:var(--border);outline:2px solid var(--primary);outline-offset:1px;}
+.icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
+.divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.input{
+  flex:1;width:180px;min-width:0;border:none;background:none;
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+}
+.input:focus{outline:none;}
+.input::placeholder{color:var(--ink-400);}
+.clear{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:22px;height:22px;padding:0;border:none;border-radius:var(--radius);
+  background:none;color:var(--ink-500);cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.clear:hover{background:var(--gray-bg);color:var(--ink-900);}
+.clear:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.clear svg{width:14px;height:14px;}

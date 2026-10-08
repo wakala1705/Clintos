@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './VacToolbar.css';
-import { LuChevronDown, LuFilter, LuSearch } from 'react-icons/lu';
+import { LuChevronDown, LuFilter } from 'react-icons/lu';
 import { ESQUEMA_OPTIONS, ESTADO_OPTIONS, PROXIMA_OPTIONS, QUICK_FILTERS } from '@/hooks/Vacunacion/mockVacunacionData';
 import Button from '@/Components/Button/Button';
 import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Barra de herramientas en una sola línea: búsqueda a la izquierda, el
 // segmented control de acceso rápido (Todos/Pendientes/Atrasados/Próximos) y
 // el botón "Filtros" a la derecha — mismo patrón search-left/filters-right
@@ -63,16 +64,7 @@ export default function VacToolbar({
   return (
     <div className="vac-toolbar">
       <div className="vac-toolbar-row">
-        <div className="search-field">
-          <LuSearch className="icon" aria-hidden="true" />
-          <input
-            type="text"
-            placeholder="Buscar paciente por nombre o documento…"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            aria-label="Buscar paciente por nombre o documento"
-          />
-        </div>
+        <SearchField className="vac-search" value={query} onChange={(v) => onQueryChange(v)} placeholder="Buscar paciente por nombre o documento…" ariaLabel="Buscar paciente por nombre o documento" />
 
         <div className="filter-spacer"></div>
 

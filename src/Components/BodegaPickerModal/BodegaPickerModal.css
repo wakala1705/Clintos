@@ -19,11 +19,7 @@
 }
 .bdg-body{padding:20px 24px;overflow-y:auto;min-height:0;}
 
-.bdg-search{
-  display:flex;align-items:center;gap:8px;
-  height:36px;padding:0 12px;margin-bottom:12px;
-  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);
-}
+.bdg-search{margin-bottom:12px;}
 .bdg-search .icon{width:16px;height:16px;color:var(--ink-500);flex-shrink:0;}
 .bdg-search input{
   flex:1;min-width:0;border:none;background:transparent;

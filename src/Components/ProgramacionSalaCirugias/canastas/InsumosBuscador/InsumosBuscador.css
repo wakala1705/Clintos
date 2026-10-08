@@ -1,6 +1,6 @@
-/* .search-field viene de ../../shared/shared.css. */
+/* .psc-search viene de ../../shared/shared.css. */
 .cnc-buscador{flex-shrink:0;margin-bottom:12px;}
-.cnc-buscador .search-field{width:100%;max-width:320px;}
+.cnc-buscador .psc-search{width:100%;max-width:320px;}
 @media (max-width:1024px), (pointer:coarse){
-  .cnc-buscador .search-field input{height:44px;}
+  .cnc-buscador .psc-search{height:44px;}
 }

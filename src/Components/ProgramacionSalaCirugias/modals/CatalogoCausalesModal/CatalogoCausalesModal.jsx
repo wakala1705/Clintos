@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './CatalogoCausalesModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes para que la búsqueda encuentre "cancelacion" al escribir
 // "cancelación" o viceversa -- mismo helper que CatalogoSalasModal.jsx (no
@@ -60,16 +61,7 @@ export default function CatalogoCausalesModal({
           closeLabel="Cerrar catálogo de causales"
         />
         <div className="modal-body ccam-body">
-          <div className="ccam-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por descripción o ID..."
-              aria-label="Buscar por descripción o ID..."
-            />
-          </div>
+          <SearchField className="ccam-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por descripción o ID..." ariaLabel="Buscar por descripción o ID..." />
 
           <div className="ccam-table">
             <div className="ccam-row ccam-row-head">

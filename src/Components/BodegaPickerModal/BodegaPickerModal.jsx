@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import './BodegaPickerModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuSearch } from 'react-icons/lu';
+
 import { BODEGAS_CATALOGO } from '@/hooks/Bodega/bodega';
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes para que la búsqueda encuentre "farmacia" al escribir
 // "farmácia" o viceversa -- mismo helper que AllModulesModal.jsx/
@@ -69,16 +70,7 @@ export default function BodegaPickerModal({ bodega, onSelect, onClose }) {
         />
 
         <div className="bdg-body">
-          <div className="bdg-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar bodega..."
-              aria-label="Buscar bodega"
-            />
-          </div>
+          <SearchField className="bdg-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar bodega..." ariaLabel="Buscar bodega" />
 
           <div className="bdg-table">
             <div className="bdg-row bdg-row-head">

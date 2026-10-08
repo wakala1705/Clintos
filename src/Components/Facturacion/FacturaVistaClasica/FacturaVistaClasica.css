@@ -1,6 +1,6 @@
 .fvc-shell{display:flex;flex-direction:column;flex:1;min-height:0;}
 
-/* .search-field/.icon-btn-circle: definidas en ../shared/shared.css /
+/* .fact-search/.icon-btn-circle: definidas en ../shared/shared.css /
    Topbar.css -- acá solo el layout propio de esta toolbar (label+control
    inline, distinto del botón "Filtros"+popover de la vista nueva). */
 .fvc-toolbar{

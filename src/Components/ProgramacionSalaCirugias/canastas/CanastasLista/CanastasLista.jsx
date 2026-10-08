@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { LuSearch } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
 import { ESTADO_FILTRO_OPTIONS, agruparCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
@@ -62,18 +63,16 @@ export default function CanastasLista({
           </button>
         </div>
         {buscando && (
-          <div className="search-field cnc-lista-busqueda" id="cnc-lista-busqueda">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              ref={inputRef}
-              type="search"
-              placeholder="Paciente o solicitud"
-              aria-label="Buscar por paciente, documento o n.º de solicitud"
-              value={filtros.busqueda}
-              onChange={(e) => onFiltrosChange({ busqueda: e.target.value })}
-              onKeyDown={(e) => { if (e.key === 'Escape') alternarBusqueda(); }}
-            />
-          </div>
+          <SearchField
+            className="cnc-lista-busqueda"
+            id="cnc-lista-busqueda"
+            inputRef={inputRef}
+            placeholder="Paciente o solicitud"
+            ariaLabel="Buscar por paciente, documento o n.º de solicitud"
+            value={filtros.busqueda}
+            onChange={(v) => onFiltrosChange({ busqueda: v })}
+            onKeyDown={(e) => { if (e.key === 'Escape') alternarBusqueda(); }}
+          />
         )}
       </div>
       <div className="cnc-lista-items">

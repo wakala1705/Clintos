@@ -27,13 +27,12 @@ import GestionCamasSidebar from './GestionCamasSidebar/GestionCamasSidebar';
 import CamasPagination from './CamasPagination/CamasPagination';
 import Button from '@/Components/Button/Button';
 import { horaAhora } from '@/hooks/GestionCamas/formatRelativeTime';
+import SearchField from '@/Components/SearchField/SearchField';
 import {
   ACTIVIDAD_INICIAL, AREAS, CAMAS, ESTADOS, ESTADO_LABEL, HOY_ADMISION, PISOS,
   SECTORES, SEDES, TIPOS,
 } from '@/hooks/GestionCamas/mockCamasData';
-import {
-  LuBedDouble, LuFilterX, LuPlus, LuSearch, LuUser,
-} from 'react-icons/lu';
+import { LuBedDouble, LuFilterX, LuPlus, LuUser } from 'react-icons/lu';
 
 // Solo `habitacion` — Temporal/Con reserva/Aislamiento/Bloqueada/Limpieza/
 // Mantenimiento se quitaron de "Más filtros" (salvo Temporal/Con reserva,
@@ -609,16 +608,7 @@ export default function GestionCamas() {
                   <div className="filter-bar">
                     {/* Orden (encargo): búsqueda al extremo izquierdo, filtros +
                         vista agrupados al extremo derecho. */}
-                    <div className="search-field">
-                      <LuSearch className="icon" />
-                      <input
-                        type="text"
-                        placeholder="Buscar cama, paciente, HC o admisión..."
-                        value={query}
-                        onChange={(e) => handleChangeQuery(e.target.value)}
-                        aria-label="Buscar cama, paciente, historia clínica o admisión"
-                      />
-                    </div>
+                    <SearchField className="cb-search" value={query} onChange={(v) => handleChangeQuery(v)} placeholder="Buscar cama, paciente, HC o admisión..." ariaLabel="Buscar cama, paciente, historia clínica o admisión" />
 
                     <div className="filter-spacer" />
 

@@ -21,12 +21,10 @@ import {
   EVENTOS, INDICADORES_ACTIVIDAD, MODULOS, PERIODOS, SEDES, SERVICIOS, TIPOS_EVENTO, USUARIOS,
   MODULO_LABEL, USUARIO_LABEL, fetchEventos, formatFechaHora,
 } from '@/hooks/GestionCamas/mockAuditoriaData';
-import {
-  LuArrowDown, LuArrowUp, LuArrowUpDown, LuBedDouble, LuCalendarClock, LuCircleAlert, LuClipboardX,
-  LuFileClock, LuFilterX, LuPencilLine, LuSearch, LuSearchX, LuTrash2, LuUsers,
-} from 'react-icons/lu';
+import { LuArrowDown, LuArrowUp, LuArrowUpDown, LuBedDouble, LuCalendarClock, LuCircleAlert, LuClipboardX, LuFileClock, LuFilterX, LuPencilLine, LuSearchX, LuTrash2, LuUsers } from 'react-icons/lu';
 import DatePicker from '@/Components/DatePicker/DatePicker';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const FILTROS_AVANZADOS_INICIALES = { servicio: 'todos', habitacion: '' };
 
 const COLUMNAS_ORDENABLES = [
@@ -220,16 +218,7 @@ export default function GestionCamasAuditoria() {
                     GestionCamasCamas.jsx): búsqueda al extremo izquierdo,
                     filtros agrupados al extremo derecho vía
                     .cbau-filters-group (margin-left:auto). */}
-                <div className="search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar eventos, camas, usuarios..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar eventos, camas, habitaciones, usuarios o ID de evento"
-                  />
-                </div>
+                <SearchField className="cb-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar eventos, camas, usuarios..." ariaLabel="Buscar eventos, camas, habitaciones, usuarios o ID de evento" />
 
                 <div className="cbau-filters-group">
                   <AreaSelector label="Tipo de evento" options={TIPOS_EVENTO} value={tipo} onChange={handleChangeTipo} />

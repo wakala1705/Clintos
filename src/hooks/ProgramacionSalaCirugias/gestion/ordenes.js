@@ -4,7 +4,6 @@
 export const ORIGEN_LABEL = {
   'consulta-externa': 'Consulta externa',
   internacion: 'Internación',
-  externa: 'Orden externa',
 };
 
 // Ambulatorio = no está hospitalizado: al programar se crea la admisión con

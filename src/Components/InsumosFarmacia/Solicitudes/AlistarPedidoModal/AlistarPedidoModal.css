@@ -119,7 +119,7 @@ html[data-theme="dark"] .mig-alistar-body::-webkit-scrollbar-thumb:hover{backgro
   padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
 }
 .mig-articulos-toolbar{display:flex;align-items:center;gap:10px;}
-/* Buscador único código/descripción (encargo explícito) -- `.search-field`
+/* Buscador único código/descripción (encargo explícito) -- `.mig-search`
    ya está definido en ../shared/shared.css (mismo recipiente que
    MovimientosToolbar). flex:1 (a diferencia del ancho fijo que tenía
    cuando compartía fila con el hint de la derecha) porque acá es el único

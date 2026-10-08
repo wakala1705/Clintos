@@ -21,7 +21,6 @@ test('armarChecklist: orden adjunta, imágenes solo si se requieren', () => {
 
 test('esAmbulatorio', () => {
   assert.equal(esAmbulatorio({ origen: 'internacion' }), false);
-  assert.equal(esAmbulatorio({ origen: 'externa' }), true);
   assert.equal(esAmbulatorio({ origen: 'consulta-externa' }), true);
 });
 
@@ -31,7 +30,7 @@ test('solicitud -> datos del wizard: precarga y vínculo', () => {
   assert.equal(datos.fechaInicio, `${s.fechaTentativa}T07:00`);
   assert.equal(datos.idAseguradora, 'Sura');
   assert.equal(datos.procedimientos.length, 1);
-  assert.match(datos.procedimientos[0].idCirugia, / - Colecistectomía laparoscópica$/);
+  assert.match(datos.procedimientos[0].idCirugia, / - Mastectomía radical modificada$/);
   assert.equal(datos.procedimientos[0].idCirujano, 'Dr. Andrés Villamizar');
   assert.equal(datos.noAutorizacion, '[N° autorización]');
   assert.deepEqual(

@@ -2,10 +2,11 @@
 
 import './MovimientosToolbar.css';
 import FilterListDropdown from '../FilterListDropdown/FilterListDropdown';
-import MovimientosFiltrosPopover from '../MovimientosFiltrosPopover/MovimientosFiltrosPopover';
 import VistaModoMenu from '../VistaModoMenu/VistaModoMenu';
-import { ESTADO_OPTIONS } from '@/hooks/InsumosFarmacia/mockSolicitudesData';
-import { LuSearch } from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
+import {
+  ESTADO_OPTIONS, TRNS_OPTIONS, TIPO_ARTICULO_OPTIONS, PROCEDENCIA_OPTIONS, BUSQUEDA_CAMPO_OPTIONS,
+} from '@/hooks/InsumosFarmacia/mockSolicitudesData';
 
 // Toolbar de una sola fila (buscador → filter-spacer → filtros), ver
 // AGENTS.md "Barra de filtros de listado". .filter-bar/.search-field/
@@ -16,24 +17,28 @@ import { LuSearch } from 'react-icons/lu';
 export default function MovimientosToolbar({
   filtros, onChange, modo, onModoChange,
 }) {
-  const activeFiltrosCount = (filtros.tipoArticulo !== 'todos' ? 1 : 0) + (filtros.procedencia !== 'todos' ? 1 : 0);
-
   return (
     <div className="filter-bar mig-toolbar">
-      <div className="search-field">
-        <LuSearch className="icon" />
-        <input
-          type="text"
-          placeholder="Buscar por consecutivo"
-          aria-label="Buscar por consecutivo"
-          value={filtros.noDoc}
-          onChange={(e) => onChange({ noDoc: e.target.value })}
-        />
-      </div>
+      <SearchField
+        fields={BUSQUEDA_CAMPO_OPTIONS}
+        field={filtros.campoBusqueda}
+        onChangeField={(v) => onChange({ campoBusqueda: v })}
+        value={filtros.busqueda}
+        onChange={(v) => onChange({ busqueda: v })}
+        ariaLabel="Buscar movimiento"
+      />
 
       <div className="filter-spacer" />
 
       <div className="filter-cluster">
+        <FilterListDropdown
+          label="TRNS"
+          showLabel
+          options={TRNS_OPTIONS}
+          value={filtros.trns}
+          onChange={(v) => onChange({ trns: v })}
+        />
+
         <FilterListDropdown
           label="Estado"
           options={ESTADO_OPTIONS}
@@ -41,10 +46,20 @@ export default function MovimientosToolbar({
           onChange={(v) => onChange({ estado: v })}
         />
 
-        <MovimientosFiltrosPopover
-          filtros={{ tipoArticulo: filtros.tipoArticulo, procedencia: filtros.procedencia }}
-          onApply={onChange}
-          activeCount={activeFiltrosCount}
+        <FilterListDropdown
+          label="Tipo artículo"
+          showLabel
+          options={TIPO_ARTICULO_OPTIONS}
+          value={filtros.tipoArticulo}
+          onChange={(v) => onChange({ tipoArticulo: v })}
+        />
+
+        <FilterListDropdown
+          label="Procedencia"
+          showLabel
+          options={PROCEDENCIA_OPTIONS}
+          value={filtros.procedencia}
+          onChange={(v) => onChange({ procedencia: v })}
         />
       </div>
 

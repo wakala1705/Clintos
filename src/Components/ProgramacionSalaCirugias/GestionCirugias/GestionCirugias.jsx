@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  LuCircleAlert, LuCircleCheck, LuClipboardList, LuClock, LuPlus, LuSearch,
-} from 'react-icons/lu';
+import { LuCircleAlert, LuCircleCheck, LuClipboardList, LuClock, LuPlus } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
 import './GestionCirugias.css';
@@ -30,8 +28,9 @@ import {
   datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/programacion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
-import { contarPorEstado, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import { contarPorEstado, filtrarSolicitudes, ordenarPorPrioridad } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const FILTROS_INICIALES = {
   busqueda: '', origen: 'todas', eps: 'todas', especialidad: 'todas', estado: 'todas',
 };
@@ -84,7 +83,7 @@ export default function GestionCirugias() {
   // Los indicadores cuentan sobre lo que dejan los demás filtros, así su
   // número coincide con las filas que aparecen al pulsarlos.
   const conteo = contarPorEstado(filtrarSolicitudes(solicitudes, efectivos, { ignorarEstado: true }));
-  const filas = filtrarSolicitudes(solicitudes, efectivos);
+  const filas = ordenarPorPrioridad(filtrarSolicitudes(solicitudes, efectivos));
   const seleccionada = solicitudes.find((s) => s.id === selectedId) ?? null;
   const hayFiltros = JSON.stringify(filtros) !== JSON.stringify(FILTROS_INICIALES);
 
@@ -204,16 +203,7 @@ export default function GestionCirugias() {
           <div className="gc-workspace">
             <section className="gc-lista" aria-label="Solicitudes de cirugía">
               <div className="filter-bar gc-toolbar">
-                <div className="search-field">
-                  <LuSearch className="icon" aria-hidden="true" />
-                  <input
-                    type="search"
-                    value={filtros.busqueda}
-                    onChange={(e) => setFiltro({ busqueda: e.target.value })}
-                    placeholder="Paciente, documento o procedimiento"
-                    aria-label="Buscar por paciente, documento o procedimiento"
-                  />
-                </div>
+                <SearchField className="psc-search" value={filtros.busqueda} onChange={(v) => setFiltro({ busqueda: v })} placeholder="Paciente, documento o procedimiento" ariaLabel="Buscar por paciente, documento o procedimiento" />
                 <span className="filter-spacer" />
                 <div className="filter-cluster">
                   <div className="gc-filtro">

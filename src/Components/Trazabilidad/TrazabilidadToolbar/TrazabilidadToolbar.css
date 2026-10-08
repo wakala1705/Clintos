@@ -1,4 +1,4 @@
-/* .filter-bar/.search-field/.filter-spacer/.filter-cluster: definidas en
+/* .filter-bar/.traz-search/.filter-spacer/.filter-cluster: definidas en
    ../shared/shared.css (importado desde Trazabilidad.jsx) — acá solo lo
    propio de este toolbar. */
 .traz-search-field{width:320px;flex-shrink:0;}

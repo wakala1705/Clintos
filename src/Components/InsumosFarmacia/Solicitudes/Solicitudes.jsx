@@ -26,7 +26,7 @@ const PAGE_SIZE = 15;
 
 const FILTROS_INICIALES = {
   tipo: 'debito', tipoArticulo: 'todos', procedencia: 'todos', estado: 'sin-confirmar', trns: 'sal',
-  noDoc: '', noAdmision: '', noPrestacion: '',
+  campoBusqueda: 'consecutivo', busqueda: '',
 };
 
 function movimientoCoincide(m, filtros) {
@@ -35,9 +35,8 @@ function movimientoCoincide(m, filtros) {
   if (filtros.procedencia !== 'todos' && m.procedenciaTipo !== filtros.procedencia) return false;
   if (filtros.estado !== 'todos' && m.estado !== filtros.estado) return false;
   if (m.trns !== filtros.trns) return false;
-  if (filtros.noDoc && !m.consecutivo.toLowerCase().includes(filtros.noDoc.trim().toLowerCase())) return false;
-  if (filtros.noAdmision && !m.noAdmision.includes(filtros.noAdmision.trim())) return false;
-  if (filtros.noPrestacion && !m.noPrestacion.includes(filtros.noPrestacion.trim())) return false;
+  const q = filtros.busqueda.trim().toLowerCase();
+  if (q && !String(m[filtros.campoBusqueda] ?? '').toLowerCase().includes(q)) return false;
   return true;
 }
 

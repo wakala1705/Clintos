@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, resumenOcupacion,
+  canastaPedida, canastaVinculada, conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, rangoFechas, resumenOcupacion,
 } from '../panel.js';
 
 const c = (id, salaId, estado, horaInicio, horaFin, extra = {}) => ({
@@ -102,6 +102,40 @@ test('filasACsv: cabecera, comillas escapadas y estado visual', () => {
     () => 'Quirófano #1',
   );
   const [cab, fila] = csv.replace('﻿', '').split('\r\n');
-  assert.equal(cab, '"Hora","Sala","Paciente","Documento","Procedimiento","Anestesia","Cirujano","Duración (min)","Estado"');
-  assert.equal(fila, '"07:00","Quirófano #1","Paciente 1","CC 1","Cole ""lap""","General","Dr. X","90","Finalizada"');
+  assert.equal(cab, '"Hora","Sala","Paciente","Documento","Procedimiento","Anestesia","Cirujano","Duración (min)","Canasta vinculada","Canasta pedida","Estado"');
+  assert.equal(fila, '"07:00","Quirófano #1","Paciente 1","CC 1","Cole ""lap""","General","Dr. X","90","No vinculada","—","Finalizada"');
+});
+
+test('canastaVinculada/canastaPedida: sin canasta, sin pedir y pedida a farmacia', () => {
+  const sin = c('1', 'a', 'programada', '07:00', '08:00');
+  assert.equal(canastaVinculada(sin), null);
+  assert.equal(canastaPedida(sin), null);
+
+  const items = [{ nombre: 'Gasas', cantidad: 2, estado: 'disponible' }];
+  const sinPedir = c('2', 'a', 'programada', '07:00', '08:00', { canasta: { nombre: 'Canasta X', items } });
+  assert.deepEqual(canastaVinculada(sinPedir), { nombre: 'Canasta X', items: 1 });
+  assert.deepEqual(canastaPedida(sinPedir), { estado: 'sin-solicitar', label: 'No pedida' });
+
+  const pedida = c('3', 'a', 'programada', '07:00', '08:00', {
+    canasta: { nombre: 'Canasta X', items: [{ ...items[0], solicitudFarmacia: 'solicitado', preparado: false }] },
+    farmacia: { numeroPedido: '4590' },
+  });
+  assert.deepEqual(canastaPedida(pedida), { estado: 'en-preparacion', label: 'En preparación' });
+});
+
+test('rangoFechas: hoy, semana (lunes a domingo) y mes', () => {
+  assert.deepEqual(rangoFechas('hoy', AHORA), { inicio: '2026-10-02', fin: '2026-10-02', dias: 1 });
+  assert.deepEqual(rangoFechas('semana', AHORA), { inicio: '2026-09-28', fin: '2026-10-04', dias: 7 });
+  assert.deepEqual(rangoFechas('mes', AHORA), { inicio: '2026-10-01', fin: '2026-10-31', dias: 31 });
+});
+
+test('estadoVisual: un día anterior abierto es retrasada y uno futuro es pendiente', () => {
+  assert.equal(estadoVisual(c('1', 'a', 'programada', '09:00', '10:00', { fecha: '2026-10-01' }), AHORA), 'retrasada');
+  assert.equal(estadoVisual(c('2', 'a', 'programada', '07:00', '08:00', { fecha: '2026-10-03' }), AHORA), 'pendiente');
+});
+
+test('resumenOcupacion: la capacidad escala con los días del rango', () => {
+  const una = [c('1', 'a', 'programada', '07:00', '19:00')];
+  assert.equal(resumenOcupacion(una, SALAS, 1).ocupacionPct, 50);
+  assert.equal(resumenOcupacion(una, SALAS, 7).ocupacionPct, 7);
 });

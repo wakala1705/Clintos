@@ -49,9 +49,18 @@ export const ESTADO_OPTIONS = [
   { value: 'todos', label: 'Todos' },
 ];
 
+// Campo por el que busca el buscador del toolbar; `value` es la clave del
+// movimiento sobre la que se compara (ver movimientoCoincide en Solicitudes.jsx).
+export const BUSQUEDA_CAMPO_OPTIONS = [
+  { value: 'consecutivo', label: 'N° de documento' },
+  { value: 'noAdmision', label: 'N° de admisión' },
+  { value: 'noPrestacion', label: 'N° de prestación' },
+];
+
 export const TRNS_OPTIONS = [
-  { value: 'sal', label: 'SAL' },
-  { value: 'ent', label: 'ENT' },
+  { value: 'sal', label: 'SAL - Salidas Asistenciales' },
+  { value: 'dev', label: 'DEV - Devoluciones' },
+  { value: 'tra', label: 'TRA - Traslados' },
 ];
 
 // 'dd/mm/aaaa' -- distinto del formatFechaClasica de mockFacturasData.js
@@ -415,7 +424,7 @@ const MOVIMIENTOS_BASE = [
     // Trns distinto del default ('sal') a propósito -- ejercita el filtro
     // Trns. (con Trns.=SAL este movimiento queda oculto por defecto).
     estado: 'sin-confirmar',
-    trns: 'ent',
+    trns: 'dev',
     fechaContable: '2026-07-23',
     confirmo: '',
     permitirEditarCostos: false,

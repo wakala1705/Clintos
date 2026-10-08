@@ -10,9 +10,8 @@ import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterB
 import AreaSelector from '@/Components/AreaSelector/AreaSelector';
 import DetalleAdmisionModal from '@/Components/DetalleAdmisionModal/DetalleAdmisionModal';
 import { getDetalleAdmision } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
-import {
-  LuGrid2X2, LuMaximize2, LuMinimize2, LuSearch,
-} from 'react-icons/lu';
+import SearchField from '@/Components/SearchField/SearchField';
+import { LuGrid2X2, LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 
 const FILTROS = [
   { value: 'todos', label: 'Todos' },
@@ -67,16 +66,7 @@ export default function PatientsPanel({
   return (
     <section className="card pg-patients-card">
       <div className="pg-patients-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar paciente, habitación..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Buscar paciente u habitación"
-          />
-        </div>
+        <SearchField className="ge-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar paciente, habitación..." ariaLabel="Buscar paciente u habitación" />
 
         <div className="filter-spacer" />
 

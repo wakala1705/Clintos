@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { LuPlus, LuSearch, LuTrash2 } from 'react-icons/lu';
+import { LuPlus, LuTrash2 } from 'react-icons/lu';
 import './PasoProcedimientos.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DatePicker from '@/Components/DatePicker/DatePicker';
@@ -7,6 +7,7 @@ import EstadoChip from '../../GestionCirugias/EstadoChip/EstadoChip';
 import { CATALOGO_CUPS, COBERTURA_LABEL, TONO_COBERTURA } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
 import { LATERALIDAD_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const tiempoLabel = (min) => {
   const h = Math.floor(min / 60);
   const m = min % 60;
@@ -47,18 +48,7 @@ export default function PasoProcedimientos({
 
       <div className="form-field">
         <label htmlFor="ro-cups">Buscar por código o nombre</label>
-        <div className="search-field pr-buscador">
-          <LuSearch className="icon" aria-hidden="true" />
-          <input
-            id="ro-cups"
-            ref={buscadorRef}
-            type="search"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Ej. colecistectomía"
-            autoComplete="off"
-          />
-        </div>
+        <SearchField className="psc-search pr-buscador" value={busqueda} onChange={(v) => setBusqueda(v)} id="ro-cups" ref={buscadorRef} placeholder="Ej. colecistectomía" autoComplete="off" />
         {q && (
           <ul className="pr-resultados" aria-label="Resultados de la búsqueda">
             {resultados.length === 0 && <li className="pr-sin">Sin resultados para “{busqueda}”.</li>}

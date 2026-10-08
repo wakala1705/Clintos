@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { LuSearch } from 'react-icons/lu';
+
 import './TriagePanel.css';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import TriageResumen from './TriageResumen/TriageResumen';
@@ -10,6 +10,7 @@ import ClasificadosTable from './ClasificadosTable/ClasificadosTable';
 import TriageFooter from './TriageFooter/TriageFooter';
 import { PAGE_SIZE, TABS } from '@/hooks/Triage/triageData';
 
+import SearchField from '@/Components/SearchField/SearchField';
 // Card del registro. Barra de una sola fila (AGENTS.md "Barra de filtros de
 // listado"): buscador a la izquierda, .filter-spacer y las pestañas
 // En espera / Clasificados (con su conteo) a la derecha. Debajo, el resumen
@@ -41,16 +42,7 @@ export default function TriagePanel({ enEspera, clasificados, onIniciar }) {
   return (
     <section className="card tg-panel">
       <div className="filter-bar tg-toolbar">
-        <div className="search-field">
-          <LuSearch className="icon" />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o documento..."
-            value={query}
-            onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-            aria-label="Buscar por nombre o documento"
-          />
-        </div>
+        <SearchField className="tg-search" value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Buscar por nombre o documento..." ariaLabel="Buscar por nombre o documento" />
 
         <div className="filter-spacer" />
 

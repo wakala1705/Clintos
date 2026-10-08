@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import './FiltroPickerModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes para que la búsqueda encuentre "pediatria" al escribir
 // "pediatría" o viceversa — mismo helper que SelectorModal.jsx de
@@ -56,16 +57,7 @@ export default function FiltroPickerModal({
       <div className="acp-modal">
         <ModalHeader title={title} onClose={onClose} />
 
-        <div className="acp-search">
-          <LuSearch className="icon" aria-hidden="true" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
-            aria-label={searchPlaceholder}
-          />
-        </div>
+        <SearchField className="acp-search" value={query} onChange={(v) => setQuery(v)} placeholder={searchPlaceholder} ariaLabel={searchPlaceholder} />
 
         <div className="acp-table">
           <div className="acp-row acp-row-head">

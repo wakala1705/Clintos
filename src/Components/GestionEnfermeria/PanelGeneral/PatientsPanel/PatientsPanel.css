@@ -1,4 +1,4 @@
-/* .card (base)/.chip-group.segmented/.chip-filter/.filter-spacer/.search-field/
+/* .card (base)/.chip-group.segmented/.chip-filter/.filter-spacer/.ge-search/
    .btn: definidas en ../../shared/shared.css (shared del feature) — acá solo
    el layout propio de esta card. */
 .pg-patients-toolbar{
@@ -6,7 +6,7 @@
 }
 /* Buscador flexible (180–260px): con el panel de secciones abierto, cede
    ancho antes de que el botón expandir salte a una segunda fila. */
-.pg-patients-toolbar .search-field{flex:1 1 180px;min-width:180px;max-width:260px;}
+.pg-patients-toolbar .ge-search{flex:1 1 180px;min-width:180px;max-width:260px;}
 
 /* Expandir/contraer tabla — botón de ícono cuadrado con el mismo borde,
    radio y alto que "Mapa de camas" a su izquierda. Activo (expandida) con

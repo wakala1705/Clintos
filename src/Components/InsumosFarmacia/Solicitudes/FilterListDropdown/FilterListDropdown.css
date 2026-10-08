@@ -1,4 +1,4 @@
 /* .filters-more-btn/.filter-popover-wrap: definidas en ../shared/shared.css.
    Apariencia del panel/ítems: @/Components/DropdownPanel (ver AGENTS.md
    "Dropdowns") -- acá solo la posición. */
-.fld-dropdown{position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:200px;min-width:0;}
+.fld-dropdown{position:absolute;top:calc(100% + 8px);right:0;z-index:var(--z-popover);width:max-content;min-width:200px;}

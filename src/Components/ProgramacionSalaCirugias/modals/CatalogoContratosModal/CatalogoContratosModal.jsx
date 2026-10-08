@@ -5,7 +5,8 @@ import './CatalogoContratosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { CONTRATOS_CATALOGO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que CatalogoEquiposModal.jsx/
 // CatalogoInsumosModal.jsx (no compartido entre los 3, ver AGENTS.md
@@ -60,16 +61,7 @@ export default function CatalogoContratosModal({ onSelect, onClose }) {
           closeLabel="Cerrar búsqueda de contrato"
         />
         <div className="modal-body cctm-body">
-          <div className="cctm-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por Id. o descripción del contrato"
-              aria-label="Buscar por Id. o descripción del contrato"
-            />
-          </div>
+          <SearchField className="cctm-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por Id. o descripción del contrato" ariaLabel="Buscar por Id. o descripción del contrato" />
 
           <div className="cctm-table">
             <div className="cctm-row cctm-row-head">

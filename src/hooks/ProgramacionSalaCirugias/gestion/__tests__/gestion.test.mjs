@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  contarPorEstado, enmascararDocumento, evaluarSolicitud, filtrarSolicitudes, mensajeFaltantes,
+  contarPorEstado, enmascararDocumento, evaluarSolicitud, filtrarSolicitudes, mensajeFaltantes, ordenarPorPrioridad,
 } from '../gestion.js';
 
 const item = (estado, obligatorio = true) => ({ estado, obligatorio, detalle: '' });
@@ -62,7 +62,7 @@ test('filtra por búsqueda sin tildes, eps y estado; cuenta por estado', () => {
   assert.equal(filtrarSolicitudes(lista, { ...base, busqueda: 'CATARATA' }).length, 2);
   assert.equal(filtrarSolicitudes(lista, { ...base, busqueda: '41667' }).length, 2);
   assert.equal(filtrarSolicitudes(lista, { ...base, eps: 'Sanitas' }).length, 1);
-  assert.equal(filtrarSolicitudes([sol({}, { origen: 'externa' }), sol()], { ...base, origen: 'externa' }).length, 1);
+  assert.equal(filtrarSolicitudes([sol({}, { origen: 'internacion' }), sol()], { ...base, origen: 'internacion' }).length, 1);
   assert.equal(filtrarSolicitudes(lista, { ...base, estado: 'pendientes' }).length, 1);
   assert.equal(filtrarSolicitudes(lista, { ...base, estado: 'pendientes' }, { ignorarEstado: true }).length, 2);
   assert.deepEqual(contarPorEstado(lista), {
@@ -80,4 +80,18 @@ test('estadoEstudios resume los dos subítems; accionItem según estado', async 
   assert.equal(accionItem('autorizacion', 'vencida'), 'Solicitar renovación');
   assert.equal(accionItem('orden', 'pendiente'), 'Registrar orden médica');
   assert.equal(accionItem('imagenes', 'no-requerido'), null);
+});
+
+test('ordenarPorPrioridad: prioritarias, luego primera vez, luego el resto (estable)', () => {
+  const ids = (l) => l.map((s) => s.id);
+  const lista = [
+    { id: 'a' },
+    { id: 'b', primeraVez: true },
+    { id: 'c', prioritaria: true },
+    { id: 'd', prioritaria: true, primeraVez: true },
+    { id: 'e' },
+    { id: 'f', primeraVez: true },
+  ];
+  assert.deepEqual(ids(ordenarPorPrioridad(lista)), ['d', 'c', 'b', 'f', 'a', 'e']);
+  assert.deepEqual(ids(lista), ['a', 'b', 'c', 'd', 'e', 'f']);
 });

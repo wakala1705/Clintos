@@ -6,11 +6,11 @@
    bug ya visto con .pf-checklist.pf-grid-4 en PlantillaCrecimt2.css). */
 .modal-card.pm-card{width:720px;}
 .pm-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
-/* Compuesto (0,2,0) a propósito: .search-field (HistoriaClinica.css) fija
+/* Compuesto (0,2,0) a propósito: .hc-search (HistoriaClinica.css) fija
    width:320px con la misma especificidad que ".pm-search" solo, y cuál
    gana dependía del orden de inyección de las hojas — mismo motivo que
    .modal-card.pm-card arriba. */
-.search-field.pm-search{width:100%;}
+.hc-search.pm-search{width:100%;}
 
 .pm-table-wrap{
   border:1px solid var(--border);border-radius:var(--radius);

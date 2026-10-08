@@ -5,7 +5,8 @@ import './AreaFuncionalPickerModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import { AREAS_FUNCIONALES_CATALOGO } from '@/hooks/AreaFuncional/areaFuncional';
-import { LuSearch } from 'react-icons/lu';
+
+import SearchField from '@/Components/SearchField/SearchField';
 
 // Quita tildes -- mismo helper que AllModulesModal.jsx/CatalogoAseguradorasModal.jsx
 // (no compartido entre features, ver AGENTS.md "Component organization").
@@ -66,16 +67,7 @@ export default function AreaFuncionalPickerModal({ area, onSelect, onClose }) {
         />
 
         <div className="afp-body">
-          <div className="afp-search">
-            <LuSearch className="icon" aria-hidden="true" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar área funcional por ID o descripción..."
-              aria-label="Buscar área funcional por ID o descripción"
-            />
-          </div>
+          <SearchField className="afp-search" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar área funcional por ID o descripción..." ariaLabel="Buscar área funcional por ID o descripción" />
 
           <div className="afp-table">
             <div className="afp-row afp-row-head">

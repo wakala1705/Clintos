@@ -14,8 +14,9 @@ import FacturaListPane from './FacturaListPane/FacturaListPane';
 import FacturaDetallePanel from './FacturaDetallePanel/FacturaDetallePanel';
 import FacturaVistaClasica from './FacturaVistaClasica/FacturaVistaClasica';
 import FacturaAgregarModalClasico from './FacturaVistaClasica/FacturaAgregarModalClasico/FacturaAgregarModalClasico';
-import { LuPlus, LuSearch } from 'react-icons/lu';
+import { LuPlus } from 'react-icons/lu';
 
+import SearchField from '@/Components/SearchField/SearchField';
 const PAGE_SIZE = 15;
 const FILTROS_INICIALES = { clase: 'todas', tipo: 'todas', desde: '', hasta: '' };
 
@@ -140,16 +141,7 @@ export default function Facturacion() {
           ) : (
             <div className="card fact-card-shell">
               <div className="filter-bar">
-                <div className="search-field fact-search-field">
-                  <LuSearch className="icon" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por No. factura, tercero o afiliado"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Buscar por número de factura, tercero o afiliado"
-                  />
-                </div>
+                <SearchField className="fact-search fact-search-field" value={query} onChange={(v) => setQuery(v)} placeholder="Buscar por No. factura, tercero o afiliado" ariaLabel="Buscar por número de factura, tercero o afiliado" />
 
                 <div className="filter-spacer" />
 

@@ -130,22 +130,14 @@ body{
 }
 
 /* ---------- SEARCH FIELD / CHIPS DE FILTRO ----------
-   Mismo patrón .search-field / .chip-group.segmented que
+   Mismo patrón .vac-search / .chip-group.segmented que
    HistoriaClinica.css / SolicitudConsumo/shared/shared.css /
    GestionEnfermeria/shared/shared.css — cada feature de nivel superior es
    dueña de su copia (ver AGENTS.md). Los chips en sí son
    @/Components/ChipFilter/ChipFilter. Reemplaza los .vac-search-field/
    .vac-quick-filter-btn que tenía esta pantalla, para que la barra de
    búsqueda y el segmented control se vean idénticos al resto del proyecto. */
-.search-field{position:relative;width:320px;flex-shrink:0;}
-.search-field .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink-500);width:17px;height:17px;}
-.search-field input{
-  width:100%;height:var(--input-md);padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:var(--fs-base);background:var(--bg);
-}
-.search-field input::placeholder{color:var(--ink-400);}
-.search-field input:focus{outline:2px solid var(--primary);outline-offset:1px;background:var(--surface);}
-
+.vac-search{width:320px;flex-shrink:0;}
 .chip-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 
 .chip-group.segmented{
@@ -155,8 +147,6 @@ body{
 }
 
 html[data-theme="dark"] .chip-group.segmented{background:#0c0f17;}
-
-html[data-theme="dark"] .search-field input:focus{background:var(--surface);}
 
 /* ---------- MODAL scaffolding ----------
    Mismo patrón que HistoriaClinica/shared/shared.css / GestionEnfermeria/
