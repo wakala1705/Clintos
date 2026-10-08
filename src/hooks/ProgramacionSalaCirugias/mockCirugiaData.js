@@ -4,6 +4,8 @@
 // array module-level + funciones que lo reemplazan (nunca mutado in
 // place), se resetea al recargar la página.
 
+import { INSUMOS_HOY, INSUMOS_ONCO } from './insumosOncologia.js';
+
 export const SEDES = [
   { value: '02', label: '02 - Sede Norte' },
   { value: '01', label: '01 - Sede Central' },
@@ -743,6 +745,10 @@ export const SEMANA_ANCLA = new Date(2026, 7, 31);
 // eran literales de 2026-09-29 y la pantalla abría vacía al día siguiente).
 const HOY_ISO = fechaISO(new Date());
 
+// Igual que itemsDe, pero desde una lista [nombre, cantidad] (ver insumosOncologia.js).
+const itemsDeLista = (lista, fn) => lista.map(([nombre, cantidad], n) => ({
+  nombre, cantidad, estado: 'disponible', ...fn({ nombre, cantidad }, n),
+}));
 const itemsDe = (catalogo, fn) => CANASTAS_CATALOGO[catalogo].items.map((i, n) => ({ ...i, ...fn(i, n) }));
 
 // Cirugía de sede '02'/sala 'qx-1' de hoy con los datos mínimos que consumen
@@ -1123,7 +1129,7 @@ let CIRUGIAS = [
     // Recibida completa y cirugía ya realizada: queda el consumo por registrar.
     canasta: {
       nombre: 'Cirugía laparoscópica oncológica',
-      items: itemsDe(0, (i) => ({
+      items: itemsDeLista(INSUMOS_HOY[12353], (i) => ({
         solicitudFarmacia: 'entregado', preparado: true, despachado: i.cantidad, recibido: i.cantidad,
       })),
       recepcion: { usuario: 'Camilo Grondona', fecha: `${HOY_ISO}T06:48`, conNovedades: false },
@@ -1167,7 +1173,7 @@ let CIRUGIAS = [
     ],
     // Sin `solicitudFarmacia` -- sin solicitar todavía, solo visible bajo la
     // pestaña "Todas".
-    canasta: { nombre: 'Colostomía derivativa', items: CANASTAS_CATALOGO[1].items.map((i) => ({ ...i })) },
+    canasta: { nombre: 'Colostomía derivativa', items: itemsDeLista(INSUMOS_HOY[12354], () => ({})) },
     farmacia: {
       numeroPedido: '4591', estado: 'en-preparacion', fechaSolicitud: '2026-09-29T09:45',
       medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Metronidazol', dosis: '500mg IV' }],
@@ -1208,7 +1214,7 @@ let CIRUGIAS = [
     // Recibida con novedades: llegó 1 unidad menos de gasas.
     canasta: {
       nombre: 'Cirugía de mama conservadora',
-      items: itemsDe(2, (i) => {
+      items: itemsDeLista(INSUMOS_HOY[12355], (i) => {
         const falta = i.nombre === 'Gasas estériles';
         return {
           solicitudFarmacia: 'entregado',
@@ -1245,7 +1251,7 @@ let CIRUGIAS = [
     horaFin: '12:30',
     canasta: {
       nombre: 'Orquiectomía radical inguinal',
-      items: itemsDe(2, (i) => ({
+      items: itemsDeLista(INSUMOS_HOY[12356], (i) => ({
         solicitudFarmacia: 'solicitado', preparado: true, despachado: i.nombre === 'Gasas estériles' ? i.cantidad - 1 : i.cantidad,
       })),
     },
@@ -1292,11 +1298,7 @@ let CIRUGIAS = [
     ],
     canasta: {
       nombre: 'Colecistectomía radical + resección hepática',
-      items: [
-        ['Bisturí ultrasónico', 1], ['Trocar 10mm', 2], ['Separador hepático', 1], ['Pinza Maryland', 1], ['Clips de titanio', 6],
-        ['Bolsa de extracción', 1], ['Catéter de colangiografía', 1], ['Medio de contraste yodado 20ml', 1],
-        ['Sellante de fibrina', 2], ['Sutura Prolene 4-0', 2], ['Sutura Vicryl 2-0', 3], ['Gasas estériles', 12],
-      ].map(([nombre, cantidad]) => ({ nombre, cantidad, estado: 'disponible' })),
+      items: INSUMOS_HOY[12361].map(([nombre, cantidad]) => ({ nombre, cantidad, estado: 'disponible' })),
     },
     farmacia: {
       numeroPedido: '4601', estado: 'pendiente', fechaSolicitud: `${HOY_ISO}T08:00`,
@@ -1322,7 +1324,7 @@ let CIRUGIAS = [
     horaFin: '15:00',
     canasta: {
       nombre: 'Resección de tumor de partes blandas',
-      items: itemsDe(3, (i) => ({ solicitudFarmacia: 'solicitado', preparado: true, despachado: i.cantidad })),
+      items: itemsDeLista(INSUMOS_HOY[12359], (i) => ({ solicitudFarmacia: 'solicitado', preparado: true, despachado: i.cantidad })),
     },
     farmacia: {
       numeroPedido: '4596', estado: 'listo', fechaSolicitud: `${HOY_ISO}T07:55`, medicamentos: [{ nombre: 'Ketorolaco', dosis: '30mg IV' }],
@@ -1346,7 +1348,7 @@ let CIRUGIAS = [
     horaFin: '19:00',
     canasta: {
       nombre: 'Resección ileocecal laparoscópica',
-      items: itemsDe(1, (_, n) => ({ solicitudFarmacia: 'solicitado', preparado: n < 3 })),
+      items: itemsDeLista(INSUMOS_HOY[12357], (_, n) => ({ solicitudFarmacia: 'solicitado', preparado: n < 3 })),
     },
     farmacia: {
       numeroPedido: '4594', estado: 'en-preparacion', fechaSolicitud: `${HOY_ISO}T09:45`, medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
@@ -1371,10 +1373,7 @@ let CIRUGIAS = [
     horaFin: '10:00',
     canasta: {
       nombre: 'Histerectomía radical oncológica',
-      items: [
-        ['Sutura Vicryl 1', 4], ['Sutura Vicryl 0', 3], ['Compresas quirúrgicas', 4], ['Gasas estériles', 5],
-        ['Hoja de bisturí #22', 2], ['Sonda Foley 16 Fr', 1], ['Bolsa recolectora de orina', 1],
-      ].map(([nombre, cantidad]) => ({
+      items: INSUMOS_HOY[12358].map(([nombre, cantidad]) => ({
         nombre, cantidad, estado: 'disponible', solicitudFarmacia: 'solicitado', preparado: false,
       })),
     },
@@ -1516,7 +1515,7 @@ function minutosEntre(horaInicio, horaFin) {
 function cirugiaOnco({
   id, dia, salaId = 'qx-1', horaInicio, horaFin, nombre, documento, edad, sexo, aseguradora = 'Sura EPS', procedimiento, dx, servicio = 'Oncología quirúrgica',
   cirujano, ayudante, anestesiologo = 'Dra. Ana López', tipoAnestesia = 'General', asa = 'Clase 2', complejidad = 'Alta', notas = '', adicionales = [],
-  equipos = [], insumos = [], estado, tipoCirugia, canastaRecibida = false, ...resto
+  equipos = [], insumos = INSUMOS_ONCO[id] ?? [], estado, tipoCirugia, canastaRecibida = false, ...resto
 }) {
   const fecha = fechaISO(addDias(LUNES_SEMANA, dia));
   const par = Number(id) % 2 === 0;
@@ -1571,9 +1570,6 @@ const EQ_CAUTERIO = ['Bisturí eléctrico', 'Energía quirúrgica', 'EQ-0102'];
 const EQ_MONITOR = ['Monitor de signos vitales', 'Monitoreo', 'EQ-0231'];
 const EQ_MESA = ['Mesa quirúrgica eléctrica', 'Soporte quirúrgico', 'EQ-0560'];
 const EQ_ARCO = ['Arco en C', 'Imagenología', 'EQ-0310'];
-const INS_BASE = [['Gasas estériles', 12], ['Compresas quirúrgicas', 6], ['Sutura Vicryl 2-0', 4], ['Hoja de bisturí #10', 2]];
-const INS_LAPARO = [['Trocar 12mm', 2], ['Trocar 5mm', 3], ['Aguja de Veress', 1], ['Bolsa de extracción', 1], ['Clips de titanio', 8], ...INS_BASE];
-
 const SEMANA_ONCOLOGIA = [
   // ----- Lunes -----
   cirugiaOnco({
@@ -1581,58 +1577,58 @@ const SEMANA_ONCOLOGIA = [
     procedimiento: 'Mastectomía radical modificada', dx: 'C509 - TUMOR MALIGNO DE LA MAMA, PARTE NO ESPECIFICADA', servicio: 'Mastología',
     cirujano: 'Dra. Marcela Ospina', ayudante: 'Dr. Felipe Ortiz', notas: 'Carcinoma ductal infiltrante T2N1, posterior a neoadyuvancia.',
     adicionales: [{ nombre: 'Biopsia de ganglio centinela', duracionMin: 45, notas: 'Con azul de metileno y radiotrazador.' }],
-    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: [['Dren de succión tipo Hemovac # 14', 2], ['Grapadora de piel 35 W', 1], ...INS_BASE],
+    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12402', dia: 0, horaInicio: '11:30', horaFin: '13:30', nombre: 'Luz Marina Cárdenas', documento: 'CC 51.874.220', edad: 48, sexo: 'Femenino',
     aseguradora: 'Nueva EPS', procedimiento: 'Cuadrantectomía con ganglio centinela', dx: 'C504 - TUMOR MALIGNO DEL CUADRANTE SUPERIOR EXTERNO DE LA MAMA',
     servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', asa: 'Clase 2', complejidad: 'Media', notas: 'Cirugía conservadora, marcaje con arpón.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR], insumos: INS_BASE,
+    equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12403', dia: 0, salaId: 'qx-2', horaInicio: '07:00', horaFin: '12:00', nombre: 'Hernán Darío Quintero', documento: 'CC 79.115.640', edad: 64, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Gastrectomía subtotal con linfadenectomía D2', dx: 'C169 - TUMOR MALIGNO DEL ESTOMAGO, PARTE NO ESPECIFICADA',
     cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
     notas: 'Adenocarcinoma gástrico antral T3N0, reconstrucción en Y de Roux.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
-    insumos: [['Grapadora lineal cortante 60mm', 3], ['Grapadora circular 25mm', 1], ...INS_BASE],
+    
   }),
   cirugiaOnco({
     id: '12404', dia: 0, salaId: 'qx-2', horaInicio: '14:00', horaFin: '17:00', nombre: 'Rosa Elvira Barrera', documento: 'CC 20.456.911', edad: 69, sexo: 'Femenino',
     procedimiento: 'Hemicolectomía derecha laparoscópica', dx: 'C182 - TUMOR MALIGNO DEL COLON ASCENDENTE', cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz',
     anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Adenocarcinoma de ciego, anastomosis ileocólica intracorpórea.',
-    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], insumos: INS_LAPARO,
+    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12405', dia: 0, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Jairo Alberto Pinzón', documento: 'CC 80.223.457', edad: 58, sexo: 'Masculino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
     cirujano: 'Dr. Héctor Villamizar', anestesiologo: 'Dra. Ana López', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR],
-    insumos: [['Reservorio venoso implantable', 1], ['Aguja de Huber', 1], ['Guía metálica 0.035', 1], ['Apósito transparente 10x12cm', 2]],
+    
   }),
   // ----- Martes -----
   cirugiaOnco({
     id: '12406', dia: 1, horaInicio: '07:00', horaFin: '11:00', nombre: 'Sandra Milena Ibáñez', documento: 'CC 52.730.184', edad: 43, sexo: 'Femenino',
     procedimiento: 'Tiroidectomía total con vaciamiento central', dx: 'C73 - TUMOR MALIGNO DE LA GLANDULA TIROIDES', servicio: 'Cabeza y cuello',
     cirujano: 'Dr. Héctor Villamizar', ayudante: 'Dr. Felipe Ortiz', asa: 'Clase 2', notas: 'Carcinoma papilar con metástasis ganglionares nivel VI; neuromonitoreo recurrencial.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: [['Electrodo de neuromonitoreo', 1], ['Dren de succión tipo Hemovac # 14', 1], ...INS_BASE],
+    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12407', dia: 1, horaInicio: '12:30', horaFin: '14:00', nombre: 'Álvaro José Londoño', documento: 'CC 70.552.138', edad: 61, sexo: 'Masculino',
     procedimiento: 'Resección amplia de melanoma con ganglio centinela', dx: 'C435 - MELANOMA MALIGNO DEL TRONCO', servicio: 'Cabeza y cuello',
     cirujano: 'Dr. Héctor Villamizar', asa: 'Clase 2', complejidad: 'Media', notas: 'Breslow 2.1 mm, márgenes de 2 cm; linfogammagrafía previa.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR], insumos: INS_BASE,
+    equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12408', dia: 1, salaId: 'qx-2', horaInicio: '07:30', horaFin: '13:30', nombre: 'Orlando Enrique Tafur', documento: 'CC 17.331.905', edad: 66, sexo: 'Masculino',
     aseguradora: 'Coomeva EPS', procedimiento: 'Duodenopancreatectomía cefálica (Whipple)', dx: 'C250 - TUMOR MALIGNO DE LA CABEZA DEL PANCREAS',
     cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
     notas: 'Adenocarcinoma ductal resecable; ictericia drenada con stent biliar previo.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
-    insumos: [['Grapadora lineal cortante 60mm', 2], ['Dren Jackson-Pratt', 3], ['Sutura PDS 5-0', 3], ...INS_BASE],
+    
   }),
   cirugiaOnco({
     id: '12409', dia: 1, salaId: 'gastroenterologia', horaInicio: '08:00', horaFin: '09:00', nombre: 'Beatriz Helena Caicedo', documento: 'CC 38.992.601', edad: 59, sexo: 'Femenino',
     procedimiento: 'Colonoscopia total con polipectomía', dx: 'D126 - TUMOR BENIGNO DEL COLON, SIN OTRA ESPECIFICACION', servicio: 'Gastroenterología',
     cirujano: 'Dr. Andrés López', anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Seguimiento posterior a resección de adenocarcinoma de sigmoide.',
-    equipos: [EQ_MONITOR], insumos: [['Asa de polipectomía', 1], ['Pinza de biopsia', 2]],
+    equipos: [EQ_MONITOR], 
   }),
   // ----- Miércoles -----
   cirugiaOnco({
@@ -1640,50 +1636,50 @@ const SEMANA_ONCOLOGIA = [
     aseguradora: 'Nueva EPS', procedimiento: 'Histerectomía radical (Wertheim-Meigs)', dx: 'C539 - TUMOR MALIGNO DEL CUELLO DEL UTERO, SIN OTRA ESPECIFICACION',
     servicio: 'Ginecología oncológica', cirujano: 'Dra. Lucía Ferrer', ayudante: 'Dr. Felipe Ortiz', estado: 'cancelada',
     motivoCancelacion: 'Neutropenia posquimioterapia: se aplaza hasta recuperación hematológica y nueva valoración por hematología oncológica.',
-    notas: 'Carcinoma escamocelular estadio IB2.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: INS_BASE,
+    notas: 'Carcinoma escamocelular estadio IB2.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12411', dia: 2, horaInicio: '11:30', horaFin: '15:00', nombre: 'Efraín Castellanos', documento: 'CC 19.440.275', edad: 63, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Nefrectomía radical laparoscópica', dx: 'C649 - TUMOR MALIGNO DEL RIÑON, EXCEPTO DE LA PELVIS RENAL',
     servicio: 'Urología oncológica', cirujano: 'Dr. Jorge Acosta', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
-    notas: 'Masa renal derecha de 6 cm (T1b), carcinoma de células claras.', equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], insumos: INS_LAPARO,
+    notas: 'Masa renal derecha de 6 cm (T1b), carcinoma de células claras.', equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12412', dia: 2, salaId: 'qx-2', horaInicio: '07:00', horaFin: '11:00', nombre: 'Nelson Rafael Pardo', documento: 'CC 91.205.664', edad: 57, sexo: 'Masculino',
     procedimiento: 'Resección anterior baja de recto con ileostomía de protección', dx: 'C20 - TUMOR MALIGNO DEL RECTO', cirujano: 'Dr. Ricardo Salamanca',
     ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Posterior a quimiorradioterapia neoadyuvante, escisión total del mesorrecto.',
-    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], insumos: [['Grapadora circular 29mm', 1], ['Bolsa de ileostomía', 2], ...INS_LAPARO],
+    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12413', dia: 2, salaId: 'qx-2', horaInicio: '13:00', horaFin: '14:30', nombre: 'Yolanda Esperanza Rivas', documento: 'CC 35.667.219', edad: 71, sexo: 'Femenino',
     procedimiento: 'Mastectomía simple', dx: 'C508 - LESION DE SITIO CONTIGUO DE LA MAMA', servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', asa: 'Clase 3',
     complejidad: 'Media', estado: 'incumplida', causalIncumplimiento: 'FALTA DE EXAMENES MEDICOS',
-    observacionIncumplimiento: 'La paciente no llegó con valoración cardiológica preoperatoria vigente.', equipos: [EQ_CAUTERIO, EQ_MONITOR], insumos: INS_BASE,
+    observacionIncumplimiento: 'La paciente no llegó con valoración cardiológica preoperatoria vigente.', equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
   // ----- Jueves (hoy: solo salas que no tienen semilla de canastas) -----
   cirugiaOnco({
     id: '12414', dia: 3, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Aura Cristina Mejía', documento: 'CC 66.910.347', edad: 54, sexo: 'Femenino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
     cirujano: 'Dr. Héctor Villamizar', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR], canastaRecibida: true,
-    insumos: [['Reservorio venoso implantable', 1], ['Aguja de Huber', 1], ['Guía metálica 0.035', 1], ['Apósito transparente 10x12cm', 2]],
+    
   }),
   cirugiaOnco({
     id: '12415', dia: 3, salaId: 'proc-menores', horaInicio: '10:00', horaFin: '11:00', nombre: 'Wilson Fabián Duque', documento: 'CC 80.774.390', edad: 45, sexo: 'Masculino',
     procedimiento: 'Biopsia excisional de ganglio cervical', dx: 'R590 - ADENOMEGALIA LOCALIZADA', servicio: 'Cabeza y cuello', cirujano: 'Dr. Héctor Villamizar',
-    tipoAnestesia: 'Local', complejidad: 'Baja', notas: 'Estudio de linfoma, ganglio cervical nivel II de 3 cm.', equipos: [EQ_CAUTERIO], insumos: INS_BASE.slice(0, 3),
+    tipoAnestesia: 'Local', complejidad: 'Baja', notas: 'Estudio de linfoma, ganglio cervical nivel II de 3 cm.', equipos: [EQ_CAUTERIO], 
   }),
   cirugiaOnco({
     id: '12416', dia: 3, salaId: 'gastroenterologia', horaInicio: '08:00', horaFin: '09:00', nombre: 'Clemencia Sarmiento', documento: 'CC 41.288.653', edad: 62, sexo: 'Femenino',
     procedimiento: 'Esofagogastroduodenoscopia con biopsias', dx: 'C160 - TUMOR MALIGNO DEL CARDIAS', servicio: 'Gastroenterología', cirujano: 'Dr. Andrés López',
     anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Estadificación: lesión ulcerada en cardias, toma de biopsias múltiples.',
-    equipos: [EQ_MONITOR], insumos: [['Pinza de biopsia', 4], ['Frascos de patología', 4]], canastaRecibida: true, horaInicioReal: '08:05',
+    equipos: [EQ_MONITOR], canastaRecibida: true, horaInicioAnest: '07:50', horaInicioReal: '08:05',
   }),
   cirugiaOnco({
     id: '12417', dia: 3, salaId: 'hemodinamia', horaInicio: '13:00', horaFin: '15:00', nombre: 'Gustavo Adolfo Prieto', documento: 'CC 79.440.116', edad: 67, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Quimioembolización arterial hepática (TACE)', dx: 'C220 - CARCINOMA DE CELULAS HEPATICAS',
     servicio: 'Oncología intervencionista', cirujano: 'Dr. Jorge Acosta', anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'Local asistida', asa: 'Clase 3',
     notas: 'Hepatocarcinoma BCLC B, segundo ciclo.', equipos: [EQ_ARCO, EQ_MONITOR],
-    insumos: [['Microcatéter 2.4 Fr', 1], ['Microesferas cargadas con doxorrubicina', 1], ['Medio de contraste yodado 100ml', 2]],
+    
   }),
   // ----- Viernes -----
   cirugiaOnco({
@@ -1691,32 +1687,32 @@ const SEMANA_ONCOLOGIA = [
     aseguradora: 'Colsanitas Medicina Prepagada', procedimiento: 'Mastectomía con reconstrucción inmediata con expansor', dx: 'C508 - LESION DE SITIO CONTIGUO DE LA MAMA',
     servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', ayudante: 'Dr. Felipe Ortiz', asa: 'Clase 1', notas: 'Mastectomía ahorradora de piel; cirugía plástica reconstructiva en el mismo tiempo.',
     adicionales: [{ nombre: 'Biopsia de ganglio centinela', duracionMin: 30, notas: '' }], equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
-    insumos: [['Expansor tisular 450cc', 1], ['Malla biológica', 1], ['Dren de succión tipo Hemovac # 14', 2], ...INS_BASE],
+    
   }),
   cirugiaOnco({
     id: '12419', dia: 4, horaInicio: '13:00', horaFin: '15:30', nombre: 'Rubén Darío Ocampo', documento: 'CC 16.775.209', edad: 59, sexo: 'Masculino',
     aseguradora: 'Nueva EPS', procedimiento: 'Laringectomía parcial con vaciamiento cervical', dx: 'C320 - TUMOR MALIGNO DE LA GLOTIS', servicio: 'Cabeza y cuello',
     cirujano: 'Dr. Héctor Villamizar', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Carcinoma escamocelular T2N0, traqueostomía temporal.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: [['Cánula de traqueostomía # 8', 1], ...INS_BASE],
+    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12420', dia: 4, salaId: 'qx-2', horaInicio: '07:00', horaFin: '10:00', nombre: 'Fabio Hernando Gaitán', documento: 'CC 79.882.504', edad: 65, sexo: 'Masculino',
     procedimiento: 'Prostatectomía radical laparoscópica', dx: 'C61 - TUMOR MALIGNO DE LA PROSTATA', servicio: 'Urología oncológica', cirujano: 'Dr. Jorge Acosta',
     ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 2', notas: 'Gleason 4+3, T2c, PSA 11 ng/mL; con linfadenectomía pélvica.',
-    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], insumos: [['Sonda vesical Foley 18 Fr', 1], ...INS_LAPARO],
+    equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12421', dia: 4, salaId: 'qx-2', horaInicio: '11:00', horaFin: '15:30', nombre: 'Teresa de Jesús Arango', documento: 'CC 32.440.871', edad: 60, sexo: 'Femenino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Hepatectomía derecha', dx: 'C787 - TUMOR MALIGNO SECUNDARIO DEL HIGADO', cirujano: 'Dr. Ricardo Salamanca',
     ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Metástasis hepáticas de cáncer colorrectal, respuesta a quimioterapia.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: [['Bisturí ultrasónico', 1], ['Grapadora vascular 45mm', 2], ['Sellante de fibrina', 2], ...INS_BASE],
+    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   // ----- Sábado: urgencia oncológica -----
   cirugiaOnco({
     id: '12422', dia: 5, salaId: 'qx-2', horaInicio: '09:00', horaFin: '11:30', nombre: 'Edilberto Murcia', documento: 'CC 6.771.903', edad: 72, sexo: 'Masculino',
     aseguradora: 'Coomeva EPS', procedimiento: 'Laparotomía exploratoria por obstrucción intestinal maligna', dx: 'K566 - OTRAS OBSTRUCCIONES INTESTINALES Y LAS NO ESPECIFICADAS',
     cirujano: 'Dr. Ricardo Salamanca', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 4', estado: 'urgencia', notas: 'Carcinomatosis peritoneal conocida, oclusión intestinal de 48 horas.',
-    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], insumos: INS_BASE,
+    equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
 ].filter((c) => !(c.fecha === HOY_ISO && ['qx-1', 'qx-2'].includes(c.salaId)));
 
@@ -2114,13 +2110,17 @@ export function actualizarCirugia(id, datos) {
 
 // Inicia la cirugía: registra la hora real. Revalida las reglas (la pantalla ya
 // deshabilita el botón, pero el mock no confía en eso).
-export function iniciarCirugia(id, { horaInicioReal, ahora = ahoraDemo() }) {
+export function iniciarCirugia(id, { horaInicioReal, horaInicioAnest, ahora = ahoraDemo() }) {
   const actual = CIRUGIAS.find((c) => c.id === id);
   if (!actual) throw new Error('No se encontró la cirugía.');
   const motivo = motivoNoIniciable(actual, ahora, CIRUGIAS);
   if (motivo) throw new Error(motivo);
-  if (!/^\d{2}:\d{2}$/.test(horaInicioReal ?? '')) throw new Error('Indica la hora real de inicio.');
-  return actualizarCirugia(id, { horaInicioReal });
+  if (!HORA_VALIDA.test(horaInicioReal ?? '')) throw new Error('Indica la hora real de inicio.');
+  if (horaInicioAnest) {
+    if (!HORA_VALIDA.test(horaInicioAnest)) throw new Error('La hora de inicio de anestesia no es válida.');
+    if (horaInicioAnest > horaInicioReal) throw new Error('La anestesia no puede iniciar después de la cirugía.');
+  }
+  return actualizarCirugia(id, { horaInicioReal, ...(horaInicioAnest ? { horaInicioAnest } : {}) });
 }
 
 // Finaliza una cirugía en curso: registra la hora real de fin y la cierra como
@@ -2129,7 +2129,7 @@ export function finalizarCirugia(id, { horaFinReal }) {
   const actual = CIRUGIAS.find((c) => c.id === id);
   if (!actual) throw new Error('No se encontró la cirugía.');
   if (!estaIniciada(actual)) throw new Error('Solo se puede finalizar una cirugía en curso.');
-  if (!/^\d{2}:\d{2}$/.test(horaFinReal ?? '')) throw new Error('Indica la hora real de fin.');
+  if (!HORA_VALIDA.test(horaFinReal ?? '')) throw new Error('Indica la hora real de fin.');
   if (horaFinReal < actual.horaInicioReal) throw new Error('La hora de fin no puede ser anterior a la de inicio.');
   return actualizarCirugia(id, {
     estado: 'realizada',
@@ -2356,6 +2356,8 @@ export function resumenCanasta(cirugia) {
 // "Hora de inicio superada". 08:45 es la hora de los artboards de diseño.
 // `null` vuelve a la hora real del sistema.
 export const HORA_DEMO = '08:45';
+
+const HORA_VALIDA = /^\d{2}:\d{2}$/;
 
 // Inicio real de la cirugía (botón 'Iniciar cirugía'): no es un estado nuevo del
 // modelo sino un sello `horaInicioReal` sobre una cirugía abierta

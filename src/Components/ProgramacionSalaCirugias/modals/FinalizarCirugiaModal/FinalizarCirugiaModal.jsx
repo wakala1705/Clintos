@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { LuCircleCheck } from 'react-icons/lu';
+import {
+  LuCircleCheck, LuDoorOpen, LuInfo, LuPlay,
+} from 'react-icons/lu';
 import './FinalizarCirugiaModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
@@ -9,7 +11,8 @@ import { ahoraDemo, horaLocal } from '@/hooks/ProgramacionSalaCirugias/mockCirug
 
 // Confirma el fin de una cirugía en curso: hora real de fin (editable, no antes
 // del inicio real). Al confirmar, la cirugía queda realizada, el fin se registra
-// en la hoja de gasto y esta se abre para registrar el consumo.
+// en la hoja de gasto y esta se abre para registrar el consumo. Misma estructura
+// visual que IniciarCirugiaModal.
 export default function FinalizarCirugiaModal({
   cirugia, salaLabel, onClose, onSubmit,
 }) {
@@ -24,13 +27,6 @@ export default function FinalizarCirugiaModal({
     if (valida) onSubmit(hora);
   }
 
-  const datos = [
-    ['Paciente', cirugia.paciente.nombre],
-    ['Procedimiento', cirugia.procedimientoPrincipal],
-    ['Sala', salaLabel],
-    ['Inicio real', cirugia.horaInicioReal],
-  ];
-
   return (
     <div className="modal-overlay open">
       <div className="modal-card fcm-modal-card" role="dialog" aria-modal="true" aria-labelledby="fcm-title">
@@ -40,24 +36,36 @@ export default function FinalizarCirugiaModal({
             tone="primary"
             title="Finalizar cirugía"
             titleId="fcm-title"
-            subtitle={cirugia.paciente.nombre}
             onClose={onClose}
           />
           <div className="modal-body">
-            <dl className="fcm-resumen">
-              {datos.map(([k, v]) => (
-                <div key={k} className="fcm-fila">
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="form-field">
+            <section className="fcm-caso" aria-label="Cirugía a finalizar">
+              <span className="fcm-paciente">{cirugia.paciente.nombre}</span>
+              <span className="fcm-procedimiento">{cirugia.procedimientoPrincipal}</span>
+              <div className="fcm-meta">
+                <span className="fcm-dato">
+                  <LuDoorOpen className="icon" aria-hidden="true" />
+                  <span>Sala</span>
+                  <b>{salaLabel}</b>
+                </span>
+                <span className="fcm-dato">
+                  <LuPlay className="icon" aria-hidden="true" />
+                  <span>Inicio real</span>
+                  <b>{cirugia.horaInicioReal}</b>
+                </span>
+              </div>
+            </section>
+
+            <div className="form-field fcm-hora">
               <label htmlFor="fcm-hora">Hora real de fin *</label>
               <input id="fcm-hora" type="time" value={hora} min={cirugia.horaInicioReal} onChange={(e) => setHora(e.target.value)} required />
               {!valida && hora ? <span className="fcm-error" role="alert">No puede ser anterior al inicio real ({cirugia.horaInicioReal}).</span> : null}
             </div>
-            <p className="fcm-nota">Al finalizar se registra el fin en la hoja de gasto y se abre para que registres el consumo.</p>
+
+            <p className="fcm-nota">
+              <LuInfo className="icon" aria-hidden="true" />
+              Al finalizar se registra el fin en la hoja de gasto y se abre para que registres el consumo.
+            </p>
           </div>
           <div className="modal-footer">
             <Button type="button" variant="secondary" onClick={onClose}>Volver</Button>

@@ -96,7 +96,7 @@ export default function PanelGeneral() {
     modal, setModal, toast,
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
-    handleIniciarCirugia, handleAbrirHoja, handleSubmitIniciar, handleFinalizarCirugia, handleSubmitFinalizar,
+    handleIniciarCirugia, handleAbrirHoja, handleSubmitIniciar, handleFinalizarCirugia, handleSubmitFinalizar, handleFinalizarDesdeHoja,
     handleMarcarRealizada, handleMarcarIncumplida,
     handlePedirInsumos, handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
@@ -229,6 +229,7 @@ export default function PanelGeneral() {
         onPedirInsumos={handlePedirInsumos}
         onCancelarSolicitud={handleCancelarSolicitud}
         onConsumoRegistrado={handleConsumoRegistrado}
+        onFinalizarCirugia={handleFinalizarDesdeHoja}
         onVerEnCanastas={(cirugia) => router.push(canastasHref(cirugia))}
       />
 
@@ -245,6 +246,7 @@ export default function PanelGeneral() {
         <HojaConsumoAltModal
           cirugia={lista.find((c) => c.id === modal.cirugia.id) ?? modal.cirugia}
           onConsumoRegistrado={handleConsumoRegistrado}
+          onFinalizar={handleFinalizarDesdeHoja}
           onClose={() => setModal(null)}
         />
       )}

@@ -49,11 +49,15 @@ export default function useCirugiasAcciones({ applyUpdated }) {
   // Finalizar: cierra la cirugía con su hora real de fin, la registra en la hoja
   // ("Fin cirugía") y abre la hoja: con la cirugía realizada ya se puede registrar
   // el consumo.
+  function cerrarCirugiaEnCurso(cirugia, horaFinReal) {
+    const finalizada = finalizarCirugia(cirugia.id, { horaFinReal });
+    applyUpdated(finalizada);
+    registrarTiempoEnHoja(finalizada, 'termOperac', horaFinReal);
+    return finalizada;
+  }
   function handleSubmitFinalizar(horaFinReal) {
     try {
-      const finalizada = finalizarCirugia(modal?.cirugia?.id, { horaFinReal });
-      applyUpdated(finalizada);
-      registrarTiempoEnHoja(finalizada, 'termOperac', horaFinReal);
+      const finalizada = cerrarCirugiaEnCurso(modal.cirugia, horaFinReal);
       setModal({ type: 'hoja', cirugia: finalizada });
       showToast('Cirugía finalizada. Registra el consumo en la hoja de gasto.');
     } catch (e) {
@@ -61,14 +65,28 @@ export default function useCirugiasAcciones({ applyUpdated }) {
       showToast(e.message);
     }
   }
+  // Finalizar desde la propia hoja de gasto: la hoja sigue abierta (no se cambia
+  // `modal`), así el circulante registra el consumo sin pasar por el panel.
+  // Devuelve la cirugía finalizada, o null si falló (el error va al toast).
+  function handleFinalizarDesdeHoja(cirugia, horaFinReal) {
+    try {
+      const finalizada = cerrarCirugiaEnCurso(cirugia, horaFinReal);
+      showToast('Cirugía finalizada. Ya puedes registrar el consumo.');
+      return finalizada;
+    } catch (e) {
+      showToast(e.message);
+      return null;
+    }
+  }
   function handleAbrirHoja(cirugia) {
     setModal({ type: 'hoja', cirugia });
   }
-  function handleSubmitIniciar(horaInicioReal) {
+  function handleSubmitIniciar(horaInicioReal, horaInicioAnest) {
     try {
-      const iniciada = iniciarCirugia(modal?.cirugia?.id, { horaInicioReal });
+      const iniciada = iniciarCirugia(modal?.cirugia?.id, { horaInicioReal, horaInicioAnest });
       applyUpdated(iniciada);
-      // La hoja de consumo registra el inicio real (tiempo "Inicio cirugía").
+      // La hoja de consumo registra los tiempos: "Inicio anestesia" e "Inicio cirugía".
+      if (horaInicioAnest) registrarTiempoEnHoja(iniciada, 'inicioAnest', horaInicioAnest);
       registrarTiempoEnHoja(iniciada, 'inicioOperac', horaInicioReal);
       setModal({ type: 'hoja', cirugia: iniciada });
       showToast('Cirugía iniciada.');
@@ -129,6 +147,7 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleSubmitIniciar,
     handleFinalizarCirugia,
     handleSubmitFinalizar,
+    handleFinalizarDesdeHoja,
     handleMarcarRealizada,
     handleMarcarIncumplida,
     handlePedirInsumos,

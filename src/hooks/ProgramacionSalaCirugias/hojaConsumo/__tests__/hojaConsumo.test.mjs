@@ -4,6 +4,7 @@ import {
   paqueteDeCirugia, construirHojaConsumo, materialManual, calcularDevuelto, excedeEntregado,
   materialesConExceso, totales, dxDeIngreso, formatearMiles, fechaDDMMAAAA,
   obtenerHojaConsumo, guardarHojaConsumo, materialesConConsumo, consumoCompleto, marcarTodoConsumido, pasoConsumo,
+  formatoDuracionMin, formatoReloj, minutosEntreHoras, segundosTranscurridos,
 } from '../hojaConsumo.js';
 
 const cirugia = (extra = {}) => ({
@@ -124,4 +125,22 @@ test('pasoConsumo: suma/resta 1 entre 0 y el tope; vacío cuenta como 0', () => 
   assert.equal(pasoConsumo('0', -1, 3), '0');
   assert.equal(pasoConsumo('', -1, 3), '0');
   assert.equal(pasoConsumo('5', 1, null), '6');
+});
+
+test('tiempo transcurrido: en vivo hasta ahora, cerrado con fin, y casos sin dato o inválidos', () => {
+  const ahora = (8 * 60 + 45) * 60; // 08:45
+  assert.equal(segundosTranscurridos('', '', ahora), null);
+  assert.equal(segundosTranscurridos('08:05', '', ahora), 40 * 60);
+  assert.equal(segundosTranscurridos('08:05', '09:20', ahora), 75 * 60);
+  assert.ok(segundosTranscurridos('09:00', '08:30', ahora) < 0);
+  assert.ok(segundosTranscurridos('09:00', '', ahora) < 0);
+});
+
+test('formatos de tiempo: reloj HH:MM:SS y duración en horas/minutos', () => {
+  assert.equal(formatoReloj(2415), '00:40:15');
+  assert.equal(formatoReloj(3 * 3600 + 5), '03:00:05');
+  assert.equal(formatoReloj(-5), '00:00:00');
+  assert.equal(formatoDuracionMin(75 * 60), '1 h 15 min');
+  assert.equal(formatoDuracionMin(40 * 60), '40 min');
+  assert.equal(minutosEntreHoras('08:00', '09:30'), 90);
 });

@@ -165,3 +165,36 @@ export function registrarTiempoEnHoja(cirugia, clave, hora) {
   const hoja = obtenerHojaConsumo(cirugia.id) ?? construirHojaConsumo(cirugia);
   guardarHojaConsumo({ ...hoja, tiempos: { ...hoja.tiempos, [clave]: hora } });
 }
+
+// ---------- Tiempo transcurrido de la operación ----------
+
+// 'HH:mm' -> segundos desde medianoche.
+export function horaASegundos(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return (h * 60 + m) * 60;
+}
+
+// Segundos entre el inicio de cirugía y su fin; sin fin, hasta `ahoraSeg` (segundos desde
+// medianoche, el reloj de la pantalla). null sin inicio; negativo si el fin es anterior al inicio.
+export function segundosTranscurridos(inicio, fin, ahoraSeg) {
+  if (!inicio) return null;
+  return (fin ? horaASegundos(fin) : ahoraSeg) - horaASegundos(inicio);
+}
+
+const dos = (n) => String(n).padStart(2, '0');
+
+// 2415 -> '00:40:15' (reloj en vivo).
+export function formatoReloj(seg) {
+  const s = Math.max(0, Math.floor(seg));
+  return `${dos(Math.floor(s / 3600))}:${dos(Math.floor((s % 3600) / 60))}:${dos(s % 60)}`;
+}
+
+// 3900 -> '1 h 05 min'; 2400 -> '40 min' (duración ya cerrada o estimada).
+export function formatoDuracionMin(seg) {
+  const min = Math.round(Math.max(0, seg) / 60);
+  const h = Math.floor(min / 60);
+  return h > 0 ? `${h} h ${dos(min % 60)} min` : `${min} min`;
+}
+
+// Minutos entre dos 'HH:mm' (p. ej. la duración estimada de la programación).
+export const minutosEntreHoras = (inicio, fin) => (horaASegundos(fin) - horaASegundos(inicio)) / 60;

@@ -49,7 +49,7 @@ export function precargaConsumoDesdeHoja(cirugia, hoja) {
 export function planRegistroConsumo(cirugia, materiales) {
   const { usados, coincidencias, total } = usadosDesdeMateriales(cirugia, materiales);
   let bloqueo = null;
-  if (estaIniciada(cirugia)) bloqueo = 'Marca la cirugía como realizada para registrar el consumo. Mientras tanto guarda el borrador.';
+  if (estaIniciada(cirugia)) bloqueo = 'Finaliza la cirugía para registrar el consumo. Mientras tanto guarda el borrador.';
   else if (cirugia.estado !== 'realizada') bloqueo = 'La cirugía debe estar realizada para registrar el consumo.';
   else if (!['recibida', 'con-novedades', 'consumo-registrado'].includes(resumenCanasta(cirugia).estado)) {
     bloqueo = 'La canasta debe estar recibida para registrar el consumo.';

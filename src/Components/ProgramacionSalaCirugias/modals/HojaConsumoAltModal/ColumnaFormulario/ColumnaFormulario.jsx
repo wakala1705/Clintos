@@ -1,10 +1,9 @@
 'use client';
 
-import { LuChevronDown, LuLink, LuPencil } from 'react-icons/lu';
+import { LuChevronDown, LuPencil } from 'react-icons/lu';
 import './ColumnaFormulario.css';
 import Button from '@/Components/Button/Button';
-import Badge from '@/Components/Badge/Badge';
-import { dxDeIngreso } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
+import TiempoTranscurrido from '../TiempoTranscurrido/TiempoTranscurrido';
 
 const EQUIPO = [
   { key: 'cirujano', label: 'Cirujano principal' },
@@ -48,32 +47,14 @@ function Seccion({ id, titulo, accion, plegable, children }) {
   );
 }
 
-// Columna del formulario: procedimiento y diagnóstico (de la programación), equipo (solo
-// lectura) y tiempos (editables). En tablet (`plegable`) cada sección es un acordeón cerrado.
-export default function ColumnaFormulario({ cirugia, equipo, tiempos, onTiempos, plegable = false }) {
-  const dx = dxDeIngreso(cirugia.dxIngreso ?? cirugia.wizardDatos?.dxIngreso);
-  const cups = cirugia.procedimientos?.[0]?.cups || '—';
-
+// Columna del formulario: equipo (solo lectura) y tiempos (editables, con el contador de la
+// operación). Procedimiento y diagnóstico viven en la barra de contexto. En tablet (`plegable`)
+// cada sección es un acordeón cerrado.
+export default function ColumnaFormulario({
+  equipo, tiempos, onTiempos, estimadaMin, plegable = false,
+}) {
   return (
     <div className="hca-col">
-      <Seccion
-        id="hca-proc-titulo"
-        titulo="Procedimiento"
-        plegable={plegable}
-        accion={<Badge tone="info"><LuLink className="hca-badge-icon" aria-hidden="true" />Desde programación</Badge>}
-      >
-        <div className="hca-panel">
-          <div className="hca-campo">
-            <span className="hca-campo-label">Procedimiento (CUPS)</span>
-            <span className="hca-campo-valor"><b className="hca-codigo">{cups}</b> · {cirugia.procedimientoPrincipal || '—'}</span>
-          </div>
-          <div className="hca-campo">
-            <span className="hca-campo-label">Diagnóstico (CIE-10)</span>
-            <span className="hca-campo-valor"><b className="hca-codigo">{dx.codigo}</b> · {dx.descripcion}</span>
-          </div>
-        </div>
-      </Seccion>
-
       <Seccion
         id="hca-equipo-titulo"
         titulo="Equipo quirúrgico"
@@ -104,6 +85,7 @@ export default function ColumnaFormulario({ cirugia, equipo, tiempos, onTiempos,
             </div>
           ))}
         </div>
+        <TiempoTranscurrido inicio={tiempos.inicioOperac} fin={tiempos.termOperac} estimadaMin={estimadaMin} />
       </Seccion>
     </div>
   );

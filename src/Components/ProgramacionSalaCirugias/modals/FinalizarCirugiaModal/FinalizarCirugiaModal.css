@@ -1,8 +1,21 @@
-/* .modal-*, .form-field y botones vienen de ../../shared/shared.css. */
-.fcm-modal-card{width:460px;}
-.fcm-resumen{margin:0 0 16px;display:grid;gap:8px;}
-.fcm-fila{display:flex;gap:12px;font-size:var(--fs-base);}
-.fcm-fila dt{flex:0 0 130px;color:var(--ink-500);}
-.fcm-fila dd{margin:0;color:var(--ink-900);font-weight:var(--fw-medium);}
+/* .modal-*, .form-field y botones vienen de ../../shared/shared.css. Misma
+   jerarquía que IniciarCirugiaModal (paciente > procedimiento > metadatos). */
+.fcm-modal-card{width:480px;}
+.fcm-caso{
+  display:flex;flex-direction:column;gap:4px;margin-bottom:20px;padding:16px 18px;
+  background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--primary);
+  border-radius:var(--radius);
+}
+.fcm-paciente{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.25;}
+.fcm-procedimiento{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);line-height:1.4;}
+.fcm-meta{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.fcm-dato{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);}
+.fcm-dato .icon{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}
+.fcm-dato b{font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fcm-hora{max-width:200px;}
 .fcm-error{display:block;margin-top:4px;font-size:var(--fs-sm);color:var(--red);}
-.fcm-nota{margin:12px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+.fcm-nota{
+  display:flex;align-items:flex-start;gap:8px;margin:16px 0 0;
+  font-size:var(--fs-sm);color:var(--ink-500);line-height:1.45;
+}
+.fcm-nota .icon{width:15px;height:15px;margin-top:2px;color:var(--ink-400);flex-shrink:0;}

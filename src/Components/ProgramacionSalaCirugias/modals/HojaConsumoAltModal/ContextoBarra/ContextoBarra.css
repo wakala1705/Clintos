@@ -1,12 +1,35 @@
+/* Barra de contexto de la hoja, en una sola línea: paciente | datos | procedimiento y diagnóstico.
+   Compacta (poca altura): etiqueta tenue sobre el valor; lo clínico se recorta con "…". */
 .hca-contexto{
-  display:grid;grid-template-columns:2fr .7fr 1fr 1fr 1fr;gap:12px 24px;align-items:start;
-  padding:16px 32px;background:var(--bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px 32px;flex-wrap:wrap;
+  padding:12px 32px;background:var(--bg);border-bottom:1px solid var(--border);
 }
-.hca-dato{display:flex;flex-direction:column;gap:4px;min-width:0;}
-.hca-dato-label{font-size:var(--fs-sm);color:var(--ink-500);}
-.hca-dato-valor{font-size:var(--fs-base);color:var(--ink-900);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
-.hca-dato.is-fuerte .hca-dato-valor{font-weight:var(--fw-semibold);}
 
+.hca-ctx-nombre{flex:none;max-width:280px;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.25;overflow-wrap:anywhere;}
+
+.hca-ctx-meta{display:flex;align-items:center;gap:8px 28px;flex:none;margin:0;}
+.hca-ctx-dato{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.hca-ctx-dato dt{display:flex;align-items:center;gap:4px;font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+.hca-ctx-dato dt .icon{width:12px;height:12px;color:var(--ink-400);flex:none;}
+.hca-ctx-dato dd{margin:0;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+/* Lo clínico ocupa el ancho que sobra, separado de lo anterior por un divisor. */
+.hca-ctx-clinico{
+  display:flex;align-items:center;gap:24px;flex:1 1 380px;min-width:0;
+  padding-left:32px;border-left:1px solid var(--border);
+}
+.hca-ctx-item{display:flex;flex-direction:column;gap:2px;flex:1 1 0;min-width:0;}
+.hca-ctx-label{font-size:var(--fs-xs);color:var(--ink-500);white-space:nowrap;}
+.hca-ctx-valor{font-size:var(--fs-base);color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hca-codigo{margin-right:8px;font-weight:var(--fw-semibold);color:var(--primary-dark);font-variant-numeric:tabular-nums;}
+
+@media (max-width:1280px){
+  /* Sin espacio para una sola línea: lo clínico baja a su propia fila, sin divisor lateral. */
+  .hca-ctx-clinico{flex-basis:100%;padding-left:0;border-left:0;padding-top:10px;border-top:1px solid var(--border);}
+}
 @media (max-width:1024px){
-  .hca-contexto{grid-template-columns:repeat(3,minmax(0,1fr));padding:16px;}
+  .hca-contexto{padding:12px 16px;}
+  .hca-ctx-meta{flex-wrap:wrap;}
+  .hca-ctx-clinico{flex-direction:column;align-items:stretch;gap:8px;}
+  .hca-ctx-valor{white-space:normal;}
 }

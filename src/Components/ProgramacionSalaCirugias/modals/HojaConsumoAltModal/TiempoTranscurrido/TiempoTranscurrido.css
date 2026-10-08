@@ -1,0 +1,32 @@
+/* Contador de la operación (debajo de los 3 inputs de Tiempos). Tokens de la feature. */
+.tt{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 14px;
+  margin-top:12px;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.tt-icono{
+  grid-row:1 / span 2;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:var(--surface-modal);color:var(--ink-500);border:1px solid var(--border);
+}
+.tt-icono .icon{width:20px;height:20px;}
+.tt-cuerpo{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.tt-label{font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.02em;}
+.tt-valor{font-size:var(--fs-3xl);font-weight:var(--fw-bold);line-height:1.15;color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.tt-leyenda{font-size:var(--fs-sm);color:var(--ink-500);}
+.tt-estimada{grid-column:1 / -1;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:var(--fs-sm);color:var(--ink-500);}
+.tt-estimada.is-excede{color:var(--amber-fg);font-weight:var(--fw-medium);}
+
+/* En vivo: acento primario y un punto que late (solo con movimiento permitido). */
+.tt-vivo{border-color:var(--primary);background:var(--primary-50);}
+.tt-vivo .tt-icono{background:var(--primary);border-color:var(--primary);color:#fff;}
+.tt-vivo .tt-valor{color:var(--primary-dark);}
+.tt-vivo .tt-label::before{
+  content:'';display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;
+  background:var(--primary);vertical-align:1px;animation:tt-pulso 1.4s ease-in-out infinite;
+}
+@keyframes tt-pulso{0%,100%{opacity:1;}50%{opacity:.3;}}
+@media (prefers-reduced-motion:reduce){.tt-vivo .tt-label::before{animation:none;}}
+
+.tt-vacio .tt-valor{color:var(--ink-400);}
+.tt-invalido{border-color:var(--red);}
+.tt-invalido .tt-valor{color:var(--red);}
+.tt-invalido .tt-leyenda{color:var(--red);}

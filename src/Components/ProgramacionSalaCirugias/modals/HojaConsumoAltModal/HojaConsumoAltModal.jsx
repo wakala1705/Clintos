@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { LuCheck, LuClipboardList, LuLock } from 'react-icons/lu';
+import {
+  LuCheck, LuCircleCheck, LuClipboardList, LuLock,
+} from 'react-icons/lu';
 import './HojaConsumoAltModal.css';
 import { useMediaQuery } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/useMediaQuery';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
@@ -10,10 +12,13 @@ import Badge from '@/Components/Badge/Badge';
 import ContextoBarra from './ContextoBarra/ContextoBarra';
 import ColumnaFormulario from './ColumnaFormulario/ColumnaFormulario';
 import InsumosPanel from './InsumosPanel/InsumosPanel';
+import FinalizarCirugiaModal from '../FinalizarCirugiaModal/FinalizarCirugiaModal';
 import {
-  construirHojaConsumo, guardarHojaConsumo, materialesConExceso, obtenerHojaConsumo,
+  construirHojaConsumo, guardarHojaConsumo, materialesConExceso, minutosEntreHoras, obtenerHojaConsumo,
 } from '@/hooks/ProgramacionSalaCirugias/hojaConsumo/hojaConsumo';
-import { ahoraDemo, fechaHoraLocalISO, registrarConsumo } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import {
+  SALAS, ahoraDemo, estaIniciada, fechaHoraLocalISO, registrarConsumo,
+} from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { planRegistroConsumo } from '@/hooks/ProgramacionSalaCirugias/cierre/cierre';
 
 // Sin sesión real en el prototipo: el mismo usuario que ya firma la recepción en Canastas.
@@ -25,7 +30,9 @@ const USUARIO = 'Camilo Grondona';
 // al instante la devolución a farmacia de lo no consumido (ver planRegistroConsumo). Se puede usar con
 // consumo parcial; se bloquea si algún insumo excede lo entregado o si la cirugía aún no está realizada
 // con la canasta recibida.
-export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistrado }) {
+export default function HojaConsumoAltModal({
+  cirugia, onClose, onConsumoRegistrado, onFinalizar,
+}) {
   // Los tiempos reales de inicio/fin de la cirugía (botones Iniciar/Finalizar) se
   // reflejan en "Inicio cirugía"/"Fin cirugía" si la hoja aún no los tiene.
   const [hoja, setHoja] = useState(() => {
@@ -34,6 +41,7 @@ export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistr
       ...base,
       tiempos: {
         ...base.tiempos,
+        inicioAnest: base.tiempos.inicioAnest || cirugia.horaInicioAnest || '',
         inicioOperac: base.tiempos.inicioOperac || cirugia.horaInicioReal || '',
         termOperac: base.tiempos.termOperac || cirugia.horaFinReal || '',
       },
@@ -42,16 +50,31 @@ export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistr
   const hayExceso = materialesConExceso(hoja.materiales).length > 0;
   const plan = planRegistroConsumo(cirugia, hoja.materiales);
   const [error, setError] = useState('');
+  const [finalizando, setFinalizando] = useState(false);
+  // "Finalizar cirugía" solo si la cirugía está en curso y la pantalla lo soporta (`onFinalizar`).
+  const enCurso = estaIniciada(cirugia);
+  const puedeFinalizar = Boolean(onFinalizar) && enCurso;
   const set = (clave, valor) => setHoja((h) => ({ ...h, [clave]: valor }));
   const esTablet = useMediaQuery('(max-width:1024px)');
 
   useEffect(() => {
+    // Con el diálogo de finalizar encima, Escape no cierra la hoja.
+    if (finalizando) return undefined;
     const onKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onClose]);
+  }, [onClose, finalizando]);
+
+  // Guarda el borrador antes (no se pierde lo digitado) y finaliza; la hoja sigue abierta con la
+  // cirugía ya realizada, así "Registrar consumo" queda habilitado sin salir del modal.
+  function finalizar(horaFinReal) {
+    guardarHojaConsumo(hoja);
+    const finalizada = onFinalizar(cirugia, horaFinReal);
+    setFinalizando(false);
+    if (finalizada) set('tiempos', { ...hoja.tiempos, termOperac: horaFinReal });
+  }
 
   function registrar() {
     if (hayExceso || plan.bloqueo) return;
@@ -75,10 +98,10 @@ export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistr
 
   const formulario = (
     <ColumnaFormulario
-      cirugia={cirugia}
       equipo={hoja.equipo}
       tiempos={hoja.tiempos}
       onTiempos={(k, v) => set('tiempos', { ...hoja.tiempos, [k]: v })}
+      estimadaMin={minutosEntreHoras(cirugia.horaInicio, cirugia.horaFin)}
       plegable={esTablet}
     />
   );
@@ -130,10 +153,21 @@ export default function HojaConsumoAltModal({ cirugia, onClose, onConsumoRegistr
           <div className="hca-footer-acciones">
             <Button variant="secondary" onClick={onClose}>Cancelar</Button>
             <Button variant="outline" onClick={() => guardarHojaConsumo(hoja)}>Guardar borrador</Button>
-            <Button icon={LuCheck} disabled={hayExceso || plan.bloqueo !== null} onClick={registrar}>Registrar consumo</Button>
+            {puedeFinalizar && <Button icon={LuCircleCheck} onClick={() => setFinalizando(true)}>Finalizar cirugía</Button>}
+            {/* En curso el consumo no se registra todavía: primero se finaliza la cirugía. */}
+            {!enCurso && <Button icon={LuCheck} disabled={hayExceso || plan.bloqueo !== null} onClick={registrar}>Registrar consumo</Button>}
           </div>
         </div>
       </div>
+
+      {finalizando && (
+        <FinalizarCirugiaModal
+          cirugia={cirugia}
+          salaLabel={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'}
+          onClose={() => setFinalizando(false)}
+          onSubmit={finalizar}
+        />
+      )}
     </div>
   );
 }

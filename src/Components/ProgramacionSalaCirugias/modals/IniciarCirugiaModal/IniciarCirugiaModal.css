@@ -1,7 +1,27 @@
 /* .modal-*, .form-field y botones vienen de ../../shared/shared.css. */
-.icm-modal-card{width:460px;}
-.icm-resumen{margin:0 0 16px;display:grid;gap:8px;}
-.icm-fila{display:flex;gap:12px;font-size:var(--fs-base);}
-.icm-fila dt{flex:0 0 130px;color:var(--ink-500);}
-.icm-fila dd{margin:0;color:var(--ink-900);font-weight:var(--fw-medium);}
-.icm-nota{margin:12px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+.icm-modal-card{width:480px;}
+
+/* El caso: paciente como dato principal, procedimiento debajo y sala/hora
+   como metadatos en una sola línea. Fondo tintado + filete lateral para
+   separarlo del formulario sin otra caja. */
+.icm-caso{
+  display:flex;flex-direction:column;gap:4px;margin-bottom:20px;padding:16px 18px;
+  background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--primary);
+  border-radius:var(--radius);
+}
+.icm-paciente{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);line-height:1.25;}
+.icm-procedimiento{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-700);line-height:1.4;}
+.icm-meta{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.icm-dato{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-500);}
+.icm-dato .icon{width:15px;height:15px;color:var(--ink-400);flex-shrink:0;}
+.icm-dato b{font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+/* Dos tiempos en orden cronológico: anestesia, cirugía. */
+.icm-horas{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.icm-error{margin:8px 0 0;font-size:var(--fs-sm);color:var(--red);}
+
+.icm-nota{
+  display:flex;align-items:flex-start;gap:8px;margin:16px 0 0;
+  font-size:var(--fs-sm);color:var(--ink-500);line-height:1.45;
+}
+.icm-nota .icon{width:15px;height:15px;margin-top:2px;color:var(--ink-400);flex-shrink:0;}

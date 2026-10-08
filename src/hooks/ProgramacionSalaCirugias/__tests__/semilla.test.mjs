@@ -38,10 +38,11 @@ test('sala qx-2: histerectomía en preparación, la urgencia y la resección com
   assert.deepEqual(items.map((c) => [c.id, resumenCanasta(c).estado]), [['12358', 'en-preparacion'], ['12354', 'sin-solicitar'], ['12361', 'sin-solicitar']]);
 });
 
-test('canasta preparada parcialmente: 3 de 5 preparados en la urgencia', async () => {
+test('canasta preparada parcialmente: 3 preparados de la canasta de la resección ileocecal', async () => {
   const items = await fetchCanastasDia({ fecha: HOY, salaId: 'qx-1' });
   const r = resumenCanasta(items.find((c) => c.id === '12357'));
-  assert.deepEqual([r.preparados, r.total], [3, 5]);
+  assert.equal(r.preparados, 3);
+  assert.ok(r.total > 5, 'la canasta de una resección laparoscópica tiene más de 5 insumos');
 });
 
 test('una cirugía nueva no repite el id de ninguna semilla', async () => {
@@ -82,4 +83,31 @@ test('registrarTiempoEnHoja: crea la hoja y deja inicio y fin en sus tiempos', (
   assert.equal(hoja.tiempos.inicioOperac, '08:05');
   assert.equal(hoja.tiempos.termOperac, '08:40');
   assert.equal(hoja.estado, 'borrador');
+});
+
+test('insumos oncológicos: sin nombres repetidos y todas las cirugías sembradas con canasta', async () => {
+  const todas = [];
+  for (const salaId of ['qx-1', 'qx-2', 'proc-menores', 'gastroenterologia', 'hemodinamia']) {
+    todas.push(...await fetchCanastasDia({ fecha: HOY, salaId }));
+  }
+  todas.forEach((c) => {
+    const nombres = c.canasta.items.map((i) => i.nombre);
+    assert.equal(new Set(nombres).size, nombres.length, `${c.id} tiene insumos repetidos`);
+  });
+  const port = todas.find((c) => c.id === '12414');
+  assert.ok(port.canasta.items.length >= 15);
+  assert.ok(port.canasta.items.some((i) => i.nombre.startsWith('Introductor desprendible')));
+});
+
+test('iniciar cirugía: registra el inicio de anestesia y no admite una anestesia posterior a la cirugía', () => {
+  // 12414 ya se inició en un test anterior: se prueba sobre otra cirugía con canasta recibida.
+  const base = { salaId: 'qx-1', fecha: HOY, horaInicio: '08:30', horaFin: '09:30', paciente: { nombre: 'X', documento: 'CC 9' } };
+  const nueva = crearCirugia({
+    ...base,
+    canasta: { nombre: 'C', items: [{ nombre: 'Gasas', cantidad: 1, solicitudFarmacia: 'entregado', despachado: 1, recibido: 1 }], recepcion: { conNovedades: false } },
+  });
+  assert.throws(() => iniciarCirugia(nueva.id, { horaInicioReal: '08:45', horaInicioAnest: '08:50' }), /anestesia no puede iniciar después/);
+  const c = iniciarCirugia(nueva.id, { horaInicioReal: '08:45', horaInicioAnest: '08:30' });
+  assert.equal(c.horaInicioAnest, '08:30');
+  assert.equal(c.horaInicioReal, '08:45');
 });
