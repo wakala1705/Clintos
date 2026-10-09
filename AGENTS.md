@@ -619,7 +619,11 @@ Mismo tipo de deriva ya documentado para Botones/Badges.
   `--space-2 --space-3`, radio `20px`; hover `var(--gray-bg)` (nunca hex);
   activo con los tokens `--interactive-selected-*`. `sm` = `--fs-sm` +
   `6px --space-3`. El segmented activo lleva borde `var(--border)` (el valor
-  de 4 de las 7 copias).
+  de 4 de las 7 copias). **Alto del segmented: 36px** en total (chip de 28px +
+  3px de padding + 1px de borde del contenedor `.chip-group.segmented`), igual
+  que el resto de controles de una barra de filtros — lo fija el chip, no el
+  contenedor, así vale para todas las features sin tocar sus copias del
+  contenedor.
 - **El contenedor no es parte del componente**: `.chip-group` y
   `.chip-group.segmented` siguen siendo clases globales por feature (el
   layout/píldora que agrupa los chips); solo el chip es CSS Module.
@@ -946,3 +950,35 @@ paddings y anchos propios) y ~20 cajas `.xx-search` de modales de catálogo.
   - **Pendiente**: `ContractPanel` (Programar cita, input sin estado).
   - **Fuera de alcance**: `Typeahead`, `SearchableSelect`, `DiagnosticoField`,
     `InsumosBuscador` (tienen listbox/resultados propios).
+
+# Pantalla de familiares
+
+Ruta pública `/pantalla-familiares` (sin Sidebar/Topbar): lista a pantalla
+completa, estilo tablero de aeropuerto, para proyectar en el televisor de la
+sala de espera. Código en `@/Components/PantallaFamiliares/` y lógica en
+`@/hooks/PantallaFamiliares/`.
+
+- **Privacidad**: solo muestra **código** (el número de la cirugía), **nombre
+  abreviado** ("Laura G."), **hora programada** y **estado** en palabras para una
+  familia. Nunca diagnóstico, procedimiento, cirujano, documento ni sala. La
+  derivación (alta/UCI/hospitalización) es un dato clínico: se muestra neutra
+  ("Con el equipo médico"). Sin programadas ni canceladas/incumplidas; sí
+  "Cirugía finalizada". Esas reglas viven en `familiares.js` con tests: no
+  agregar campos a las filas sin revisarlas.
+- **Estado**: sale de la `etapa` de la cirugía (la misma del Tablero del Panel
+  general), así que mover una tarjeta ahí actualiza la pantalla. Se relee cada 5 s
+  y rota de página cada 10 s si hay más de 7 filas.
+- **Acceso (DEMO)**: pide una clave en el cliente (`acceso.js`, hoy
+  `clintos2026`) que solo evita abrirla por accidente; no protege datos. Con
+  backend, validar en el servidor.
+- **Excepción a "Tipografía"**: usa una escala propia `--pf-fs-*` (clamp + vw)
+  y un tema propio en `.pf-screen`, porque los `--fs-*` (máx. 28px) no se
+  leen a varios metros. Familia y pesos siguen siendo los del proyecto.
+- **Temas y demo**: la ruta del televisor es oscura (`tema="oscuro"`). Hay
+  versión clara (`tema="claro"`, clase `.pf-tema-claro`, con colores de estado
+  más oscuros para el contraste). La demo la abre desde el botón "Pantalla de
+  familiares" del Panel general en `PantallaFamiliaresModal` (95% x 95%, clara).
+  Sin pie con mensaje: el pie solo existe para los puntos de página.
+- **Limitación**: el estado vive en memoria del navegador. Un televisor con su
+  propio navegador no ve lo que el personal mueve en otro equipo hasta que haya
+  backend; la fuente de datos es lo único que cambiaría.

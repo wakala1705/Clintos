@@ -5,6 +5,7 @@
 // place), se resetea al recargar la página.
 
 import { INSUMOS_HOY, INSUMOS_ONCO } from './insumosOncologia.js';
+import { ETAPA_IDS, DESTINOS_DERIVACION } from './tablero/etapas.js';
 
 export const SEDES = [
   { value: '02', label: '02 - Sede Norte' },
@@ -2202,7 +2203,7 @@ export function iniciarCirugia(id, { horaInicioReal, horaInicioAnest, ahora = ah
     if (!HORA_VALIDA.test(horaInicioAnest)) throw new Error('La hora de inicio de anestesia no es válida.');
     if (horaInicioAnest > horaInicioReal) throw new Error('La anestesia no puede iniciar después de la cirugía.');
   }
-  return actualizarCirugia(id, { horaInicioReal, ...(horaInicioAnest ? { horaInicioAnest } : {}) });
+  return actualizarCirugia(id, { horaInicioReal, ...(horaInicioAnest ? { horaInicioAnest } : {}), ...cambioEtapa(actual, 'en-quirofano') });
 }
 
 // Finaliza una cirugía en curso: registra la hora real de fin y la cierra como
@@ -2216,12 +2217,43 @@ export function finalizarCirugia(id, { horaFinReal }) {
   return actualizarCirugia(id, {
     estado: 'realizada',
     horaFinReal,
+    ...cambioEtapa(actual, 'finalizado'),
     farmacia: conResolucionInsumos(actual, 'consumido'),
   });
 }
 
+// Etapa de la vista "Por estado" del tablero (ver tablero/etapas.js). Cada
+// cambio queda en `etapaHistorial` (quién/cuándo no hay: es un mock) para una
+// línea de tiempo y tiempos por etapa más adelante.
+function cambioEtapa(actual, etapa, derivacion = null) {
+  return {
+    etapa,
+    derivacion: etapa === 'derivado' ? derivacion : null,
+    etapaHistorial: [...(actual.etapaHistorial ?? []), { etapa, fecha: fechaHoraLocalISO(ahoraDemo()) }],
+  };
+}
+
+// Movimiento manual de una cirugía entre etapas (arrastre o "Mover a…" en el
+// tablero). Libre en ambos sentidos: sirve también para corregir un error.
+// Las reglas que piden un dato real (iniciar/finalizar/derivar) las resuelve
+// resolverMovimiento antes de llegar acá.
+export function moverEtapaCirugia(id, etapa, { derivacion = null } = {}) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  if (!ETAPA_IDS.includes(etapa)) throw new Error('La etapa no es válida.');
+  if (etapa === 'derivado' && !DESTINOS_DERIVACION.some((d) => d.value === derivacion)) {
+    throw new Error('Indica el destino de la derivación.');
+  }
+  return actualizarCirugia(id, cambioEtapa(actual, etapa, derivacion));
+}
+
 export function actualizarEstadoCirugia(id, nuevoEstado) {
-  return actualizarCirugia(id, { estado: nuevoEstado });
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  // Marcar realizada desde el menú también la lleva a "Finalizado" si aún no
+  // había avanzado a recuperación/derivación.
+  const aFinalizado = nuevoEstado === 'realizada' && actual
+    && !['finalizado', 'en-recuperacion', 'derivado'].includes(actual.etapa);
+  return actualizarCirugia(id, { estado: nuevoEstado, ...(aFinalizado ? cambioEtapa(actual, 'finalizado') : {}) });
 }
 
 export function reprogramarCirugia(id, {

@@ -2,15 +2,16 @@
 
 import { useRef, useState } from 'react';
 import { registrarTiempoEnHoja } from './hojaConsumo/hojaConsumo';
+import { ETAPA_LABEL, resolverMovimiento } from './tablero/etapas';
 import {
   actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, finalizarCirugia, iniciarCirugia, reprogramarCirugia,
-  resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
+  moverEtapaCirugia, resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
 } from './mockCirugiaData';
 
 // Acciones sobre una cirugía puntual (reprogramar, cancelar, marcar realizada/
 // incumplida, insumos) + el `modal` que las confirma y el toast de
 // resultado. Compartido por la agenda (ProgramacionSalaCirugias.jsx) y el
-// tablero del día (TableroDia.jsx) para que ambas pantallas apliquen
+// Panel general (PanelGeneral.jsx) para que ambas pantallas apliquen
 // exactamente las mismas reglas y mensajes. `applyUpdated(cirugia)` es cómo
 // cada pantalla refleja el registro mutado en su propia lista.
 export default function useCirugiasAcciones({ applyUpdated }) {
@@ -95,6 +96,29 @@ export default function useCirugiasAcciones({ applyUpdated }) {
       showToast(e.message);
     }
   }
+  // Vista "Por estado" del tablero: mover una cirugía a otra etapa. Las que
+  // registran un dato real reusan los modales de siempre (iniciar/finalizar) y
+  // la etapa se actualiza al confirmarlos (ver iniciarCirugia/finalizarCirugia);
+  // derivar pide el destino; el resto es un cambio directo.
+  function handleMoverEtapa(cirugia, destino) {
+    const r = resolverMovimiento(cirugia, destino);
+    if (r.tipo === 'ninguno') return;
+    if (r.tipo === 'bloqueado') { showToast(r.motivo); return; }
+    if (r.tipo === 'iniciar') { handleIniciarCirugia(cirugia); return; }
+    if (r.tipo === 'finalizar') { handleFinalizarCirugia(cirugia); return; }
+    if (r.tipo === 'derivar') { setModal({ type: 'derivar', cirugia }); return; }
+    applyUpdated(moverEtapaCirugia(cirugia.id, destino));
+    showToast(`Cirugía movida a «${ETAPA_LABEL[destino]}».`);
+  }
+  function handleSubmitDerivacion(derivacion) {
+    try {
+      applyUpdated(moverEtapaCirugia(modal.cirugia.id, 'derivado', { derivacion }));
+      showToast('Cirugía derivada.');
+    } catch (e) {
+      showToast(e.message);
+    }
+    setModal(null);
+  }
   function handleReprogramarCirugia(cirugia) {
     setModal({ type: 'reprogramar', cirugia });
   }
@@ -154,6 +178,8 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleFinalizarDesdeHoja,
     handleMarcarRealizada,
     handleMarcarIncumplida,
+    handleMoverEtapa,
+    handleSubmitDerivacion,
     handlePedirInsumos,
     handleVincularCanasta,
     handleCancelarSolicitud,

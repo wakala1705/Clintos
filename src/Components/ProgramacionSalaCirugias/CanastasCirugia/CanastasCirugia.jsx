@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LuCalendarDays, LuHistory, LuPackageSearch } from 'react-icons/lu';
+import { LuHistory, LuLayoutDashboard, LuPackageSearch } from 'react-icons/lu';
 // Tokens (:root), reset del shell y reglas compartidas de la feature: los
 // mismos 2 archivos que carga RevisionVencidas.jsx, porque esta ruta es otra
 // página de la misma feature (ProgramacionSalaCirugias).
@@ -271,8 +271,8 @@ export default function CanastasCirugia() {
               >
                 <LuHistory className="icon" aria-hidden="true" />
               </button>
-              <Button variant="secondary-accent" icon={LuCalendarDays} onClick={() => router.push('/cirugia/programacion')}>
-                Ver agenda
+              <Button variant="secondary-accent" icon={LuLayoutDashboard} onClick={() => router.push('/cirugia')}>
+                Panel general
               </Button>
             </div>
           </div>

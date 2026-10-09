@@ -1,0 +1,5 @@
+.ve-overlay{cursor:grabbing;box-shadow:var(--dropdown-shadow);border-radius:var(--radius);}
+.ve-overlay .cc-card{margin:0;}
+
+/* Una columna por etapa, scroll horizontal si no caben. */
+.ve-board{display:flex;gap:12px;flex:1;min-height:0;overflow-x:auto;padding:12px;}

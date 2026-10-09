@@ -33,3 +33,6 @@
 @media (max-width:768px){
   .igs-grid, .igs-grid.igs-grid-3{grid-template-columns:1fr;}
 }
+
+.igs-field-error{font-size:var(--fs-sm);color:var(--red);}
+.igs-step input[aria-invalid="true"]{border-color:var(--red);}

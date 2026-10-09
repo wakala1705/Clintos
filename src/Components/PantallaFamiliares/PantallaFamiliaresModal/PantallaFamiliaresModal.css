@@ -1,0 +1,5 @@
+/* 95% de alto y ancho del viewport (encargo explícito); sin padding propio,
+   el contenido (.pf-screen) trae el suyo. */
+.modal-card.pfm-modal-card{
+  width:95vw;max-width:none;height:95vh;max-height:95vh;padding:0;overflow:hidden;
+}

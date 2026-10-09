@@ -1,0 +1,67 @@
+/* Pantalla de clave de la "Pantalla de familiares": mismos colores que
+   ListaFamiliares (oscuro por defecto, claro con `.pf-tema-claro`), repetidos
+   acá porque este componente se monta antes. */
+.pf-acceso{
+  --pf-bg:#0b1220;
+  --pf-surface:#111a2e;
+  --pf-border:#26324a;
+  --pf-field-border:#33425f;
+  --pf-ink:#f3f6fb;
+  --pf-ink-muted:#a9b6cf;
+  --pf-accent:#8ab4ff;
+  --pf-icon-bg:#1c2a4a;
+  --pf-error:#ff9d9d;
+  --pf-btn:#3b82f6;
+  --pf-btn-hover:#2f6fe0;
+
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:var(--pf-bg);color:var(--pf-ink);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+}
+.pf-acceso.pf-tema-claro{
+  --pf-bg:#f4f6fa;
+  --pf-surface:#ffffff;
+  --pf-border:#dbe2ee;
+  --pf-field-border:#c5cedd;
+  --pf-ink:#111827;
+  --pf-ink-muted:#5b6578;
+  --pf-accent:#1d4ed8;
+  --pf-icon-bg:#e3ecff;
+  --pf-error:#b91c1c;
+  --pf-btn:#1d4ed8;
+  --pf-btn-hover:#1a43b8;
+}
+.pf-acceso.pf-incrustada{min-height:0;height:100%;}
+
+.pf-acceso-card{
+  width:100%;max-width:380px;display:flex;flex-direction:column;gap:10px;
+  padding:32px;border:1px solid var(--pf-border);border-radius:16px;background:var(--pf-surface);
+}
+.pf-acceso-icon{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--pf-icon-bg);color:var(--pf-accent);
+}
+.pf-acceso-icon .icon{width:22px;height:22px;}
+.pf-acceso-title{margin:8px 0 0;font-size:var(--fs-xl);font-weight:var(--fw-semibold);}
+.pf-acceso-text{margin:0 0 8px;font-size:var(--fs-base);color:var(--pf-ink-muted);}
+.pf-acceso-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--pf-ink-muted);}
+.pf-acceso-input{
+  height:var(--input-md,40px);padding:0 12px;border:1px solid var(--pf-field-border);border-radius:8px;
+  background:var(--pf-bg);color:var(--pf-ink);font-family:inherit;font-size:var(--fs-base);
+}
+.pf-acceso-input:focus-visible{outline:2px solid var(--pf-accent);outline-offset:1px;}
+.pf-acceso-input[aria-invalid="true"]{border-color:var(--pf-error);}
+.pf-acceso-error{font-size:var(--fs-sm);color:var(--pf-error);}
+.pf-acceso-btn{
+  height:var(--input-md,40px);margin-top:8px;border:none;border-radius:var(--btn-radius,8px);
+  background:var(--pf-btn);color:#fff;font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-semibold);cursor:pointer;
+}
+.pf-acceso-btn:hover:not(:disabled){background:var(--pf-btn-hover);}
+.pf-acceso-btn:disabled{opacity:var(--btn-disabled-opacity,.45);cursor:not-allowed;}
+.pf-acceso-btn:focus-visible{outline:2px solid var(--pf-accent);outline-offset:2px;}
+.pf-acceso-cancel{
+  height:var(--input-md,40px);border:1px solid var(--pf-field-border);border-radius:var(--btn-radius,8px);
+  background:transparent;color:var(--pf-ink-muted);font-family:inherit;font-size:var(--fs-base);font-weight:var(--fw-medium);cursor:pointer;
+}
+.pf-acceso-cancel:hover{color:var(--pf-ink);}
+.pf-acceso-cancel:focus-visible{outline:2px solid var(--pf-accent);outline-offset:2px;}

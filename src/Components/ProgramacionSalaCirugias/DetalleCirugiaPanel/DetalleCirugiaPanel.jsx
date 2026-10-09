@@ -19,7 +19,7 @@ import {
   ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuClipboardList, LuPencil, LuUser,
+  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuPencil, LuUser,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo).
@@ -115,7 +115,6 @@ export default function DetalleCirugiaPanel({
   const puedeMarcarRealizada = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
   // En curso (iniciada) ya no se edita, reprograma, cancela ni incumple: solo se cierra.
   const puedeAccionar = puedeMarcarRealizada && !estaIniciada(cirugia);
-  const puedeVerHojaGasto = !['cancelada', 'incumplida'].includes(cirugia.estado);
   // Incumplida solo aplica cuando la hora de inicio ya pasó.
   const puedeMarcarIncumplida = puedeAccionar && cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
   // Una cirugía programada solo se cierra como realizada cuando ya empezó (igual que incumplida);
@@ -262,7 +261,6 @@ export default function DetalleCirugiaPanel({
       <div className="dcp-actions">
         <Button variant="secondary-accent" icon={LuBan} className="dcp-cancelar-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
         <div className="dcp-actions-estado">
-          <Button variant="secondary-accent" icon={LuClipboardList} disabled={!puedeVerHojaGasto} title={puedeVerHojaGasto ? undefined : 'No disponible para cirugías canceladas o incumplidas'} onClick={() => setHojaGastoAltAbierta(true)}>Hoja de consumo</Button>
           {onEditar && <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>}
           <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
           <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>

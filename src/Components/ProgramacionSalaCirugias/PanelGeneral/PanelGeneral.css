@@ -11,24 +11,9 @@
   display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;flex-shrink:0;
 }
 
-/* Tabla expandida: cada KPI pasa a una línea (prop compact de KpiCard) y la
+/* KPIs compactos: cada KPI pasa a una línea (prop compact de KpiCard) y la
    tarjeta de la tabla, que ya es flex:1, absorbe el alto liberado. */
 .pg-cir-kpis.compact{gap:12px;}
-
-/* Botón expandir/contraer: ícono cuadrado de la altura de los botones de la
-   barra; activo con los tokens de selección, como un toggle. */
-.pg-cir-expand-btn{
-  flex-shrink:0;width:36px;height:36px;padding:0;
-  display:inline-flex;align-items:center;justify-content:center;
-  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
-  background:var(--surface);color:var(--ink-700);cursor:pointer;transition:var(--btn-transition);
-}
-.pg-cir-expand-btn .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
-.pg-cir-expand-btn:hover{background:var(--gray-bg);}
-.pg-cir-expand-btn:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
-.pg-cir-expand-btn[aria-pressed='true']{
-  background:var(--interactive-selected-bg);border-color:var(--primary);color:var(--primary);
-}
 
 .pg-cir-panel{
   flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;

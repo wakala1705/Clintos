@@ -4,8 +4,9 @@ import { useState } from 'react';
 import './CirugiaCardMenu.css';
 import DropdownMenu from '@/Components/DropdownMenu/DropdownMenu';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
+  LuArrowRight, LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuPencil,
 } from 'react-icons/lu';
+import { ETAPAS_VISIBLES } from '@/hooks/ProgramacionSalaCirugias/tablero/etapas';
 import {
   ESTADOS_TERMINALES_CIRUGIA, ahoraDemo, cirugiaYaInicio, estaIniciada,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -26,6 +27,7 @@ import {
 // el mouse sale de la tarjeta hacia el menú portado a document.body.
 export default function CirugiaCardMenu({
   cirugia, onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar, size = 'sm',
+  etapaActual, onMoverEtapa,
 }) {
   const [open, setOpen] = useState(false);
   // Una cirugía en curso ya no se edita, reprograma, cancela ni incumple: solo se cierra.
@@ -45,12 +47,17 @@ export default function CirugiaCardMenu({
         size={size}
         onOpenChange={setOpen}
         items={[
+          // Solo en la vista "Por estado" del tablero: alternativa por teclado
+          // (y sin arrastre) para mover la cirugía a otra etapa.
+          ...(onMoverEtapa ? ETAPAS_VISIBLES.filter((e) => e.id !== etapaActual).map((e) => ({
+            id: `mover-${e.id}`, label: `Mover a ${e.label}`, icon: LuArrowRight, onSelect: () => onMoverEtapa(cirugia, e.id),
+          })) : []),
           // Sin `onEditar` (tablero del día) la acción no se ofrece.
           ...(onEditar ? [{
             id: 'editar', label: 'Editar', icon: LuPencil, disabled: !puedeAccionar, onSelect: () => onEditar(cirugia),
           }] : []),
           {
-            id: 'reprogramar', label: 'Reprogramar', icon: LuCalendarClock, disabled: !puedeAccionar, onSelect: () => onReprogramar(cirugia),
+            id: 'reprogramar', label: 'Reprogramar', icon: LuCalendarClock, disabled: !puedeAccionar, onSelect: () => onReprogramar(cirugia), dividerBefore: Boolean(onMoverEtapa),
           },
           {
             id: 'realizada', label: 'Marcar como realizada', icon: LuCheckCheck, disabled: !puedeMarcarRealizada, onSelect: () => onMarcarRealizada(cirugia), dividerBefore: true,

@@ -1,0 +1,18 @@
+.vpm-root{position:relative;flex-shrink:0;}
+
+/* Mismo alto que el resto de controles de la barra (36px). */
+.vpm-trigger{
+  width:36px;height:36px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;
+  font-family:inherit;transition:var(--btn-transition);
+}
+.vpm-trigger .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.vpm-trigger:hover{background:var(--gray-bg);}
+.vpm-trigger[aria-expanded="true"]{background:var(--primary-50);color:var(--primary);border-color:var(--primary);}
+.vpm-trigger:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
+
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver
+   AGENTS.md "Dropdowns") -- acá solo la posición. */
+.vpm-dropdown{position:absolute;top:calc(100% + 6px);right:0;z-index:var(--z-popover);width:180px;min-width:0;}

@@ -40,8 +40,14 @@
 /* Variante segmented: el chip vive dentro de un `.chip-group.segmented`
    (contenedor píldora, sigue siendo global por feature) — sin borde propio,
    la opción activa se distingue con fondo elevado, no con relleno azul.
-   El borde del activo es el valor de la mayoría de copias (4 de 7). */
-.segmented{border-color:transparent;background:transparent;box-shadow:none;}
+   El borde del activo es el valor de la mayoría de copias (4 de 7).
+   Alto del chip fijo en 28px: con el padding (3px) y el borde (1px) del
+   contenedor `.chip-group.segmented` el control completo mide 36px, igual
+   que el resto de controles de una barra de filtros (antes 43px). */
+.segmented{
+  height:28px;padding-top:0;padding-bottom:0;
+  border-color:transparent;background:transparent;box-shadow:none;
+}
 .segmented:hover{background:rgba(16,24,39,.05);border-color:transparent;}
 .segmented.active,
 .segmented.active:hover{

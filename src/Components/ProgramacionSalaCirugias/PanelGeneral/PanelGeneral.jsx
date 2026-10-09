@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  LuDownload, LuLayoutDashboard, LuMaximize2, LuMinimize2, LuPlus,
+  LuDownload, LuPlus, LuTv,
 } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
@@ -20,7 +20,9 @@ import FinalizarCirugiaModal from '../modals/FinalizarCirugiaModal/FinalizarCiru
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import PanelKpis from './PanelKpis/PanelKpis';
 import CirugiasDiaTable from './CirugiasDiaTable/CirugiasDiaTable';
-import TableroDia from '../TableroDia/TableroDia';
+import VistaEstados from './VistaEstados/VistaEstados';
+import DerivacionModal from '../modals/DerivacionModal/DerivacionModal';
+import PantallaFamiliaresModal from '@/Components/PantallaFamiliares/PantallaFamiliaresModal/PantallaFamiliaresModal';
 import {
   SALAS, ahoraDemo, fechaISO, fetchAgendaRango, motivoNoIniciable,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -31,6 +33,7 @@ import {
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import VistaPanelMenu from './VistaPanelMenu/VistaPanelMenu';
 import SearchField from '@/Components/SearchField/SearchField';
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx).
 const SEDE_ID = '02';
@@ -43,6 +46,15 @@ const salaLabel = (salaId) => SALAS_SEDE.find((s) => s.value === salaId)?.descri
 // Crear una cirugía (wizard) vive en Programación.
 export default function PanelGeneral() {
   const router = useRouter();
+  // Vista del contenido del panel: "Tabla" (por defecto) o "Tablero" (por
+  // estado, arrastrable). Vive en la URL (?vista=tablero) para poder abrirla
+  // directo o dejarla fija en una pantalla de coordinación. Ambas vistas usan el
+  // mismo rango (Hoy/Semana/Mes); con más de un día las tarjetas muestran su fecha.
+  const searchParams = useSearchParams();
+  const vista = searchParams.get('vista') === 'tablero' ? 'tablero' : 'tabla';
+  function setVista(v) {
+    router.replace(v === 'tablero' ? '/cirugia?vista=tablero' : '/cirugia', { scroll: false });
+  }
   // Datos cargados + el rango al que pertenecen: si no coincide con el rango
   // elegido, se está cargando (sin setState síncrono en el efecto).
   const [datos, setDatos] = useState({ rango: null, items: [] });
@@ -50,11 +62,13 @@ export default function PanelGeneral() {
   const [rango, setRango] = useState('hoy');
   const [busqueda, setBusqueda] = useState('');
   const [selectedId, setSelectedId] = useState(null);
-  const [tableroAbierto, setTableroAbierto] = useState(false);
-  // Botón expandir de la barra de la tabla: compacta los KPIs a una línea y la
-  // tabla (flex:1) gana ese alto.
-  const [tablaExpandida, setTablaExpandida] = useState(false);
-  const ExpandIcon = tablaExpandida ? LuMinimize2 : LuMaximize2;
+  // Demo de la pantalla de familiares (televisor de la sala de espera) en un modal.
+  const [familiaresAbierto, setFamiliaresAbierto] = useState(false);
+  // Tipo de vista: compacto (KPIs de una línea, la tarjeta de la tabla o el
+  // tablero gana ese alto) o expandido. Arranca compacto (encargo explícito);
+  // se elige en el menú de configuración de vista.
+  const [tipoVista, setTipoVista] = useState('compacto');
+  const kpisCompactos = tipoVista === 'compacto';
   // Reloj del render: define "en curso"/"retrasada" (ver estadoVisual).
   const [ahora] = useState(() => ahoraDemo());
 
@@ -98,6 +112,7 @@ export default function PanelGeneral() {
     handleReprogramarCirugia, handleCancelarCirugia,
     handleIniciarCirugia, handleAbrirHoja, handleSubmitIniciar, handleFinalizarCirugia, handleSubmitFinalizar, handleFinalizarDesdeHoja,
     handleMarcarRealizada, handleMarcarIncumplida,
+    handleMoverEtapa, handleSubmitDerivacion,
     handlePedirInsumos, handleVincularCanasta, handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
 
@@ -125,6 +140,22 @@ export default function PanelGeneral() {
   let listado;
   if (cirugias === null) {
     listado = <p className="pg-cir-estado" role="status">Cargando cirugías…</p>;
+  } else if (vista === 'tablero') {
+    listado = (
+      <VistaEstados
+        cirugias={filas}
+        salaLabel={salaLabel}
+        mostrarFecha={rango !== 'hoy'}
+        ahora={ahora}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+        onMoverEtapa={handleMoverEtapa}
+        onReprogramar={handleReprogramarCirugia}
+        onMarcarRealizada={handleMarcarRealizada}
+        onMarcarIncumplida={handleMarcarIncumplida}
+        onCancelar={handleCancelarCirugia}
+      />
+    );
   } else if (filas.length === 0) {
     listado = (
       <div className="pg-cir-estado" role="status">
@@ -171,19 +202,24 @@ export default function PanelGeneral() {
               <p>Estado de las salas y programación quirúrgica del día.</p>
             </div>
             <div className="psc-page-header-actions">
-              <Button variant="secondary" icon={LuDownload} onClick={handleExportar} disabled={filas.length === 0}>
-                Exportar
+              <Button variant="secondary" icon={LuTv} onClick={() => setFamiliaresAbierto(true)}>
+                Pantalla de familiares
               </Button>
+              {vista === 'tabla' && (
+                <Button variant="secondary" icon={LuDownload} onClick={handleExportar} disabled={filas.length === 0}>
+                  Exportar
+                </Button>
+              )}
               <Button icon={LuPlus} onClick={() => router.push('/cirugia/programacion')}>
                 Programar cirugía
               </Button>
             </div>
           </div>
 
-          <div className={`pg-cir-kpis${tablaExpandida ? ' compact' : ''}`}>
+          <div className={`pg-cir-kpis${kpisCompactos ? ' compact' : ''}`}>
             <PanelKpis
               kpis={kpisPanel(lista, ahora, SALAS_SEDE, rangoActual.dias)}
-              compact={tablaExpandida}
+              compact={kpisCompactos}
               filtro={filtro}
               periodo={periodo}
               onFiltro={setFiltro}
@@ -200,19 +236,12 @@ export default function PanelGeneral() {
                 onChange={setRango}
                 ariaLabel="Filtrar cirugías por fecha"
               />
-              <Button variant="secondary-accent" icon={LuLayoutDashboard} onClick={() => setTableroAbierto(true)}>
-                Tablero del día
-              </Button>
-              <button
-                type="button"
-                className="pg-cir-expand-btn"
-                onClick={() => setTablaExpandida((v) => !v)}
-                aria-pressed={tablaExpandida}
-                aria-label={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
-                title={tablaExpandida ? 'Contraer tabla' : 'Expandir tabla'}
-              >
-                <ExpandIcon className="icon" aria-hidden="true" />
-              </button>
+              <VistaPanelMenu
+                vista={vista}
+                onChange={setVista}
+                tipo={tipoVista}
+                onChangeTipo={setTipoVista}
+              />
             </div>
             {listado}
           </section>
@@ -251,14 +280,14 @@ export default function PanelGeneral() {
           onClose={() => setModal(null)}
         />
       )}
+      {familiaresAbierto && (
+        <PantallaFamiliaresModal onClose={() => setFamiliaresAbierto(false)} />
+      )}
+      {modal?.type === 'derivar' && (
+        <DerivacionModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitDerivacion} />
+      )}
       {modal?.type === 'cancelar' && (
         <CancelarCirugiaModal cirugia={modal.cirugia} onClose={() => setModal(null)} onSubmit={handleSubmitCancelar} />
-      )}
-
-      {/* Tablero del día: modal de 90% x 90%. Va después del detalle y los
-          modales de acción de esta pantalla para quedar encima si coinciden. */}
-      {tableroAbierto && (
-        <TableroDia onClose={() => setTableroAbierto(false)} onCirugiaActualizada={applyUpdated} />
       )}
 
       <div className={`psc-toast${toast ? ' show' : ''}`} role="status">

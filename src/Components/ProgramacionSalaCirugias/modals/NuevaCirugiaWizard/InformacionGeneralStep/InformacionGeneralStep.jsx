@@ -76,7 +76,7 @@ const ASA_OPTIONS = toOptions(ASA_CATALOGO);
 // ConsultaStep.jsx, required sin resaltado ámbar), así que esos 4 campos
 // quedan solo con `required` semántico, sin ámbar visible.
 export default function InformacionGeneralStep({
-  datos, onChange,
+  datos, onChange, fechaMinima, fechaInicioPasada = false,
 }) {
   const [catalogoDxAbierto, setCatalogoDxAbierto] = useState(false);
   const [catalogoAseguradoraAbierto, setCatalogoAseguradoraAbierto] = useState(false);
@@ -91,9 +91,17 @@ export default function InformacionGeneralStep({
             id="igs-fecha-inicio"
             type="datetime-local"
             required
+            min={fechaMinima}
+            aria-invalid={fechaInicioPasada || undefined}
+            aria-describedby={fechaInicioPasada ? 'igs-fecha-inicio-error' : undefined}
             value={datos.fechaInicio}
             onChange={(e) => onChange('fechaInicio', e.target.value)}
           />
+          {fechaInicioPasada && (
+            <span id="igs-fecha-inicio-error" className="igs-field-error" role="alert">
+              La fecha de programación no puede ser anterior a ahora.
+            </span>
+          )}
         </div>
         <div className="form-field">
           <label htmlFor="igs-telefonos-aviso">Teléfonos aviso</label>

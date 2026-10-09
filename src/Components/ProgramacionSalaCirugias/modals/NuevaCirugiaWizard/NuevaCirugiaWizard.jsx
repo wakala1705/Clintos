@@ -10,7 +10,7 @@ import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
-  fechaISO, fechaHoraLocalISO, horaLocal, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
+  fechaISO, fechaHoraLocalISO, horaLocal, ahoraDemo, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   LuCheck, LuTrash2, LuTriangleAlert, LuX,
@@ -160,6 +160,17 @@ export default function NuevaCirugiaWizard({
   // abajo).
   const datosInicialesRef = useRef(datos);
 
+  // No se programa en el pasado: la fecha/hora de programación debe ser desde
+  // "ahora" (tomado al abrir el wizard, ver ahoraDemo). Al editar una cirugía
+  // cuya fecha ya pasó, se tolera el valor original sin tocar -- solo se
+  // bloquea si el usuario lo cambia a otro valor pasado. Strings
+  // "YYYY-MM-DDTHH:mm" comparables lexicográficamente.
+  const [fechaMinima] = useState(() => fechaHoraLocalISO(ahoraDemo()));
+  const [fechaInicioOriginal] = useState(datos.fechaInicio);
+  const fechaInicioPasada = !vacio(datos.fechaInicio)
+    && datos.fechaInicio < fechaMinima
+    && (!editando || datos.fechaInicio !== fechaInicioOriginal);
+
   // Foco atrapado dentro del wizard mientras está montado, y dentro de la
   // confirmación de descarte mientras está abierta -- 2 instancias porque
   // son 2 diálogos distintos que pueden estar visibles a la vez (el de
@@ -185,7 +196,7 @@ export default function NuevaCirugiaWizard({
   // exige que todos los pasos anteriores estén completos.
   const faltantesPaso1 = camposFaltantesPaso1(datos);
   const pasoCompleto = {
-    1: faltantesPaso1.length === 0,
+    1: faltantesPaso1.length === 0 && !fechaInicioPasada,
     2: datos.procedimientos.length > 0,
     3: true,
     4: true,
@@ -296,7 +307,7 @@ export default function NuevaCirugiaWizard({
 
             <div className="ncw-content">
               {paso === 1 && (
-                <InformacionGeneralStep datos={datos} onChange={set} />
+                <InformacionGeneralStep datos={datos} onChange={set} fechaMinima={fechaMinima} fechaInicioPasada={fechaInicioPasada} />
               )}
               {paso === 2 && (
                 <ProcedimientosStep datos={datos} onChange={set} />

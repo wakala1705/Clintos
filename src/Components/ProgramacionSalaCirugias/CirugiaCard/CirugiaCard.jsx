@@ -27,6 +27,7 @@ import CirugiaCardMenu from '../CirugiaCardMenu/CirugiaCardMenu';
 export default function CirugiaCard({
   cirugia, selected, onClick, style, compact = false,
   onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
+  etapaActual, onMoverEtapa,
 }) {
   function handleKeyDown(e) {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -59,6 +60,8 @@ export default function CirugiaCard({
           onMarcarRealizada={onMarcarRealizada}
           onMarcarIncumplida={onMarcarIncumplida}
           onCancelar={onCancelar}
+          etapaActual={etapaActual}
+          onMoverEtapa={onMoverEtapa}
         />
       </div>
 
