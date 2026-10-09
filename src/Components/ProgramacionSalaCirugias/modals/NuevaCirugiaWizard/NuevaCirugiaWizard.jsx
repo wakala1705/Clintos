@@ -18,7 +18,7 @@ import {
 
 const PASOS = [
   { n: 1, titulo: 'Información general', sub: 'Datos administrativos y de admisión de la cirugía.' },
-  { n: 2, titulo: 'Procedimientos', sub: 'Procedimiento principal y asociados.' },
+  { n: 2, titulo: 'Personal', sub: 'Profesionales que participan en la cirugía.' },
   { n: 3, titulo: 'Insumos', sub: 'Canasta e insumos requeridos.' },
   { n: 4, titulo: 'Equipos', sub: 'Equipos requeridos para la cirugía.' },
   { n: 5, titulo: 'Confirmación', sub: 'Resumen antes de guardar.' },
@@ -97,10 +97,11 @@ function datosIniciales(patient, salaId, initialFechaHora) {
     horaVence: '',
     observaciones: '',
     procedimientos: [],
-    // `null` hasta que InsumosStep (Paso 3) escribe una primera edición real
-    // -- mientras tanto se muestra el cálculo derivado de procedimientos
-    // (ver agregarInsumosPrecargados en mockCirugiaData.js) sin persistirlo,
-    // así ConfirmacionStep (Paso 5) siempre lee el mismo dato ya editado.
+    // Personal adicional (Ayudante/Instrumentadora/Circulante...) [{ rol, nombre }].
+    personal: [],
+    // Canasta vinculada en el Paso 3 (`{ id, nombre }`) y sus insumos editables;
+    // ambos `null` mientras no se vincule ninguna (no es bloqueante).
+    canasta: null,
     insumos: null,
     equipos: [],
   };
@@ -298,7 +299,7 @@ export default function NuevaCirugiaWizard({
                 <InformacionGeneralStep datos={datos} onChange={set} />
               )}
               {paso === 2 && (
-                <ProcedimientosStep datos={datos} onChange={set} patient={patient} />
+                <ProcedimientosStep datos={datos} onChange={set} />
               )}
               {paso === 3 && (
                 <InsumosStep datos={datos} onChange={set} />

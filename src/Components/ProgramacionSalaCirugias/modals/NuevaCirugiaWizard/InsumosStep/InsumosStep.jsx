@@ -3,28 +3,45 @@
 import { useState } from 'react';
 import './InsumosStep.css';
 import CatalogoInsumosModal from '../../CatalogoInsumosModal/CatalogoInsumosModal';
-import { agregarInsumosPrecargados } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import VincularCanastaModal from '../../VincularCanastaModal/VincularCanastaModal';
+import { soloNombre } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuCheck, LuLink, LuPencil, LuPlus, LuPrinter, LuTrash2, LuX,
+  LuCheck, LuLink, LuPackage, LuPencil, LuPlus, LuPrinter, LuScissors, LuTrash2, LuUnlink, LuX,
 } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 
-// Paso 3 del wizard "Nueva cirugía" -- arranca con la canasta consolidada de
-// los procedimientos agregados en el Paso 2 (mismo cálculo que el preview
-// por card de ProcedimientosStep, ver agregarInsumosPrecargados en
-// mockCirugiaData.js), pero de acá en más pasa a ser editable (editar
-// cantidad inline, eliminar fila, agregar un insumo nuevo desde
-// CatalogoInsumosModal). `datos.insumos` vive en el wizard (no local a este
-// componente, ver datosIniciales en NuevaCirugiaWizard.jsx) para que
-// ConfirmacionStep (Paso 4) pueda mostrar la canasta ya editada -- mientras
-// sea `null` (todavía no se inicializó) se muestra el cálculo derivado de
-// agregarInsumosPrecargados sin escribirlo; recién la primera edición real
-// (editar/eliminar/agregar) lo vuelve estado propio vía onChange.
+// Paso 3 del wizard "Nueva cirugía" -- NO bloqueante: la canasta se vincula
+// acá o después desde el detalle de la cirugía (tab Insumos). "Vincular
+// canastas" abre VincularCanastaModal (3 canastas genéricas oncológicas por
+// complejidad); al elegir una, sus insumos se copian a `datos.insumos` y
+// `datos.canasta` guarda `{ id, nombre }`. Una cirugía lleva una sola
+// canasta aunque tenga varios procedimientos. Desde ahí la canasta es
+// editable: cantidad inline, eliminar fila y agregar insumo desde
+// CatalogoInsumosModal. Sin canasta vinculada (`datos.canasta` null) la
+// cirugía se guarda "sin vincular" y NO se pide nada a farmacia (la solicitud
+// es un paso aparte). ConfirmacionStep (Paso 5) lee los mismos datos.
+// Imprimir sigue oculto por ahora (encargo explícito).
+const MOSTRAR_IMPRIMIR = false;
+
 export default function InsumosStep({ datos, onChange }) {
-  const insumos = datos.insumos ?? agregarInsumosPrecargados(datos.procedimientos);
+  const canasta = datos.canasta ?? null;
+  const insumos = datos.insumos ?? [];
   const [editandoCodigo, setEditandoCodigo] = useState(null);
   const [cantidadEdit, setCantidadEdit] = useState('');
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
+  const [vincularAbierto, setVincularAbierto] = useState(false);
+
+  function handleVincular({ id, nombre, items }) {
+    onChange('canasta', { id, nombre });
+    onChange('insumos', items);
+    setEditandoCodigo(null);
+  }
+
+  function handleDesvincular() {
+    onChange('canasta', null);
+    onChange('insumos', null);
+    setEditandoCodigo(null);
+  }
 
   function handleEliminar(codigo) {
     onChange('insumos', insumos.filter((i) => i.codigo !== codigo));
@@ -61,31 +78,67 @@ export default function InsumosStep({ datos, onChange }) {
       <div className="is-header">
         <h4 className="ncw-section-title">Canasta de insumos</h4>
         <div className="is-header-actions">
-          {/* Sin acción por ahora: abrirá el vínculo de canastas de cirugía. */}
-          <Button type="button" size="sm" icon={LuLink}>Vincular canastas</Button>
-          <button
-            type="button"
-            className="ncw-icon-btn"
-            onClick={() => window.print()}
-            aria-label="Imprimir canasta de insumos"
-            title="Imprimir"
-          >
-            <LuPrinter className="icon" />
-          </button>
-          <button
-            type="button"
-            className="ncw-icon-btn ncw-icon-btn-primary"
-            onClick={() => setCatalogoAbierto(true)}
-            aria-label="Agregar insumo"
-            title="Agregar insumo"
-          >
-            <LuPlus className="icon" />
-          </button>
+          {MOSTRAR_IMPRIMIR && canasta && (
+            <button
+              type="button"
+              className="ncw-icon-btn"
+              onClick={() => window.print()}
+              aria-label="Imprimir canasta de insumos"
+              title="Imprimir"
+            >
+              <LuPrinter className="icon" />
+            </button>
+          )}
+          {canasta && (
+            <Button type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setCatalogoAbierto(true)}>
+              Agregar insumo
+            </Button>
+          )}
+          <Button type="button" size="sm" icon={LuLink} onClick={() => setVincularAbierto(true)}>
+            {canasta ? 'Cambiar canasta' : 'Vincular canastas'}
+          </Button>
         </div>
       </div>
 
-      {insumos.length === 0 ? (
-        <div className="ncw-step-empty">Aún no hay insumos precargados.</div>
+      {datos.procedimientos.length > 0 && (
+        <div className="is-procedimiento">
+          <span className="is-procedimiento-icon" aria-hidden="true"><LuScissors className="icon" /></span>
+          <div className="is-procedimiento-text">
+            <span className="is-procedimiento-label">
+              {datos.procedimientos.length > 1 ? 'Procedimientos de la cirugía' : 'Procedimiento de la cirugía'}
+            </span>
+            {datos.procedimientos.map((p, i) => (
+              <span className="is-procedimiento-nombre" key={i}>{soloNombre(p.idCirugia)}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {canasta && (
+        <div className="is-canasta">
+          <span className="is-canasta-icon" aria-hidden="true"><LuPackage className="icon" /></span>
+          <div className="is-canasta-text">
+            <span className="is-procedimiento-label">Canasta vinculada</span>
+            <span className="is-canasta-nombre">{canasta.nombre}</span>
+          </div>
+          <button
+            type="button"
+            className="ncw-icon-btn ncw-icon-btn-danger"
+            onClick={handleDesvincular}
+            aria-label="Desvincular canasta"
+            title="Desvincular canasta"
+          >
+            <LuUnlink className="icon" />
+          </button>
+        </div>
+      )}
+
+      {!canasta ? (
+        <div className="ncw-step-empty">
+          Aún no has vinculado una canasta. Puedes hacerlo ahora o después desde el detalle de la cirugía.
+        </div>
+      ) : insumos.length === 0 ? (
+        <div className="ncw-step-empty">La canasta no tiene insumos. Agrega los que necesites.</div>
       ) : (
         <div className="ncw-insumos-table-wrap">
           <table className="ncw-insumos-table">
@@ -170,6 +223,14 @@ export default function InsumosStep({ datos, onChange }) {
             </tbody>
           </table>
         </div>
+      )}
+
+      {vincularAbierto && (
+        <VincularCanastaModal
+          canastaActualId={canasta?.id ?? null}
+          onSelect={handleVincular}
+          onClose={() => setVincularAbierto(false)}
+        />
       )}
 
       {catalogoAbierto && (

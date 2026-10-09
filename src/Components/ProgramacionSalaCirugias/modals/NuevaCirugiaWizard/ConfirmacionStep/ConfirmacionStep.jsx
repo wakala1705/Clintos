@@ -2,14 +2,14 @@
 
 import './ConfirmacionStep.css';
 import {
-  soloNombre, capitalizar, agregarInsumosPrecargados, personalDeProcedimientos,
+  soloNombre, capitalizar, personalDeProcedimientos,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import Badge from '@/Components/Badge/Badge';
 
 // Paso 5 (último) del wizard "Nueva cirugía" -- resumen de solo lectura
 // antes de "Guardar cirugía": procedimientos a realizar, insumos de la
 // canasta (mismos datos que ProcedimientosStep/InsumosStep, ver
-// datos.insumos/agregarInsumosPrecargados), equipos (Paso 4, ver
+// datos.canasta/datos.insumos), equipos (Paso 4, ver
 // EquiposStep.jsx) y personal que interviene (deduplicado entre
 // procedimientos, ver personalDeProcedimientos en mockCirugiaData.js -- la
 // misma función arma `personal` al guardar, ver armarCirugiaDesdeWizard).
@@ -17,8 +17,9 @@ import Badge from '@/Components/Badge/Badge';
 // riel o "Atrás".
 export default function ConfirmacionStep({ datos }) {
   const { procedimientos, equipos } = datos;
-  const insumos = datos.insumos ?? agregarInsumosPrecargados(procedimientos);
-  const personal = personalDeProcedimientos(procedimientos);
+  const canasta = datos.canasta ?? null;
+  const insumos = canasta ? (datos.insumos ?? []) : [];
+  const personal = personalDeProcedimientos(procedimientos, datos.personal ?? []);
 
   return (
     <div className="cfs-step">
@@ -39,9 +40,15 @@ export default function ConfirmacionStep({ datos }) {
       </section>
 
       <section className="cfs-section">
-        <h4 className="ncw-section-title">Insumos</h4>
-        {insumos.length === 0 ? (
-          <div className="ncw-step-empty">Aún no hay insumos precargados.</div>
+        <h4 className="ncw-section-title">
+          {canasta ? `Canasta: ${canasta.nombre}` : 'Canasta de insumos'}
+        </h4>
+        {!canasta ? (
+          <div className="ncw-step-empty">
+            Sin vincular. Podrás vincular una canasta después desde el detalle de la cirugía; mientras tanto no se podrán pedir insumos a farmacia.
+          </div>
+        ) : insumos.length === 0 ? (
+          <div className="ncw-step-empty">La canasta no tiene insumos.</div>
         ) : (
           <div className="ncw-insumos-table-wrap">
             <table className="ncw-insumos-table">

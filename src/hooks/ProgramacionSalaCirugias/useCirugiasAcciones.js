@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { registrarTiempoEnHoja } from './hojaConsumo/hojaConsumo';
 import {
   actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, finalizarCirugia, iniciarCirugia, reprogramarCirugia,
-  resumenCanasta, solicitarInsumosFarmacia,
+  resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
 } from './mockCirugiaData';
 
 // Acciones sobre una cirugía puntual (reprogramar, cancelar, marcar realizada/
@@ -116,6 +116,10 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     applyUpdated(solicitarInsumosFarmacia(cirugia.id));
     showToast('Insumos solicitados a farmacia.');
   }
+  function handleVincularCanasta(cirugia, canasta) {
+    applyUpdated(vincularCanastaCirugia(cirugia.id, canasta));
+    showToast('Canasta vinculada a la cirugía.');
+  }
   function handleCancelarSolicitud(cirugia, { causal, observacion }) {
     applyUpdated(cancelarSolicitudInsumos(cirugia.id, { causal, observacion }));
     showToast('Solicitud de insumos cancelada.');
@@ -151,6 +155,7 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleMarcarRealizada,
     handleMarcarIncumplida,
     handlePedirInsumos,
+    handleVincularCanasta,
     handleCancelarSolicitud,
     handleConsumoRegistrado,
   };

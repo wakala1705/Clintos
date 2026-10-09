@@ -14,6 +14,7 @@ import EquiposTab from './tabs/EquiposTab/EquiposTab';
 import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
+import VincularCanastaModal from '../modals/VincularCanastaModal/VincularCanastaModal';
 import {
   ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -48,7 +49,7 @@ function InfoItem({ label, value, wide = false }) {
 // explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
-  onMarcarRealizada, onMarcarIncumplida, onPedirInsumos,
+  onMarcarRealizada, onMarcarIncumplida, onPedirInsumos, onVincularCanasta,
   onCancelarSolicitud, onVerEnCanastas, onConsumoRegistrado, onFinalizarCirugia,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
@@ -60,10 +61,12 @@ export default function DetalleCirugiaPanel({
   // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
   const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
   const [hojaGastoAltAbierta, setHojaGastoAltAbierta] = useState(false);
+  // "Vincular canasta" (tab Insumos, cirugía programada sin canasta).
+  const [vincularCanastaAbierto, setVincularCanastaAbierto] = useState(false);
   // Hoja de consumo guardada de la cirugía: vive en un almacén fuera de React, así que se
   // relee en eventos (al cambiar de cirugía y al cerrar su modal), no en el render.
   const [hoja, setHoja] = useState(() => (cirugia ? obtenerHojaConsumo(cirugia.id) : null));
-  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAltAbierta;
+  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAltAbierta || vincularCanastaAbierto;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -238,6 +241,7 @@ export default function DetalleCirugiaPanel({
                   cirugia={cirugia}
                   puedeAccionar={puedeAccionar}
                   onPedirInsumos={onPedirInsumos}
+                  onVincularCanasta={() => setVincularCanastaAbierto(true)}
                   onCancelarSolicitud={() => setCancelarSolicitudAbierto(true)}
                   onVerEnCanastas={onVerEnCanastas}
                 />
@@ -301,6 +305,12 @@ export default function DetalleCirugiaPanel({
             setCancelarSolicitudAbierto(false);
           }}
           onClose={() => setCancelarSolicitudAbierto(false)}
+        />
+      )}
+      {vincularCanastaAbierto && (
+        <VincularCanastaModal
+          onSelect={(canasta) => onVincularCanasta(cirugia, canasta)}
+          onClose={() => setVincularCanastaAbierto(false)}
         />
       )}
       {hojaGastoAltAbierta && (

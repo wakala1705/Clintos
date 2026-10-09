@@ -11,7 +11,7 @@
 .pcs-list .pcs-card:last-child{border-bottom:none;}
 
 .pcs-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.pcs-card-heading{display:flex;align-items:flex-start;gap:10px;}
+.pcs-card-heading{display:flex;align-items:center;gap:10px;}
 /* Mismo criterio de círculo-ícono que .modal-header-icon (ModalHeader.css)
    y .alert-type-icon (AlertTable.css) -- 34px, tono primary fijo (no hay
    variación por tipo de procedimiento). */
@@ -22,7 +22,7 @@
 }
 .pcs-cell-icon .icon{width:18px;height:18px;}
 .pcs-card-heading-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.pcs-cell-primary{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
+.pcs-cell-primary{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .pcs-card-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
 
 .pcs-card-bottom{
@@ -66,3 +66,15 @@
 @media (max-width:768px){
   .pcs-card-bottom{grid-template-columns:1fr;}
 }
+
+.pcs-personal-list{
+  list-style:none;margin:0;padding:0;
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+}
+.pcs-personal-item{
+  display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:10px;
+  padding:8px 12px;border-bottom:1px solid var(--bg);
+}
+.pcs-personal-item:last-child{border-bottom:none;}
+.pcs-personal-nombre{font-size:var(--fs-sm);color:var(--ink-700);}
+.pcs-personal-actions{display:flex;flex-wrap:wrap;gap:8px;}

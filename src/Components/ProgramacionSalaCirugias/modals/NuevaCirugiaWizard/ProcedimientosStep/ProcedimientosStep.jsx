@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import './ProcedimientosStep.css';
 import Button from '@/Components/Button/Button';
-import AgregarProcedimientoModal from './AgregarProcedimientoModal/AgregarProcedimientoModal';
+import CatalogoMedicosModal from '../../CatalogoMedicosModal/CatalogoMedicosModal';
 import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuChevronDown, LuPlus, LuScissors, LuTrash2,
+  LuChevronDown, LuPlus, LuScissors, LuX,
 } from 'react-icons/lu';
 
 // Paso 2 del wizard "Nueva cirugía" -- lista los procedimientos agregados
@@ -23,33 +23,36 @@ import {
 // aparte), abajo
 // Médico/Anestesiólogo en 2 columnas separadas (antes un solo bloque
 // "Personal" con ambos nombres apilados).
+// Roles de personal que se pueden sumar a la cirugía (además del cirujano/
+// anestesiólogo de cada procedimiento). `catalogo` es el `descripcion` de
+// MEDICOS_CATALOGO que filtra CatalogoMedicosModal -- Ayudante sale de los
+// cirujanos.
+const ROLES_PERSONAL = [
+  { rol: 'Cirujano', catalogo: 'Cirujano' },
+  { rol: 'Anestesiólogo', catalogo: 'Anestesiólogo' },
+  { rol: 'Ayudante', catalogo: 'Cirujano' },
+  { rol: 'Instrumentadora', catalogo: 'Instrumentadora' },
+  { rol: 'Circulante', catalogo: 'Circulante' },
+];
+
 export default function ProcedimientosStep({
-  datos, onChange, patient,
+  datos, onChange,
 }) {
-  const [modalAbierto, setModalAbierto] = useState(false);
+  const [rolAbierto, setRolAbierto] = useState(null);
   // Índices (dentro de `procedimientos`) cuya card de insumos está expandida
-  // -- arranca vacío (todas colapsadas, progressive disclosure, mismo
-  // criterio que los rangos de EadDomainEtapa.jsx). Reindexado a mano en
-  // handleRemove para que quitar una card del medio no deje expandida la
-  // card equivocada.
+  // -- arranca vacío (todas colapsadas, progressive disclosure).
   const [expandedInsumos, setExpandedInsumos] = useState(() => new Set());
   const procedimientos = datos.procedimientos;
+  const personal = datos.personal ?? [];
 
-  function handleAdd(procedimiento) {
-    onChange('procedimientos', [...procedimientos, procedimiento]);
-    setModalAbierto(false);
+  function handleAddPersonal(rol, valor) {
+    const nombre = soloNombre(valor);
+    if (personal.some((p) => p.rol === rol && p.nombre === nombre)) return;
+    onChange('personal', [...personal, { rol, nombre }]);
   }
 
-  function handleRemove(index) {
-    onChange('procedimientos', procedimientos.filter((_, i) => i !== index));
-    setExpandedInsumos((prev) => {
-      const next = new Set();
-      prev.forEach((i) => {
-        if (i < index) next.add(i);
-        else if (i > index) next.add(i - 1);
-      });
-      return next;
-    });
+  function handleRemovePersonal(index) {
+    onChange('personal', personal.filter((_, i) => i !== index));
   }
 
   function toggleInsumos(index) {
@@ -65,7 +68,7 @@ export default function ProcedimientosStep({
       <h4 className="ncw-section-title">Procedimientos asociados</h4>
 
       {procedimientos.length === 0 ? (
-        <div className="ncw-step-empty">Aún no se han agregado procedimientos.</div>
+        <div className="ncw-step-empty">Esta cirugía no tiene procedimientos asociados.</div>
       ) : (
         <div className="pcs-table">
           <div className="pcs-list">
@@ -79,27 +82,7 @@ export default function ProcedimientosStep({
                       <span className="pcs-card-tipo">{capitalizar(p.tipoCirugia)}</span>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="ncw-icon-btn ncw-icon-btn-danger"
-                    onClick={() => handleRemove(i)}
-                    aria-label={`Quitar procedimiento ${soloNombre(p.idCirugia)}`}
-                    title="Quitar procedimiento"
-                  >
-                    <LuTrash2 className="icon" />
-                  </button>
                 </div>
-                <div className="pcs-card-bottom">
-                  <div className="pcs-card-field">
-                    <span className="pcs-card-label">Médico</span>
-                    <span className="pcs-card-value">{soloNombre(p.idCirujano)}</span>
-                  </div>
-                  <div className="pcs-card-field">
-                    <span className="pcs-card-label">Anestesiólogo</span>
-                    <span className="pcs-card-value">{soloNombre(p.idAnestesiologo)}</span>
-                  </div>
-                </div>
-
                 {p.insumos?.length > 0 && (
                   <div className="pcs-insumos">
                     <button
@@ -142,17 +125,44 @@ export default function ProcedimientosStep({
         </div>
       )}
 
-      <Button type="button" variant="outline" icon={LuPlus} onClick={() => setModalAbierto(true)}>
-        Agregar procedimiento
-      </Button>
+      <h4 className="ncw-section-title">Personal que participa</h4>
 
-      {modalAbierto && (
-        <AgregarProcedimientoModal
-          patient={patient}
-          onAdd={handleAdd}
-          onClose={() => setModalAbierto(false)}
+      {personal.length > 0 && (
+        <ul className="pcs-personal-list">
+          {personal.map((per, i) => (
+            <li className="pcs-personal-item" key={`${per.rol}:${per.nombre}`}>
+              <span className="pcs-card-label">{per.rol}</span>
+              <span className="pcs-personal-nombre">{per.nombre}</span>
+              <button
+                type="button"
+                className="ncw-icon-btn ncw-icon-btn-danger"
+                onClick={() => handleRemovePersonal(i)}
+                aria-label={`Quitar ${per.rol} ${per.nombre}`}
+                title="Quitar"
+              >
+                <LuX className="icon" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="pcs-personal-actions">
+        {ROLES_PERSONAL.map(({ rol }) => (
+          <Button key={rol} type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setRolAbierto(rol)}>
+            Agregar {rol.toLowerCase()}
+          </Button>
+        ))}
+      </div>
+
+      {rolAbierto && (
+        <CatalogoMedicosModal
+          tipo={ROLES_PERSONAL.find((r) => r.rol === rolAbierto).catalogo}
+          onSelect={(valor) => handleAddPersonal(rolAbierto, valor)}
+          onClose={() => setRolAbierto(null)}
         />
       )}
+
     </div>
   );
 }

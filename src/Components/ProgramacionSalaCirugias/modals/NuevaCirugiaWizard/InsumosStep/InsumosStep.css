@@ -12,3 +12,35 @@
   padding:0 8px;font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
 }
 .is-cantidad-input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+.is-procedimiento{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--primary-50);
+}
+.is-procedimiento-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);color:var(--primary);
+}
+.is-procedimiento-icon .icon{width:18px;height:18px;}
+.is-procedimiento-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.is-procedimiento-label{
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.is-procedimiento-nombre{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.is-canasta{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);
+}
+.is-canasta-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.is-canasta-icon .icon{width:18px;height:18px;}
+.is-canasta-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.is-canasta-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}

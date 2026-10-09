@@ -70,7 +70,7 @@ export default function TableroDia({ onClose, onCirugiaActualizada }) {
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
     handleMarcarRealizada, handleMarcarIncumplida,
-    handlePedirInsumos, handleCancelarSolicitud, handleConsumoRegistrado,
+    handlePedirInsumos, handleVincularCanasta, handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
 
   // Con el detalle o un modal de acción encima, el foco y Escape son de ese
@@ -175,6 +175,7 @@ export default function TableroDia({ onClose, onCirugiaActualizada }) {
         onMarcarRealizada={handleMarcarRealizada}
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
+        onVincularCanasta={handleVincularCanasta}
         onCancelarSolicitud={handleCancelarSolicitud}
         onConsumoRegistrado={handleConsumoRegistrado}
         onVerEnCanastas={(cirugia) => router.push(canastasHref(cirugia))}

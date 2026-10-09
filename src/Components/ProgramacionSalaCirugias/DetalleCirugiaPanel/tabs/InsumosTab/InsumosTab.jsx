@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  LuPackageMinus, LuPackagePlus, LuPackageSearch, LuPackageX,
+  LuLink, LuPackage, LuPackageMinus, LuPackagePlus, LuPackageSearch, LuPackageX,
 } from 'react-icons/lu';
 import './InsumosTab.css';
 import Badge from '@/Components/Badge/Badge';
@@ -64,9 +64,27 @@ function headRow(conDevuelto) {
 // Devolver no: lo no usado se devuelve también después de realizada o
 // cancelada la cirugía.
 export default function InsumosTab({
-  cirugia, puedeAccionar, onPedirInsumos, onCancelarSolicitud, onVerEnCanastas,
+  cirugia, puedeAccionar, onPedirInsumos, onVincularCanasta, onCancelarSolicitud, onVerEnCanastas,
 }) {
   const { canasta } = cirugia;
+  // Sin canasta vinculada (se programó sin elegirla en el wizard): no hay nada
+  // que pedir a farmacia hasta vincular una.
+  if (canasta.items.length === 0) {
+    return (
+      <div className="ist-tab">
+        <div className="ist-sin-vincular">
+          <span className="ist-sin-vincular-icon" aria-hidden="true"><LuPackage className="icon" /></span>
+          <p className="ist-sin-vincular-title">Canasta sin vincular</p>
+          <p className="ist-sin-vincular-text">
+            Vincula una canasta para poder pedir los insumos a farmacia.
+          </p>
+          <Button icon={LuLink} disabled={!puedeAccionar} onClick={onVincularCanasta}>
+            Vincular canasta
+          </Button>
+        </div>
+      </div>
+    );
+  }
   const total = canasta.items.length;
   const pasos = canasta.items.map((i) => i.solicitudFarmacia ?? 'sin-solicitar');
   const porSolicitar = pasos.filter((p) => p === 'sin-solicitar').length;

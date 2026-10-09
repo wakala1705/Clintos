@@ -172,6 +172,18 @@ export const CAUSALES_REPROGRAMACION_CIRUGIA = [
 // mantener las dos formas.
 export const MEDICOS_CATALOGO = [
   {
+    idMedico: '52114730', nombre: 'MARTHA LUCIA RAMIREZ PINEDA', descripcion: 'Instrumentadora', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1032456789', nombre: 'DIANA CAROLINA SUAREZ MORA', descripcion: 'Instrumentadora', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '39785412', nombre: 'LUZ MARINA CASTRO VEGA', descripcion: 'Circulante', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1019087654', nombre: 'ANDRES FELIPE GIRALDO RUIZ', descripcion: 'Circulante', sede: 'SEDE NORTE',
+  },
+  {
     idMedico: '02757/98', nombre: 'ABRAHAM GANEM BECHARA', descripcion: 'Cirujano', sede: 'SEDE NORTE',
   },
   {
@@ -454,6 +466,74 @@ export function agregarInsumosPrecargados(procedimientos) {
   return Array.from(porCodigo.values());
 }
 
+// Canastas genéricas de cirugía oncológica, una por complejidad (Paso 3 del
+// wizard "Nueva cirugía" y tab Insumos del detalle: "Vincular canastas").
+// Cada una es un punto de partida editable: al vincularla se copian sus
+// insumos a la cirugía y el usuario puede cambiar cantidades, quitar o
+// agregar. Cada nivel incluye lo del anterior. Cantidades de ejemplo hasta
+// que farmacia defina las canastas reales.
+const CANASTA_ONCOLOGICA_BASICA = [
+  { codigo: 'DM000318', nombre: 'GUANTE QUIRURGICO ESTERIL TALLA 7', cantidad: 4 },
+  { codigo: 'DM000319', nombre: 'GUANTE QUIRURGICO ESTERIL TALLA 7.5', cantidad: 4 },
+  { codigo: 'DM000102', nombre: 'BATA QUIRURGICA DESECHABLE TALLA M', cantidad: 3 },
+  { codigo: 'DM000103', nombre: 'BATA QUIRURGICA DESECHABLE TALLA L', cantidad: 3 },
+  { codigo: 'DM000225', nombre: 'COMPRESA DE CAMPO QUIRURGICO 45X45', cantidad: 4 },
+  { codigo: 'DM000301', nombre: 'GASA ESTERIL 10X10CM PAQUETE X10', cantidad: 6 },
+  { codigo: 'DM000340', nombre: 'HOJA DE BISTURI N 11', cantidad: 2 },
+  { codigo: 'DM000341', nombre: 'HOJA DE BISTURI N 15', cantidad: 1 },
+  { codigo: 'DM000700', nombre: 'LAPIZ DE ELECTROBISTURI DESECHABLE', cantidad: 1 },
+  { codigo: 'DM000701', nombre: 'PLACA DE ELECTROBISTURI ADULTO', cantidad: 1 },
+  { codigo: 'DM000500', nombre: 'SUTURA VICRYL 2-0', cantidad: 3 },
+  { codigo: 'DM000501', nombre: 'SUTURA NYLON 3-0', cantidad: 2 },
+  { codigo: 'DM000702', nombre: 'FRASCO PARA MUESTRA DE PATOLOGIA', cantidad: 2 },
+  { codigo: 'DM000610', nombre: 'TAPABOCAS QUIRURGICO', cantidad: 4 },
+  { codigo: 'DM000045', nombre: 'APOSITO TRANSPARENTE 10X12CM', cantidad: 2 },
+  { codigo: 'DM000650', nombre: 'TELA ADHESIVA MICROPORE 5CM', cantidad: 1 },
+];
+const CANASTA_ONCOLOGICA_MEDIA_EXTRA = [
+  { codigo: 'DM000502', nombre: 'SUTURA VICRYL 0', cantidad: 3 },
+  { codigo: 'DM000710', nombre: 'CLIP DE LIGADURA TITANIO MEDIANO', cantidad: 12 },
+  { codigo: 'DM000711', nombre: 'DRENAJE JACKSON-PRATT 15FR', cantidad: 2 },
+  { codigo: 'DM000712', nombre: 'BOLSA PARA EXTRACCION DE ESPECIMEN', cantidad: 1 },
+  { codigo: 'DM000713', nombre: 'SOLUCION SALINA 0.9% 1000ML', cantidad: 4 },
+  { codigo: 'DM000470', nombre: 'SONDA VESICAL FOLEY N 16', cantidad: 1 },
+  { codigo: 'DM000450', nombre: 'SET DE VENOCLISIS MACROGOTERO', cantidad: 1 },
+];
+const CANASTA_ONCOLOGICA_ALTA_EXTRA = [
+  { codigo: 'DM000720', nombre: 'GRAPADORA LINEAL CORTANTE 60MM', cantidad: 2 },
+  { codigo: 'DM000721', nombre: 'RECARGA PARA GRAPADORA LINEAL 60MM', cantidad: 4 },
+  { codigo: 'DM000722', nombre: 'DISPOSITIVO DE SELLADO VASCULAR', cantidad: 2 },
+  { codigo: 'DM000723', nombre: 'COMPRESA DE LAPAROTOMIA', cantidad: 10 },
+  { codigo: 'DM000724', nombre: 'PROTECTOR DE HERIDA (SEPARADOR)', cantidad: 1 },
+  { codigo: 'DM000725', nombre: 'MALLA HEMOSTATICA ABSORBIBLE', cantidad: 2 },
+  { codigo: 'DM000726', nombre: 'SUTURA PROLENE 3-0', cantidad: 2 },
+  { codigo: 'DM000210', nombre: 'CATETER VENOSO CENTRAL 7FR', cantidad: 1 },
+];
+const conExtra = (...listas) => listas.flat().map((i) => ({ ...i }));
+export const CANASTAS_GENERICAS = [
+  {
+    id: 'oncologica-basica',
+    nombre: 'Canasta oncológica básica',
+    complejidad: 'Baja',
+    descripcion: 'Resecciones, biopsias y procedimientos oncológicos de baja complejidad.',
+    items: conExtra(CANASTA_ONCOLOGICA_BASICA),
+  },
+  {
+    id: 'oncologica-intermedia',
+    nombre: 'Canasta oncológica intermedia',
+    complejidad: 'Media',
+    descripcion: 'Mastectomías, tiroidectomías y resecciones con drenaje y ligadura.',
+    items: conExtra(CANASTA_ONCOLOGICA_BASICA, CANASTA_ONCOLOGICA_MEDIA_EXTRA),
+  },
+  {
+    id: 'oncologica-alta',
+    nombre: 'Canasta oncológica avanzada',
+    complejidad: 'Alta',
+    descripcion: 'Resecciones mayores (colon, gástrica, hepática) con sellado vascular y grapado.',
+    items: conExtra(CANASTA_ONCOLOGICA_BASICA, CANASTA_ONCOLOGICA_MEDIA_EXTRA, CANASTA_ONCOLOGICA_ALTA_EXTRA),
+  },
+];
+
 // Catálogo de insumos que alimenta CatalogoInsumosModal ("Agregar insumo" en
 // InsumosStep, Paso 3 del wizard "Nueva cirugía") -- superset de
 // INSUMOS_PRECARGA_CATALOGO (mismos 11 códigos, sin `cantidad` porque acá es
@@ -481,6 +561,10 @@ export const INSUMOS_CATALOGO = [
   { codigo: 'DM000610', nombre: 'TAPABOCAS QUIRURGICO' },
   { codigo: 'DM000650', nombre: 'TELA ADHESIVA MICROPORE 5CM' },
 ];
+// Los insumos de las canastas genéricas también se pueden buscar/agregar.
+CANASTAS_GENERICAS.forEach((c) => c.items.forEach(({ codigo, nombre }) => {
+  if (!INSUMOS_CATALOGO.some((i) => i.codigo === codigo)) INSUMOS_CATALOGO.push({ codigo, nombre });
+}));
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 
@@ -703,22 +787,16 @@ export function capitalizar(texto) {
 // ConfirmacionStep.jsx (Paso 5) porque armarCirugiaDesdeWizard más abajo
 // también lo necesita para construir `personal` al guardar. Instrumentadora/
 // Circulante no se arman acá -- ningún paso del wizard los recolecta hoy.
-export function personalDeProcedimientos(procedimientos) {
+export function personalDeProcedimientos(procedimientos, adicional = []) {
+  // El personal lo elige el usuario en el Paso 2 (datos.personal); ya no se
+  // deriva por defecto del cirujano/anestesiólogo de cada procedimiento.
   const vistos = new Set();
-  const personal = [];
-  procedimientos.forEach((p) => {
-    [
-      { rol: 'Cirujano', nombre: soloNombre(p.idCirujano) },
-      { rol: 'Anestesiólogo', nombre: soloNombre(p.idAnestesiologo) },
-    ].forEach((item) => {
-      const key = `${item.rol}:${item.nombre}`;
-      if (!vistos.has(key)) {
-        vistos.add(key);
-        personal.push(item);
-      }
-    });
-  });
-  return personal;
+  return adicional.filter((item) => {
+    const key = `${item.rol}:${item.nombre}`;
+    if (vistos.has(key)) return false;
+    vistos.add(key);
+    return true;
+  }).map((item) => ({ rol: item.rol, nombre: item.nombre }));
 }
 
 export function periodKeyDeSemana(weekStart, salaId) {
@@ -1880,7 +1958,7 @@ export function armarCirugiaDesdeWizard(datos, patient, salaId) {
   const duracionMin = Number(datos.duracionEstimada) || 0;
   const horaFin = calcularHoraFin(horaInicio, duracionMin);
 
-  const insumos = datos.insumos ?? agregarInsumosPrecargados(datos.procedimientos);
+  const insumos = datos.canasta ? (datos.insumos ?? []) : [];
   const primerProcedimiento = datos.procedimientos[0];
 
   return {
@@ -1912,10 +1990,10 @@ export function armarCirugiaDesdeWizard(datos, patient, salaId) {
       duracionMin,
       notas: '',
     })),
-    personal: personalDeProcedimientos(datos.procedimientos),
+    personal: personalDeProcedimientos(datos.procedimientos, datos.personal ?? []),
     equipos: datos.equipos ?? [],
     canasta: {
-      nombre: 'Canasta de la cirugía',
+      nombre: insumos.length ? (datos.canasta?.nombre ?? 'Canasta de la cirugía') : 'Sin canasta asignada',
       items: insumos.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })),
     },
     farmacia: {
@@ -1954,7 +2032,7 @@ export function editarCirugiaDesdeWizard(id, datos, salaId) {
   const duracionMin = Number(datos.duracionEstimada) || 0;
   const horaFin = calcularHoraFin(horaInicio, duracionMin);
 
-  const insumos = datos.insumos ?? agregarInsumosPrecargados(datos.procedimientos);
+  const insumos = datos.canasta ? (datos.insumos ?? []) : [];
   const primerProcedimiento = datos.procedimientos[0];
 
   return actualizarCirugia(id, {
@@ -1972,10 +2050,10 @@ export function editarCirugiaDesdeWizard(id, datos, salaId) {
       duracionMin,
       notas: '',
     })),
-    personal: personalDeProcedimientos(datos.procedimientos),
+    personal: personalDeProcedimientos(datos.procedimientos, datos.personal ?? []),
     equipos: datos.equipos ?? [],
     canasta: {
-      nombre: actual.canasta?.nombre ?? 'Canasta de la cirugía',
+      nombre: insumos.length ? (datos.canasta?.nombre ?? actual.canasta?.nombre ?? 'Canasta de la cirugía') : 'Sin canasta asignada',
       items: insumos.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })),
     },
     tipoAnestesia: datos.tipoAnestesia ?? '',
@@ -2033,8 +2111,12 @@ export function datosWizardDesdeCirugia(cirugia) {
       tipoCirugia: '',
       insumos: [],
     })),
-    insumos: (cirugia.canasta?.items ?? []).map((i) => ({ codigo: i.nombre, nombre: i.nombre, cantidad: i.cantidad })),
+    canasta: cirugia.canasta?.items?.length ? { id: null, nombre: cirugia.canasta.nombre } : null,
+    insumos: cirugia.canasta?.items?.length
+      ? cirugia.canasta.items.map((i) => ({ codigo: i.nombre, nombre: i.nombre, cantidad: i.cantidad }))
+      : null,
     equipos: cirugia.equipos ?? [],
+    personal: cirugia.personal ?? [],
   };
 }
 
@@ -2459,6 +2541,20 @@ export function solicitarInsumosFarmacia(id) {
   const mayor = Math.max(0, ...CIRUGIAS.map((c) => Number(c.farmacia?.numeroPedido) || 0));
   return actualizarCirugia(id, {
     farmacia: { ...actualizada.farmacia, numeroPedido: String(mayor + 1), fechaSolicitud: fechaHoraLocalISO(new Date()) },
+  });
+}
+
+// "Vincular canasta" desde el detalle de una cirugía que se programó sin
+// canasta: copia los insumos de la canasta elegida (ya con las cantidades que
+// el usuario ajustó, si las hubo) al registro, todos "sin solicitar". Solo
+// si la cirugía aún no tiene canasta -- cambiarla con un pedido en curso
+// afectaría a farmacia.
+export function vincularCanastaCirugia(id, { nombre, items }) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  if (actual.canasta?.items?.length) throw new Error('La cirugía ya tiene una canasta vinculada.');
+  return actualizarCirugia(id, {
+    canasta: { nombre, items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, estado: 'disponible' })) },
   });
 }
 

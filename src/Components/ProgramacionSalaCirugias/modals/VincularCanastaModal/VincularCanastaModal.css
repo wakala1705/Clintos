@@ -1,0 +1,45 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer viven en shared/shared.css. */
+.modal-card.vcm-modal-card{width:760px;}
+.vcm-modal-card > .modal-body{overflow:hidden;}
+.vcm-body{padding:16px 24px 20px;gap:16px;flex:1;min-height:0;}
+
+.vcm-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;flex-shrink:0;}
+.vcm-option{
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
+  padding:12px;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--surface);font-family:inherit;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+.vcm-option:hover{background:var(--bg);}
+.vcm-option:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.vcm-option.active{
+  background:var(--interactive-selected-bg);border-color:var(--primary);
+  box-shadow:inset 0 0 0 1px var(--primary);
+}
+.vcm-option-top{display:flex;align-items:center;justify-content:space-between;width:100%;}
+.vcm-option-check{width:18px;height:18px;color:var(--primary);}
+.vcm-option-nombre{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.vcm-option-desc{font-size:var(--fs-sm);color:var(--ink-500);}
+.vcm-option-count{font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);margin-top:auto;}
+
+.vcm-preview{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;}
+.vcm-preview-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.vcm-table-wrap{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow-y:auto;max-height:320px;
+}
+.vcm-table{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+.vcm-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  padding:8px 12px;text-align:left;
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.vcm-table td{padding:6px 12px;border-bottom:1px solid var(--bg);color:var(--ink-900);}
+.vcm-table tbody tr:last-child td{border-bottom:none;}
+.vcm-table .vcm-muted{color:var(--ink-500);}
+.vcm-table .vcm-num{text-align:right;}
+.vcm-empty{
+  padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);
+  border:1px dashed var(--border);border-radius:var(--radius);
+}
