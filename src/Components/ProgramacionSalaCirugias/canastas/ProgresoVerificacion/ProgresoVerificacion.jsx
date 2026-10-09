@@ -4,6 +4,7 @@ import './ProgresoVerificacion.css';
 
 // Avance de la verificación de la recepción: texto + barra. `conDiferencia` =
 // insumos con diferencia todavía sin verificar (hay que revisarlos uno a uno).
+// Vive en el footer de la pestaña (.cnc-footer-msg) para no quitarle alto a la tabla.
 export default function ProgresoVerificacion({ verificados, total, conDiferencia = 0 }) {
   const pct = total === 0 ? 0 : Math.round((verificados / total) * 100);
   return (

@@ -6,7 +6,10 @@ import './SeleccionarSolicitudModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
+import { LuUserPlus } from 'react-icons/lu';
 import OrigenTag from '../GestionCirugias/OrigenTag/OrigenTag';
+import PrioridadTag from '../GestionCirugias/PrioridadTag/PrioridadTag';
+import DiagnosticoTag from '../GestionCirugias/DiagnosticoTag/DiagnosticoTag';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
@@ -20,8 +23,10 @@ const OPCIONES_ORIGEN = [
 // Modal de "Programar cirugía" en la agenda: lista solo las solicitudes de
 // Gestión de cirugías con la lista de chequeo completa (estado 'lista', ver
 // evaluarSolicitud). Elegir una avisa al padre (`onElegir`), que abre el
-// wizard "Nueva cirugía" con la solicitud precargada.
-export default function SeleccionarSolicitudModal({ solicitudes, onClose, onElegir }) {
+// wizard "Nueva cirugía" con la solicitud precargada. "Programar otro paciente"
+// (onOtroPaciente) abre el buscador de pacientes del flujo anterior, para
+// agendar a alguien que no está en esta lista.
+export default function SeleccionarSolicitudModal({ solicitudes, onClose, onElegir, onOtroPaciente }) {
   const modalRef = useRef(null);
   useModalFocusTrap(modalRef);
 
@@ -60,8 +65,7 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
         aria-labelledby="sso-title"
       >
         <ModalHeader
-          title="Programar cirugía"
-          titleId="sso-title"
+          title="Programar cirugía"          titleId="sso-title"
           onClose={onClose}
           closeLabel="Cerrar selección de solicitud"
         />
@@ -98,8 +102,9 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
                 <tr>
                   <th scope="col">Paciente</th>
                   <th scope="col">Procedimiento</th>
+                  <th scope="col">Prioridad</th>
+                  <th scope="col">Diagnóstico</th>
                   <th scope="col">Origen</th>
-                  <th scope="col">Médico</th>
                   <th scope="col"><span className="sso-sr">Acciones</span></th>
                 </tr>
               </thead>
@@ -116,8 +121,9 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
                       <span className="sso-main">{s.procedimiento}</span>
                       <span className="sso-sub">{s.especialidad}</span>
                     </td>
+                    <td><PrioridadTag prioritaria={s.prioritaria} /></td>
+                    <td><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                     <td><OrigenTag origen={s.origen} /></td>
-                    <td>{s.cirujano ?? s.medicoOrdena}</td>
                     <td className="sso-accion">
                       <Button
                         aria-label={`Programar cirugía de ${s.paciente.nombre}`}
@@ -133,9 +139,16 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
           </div>
         )}
 
-        <p className="sso-pie">
-          {visibles.length} de {totalListas} {totalListas === 1 ? 'solicitud lista' : 'solicitudes listas'} para programar
-        </p>
+        <div className="sso-pie">
+          <p className="sso-resumen" aria-live="polite">
+            {visibles.length} de {totalListas} {totalListas === 1 ? 'solicitud lista' : 'solicitudes listas'} para programar
+          </p>
+          {onOtroPaciente && (
+            <Button variant="outline" icon={LuUserPlus} onClick={onOtroPaciente}>
+              Programar otro paciente
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

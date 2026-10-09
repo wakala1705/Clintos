@@ -1,4 +1,4 @@
-.cnc-progreso{flex-shrink:0;margin-bottom:12px;}
+.cnc-progreso{flex-shrink:0;}
 .cnc-progreso-texto{
   display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
   font-size:var(--fs-base);color:var(--ink-700);margin-bottom:6px;

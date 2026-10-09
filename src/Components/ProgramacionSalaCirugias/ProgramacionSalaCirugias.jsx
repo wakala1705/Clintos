@@ -212,6 +212,14 @@ export default function ProgramacionSalaCirugias() {
     nuevaCirugiaSlotRef.current = null;
     setSolicitudesParaProgramar(null);
   }
+  // "Programar otro paciente": cierra la lista y abre el buscador de pacientes
+  // del flujo anterior (intención 'cirugia' -> wizard). Conserva el slot de la
+  // grilla, si lo hay, para precargar fecha/hora.
+  function handleProgramarOtroPaciente() {
+    setSolicitudesParaProgramar(null);
+    patientSearchIntentRef.current = 'cirugia';
+    window.openPatientSearch();
+  }
   function handleAbrirNuevaUrgencia() {
     patientSearchIntentRef.current = 'urgencia';
     window.openPatientSearch();
@@ -524,6 +532,7 @@ export default function ProgramacionSalaCirugias() {
           solicitudes={solicitudesParaProgramar}
           onClose={handleCerrarSolicitudes}
           onElegir={handleElegirSolicitud}
+          onOtroPaciente={handleProgramarOtroPaciente}
         />
       )}
 

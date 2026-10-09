@@ -13,7 +13,8 @@
   cursor:pointer;
 }
 .hamburger-btn:hover{background:var(--bg);}
-.hamburger-btn .hamburger{color:var(--ink-500);}
+/* Tamaño propio: el .icon genérico lo define cada feature (a veces 14px) y el botón se achicaba según la ruta. */
+.hamburger-btn .hamburger.icon{width:20px;height:20px;flex-shrink:0;color:var(--ink-500);}
 
 .hmenu-dropdown{
   position:absolute;top:calc(100% + 8px);left:0;z-index:400;width:240px;

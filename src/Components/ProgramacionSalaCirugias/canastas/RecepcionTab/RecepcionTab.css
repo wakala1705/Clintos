@@ -36,6 +36,8 @@ html[data-theme="dark"] .cnc-resumen-lectura{color:var(--green);}
 /* Check de la cabecera (verificar todos): más bajo para no agrandar el encabezado; estado mixto con "−". */
 .cnc-check.cnc-check-head{width:40px;height:36px;margin:0 auto;}
 .cnc-check-head:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed;}
+/* Check de las filas centrado en la columna (el de la cabecera ya lo estaba). */
+.cnc-tabla td.cnc-col-ok .cnc-check{margin:0 auto;}
 .cnc-check.mixto .cnc-check-box{background:var(--primary);border-color:var(--primary);}
 /* Recibido en reposo: valor + enlace "Ajustar" (el stepper solo aparece al ajustar). */
 .cnc-recibido-fijo{display:inline-flex;align-items:center;justify-content:center;gap:10px;}
@@ -51,3 +53,13 @@ html[data-theme="dark"] .cnc-resumen-lectura{color:var(--green);}
 }
 /* Movimientos de una solicitud con despacho parcial (despachos y recepciones). */
 .cnc-movimientos{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:var(--fs-sm);color:var(--ink-500);flex-shrink:0;}
+
+/* Desktop con puntero fino: filas más compactas (el alto lo fijaba el check de
+   44px, que es el objetivo táctil de tablet). Cabezal igual de compacto. */
+@media (min-width:1025px) and (pointer:fine){
+  .cnc-tabla td{padding:6px 12px;}
+  .cnc-tabla tbody .cnc-check{height:32px;}
+  .cnc-tabla th{padding:10px 12px;}
+  .cnc-tabla th.cnc-col-ok{padding:6px 0;}
+  .cnc-tabla th .cnc-check.cnc-check-head{height:28px;}
+}

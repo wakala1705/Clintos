@@ -32,12 +32,13 @@ import { contarPorEstado, filtrarSolicitudes, ordenarPorPrioridad } from '@/hook
 
 import SearchField from '@/Components/SearchField/SearchField';
 const FILTROS_INICIALES = {
-  busqueda: '', origen: 'todas', eps: 'todas', especialidad: 'todas', estado: 'todas',
+  busqueda: '', origen: 'todas', diagnostico: 'todas', estado: 'todas',
 };
 
-const opciones = (todas, valores) => [
-  { value: 'todas', label: todas },
-  ...[...new Set(valores)].sort((a, b) => a.localeCompare(b, 'es')).map((v) => ({ value: v, label: v })),
+const DIAGNOSTICO_OPCIONES = [
+  { value: 'todas', label: 'Todos los diagnósticos' },
+  { value: 'primera-vez', label: 'Primera vez' },
+  { value: 'recurrente', label: 'Recurrente' },
 ];
 
 // "Gestión de cirugías": solicitudes de cirugía con su lista de chequeo
@@ -77,8 +78,7 @@ export default function GestionCirugias() {
   const efectivos = {
     ...filtros,
     origen: filtros.origen === 'todas' ? '' : filtros.origen,
-    eps: filtros.eps === 'todas' ? '' : filtros.eps,
-    especialidad: filtros.especialidad === 'todas' ? '' : filtros.especialidad,
+    diagnostico: filtros.diagnostico === 'todas' ? '' : filtros.diagnostico,
   };
   // Los indicadores cuentan sobre lo que dejan los demás filtros, así su
   // número coincide con las filas que aparecen al pulsarlos.
@@ -215,22 +215,13 @@ export default function GestionCirugias() {
                       options={[{ value: 'todas', label: 'Todos los orígenes' }, ...Object.entries(ORIGEN_LABEL).map(([value, label]) => ({ value, label }))]}
                     />
                   </div>
-                  <div className="gc-filtro">
+                  <div className="gc-filtro gc-filtro-diagnostico">
                     <FormSelect
-                      id="gc-eps"
-                      ariaLabel="EPS"
-                      value={filtros.eps}
-                      onChange={(eps) => setFiltro({ eps })}
-                      options={opciones('Todas las EPS', solicitudes.map((s) => s.eps))}
-                    />
-                  </div>
-                  <div className="gc-filtro">
-                    <FormSelect
-                      id="gc-especialidad"
-                      ariaLabel="Especialidad"
-                      value={filtros.especialidad}
-                      onChange={(especialidad) => setFiltro({ especialidad })}
-                      options={opciones('Todas las especialidades', solicitudes.map((s) => s.especialidad))}
+                      id="gc-diagnostico"
+                      ariaLabel="Diagnóstico"
+                      value={filtros.diagnostico}
+                      onChange={(diagnostico) => setFiltro({ diagnostico })}
+                      options={DIAGNOSTICO_OPCIONES}
                     />
                   </div>
                 </div>

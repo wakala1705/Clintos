@@ -17,6 +17,8 @@
    solo se fija el ancho de cada control. */
 .gc-toolbar .psc-search{width:300px;}
 .gc-toolbar .gc-filtro{width:176px;}
+/* "Todos los diagnósticos" no entra en 176px: se truncaba y el listbox (más ancho que el trigger) se corría a la izquierda. */
+.gc-toolbar .gc-filtro-diagnostico{width:216px;}
 
 .gc-vacio{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;

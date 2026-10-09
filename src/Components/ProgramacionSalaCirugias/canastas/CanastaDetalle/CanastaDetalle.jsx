@@ -1,12 +1,12 @@
 'use client';
 
-import { LuInfo, LuLock } from 'react-icons/lu';
+import { LuChevronDown, LuInfo, LuLock } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import EstadoCirugiaBadge from '../../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import RecepcionTab from '../RecepcionTab/RecepcionTab';
 import ConsumoTab from '../ConsumoTab/ConsumoTab';
 import {
-  CANASTA_ESTADO_LABEL, edadDetalleLabel, fechaHoraRangoLabel, resumenCanasta,
+  CANASTA_ESTADO_LABEL, fechaHoraRangoLabel, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
   CANASTA_META, badgeProps, bannerCanasta,
@@ -25,6 +25,8 @@ export default function CanastaDetalle({
   const { estado } = resumenCanasta(cirugia);
   const banner = bannerCanasta(cirugia);
   const consumoDisponible = cirugia.estado === 'realizada';
+  // Cabecera colapsada por defecto (más alto para la tabla); vive en el draft como la pestaña.
+  const detalleAbierto = Boolean(draft.detalleAbierto);
   const tab = consumoDisponible ? (draft.tab ?? 'consumo') : 'recepcion';
 
   return (
@@ -32,19 +34,30 @@ export default function CanastaDetalle({
       <div className="cnc-det-head">
         <div className="cnc-det-head-top">
           <div className="cnc-det-paciente-row">
-            <h2>{cirugia.paciente.nombre}</h2>
+            <h2>Solicitud {cirugia.farmacia?.numeroPedido ?? '—'}</h2>
+            <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
             {cirugia.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
-            <span className="cnc-det-doc">{cirugia.paciente.documento}{Number.isFinite(cirugia.paciente.edad) && ` · ${edadDetalleLabel(cirugia.paciente)}`}</span>
           </div>
           <div className="cnc-det-head-right">
-            <span className="cnc-det-solicitud">Solicitud <strong>{cirugia.farmacia?.numeroPedido ?? '—'}</strong></span>
-            <Badge {...badgeProps(CANASTA_META[estado])}>{CANASTA_ESTADO_LABEL[estado]}</Badge>
+            <button
+              type="button"
+              className="cnc-det-toggle"
+              aria-expanded={detalleAbierto}
+              aria-controls="cnc-det-grid"
+              aria-label={detalleAbierto ? 'Ocultar detalle de la cirugía' : 'Mostrar detalle de la cirugía'}
+              onClick={() => onDraftChange({ detalleAbierto: !detalleAbierto })}
+            >
+              <LuChevronDown className="icon" aria-hidden="true" />
+            </button>
           </div>
         </div>
-        <div className="cnc-det-grid">
+        <div className="cnc-det-grid" id="cnc-det-grid" hidden={!detalleAbierto}>
+          <div>
+            <span className="cnc-det-label">Paciente</span>
+            <span className="cnc-det-value">{cirugia.paciente.nombre}</span>
+          </div>
           <div><span className="cnc-det-label">Procedimiento</span><span className="cnc-det-value">{oracion(cirugia.procedimientoPrincipal)}</span></div>
           <div><span className="cnc-det-label">Horario</span><span className="cnc-det-value">{fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)}</span></div>
-          <div><span className="cnc-det-label">Cirujano</span><span className="cnc-det-value">{cirugia.cirujano}</span></div>
         </div>
       </div>
 

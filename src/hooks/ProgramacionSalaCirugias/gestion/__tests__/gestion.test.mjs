@@ -53,15 +53,16 @@ test('enmascara el documento dejando 4 dígitos', () => {
   assert.equal(enmascararDocumento('CC', '1.020.345.817'), 'CC ••••5817');
 });
 
-test('filtra por búsqueda sin tildes, eps y estado; cuenta por estado', () => {
-  const lista = [sol(), sol({ valoracion: item('pendiente') }, { id: 'y', eps: 'Sanitas' })];
+test('filtra por búsqueda sin tildes, diagnóstico y estado; cuenta por estado', () => {
+  const lista = [sol(), sol({ valoracion: item('pendiente') }, { id: 'y', primeraVez: true })];
   const base = {
-    busqueda: '', origen: '', eps: '', especialidad: '', estado: 'todas',
+    busqueda: '', origen: '', diagnostico: '', estado: 'todas',
   };
   assert.equal(filtrarSolicitudes(lista, { ...base, busqueda: 'oftalmologia' }).length, 0);
   assert.equal(filtrarSolicitudes(lista, { ...base, busqueda: 'CATARATA' }).length, 2);
   assert.equal(filtrarSolicitudes(lista, { ...base, busqueda: '41667' }).length, 2);
-  assert.equal(filtrarSolicitudes(lista, { ...base, eps: 'Sanitas' }).length, 1);
+  assert.equal(filtrarSolicitudes(lista, { ...base, diagnostico: 'primera-vez' }).length, 1);
+  assert.equal(filtrarSolicitudes(lista, { ...base, diagnostico: 'recurrente' }).length, 1);
   assert.equal(filtrarSolicitudes([sol({}, { origen: 'internacion' }), sol()], { ...base, origen: 'internacion' }).length, 1);
   assert.equal(filtrarSolicitudes(lista, { ...base, estado: 'pendientes' }).length, 1);
   assert.equal(filtrarSolicitudes(lista, { ...base, estado: 'pendientes' }, { ignorarEstado: true }).length, 2);

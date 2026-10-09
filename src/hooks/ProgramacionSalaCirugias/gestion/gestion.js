@@ -75,14 +75,14 @@ const normalizar = (s) => String(s ?? '')
   .toLowerCase()
   .trim();
 
-// Filtros: busqueda (paciente, documento o procedimiento), origen, eps,
-// especialidad y el estado general. Con `ignorarEstado` se
+// Filtros: busqueda (paciente, documento o procedimiento), origen,
+// diagnóstico ('primera-vez' | 'recurrente') y el estado general. Con `ignorarEstado` se
 // obtiene la base sobre la que se cuentan los indicadores.
 export function filtrarSolicitudes(solicitudes, filtros, { ignorarEstado = false } = {}) {
   const q = normalizar(filtros.busqueda);
   return solicitudes.filter((s) => {
-    if (filtros.eps && s.eps !== filtros.eps) return false;
-    if (filtros.especialidad && s.especialidad !== filtros.especialidad) return false;
+    if (filtros.diagnostico === 'primera-vez' && !s.primeraVez) return false;
+    if (filtros.diagnostico === 'recurrente' && s.primeraVez) return false;
     if (filtros.origen && s.origen !== filtros.origen) return false;
     if (q) {
       const doc = String(s.paciente.numeroDocumento).replace(/\D/g, '');

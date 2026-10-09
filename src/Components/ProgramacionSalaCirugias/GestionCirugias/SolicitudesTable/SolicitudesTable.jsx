@@ -11,7 +11,9 @@ import {
   enmascararDocumento, evaluarSolicitud,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
-const PASOS = ['orden', 'autorizacion', 'valoracion'];
+// Orden de las columnas del chequeo: Orden, Estudios, Valoración, Autorización.
+const PASOS_ANTES_DE_ESTUDIOS = ['orden'];
+const PASOS_DESPUES_DE_ESTUDIOS = ['valoracion', 'autorizacion'];
 
 // Mini-chip de la columna Estudios: "Lab"/"Img", y "opc." si el estudio es
 // opcional (un opcional pendiente no bloquea la programación).
@@ -22,6 +24,16 @@ function EstudioChip({ clave, abreviatura, item }) {
     <EstadoChip tone={TONO_ITEM[item.estado]} mini srLabel={lectura}>
       {abreviatura}{opcional ? ' opc.' : ''}
     </EstadoChip>
+  );
+}
+
+// Celda de un paso del chequeo (solo el ícono de estado; el texto va para lectores de pantalla).
+function renderPaso(solicitud, clave) {
+  const item = solicitud.checklist[clave];
+  return (
+    <td key={clave} className="sct-paso">
+      <EstadoChip tone={TONO_ITEM[item.estado]} iconOnly srLabel={`${ITEM_LABEL[clave]}: ${ESTADO_ITEM_LABEL[item.estado]}`} />
+    </td>
   );
 }
 
@@ -43,9 +55,9 @@ export default function SolicitudesTable({
             <th scope="col" className="sct-origen">Diagnóstico</th>
             <th scope="col" className="sct-origen">Origen</th>
             <th scope="col" className="sct-paso" title="Orden médica">Orden</th>
-            <th scope="col" className="sct-paso" title="Autorización EPS">Autoriz.</th>
-            <th scope="col" className="sct-paso" title="Valoración preanestésica">Valoración</th>
             <th scope="col" className="sct-paso">Estudios</th>
+            <th scope="col" className="sct-paso" title="Valoración preanestésica">Valoración</th>
+            <th scope="col" className="sct-paso" title="Autorización EPS">Autoriz.</th>
             <th scope="col">Estado del chequeo</th>
             <th scope="col"><span className="sct-sr">Acciones</span></th>
           </tr>
@@ -74,20 +86,14 @@ export default function SolicitudesTable({
                 <td className="sct-origen"><PrioridadTag prioritaria={s.prioritaria} /></td>
                 <td className="sct-origen"><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                 <td className="sct-origen"><OrigenTag origen={s.origen} /></td>
-                {PASOS.map((clave) => {
-                  const item = s.checklist[clave];
-                  return (
-                    <td key={clave} className="sct-paso">
-                      <EstadoChip tone={TONO_ITEM[item.estado]} iconOnly srLabel={`${ITEM_LABEL[clave]}: ${ESTADO_ITEM_LABEL[item.estado]}`} />
-                    </td>
-                  );
-                })}
+                {PASOS_ANTES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
                 <td className="sct-paso">
                   <div className="sct-estudios">
                     <EstudioChip clave="laboratorios" abreviatura="Lab" item={s.checklist.laboratorios} />
                     <EstudioChip clave="imagenes" abreviatura="Img" item={s.checklist.imagenes} />
                   </div>
                 </td>
+                {PASOS_DESPUES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
                 <td>
                   <div className="sct-chequeo">
                     <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>

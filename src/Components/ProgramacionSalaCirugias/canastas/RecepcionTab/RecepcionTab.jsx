@@ -39,7 +39,6 @@ function renderEditar({
   const ok = draft.ok ?? {};
   const recibidoDraft = draft.recibido ?? {};
   const ajustando = draft.ajustando ?? {};
-  const busqueda = draft.busquedaInsumo ?? '';
   const todas = cirugia.canasta.items.map((item) => {
     const despachado = cantidadDespachada(item);
     const recibido = recibidoDraft[item.nombre] ?? despachado;
@@ -58,7 +57,8 @@ function renderEditar({
   });
   // Lo que viene corto de farmacia va primero (orden estable, no salta al ajustar).
   const filas = [...todas].sort((a, b) => Number(b.difFarmacia) - Number(a.difFarmacia));
-  const visibles = busqueda.trim() ? filas.filter((f) => coincide(f.item.nombre, busqueda)) : filas;
+  // Al confirmar la recepción no hay buscador: se verifican todos los insumos.
+  const visibles = filas;
 
   const verificados = filas.filter((f) => f.verificado).length;
   const todos = verificados === filas.length;
@@ -98,18 +98,11 @@ function renderEditar({
     conNovedades ? { motivo, nota: draft.nota } : {},
   );
 
-  let mensaje = 'Haz clic en cada insumo para verificarlo, o usa el check de la cabecera.';
-  if (todos && faltaMotivo) mensaje = 'Indica el motivo de la diferencia para poder confirmar.';
-  else if (difSinVerificar > 0) mensaje = 'Los insumos con diferencia se verifican uno a uno.';
   const ariaTodos = todosSel ? true : (algunoSel ? 'mixed' : false);
 
   return (
     <>
       <div className="cnc-tab-body">
-        <ProgresoVerificacion verificados={verificados} total={filas.length} conDiferencia={difSinVerificar} />
-        {filas.length > MIN_PARA_BUSCAR && (
-          <InsumosBuscador value={busqueda} onChange={(v) => onDraftChange({ busquedaInsumo: v })} />
-        )}
         <div className="cnc-tabla-scroll">
           <table className="cnc-tabla">
             <thead>
@@ -207,7 +200,9 @@ function renderEditar({
         )}
       </div>
       <div className="cnc-tab-footer">
-        <span className="cnc-footer-msg">{mensaje}</span>
+        <div className="cnc-footer-msg">
+          <ProgresoVerificacion verificados={verificados} total={filas.length} conDiferencia={difSinVerificar} />
+        </div>
         {!todos && <Button icon={LuPackageCheck} disabled>{`Confirmar recepción (${verificados}/${filas.length})`}</Button>}
         {todos && !conNovedades && <Button icon={LuPackageCheck} onClick={confirmar}>Confirmar recepción completa</Button>}
         {todos && conNovedades && (
