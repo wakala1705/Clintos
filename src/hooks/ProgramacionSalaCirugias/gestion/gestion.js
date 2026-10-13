@@ -113,7 +113,12 @@ export function contarPorEstado(solicitudes) {
 }
 
 // Texto del pie del panel cuando no se puede programar.
+// Si no hay nada completo y todo está pendiente (p. ej. 5 de 5), se resume en una línea.
 export function mensajeFaltantes(evaluacion) {
+  const { faltantes, total } = evaluacion;
+  if (total > 1 && faltantes.length === total && faltantes.every((i) => i.estado === 'pendiente')) {
+    return `Para programar faltan los ${total} requisitos obligatorios (todos pendientes).`;
+  }
   const lista = evaluacion.faltantes.map((i) => {
     const estado = ESTADO_ITEM_LABEL[i.estado].toLowerCase();
     return `${ITEM_LABEL[i.key]} (${estado})`;

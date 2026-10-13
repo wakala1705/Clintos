@@ -41,7 +41,7 @@ function renderPaso(solicitud, clave) {
 // lectores de pantalla el control real es el botón "Gestionar" de la última
 // columna (un solo tab stop por fila).
 export default function SolicitudesTable({
-  solicitudes, selectedId, onSelect,
+  solicitudes, selectedId, onSelect, mostrarPasos = true,
 }) {
   return (
     <div className="sct-scroll">
@@ -54,10 +54,14 @@ export default function SolicitudesTable({
             <th scope="col" className="sct-origen">Prioridad</th>
             <th scope="col" className="sct-origen">Diagnóstico</th>
             <th scope="col" className="sct-origen">Origen</th>
-            <th scope="col" className="sct-paso" title="Orden médica">Orden</th>
-            <th scope="col" className="sct-paso">Estudios</th>
-            <th scope="col" className="sct-paso" title="Valoración preanestésica">Valoración</th>
-            <th scope="col" className="sct-paso" title="Autorización EPS">Autoriz.</th>
+            {mostrarPasos && (
+              <>
+              <th scope="col" className="sct-paso" title="Orden médica">Orden</th>
+              <th scope="col" className="sct-paso">Estudios</th>
+              <th scope="col" className="sct-paso" title="Valoración preanestésica">Valoración</th>
+              <th scope="col" className="sct-paso" title="Autorización EPS">Autoriz.</th>
+              </>
+            )}
             <th scope="col">Estado del chequeo</th>
             <th scope="col"><span className="sct-sr">Acciones</span></th>
           </tr>
@@ -86,14 +90,18 @@ export default function SolicitudesTable({
                 <td className="sct-origen"><PrioridadTag prioritaria={s.prioritaria} /></td>
                 <td className="sct-origen"><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                 <td className="sct-origen"><OrigenTag origen={s.origen} /></td>
-                {PASOS_ANTES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
-                <td className="sct-paso">
-                  <div className="sct-estudios">
-                    <EstudioChip clave="laboratorios" abreviatura="Lab" item={s.checklist.laboratorios} />
-                    <EstudioChip clave="imagenes" abreviatura="Img" item={s.checklist.imagenes} />
-                  </div>
-                </td>
-                {PASOS_DESPUES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
+                {mostrarPasos && (
+                  <>
+                    {PASOS_ANTES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
+                    <td className="sct-paso">
+                      <div className="sct-estudios">
+                        <EstudioChip clave="laboratorios" abreviatura="Lab" item={s.checklist.laboratorios} />
+                        <EstudioChip clave="imagenes" abreviatura="Img" item={s.checklist.imagenes} />
+                      </div>
+                    </td>
+                    {PASOS_DESPUES_DE_ESTUDIOS.map((clave) => renderPaso(s, clave))}
+                  </>
+                )}
                 <td>
                   <div className="sct-chequeo">
                     <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>

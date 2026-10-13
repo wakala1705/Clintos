@@ -12,6 +12,7 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import ColumnasMenu from './ColumnasMenu/ColumnasMenu';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
 import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal';
@@ -59,6 +60,8 @@ export default function GestionCirugias() {
   const [adjuntando, setAdjuntando] = useState(null);
   const [visorPdf, setVisorPdf] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
+  // Muestra/oculta las 4 columnas de validaciones (Orden, Estudios, Valoración, Autorización).
+  const [mostrarValidaciones, setMostrarValidaciones] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
@@ -230,6 +233,10 @@ export default function GestionCirugias() {
                     Limpiar filtros
                   </Button>
                 )}
+                <ColumnasMenu
+                  mostrarValidaciones={mostrarValidaciones}
+                  onToggleValidaciones={() => setMostrarValidaciones((v) => !v)}
+                />
               </div>
 
               {filas.length === 0 ? (
@@ -238,7 +245,7 @@ export default function GestionCirugias() {
                   <Button variant="secondary" onClick={() => setFiltros(FILTROS_INICIALES)}>Limpiar filtros</Button>
                 </div>
               ) : (
-                <SolicitudesTable solicitudes={filas} selectedId={selectedId} onSelect={setSelectedId} />
+                <SolicitudesTable solicitudes={filas} selectedId={selectedId} onSelect={setSelectedId} mostrarPasos={mostrarValidaciones} />
               )}
               <p className="gc-resumen" aria-live="polite">
                 {filas.length} de {solicitudes.length} solicitudes
