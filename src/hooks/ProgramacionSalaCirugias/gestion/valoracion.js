@@ -1,5 +1,6 @@
 // Lógica pura del registro de la valoración preanestésica (paso 3 del chequeo
 // de Gestión de cirugías). Sin React ni fecha del sistema.
+import { capitalizarNombre } from './gestion.js';
 
 export const OPCIONES_ASA = ['I', 'II', 'III', 'IV', 'V'].map((v) => ({ value: v, label: `ASA ${v}` }));
 
@@ -11,11 +12,11 @@ export const CONCEPTOS = [
 
 // Datos de ejemplo hasta que exista el catálogo real de anestesiólogos.
 export const ANESTESIOLOGOS = [
-  'Dra. Paula Mendoza',
-  'Dr. Ricardo Salazar',
-  'Dra. Natalia Ortega',
-  'Dr. Camilo Peña',
-].map((v) => ({ value: v, label: v }));
+  'INDIRA GUARDO MARTINEZ',
+  'ELIAS MANUEL ANAYA GONZALEZ',
+  'ARMANDO DE JESUS MARQUEZ ARIAS',
+  'JUAN CARLOS ACOSTA DIAZ',
+].map((v) => ({ value: v, label: capitalizarNombre(v) }));
 
 const CONCEPTOS_CON_OBSERVACION = ['condiciones', 'no-apto'];
 

@@ -21,6 +21,7 @@
   display:grid;grid-template-columns:120px 1fr 130px 130px;align-items:center;gap:10px;
   padding:10px 12px;
 }
+.cmm-row.cmm-sin-id{grid-template-columns:1fr 130px 130px;}
 .cmm-row-head{
   background:var(--table-header-bg);border-bottom:1px solid var(--border);flex-shrink:0;
   font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
@@ -85,5 +86,6 @@
 @media (max-width:768px){
   .cmm-modal-card{width:100%;}
   .cmm-row{grid-template-columns:90px 1fr 100px 100px;}
+  .cmm-row.cmm-sin-id{grid-template-columns:1fr 100px 100px;}
   .cmm-pagination{justify-content:center;text-align:center;}
 }

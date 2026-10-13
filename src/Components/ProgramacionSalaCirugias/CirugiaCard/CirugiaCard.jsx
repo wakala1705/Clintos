@@ -2,6 +2,7 @@
 
 import './CirugiaCard.css';
 import CirugiaCardMenu from '../CirugiaCardMenu/CirugiaCardMenu';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Jerarquía fija horario→paciente→procedimiento→cirujano (spec sección
 // "Tarjeta de cirugía"; el estado se comunica solo con el color de la card,
@@ -25,7 +26,7 @@ import CirugiaCardMenu from '../CirugiaCardMenu/CirugiaCardMenu';
 // clic/teclado del menú para que abrirlo no seleccione/deseleccione la
 // card por accidente.
 export default function CirugiaCard({
-  cirugia, selected, onClick, style, compact = false,
+  cirugia, selected, onClick, style, compact = false, salaLabel,
   onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
   etapaActual, onMoverEtapa,
 }) {
@@ -43,7 +44,7 @@ export default function CirugiaCard({
       aria-pressed={selected || undefined}
       className={`cc-card cc-${cirugia.estado}${selected ? ' selected' : ''}${compact ? ' compact' : ''}`}
       style={style}
-      title={`${cirugia.paciente.nombre}\n${cirugia.horaInicio} – ${cirugia.horaFin}\n${cirugia.procedimientoPrincipal}\n${cirugia.cirujano}`}
+      title={`${cirugia.paciente.nombre}\n${cirugia.horaInicio} – ${cirugia.horaFin}\n${cirugia.procedimientoPrincipal}\n${capitalizarNombre(cirugia.cirujano)}${salaLabel ? `\n${salaLabel}` : ''}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
     >
@@ -72,7 +73,8 @@ export default function CirugiaCard({
           <span className="cc-horario">{cirugia.horaInicio} – {cirugia.horaFin}</span>
           <span className="cc-paciente">{cirugia.paciente.nombre}</span>
           <span className="cc-procedimiento">{cirugia.procedimientoPrincipal}</span>
-          <span className="cc-cirujano">{cirugia.cirujano}</span>
+          {/* En la agenda de un cirujano (varias salas) la línea del cirujano es redundante: va la sala. */}
+          <span className="cc-cirujano">{salaLabel ?? capitalizarNombre(cirugia.cirujano)}</span>
         </>
       )}
     </div>

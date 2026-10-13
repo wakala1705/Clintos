@@ -7,6 +7,7 @@ import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import SlotAccionesMenu from '../SlotAccionesMenu/SlotAccionesMenu';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { JORNADAS } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
+import { SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Franjas de 30 min (mismas que gestion/agenda.js: índice 0 = 00:00). La
 // "jornada" (horas visibles) es solo una ventana sobre ellas, así que cambiarla
@@ -31,6 +32,7 @@ export default function AgendaSemana({
   label, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
+  cirujano = 'todos', cirujanos, onCirujanoChange,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
   vista, onChangeVista, jornada = '24h', onJornada, diasVista, onDiasVista,
 }) {
@@ -46,6 +48,8 @@ export default function AgendaSemana({
   // creación que antes solo vivían en ProgramarCirugiaDropdown (encargo
   // explícito: "Programar cirugía" y "Cirugía de urgencia").
   const [slotMenu, setSlotMenu] = useState(null);
+  // "Todas las salas" (solo con cirujano): las tarjetas muestran su sala en vez del cirujano.
+  const porCirujano = salaId === 'todas';
 
   function closeSlotMenu() { setSlotMenu(null); }
   function handleSlotButtonClick(e, fecha, hora) {
@@ -81,6 +85,9 @@ export default function AgendaSemana({
           onSalaChange={onSalaChange}
           estado={estado}
           onEstadoChange={onEstadoChange}
+          cirujano={cirujano}
+          cirujanos={cirujanos}
+          onCirujanoChange={onCirujanoChange}
           vista={vista}
           onChangeVista={onChangeVista}
           jornada={jornada}
@@ -158,6 +165,7 @@ export default function AgendaSemana({
                 // DetalleCirugiaPanel al seleccionarla, más el tooltip
                 // nativo de CirugiaCard con el resumen completo).
                 compact={spanSlots <= SLOTS_POR_HORA}
+                salaLabel={porCirujano ? (SALAS.find((x) => x.value === c.salaId)?.descripcion ?? c.salaId) : undefined}
                 style={{
                   gridColumn: dayIdx + 2,
                   gridRow: `${startSlot + 2} / span ${spanSlots}`,

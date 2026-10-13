@@ -213,6 +213,15 @@ export const MEDICOS_CATALOGO = [
     idMedico: '80092293', nombre: 'CESAR ALONSO RIOS NIETO', descripcion: 'Cirujano', sede: 'SEDE NORTE',
   },
   {
+    idMedico: '43876219', nombre: 'PAULA ANDREA RESTREPO LONDOÑO', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '1036482770', nombre: 'FELIPE ANDRES ORTIZ MEJIA', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
+    idMedico: '72845103', nombre: 'PEDRO PABLO SALAZAR RUEDA', descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  },
+  {
     idMedico: '1128270914', nombre: 'JOSE DARIO MERCADO GONZALEZ', descripcion: 'Anestesiólogo', sede: 'SEDE NORTE',
   },
   {
@@ -252,8 +261,8 @@ export const SERVICIOS_CATALOGO = [
   'Oncología quirúrgica', 'Mastología', 'Cabeza y cuello', 'Ginecología oncológica', 'Urología oncológica', 'Oncología intervencionista',
 ];
 export const TIPOS_CIRUGIA_CATALOGO = ['Programada', 'Ambulatoria', 'Urgencia'];
-export const INSTRUMENTADORAS_CATALOGO = ['María Fernández', 'Laura Gómez'];
-export const CIRCULANTES_CATALOGO = ['Luis Ramírez', 'Andrés Molina'];
+export const INSTRUMENTADORAS_CATALOGO = ['MARTHA LUCIA RAMIREZ PINEDA', 'DIANA CAROLINA SUAREZ MORA'];
+export const CIRCULANTES_CATALOGO = ['LUZ MARINA CASTRO VEGA', 'ANDRES FELIPE GIRALDO RUIZ'];
 
 // "Tipo Tercero" de NuevaUrgenciaModal (encargo explícito, ver captura de
 // referencia "Incluir Procedimientos Urgentes en la Programación") --
@@ -880,7 +889,7 @@ let CIRUGIAS = [
     dxIngreso: 'K810 - COLECISTITIS AGUDA',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Juan García',
+    cirujano: 'CARLOS ALBERTO VALLEJO BERTEL',
     fecha: '2026-08-31',
     horaInicio: '07:00',
     horaFin: '09:00',
@@ -889,11 +898,11 @@ let CIRUGIAS = [
       { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 120, notas: 'Sin complicaciones esperadas.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Juan García' },
-      { rol: 'Ayudante', nombre: 'Dr. Pedro Salazar' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'CARLOS ALBERTO VALLEJO BERTEL' },
+      { rol: 'Ayudante', nombre: 'PEDRO PABLO SALAZAR RUEDA' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -920,7 +929,7 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Hernia inguinal',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Andrés López',
+    cirujano: 'ANTONIO CARLOS MIRANDA HOYOS',
     fecha: '2026-08-31',
     horaInicio: '09:30',
     horaFin: '11:30',
@@ -929,10 +938,10 @@ let CIRUGIAS = [
       { nombre: 'Hernia inguinal', tipo: 'principal', duracionMin: 90, notas: 'Abordaje abierto.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Andrés López' },
-      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Andrés Molina' },
+      { rol: 'Cirujano', nombre: 'ANTONIO CARLOS MIRANDA HOYOS' },
+      { rol: 'Anestesiólogo', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: [
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
@@ -959,7 +968,7 @@ let CIRUGIAS = [
     dxIngreso: 'M170 - GONARTROSIS PRIMARIA, BILATERAL',
     servicio: 'Ortopedia',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Carlos Martínez',
+    cirujano: 'CARLOS MANUEL PEREIRA BETANCOURT',
     fecha: '2026-08-31',
     horaInicio: '12:00',
     horaFin: '14:00',
@@ -968,10 +977,10 @@ let CIRUGIAS = [
       { nombre: 'Artroplastia total de rodilla', tipo: 'principal', duracionMin: 120, notas: 'Reemplazo articular por gonartrosis bilateral.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Carlos Martínez' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'CARLOS MANUEL PEREIRA BETANCOURT' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
@@ -995,7 +1004,7 @@ let CIRUGIAS = [
     dxIngreso: 'K358 - OTRAS APENDICITIS AGUDAS Y LAS NO ESPECIFICADAS',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Carlos Martínez',
+    cirujano: 'CARLOS MANUEL PEREIRA BETANCOURT',
     fecha: '2026-09-01',
     horaInicio: '08:00',
     horaFin: '10:00',
@@ -1004,10 +1013,10 @@ let CIRUGIAS = [
       { nombre: 'Apendicectomía', tipo: 'principal', duracionMin: 100, notas: 'Apendicitis no complicada.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Carlos Martínez' },
-      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Andrés Molina' },
+      { rol: 'Cirujano', nombre: 'CARLOS MANUEL PEREIRA BETANCOURT' },
+      { rol: 'Anestesiólogo', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -1033,7 +1042,7 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Laparoscopia diagnóstica',
     servicio: 'Ginecología',
     tipoCirugia: 'Urgencia',
-    cirujano: 'Dra. Ana López',
+    cirujano: 'CESAR ALONSO RIOS NIETO',
     fecha: '2026-09-01',
     horaInicio: '11:00',
     horaFin: '13:00',
@@ -1042,10 +1051,10 @@ let CIRUGIAS = [
       { nombre: 'Laparoscopia diagnóstica', tipo: 'principal', duracionMin: 110, notas: 'Dolor pélvico agudo, descartar embarazo ectópico.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dra. Ana López' },
-      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'CESAR ALONSO RIOS NIETO' },
+      { rol: 'Anestesiólogo', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'en-uso' },
@@ -1072,7 +1081,7 @@ let CIRUGIAS = [
     dxIngreso: 'K802 - CALCULOS DE LA VESICULA BILIAR SIN COLECISTITIS',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Juan García',
+    cirujano: 'CARLOS ALBERTO VALLEJO BERTEL',
     fecha: '2026-09-02',
     horaInicio: '07:30',
     horaFin: '10:00',
@@ -1081,10 +1090,10 @@ let CIRUGIAS = [
       { nombre: 'Colecistectomía laparoscópica', tipo: 'principal', duracionMin: 130, notas: 'Colecistitis crónica.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Juan García' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Andrés Molina' },
+      { rol: 'Cirujano', nombre: 'CARLOS ALBERTO VALLEJO BERTEL' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -1108,7 +1117,7 @@ let CIRUGIAS = [
     dxIngreso: 'N800 - ENDOMETRIOSIS DEL UTERO',
     servicio: 'Ginecología',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Andrés López',
+    cirujano: 'ANTONIO CARLOS MIRANDA HOYOS',
     fecha: '2026-09-03',
     horaInicio: '08:00',
     horaFin: '10:30',
@@ -1117,10 +1126,10 @@ let CIRUGIAS = [
       { nombre: 'Histerectomía', tipo: 'principal', duracionMin: 150, notas: 'Vía abdominal.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Andrés López' },
-      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'ANTONIO CARLOS MIRANDA HOYOS' },
+      { rol: 'Anestesiólogo', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
@@ -1146,7 +1155,7 @@ let CIRUGIAS = [
     procedimientoPrincipal: 'Hernia umbilical',
     servicio: 'Cirugía general',
     tipoCirugia: 'Programada',
-    cirujano: 'Dr. Carlos Martínez',
+    cirujano: 'CARLOS MANUEL PEREIRA BETANCOURT',
     fecha: '2026-09-04',
     horaInicio: '11:00',
     horaFin: '13:00',
@@ -1155,10 +1164,10 @@ let CIRUGIAS = [
       { nombre: 'Hernia umbilical', tipo: 'principal', duracionMin: 100, notas: 'Reparación con malla.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Carlos Martínez' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Andrés Molina' },
+      { rol: 'Cirujano', nombre: 'CARLOS MANUEL PEREIRA BETANCOURT' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: [
       { nombre: 'Cauterio', tipo: 'Energía quirúrgica', identificacion: 'EQ-0087', estado: 'disponible' },
@@ -1191,7 +1200,7 @@ let CIRUGIAS = [
     tipoAnestesia: 'General',
     asa: 'Clase 2',
     complejidad: 'Alta',
-    cirujano: 'Dr. Ricardo Salamanca',
+    cirujano: 'ABRAHAM GANEM BECHARA',
     fecha: HOY_ISO,
     horaInicio: '07:00',
     horaFin: '10:30',
@@ -1200,10 +1209,10 @@ let CIRUGIAS = [
       { nombre: 'Hemicolectomía derecha laparoscópica', tipo: 'principal', duracionMin: 210, notas: 'Adenocarcinoma de colon ascendente T3N0, anastomosis ileocólica.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Ricardo Salamanca' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'ABRAHAM GANEM BECHARA' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -1237,7 +1246,7 @@ let CIRUGIAS = [
     tipoAnestesia: 'General',
     asa: 'Clase 4',
     complejidad: 'Media',
-    cirujano: 'Dr. Ricardo Salamanca',
+    cirujano: 'ABRAHAM GANEM BECHARA',
     fecha: HOY_ISO,
     horaInicio: '10:30',
     horaFin: '12:30',
@@ -1246,10 +1255,10 @@ let CIRUGIAS = [
       { nombre: 'Colostomía derivativa por obstrucción maligna', tipo: 'principal', duracionMin: 120, notas: 'Tumor de sigmoides obstructivo, distensión abdominal de 48 horas.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Ricardo Salamanca' },
-      { rol: 'Anestesiólogo', nombre: 'Dr. Pedro Sánchez' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Andrés Molina' },
+      { rol: 'Cirujano', nombre: 'ABRAHAM GANEM BECHARA' },
+      { rol: 'Anestesiólogo', nombre: 'JUAN CARLOS GOMEZ DOMINGUEZ' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -1277,7 +1286,7 @@ let CIRUGIAS = [
     tipoAnestesia: 'General',
     asa: 'Clase 2',
     complejidad: 'Media',
-    cirujano: 'Dra. Marcela Ospina',
+    cirujano: 'CARLOS MAURICIO BURGOS DURANGO',
     fecha: HOY_ISO,
     horaInicio: '15:30',
     horaFin: '17:00',
@@ -1286,10 +1295,10 @@ let CIRUGIAS = [
       { nombre: 'Cuadrantectomía con ganglio centinela', tipo: 'principal', duracionMin: 90, notas: 'Cirugía conservadora, marcaje con arpón.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dra. Marcela Ospina' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'Laura Gómez' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'CARLOS MAURICIO BURGOS DURANGO' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Mesa quirúrgica eléctrica', tipo: 'Soporte quirúrgico', identificacion: 'EQ-0560', estado: 'disponible' },
@@ -1329,7 +1338,7 @@ let CIRUGIAS = [
     procedimiento: 'Orquiectomía radical inguinal derecha',
     dx: 'C629 - TUMOR MALIGNO DEL TESTICULO, SIN OTRA ESPECIFICACION',
     servicio: 'Urología oncológica',
-    cirujano: 'Dr. Jorge Acosta',
+    cirujano: 'AMAURY RAFAEL GARCIA BURGOS',
     horaInicio: '11:00',
     horaFin: '12:30',
     canasta: {
@@ -1357,7 +1366,7 @@ let CIRUGIAS = [
     procedimiento: 'Colecistectomía radical',
     dx: 'C23 - TUMOR MALIGNO DE LA VESICULA BILIAR',
     servicio: 'Oncología quirúrgica',
-    cirujano: 'Dr. Ricardo Salamanca',
+    cirujano: 'ABRAHAM GANEM BECHARA',
     salaId: 'qx-2',
     horaInicio: '13:30',
     horaFin: '17:30',
@@ -1367,11 +1376,11 @@ let CIRUGIAS = [
       { nombre: 'Linfadenectomía del hilio hepático', tipo: 'principal', duracionMin: 30, notas: 'Estadificación ganglionar del pedículo hepático.' },
     ],
     personal: [
-      { rol: 'Cirujano', nombre: 'Dr. Ricardo Salamanca' },
-      { rol: 'Ayudante', nombre: 'Dr. Felipe Ortiz' },
-      { rol: 'Anestesiólogo', nombre: 'Dra. Ana López' },
-      { rol: 'Instrumentadora', nombre: 'María Fernández' },
-      { rol: 'Circulante', nombre: 'Luis Ramírez' },
+      { rol: 'Cirujano', nombre: 'ABRAHAM GANEM BECHARA' },
+      { rol: 'Ayudante', nombre: 'FELIPE ANDRES ORTIZ MEJIA' },
+      { rol: 'Anestesiólogo', nombre: 'ANA ISABEL TABOADA HOYOS' },
+      { rol: 'Instrumentadora', nombre: 'MARTHA LUCIA RAMIREZ PINEDA' },
+      { rol: 'Circulante', nombre: 'LUZ MARINA CASTRO VEGA' },
     ],
     equipos: [
       { nombre: 'Torre de laparoscopia', tipo: 'Video/Imagen', identificacion: 'EQ-0412', estado: 'disponible' },
@@ -1402,7 +1411,7 @@ let CIRUGIAS = [
     procedimiento: 'Resección de sarcoma de partes blandas de muslo izquierdo',
     dx: 'C492 - TUMOR MALIGNO DEL TEJIDO CONJUNTIVO Y BLANDO DEL MIEMBRO INFERIOR',
     servicio: 'Oncología quirúrgica',
-    cirujano: 'Dra. Paula Restrepo',
+    cirujano: 'PAULA ANDREA RESTREPO LONDOÑO',
     horaInicio: '13:00',
     horaFin: '15:00',
     canasta: {
@@ -1426,7 +1435,7 @@ let CIRUGIAS = [
     procedimiento: 'Resección ileocecal laparoscópica',
     dx: 'C181 - TUMOR MALIGNO DEL APENDICE',
     servicio: 'Oncología quirúrgica',
-    cirujano: 'Dr. Ricardo Salamanca',
+    cirujano: 'ABRAHAM GANEM BECHARA',
     horaInicio: '17:30',
     horaFin: '19:00',
     canasta: {
@@ -1450,7 +1459,7 @@ let CIRUGIAS = [
     procedimiento: 'Histerectomía radical con linfadenectomía pélvica',
     dx: 'C541 - TUMOR MALIGNO DEL ENDOMETRIO',
     servicio: 'Ginecología oncológica',
-    cirujano: 'Dra. Lucía Ferrer',
+    cirujano: 'ANGEL MARIA PARRA LIÑAN',
     salaId: 'qx-2',
     horaInicio: '07:00',
     horaFin: '10:00',
@@ -1527,19 +1536,19 @@ const BASE_VENCIDA_POR_SALA = {
   gastroenterologia: {
     procedimiento: 'Esofagogastroduodenoscopia',
     servicio: 'Gastroenterología',
-    cirujano: 'Dr. Andrés López',
+    cirujano: 'ANTONIO CARLOS MIRANDA HOYOS',
     medicamentos: [{ nombre: 'Propofol', dosis: '200mg IV' }, { nombre: 'Lidocaína spray', dosis: '10%' }],
   },
   'qx-1': {
     procedimiento: 'Colecistectomía laparoscópica',
     servicio: 'Cirugía general',
-    cirujano: 'Dr. Juan García',
+    cirujano: 'CARLOS ALBERTO VALLEJO BERTEL',
     medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }, { nombre: 'Ondansetrón', dosis: '4mg IV' }],
   },
   'qx-2': {
     procedimiento: 'Herniorrafia inguinal',
     servicio: 'Cirugía general',
-    cirujano: 'Dr. Carlos Martínez',
+    cirujano: 'CARLOS MANUEL PEREIRA BETANCOURT',
     medicamentos: [{ nombre: 'Cefazolina', dosis: '1g IV' }],
   },
 };
@@ -1597,7 +1606,7 @@ function minutosEntre(horaInicio, horaFin) {
 
 function cirugiaOnco({
   id, dia, salaId = 'qx-1', horaInicio, horaFin, nombre, documento, edad, sexo, aseguradora = 'Sura EPS', procedimiento, dx, servicio = 'Oncología quirúrgica',
-  cirujano, ayudante, anestesiologo = 'Dra. Ana López', tipoAnestesia = 'General', asa = 'Clase 2', complejidad = 'Alta', notas = '', adicionales = [],
+  cirujano, ayudante, anestesiologo = 'ANA ISABEL TABOADA HOYOS', tipoAnestesia = 'General', asa = 'Clase 2', complejidad = 'Alta', notas = '', adicionales = [],
   equipos = [], insumos = INSUMOS_ONCO[id] ?? [], estado, tipoCirugia, canastaRecibida = false, ...resto
 }) {
   const fecha = fechaISO(addDias(LUNES_SEMANA, dia));
@@ -1629,8 +1638,8 @@ function cirugiaOnco({
       { rol: 'Cirujano', nombre: cirujano },
       ...(ayudante ? [{ rol: 'Ayudante', nombre: ayudante }] : []),
       { rol: 'Anestesiólogo', nombre: anestesiologo },
-      { rol: 'Instrumentadora', nombre: par ? 'María Fernández' : 'Laura Gómez' },
-      { rol: 'Circulante', nombre: par ? 'Luis Ramírez' : 'Andrés Molina' },
+      { rol: 'Instrumentadora', nombre: par ? 'MARTHA LUCIA RAMIREZ PINEDA' : 'DIANA CAROLINA SUAREZ MORA' },
+      { rol: 'Circulante', nombre: par ? 'LUZ MARINA CASTRO VEGA' : 'ANDRES FELIPE GIRALDO RUIZ' },
     ],
     equipos: equipos.map(([n, tipo, identificacion]) => ({
       nombre: n, tipo, identificacion, estado: 'disponible',
@@ -1658,84 +1667,84 @@ const SEMANA_ONCOLOGIA = [
   cirugiaOnco({
     id: '12401', dia: 0, horaInicio: '07:00', horaFin: '10:30', nombre: 'Gloria Patricia Mendoza', documento: 'CC 41.652.308', edad: 56, sexo: 'Femenino',
     procedimiento: 'Mastectomía radical modificada', dx: 'C509 - TUMOR MALIGNO DE LA MAMA, PARTE NO ESPECIFICADA', servicio: 'Mastología',
-    cirujano: 'Dra. Marcela Ospina', ayudante: 'Dr. Felipe Ortiz', notas: 'Carcinoma ductal infiltrante T2N1, posterior a neoadyuvancia.',
+    cirujano: 'CARLOS MAURICIO BURGOS DURANGO', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', notas: 'Carcinoma ductal infiltrante T2N1, posterior a neoadyuvancia.',
     adicionales: [{ nombre: 'Biopsia de ganglio centinela', duracionMin: 45, notas: 'Con azul de metileno y radiotrazador.' }],
     equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12402', dia: 0, horaInicio: '11:30', horaFin: '13:30', nombre: 'Luz Marina Cárdenas', documento: 'CC 51.874.220', edad: 48, sexo: 'Femenino',
     aseguradora: 'Nueva EPS', procedimiento: 'Cuadrantectomía con ganglio centinela', dx: 'C504 - TUMOR MALIGNO DEL CUADRANTE SUPERIOR EXTERNO DE LA MAMA',
-    servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', asa: 'Clase 2', complejidad: 'Media', notas: 'Cirugía conservadora, marcaje con arpón.',
+    servicio: 'Mastología', cirujano: 'CARLOS MAURICIO BURGOS DURANGO', asa: 'Clase 2', complejidad: 'Media', notas: 'Cirugía conservadora, marcaje con arpón.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12403', dia: 0, salaId: 'qx-2', horaInicio: '07:00', horaFin: '12:00', nombre: 'Hernán Darío Quintero', documento: 'CC 79.115.640', edad: 64, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Gastrectomía subtotal con linfadenectomía D2', dx: 'C169 - TUMOR MALIGNO DEL ESTOMAGO, PARTE NO ESPECIFICADA',
-    cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
+    cirujano: 'ABRAHAM GANEM BECHARA', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3',
     notas: 'Adenocarcinoma gástrico antral T3N0, reconstrucción en Y de Roux.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
     
   }),
   cirugiaOnco({
     id: '12404', dia: 0, salaId: 'qx-2', horaInicio: '14:00', horaFin: '17:00', nombre: 'Rosa Elvira Barrera', documento: 'CC 20.456.911', edad: 69, sexo: 'Femenino',
-    procedimiento: 'Hemicolectomía derecha laparoscópica', dx: 'C182 - TUMOR MALIGNO DEL COLON ASCENDENTE', cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz',
-    anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Adenocarcinoma de ciego, anastomosis ileocólica intracorpórea.',
+    procedimiento: 'Hemicolectomía derecha laparoscópica', dx: 'C182 - TUMOR MALIGNO DEL COLON ASCENDENTE', cirujano: 'ABRAHAM GANEM BECHARA', ayudante: 'FELIPE ANDRES ORTIZ MEJIA',
+    anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3', notas: 'Adenocarcinoma de ciego, anastomosis ileocólica intracorpórea.',
     equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12405', dia: 0, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Jairo Alberto Pinzón', documento: 'CC 80.223.457', edad: 58, sexo: 'Masculino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
-    cirujano: 'Dr. Héctor Villamizar', anestesiologo: 'Dra. Ana López', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR],
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', anestesiologo: 'ANA ISABEL TABOADA HOYOS', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR],
     
   }),
   // ----- Martes -----
   cirugiaOnco({
     id: '12406', dia: 1, horaInicio: '07:00', horaFin: '11:00', nombre: 'Sandra Milena Ibáñez', documento: 'CC 52.730.184', edad: 43, sexo: 'Femenino',
     procedimiento: 'Tiroidectomía total con vaciamiento central', dx: 'C73 - TUMOR MALIGNO DE LA GLANDULA TIROIDES', servicio: 'Cabeza y cuello',
-    cirujano: 'Dr. Héctor Villamizar', ayudante: 'Dr. Felipe Ortiz', asa: 'Clase 2', notas: 'Carcinoma papilar con metástasis ganglionares nivel VI; neuromonitoreo recurrencial.',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', asa: 'Clase 2', notas: 'Carcinoma papilar con metástasis ganglionares nivel VI; neuromonitoreo recurrencial.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12407', dia: 1, horaInicio: '12:30', horaFin: '14:00', nombre: 'Álvaro José Londoño', documento: 'CC 70.552.138', edad: 61, sexo: 'Masculino',
     procedimiento: 'Resección amplia de melanoma con ganglio centinela', dx: 'C435 - MELANOMA MALIGNO DEL TRONCO', servicio: 'Cabeza y cuello',
-    cirujano: 'Dr. Héctor Villamizar', asa: 'Clase 2', complejidad: 'Media', notas: 'Breslow 2.1 mm, márgenes de 2 cm; linfogammagrafía previa.',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', asa: 'Clase 2', complejidad: 'Media', notas: 'Breslow 2.1 mm, márgenes de 2 cm; linfogammagrafía previa.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12408', dia: 1, salaId: 'qx-2', horaInicio: '07:30', horaFin: '13:30', nombre: 'Orlando Enrique Tafur', documento: 'CC 17.331.905', edad: 66, sexo: 'Masculino',
     aseguradora: 'Coomeva EPS', procedimiento: 'Duodenopancreatectomía cefálica (Whipple)', dx: 'C250 - TUMOR MALIGNO DE LA CABEZA DEL PANCREAS',
-    cirujano: 'Dr. Ricardo Salamanca', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
+    cirujano: 'ABRAHAM GANEM BECHARA', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3',
     notas: 'Adenocarcinoma ductal resecable; ictericia drenada con stent biliar previo.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
     
   }),
   cirugiaOnco({
     id: '12409', dia: 1, salaId: 'gastroenterologia', horaInicio: '08:00', horaFin: '09:00', nombre: 'Beatriz Helena Caicedo', documento: 'CC 38.992.601', edad: 59, sexo: 'Femenino',
     procedimiento: 'Colonoscopia total con polipectomía', dx: 'D126 - TUMOR BENIGNO DEL COLON, SIN OTRA ESPECIFICACION', servicio: 'Gastroenterología',
-    cirujano: 'Dr. Andrés López', anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Seguimiento posterior a resección de adenocarcinoma de sigmoide.',
+    cirujano: 'ANTONIO CARLOS MIRANDA HOYOS', anestesiologo: 'NATALIA ANDREA CABRERA OVIEDO', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Seguimiento posterior a resección de adenocarcinoma de sigmoide.',
     equipos: [EQ_MONITOR], 
   }),
   // ----- Miércoles -----
   cirugiaOnco({
     id: '12410', dia: 2, horaInicio: '07:00', horaFin: '10:00', nombre: 'Martha Lucía Orozco', documento: 'CC 43.118.762', edad: 52, sexo: 'Femenino',
     aseguradora: 'Nueva EPS', procedimiento: 'Histerectomía radical (Wertheim-Meigs)', dx: 'C539 - TUMOR MALIGNO DEL CUELLO DEL UTERO, SIN OTRA ESPECIFICACION',
-    servicio: 'Ginecología oncológica', cirujano: 'Dra. Lucía Ferrer', ayudante: 'Dr. Felipe Ortiz', estado: 'cancelada',
+    servicio: 'Ginecología oncológica', cirujano: 'ANGEL MARIA PARRA LIÑAN', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', estado: 'cancelada',
     motivoCancelacion: 'Neutropenia posquimioterapia: se aplaza hasta recuperación hematológica y nueva valoración por hematología oncológica.',
     notas: 'Carcinoma escamocelular estadio IB2.', equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12411', dia: 2, horaInicio: '11:30', horaFin: '15:00', nombre: 'Efraín Castellanos', documento: 'CC 19.440.275', edad: 63, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Nefrectomía radical laparoscópica', dx: 'C649 - TUMOR MALIGNO DEL RIÑON, EXCEPTO DE LA PELVIS RENAL',
-    servicio: 'Urología oncológica', cirujano: 'Dr. Jorge Acosta', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3',
+    servicio: 'Urología oncológica', cirujano: 'AMAURY RAFAEL GARCIA BURGOS', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3',
     notas: 'Masa renal derecha de 6 cm (T1b), carcinoma de células claras.', equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12412', dia: 2, salaId: 'qx-2', horaInicio: '07:00', horaFin: '11:00', nombre: 'Nelson Rafael Pardo', documento: 'CC 91.205.664', edad: 57, sexo: 'Masculino',
-    procedimiento: 'Resección anterior baja de recto con ileostomía de protección', dx: 'C20 - TUMOR MALIGNO DEL RECTO', cirujano: 'Dr. Ricardo Salamanca',
-    ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Posterior a quimiorradioterapia neoadyuvante, escisión total del mesorrecto.',
+    procedimiento: 'Resección anterior baja de recto con ileostomía de protección', dx: 'C20 - TUMOR MALIGNO DEL RECTO', cirujano: 'ABRAHAM GANEM BECHARA',
+    ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3', notas: 'Posterior a quimiorradioterapia neoadyuvante, escisión total del mesorrecto.',
     equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12413', dia: 2, salaId: 'qx-2', horaInicio: '13:00', horaFin: '14:30', nombre: 'Yolanda Esperanza Rivas', documento: 'CC 35.667.219', edad: 71, sexo: 'Femenino',
-    procedimiento: 'Mastectomía simple', dx: 'C508 - LESION DE SITIO CONTIGUO DE LA MAMA', servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', asa: 'Clase 3',
+    procedimiento: 'Mastectomía simple', dx: 'C508 - LESION DE SITIO CONTIGUO DE LA MAMA', servicio: 'Mastología', cirujano: 'CARLOS MAURICIO BURGOS DURANGO', asa: 'Clase 3',
     complejidad: 'Media', estado: 'incumplida', causalIncumplimiento: 'FALTA DE EXAMENES MEDICOS',
     observacionIncumplimiento: 'La paciente no llegó con valoración cardiológica preoperatoria vigente.', equipos: [EQ_CAUTERIO, EQ_MONITOR], 
   }),
@@ -1743,24 +1752,24 @@ const SEMANA_ONCOLOGIA = [
   cirugiaOnco({
     id: '12414', dia: 3, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Aura Cristina Mejía', documento: 'CC 66.910.347', edad: 54, sexo: 'Femenino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
-    cirujano: 'Dr. Héctor Villamizar', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR], canastaRecibida: true,
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR], canastaRecibida: true,
     
   }),
   cirugiaOnco({
     id: '12415', dia: 3, salaId: 'proc-menores', horaInicio: '10:00', horaFin: '11:00', nombre: 'Wilson Fabián Duque', documento: 'CC 80.774.390', edad: 45, sexo: 'Masculino',
-    procedimiento: 'Biopsia excisional de ganglio cervical', dx: 'R590 - ADENOMEGALIA LOCALIZADA', servicio: 'Cabeza y cuello', cirujano: 'Dr. Héctor Villamizar',
+    procedimiento: 'Biopsia excisional de ganglio cervical', dx: 'R590 - ADENOMEGALIA LOCALIZADA', servicio: 'Cabeza y cuello', cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ',
     tipoAnestesia: 'Local', complejidad: 'Baja', notas: 'Estudio de linfoma, ganglio cervical nivel II de 3 cm.', equipos: [EQ_CAUTERIO], 
   }),
   cirugiaOnco({
     id: '12416', dia: 3, salaId: 'gastroenterologia', horaInicio: '08:00', horaFin: '09:00', nombre: 'Clemencia Sarmiento', documento: 'CC 41.288.653', edad: 62, sexo: 'Femenino',
-    procedimiento: 'Esofagogastroduodenoscopia con biopsias', dx: 'C160 - TUMOR MALIGNO DEL CARDIAS', servicio: 'Gastroenterología', cirujano: 'Dr. Andrés López',
-    anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Estadificación: lesión ulcerada en cardias, toma de biopsias múltiples.',
+    procedimiento: 'Esofagogastroduodenoscopia con biopsias', dx: 'C160 - TUMOR MALIGNO DEL CARDIAS', servicio: 'Gastroenterología', cirujano: 'ANTONIO CARLOS MIRANDA HOYOS',
+    anestesiologo: 'NATALIA ANDREA CABRERA OVIEDO', tipoAnestesia: 'General IV', complejidad: 'Baja', notas: 'Estadificación: lesión ulcerada en cardias, toma de biopsias múltiples.',
     equipos: [EQ_MONITOR], canastaRecibida: true, horaInicioAnest: '07:50', horaInicioReal: '08:05',
   }),
   cirugiaOnco({
     id: '12417', dia: 3, salaId: 'hemodinamia', horaInicio: '13:00', horaFin: '15:00', nombre: 'Gustavo Adolfo Prieto', documento: 'CC 79.440.116', edad: 67, sexo: 'Masculino',
     aseguradora: 'Salud Total EPS', procedimiento: 'Quimioembolización arterial hepática (TACE)', dx: 'C220 - CARCINOMA DE CELULAS HEPATICAS',
-    servicio: 'Oncología intervencionista', cirujano: 'Dr. Jorge Acosta', anestesiologo: 'Dra. Natalia Cabrera', tipoAnestesia: 'Local asistida', asa: 'Clase 3',
+    servicio: 'Oncología intervencionista', cirujano: 'AMAURY RAFAEL GARCIA BURGOS', anestesiologo: 'NATALIA ANDREA CABRERA OVIEDO', tipoAnestesia: 'Local asistida', asa: 'Clase 3',
     notas: 'Hepatocarcinoma BCLC B, segundo ciclo.', equipos: [EQ_ARCO, EQ_MONITOR],
     
   }),
@@ -1768,33 +1777,33 @@ const SEMANA_ONCOLOGIA = [
   cirugiaOnco({
     id: '12418', dia: 4, horaInicio: '07:00', horaFin: '11:30', nombre: 'Diana Carolina Becerra', documento: 'CC 1.020.455.318', edad: 41, sexo: 'Femenino',
     aseguradora: 'Colsanitas Medicina Prepagada', procedimiento: 'Mastectomía con reconstrucción inmediata con expansor', dx: 'C508 - LESION DE SITIO CONTIGUO DE LA MAMA',
-    servicio: 'Mastología', cirujano: 'Dra. Marcela Ospina', ayudante: 'Dr. Felipe Ortiz', asa: 'Clase 1', notas: 'Mastectomía ahorradora de piel; cirugía plástica reconstructiva en el mismo tiempo.',
+    servicio: 'Mastología', cirujano: 'CARLOS MAURICIO BURGOS DURANGO', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', asa: 'Clase 1', notas: 'Mastectomía ahorradora de piel; cirugía plástica reconstructiva en el mismo tiempo.',
     adicionales: [{ nombre: 'Biopsia de ganglio centinela', duracionMin: 30, notas: '' }], equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA],
     
   }),
   cirugiaOnco({
     id: '12419', dia: 4, horaInicio: '13:00', horaFin: '15:30', nombre: 'Rubén Darío Ocampo', documento: 'CC 16.775.209', edad: 59, sexo: 'Masculino',
     aseguradora: 'Nueva EPS', procedimiento: 'Laringectomía parcial con vaciamiento cervical', dx: 'C320 - TUMOR MALIGNO DE LA GLOTIS', servicio: 'Cabeza y cuello',
-    cirujano: 'Dr. Héctor Villamizar', ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Carcinoma escamocelular T2N0, traqueostomía temporal.',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3', notas: 'Carcinoma escamocelular T2N0, traqueostomía temporal.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   cirugiaOnco({
     id: '12420', dia: 4, salaId: 'qx-2', horaInicio: '07:00', horaFin: '10:00', nombre: 'Fabio Hernando Gaitán', documento: 'CC 79.882.504', edad: 65, sexo: 'Masculino',
-    procedimiento: 'Prostatectomía radical laparoscópica', dx: 'C61 - TUMOR MALIGNO DE LA PROSTATA', servicio: 'Urología oncológica', cirujano: 'Dr. Jorge Acosta',
-    ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 2', notas: 'Gleason 4+3, T2c, PSA 11 ng/mL; con linfadenectomía pélvica.',
+    procedimiento: 'Prostatectomía radical laparoscópica', dx: 'C61 - TUMOR MALIGNO DE LA PROSTATA', servicio: 'Urología oncológica', cirujano: 'AMAURY RAFAEL GARCIA BURGOS',
+    ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 2', notas: 'Gleason 4+3, T2c, PSA 11 ng/mL; con linfadenectomía pélvica.',
     equipos: [EQ_TORRE, EQ_CAUTERIO, EQ_MONITOR], 
   }),
   cirugiaOnco({
     id: '12421', dia: 4, salaId: 'qx-2', horaInicio: '11:00', horaFin: '15:30', nombre: 'Teresa de Jesús Arango', documento: 'CC 32.440.871', edad: 60, sexo: 'Femenino',
-    aseguradora: 'Salud Total EPS', procedimiento: 'Hepatectomía derecha', dx: 'C787 - TUMOR MALIGNO SECUNDARIO DEL HIGADO', cirujano: 'Dr. Ricardo Salamanca',
-    ayudante: 'Dr. Felipe Ortiz', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 3', notas: 'Metástasis hepáticas de cáncer colorrectal, respuesta a quimioterapia.',
+    aseguradora: 'Salud Total EPS', procedimiento: 'Hepatectomía derecha', dx: 'C787 - TUMOR MALIGNO SECUNDARIO DEL HIGADO', cirujano: 'ABRAHAM GANEM BECHARA',
+    ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3', notas: 'Metástasis hepáticas de cáncer colorrectal, respuesta a quimioterapia.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
   // ----- Sábado: urgencia oncológica -----
   cirugiaOnco({
     id: '12422', dia: 5, salaId: 'qx-2', horaInicio: '09:00', horaFin: '11:30', nombre: 'Edilberto Murcia', documento: 'CC 6.771.903', edad: 72, sexo: 'Masculino',
     aseguradora: 'Coomeva EPS', procedimiento: 'Laparotomía exploratoria por obstrucción intestinal maligna', dx: 'K566 - OTRAS OBSTRUCCIONES INTESTINALES Y LAS NO ESPECIFICADAS',
-    cirujano: 'Dr. Ricardo Salamanca', anestesiologo: 'Dr. Pedro Sánchez', asa: 'Clase 4', estado: 'urgencia', notas: 'Carcinomatosis peritoneal conocida, oclusión intestinal de 48 horas.',
+    cirujano: 'ABRAHAM GANEM BECHARA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 4', estado: 'urgencia', notas: 'Carcinomatosis peritoneal conocida, oclusión intestinal de 48 horas.',
     equipos: [EQ_CAUTERIO, EQ_MONITOR, EQ_MESA], 
   }),
 ].filter((c) => !(c.fecha === HOY_ISO && ['qx-1', 'qx-2'].includes(c.salaId)));
@@ -1823,18 +1832,35 @@ export function siguienteNumeroProgramacion() {
 // yyyy-mm-dd) los calcula el orquestador según la vista activa (Día/Semana/
 // Mes) en vez de asumir siempre una semana completa -- ver
 // ProgramacionSalaCirugias.jsx.
+// ¿La cirugía entra en la vista de la agenda? Sala `'todas'` no filtra por sala:
+// es lo que muestra la agenda de un cirujano (que cruza salas); `cirujano` es el
+// cirujano principal (`c.cirujano`), `'todos'` no filtra. Lo usan el fetch y el
+// orquestador (para decidir si una cirugía recién mutada sigue visible).
+export function cirugiaCoincide(c, {
+  sedeId, salaId, inicio, fin, estado = 'todos', cirujano = 'todos',
+}) {
+  if (c.sedeId !== sedeId) return false;
+  if (salaId !== 'todas' && c.salaId !== salaId) return false;
+  if (cirujano !== 'todos' && c.cirujano !== cirujano) return false;
+  if (c.fecha < inicio || c.fecha > fin) return false;
+  if (estado !== 'todos' && c.estado !== estado) return false;
+  return true;
+}
+
+// Cirujanos principales con cirugías en la sede, ordenados: opciones del filtro "Cirujano".
+export function cirujanosDeSede(sedeId) {
+  const nombres = new Set(CIRUGIAS.filter((c) => c.sedeId === sedeId && c.cirujano).map((c) => c.cirujano));
+  return [...nombres].sort((a, b) => a.localeCompare(b, 'es'));
+}
+
 export function fetchAgendaRango({
-  sedeId, salaId, inicio, fin, estado = 'todos',
+  sedeId, salaId, inicio, fin, estado = 'todos', cirujano = 'todos',
 }) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const items = CIRUGIAS.filter((c) => {
-        if (c.sedeId !== sedeId || c.salaId !== salaId) return false;
-        if (c.fecha < inicio || c.fecha > fin) return false;
-        if (estado !== 'todos' && c.estado !== estado) return false;
-        return true;
-      });
-      resolve(items);
+      resolve(CIRUGIAS.filter((c) => cirugiaCoincide(c, {
+        sedeId, salaId, inicio, fin, estado, cirujano,
+      })));
     }, 250);
   });
 }
@@ -1876,19 +1902,22 @@ const JORNADA_OPERATIVA_MIN = 12 * 60;
 // exactamente lo que la grilla principal está mostrando en ese momento.
 // Cancelada no cuenta como "ocupando" agenda en ninguno de los indicadores.
 export function resumenAgenda({
-  cirugias, sedeId, inicio, fin, estado = 'todos',
+  cirugias, sedeId, inicio, fin, estado = 'todos', cirujano = 'todos',
 }) {
   const activas = cirugias.filter((c) => c.estado !== 'cancelada');
   const minutosOcupados = activas.reduce((acc, c) => acc + minutosCirugia(c), 0);
   const dias = diasEnRango(inicio, fin);
 
   const salasActivas = SALAS.filter((s) => s.sedeId === sedeId && s.estado === 'Activo');
-  const salasOcupadas = salasActivas.filter((sala) => CIRUGIAS.some((c) => (
-    c.sedeId === sedeId && c.salaId === sala.value
-    && c.fecha >= inicio && c.fecha <= fin
-    && c.estado !== 'cancelada'
-    && (estado === 'todos' || c.estado === estado)
-  ))).length;
+  // Con un cirujano elegido, "salas ocupadas" son las salas distintas donde opera en el rango.
+  const salasOcupadas = cirujano !== 'todos'
+    ? new Set(activas.map((c) => c.salaId)).size
+    : salasActivas.filter((sala) => CIRUGIAS.some((c) => (
+      c.sedeId === sedeId && c.salaId === sala.value
+      && c.fecha >= inicio && c.fecha <= fin
+      && c.estado !== 'cancelada'
+      && (estado === 'todos' || c.estado === estado)
+    ))).length;
 
   return {
     totalCirugias: activas.length,

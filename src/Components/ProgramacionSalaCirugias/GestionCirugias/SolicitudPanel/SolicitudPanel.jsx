@@ -10,6 +10,7 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import { ORIGEN_LABEL, listaProcedimientos } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
   accionItem, enmascararDocumento, estadoEstudios, evaluarSolicitud, mensajeFaltantes,
@@ -147,7 +148,7 @@ export default function SolicitudPanel({
               <dl className="sp-grupo">
                 <Dato label={`Orden · ${ORIGEN_LABEL[solicitud.origen]}`}>
                   {solicitud.ordenNumero}
-                  <span className="sp-dato-sub">{solicitud.medicoOrdena}</span>
+                  <span className="sp-dato-sub">{capitalizarNombre(solicitud.medicoOrdena)}</span>
                   {solicitud.institucionRemite && <span className="sp-dato-sub">{solicitud.institucionRemite}</span>}
                 </Dato>
                 <Dato label="CUPS · Procedimientos">

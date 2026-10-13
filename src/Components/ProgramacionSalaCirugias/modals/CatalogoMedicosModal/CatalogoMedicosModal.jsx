@@ -50,15 +50,21 @@ function rangoPaginas(page, totalPages) {
 // criterio que la referencia -- "Nombre del profesional:" es el único
 // campo que muestra) en vez del botón "Buscar [F12]" aparte: acá filtra en
 // vivo, como el resto de catálogos de este proyecto.
+// Modo filtro de agenda (FiltrosBar): con `medicos` la lista es la que se pasa
+// (los cirujanos con agenda, cuyos nombres no son los del catálogo de RR.HH.),
+// `onSelect` recibe solo el nombre, `value` marca el actual y `onClear` agrega
+// "Quitar filtro" al pie.
 export default function CatalogoMedicosModal({
-  tipo, onSelect, onClose,
+  tipo, onSelect, onClose, medicos, value, onClear, titulo = 'Listado de médicos por tipo de Recurso Humano',
 }) {
+  // En el modo filtro de agenda no se conoce el documento: se omite la columna.
+  const sinId = Boolean(medicos);
   const modalRef = useRef(null);
   useModalFocusTrap(modalRef);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [seleccion, setSeleccion] = useState(null);
+  const [seleccion, setSeleccion] = useState(() => medicos?.find((m) => m.nombre === value) ?? null);
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -78,8 +84,8 @@ export default function CatalogoMedicosModal({
   }
 
   const q = normalizar(query.trim());
-  const filtered = MEDICOS_CATALOGO.filter((m) => (
-    m.descripcion === tipo && (!q || normalizar(m.nombre).includes(q))
+  const filtered = (medicos ?? MEDICOS_CATALOGO).filter((m) => (
+    (medicos || m.descripcion === tipo) && (!q || normalizar(m.nombre).includes(q))
   ));
 
   const total = filtered.length;
@@ -92,7 +98,7 @@ export default function CatalogoMedicosModal({
 
   function handleConfirm() {
     if (!seleccion) return;
-    onSelect(`${seleccion.idMedico} - ${seleccion.nombre}`);
+    onSelect(medicos ? seleccion.nombre : `${seleccion.idMedico} - ${seleccion.nombre}`);
     onClose();
   }
 
@@ -100,7 +106,7 @@ export default function CatalogoMedicosModal({
     <div className="modal-overlay open">
       <div ref={modalRef} className="modal-card cmm-modal-card" role="dialog" aria-modal="true" aria-labelledby="cmm-title">
         <ModalHeader
-          title="Listado de médicos por tipo de Recurso Humano"
+          title={titulo}
           titleId="cmm-title"
           onClose={onClose}
           closeLabel={`Cerrar búsqueda de ${tipo.toLowerCase()}`}
@@ -109,8 +115,8 @@ export default function CatalogoMedicosModal({
           <SearchField className="cmm-search" value={query} onChange={(v) => handleQuery(v)} placeholder="Buscar por nombre del profesional" ariaLabel="Buscar por nombre del profesional" />
 
           <div className="cmm-table">
-            <div className="cmm-row cmm-row-head">
-              <span>Id. Médico</span>
+            <div className={`cmm-row cmm-row-head${sinId ? ' cmm-sin-id' : ''}`}>
+              {!sinId && <span>Id. Médico</span>}
               <span>Nombre</span>
               <span>Descripción</span>
               <span>Sede</span>
@@ -120,17 +126,17 @@ export default function CatalogoMedicosModal({
                 <div className="cmm-empty">Sin resultados para los filtros aplicados.</div>
               )}
               {pageItems.map((m) => {
-                const active = seleccion?.idMedico === m.idMedico;
+                const active = seleccion?.nombre === m.nombre;
                 return (
                   <button
                     type="button"
-                    key={m.idMedico}
+                    key={m.nombre}
                     role="option"
                     aria-selected={active}
-                    className={`cmm-row cmm-option${active ? ' active' : ''}`}
+                    className={`cmm-row cmm-option${sinId ? ' cmm-sin-id' : ''}${active ? ' active' : ''}`}
                     onClick={() => setSeleccion(m)}
                   >
-                    <span className="cmm-id">{m.idMedico}</span>
+                    {!sinId && <span className="cmm-id">{m.idMedico}</span>}
                     <span className="cmm-nombre">{m.nombre}</span>
                     <span className="cmm-descripcion">{m.descripcion}</span>
                     <span className="cmm-sede">{m.sede}</span>
@@ -191,6 +197,9 @@ export default function CatalogoMedicosModal({
           )}
         </div>
         <div className="modal-footer">
+          {onClear && value && (
+            <Button type="button" variant="outline" onClick={() => { onClear(); onClose(); }}>Quitar filtro</Button>
+          )}
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>

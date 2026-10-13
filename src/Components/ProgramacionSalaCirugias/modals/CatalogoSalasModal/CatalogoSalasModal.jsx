@@ -28,7 +28,7 @@ function normalizar(texto) {
 // confirmar con "Seleccionar" -- cerrar con la X o "Cancelar" descarta la
 // fila resaltada sin tocar el filtro, mismo criterio que FiltroPickerModal.
 export default function CatalogoSalasModal({
-  salas, value, onSelect, onClose,
+  salas, value, onSelect, onClose, onTodas,
 }) {
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState(value);
@@ -98,6 +98,9 @@ export default function CatalogoSalasModal({
           </div>
         </div>
         <div className="modal-footer">
+          {onTodas && (
+            <Button type="button" variant="outline" onClick={() => { onTodas(); onClose(); }}>Todas las salas</Button>
+          )}
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
         </div>

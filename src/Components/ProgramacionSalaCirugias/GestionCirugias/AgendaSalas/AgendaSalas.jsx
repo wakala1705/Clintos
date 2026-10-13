@@ -1,12 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LuCalendarCheck, LuChevronLeft, LuChevronRight, LuCircleCheck, LuWrench } from 'react-icons/lu';
 import './AgendaSalas.css';
 import VistaAgenda from '../VistaAgenda/VistaAgenda';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import CatalogPickerTrigger from '../../CatalogPickerTrigger/CatalogPickerTrigger';
+import CatalogoMedicosModal from '../../modals/CatalogoMedicosModal/CatalogoMedicosModal';
 import {
   JORNADAS, duracionLabel, horaFranja, rangoLabel,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 import { diaCortoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Tras el bloque de esta cirugía se dibujan, más tenues, el tiempo postquirúrgico
 // y el de recuperación: no ocupan el quirófano, pero muestran el proceso completo.
@@ -18,11 +21,16 @@ import { diaCortoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData'
 // `dias` = [{ id: 'YYYY-MM-DD', bloques, mapa }] (null mientras carga); la
 // selección usa ese `id` como `colId`.
 export default function AgendaSalas({
-  etiqueta, onSemana, salas, salaId, onSala, dias, diasVista, onDiasVista, hoy, postFranjas, recupFranjas, seleccion, duracion, onElegir, jornada, onJornada,
+  etiqueta, onSemana, salas, salaId, onSala, cirujano = '', cirujanos, onCirujano, dias, diasVista, onDiasVista, hoy, postFranjas, recupFranjas, seleccion, duracion, onElegir, jornada, onJornada,
 }) {
   const { desde, hasta } = JORNADAS[jornada];
   const filas = Array.from({ length: hasta - desde }, (_, k) => desde + k);
   const estaRef = useRef(null);
+  const [cirujanoAbierto, setCirujanoAbierto] = useState(false);
+  // Mismo shape que MEDICOS_CATALOGO para reusar CatalogoMedicosModal (el documento no se conoce acá).
+  const cirujanosCatalogo = cirujanos?.map((n) => ({
+    idMedico: n, nombre: n, descripcion: 'Cirujano', sede: 'SEDE NORTE',
+  }));
   // Mantiene a la vista el bloque de esta cirugía al moverlo, cambiar de día o de jornada.
   useEffect(() => {
     estaRef.current?.scrollIntoView({ block: 'center' });
@@ -59,6 +67,17 @@ export default function AgendaSalas({
               options={salas.map((x) => ({ value: x.value, label: x.descripcion }))}
             />
           </div>
+          {cirujanosCatalogo && (
+            <div className="as2-cirujano">
+              <CatalogPickerTrigger
+                id="as2-cirujano"
+                label={cirujano ? capitalizarNombre(cirujano) : 'Todos los cirujanos'}
+                open={cirujanoAbierto}
+                onClick={() => setCirujanoAbierto(true)}
+                ariaLabel="Cirujano"
+              />
+            </div>
+          )}
           <VistaAgenda
             jornada={jornada}
             onJornada={onJornada}
@@ -137,7 +156,7 @@ export default function AgendaSalas({
                         key={`${b.inicio}-${b.titulo}`}
                         className={`as2-bloque ${b.tipo === 'ocupado' ? 'as2-ocupado' : 'as2-nd'}`}
                         style={{ gridRow: v.fila }}
-                        title={`${b.titulo}${b.cirujano ? ` · ${b.cirujano}` : ''} · ${rangoLabel(b.inicio, b.dur)}`}
+                        title={`${b.titulo}${b.cirujano ? ` · ${capitalizarNombre(b.cirujano)}` : ''} · ${rangoLabel(b.inicio, b.dur)}`}
                       >
                         <span className="as2-bloque-top">
                           {b.tipo === 'ocupado'
@@ -145,7 +164,7 @@ export default function AgendaSalas({
                             : <LuWrench className="icon" aria-hidden="true" />}
                           <span className="as2-bloque-titulo">
                             <span className="as2-sr">{b.tipo === 'ocupado' ? 'Ocupado: ' : 'No disponible: '}</span>
-                            {b.titulo}{b.cirujano ? ` · ${b.cirujano}` : ''}
+                            {b.titulo}{b.cirujano ? ` · ${capitalizarNombre(b.cirujano)}` : ''}
                           </span>
                         </span>
                         {v.dur > 1 && <span className="as2-bloque-sub">{rangoLabel(b.inicio, b.dur)}</span>}
@@ -175,6 +194,17 @@ export default function AgendaSalas({
           <li><span className="as2-sw as2-sw-esta" aria-hidden="true"><LuCircleCheck className="icon" /></span>Esta cirugía</li>
         </ul>
       </div>
+      {cirujanoAbierto && (
+        <CatalogoMedicosModal
+          tipo="Cirujano"
+          titulo="Cirujanos con agenda"
+          medicos={cirujanosCatalogo}
+          value={cirujano || undefined}
+          onSelect={onCirujano}
+          onClear={() => onCirujano('')}
+          onClose={() => setCirujanoAbierto(false)}
+        />
+      )}
     </section>
   );
 }

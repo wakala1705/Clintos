@@ -11,7 +11,7 @@ import OrigenTag from '../GestionCirugias/OrigenTag/OrigenTag';
 import PrioridadTag from '../GestionCirugias/PrioridadTag/PrioridadTag';
 import DiagnosticoTag from '../GestionCirugias/DiagnosticoTag/DiagnosticoTag';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
-import { enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import { capitalizarNombre, enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 
 import SearchField from '@/Components/SearchField/SearchField';
@@ -26,7 +26,9 @@ const OPCIONES_ORIGEN = [
 // wizard "Nueva cirugía" con la solicitud precargada. "Programar otro paciente"
 // (onOtroPaciente) abre el buscador de pacientes del flujo anterior, para
 // agendar a alguien que no está en esta lista.
-export default function SeleccionarSolicitudModal({ solicitudes, onClose, onElegir, onOtroPaciente }) {
+export default function SeleccionarSolicitudModal({
+  solicitudes, onClose, onElegir, onOtroPaciente, cirujano,
+}) {
   const modalRef = useRef(null);
   useModalFocusTrap(modalRef);
 
@@ -65,7 +67,9 @@ export default function SeleccionarSolicitudModal({ solicitudes, onClose, onEleg
         aria-labelledby="sso-title"
       >
         <ModalHeader
-          title="Programar cirugía"          titleId="sso-title"
+          title="Programar cirugía"
+          titleId="sso-title"
+          subtitle={cirujano ? `Cirujano: ${capitalizarNombre(cirujano)}` : undefined}
           onClose={onClose}
           closeLabel="Cerrar selección de solicitud"
         />

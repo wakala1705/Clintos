@@ -88,29 +88,29 @@ export const TONO_COBERTURA = { cubierto: 'complete', autorizacion: 'pending', '
 // 00:00 (índice 0 = 00:00, 14 = 07:00) en los que ya tiene otra cirugía ese día.
 export const PERSONAL = {
   cirujano: [
-    { value: 'Dr. Andrés Villamizar', ocupado: [{ inicio: 16, dur: 4 }] },
-    { value: 'Dra. Marcela Echeverri', ocupado: [{ inicio: 22, dur: 3 }] },
-    { value: 'Dr. Mauricio Salamanca', ocupado: [{ inicio: 14, dur: 3 }] },
-    { value: 'Dr. Ricardo Naranjo', ocupado: [{ inicio: 17, dur: 5 }] },
-    { value: 'Dr. Héctor Lozano', ocupado: [] },
-    { value: 'Dra. Natalia Escobar', ocupado: [] },
+    { value: 'ANTONIO CARLOS MIRANDA HOYOS', ocupado: [{ inicio: 16, dur: 4 }] },
+    { value: 'CARLOS MAURICIO BURGOS DURANGO', ocupado: [{ inicio: 22, dur: 3 }] },
+    { value: 'CARLOS MANUEL PEREIRA BETANCOURT', ocupado: [{ inicio: 14, dur: 3 }] },
+    { value: 'AMAURY RAFAEL GARCIA BURGOS', ocupado: [{ inicio: 17, dur: 5 }] },
+    { value: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', ocupado: [] },
+    { value: 'CESAR ALONSO RIOS NIETO', ocupado: [] },
   ],
   anestesiologo: [
-    { value: 'Dra. Paula Becerra', ocupado: [{ inicio: 16, dur: 4 }] },
-    { value: 'Dr. Felipe Gaitán', ocupado: [] },
-    { value: 'Dr. Julián Arango', ocupado: [{ inicio: 24, dur: 4 }] },
+    { value: 'LINA MARIA LOBATON RAMIREZ', ocupado: [{ inicio: 16, dur: 4 }] },
+    { value: 'JORGE CARLOS GONZALEZ NUÑEZ', ocupado: [] },
+    { value: 'JOSE DARIO MERCADO GONZALEZ', ocupado: [{ inicio: 24, dur: 4 }] },
   ],
   ayudante: [
-    { value: 'Dr. Camilo Prieto', ocupado: [] },
-    { value: 'Dra. Laura Sarmiento', ocupado: [{ inicio: 14, dur: 6 }] },
+    { value: 'ANGEL MARIA PARRA LIÑAN', ocupado: [] },
+    { value: 'ABRAHAM GANEM BECHARA', ocupado: [{ inicio: 14, dur: 6 }] },
   ],
   instrumentador: [
-    { value: 'Inst. Diana Cañón', ocupado: [{ inicio: 22, dur: 3 }] },
-    { value: 'Inst. Jhon Murcia', ocupado: [] },
+    { value: 'DIANA CAROLINA SUAREZ MORA', ocupado: [{ inicio: 22, dur: 3 }] },
+    { value: 'MARTHA LUCIA RAMIREZ PINEDA', ocupado: [] },
   ],
   circulante: [
-    { value: 'Enf. Martha Rincón', ocupado: [] },
-    { value: 'Enf. Yesid Camargo', ocupado: [{ inicio: 17, dur: 5 }] },
+    { value: 'LUZ MARINA CASTRO VEGA', ocupado: [] },
+    { value: 'ANDRES FELIPE GIRALDO RUIZ', ocupado: [{ inicio: 17, dur: 5 }] },
   ],
 };
 

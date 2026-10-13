@@ -82,6 +82,8 @@ export function datosWizardDesdeSolicitud(solicitud, hueco = {}) {
       insumos: [],
     })),
     equipos: hueco.equipos ?? [],
+    // Cirujano elegido de antemano (filtro de la agenda): ya figura en el paso Personal.
+    ...(hueco.cirujano ? { personal: [{ rol: 'Cirujano', nombre: hueco.cirujano }] } : {}),
     // Vínculo que queda guardado en la cirugía (ver armarCirugiaDesdeWizard).
     solicitud: {
       id: solicitud.id,

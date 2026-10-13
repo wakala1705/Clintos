@@ -6,7 +6,7 @@ import {
 } from '../valoracion.js';
 
 const base = {
-  fecha: '2026-10-07', anestesiologo: 'Dra. Paula Mendoza', asa: 'II', concepto: 'apto', observaciones: '',
+  fecha: '2026-10-07', anestesiologo: 'INDIRA GUARDO MARTINEZ', asa: 'II', concepto: 'apto', observaciones: '',
 };
 const solicitud = () => ({
   id: 'SC-1',

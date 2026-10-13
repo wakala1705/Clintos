@@ -13,7 +13,7 @@ import {
   primerHabil, rangoFechasLabel, rangoLabel, reubicar,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 import {
-  SALAS, addDias, diaCortoLabel, fechaISO, fetchAgendaRango, rangoSemanaLabel,
+  SALAS, addDias, cirujanosDeSede, diaCortoLabel, fechaISO, fetchAgendaRango, rangoSemanaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx); se ofrecen los
@@ -24,16 +24,19 @@ const SALAS_MODAL = SALAS.filter((s) => s.sedeId === SEDE_ID && s.value.startsWi
 // Modal "Programar cirugía" de Gestión de cirugías: agenda semanal de una sala
 // (una columna por día, con las cirugías reales ya programadas), día/hora de esta cirugía
 // y sus tiempos postquirúrgico y de recuperación (personal y equipos se eligen
-// después, en el wizard). No navega: al continuar avisa al
+// después, en el wizard). Con `cirujano` (filtro de la agenda) la grilla suma, como ocupado, lo que ese
+// cirujano ya tiene en otras salas: una franja solo está libre si la sala y el cirujano lo están. No navega: al continuar avisa al
 // padre (`onElegir`), que abre el wizard "Nueva cirugía" con todo esto
 // precargado para completar los datos administrativos y los insumos.
 export default function SeleccionarHuecoModal({
-  solicitud, duracionMin, onClose, onElegir,
+  solicitud, duracionMin, onClose, onElegir, cirujano: cirujanoInicial,
 }) {
   const modalRef = useRef(null);
   useModalFocusTrap(modalRef);
 
   const [salaId, setSalaId] = useState(SALAS_MODAL[0].value);
+  // Filtro por cirujano (parte del de la agenda; se puede cambiar o quitar aquí). '' = sin filtro.
+  const [cirujano, setCirujano] = useState(cirujanoInicial ?? '');
   const [date, setDate] = useState(() => parseISO(solicitud.fechaTentativa)); // arranca en la fecha tentativa
   // Días visibles: 'habil' (lunes a viernes, por defecto), 'semana' (lunes a
   // domingo) o 'tres' (3 días hábiles desde hoy).
@@ -41,7 +44,7 @@ export default function SeleccionarHuecoModal({
   const esTres = vistaDias === 'tres';
   const anchorIso = fechaISO(date);
   const fechasVista = fechasDeVista(esTres, anchorIso);
-  const claveCarga = `${fechasVista[0]}|${fechasVista.length}|${salaId}`;
+  const claveCarga = `${fechasVista[0]}|${fechasVista.length}|${salaId}|${cirujano}`;
   const [datos, setDatos] = useState(null); // { clave, dias }
   const [duracion, setDuracion] = useState(() => Math.max(1, Math.round(duracionMin / MINUTOS_FRANJA)));
   const [seleccion, setSeleccion] = useState(null);
@@ -66,12 +69,21 @@ export default function SeleccionarHuecoModal({
     let cancelled = false;
     const fechas = fechasDeVista(esTres, anchorIso);
     const sala = SALAS_MODAL.find((x) => x.value === salaId);
-    fetchAgendaRango({
-      sedeId: SEDE_ID, salaId, inicio: fechas[0], fin: fechas[fechas.length - 1],
-    }).then((cirugias) => {
+    const rango = { sedeId: SEDE_ID, inicio: fechas[0], fin: fechas[fechas.length - 1] };
+    Promise.all([
+      fetchAgendaRango({ ...rango, salaId }),
+      cirujano ? fetchAgendaRango({ ...rango, salaId: 'todas', cirujano }) : Promise.resolve([]),
+    ]).then(([cirugias, delCirujano]) => {
       if (cancelled) return;
+      const enOtrasSalas = delCirujano.filter((c) => c.salaId !== salaId);
       const dias = fechas.map((fechaDia) => {
-        const bloques = bloquesDeSala(cirugias.filter((c) => c.fecha === fechaDia), sala.estado === 'Mantenimiento');
+        const mantenimiento = sala.estado === 'Mantenimiento';
+        const propios = bloquesDeSala(cirugias.filter((c) => c.fecha === fechaDia), mantenimiento);
+        // Lo del cirujano en otras salas: un bloque por cirugía, rotulado con su sala.
+        const ajenos = mantenimiento ? [] : enOtrasSalas.filter((c) => c.fecha === fechaDia).flatMap((c) => (
+          bloquesDeSala([c]).map((bl) => ({ ...bl, cirujano: SALAS.find((x) => x.value === c.salaId)?.descripcion ?? '' }))
+        ));
+        const bloques = [...propios, ...ajenos];
         return {
           id: fechaDia, bloques, mapa: mapaOcupado(bloques),
         };
@@ -92,7 +104,7 @@ export default function SeleccionarHuecoModal({
       }
     });
     return () => { cancelled = true; };
-  }, [claveCarga, esTres, anchorIso, salaId, solicitud.fechaTentativa]);
+  }, [claveCarga, esTres, anchorIso, salaId, cirujano, solicitud.fechaTentativa]);
 
   // Escape cierra (el foco queda atrapado en el modal por useModalFocusTrap).
   useEffect(() => {
@@ -186,6 +198,10 @@ export default function SeleccionarHuecoModal({
     setAviso(null);
     setSalaId(nueva);
   }
+  function handleCirujano(nuevo) {
+    setAviso(null);
+    setCirujano(nuevo);
+  }
 
   const puedeContinuar = Boolean(seleccion);
 
@@ -193,6 +209,7 @@ export default function SeleccionarHuecoModal({
     if (!puedeContinuar) return;
     onElegir({
       salaId: salaElegida.value,
+      cirujano: cirujano || undefined,
       fecha: seleccion.colId,
       hora: horaFranja(seleccion.inicio),
       duracionMin: duracion * MINUTOS_FRANJA,
@@ -236,6 +253,9 @@ export default function SeleccionarHuecoModal({
             salas={SALAS_MODAL}
             salaId={salaId}
             onSala={handleSala}
+            cirujano={cirujano}
+            cirujanos={cirujanosDeSede(SEDE_ID)}
+            onCirujano={handleCirujano}
             dias={dias}
             diasVista={vistaDias}
             onDiasVista={handleDiasVista}

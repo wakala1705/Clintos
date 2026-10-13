@@ -35,6 +35,8 @@ import {
   diasDeSemana,
   fechaISO,
   fetchAgendaRango,
+  cirugiaCoincide,
+  cirujanosDeSede,
   fetchVencidas,
   grillaMes,
   lunesDeSemana,
@@ -67,6 +69,11 @@ export default function ProgramacionSalaCirugias() {
     return new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
   });
   const [estado, setEstado] = useState('todos');
+  // Filtro por cirujano principal. Al elegir uno la agenda arranca en 'todas' las salas (cruza salas);
+  // se puede acotar a una sala. `salaId` conserva la última sala y vuelve al quitar el cirujano.
+  const [cirujano, setCirujano] = useState('todos');
+  const [todasSalas, setTodasSalas] = useState(false);
+  const salaEfectiva = cirujano !== 'todos' && todasSalas ? 'todas' : salaId;
   const [vista, setVista] = useState('semana');
   // Configuración "Vista" de la agenda (mismo menú que el modal de Programar
   // cirugía, ver VistaAgenda.jsx): horas visibles ('24h' | 'operativa') y días
@@ -192,7 +199,8 @@ export default function ProgramacionSalaCirugias() {
     setDesdeSolicitud({
       solicitud,
       patient: pacienteDeSolicitud(solicitud, new Date()),
-      datos: datosWizardDesdeSolicitud(solicitud, hueco),
+      // Con un cirujano filtrado en la agenda, él es el cirujano de la cirugía.
+      datos: datosWizardDesdeSolicitud(solicitud, cirujano !== 'todos' ? { ...hueco, cirujano } : hueco),
       // El hueco elegido trae su sala; sin él, la del filtro de la agenda.
       salaId: hueco.salaId,
       // Cancelar el wizard vuelve a la agenda, no a Gestión de cirugías.
@@ -282,13 +290,13 @@ export default function ProgramacionSalaCirugias() {
   useEffect(() => {
     let cancelled = false;
     fetchAgendaRango({
-      sedeId, salaId, inicio: rangoInicio, fin: rangoFin, estado,
+      sedeId, salaId: salaEfectiva, inicio: rangoInicio, fin: rangoFin, estado, cirujano,
     }).then((items) => {
       if (cancelled) return;
       setCirugias(items);
     });
     return () => { cancelled = true; };
-  }, [sedeId, salaId, estado, rangoInicio, rangoFin]);
+  }, [sedeId, salaEfectiva, estado, cirujano, rangoInicio, rangoFin]);
 
   // Programaciones vencidas sin cerrar (ver RevisionVencidas.jsx): se
   // muestran en el "Resumen de agenda" del panel lateral, con el mismo
@@ -309,10 +317,9 @@ export default function ProgramacionSalaCirugias() {
   // mutación: la respuesta de crearCirugia/actualizarCirugia/etc. ya trae
   // el registro completo, solo hace falta decidir si mostrarlo.
   function perteneceAVistaActual(c) {
-    if (c.sedeId !== sedeId || c.salaId !== salaId) return false;
-    if (c.fecha < rangoInicio || c.fecha > rangoFin) return false;
-    if (estado !== 'todos' && c.estado !== estado) return false;
-    return true;
+    return cirugiaCoincide(c, {
+      sedeId, salaId: salaEfectiva, inicio: rangoInicio, fin: rangoFin, estado, cirujano,
+    });
   }
 
   function applyUpdated(actualizada) {
@@ -324,11 +331,17 @@ export default function ProgramacionSalaCirugias() {
   }
 
   function handleSalaChange(v) {
-    setSalaId(v);
+    if (v === 'todas') setTodasSalas(true);
+    else { setSalaId(v); setTodasSalas(false); }
     setSelectedId(null);
   }
   function handleFechaAnclaChange(d) {
     setFechaAncla(d);
+    setSelectedId(null);
+  }
+  function handleCirujanoChange(v) {
+    setCirujano(v);
+    setTodasSalas(v !== 'todos');
     setSelectedId(null);
   }
   function handleEstadoChange(v) {
@@ -374,7 +387,7 @@ export default function ProgramacionSalaCirugias() {
   // momento, mismo criterio que selectedCirugia arriba (derivado, no estado
   // propio).
   const resumen = resumenAgenda({
-    cirugias, sedeId, inicio: rangoInicio, fin: rangoFin, estado,
+    cirugias, sedeId, inicio: rangoInicio, fin: rangoFin, estado, cirujano,
   });
   // Días visibles de la vista Semana (menú "Vista"): semana completa, solo
   // lun-vie (se filtra por `label` en vez de recalcular el día de semana --
@@ -468,10 +481,13 @@ export default function ProgramacionSalaCirugias() {
                   onPrevMonth={handlePrev}
                   onNextMonth={handleNext}
                   sedeId={sedeId}
-                  salaId={salaId}
+                  salaId={salaEfectiva}
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  cirujano={cirujano}
+                  cirujanos={cirujanosDeSede(sedeId)}
+                  onCirujanoChange={handleCirujanoChange}
                   vista={vista}
                   onChangeVista={handleChangeVista}
                 />
@@ -488,10 +504,13 @@ export default function ProgramacionSalaCirugias() {
                   navPrevLabel={vista === 'dia' ? 'Día anterior' : (tresDias ? 'Días anteriores' : 'Semana anterior')}
                   navNextLabel={vista === 'dia' ? 'Día siguiente' : (tresDias ? 'Días siguientes' : 'Semana siguiente')}
                   sedeId={sedeId}
-                  salaId={salaId}
+                  salaId={salaEfectiva}
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  cirujano={cirujano}
+                  cirujanos={cirujanosDeSede(sedeId)}
+                  onCirujanoChange={handleCirujanoChange}
                   onEditarCirugia={handleEditarCirugia}
                   onReprogramarCirugia={handleReprogramarCirugia}
                   onMarcarRealizada={handleMarcarRealizada}
@@ -533,12 +552,14 @@ export default function ProgramacionSalaCirugias() {
           onClose={handleCerrarSolicitudes}
           onElegir={handleElegirSolicitud}
           onOtroPaciente={handleProgramarOtroPaciente}
+          cirujano={cirujano !== 'todos' ? cirujano : undefined}
         />
       )}
 
       {huecoSolicitud && (
         <SeleccionarHuecoModal
           solicitud={huecoSolicitud}
+          cirujano={cirujano !== 'todos' ? cirujano : undefined}
           duracionMin={duracionEstimadaMin(huecoSolicitud)}
           onClose={() => setHuecoSolicitud(null)}
           onElegir={(hueco) => {
@@ -564,7 +585,7 @@ export default function ProgramacionSalaCirugias() {
           } : (desdeSolicitud?.patient ?? nuevaCirugiaWizardPatient)}
           salaId={editCirugia ? editCirugia.salaId : (desdeSolicitud?.salaId ?? salaId)}
           cirugiaId={editCirugia?.id}
-          initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : desdeSolicitud?.datos}
+          initialDatos={editCirugia ? datosWizardDesdeCirugia(editCirugia) : (desdeSolicitud?.datos ?? (cirujano !== 'todos' ? { personal: [{ rol: 'Cirujano', nombre: cirujano }] } : undefined))}
           initialFechaHora={editCirugia
             ? null
             : (nuevaCirugiaInitialFechaHora ? `${nuevaCirugiaInitialFechaHora.fecha}T${nuevaCirugiaInitialFechaHora.hora}` : null)}

@@ -12,7 +12,7 @@ import { fechaISO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 // vez de mini-tarjetas por día: decisión confirmada con el encargo.
 export default function AgendaMes({
   monthLabel, dowLabels, days, cirugias, onSelectDia, onPrevMonth, onNextMonth,
-  sedeId, salaId, onSalaChange, estado, onEstadoChange,
+  sedeId, salaId, onSalaChange, estado, onEstadoChange, cirujano = 'todos', cirujanos, onCirujanoChange,
   vista, onChangeVista,
 }) {
   function cantidadDelDia(date) {
@@ -39,6 +39,9 @@ export default function AgendaMes({
           onSalaChange={onSalaChange}
           estado={estado}
           onEstadoChange={onEstadoChange}
+          cirujano={cirujano}
+          cirujanos={cirujanos}
+          onCirujanoChange={onCirujanoChange}
           vista={vista}
           onChangeVista={onChangeVista}
         />

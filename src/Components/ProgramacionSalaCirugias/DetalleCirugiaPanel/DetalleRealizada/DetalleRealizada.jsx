@@ -13,6 +13,7 @@ import {
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { balanceInsumos, hitosCierre } from '@/hooks/ProgramacionSalaCirugias/detalleRealizada/detalleRealizada';
 import { estadoCierre } from '@/hooks/ProgramacionSalaCirugias/cierre/cierre';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 function Fact({ label, value }) {
   return (
@@ -79,7 +80,7 @@ export default function DetalleRealizada({
               <Fact label="Documento" value={paciente.documento} />
               <Fact label="Edad" value={edadDetalleLabel(paciente)} />
               <Fact label="Aseguradora" value={paciente.aseguradora} />
-              <Fact label="Cirujano" value={cirugia.cirujano} />
+              <Fact label="Cirujano" value={capitalizarNombre(cirugia.cirujano)} />
               <Fact label="Sala" value={sala} />
               <Fact label="Anestesia" value={cirugia.tipoAnestesia} />
               <Fact label="Servicio" value={cirugia.servicio} />
@@ -113,7 +114,7 @@ export default function DetalleRealizada({
               {cirugia.personal.map((p) => (
                 <li key={p.rol}>
                   <span>{p.rol}</span>
-                  <strong>{p.nombre}</strong>
+                  <strong>{capitalizarNombre(p.nombre)}</strong>
                 </li>
               ))}
             </ul>

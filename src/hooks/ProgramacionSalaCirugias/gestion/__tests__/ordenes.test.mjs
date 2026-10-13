@@ -31,7 +31,7 @@ test('solicitud -> datos del wizard: precarga y vínculo', () => {
   assert.equal(datos.idAseguradora, 'Sura');
   assert.equal(datos.procedimientos.length, 1);
   assert.match(datos.procedimientos[0].idCirugia, / - Mastectomía radical modificada$/);
-  assert.equal(datos.procedimientos[0].idCirujano, 'Dr. Andrés Villamizar');
+  assert.equal(datos.procedimientos[0].idCirujano, 'ANTONIO CARLOS MIRANDA HOYOS');
   assert.equal(datos.noAutorizacion, '[N° autorización]');
   assert.deepEqual(
     [datos.solicitud.id, datos.solicitud.origen, datos.solicitud.ambulatorio],

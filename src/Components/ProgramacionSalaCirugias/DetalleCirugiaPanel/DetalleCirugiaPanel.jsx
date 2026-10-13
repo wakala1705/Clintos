@@ -15,6 +15,7 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import VincularCanastaModal from '../modals/VincularCanastaModal/VincularCanastaModal';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
   ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -148,12 +149,12 @@ export default function DetalleCirugiaPanel({
           <div className="dcp-info-grid">
             <InfoItem label="Fecha" value={fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)} wide />
             <InfoItem label="Sala" value={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'} />
-            <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} />
+            <InfoItem label="Cirujano" value={capitalizarNombre(cirugia.cirujano) || '—'} />
             {datosExpandidos && cirugia.solicitud && (
               <>
                 <InfoItem
                   label={`Orden · ${ORIGEN_LABEL[cirugia.solicitud.origen]}`}
-                  value={`${cirugia.solicitud.ordenNumero} · ${cirugia.solicitud.medicoOrdena}`}
+                  value={`${cirugia.solicitud.ordenNumero} · ${capitalizarNombre(cirugia.solicitud.medicoOrdena)}`}
                   wide
                 />
                 <InfoItem

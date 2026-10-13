@@ -12,6 +12,7 @@ import {
   SALAS, CAUSALES_REPROGRAMACION_CIRUGIA, fechaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuCalendarClock, LuSearch } from 'react-icons/lu';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Redisñado a partir de un formulario legacy de referencia ("Reprogramación
 // de cirugía", captura adjunta) -- adaptado al design system del proyecto en
@@ -111,7 +112,7 @@ export default function ReprogramarCirugiaModal({
               </div>
               <div className="rcm-info-item">
                 <span className="rcm-info-label">Cirujano actual</span>
-                <span className="rcm-info-value">{cirugia.cirujano || '—'}</span>
+                <span className="rcm-info-value">{capitalizarNombre(cirugia.cirujano) || '—'}</span>
               </div>
               <div className="rcm-info-item">
                 <span className="rcm-info-label">Sala actual</span>

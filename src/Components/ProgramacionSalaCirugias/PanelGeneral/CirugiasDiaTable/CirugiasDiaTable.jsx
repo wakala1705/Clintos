@@ -10,6 +10,7 @@ import { canastaPedida, canastaVinculada, estadoVisual } from '@/hooks/Programac
 import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import { diaCortoLabel, estaIniciada } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Tabla de las cirugías de hoy (el cirujano va bajo el procedimiento). Clic (o Enter) en una fila abre el detalle;
 // el "⋯" actúa sobre esa cirugía (reprogramar, cancelar, marcar realizada/
@@ -69,7 +70,7 @@ export default function CirugiasDiaTable({
                   {c.procedimientoPrincipal}
                   {c.estado === 'urgencia' && <Badge tone="warn">Urgencia</Badge>}
                 </span>
-                <span className="cdt-sub">{c.cirujano}</span>
+                <span className="cdt-sub">{capitalizarNombre(c.cirujano)}</span>
               </td>
               <td className="cdt-num">{minutosCirugia(c)} min</td>
               <td>

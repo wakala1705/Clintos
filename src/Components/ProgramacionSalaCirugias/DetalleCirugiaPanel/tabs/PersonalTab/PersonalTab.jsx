@@ -1,6 +1,7 @@
 'use client';
 
 import './PersonalTab.css';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 export default function PersonalTab({ cirugia }) {
   return (
@@ -11,7 +12,7 @@ export default function PersonalTab({ cirugia }) {
       <tbody>
         {cirugia.personal.map((p) => (
           <tr key={p.rol}>
-            <td className="cell-primary">{p.nombre}</td>
+            <td className="cell-primary">{capitalizarNombre(p.nombre)}</td>
             <td className="cell-muted">{p.rol}</td>
           </tr>
         ))}

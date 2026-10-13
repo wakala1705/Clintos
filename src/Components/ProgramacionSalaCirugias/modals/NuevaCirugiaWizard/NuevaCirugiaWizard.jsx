@@ -9,6 +9,8 @@ import InsumosStep from './InsumosStep/InsumosStep';
 import EquiposStep from './EquiposStep/EquiposStep';
 import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
+import CatalogPickerTrigger from '../../CatalogPickerTrigger/CatalogPickerTrigger';
+import CatalogoSalasModal from '../CatalogoSalasModal/CatalogoSalasModal';
 import Badge from '@/Components/Badge/Badge';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
@@ -158,7 +160,11 @@ export default function NuevaCirugiaWizard({
     ...initialDatos,
   }));
   const [mostrarDescartar, setMostrarDescartar] = useState(false);
-  const salaLabel = SALAS.find((s) => s.value === salaId)?.label ?? '—';
+  const [salaCatalogoAbierto, setSalaCatalogoAbierto] = useState(false);
+  // Al crear, la sala se elige acá (la celda de una agenda por cirujano no trae sala); al editar es fija.
+  const salaActual = editando ? salaId : (datos.salaId || salaId);
+  const salaLabel = SALAS.find((s) => s.value === salaActual)?.label ?? '—';
+  const sedeSala = SALAS.find((s) => s.value === salaId)?.sedeId;
   // Snapshot del primer `datos` -- `useRef(datos)` solo toma el argumento en
   // el montaje, así que sirve de línea base estable para detectar progreso
   // real del usuario sin recalcularla en cada render (ver haCambiado más
@@ -235,7 +241,7 @@ export default function NuevaCirugiaWizard({
     if (!pasoCompleto[1] || !pasoCompleto[2]) return;
     const resultado = editando
       ? editarCirugiaDesdeWizard(cirugiaId, datos, salaId)
-      : crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaId));
+      : crearCirugia(armarCirugiaDesdeWizard(datos, patient, salaActual));
     onGuardar?.(resultado);
     onClose();
   }
@@ -259,7 +265,17 @@ export default function NuevaCirugiaWizard({
               <div className="ncw-rail-meta">
                 <div className="ncw-rail-meta-item">
                   <span className="ncw-rail-meta-label">Sala de cirugía</span>
-                  <span className="ncw-rail-meta-value">{salaLabel}</span>
+                  {editando ? (
+                    <span className="ncw-rail-meta-value">{salaLabel}</span>
+                  ) : (
+                    <CatalogPickerTrigger
+                      id="ncw-sala"
+                      label={salaLabel}
+                      open={salaCatalogoAbierto}
+                      onClick={() => setSalaCatalogoAbierto(true)}
+                      ariaLabel="Sala de cirugía"
+                    />
+                  )}
                 </div>
                 <div className="ncw-rail-meta-item">
                   <span className="ncw-rail-meta-label">No. cirugía</span>
@@ -383,6 +399,14 @@ export default function NuevaCirugiaWizard({
       </div>
       </div>
 
+      {salaCatalogoAbierto && (
+        <CatalogoSalasModal
+          salas={SALAS.filter((x) => x.sedeId === sedeSala)}
+          value={salaActual}
+          onSelect={(v) => set('salaId', v)}
+          onClose={() => setSalaCatalogoAbierto(false)}
+        />
+      )}
       {mostrarDescartar && (
         <div
           className="modal-overlay open"

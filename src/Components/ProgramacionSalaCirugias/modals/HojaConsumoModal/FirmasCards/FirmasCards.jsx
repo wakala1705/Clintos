@@ -2,11 +2,12 @@
 
 import './FirmasCards.css';
 import Badge from '@/Components/Badge/Badge';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Firmas de la hoja: solo estado (la firma de farmacia llega después del registro).
 export default function FirmasCards({ equipo, registrada }) {
   const firmas = [
-    { rol: 'Médico', estado: 'Pendiente', tone: 'warn', detalle: equipo.cirujano ? `Responsable: ${equipo.cirujano}` : 'Sin responsable asignado' },
+    { rol: 'Médico', estado: 'Pendiente', tone: 'warn', detalle: equipo.cirujano ? `Responsable: ${capitalizarNombre(equipo.cirujano)}` : 'Sin responsable asignado' },
     { rol: 'Recibí conforme', estado: 'Pendiente', tone: 'warn', detalle: equipo.circulante ? `Responsable: ${equipo.circulante}` : 'Sin responsable asignado' },
     registrada
       ? { rol: 'Farmacia', estado: 'Por firmar', tone: 'warn', detalle: 'Consumo registrado, a la espera de farmacia' }

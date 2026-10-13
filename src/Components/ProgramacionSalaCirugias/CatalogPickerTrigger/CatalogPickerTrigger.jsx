@@ -16,7 +16,7 @@ import { LuChevronDown } from 'react-icons/lu';
 // `.form-select-trigger.open` no tiene regla propia) — bug real encontrado
 // en la versión a mano: el chevron nunca rotaba al abrir el catálogo.
 export default function CatalogPickerTrigger({
-  id, label, placeholder = 'Selecciona una opción', open, onClick, ariaLabel, required = false,
+  id, label, placeholder = 'Selecciona una opción', open, onClick, ariaLabel, required = false, disabled = false,
 }) {
   return (
     <div className="form-select">
@@ -25,6 +25,7 @@ export default function CatalogPickerTrigger({
         id={id}
         className={`form-select-trigger${open ? ' open' : ''}`}
         onClick={onClick}
+        disabled={disabled}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={ariaLabel}
