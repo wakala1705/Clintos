@@ -22,7 +22,7 @@
   margin:16px 24px 0;background:var(--bg);border:1px solid var(--border);
   border-radius:var(--radius-lg);flex-shrink:0;
 }
-.dcp-info-group{padding:14px 20px;min-width:0;}
+.dcp-info-group{padding:12px 20px;min-width:0;}
 .dcp-info-group-prog{border-right:1px solid var(--border);}
 .dcp-info-group-title{
   display:flex;align-items:center;gap:6px;min-height:24px;

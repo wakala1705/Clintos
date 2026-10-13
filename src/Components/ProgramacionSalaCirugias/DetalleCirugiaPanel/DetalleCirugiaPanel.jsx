@@ -53,8 +53,9 @@ export default function DetalleCirugiaPanel({
   onCancelarSolicitud, onVerEnCanastas, onConsumoRegistrado, onFinalizarCirugia,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
-  // Datos de contacto del paciente (tel., nivel, tipo de afiliado, dirección): se consultan poco, van plegados.
-  const [pacienteExpandido, setPacienteExpandido] = useState(false);
+  // Datos que se consultan poco (orden y admisión de la programación; contacto del paciente) van plegados
+  // detrás de un solo "Ver más datos" para que la franja de arriba no le quite espacio a lo importante.
+  const [datosExpandidos, setDatosExpandidos] = useState(false);
   // "Ahora" tomado al montar (render puro): decide si la cirugía ya pasó de hora.
   const [ahora] = useState(() => ahoraDemo());
   // Ventana "Causal de Cancelación de Programación" (se abre desde
@@ -82,7 +83,7 @@ export default function DetalleCirugiaPanel({
   if ((cirugia?.id ?? null) !== lastCirugiaId) {
     setLastCirugiaId(cirugia?.id ?? null);
     setActiveDetailTab('insumos');
-    setPacienteExpandido(false);
+    setDatosExpandidos(false);
     setCancelarSolicitudAbierto(false);
     setHojaGastoAltAbierta(false);
     setHoja(cirugia ? obtenerHojaConsumo(cirugia.id) : null);
@@ -148,7 +149,7 @@ export default function DetalleCirugiaPanel({
             <InfoItem label="Fecha" value={fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)} wide />
             <InfoItem label="Sala" value={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'} />
             <InfoItem label="Cirujano" value={cirugia.cirujano || '—'} />
-            {cirugia.solicitud && (
+            {datosExpandidos && cirugia.solicitud && (
               <>
                 <InfoItem
                   label={`Orden · ${ORIGEN_LABEL[cirugia.solicitud.origen]}`}
@@ -171,25 +172,26 @@ export default function DetalleCirugiaPanel({
             <button
               type="button"
               className="dcp-info-toggle"
-              aria-expanded={pacienteExpandido}
-              onClick={() => setPacienteExpandido((v) => !v)}
+              aria-expanded={datosExpandidos}
+              aria-label={datosExpandidos ? 'Ver menos datos de la programación y del paciente' : 'Ver más datos de la programación y del paciente'}
+              onClick={() => setDatosExpandidos((v) => !v)}
             >
-              {pacienteExpandido ? 'Ver menos' : 'Ver más datos'}
-              <LuChevronDown className={`dcp-info-toggle-icon${pacienteExpandido ? ' open' : ''}`} aria-hidden="true" />
+              {datosExpandidos ? 'Ver menos' : 'Ver más datos'}
+              <LuChevronDown className={`dcp-info-toggle-icon${datosExpandidos ? ' open' : ''}`} aria-hidden="true" />
             </button>
           </div>
           <div className="dcp-info-grid">
             <InfoItem label="Nombre" value={cirugia.paciente.nombre} />
             <InfoItem label="Doc. Id" value={cirugia.paciente.documento} />
             <InfoItem label="Edad" value={edadDetalleLabel(cirugia.paciente)} />
-            <InfoItem label="Sexo" value={cirugia.paciente.sexo} />
+            {cirugia.paciente.sexo && <InfoItem label="Sexo" value={cirugia.paciente.sexo} />}
             <InfoItem label="Aseguradora" value={cirugia.paciente.aseguradora} />
-            {pacienteExpandido && (
+            {datosExpandidos && (
               <>
-                <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso || '—'} />
-                <InfoItem label="Nivel" value={cirugia.paciente.nivel || '—'} />
-                <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado || '—'} />
-                <InfoItem label="Dirección" value={cirugia.paciente.direccion || '—'} wide />
+                {cirugia.paciente.telAviso && <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso} />}
+                {cirugia.paciente.nivel && <InfoItem label="Nivel" value={cirugia.paciente.nivel} />}
+                {cirugia.paciente.tipoAfiliado && <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado} />}
+                {cirugia.paciente.direccion && <InfoItem label="Dirección" value={cirugia.paciente.direccion} wide />}
               </>
             )}
           </div>
