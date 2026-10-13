@@ -1,0 +1,43 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer en ../../shared/shared.css.
+   Selector compuesto para ganarle a la regla base de .modal-card. */
+.modal-card.alm-card{width:800px;max-width:100%;}
+.alm-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.alm-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);line-height:1.5;}
+
+.alm-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;}
+.alm-lista{max-height:200px;}
+.alm-resultados{max-height:220px;}
+.alm-table{width:100%;border-collapse:separate;border-spacing:0;}
+.alm-table thead th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.alm-table tbody th,
+.alm-table tbody td{
+  padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;text-align:left;
+  font-size:var(--fs-base);background:var(--surface);
+}
+.alm-table tbody tr:last-child th,
+.alm-table tbody tr:last-child td{border-bottom:none;}
+.alm-table tbody th{width:38%;font-weight:var(--fw-regular);color:var(--ink-700);}
+.alm-valor{font-weight:var(--fw-medium);color:var(--ink-900);white-space:pre-line;overflow-wrap:anywhere;}
+
+/* Lista de EVAPRE seleccionable */
+.alm-lista tbody tr{cursor:pointer;}
+.alm-lista tbody tr:hover td{background:var(--bg);}
+.alm-lista tbody tr.selected td{background:var(--interactive-selected-bg);}
+.alm-lista tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.alm-lista tbody tr.alm-sin{cursor:not-allowed;}
+.alm-lista tbody tr.alm-sin td{color:var(--ink-500);}
+.alm-lista tbody tr.alm-sin:hover td{background:var(--surface);}
+.alm-nowrap{white-space:nowrap;}
+.alm-col-acciones{width:1%;white-space:nowrap;text-align:right;}
+
+/* Vista previa de los resultados de la EVAPRE elegida */
+.alm-preview{display:flex;flex-direction:column;gap:8px;}
+.alm-preview-titulo{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.alm-empty{padding:28px 16px;text-align:center;}
+.alm-empty-title{margin:0 0 4px 0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.alm-empty-sub{margin:0;font-size:var(--fs-base);color:var(--ink-500);line-height:1.5;}
