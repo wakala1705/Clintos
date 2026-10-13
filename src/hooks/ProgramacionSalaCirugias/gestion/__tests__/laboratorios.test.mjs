@@ -56,3 +56,14 @@ test('con laboratorios adjuntos la solicitud queda lista para programar', () => 
   assert.equal(evaluarSolicitud(solicitud()).estado, 'pendientes');
   assert.equal(evaluarSolicitud(aplicarLaboratorios(solicitud(), d)).estado, 'lista');
 });
+
+test('aplicarResultados: completa el paso de imágenes sin tocar laboratorios', async () => {
+  const { aplicarResultados } = await import('../laboratorios.js');
+  const base = { checklist: { laboratorios: { estado: 'pendiente', obligatorio: true }, imagenes: { estado: 'pendiente', obligatorio: true } } };
+  const datos = { fecha: '2026-10-07', evapre: { id: 'e1', numero: '0201295702' }, resultados: [{ key: 'rxTorax', label: 'RX de tórax', valor: 'NORMAL' }] };
+  const r = aplicarResultados(base, 'imagenes', datos);
+  assert.equal(r.checklist.imagenes.estado, 'ok');
+  assert.match(r.checklist.imagenes.detalle, /1 estudios de imágenes/);
+  assert.equal(r.checklist.laboratorios.estado, 'pendiente');
+  assert.equal(base.checklist.imagenes.estado, 'pendiente');
+});

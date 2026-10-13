@@ -1,4 +1,4 @@
-// Lógica pura de "Adjuntar resultados" del paso Laboratorios del chequeo de
+// Lógica pura de "Vincular resultados" del paso Laboratorios del chequeo de
 // Gestión de cirugías (simulado): los resultados no se cargan a mano, se toman
 // de los que ya están registrados en la sección Laboratorios de una EVAPRE del
 // paciente. Sin React ni fecha del sistema.
@@ -25,19 +25,24 @@ export function datosLaboratorioDesdeEvapre(registro, campos) {
   };
 }
 
-// Devuelve una solicitud nueva con el paso "laboratorios" completo. `registro`
-// guarda lo adjuntado para "Ver resultados".
-export function aplicarLaboratorios(solicitud, datos) {
+// Devuelve una solicitud nueva con el paso `clave` ('laboratorios' | 'imagenes')
+// completo. `registro` guarda lo vinculado para "Ver resultados".
+export function aplicarResultados(solicitud, clave, datos) {
+  const unidad = clave === 'imagenes' ? 'estudios de imágenes' : 'registros de laboratorio';
   return {
     ...solicitud,
     checklist: {
       ...solicitud.checklist,
-      laboratorios: {
-        ...solicitud.checklist.laboratorios,
+      [clave]: {
+        ...solicitud.checklist[clave],
         estado: 'ok',
-        detalle: `Resultados adjuntos de la EVAPRE N° ${datos.evapre.numero} (${fechaCorta(datos.fecha)}): ${datos.resultados.length} registros de laboratorio.`,
+        detalle: `Resultados vinculados de la EVAPRE N° ${datos.evapre.numero} (${fechaCorta(datos.fecha)}): ${datos.resultados.length} ${unidad}.`,
         registro: { ...datos },
       },
     },
   };
+}
+
+export function aplicarLaboratorios(solicitud, datos) {
+  return aplicarResultados(solicitud, 'laboratorios', datos);
 }

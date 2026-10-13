@@ -4,7 +4,9 @@
 // rutas pero no a recargar la página.
 import { crearSolicitudesMock } from './mockSolicitudes.js';
 import { aplicarValoracion } from './valoracion.js';
-import { aplicarLaboratorios } from './laboratorios.js';
+import { aplicarResultados } from './laboratorios.js';
+import { aplicarOrden } from './ordenMedica.js';
+import { aplicarAutorizacion } from './autorizacion.js';
 
 let solicitudes = null;
 let aviso = null;
@@ -37,9 +39,19 @@ export function registrarValoracion(id, datos) {
   solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarValoracion(s, datos) : s));
 }
 
-// Adjunta los resultados de laboratorio de una solicitud (paso 4 del chequeo).
-export function adjuntarLaboratorios(id, datos) {
-  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarLaboratorios(s, datos) : s));
+// Registra la autorización de la EPS de una solicitud (paso Autorización del chequeo).
+export function registrarAutorizacion(id, datos) {
+  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarAutorizacion(s, datos) : s));
+}
+
+// Vincula una orden médica de HC a una solicitud (paso 1 del chequeo).
+export function vincularOrden(id, datos) {
+  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarOrden(s, datos) : s));
+}
+
+// Vincula los resultados de una EVAPRE (`clave`: 'laboratorios' | 'imagenes') a una solicitud (paso 4 del chequeo).
+export function vincularResultados(id, clave, datos) {
+  solicitudes = getSolicitudes().map((s) => (s.id === id ? aplicarResultados(s, clave, datos) : s));
 }
 
 // Mensaje de una sola lectura para la lista (toast tras volver de otra pantalla).

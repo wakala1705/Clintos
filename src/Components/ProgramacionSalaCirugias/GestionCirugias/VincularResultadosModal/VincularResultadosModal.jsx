@@ -1,42 +1,73 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LuEye, LuFlaskConical } from 'react-icons/lu';
-import './AdjuntarLaboratoriosModal.css';
+import { LuEye, LuFlaskConical, LuImage } from 'react-icons/lu';
+import './VincularResultadosModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
 import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import { getEvapreRegistros } from '@/hooks/HistoriaClinica/mockEvapreRegistros';
-import { CAMPOS_LABORATORIO_EVAPRE } from '@/hooks/HistoriaClinica/evaluacionPreanestesicaCampos';
+import { CAMPOS_IMAGENES_EVAPRE, CAMPOS_LABORATORIO_EVAPRE } from '@/hooks/HistoriaClinica/evaluacionPreanestesicaCampos';
+import { capitalizarNombre, enmascararDocumento } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { datosLaboratorioDesdeEvapre, resultadosDeEvapre } from '@/hooks/ProgramacionSalaCirugias/gestion/laboratorios';
 
-// Modal de "Adjuntar resultados" del paso Laboratorios (Gestión de cirugías,
+// Textos y campos de cada estudio del paso 4 del chequeo que se vincula desde una EVAPRE.
+const TIPOS = {
+  laboratorios: {
+    icon: LuFlaskConical,
+    titulo: 'Vincular resultados de laboratorio',
+    closeLabel: 'Cerrar vinculación de resultados de laboratorio',
+    campos: CAMPOS_LABORATORIO_EVAPRE,
+    ayuda: 'Selecciona la EVAPRE de la que tomar los resultados de laboratorio.',
+    vacioSub: 'Los resultados de laboratorio se toman de la EVAPRE. Cuando exista una, vuelve a intentarlo.',
+    columna: 'Laboratorios',
+    item: 'Prueba',
+    unidad: ['prueba', 'pruebas'],
+  },
+  imagenes: {
+    icon: LuImage,
+    titulo: 'Vincular resultados de imágenes',
+    closeLabel: 'Cerrar vinculación de resultados de imágenes',
+    campos: CAMPOS_IMAGENES_EVAPRE,
+    ayuda: 'Selecciona la EVAPRE de la que tomar los resultados de imágenes.',
+    vacioSub: 'Los resultados de imágenes se toman de la EVAPRE. Cuando exista una, vuelve a intentarlo.',
+    columna: 'Imágenes',
+    item: 'Estudio',
+    unidad: ['estudio', 'estudios'],
+  },
+};
+
+// Modal de "Vincular resultados" del paso Laboratorios / Estudios de imágenes (Gestión de cirugías,
 // simulado). Mismo patrón que VincularEvapreModal: se listan las EVAPRE del
 // paciente y se elige de cuál tomar los resultados de laboratorio (están en la
 // sección Laboratorios de la evaluación, no se cargan a mano). Al elegir una
-// fila se previsualizan sus resultados; "Adjuntar resultados" los pasa al
+// fila se previsualizan sus resultados; "Vincular resultados" los pasa al
 // chequeo. Elegir = clic en la fila (doble clic o Enter sobre la ya elegida la
-// adjunta).
-export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjuntar }) {
+// vincula).
+export default function VincularResultadosModal({
+  tipo = 'laboratorios', solicitud, onClose, onVincular,
+}) {
+  const cfg = TIPOS[tipo];
   const modalRef = useRef(null);
   useModalFocusTrap(modalRef);
 
+  const { paciente } = solicitud;
   const registros = useMemo(
-    () => getEvapreRegistros(solicitud.paciente.numeroDocumento),
-    [solicitud.paciente.numeroDocumento],
+    () => getEvapreRegistros(paciente.numeroDocumento),
+    [paciente.numeroDocumento],
   );
   // Cantidad de resultados por EVAPRE (0 = no se puede elegir).
   const conteos = useMemo(
-    () => Object.fromEntries(registros.map((r) => [r.id, resultadosDeEvapre(r, CAMPOS_LABORATORIO_EVAPRE).length])),
-    [registros],
+    () => Object.fromEntries(registros.map((r) => [r.id, resultadosDeEvapre(r, cfg.campos).length])),
+    [registros, cfg],
   );
   const [selectedId, setSelectedId] = useState(null);
   const [verPdf, setVerPdf] = useState(null);
   const selected = registros.find((r) => r.id === selectedId) ?? null;
-  const resultados = selected ? resultadosDeEvapre(selected, CAMPOS_LABORATORIO_EVAPRE) : [];
-  const datos = selected ? datosLaboratorioDesdeEvapre(selected, CAMPOS_LABORATORIO_EVAPRE) : null;
+  const resultados = selected ? resultadosDeEvapre(selected, cfg.campos) : [];
+  const datos = selected ? datosLaboratorioDesdeEvapre(selected, cfg.campos) : null;
 
   // Escape cierra (el foco queda atrapado en el modal por useModalFocusTrap).
   useEffect(() => {
@@ -45,9 +76,9 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  function adjuntar(registro) {
-    const d = datosLaboratorioDesdeEvapre(registro, CAMPOS_LABORATORIO_EVAPRE);
-    if (d) onAdjuntar(d);
+  function vincular(registro) {
+    const d = datosLaboratorioDesdeEvapre(registro, cfg.campos);
+    if (d) onVincular(d);
   }
 
   return (
@@ -61,28 +92,26 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
         aria-labelledby="alm-title"
       >
         <ModalHeader
-          icon={LuFlaskConical}
+          icon={cfg.icon}
           tone="primary"
-          title="Adjuntar resultados de laboratorio"
+          title={cfg.titulo}
           titleId="alm-title"
-          subtitle={solicitud.paciente.nombre}
+          subtitle={`${paciente.nombre} · ${enmascararDocumento(paciente.tipoDocumento, paciente.numeroDocumento)}`}
           onClose={onClose}
-          closeLabel="Cerrar adjuntar resultados"
+          closeLabel={cfg.closeLabel}
         />
 
         <div className="modal-body alm-body">
           {registros.length === 0 ? (
             <div className="alm-empty" role="status">
-              <p className="alm-empty-title">Este paciente no tiene resultados de laboratorio registrados</p>
+              <p className="alm-empty-title">Este paciente no tiene evaluaciones preanestésicas</p>
               <p className="alm-empty-sub">
-                Los resultados se toman de la evaluación preanestésica (EVAPRE). Diligénciala en Historia clínica de Hospitalización y vuelve a intentarlo.
+                {cfg.vacioSub}
               </p>
             </div>
           ) : (
             <>
-              <p className="alm-help">
-                Selecciona la EVAPRE de la que tomar los resultados de laboratorio. Al adjuntarlos quedan asociados a esta solicitud.
-              </p>
+              <p className="alm-help">{cfg.ayuda}</p>
 
               <div className="alm-table-wrap alm-lista">
                 <table className="alm-table">
@@ -91,7 +120,7 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
                       <th scope="col">N° registro</th>
                       <th scope="col">Fecha</th>
                       <th scope="col">Anestesiólogo</th>
-                      <th scope="col">Laboratorios</th>
+                      <th scope="col">{cfg.columna}</th>
                       <th scope="col" className="alm-col-acciones">Acciones</th>
                     </tr>
                   </thead>
@@ -108,25 +137,25 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
                           aria-disabled={sinResultados || undefined}
                           tabIndex={sinResultados ? -1 : 0}
                           onClick={() => { if (!sinResultados) setSelectedId(r.id); }}
-                          onDoubleClick={() => { if (!sinResultados) adjuntar(r); }}
+                          onDoubleClick={() => { if (!sinResultados) vincular(r); }}
                           onKeyDown={(e) => {
                             if (sinResultados || e.target !== e.currentTarget) return;
                             if (e.key !== 'Enter' && e.key !== ' ') return;
                             e.preventDefault();
-                            if (isSelected) adjuntar(r);
+                            if (isSelected) vincular(r);
                             else setSelectedId(r.id);
                           }}
                         >
                           <td className="alm-nowrap">{r.numero}</td>
-                          <td className="alm-nowrap">{r.fecha} · {r.hora}</td>
-                          <td>{r.autor}</td>
+                          <td className="alm-nowrap">{r.fecha} - {r.hora}</td>
+                          <td>{capitalizarNombre(r.autor)}</td>
                           <td>
                             {sinResultados
                               ? <Badge tone="neutral">Sin resultados</Badge>
-                              : <Badge tone="success">{total} {total === 1 ? 'prueba' : 'pruebas'}</Badge>}
+                              : <Badge tone="success">{total} {cfg.unidad[total === 1 ? 0 : 1]}</Badge>}
                           </td>
                           {/* Ver detalle: abre el PDF de la EVAPRE en el visor. Corta la propagación para que ni el
-                              clic ni el doble clic seleccionen/adjunten la fila. */}
+                              clic ni el doble clic seleccionen/vinculen la fila. */}
                           <td className="alm-col-acciones" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                             <Button
                               type="button"
@@ -138,7 +167,7 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
                               onClick={() => setVerPdf({
                                 src: r.archivoUrl,
                                 title: `Evaluación preanestésica N° ${r.numero}`,
-                                subtitle: `${solicitud.paciente.nombre} · ${r.fecha} · ${r.hora}`,
+                                subtitle: `${paciente.nombre} · ${r.fecha} - ${r.hora}`,
                               })}
                             >
                               Ver detalle
@@ -158,7 +187,7 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
                     <table className="alm-table">
                       <thead>
                         <tr>
-                          <th scope="col">Prueba</th>
+                          <th scope="col">{cfg.item}</th>
                           <th scope="col">Resultado</th>
                         </tr>
                       </thead>
@@ -179,8 +208,14 @@ export default function AdjuntarLaboratoriosModal({ solicitud, onClose, onAdjunt
         </div>
 
         <div className="modal-footer">
-          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" disabled={!datos} onClick={() => adjuntar(selected)}>Adjuntar resultados</Button>
+          {registros.length === 0 ? (
+            <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
+          ) : (
+            <>
+              <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+              <Button type="button" disabled={!datos} onClick={() => vincular(selected)}>Vincular resultados</Button>
+            </>
+          )}
         </div>
       </div>
     </div>

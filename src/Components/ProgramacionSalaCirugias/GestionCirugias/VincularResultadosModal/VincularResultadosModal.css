@@ -5,13 +5,13 @@
 .alm-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);line-height:1.5;}
 
 .alm-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;}
-.alm-lista{max-height:200px;}
-.alm-resultados{max-height:220px;}
+.alm-lista{max-height:240px;}
+.alm-resultados{max-height:180px;}
 .alm-table{width:100%;border-collapse:separate;border-spacing:0;}
 .alm-table thead th{
   position:sticky;top:0;z-index:var(--z-sticky);
   text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
-  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);white-space:nowrap;
 }
 .alm-table tbody th,
 .alm-table tbody td{

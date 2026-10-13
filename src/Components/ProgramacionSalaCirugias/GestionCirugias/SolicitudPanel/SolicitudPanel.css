@@ -94,12 +94,17 @@
 .sp-mensaje-bloqueada{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
 /* status-info: solo mensajes informativos. */
 .sp-mensaje-info{background:var(--status-info-bg);color:var(--status-info-fg);}
-.sp-programar{flex-shrink:0;justify-content:center;margin-left:auto;}
+/* Acciones del pie: [n de total] [Siguiente solicitud] [Programar cirugía], pegadas a la derecha. */
+.sp-acciones{display:flex;align-items:center;gap:12px;margin-left:auto;flex-shrink:0;}
+.sp-posicion{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}
+.sp-siguiente-icono{width:18px;height:18px;flex-shrink:0;}
+.sp-programar{flex-shrink:0;justify-content:center;}
 
 /* Tablet: una sola columna (con scroll del cuerpo si hace falta). */
 @media (max-width:1024px){
   .sp-cuerpo{grid-template-columns:minmax(0,1fr);}
   .sp-pie{flex-direction:column;align-items:stretch;}
+  .sp-acciones{margin-left:0;flex-wrap:wrap;justify-content:flex-end;}
   .sp-programar{width:100%;}
 }
 

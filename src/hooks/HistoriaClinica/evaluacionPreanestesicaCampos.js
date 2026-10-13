@@ -226,6 +226,14 @@ export const CAMPOS_LABORATORIO_EVAPRE = SECCIONES_EVAPRE.find((s) => s.id === '
   .filter((c) => c.type === 'text' || CLAVES_LAB_TEXTO.includes(c.key))
   .map(({ key, label }) => ({ key, label }));
 
+// Campos de imágenes diagnósticas de la misma sección Laboratorios (RX de tórax y
+// otras imágenes; el EKG no es imagen): los que consume "Vincular resultados" del
+// paso Estudios de imágenes de Gestión de cirugías.
+export const CAMPOS_IMAGENES_EVAPRE = [
+  { key: 'rxTorax', label: 'RX de tórax' },
+  { key: 'otrosImagenes', label: 'Otras imágenes diagnósticas' },
+];
+
 // Etiqueta legible del `value` de un campo select (vista de lectura).
 export function etiquetaOpcionEvapre(key, value) {
   for (const s of SECCIONES_EVAPRE) {

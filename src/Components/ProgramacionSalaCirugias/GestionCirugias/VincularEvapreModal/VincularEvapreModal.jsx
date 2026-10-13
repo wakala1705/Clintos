@@ -11,6 +11,7 @@ import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTra
 import { getEvapreRegistros } from '@/hooks/HistoriaClinica/mockEvapreRegistros';
 import { etiquetaOpcionEvapre } from '@/hooks/HistoriaClinica/evaluacionPreanestesicaCampos';
 import { CONCEPTOS, datosDesdeEvapre } from '@/hooks/ProgramacionSalaCirugias/gestion/valoracion';
+import { capitalizarNombre, enmascararDocumento } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 const CONCEPTO_TONO = { apto: 'success', condiciones: 'warn', 'no-apto': 'danger' };
 
@@ -61,21 +62,17 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
           tone="primary"
           title="Vincular evaluación preanestésica"
           titleId="vem-title"
+          subtitle={`${solicitud.paciente.nombre} · ${enmascararDocumento(solicitud.paciente.tipoDocumento, solicitud.paciente.numeroDocumento)}`}
           onClose={onClose}
           closeLabel="Cerrar vinculación de evaluación"
         />
 
         <div className="modal-body vem-body">
-          <p className="vem-paciente">
-            <span className="vem-paciente-label">Paciente</span>
-            {solicitud.paciente.nombre} · {solicitud.paciente.tipoDocumento} {solicitud.paciente.numeroDocumento}
-          </p>
-
           {registros.length === 0 ? (
             <div className="vem-empty" role="status">
               <p className="vem-empty-title">Este paciente no tiene evaluaciones preanestésicas</p>
               <p className="vem-empty-sub">
-                Diligencia la plantilla EVAPRE en Historia clínica de Hospitalización y vuelve a intentarlo.
+                La valoración se vincula desde una EVAPRE. Cuando exista una, vuelve a intentarlo.
               </p>
             </div>
           ) : (
@@ -114,8 +111,8 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
                           }}
                         >
                           <td className="vem-nowrap">{r.numero}</td>
-                          <td className="vem-nowrap">{r.fecha} · {r.hora}</td>
-                          <td>{r.autor}</td>
+                          <td className="vem-nowrap">{r.fecha} - {r.hora}</td>
+                          <td>{capitalizarNombre(r.autor)}</td>
                           <td>{v.estadoFisicoAsa ? <Badge tone="neutral">ASA {v.estadoFisicoAsa}</Badge> : '—'}</td>
                           <td>{etiquetaOpcionEvapre('tipoAnestesia', v.tipoAnestesia) || '—'}</td>
                           {/* Ver detalle: abre el PDF de la EVAPRE en el visor. Corta la propagación para que ni el
@@ -131,7 +128,7 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
                               onClick={() => setVerPdf({
                                 src: r.archivoUrl,
                                 title: `Evaluación preanestésica N° ${r.numero}`,
-                                subtitle: `${solicitud.paciente.nombre} · ${r.fecha} · ${r.hora}`,
+                                subtitle: `${solicitud.paciente.nombre} · ${r.fecha} - ${r.hora}`,
                               })}
                             >
                               Ver detalle
@@ -164,8 +161,14 @@ export default function VincularEvapreModal({ solicitud, onClose, onVincular }) 
         </div>
 
         <div className="modal-footer">
-          <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" disabled={!datos} onClick={() => vincular(selected)}>Vincular evaluación</Button>
+          {registros.length === 0 ? (
+            <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
+          ) : (
+            <>
+              <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+              <Button type="button" disabled={!datos} onClick={() => vincular(selected)}>Vincular evaluación</Button>
+            </>
+          )}
         </div>
       </div>
     </div>

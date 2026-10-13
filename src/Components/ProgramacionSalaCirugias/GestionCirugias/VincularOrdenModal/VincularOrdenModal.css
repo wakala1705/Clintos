@@ -1,0 +1,39 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer en ../../shared/shared.css.
+   Selector compuesto para ganarle a la regla base de .modal-card. */
+.modal-card.aom-card{width:800px;max-width:100%;}
+.aom-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.aom-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);line-height:1.5;}
+
+.aom-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;}
+.aom-lista{max-height:240px;}
+.aom-servicios-lista{max-height:180px;}
+.aom-table{width:100%;border-collapse:separate;border-spacing:0;}
+.aom-table thead th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);white-space:nowrap;
+}
+.aom-table tbody td{
+  padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;text-align:left;
+  font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);
+}
+.aom-table tbody tr:last-child td{border-bottom:none;}
+.aom-nowrap{white-space:nowrap;}
+.aom-desc{overflow-wrap:anywhere;}
+/* Columna numérica: el th lleva la misma alineación que sus celdas. */
+.aom-table .aom-col-cant{width:1%;text-align:right;white-space:nowrap;}
+.aom-servicios{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;}
+
+/* Lista de órdenes seleccionable */
+.aom-lista tbody tr{cursor:pointer;}
+.aom-lista tbody tr:hover td{background:var(--bg);}
+.aom-lista tbody tr.selected td{background:var(--interactive-selected-bg);}
+.aom-lista tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+
+/* Vista previa de los servicios de la orden elegida */
+.aom-preview{display:flex;flex-direction:column;gap:8px;}
+.aom-preview-titulo{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.aom-empty{padding:28px 16px;text-align:center;}
+.aom-empty-title{margin:0 0 4px 0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.aom-empty-sub{margin:0;font-size:var(--fs-base);color:var(--ink-500);line-height:1.5;}

@@ -66,16 +66,49 @@ const ORDEN_CIRUGIA_CLAUDIA = {
   ],
 };
 
+// Órdenes de la cirugía de Rosa Elena Quintero Vargas (CC 41.667.230): su
+// solicitud de Lobectomía pulmonar por toracoscopia en Gestión de cirugías
+// tiene el paso Orden pendiente, y se vincula con una de estas (la 1870 incluye
+// la cirugía; la 1851 es una interconsulta previa, que no respalda la cirugía).
+const ORDENES_ROSA = [
+  {
+    id: 'om-1870', numero: '1870', fecha: '29.SEP.2026', hora: '15:20', tituloNota: 'ORDEN MÉDICA',
+    autor: 'RICARDO NARANJO', especialidad: 'CIRUGÍA DE TÓRAX', ambito: 'QX',
+    cirugias: [
+      { id: 'ci1', descripcion: 'LOBECTOMIA PULMONAR POR TORACOSCOPIA', servicioContratado: true, cantidad: '1', prioritario: true, observaciones: 'Nódulo pulmonar sospechoso en lóbulo superior derecho.' },
+    ],
+    laboratorios: [
+      { id: 'l1', descripcion: 'GASOMETRIA ARTERIAL', servicioContratado: true, cantidad: '1', prioritario: false, observaciones: '' },
+      { id: 'l2', descripcion: 'HEMOGRAMA IV AUTOMATIZADO', servicioContratado: true, cantidad: '1', prioritario: false, observaciones: '' },
+    ],
+  },
+  {
+    id: 'om-1851', numero: '1851', fecha: '15.SEP.2026', hora: '09:40', tituloNota: 'ORDEN MÉDICA',
+    autor: 'RICARDO NARANJO', especialidad: 'CIRUGÍA DE TÓRAX', ambito: 'QX',
+    consultas: [
+      { id: 'c1', descripcion: 'INTERCONSULTA POR CIRUGIA DE TORAX', servicioContratado: true, cantidad: '1', prioritario: false, observaciones: '' },
+    ],
+  },
+];
+
 // Órdenes propias de un paciente, por número de documento (solo dígitos).
 const ORDENES_POR_DOCUMENTO = {
   31902576: [ORDEN_CIRUGIA_CLAUDIA],
+  41667230: ORDENES_ROSA,
 };
+
+const soloDigitos = (documento) => Number(String(documento ?? '').replace(/\D/g, ''));
+
+// Solo las órdenes propias del paciente ([] si no tiene): lo usa Gestión de
+// cirugías, donde mostrar el set de ejemplo de otro paciente sería engañoso.
+export function getOrdenesPropias(documento) {
+  return ORDENES_POR_DOCUMENTO[soloDigitos(documento)] ?? [];
+}
 
 // Todas las órdenes del paciente, más recientes primero. Los pacientes con
 // órdenes propias (ver ORDENES_POR_DOCUMENTO) ven solo las suyas; para el
 // resto, igual que getRegistrosGruposHospitalizacion, se devuelve el mismo set
 // de ejemplo hasta que haya órdenes reales.
 export function getOrdenesMedicas(documento) {
-  const propias = ORDENES_POR_DOCUMENTO[Number(String(documento ?? '').replace(/\D/g, ''))];
-  return propias ?? ORDENES;
+  return ORDENES_POR_DOCUMENTO[soloDigitos(documento)] ?? ORDENES;
 }

@@ -63,6 +63,17 @@ export function evaluarSolicitud(solicitud) {
   };
 }
 
+// "CAMILO GRONDONA" -> "Camilo Grondona": los nombres y especialidades de HC vienen
+// en mayúsculas; en las tablas de los modales de vinculación se muestran en título.
+const MINUSCULAS = new Set(['de', 'del', 'la', 'las', 'los', 'y']);
+export function capitalizarNombre(texto) {
+  return String(texto ?? '')
+    .toLocaleLowerCase('es')
+    .split(' ')
+    .map((p, i) => (i > 0 && MINUSCULAS.has(p) ? p : p.charAt(0).toLocaleUpperCase('es') + p.slice(1)))
+    .join(' ');
+}
+
 // ("CC", "1.020.345.817") -> "CC ••••5817": solo se ve el final del documento.
 export function enmascararDocumento(tipo, numero) {
   const digitos = String(numero).replace(/\D/g, '');
@@ -159,13 +170,13 @@ export function accionItem(key, estado) {
   const completo = estado === 'ok';
   switch (key) {
     case 'orden':
-      return completo ? 'Ver orden' : 'Registrar orden médica';
+      return completo ? 'Ver orden' : 'Vincular orden médica';
     case 'autorizacion':
       if (completo) return 'Ver autorización';
-      return estado === 'pendiente' ? 'Solicitar autorización' : 'Solicitar renovación';
+      return estado === 'pendiente' ? 'Registrar autorización' : 'Registrar renovación';
     case 'valoracion':
-      return completo ? 'Ver valoración' : 'Registrar valoración';
+      return completo ? 'Ver valoración' : 'Vincular valoración';
     default:
-      return completo ? 'Ver resultados' : 'Adjuntar resultados';
+      return completo ? 'Ver resultados' : 'Vincular resultados';
   }
 }

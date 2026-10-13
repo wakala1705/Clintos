@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import {
-  LuCalendarPlus, LuCircleAlert, LuEye, LuInfo,
+  LuCalendarPlus, LuChevronRight, LuCircleAlert, LuEye, LuInfo,
 } from 'react-icons/lu';
 import './SolicitudPanel.css';
 import Button from '@/Components/Button/Button';
@@ -74,9 +74,11 @@ function Dato({ label, children }) {
 }
 
 // Modal con el detalle del chequeo de una solicitud: datos, los requisitos y la
-// acción "Programar cirugía" (que abre el modal de la agenda encima).
+// acción "Programar cirugía" (que abre el modal de la agenda encima). Con
+// `onSiguiente` (hay otra solicitud después de esta en la lista) ofrece pasar a
+// ella sin cerrar; `posicion` ({ indice, total }) dice dónde se está en la cola.
 export default function SolicitudPanel({
-  solicitud, onClose, onAccion, onProgramar,
+  solicitud, onClose, onAccion, onProgramar, onSiguiente, posicion,
 }) {
   const panelRef = useRef(null);
   useModalFocusTrap(panelRef);
@@ -206,15 +208,30 @@ export default function SolicitudPanel({
               )}
             </div>
           )}
-          <Button
-            icon={LuCalendarPlus}
-            className="sp-programar"
-            disabled={!puedeProgramar}
-            aria-describedby={hayMensajes ? 'sp-mensaje' : undefined}
-            onClick={() => onProgramar(solicitud)}
-          >
-            Programar cirugía
-          </Button>
+          <div className="sp-acciones">
+            {onSiguiente && (
+              <>
+                {posicion && (
+                  <span className="sp-posicion" aria-live="polite">
+                    {posicion.indice} de {posicion.total}
+                  </span>
+                )}
+                <Button variant="outline" className="sp-siguiente" onClick={onSiguiente}>
+                  Siguiente solicitud
+                  <LuChevronRight className="sp-siguiente-icono" aria-hidden="true" />
+                </Button>
+              </>
+            )}
+            <Button
+              icon={LuCalendarPlus}
+              className="sp-programar"
+              disabled={!puedeProgramar}
+              aria-describedby={hayMensajes ? 'sp-mensaje' : undefined}
+              onClick={() => onProgramar(solicitud)}
+            >
+              Programar cirugía
+            </Button>
+          </div>
         </footer>
       </div>
     </div>

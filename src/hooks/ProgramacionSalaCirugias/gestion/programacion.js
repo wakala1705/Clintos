@@ -2,7 +2,9 @@
 // con la lista de chequeo completa a lo que NuevaCirugiaWizard espera
 // (`patient` + `initialDatos`). Lógica pura; el wizard sigue siendo el dueño
 // de la captura y del guardado (armarCirugiaDesdeWizard + crearCirugia).
-import { ASA_CATALOGO, DURACIONES_CIRUGIA_CATALOGO, TIPOS_ANESTESIA_CATALOGO } from '../mockCirugiaData.js';
+import {
+  ASA_CATALOGO, CLASE_CIRUGIA_CATALOGO, DURACIONES_CIRUGIA_CATALOGO, TIPOS_ANESTESIA_CATALOGO,
+} from '../mockCirugiaData.js';
 import { esAmbulatorio, listaProcedimientos } from './ordenes.js';
 
 const DURACION_POR_DEFECTO_MIN = 120;
@@ -29,6 +31,10 @@ export function pacienteDeSolicitud(solicitud, hoy) {
   };
 }
 
+// Origen de la solicitud -> "Clase" del wizard (CLASE_CIRUGIA_CATALOGO): consulta externa -> CE;
+// internación no tiene una clase propia en el catálogo, la cirugía es de Quirófano.
+const CLASE_WIZARD = { 'consulta-externa': 'CE', internacion: 'Quirófano' };
+
 // ASA (romano, como lo registra la EVAPRE) -> opción de "Asa" del wizard (ASA_CATALOGO).
 const ASA_WIZARD = {
   I: ASA_CATALOGO[0], II: 'Clase 2', III: 'Clase 3', IV: 'Clase 4', V: 'Clase 5', VI: 'Clase 6',
@@ -47,7 +53,10 @@ const enCatalogo = (valor, catalogo) => (catalogo.includes(valor) ? valor : '');
 // hora del slot, duración, personal y equipos. Sin él se usa la fecha
 // tentativa a las 07:00 y la duración estimada de los procedimientos.
 export function datosWizardDesdeSolicitud(solicitud, hueco = {}) {
-  const autorizada = solicitud.checklist.autorizacion.estado === 'ok';
+  const autorizacion = solicitud.checklist.autorizacion;
+  const autorizada = autorizacion.estado === 'ok';
+  // Autorización registrada en Gestión de cirugías: precarga su N° y quién la registró.
+  const registroAut = autorizacion.registro;
   const cirujano = hueco.cirujano ?? solicitud.cirujano ?? '';
   // Valoración vinculada a una EVAPRE (o registrada a mano): precarga Asa y Tipo anestesia.
   const valoracion = solicitud.checklist.valoracion?.registro;
@@ -58,10 +67,13 @@ export function datosWizardDesdeSolicitud(solicitud, hueco = {}) {
     duracionRecuperacion: String(hueco.duracionRecuperacionMin ?? ''),
     dxIngreso: solicitud.dxOrden ?? '',
     idAseguradora: solicitud.eps,
+    clase: enCatalogo(CLASE_WIZARD[solicitud.origen], CLASE_CIRUGIA_CATALOGO),
     asa: enCatalogo(ASA_WIZARD[valoracion?.asa], ASA_CATALOGO),
     tipoAnestesia: enCatalogo(ANESTESIA_WIZARD[valoracion?.tipoAnestesia], TIPOS_ANESTESIA_CATALOGO),
-    noAutorizacion: autorizada ? '[N° autorización]' : '',
-    quienAutoriza: autorizada ? 'Marcela Ortiz (Auditoría médica)' : '',
+    noAutorizacion: registroAut?.numero ?? (autorizada ? '[N° autorización]' : ''),
+    quienAutoriza: registroAut
+      ? `${registroAut.registradoPor.nombre} (${registroAut.registradoPor.rol})`
+      : (autorizada ? 'Marcela Ortiz (Auditoría médica)' : ''),
     procedimientos: listaProcedimientos(solicitud).map((p) => ({
       idCirugia: `${p.cups} - ${p.nombre}`,
       idCirujano: cirujano,

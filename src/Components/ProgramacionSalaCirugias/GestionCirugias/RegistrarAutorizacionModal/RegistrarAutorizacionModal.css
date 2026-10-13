@@ -1,0 +1,25 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer/.form-field en ../../shared/shared.css.
+   Selector compuesto para ganarle a la regla base de .modal-card. */
+.modal-card.ram-card{width:520px;max-width:100%;}
+.ram-body{display:flex;flex-direction:column;gap:16px;}
+.ram-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);line-height:1.5;}
+.ram-error{font-size:var(--fs-sm);color:var(--red);}
+
+/* Documento de soporte */
+.ram-adjunto{display:flex;flex-direction:column;gap:4px;}
+.ram-label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.ram-archivo,
+.ram-vacio{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);
+}
+.ram-vacio{border-style:dashed;justify-content:space-between;}
+.ram-vacio p{margin:0;font-size:var(--fs-sm);color:var(--ink-700);flex:1;min-width:160px;}
+.ram-archivo-icono{width:20px;height:20px;color:var(--ink-500);flex-shrink:0;}
+.ram-archivo-nombre{flex:1;min-width:120px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
+
+/* Quién queda como autor del registro */
+.ram-registra{margin:0;font-size:var(--fs-sm);color:var(--ink-500);}
+.ram-registra strong{font-weight:var(--fw-medium);color:var(--ink-700);}
+
+.ram-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}

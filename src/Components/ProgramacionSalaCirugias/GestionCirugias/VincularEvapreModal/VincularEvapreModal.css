@@ -2,16 +2,14 @@
    Selector compuesto para ganarle a la regla base de .modal-card. */
 .modal-card.vem-card{width:800px;max-width:100%;}
 .vem-body{display:flex;flex-direction:column;gap:14px;min-height:0;}
-.vem-paciente{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);}
-.vem-paciente-label{font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
 .vem-help{margin:0;font-size:var(--fs-base);color:var(--ink-700);}
 
-.vem-table-wrap{border:1px solid var(--border);border-radius:var(--radius);max-height:320px;overflow:auto;}
+.vem-table-wrap{border:1px solid var(--border);border-radius:var(--radius);max-height:240px;overflow:auto;}
 .vem-table{width:100%;border-collapse:separate;border-spacing:0;}
 .vem-table th{
   position:sticky;top:0;z-index:var(--z-sticky);
   text-align:left;padding:12px 10px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
-  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);white-space:nowrap;
 }
 .vem-table td{
   padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle;

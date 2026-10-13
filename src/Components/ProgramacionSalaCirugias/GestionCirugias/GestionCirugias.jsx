@@ -16,14 +16,16 @@ import ColumnasMenu from './ColumnasMenu/ColumnasMenu';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
 import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal';
-// RegistrarValoracionModal (formulario manual) queda oculto: 'Registrar valoración'
+// RegistrarValoracionModal (formulario manual) queda oculto: 'Vincular valoración'
 // ahora vincula una EVAPRE (VincularEvapreModal).
 import VincularEvapreModal from './VincularEvapreModal/VincularEvapreModal';
-import AdjuntarLaboratoriosModal from './AdjuntarLaboratoriosModal/AdjuntarLaboratoriosModal';
+import VincularResultadosModal from './VincularResultadosModal/VincularResultadosModal';
+import RegistrarAutorizacionModal from './RegistrarAutorizacionModal/RegistrarAutorizacionModal';
+import VincularOrdenModal from './VincularOrdenModal/VincularOrdenModal';
 import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
 import {
-  adjuntarLaboratorios, consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion,
+  consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion, registrarAutorizacion, vincularOrden, vincularResultados,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
 import {
   datosWizardDesdeSolicitud, duracionEstimadaMin, pacienteDeSolicitud,
@@ -32,6 +34,8 @@ import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import { contarPorEstado, filtrarSolicitudes, ordenarPorPrioridad } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 import SearchField from '@/Components/SearchField/SearchField';
+// Usuario en sesión (el mismo del Topbar): queda como autor de los registros que hace.
+const USUARIO = { nombre: 'Camilo Grondona', rol: 'Administrador', iniciales: 'CG' };
 const FILTROS_INICIALES = {
   busqueda: '', origen: 'todas', diagnostico: 'todas', estado: 'todas',
 };
@@ -57,7 +61,10 @@ export default function GestionCirugias() {
   const [hueco, setHueco] = useState(null);
   // Solicitud cuya valoración preanestésica se está registrando (modal sobre el panel).
   const [valorando, setValorando] = useState(null);
-  const [adjuntando, setAdjuntando] = useState(null);
+  // Solicitud + estudio ('laboratorios' | 'imagenes') cuyos resultados se vinculan desde una EVAPRE.
+  const [vinculandoResultados, setVinculandoResultados] = useState(null);
+  const [vinculandoOrden, setVinculandoOrden] = useState(null);
+  const [registrandoAut, setRegistrandoAut] = useState(null);
   const [visorPdf, setVisorPdf] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   // Muestra/oculta las 4 columnas de validaciones (Orden, Estudios, Valoración, Autorización).
@@ -88,6 +95,9 @@ export default function GestionCirugias() {
   const conteo = contarPorEstado(filtrarSolicitudes(solicitudes, efectivos, { ignorarEstado: true }));
   const filas = ordenarPorPrioridad(filtrarSolicitudes(solicitudes, efectivos));
   const seleccionada = solicitudes.find((s) => s.id === selectedId) ?? null;
+  // Cola de "Siguiente solicitud": el orden y filtros que se ven en la tabla.
+  const indiceSel = seleccionada ? filas.findIndex((s) => s.id === seleccionada.id) : -1;
+  const siguiente = indiceSel >= 0 ? filas[indiceSel + 1] : null;
   const hayFiltros = JSON.stringify(filtros) !== JSON.stringify(FILTROS_INICIALES);
 
   const setFiltro = (cambio) => setFiltros((f) => ({ ...f, ...cambio }));
@@ -102,24 +112,46 @@ export default function GestionCirugias() {
   function cerrarPanel() { setSelectedId(null); }
 
   // Acciones del chequeo: "Ver orden" abre el PDF de la orden (`archivoUrl`) en un visor,
-  // "Registrar valoración" abre el modal que vincula una EVAPRE y "Adjuntar
-  // resultados" de laboratorios el que toma los resultados de esa EVAPRE; el
+  // "Vincular valoración" abre el modal que vincula una EVAPRE y "Vincular
+  // resultados" (laboratorios o imágenes) el que toma los resultados de esa EVAPRE; el
   // resto aún no tiene pantalla y avisa.
   function handleAccion(accion, item, clave) {
     const archivoUrl = seleccionada?.checklist[clave]?.archivoUrl;
     if (clave === 'orden' && accion === 'Ver orden' && archivoUrl) {
       setVisorPdf({ src: archivoUrl, title: 'Orden médica', subtitle: `${seleccionada.paciente.nombre} · ${seleccionada.ordenNumero}` });
     }
-    else if (clave === 'valoracion' && accion === 'Registrar valoración') setValorando(seleccionada);
-    else if (clave === 'laboratorios' && accion === 'Adjuntar resultados') setAdjuntando(seleccionada);
+    else if (clave === 'orden' && accion === 'Vincular orden médica') setVinculandoOrden(seleccionada);
+    else if (clave === 'autorizacion' && accion === 'Ver autorización' && archivoUrl) {
+      setVisorPdf({ src: archivoUrl, title: 'Autorización', subtitle: `${seleccionada.paciente.nombre} · N° ${seleccionada.checklist.autorizacion.registro?.numero ?? ''}` });
+    }
+    else if (clave === 'autorizacion' && (accion === 'Registrar autorización' || accion === 'Registrar renovación')) setRegistrandoAut(seleccionada);
+    else if (clave === 'valoracion' && accion === 'Vincular valoración') setValorando(seleccionada);
+    else if ((clave === 'laboratorios' || clave === 'imagenes') && accion === 'Vincular resultados') {
+      setVinculandoResultados({ solicitud: seleccionada, clave });
+    }
     else showToast(`${accion} · ${item}: pantalla por conectar`);
   }
 
-  function handleLaboratoriosAdjuntos(datos) {
-    adjuntarLaboratorios(adjuntando.id, datos);
+  function handleAutorizacionRegistrada(datos) {
+    registrarAutorizacion(registrandoAut.id, datos);
     setSolicitudes(getSolicitudes());
-    setAdjuntando(null);
-    showToast('Resultados de laboratorio adjuntados desde la EVAPRE.');
+    setRegistrandoAut(null);
+    showToast(`Autorización N° ${datos.numero.trim()} registrada.`);
+  }
+
+  function handleOrdenVinculada(datos) {
+    vincularOrden(vinculandoOrden.id, datos);
+    setSolicitudes(getSolicitudes());
+    setVinculandoOrden(null);
+    showToast(`Orden médica N° ${datos.orden.numero} vinculada desde Historia clínica.`);
+  }
+
+  function handleResultadosVinculados(datos) {
+    vincularResultados(vinculandoResultados.solicitud.id, vinculandoResultados.clave, datos);
+    setSolicitudes(getSolicitudes());
+    const { clave } = vinculandoResultados;
+    setVinculandoResultados(null);
+    showToast(`Resultados de ${clave === 'imagenes' ? 'imágenes' : 'laboratorio'} vinculados desde la EVAPRE.`);
   }
 
   function handleValoracionGuardada(datos) {
@@ -148,7 +180,7 @@ export default function GestionCirugias() {
         <Topbar
           section="Cirugía"
           page="Gestión de cirugías"
-          user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
+          user={{ name: USUARIO.nombre, role: USUARIO.rol, initials: USUARIO.iniciales }}
         />
 
         <div className="content gc-content">
@@ -258,6 +290,8 @@ export default function GestionCirugias() {
                 onClose={cerrarPanel}
                 onAccion={handleAccion}
                 onProgramar={setProgramando}
+                onSiguiente={siguiente ? () => setSelectedId(siguiente.id) : undefined}
+                posicion={{ indice: indiceSel + 1, total: filas.length }}
               />
             )}
           </div>
@@ -272,11 +306,27 @@ export default function GestionCirugias() {
         />
       )}
       {visorPdf && <PdfViewerModal {...visorPdf} onClose={() => setVisorPdf(null)} />}
-      {adjuntando && (
-        <AdjuntarLaboratoriosModal
-          solicitud={adjuntando}
-          onClose={() => setAdjuntando(null)}
-          onAdjuntar={handleLaboratoriosAdjuntos}
+      {registrandoAut && (
+        <RegistrarAutorizacionModal
+          solicitud={registrandoAut}
+          usuario={USUARIO}
+          onClose={() => setRegistrandoAut(null)}
+          onRegistrar={handleAutorizacionRegistrada}
+        />
+      )}
+      {vinculandoOrden && (
+        <VincularOrdenModal
+          solicitud={vinculandoOrden}
+          onClose={() => setVinculandoOrden(null)}
+          onVincular={handleOrdenVinculada}
+        />
+      )}
+      {vinculandoResultados && (
+        <VincularResultadosModal
+          tipo={vinculandoResultados.clave}
+          solicitud={vinculandoResultados.solicitud}
+          onClose={() => setVinculandoResultados(null)}
+          onVincular={handleResultadosVinculados}
         />
       )}
       {programando && (
