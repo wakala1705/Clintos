@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './ProcedimientosStep.css';
 import Button from '@/Components/Button/Button';
+import ProcedimientoCard from '../ProcedimientoCard/ProcedimientoCard';
 import CatalogoMedicosModal from '../../CatalogoMedicosModal/CatalogoMedicosModal';
 import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { ROLES_PERSONAL } from '@/hooks/ProgramacionSalaCirugias/personalCirugia';
+import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
-  LuChevronDown, LuPlus, LuScissors, LuX,
+  LuChevronDown, LuPlus, LuX,
 } from 'react-icons/lu';
 
 // Paso 2 del wizard "Nueva cirugía" -- lista los procedimientos agregados
@@ -23,22 +26,11 @@ import {
 // aparte), abajo
 // Médico/Anestesiólogo en 2 columnas separadas (antes un solo bloque
 // "Personal" con ambos nombres apilados).
-// Roles de personal que se pueden sumar a la cirugía (además del cirujano/
-// anestesiólogo de cada procedimiento). `catalogo` es el `descripcion` de
-// MEDICOS_CATALOGO que filtra CatalogoMedicosModal -- Ayudante sale de los
-// cirujanos.
-const ROLES_PERSONAL = [
-  { rol: 'Cirujano', catalogo: 'Cirujano' },
-  { rol: 'Anestesiólogo', catalogo: 'Anestesiólogo' },
-  { rol: 'Ayudante', catalogo: 'Cirujano' },
-  { rol: 'Instrumentadora', catalogo: 'Instrumentadora' },
-  { rol: 'Circulante', catalogo: 'Circulante' },
-];
-
 export default function ProcedimientosStep({
   datos, onChange,
 }) {
   const [rolAbierto, setRolAbierto] = useState(null);
+  const [quitado, setQuitado] = useState(null);
   // Índices (dentro de `procedimientos`) cuya card de insumos está expandida
   // -- arranca vacío (todas colapsadas, progressive disclosure).
   const [expandedInsumos, setExpandedInsumos] = useState(() => new Set());
@@ -51,9 +43,26 @@ export default function ProcedimientosStep({
     onChange('personal', [...personal, { rol, nombre }]);
   }
 
+  // Quitar guarda lo quitado para poder deshacerlo (aviso en línea, 8 s).
   function handleRemovePersonal(index) {
+    setQuitado({ item: personal[index], index });
     onChange('personal', personal.filter((_, i) => i !== index));
   }
+
+  function handleDeshacer() {
+    if (!quitado) return;
+    const next = [...personal];
+    next.splice(Math.min(quitado.index, next.length), 0, quitado.item);
+    onChange('personal', next);
+    setQuitado(null);
+  }
+
+  // El aviso de "Quitaste…" se retira solo.
+  useEffect(() => {
+    if (!quitado) return undefined;
+    const t = window.setTimeout(() => setQuitado(null), 8000);
+    return () => window.clearTimeout(t);
+  }, [quitado]);
 
   function toggleInsumos(index) {
     setExpandedInsumos((prev) => {
@@ -65,24 +74,14 @@ export default function ProcedimientosStep({
 
   return (
     <div className="pcs-step">
-      <h4 className="ncw-section-title">Procedimientos asociados</h4>
+      <h4 className="ncw-section-title">{procedimientos.length === 1 ? 'Procedimiento' : 'Procedimientos'}</h4>
 
       {procedimientos.length === 0 ? (
         <div className="ncw-step-empty">Esta cirugía no tiene procedimientos asociados.</div>
       ) : (
-        <div className="pcs-table">
-          <div className="pcs-list">
+        <div className="pcs-list">
             {procedimientos.map((p, i) => (
-              <div className="pcs-card" key={i}>
-                <div className="pcs-card-top">
-                  <div className="pcs-card-heading">
-                    <span className="pcs-cell-icon" aria-hidden="true"><LuScissors className="icon" /></span>
-                    <div className="pcs-card-heading-text">
-                      <span className="pcs-cell-primary">{soloNombre(p.idCirugia)}</span>
-                      <span className="pcs-card-tipo">{capitalizar(p.tipoCirugia)}</span>
-                    </div>
-                  </div>
-                </div>
+              <ProcedimientoCard key={i} nombre={soloNombre(p.idCirugia)} tipo={capitalizar(p.tipoCirugia)}>
                 {p.insumos?.length > 0 && (
                   <div className="pcs-insumos">
                     <button
@@ -119,41 +118,69 @@ export default function ProcedimientosStep({
                     )}
                   </div>
                 )}
-              </div>
+              </ProcedimientoCard>
             ))}
-          </div>
         </div>
       )}
 
       <h4 className="ncw-section-title">Personal que participa</h4>
 
-      {personal.length > 0 && (
-        <ul className="pcs-personal-list">
-          {personal.map((per, i) => (
-            <li className="pcs-personal-item" key={`${per.rol}:${per.nombre}`}>
-              <span className="pcs-card-label">{per.rol}</span>
-              <span className="pcs-personal-nombre">{per.nombre}</span>
-              <button
-                type="button"
-                className="ncw-icon-btn ncw-icon-btn-danger"
-                onClick={() => handleRemovePersonal(i)}
-                aria-label={`Quitar ${per.rol} ${per.nombre}`}
-                title="Quitar"
-              >
-                <LuX className="icon" />
-              </button>
+      {/* Una fila por rol (siempre visibles): con personas, sus nombres + "Agregar otro";
+          sin nadie, el botón de agregar en la propia fila. Cirujano y anestesiólogo son
+          obligatorios para continuar. */}
+      <ul className="pcs-roles">
+        {ROLES_PERSONAL.map(({ rol, obligatorio }) => {
+          const delRol = personal
+            .map((per, index) => ({ per, index }))
+            .filter(({ per }) => per.rol === rol);
+          const falta = obligatorio && delRol.length === 0;
+          return (
+            <li className={`pcs-rol${falta ? ' pcs-rol-falta' : ''}`} key={rol}>
+              <div className="pcs-rol-label">
+                <span className="pcs-card-label">{rol}</span>
+                <span className={`pcs-rol-req${falta ? ' pcs-rol-req-falta' : ''}`}>{obligatorio ? 'Requerido' : 'Opcional'}</span>
+              </div>
+              <div className="pcs-rol-contenido">
+                {delRol.length > 0 && (
+                  <ul className="pcs-rol-personas">
+                    {delRol.map(({ per, index }) => (
+                      <li className="pcs-persona" key={per.nombre}>
+                        <span className="pcs-personal-nombre">{capitalizarNombre(per.nombre)}</span>
+                        <button
+                          type="button"
+                          className="ncw-icon-btn pcs-quitar"
+                          onClick={() => handleRemovePersonal(index)}
+                          aria-label={`Quitar ${rol} ${capitalizarNombre(per.nombre)}`}
+                          title="Quitar"
+                        >
+                          <LuX className="icon" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {delRol.length === 0 ? (
+                  <Button type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setRolAbierto(rol)}>
+                    Agregar {rol.toLowerCase()}
+                  </Button>
+                ) : (
+                  <button type="button" className="pcs-agregar-otro" onClick={() => setRolAbierto(rol)}>
+                    <LuPlus className="icon" aria-hidden="true" />
+                    Agregar otro {rol.toLowerCase()}
+                  </button>
+                )}
+              </div>
             </li>
-          ))}
-        </ul>
-      )}
+          );
+        })}
+      </ul>
 
-      <div className="pcs-personal-actions">
-        {ROLES_PERSONAL.map(({ rol }) => (
-          <Button key={rol} type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setRolAbierto(rol)}>
-            Agregar {rol.toLowerCase()}
-          </Button>
-        ))}
-      </div>
+      {quitado && (
+        <p className="pcs-deshacer" role="status">
+          <span>Quitaste a {capitalizarNombre(quitado.item.nombre)} ({quitado.item.rol}).</span>
+          <button type="button" className="pcs-deshacer-btn" onClick={handleDeshacer}>Deshacer</button>
+        </p>
+      )}
 
       {rolAbierto && (
         <CatalogoMedicosModal

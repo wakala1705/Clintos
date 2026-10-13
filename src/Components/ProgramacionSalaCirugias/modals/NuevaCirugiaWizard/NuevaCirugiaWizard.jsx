@@ -4,10 +4,12 @@ import { useRef, useState } from 'react';
 import './NuevaCirugiaWizard.css';
 import InformacionGeneralStep from './InformacionGeneralStep/InformacionGeneralStep';
 import ProcedimientosStep from './ProcedimientosStep/ProcedimientosStep';
+import { rolesObligatoriosFaltantes } from '@/hooks/ProgramacionSalaCirugias/personalCirugia';
 import InsumosStep from './InsumosStep/InsumosStep';
 import EquiposStep from './EquiposStep/EquiposStep';
 import ConfirmacionStep from './ConfirmacionStep/ConfirmacionStep';
 import Button from '@/Components/Button/Button';
+import Badge from '@/Components/Badge/Badge';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import {
   fechaISO, fechaHoraLocalISO, horaLocal, ahoraDemo, SALAS, armarCirugiaDesdeWizard, crearCirugia, editarCirugiaDesdeWizard,
@@ -71,10 +73,13 @@ function camposFaltantesPaso1(datos) {
 // esa fecha/hora en vez de la del sistema -- Fecha/Hora solicitud no se ven
 // afectadas por eso: son la fecha/hora en que se está *pidiendo* la cirugía
 // (ahora), no la fecha/hora *programada* para operarla.
+// Estado del paciente (el mismo Activo / Inactivo de la lista de pacientes); sin dato, activo.
+const ESTADO_PACIENTE_LABEL = { activo: 'Activo', inactivo: 'Inactivo' };
+const ESTADO_PACIENTE_TONE = { activo: 'success', inactivo: 'neutral' };
+
 function datosIniciales(patient, salaId, initialFechaHora) {
   return {
     salaId,
-    esAfiliado: true,
     fechaInicio: initialFechaHora ?? fechaHoraLocalISO(new Date()),
     telefonosAviso: patient?.telefono ?? '',
     fechaSolicitud: fechaISO(new Date()),
@@ -195,9 +200,12 @@ export default function NuevaCirugiaWizard({
   // puede volver a un paso ya visitado/actual, pero saltar hacia adelante
   // exige que todos los pasos anteriores estén completos.
   const faltantesPaso1 = camposFaltantesPaso1(datos);
+  const estadoPaciente = patient?.estado === 'inactivo' ? 'inactivo' : 'activo';
+  // Paso 2: cirujano y anestesiólogo son obligatorios (ver ROLES_PERSONAL).
+  const rolesFaltantesPaso2 = rolesObligatoriosFaltantes(datos.personal ?? []);
   const pasoCompleto = {
     1: faltantesPaso1.length === 0 && !fechaInicioPasada,
-    2: datos.procedimientos.length > 0,
+    2: datos.procedimientos.length > 0 && rolesFaltantesPaso2.length === 0,
     3: true,
     4: true,
     5: true,
@@ -242,14 +250,9 @@ export default function NuevaCirugiaWizard({
               <div id="ncw-eyebrow" className="ncw-rail-eyebrow">{editando ? 'Editar cirugía' : 'Nueva cirugía'}</div>
               <h3 id="ncw-title" className="ncw-rail-title">{patient?.nombre ?? 'Paciente'}</h3>
               {patient?.documento && <p className="ncw-rail-desc">CC {patient.documento}</p>}
-              <label className="ncw-rail-checkbox">
-                <input
-                  type="checkbox"
-                  checked={datos.esAfiliado}
-                  onChange={(e) => set('esAfiliado', e.target.checked)}
-                />
-                Es afiliado
-              </label>
+              <div className="ncw-rail-estado">
+                <Badge tone={ESTADO_PACIENTE_TONE[estadoPaciente]} dot>{ESTADO_PACIENTE_LABEL[estadoPaciente]}</Badge>
+              </div>
 
               <div className="ncw-rail-divider" />
 
@@ -331,10 +334,17 @@ export default function NuevaCirugiaWizard({
                 </div>
               )}
               {paso === 2 && (
-                <div className="ncw-footer-actions">
-                  <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
-                  <Button variant="primary" disabled={!pasoCompleto[2]} onClick={() => setPaso(3)}>Continuar</Button>
-                </div>
+                <>
+                  {rolesFaltantesPaso2.length > 0 && (
+                    <span className="ncw-footer-hint">
+                      Para continuar falta agregar: {rolesFaltantesPaso2.join(', ').toLowerCase()}.
+                    </span>
+                  )}
+                  <div className="ncw-footer-actions">
+                    <Button variant="secondary" onClick={() => setPaso(1)}>Atrás</Button>
+                    <Button variant="primary" disabled={!pasoCompleto[2]} onClick={() => setPaso(3)}>Continuar</Button>
+                  </div>
+                </>
               )}
               {paso === 3 && (
                 <div className="ncw-footer-actions">

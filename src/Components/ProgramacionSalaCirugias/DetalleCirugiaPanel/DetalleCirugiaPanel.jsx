@@ -307,6 +307,8 @@ export default function DetalleCirugiaPanel({
       )}
       {vincularCanastaAbierto && (
         <VincularCanastaModal
+          complejidadSugerida={cirugia.complejidad || null}
+          procedimientosSugeridos={cirugia.procedimientos.map((p) => p.nombre)}
           onSelect={(canasta) => onVincularCanasta(cirugia, canasta)}
           onClose={() => setVincularCanastaAbierto(false)}
         />

@@ -2,28 +2,7 @@
 
 /* .ncw-section-title / .ncw-step-empty: ver ../../shared/shared.css. */
 
-.pcs-table{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-
-/* Cada procedimiento es un bloque de 2 filas (encargo explícito) en vez de
-   una fila de tabla con 4 columnas -- ver comentario en
-   ProcedimientosStep.jsx. */
-.pcs-card{padding:10px 12px;border-bottom:1px solid var(--bg);}
-.pcs-list .pcs-card:last-child{border-bottom:none;}
-
-.pcs-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.pcs-card-heading{display:flex;align-items:center;gap:10px;}
-/* Mismo criterio de círculo-ícono que .modal-header-icon (ModalHeader.css)
-   y .alert-type-icon (AlertTable.css) -- 34px, tono primary fijo (no hay
-   variación por tipo de procedimiento). */
-.pcs-cell-icon{
-  flex-shrink:0;width:34px;height:34px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--primary-50);color:var(--primary);
-}
-.pcs-cell-icon .icon{width:18px;height:18px;}
-.pcs-card-heading-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.pcs-cell-primary{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.pcs-card-tipo{font-size:var(--fs-sm);color:var(--ink-500);}
+.pcs-list{display:flex;flex-direction:column;gap:8px;}
 
 .pcs-card-bottom{
   display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;
@@ -67,14 +46,43 @@
   .pcs-card-bottom{grid-template-columns:1fr;}
 }
 
-.pcs-personal-list{
-  list-style:none;margin:0;padding:0;
-  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+/* Personal: una fila por rol (etiqueta + Requerido/Opcional | personas + agregar). */
+.pcs-roles{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.pcs-rol{
+  display:grid;grid-template-columns:150px minmax(0,1fr);align-items:start;gap:10px 16px;
+  padding:10px 12px;border-bottom:1px solid var(--bg);
 }
-.pcs-personal-item{
-  display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:10px;
-  padding:8px 12px;border-bottom:1px solid var(--bg);
-}
-.pcs-personal-item:last-child{border-bottom:none;}
+.pcs-rol:last-child{border-bottom:none;}
+.pcs-rol-falta{background:var(--amber-bg);}
+.pcs-rol-label{display:flex;flex-direction:column;gap:2px;padding-top:6px;}
+.pcs-rol-req{font-size:var(--fs-xs);color:var(--ink-500);}
+.pcs-rol-req-falta{font-weight:var(--fw-semibold);color:var(--amber-fg);}
+.pcs-rol-contenido{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;}
+.pcs-rol-personas{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;}
+.pcs-persona{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;}
 .pcs-personal-nombre{font-size:var(--fs-sm);color:var(--ink-700);}
-.pcs-personal-actions{display:flex;flex-wrap:wrap;gap:8px;}
+/* Quitar: neutro; rojo solo al pasar el mouse / enfocar. */
+.pcs-quitar:hover,.pcs-quitar:focus-visible{background:var(--red-bg);color:var(--red);}
+@media (pointer:coarse),(max-width:1024px){.pcs-quitar{width:44px;height:44px;}}
+/* "Agregar otro": acción discreta bajo las personas ya agregadas. */
+.pcs-agregar-otro{
+  display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 4px;margin-left:-4px;
+  border:none;border-radius:6px;background:none;cursor:pointer;
+  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--primary);
+}
+.pcs-agregar-otro:hover{background:var(--primary-50);}
+.pcs-agregar-otro:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.pcs-agregar-otro .icon{width:14px;height:14px;}
+@media (pointer:coarse){.pcs-agregar-otro{min-height:44px;}}
+/* Aviso de "Quitaste…" con Deshacer. */
+.pcs-deshacer{
+  margin:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 12px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--border);
+  font-size:var(--fs-sm);color:var(--ink-700);
+}
+.pcs-deshacer-btn{
+  border:none;background:none;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);
+  font-weight:var(--fw-semibold);color:var(--primary);text-decoration:underline;text-underline-offset:3px;
+}
+.pcs-deshacer-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+@media (max-width:768px){.pcs-rol{grid-template-columns:minmax(0,1fr);}.pcs-rol-label{padding-top:0;flex-direction:row;gap:8px;align-items:baseline;}}

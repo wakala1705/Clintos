@@ -1,0 +1,14 @@
+.pcc-card{
+  padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+}
+.pcc-heading{display:flex;align-items:center;gap:10px;}
+/* Mismo criterio de círculo-ícono que .modal-header-icon (ModalHeader.css): 34px, tono primary. */
+.pcc-icon{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
+}
+.pcc-icon .icon{width:18px;height:18px;}
+.pcc-text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.pcc-nombre{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.pcc-tipo{font-size:var(--fs-sm);color:var(--ink-500);}

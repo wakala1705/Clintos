@@ -4,16 +4,17 @@ import { useState } from 'react';
 import './InsumosStep.css';
 import CatalogoInsumosModal from '../../CatalogoInsumosModal/CatalogoInsumosModal';
 import VincularCanastaModal from '../../VincularCanastaModal/VincularCanastaModal';
-import { soloNombre } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import ProcedimientoCard from '../ProcedimientoCard/ProcedimientoCard';
 import {
-  LuCheck, LuLink, LuPackage, LuPencil, LuPlus, LuPrinter, LuScissors, LuTrash2, LuUnlink, LuX,
+  LuCheck, LuLink, LuPackage, LuPencil, LuPlus, LuPrinter, LuTrash2, LuUnlink, LuX,
 } from 'react-icons/lu';
 import Button from '@/Components/Button/Button';
 
 // Paso 3 del wizard "Nueva cirugía" -- NO bloqueante: la canasta se vincula
 // acá o después desde el detalle de la cirugía (tab Insumos). "Vincular
-// canastas" abre VincularCanastaModal (3 canastas genéricas oncológicas por
-// complejidad); al elegir una, sus insumos se copian a `datos.insumos` y
+// canastas" abre VincularCanastaModal (3 complejidades, cada una con varios
+// procedimientos oncológicos y una canasta propia por procedimiento); al elegir una, sus insumos se copian a `datos.insumos` y
 // `datos.canasta` guarda `{ id, nombre }`. Una cirugía lleva una sola
 // canasta aunque tenga varios procedimientos. Desde ahí la canasta es
 // editable: cantidad inline, eliminar fila y agregar insumo desde
@@ -75,8 +76,24 @@ export default function InsumosStep({ datos, onChange }) {
 
   return (
     <div className="is-step">
+      {datos.procedimientos.length > 0 && (
+        <>
+          <h4 className="ncw-section-title">
+            {datos.procedimientos.length === 1 ? 'Procedimiento' : 'Procedimientos'}
+          </h4>
+          <div className="is-procs">
+            {datos.procedimientos.map((p, i) => (
+              <ProcedimientoCard key={i} nombre={soloNombre(p.idCirugia)} tipo={capitalizar(p.tipoCirugia)} />
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="is-header">
-        <h4 className="ncw-section-title">Canasta de insumos</h4>
+        <h4 className="ncw-section-title">
+          Canasta de insumos
+          <span className="is-opcional">Opcional</span>
+        </h4>
         <div className="is-header-actions">
           {MOSTRAR_IMPRIMIR && canasta && (
             <button
@@ -90,29 +107,17 @@ export default function InsumosStep({ datos, onChange }) {
             </button>
           )}
           {canasta && (
-            <Button type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setCatalogoAbierto(true)}>
-              Agregar insumo
-            </Button>
+            <>
+              <Button type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setCatalogoAbierto(true)}>
+                Agregar insumo
+              </Button>
+              <Button type="button" variant="outline" size="sm" icon={LuLink} onClick={() => setVincularAbierto(true)}>
+                Cambiar canasta
+              </Button>
+            </>
           )}
-          <Button type="button" size="sm" icon={LuLink} onClick={() => setVincularAbierto(true)}>
-            {canasta ? 'Cambiar canasta' : 'Vincular canastas'}
-          </Button>
         </div>
       </div>
-
-      {datos.procedimientos.length > 0 && (
-        <div className="is-procedimiento">
-          <span className="is-procedimiento-icon" aria-hidden="true"><LuScissors className="icon" /></span>
-          <div className="is-procedimiento-text">
-            <span className="is-procedimiento-label">
-              {datos.procedimientos.length > 1 ? 'Procedimientos de la cirugía' : 'Procedimiento de la cirugía'}
-            </span>
-            {datos.procedimientos.map((p, i) => (
-              <span className="is-procedimiento-nombre" key={i}>{soloNombre(p.idCirugia)}</span>
-            ))}
-          </div>
-        </div>
-      )}
 
       {canasta && (
         <div className="is-canasta">
@@ -134,8 +139,11 @@ export default function InsumosStep({ datos, onChange }) {
       )}
 
       {!canasta ? (
-        <div className="ncw-step-empty">
-          Aún no has vinculado una canasta. Puedes hacerlo ahora o después desde el detalle de la cirugía.
+        <div className="ncw-step-empty is-vacio">
+          <p>Aún no has vinculado una canasta. Puedes hacerlo ahora o después desde el detalle de la cirugía.</p>
+          <Button type="button" variant="outline" icon={LuLink} onClick={() => setVincularAbierto(true)}>
+            Vincular canasta
+          </Button>
         </div>
       ) : insumos.length === 0 ? (
         <div className="ncw-step-empty">La canasta no tiene insumos. Agrega los que necesites.</div>
@@ -228,6 +236,8 @@ export default function InsumosStep({ datos, onChange }) {
       {vincularAbierto && (
         <VincularCanastaModal
           canastaActualId={canasta?.id ?? null}
+          complejidadSugerida={datos.complejidad || null}
+          procedimientosSugeridos={datos.procedimientos.map((p) => soloNombre(p.idCirugia))}
           onSelect={handleVincular}
           onClose={() => setVincularAbierto(false)}
         />

@@ -5,6 +5,7 @@
 // place), se resetea al recargar la página.
 
 import { INSUMOS_HOY, INSUMOS_ONCO } from './insumosOncologia.js';
+import { PROCEDIMIENTOS_CANASTA, procedimientosDeComplejidad } from './canastasProcedimientos.js';
 import { ETAPA_IDS, DESTINOS_DERIVACION } from './tablero/etapas.js';
 
 export const SEDES = [
@@ -518,6 +519,7 @@ export const CANASTAS_GENERICAS = [
     complejidad: 'Baja',
     descripcion: 'Resecciones, biopsias y procedimientos oncológicos de baja complejidad.',
     items: conExtra(CANASTA_ONCOLOGICA_BASICA),
+    procedimientos: procedimientosDeComplejidad('Baja'),
   },
   {
     id: 'oncologica-intermedia',
@@ -525,6 +527,7 @@ export const CANASTAS_GENERICAS = [
     complejidad: 'Media',
     descripcion: 'Mastectomías, tiroidectomías y resecciones con drenaje y ligadura.',
     items: conExtra(CANASTA_ONCOLOGICA_BASICA, CANASTA_ONCOLOGICA_MEDIA_EXTRA),
+    procedimientos: procedimientosDeComplejidad('Media'),
   },
   {
     id: 'oncologica-alta',
@@ -532,6 +535,7 @@ export const CANASTAS_GENERICAS = [
     complejidad: 'Alta',
     descripcion: 'Resecciones mayores (colon, gástrica, hepática) con sellado vascular y grapado.',
     items: conExtra(CANASTA_ONCOLOGICA_BASICA, CANASTA_ONCOLOGICA_MEDIA_EXTRA, CANASTA_ONCOLOGICA_ALTA_EXTRA),
+    procedimientos: procedimientosDeComplejidad('Alta'),
   },
 ];
 
@@ -562,8 +566,8 @@ export const INSUMOS_CATALOGO = [
   { codigo: 'DM000610', nombre: 'TAPABOCAS QUIRURGICO' },
   { codigo: 'DM000650', nombre: 'TELA ADHESIVA MICROPORE 5CM' },
 ];
-// Los insumos de las canastas genéricas también se pueden buscar/agregar.
-CANASTAS_GENERICAS.forEach((c) => c.items.forEach(({ codigo, nombre }) => {
+// Los insumos de las canastas genéricas y de las canastas por procedimiento también se pueden buscar/agregar.
+[...CANASTAS_GENERICAS, ...PROCEDIMIENTOS_CANASTA].forEach((c) => c.items.forEach(({ codigo, nombre }) => {
   if (!INSUMOS_CATALOGO.some((i) => i.codigo === codigo)) INSUMOS_CATALOGO.push({ codigo, nombre });
 }));
 
