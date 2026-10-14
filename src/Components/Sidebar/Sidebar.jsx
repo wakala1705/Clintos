@@ -70,8 +70,9 @@ export default function Sidebar() {
   const isCirugiaPanel = pathname === '/cirugia';
   const isCirugiaCanastas = pathname.startsWith('/cirugia/canastas');
   const isCirugiaGestion = pathname.startsWith('/cirugia/gestion');
+  const isCirugiaConfiguracion = pathname.startsWith('/cirugia/configuracion');
   const isCirugiaProgramacion = pathname.startsWith('/cirugia/programacion') || pathname.startsWith('/cirugia/historial-quirurgico');
-  const isCirugia = isCirugiaPanel || isCirugiaProgramacion || isCirugiaCanastas || isCirugiaGestion;
+  const isCirugia = isCirugiaPanel || isCirugiaProgramacion || isCirugiaCanastas || isCirugiaGestion || isCirugiaConfiguracion;
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
   const isTriage = pathname.startsWith('/hospitalizacion/triage');

@@ -1,0 +1,28 @@
+.ac-tabla-wrap{flex:1;min-height:0;overflow:auto;}
+.ac-tabla{width:100%;border-collapse:collapse;min-width:900px;}
+
+/* Encabezado principal (AGENTS.md "Encabezados de tabla"): tokens --th-*,
+   sticky, mismo padding horizontal que el td. */
+.ac-tabla th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  padding:10px 16px;text-align:left;white-space:nowrap;
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+}
+.ac-tabla td{
+  padding:12px 16px;vertical-align:middle;
+  font-size:var(--fs-base);color:var(--ink-900);border-bottom:1px solid var(--border);
+}
+.ac-fila-clicable{cursor:pointer;}
+.ac-fila-clicable:hover{background:var(--bg);}
+
+.ac-nombre{font-weight:var(--fw-semibold);}
+.ac-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+.ac-num{white-space:nowrap;}
+.ac-col-accion{text-align:right;}
+
+/* Texto solo para lectores de pantalla (cabecera de la columna de acciones). */
+.ac-sr{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
