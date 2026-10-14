@@ -69,11 +69,14 @@ export default function ProgramacionSalaCirugias() {
     return new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
   });
   const [estado, setEstado] = useState('todos');
-  // Filtro por cirujano principal. Al elegir uno la agenda arranca en 'todas' las salas (cruza salas);
-  // se puede acotar a una sala. `salaId` conserva la última sala y vuelve al quitar el cirujano.
+  // Agenda "por salas" (una sala a la vez, selector de sala) o "por médicos"
+  // (la agenda de un cirujano cruzando todas las salas, selector de cirujano) --
+  // se elige en el menú "Vista". En 'medicos' siempre hay un cirujano elegido
+  // (arranca en el primero de la sede); en 'salas' `cirujano` es 'todos'.
+  // `salaId` conserva la última sala y vuelve al regresar a 'salas'.
+  const [modoAgenda, setModoAgenda] = useState('salas');
   const [cirujano, setCirujano] = useState('todos');
-  const [todasSalas, setTodasSalas] = useState(false);
-  const salaEfectiva = cirujano !== 'todos' && todasSalas ? 'todas' : salaId;
+  const salaEfectiva = modoAgenda === 'medicos' ? 'todas' : salaId;
   const [vista, setVista] = useState('semana');
   // Configuración "Vista" de la agenda (mismo menú que el modal de Programar
   // cirugía, ver VistaAgenda.jsx): horas visibles ('24h' | 'operativa') y días
@@ -331,8 +334,12 @@ export default function ProgramacionSalaCirugias() {
   }
 
   function handleSalaChange(v) {
-    if (v === 'todas') setTodasSalas(true);
-    else { setSalaId(v); setTodasSalas(false); }
+    setSalaId(v);
+    setSelectedId(null);
+  }
+  function handleModoAgendaChange(modo) {
+    setModoAgenda(modo);
+    setCirujano(modo === 'medicos' ? (cirujanosDeSede(sedeId)[0] ?? 'todos') : 'todos');
     setSelectedId(null);
   }
   function handleFechaAnclaChange(d) {
@@ -341,7 +348,6 @@ export default function ProgramacionSalaCirugias() {
   }
   function handleCirujanoChange(v) {
     setCirujano(v);
-    setTodasSalas(v !== 'todos');
     setSelectedId(null);
   }
   function handleEstadoChange(v) {
@@ -485,6 +491,8 @@ export default function ProgramacionSalaCirugias() {
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  modoAgenda={modoAgenda}
+                  onModoAgenda={handleModoAgendaChange}
                   cirujano={cirujano}
                   cirujanos={cirujanosDeSede(sedeId)}
                   onCirujanoChange={handleCirujanoChange}
@@ -508,6 +516,8 @@ export default function ProgramacionSalaCirugias() {
                   onSalaChange={handleSalaChange}
                   estado={estado}
                   onEstadoChange={handleEstadoChange}
+                  modoAgenda={modoAgenda}
+                  onModoAgenda={handleModoAgendaChange}
                   cirujano={cirujano}
                   cirujanos={cirujanosDeSede(sedeId)}
                   onCirujanoChange={handleCirujanoChange}

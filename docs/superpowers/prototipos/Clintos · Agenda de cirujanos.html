@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clintos · Agenda del cirujano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  --bg:#F3F5F9; --surface:#FFFFFF; --surface-muted:#F7F8FB;
+  --border:#E1E5EC; --border-strong:#C9D0DB;
+  --text:#151A22; --text-muted:#5C6675; --text-faint:#8A93A1;
+  --action-primary:#0A5CD6; --action-primary-hover:#0849AB; --on-primary:#FFFFFF;
+  --interactive-selected:#E4EEFD; --link:#0A5CD6;
+  --status-info-bg:#E1EFFC; --status-info:#1D6FD6;
+  --status-ok-bg:#E4F5EB; --status-ok:#1B9A57;
+  --status-urgent-bg:#EFE8FB; --status-urgent:#7B4FD1;
+  --status-warn-bg:#FFF3D6; --status-warn:#B7791F; --status-warn-border:#E3B53D;
+  --status-danger-bg:#FBE4E4; --status-danger:#C93A3A;
+  --avail:#FFFFFF; --unavail:#EEF0F4; --hatch:rgba(60,72,92,.07);
+  --grid:rgba(60,72,92,.12);
+  --block-a:rgba(201,58,58,.17); --block-b:rgba(201,58,58,.07);
+  --shadow:0 8px 28px rgba(15,25,45,.18);
+  --overlay:rgba(15,22,36,.45);
+  --nav:#0A5CD6;
+  --hh:56px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1219; --surface:#161B24; --surface-muted:#1B212C;
+    --border:#283040; --border-strong:#3A4458;
+    --text:#E8ECF3; --text-muted:#A2ACBB; --text-faint:#768093;
+    --action-primary:#4C8DF6; --action-primary-hover:#6BA1F8; --on-primary:#0B1220;
+    --interactive-selected:#1B2D4A; --link:#7FB0FA;
+    --status-info-bg:#17304D; --status-info:#6AAEF5;
+    --status-ok-bg:#153325; --status-ok:#4CC98A;
+    --status-urgent-bg:#2A2145; --status-urgent:#B193F0;
+    --status-warn-bg:#3A2E12; --status-warn:#F0C45C; --status-warn-border:#C9972B;
+    --status-danger-bg:#3C1B1F; --status-danger:#F08080;
+    --avail:#161B24; --unavail:#10141B; --hatch:rgba(180,195,220,.08);
+    --grid:rgba(180,195,220,.13);
+    --block-a:rgba(240,128,128,.24); --block-b:rgba(240,128,128,.09);
+    --shadow:0 8px 28px rgba(0,0,0,.55);
+    --overlay:rgba(0,0,0,.6);
+    --nav:#0B3F94;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1219; --surface:#161B24; --surface-muted:#1B212C;
+  --border:#283040; --border-strong:#3A4458;
+  --text:#E8ECF3; --text-muted:#A2ACBB; --text-faint:#768093;
+  --action-primary:#4C8DF6; --action-primary-hover:#6BA1F8; --on-primary:#0B1220;
+  --interactive-selected:#1B2D4A; --link:#7FB0FA;
+  --status-info-bg:#17304D; --status-info:#6AAEF5;
+  --status-ok-bg:#153325; --status-ok:#4CC98A;
+  --status-urgent-bg:#2A2145; --status-urgent:#B193F0;
+  --status-warn-bg:#3A2E12; --status-warn:#F0C45C; --status-warn-border:#C9972B;
+  --status-danger-bg:#3C1B1F; --status-danger:#F08080;
+  --avail:#161B24; --unavail:#10141B; --hatch:rgba(180,195,220,.08);
+  --grid:rgba(180,195,220,.13);
+  --block-a:rgba(240,128,128,.24); --block-b:rgba(240,128,128,.09);
+  --shadow:0 8px 28px rgba(0,0,0,.55);
+  --overlay:rgba(0,0,0,.6);
+  --nav:#0B3F94;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--text);font:400 14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--action-primary);outline-offset:2px}
+.app{display:flex;height:100%}
+
+/* Navegación lateral */
+.nav{width:62px;flex:none;background:var(--nav);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:8px}
+.nav .logo{width:34px;height:34px;margin-bottom:10px;color:#fff}
+.nav .ni{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:rgba(255,255,255,.82);background:none;border:0}
+.nav .ni:hover{background:rgba(255,255,255,.12)}
+.nav .ni.active{background:rgba(255,255,255,.2);color:#fff}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+.topbar{height:56px;flex:none;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 22px}
+.crumbs{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:13.5px;min-width:0;white-space:nowrap}
+.crumbs b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.chip-top{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);white-space:nowrap}
+.chip-top strong{color:var(--text);font-weight:600}
+.user{display:flex;align-items:center;gap:10px;margin-left:8px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--interactive-selected);color:var(--link);display:grid;place-items:center;font-weight:600;font-size:12.5px}
+.user small{display:block;color:var(--text-muted);font-size:12px;line-height:1.1}
+.user span{font-weight:600;font-size:13px;line-height:1.2;display:block}
+
+.content{flex:1;min-height:0;overflow:auto;padding:22px 24px 28px;display:flex;flex-direction:column;gap:18px}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.backlink{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:var(--link);font-weight:500;font-size:13px;padding:0;margin-bottom:6px}
+.backlink:hover{text-decoration:underline}
+h1{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
+.pagehead p{margin:4px 0 0;color:var(--text-muted)}
+.head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dirty{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--status-warn);background:var(--status-warn-bg);border:1px solid var(--status-warn-border);border-radius:999px;padding:3px 10px}
+.dirty[hidden]{display:none}
+.dirty.err{color:var(--status-danger);background:var(--status-danger-bg);border-color:var(--status-danger)}
+
+.layout{display:grid;grid-template-columns:minmax(340px,430px) minmax(0,1fr);gap:18px;flex:1;min-height:640px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;min-height:0}
+
+/* Panel de configuración */
+.config{display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;gap:4px;padding:0 14px;border-bottom:1px solid var(--border);flex:none}
+.tab{border:0;background:none;padding:14px 10px 12px;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:8px}
+.tab[aria-selected="true"]{color:var(--link);border-bottom-color:var(--action-primary)}
+.tab .count{font-size:11.5px;min-width:20px;text-align:center;padding:0 6px;border-radius:999px;background:var(--surface-muted);border:1px solid var(--border);color:var(--text-muted)}
+.config-body{flex:1;min-height:0;overflow:auto;padding:16px 18px 22px}
+.gtitle{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-weight:600;font-size:13.5px;margin:0 0 10px}
+.gtitle span{font-weight:400;color:var(--text-muted);font-size:12.5px}
+.section{margin-bottom:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:500;color:var(--text-muted)}
+select,input[type=date],input[type=text]{height:36px;border:1px solid var(--border-strong);border-radius:8px;padding:0 10px;background:var(--surface);color:var(--text);width:100%;min-width:0}
+select:disabled,input:disabled{opacity:.5;cursor:not-allowed}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--text)}
+.check input{width:16px;height:16px;accent-color:var(--action-primary);margin:0}
+.hint{margin:8px 0 0;font-size:12.5px;color:var(--text-muted)}
+.err{margin:8px 0 0;font-size:12.5px;color:var(--status-danger);display:flex;gap:6px;align-items:flex-start}
+
+.day{padding:12px 0;border-top:1px solid var(--border)}
+.day:first-of-type{border-top:0}
+.day-head{display:flex;align-items:center;gap:12px;min-height:28px}
+.day-name{font-weight:600;width:84px}
+.day-sum{color:var(--text-muted);font-size:12.5px;margin-left:auto;text-align:right}
+.day.off .day-name{color:var(--text-muted);font-weight:500}
+.switch{position:relative;width:36px;height:20px;flex:none}
+.switch input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.switch .track{position:absolute;inset:0;border-radius:20px;background:var(--border-strong);transition:background .15s}
+.switch .track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch input:checked+.track{background:var(--action-primary)}
+.switch input:checked+.track::after{transform:translateX(16px)}
+.switch input:focus-visible+.track{outline:2px solid var(--action-primary);outline-offset:2px}
+.blocks{margin:10px 0 0 48px;display:flex;flex-direction:column;gap:8px}
+.blk{display:flex;align-items:center;gap:8px}
+.blk select{width:96px}
+.blk .sep{color:var(--text-faint)}
+.day-actions{display:flex;gap:6px;margin-top:2px;flex-wrap:wrap}
+.copybox{margin:10px 0 0 48px;padding:12px;border:1px solid var(--border);background:var(--surface-muted);border-radius:10px}
+.copybox p{margin:0 0 8px;font-size:12.5px;color:var(--text-muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chipbtn{height:30px;padding:0 12px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:12.5px;font-weight:500}
+.chipbtn[aria-pressed="true"]{background:var(--interactive-selected);border-color:var(--action-primary);color:var(--link)}
+.day .err{margin-left:48px}
+
+.btn{height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font-weight:500;font-size:13.5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn:hover:not(:disabled){background:var(--surface-muted)}
+.btn.primary{background:var(--action-primary);border-color:var(--action-primary);color:var(--on-primary)}
+.btn.primary:hover:not(:disabled){background:var(--action-primary-hover)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px}
+.btn.link{border-color:transparent;background:none;color:var(--link)}
+.btn.link:hover:not(:disabled){background:var(--interactive-selected)}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:0;background:none;color:var(--text-muted);display:grid;place-items:center;flex:none}
+.icon-btn:hover{background:var(--surface-muted);color:var(--text)}
+.icon-btn.danger:hover{color:var(--status-danger);background:var(--status-danger-bg)}
+
+/* Excepciones */
+.exc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.exc-top p{margin:0;color:var(--text-muted);font-size:12.5px;max-width:240px}
+.exc{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;align-items:flex-start}
+.exc.past{opacity:.6}
+.exc .ico{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+.exc.block .ico{background:var(--status-danger-bg);color:var(--status-danger)}
+.exc.open .ico{background:var(--status-ok-bg);color:var(--status-ok)}
+.exc .body{flex:1;min-width:0}
+.exc .t{font-weight:600}
+.exc .s{color:var(--text-muted);font-size:12.5px;margin-top:2px}
+.exc .n{font-size:12.5px;margin-top:4px}
+.empty{padding:28px 12px;text-align:center;color:var(--text-muted);border:1px dashed var(--border-strong);border-radius:10px}
+
+/* Vista previa */
+.preview{display:flex;flex-direction:column;overflow:hidden}
+.pv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px 10px}
+.pv-head h2{margin:0;font-size:15px;font-weight:600}
+.pv-head p{margin:2px 0 0;color:var(--text-muted);font-size:12.5px}
+.weeknav{display:flex;align-items:center;gap:6px}
+.weeknav .range{font-weight:600;min-width:150px;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 18px 10px}
+.stat{border:1px solid var(--border);background:var(--surface-muted);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;text-align:left}
+.stat b{font-size:18px;font-weight:600;line-height:1.2}
+.stat small{color:var(--text-muted);font-size:12px}
+button.stat{width:100%}
+.stat.warn{background:var(--status-warn-bg);border-color:var(--status-warn-border)}
+.stat.warn b,.stat.warn small{color:var(--status-warn)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:0 18px 12px;font-size:12px;color:var(--text-muted)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-3px;margin-right:6px;border:1px solid var(--border-strong)}
+.lg-avail{background:var(--avail)}
+.lg-unavail{background:var(--unavail)}
+.lg-block{background-image:repeating-linear-gradient(135deg,var(--block-a) 0 4px,var(--block-b) 4px 8px)}
+.lg-open{background:var(--avail);border:1.5px dashed var(--status-ok)!important}
+.lg-ok{background:var(--status-ok-bg);border-color:var(--status-ok)!important}
+.lg-info{background:var(--status-info-bg);border-color:var(--status-info)!important}
+.lg-warn{background:var(--status-warn-bg);border-color:var(--status-warn-border)!important}
+.cal-scroll{flex:1;min-height:0;overflow:auto;border-top:1px solid var(--border)}
+.cal{display:grid;min-width:640px}
+.cal-corner,.ch{position:sticky;top:0;z-index:8;background:var(--surface);border-bottom:1px solid var(--border)}
+.ch{padding:8px 4px;text-align:center;border-left:1px solid var(--border)}
+.ch small{display:block;font-size:11px;color:var(--text-muted);letter-spacing:.02em}
+.ch b{font-size:13px;font-weight:600}
+.ch.today{background:var(--interactive-selected)}
+.ch.today b,.ch.today small{color:var(--link)}
+.hours{position:relative}
+.hl{position:absolute;right:8px;font-size:11px;color:var(--text-faint)}
+.daycol{position:relative;border-left:1px solid var(--border);background-color:var(--unavail);background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 9px);overflow:hidden}
+.gridlines{position:absolute;inset:0;pointer-events:none;z-index:3;background-image:linear-gradient(to bottom,var(--grid) 1px,transparent 1px);background-size:100% var(--hh)}
+.seg{position:absolute;left:0;right:0}
+.seg.avail{background:var(--avail);z-index:1}
+.seg.open{background:var(--avail);z-index:2;border:1.5px dashed var(--status-ok)}
+.seg.block{z-index:4;background-image:repeating-linear-gradient(135deg,var(--block-a) 0 6px,var(--block-b) 6px 12px)}
+.seg span{position:absolute;top:4px;left:6px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:4px}
+.seg.open span{background:var(--status-ok-bg);color:var(--status-ok)}
+.seg.block span{background:var(--status-danger-bg);color:var(--status-danger)}
+.sg{position:absolute;left:4px;right:4px;z-index:5;border-radius:6px;border-left:3px solid;padding:4px 7px;overflow:hidden;font-size:11px;line-height:1.3}
+.sg .tm{color:var(--text-muted);font-size:10.5px}
+.sg .nm{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg .pr{color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg.ok{background:var(--status-ok-bg);border-color:var(--status-ok)}
+.sg.info{background:var(--status-info-bg);border-color:var(--status-info)}
+.sg.urgent{background:var(--status-urgent-bg);border-color:var(--status-urgent)}
+.sg.conf{background:var(--status-warn-bg);border-color:var(--status-warn);outline:2px solid var(--status-warn-border);outline-offset:-2px}
+.sg .al{position:absolute;top:4px;right:5px;color:var(--status-warn)}
+
+
+[hidden]{display:none!important}
+.config-body>.callout{margin-bottom:16px}
+.callout.info{background:var(--status-info-bg);border:1px solid var(--status-info);color:var(--text)}
+.callout.info svg{color:var(--status-info);flex:none;margin-top:2px}
+
+/* Listado de cirujanos */
+.list-card{display:flex;flex-direction:column;overflow:hidden;flex:none}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--border)}
+.search{position:relative;flex:1;min-width:220px;max-width:360px}
+.search .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-faint);display:flex;pointer-events:none}
+.search input{padding-left:34px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.fchip[aria-pressed="true"]{background:var(--interactive-selected);border-color:var(--action-primary);color:var(--link)}
+.fchip .n{font-size:12px;color:var(--text-muted)}
+.fchip[aria-pressed="true"] .n{color:var(--link)}
+.tbl-wrap{overflow:auto}
+table.tbl{width:100%;border-collapse:collapse;min-width:900px}
+.tbl th{text-align:left;font-size:12px;font-weight:600;color:var(--text-muted);padding:10px 16px;background:var(--surface-muted);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--surface-muted)}
+.tbl .nm{font-weight:600}
+.tbl .sub{color:var(--text-muted);font-size:12.5px}
+.tbl .num{white-space:nowrap}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid;white-space:nowrap}
+.pill.ok{background:var(--status-ok-bg);color:var(--status-ok);border-color:var(--status-ok)}
+.pill.soon{background:var(--status-warn-bg);color:var(--status-warn);border-color:var(--status-warn-border)}
+.pill.expired{background:var(--status-danger-bg);color:var(--status-danger);border-color:var(--status-danger)}
+.pill.none{background:var(--surface-muted);color:var(--text-muted);border-color:var(--border-strong)}
+.tbl-empty{padding:32px 16px;text-align:center;color:var(--text-muted)}
+.tbl-foot{padding:12px 16px;color:var(--text-muted);font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* Modales */
+.overlay{position:fixed;inset:0;z-index:50;background:var(--overlay);display:grid;place-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.modal{background:var(--surface);color:var(--text);border-radius:14px;box-shadow:var(--shadow);width:min(580px,100%);max-height:100%;display:flex;flex-direction:column}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-head h2{margin:0;font-size:16px;font-weight:600}
+.modal-body{padding:18px 20px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border)}
+.segctl{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--surface-muted);border:1px solid var(--border);border-radius:10px}
+.segctl button{height:34px;border:0;border-radius:7px;background:none;font-weight:500;color:var(--text-muted)}
+.segctl button[aria-pressed="true"]{background:var(--surface);color:var(--link);box-shadow:0 1px 3px rgba(15,25,45,.18)}
+.callout{display:flex;gap:10px;padding:12px;border-radius:10px;font-size:13px}
+.callout.warn{background:var(--status-warn-bg);border:1px solid var(--status-warn-border);color:var(--text)}
+.callout.warn svg{color:var(--status-warn);flex:none;margin-top:2px}
+.callout p{margin:0}
+.impact{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.impact li{padding:10px 12px;border-top:1px solid var(--border);display:grid;gap:2px}
+.impact li:first-child{border-top:0}
+.impact .when{font-size:12px;color:var(--text-muted)}
+.impact .who{font-weight:600}
+.impact .why{font-size:12px;color:var(--status-warn);font-weight:500}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:500;font-size:13.5px;z-index:60;box-shadow:var(--shadow)}
+.toast[hidden]{display:none}
+
+@media (max-width:1060px){
+  .layout{grid-template-columns:1fr}
+  .config{overflow:visible}
+  .config-body{overflow:visible}
+  .cal-scroll{height:560px;flex:none}
+}
+@media (max-width:700px){
+  .nav{display:none}
+  .content{padding:16px 14px 24px}
+  .topbar{padding:0 14px}
+  .chip-top,.user>div{display:none}
+  .stats{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr}
+  .blocks,.copybox,.day .err{margin-left:0}
+  h1{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav" aria-label="Navegación principal">
+    <svg class="logo" viewBox="0 0 34 34" fill="none" aria-label="Clintos"><circle cx="17" cy="17" r="13" stroke="currentColor" stroke-width="4"/><circle cx="17" cy="17" r="4.5" fill="currentColor"/></svg>
+    <button class="ni" aria-label="Inicio" id="n1"></button>
+    <button class="ni active" aria-label="Cirugía" aria-current="page" id="n2"></button>
+    <button class="ni" aria-label="Pacientes" id="n3"></button>
+    <button class="ni" aria-label="Documentos" id="n4"></button>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumbs"><span>Cirugía</span><span aria-hidden="true">/</span><span>Configuración</span><span aria-hidden="true">/</span><b>Agenda de cirujanos</b></div>
+      <div class="spacer"></div>
+      <div class="chip-top">Sede: <strong>SEDE NORTE</strong></div>
+      <div class="user"><div class="avatar" aria-hidden="true">CG</div><div><span>Camilo Grondona</span><small>Administrador</small></div></div>
+    </header>
+
+    <main class="content" id="listView">
+      <div class="pagehead">
+        <div>
+          <h1>Agenda de cirujanos</h1>
+          <p>Configura cuándo opera cada cirujano. Programación solo podrá asignarle cirugías dentro de esa disponibilidad.</p>
+        </div>
+      </div>
+      <section class="card list-card" aria-label="Listado de cirujanos">
+        <div class="toolbar">
+          <div class="search"><span class="si" id="srchIc"></span><input type="text" id="search" placeholder="Buscar por nombre del cirujano" aria-label="Buscar cirujano" autocomplete="off"></div>
+          <div class="filters" id="filters" role="group" aria-label="Filtrar por estado de agenda"></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th scope="col">Cirujano</th><th scope="col">Sede</th><th scope="col">Estado de agenda</th><th scope="col">Horas por semana</th><th scope="col">Vigencia</th><th scope="col">Próxima excepción</th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Acciones</span></th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="tbl-foot"><span id="tcount"></span><span>Un cirujano sin agenda vigente no se puede elegir al programar una cirugía, salvo urgencias.</span></div>
+      </section>
+    </main>
+
+    <main class="content" id="editView" hidden>
+      <div class="pagehead">
+        <div>
+          <button class="backlink" type="button" id="back"></button>
+          <h1 id="editTitle">Agenda de cirujano</h1>
+          <p>Define cuándo está disponible para que Programación le asigne cirugías.</p>
+        </div>
+        <div class="head-actions">
+          <span class="dirty" id="dirty" hidden role="status"></span>
+          <button class="btn" type="button" id="discard">Descartar cambios</button>
+          <button class="btn primary" type="button" id="save">Guardar horario</button>
+        </div>
+      </div>
+
+      <div class="layout">
+        <section class="card config" aria-label="Configuración de la agenda">
+          <div class="tabs" role="tablist" aria-label="Secciones de la agenda">
+            <button class="tab" role="tab" id="tab-weekly" data-tab="weekly" aria-selected="true">Horario semanal</button>
+            <button class="tab" role="tab" id="tab-exc" data-tab="exc" aria-selected="false">Excepciones <span class="count" id="excCount">0</span></button>
+          </div>
+          <div class="config-body" id="configBody" role="tabpanel"></div>
+        </section>
+
+        <section class="card preview" aria-label="Vista previa de la agenda">
+          <div class="pv-head">
+            <div>
+              <h2>Vista previa</h2>
+              <p>Así verá Programación la disponibilidad de este cirujano.</p>
+            </div>
+            <div class="weeknav">
+              <button class="btn sm" type="button" id="today">Hoy</button>
+              <button class="icon-btn" type="button" id="prevWeek" aria-label="Semana anterior"></button>
+              <span class="range" id="range" aria-live="polite"></span>
+              <button class="icon-btn" type="button" id="nextWeek" aria-label="Semana siguiente"></button>
+            </div>
+          </div>
+          <div class="stats" id="stats"></div>
+          <div class="legend" aria-label="Leyenda">
+            <span><i class="lg-avail"></i>Disponible</span>
+            <span><i class="lg-unavail"></i>Fuera de agenda</span>
+            <span><i class="lg-block"></i>Bloqueo</span>
+            <span><i class="lg-open"></i>Apertura extra</span>
+            <span><i class="lg-ok"></i>Programada</span>
+            <span><i class="lg-info"></i>Realizada</span>
+            <span><i class="lg-warn"></i>Cirugía fuera de agenda</span>
+          </div>
+          <div class="cal-scroll" id="calScroll"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="modalRoot"></div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Utilidades ---------- */
+var pad=function(n){return String(n).padStart(2,'0')};
+var toMin=function(t){var p=t.split(':');return +p[0]*60+ +p[1]};
+var fromMin=function(m){return pad(Math.floor(m/60))+':'+pad(m%60)};
+var parseISO=function(s){var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
+var iso=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+var addDays=function(s,n){var d=parseISO(s);d.setDate(d.getDate()+n);return iso(d)};
+var wd=function(s){return (parseISO(s).getDay()+6)%7};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var clone=function(o){return JSON.parse(JSON.stringify(o))};
+var $=function(s,r){return (r||document).querySelector(s)};
+
+var MONTHS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+var WD_SHORT=['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
+var WD_MID=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+var WD_LONG=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+var fmtDate=function(s){var d=parseISO(s);return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()};
+var fmtDay=function(s){var d=parseISO(s);return d.getDate()+' '+MONTHS[d.getMonth()]};
+var fmtH=function(min){var h=min/60;return (Number.isInteger(h)?h:h.toFixed(1).replace('.',','))+' h'};
+
+var ICONS={
+  left:'<path d="m15 18-6-6 6-6"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  plus:'<path d="M5 12h14M12 5v14"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  copy:'<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  home:'<path d="m3 11 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+  scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
+  users:'<circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1"/>',
+  folder:'<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>'
+};
+var ic=function(n,s){s=s||16;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>'};
+
+/* ---------- Datos de ejemplo ---------- */
+var TODAY='2026-10-14';
+var DAY_S=7*60, DAY_E=19*60, HOUR_H=56;
+
+var SURGERIES=[
+  {id:1,date:'2026-10-12',s:'08:00',e:'09:00',patient:'Jairo Alberto Pinzón',proc:'Biopsia de mama guiada',status:'realizada'},
+  {id:2,date:'2026-10-13',s:'07:00',e:'11:00',patient:'Sandra Milena Ibáñez',proc:'Tiroidectomía total con vaciamiento central',status:'realizada'},
+  {id:3,date:'2026-10-13',s:'12:30',e:'14:00',patient:'Álvaro José Londoño',proc:'Resección amplia de melanoma con ganglio centinela',status:'realizada'},
+  {id:4,date:'2026-10-15',s:'08:00',e:'09:00',patient:'Aura Cristina Mejía',proc:'Biopsia ganglionar',status:'programada'},
+  {id:5,date:'2026-10-15',s:'10:00',e:'11:00',patient:'Wilson Fabián Duque',proc:'Exéresis de lesión cutánea',status:'programada'},
+  {id:6,date:'2026-10-16',s:'13:00',e:'15:30',patient:'Rubén Darío Ocampo',proc:'Laringectomía parcial con vaciamiento cervical',status:'programada'},
+  {id:7,date:'2026-10-19',s:'07:30',e:'10:00',patient:'María Fernanda Ríos Duarte',proc:'Mastectomía radical modificada',status:'programada'},
+  {id:8,date:'2026-10-21',s:'08:00',e:'10:30',patient:'Jorge Iván Peñaranda Soto',proc:'Escisión amplia de melanoma con biopsia de ganglio centinela',status:'programada'},
+  {id:9,date:'2026-10-22',s:'09:00',e:'11:30',patient:'Carlos Alberto Mejía Rueda',proc:'Prostatectomía radical',status:'programada'},
+  {id:10,date:'2026-10-23',s:'13:00',e:'16:00',patient:'Luz Marina Cárdenas',proc:'Cuadrantectomía con ganglio centinela',status:'programada'}
+];
+SURGERIES.forEach(function(x){x.sid=4});
+SURGERIES.push(
+  {id:11,sid:8,date:'2026-10-12',s:'07:00',e:'10:30',patient:'Gloria Patricia Mendoza',proc:'Mastectomía radical modificada',status:'realizada'},
+  {id:12,sid:8,date:'2026-10-12',s:'11:30',e:'13:30',patient:'Luz Marina Cárdenas',proc:'Cuadrantectomía con ganglio centinela',status:'realizada'},
+  {id:13,sid:8,date:'2026-10-14',s:'15:30',e:'17:00',patient:'Camila Duarte',proc:'Cuadrantectomía con ganglio centinela',status:'programada'},
+  {id:14,sid:8,date:'2026-10-16',s:'07:00',e:'11:30',patient:'Diana Carolina Becerra',proc:'Mastectomía con reconstrucción inmediata',status:'programada'}
+);
+SURGERIES.forEach(function(x){x.s=toMin(x.s);x.e=toMin(x.e)});
+var cur=4;
+function curSurgeries(){return SURGERIES.filter(function(x){return x.sid===cur})}
+
+var REASONS={
+  block:['Vacaciones','Congreso o capacitación','Incapacidad','Permiso','Otro'],
+  open:['Jornada adicional','Reemplazo','Otro']
+};
+
+var wk=function(spec,vig){
+  return {vig:vig,days:spec.map(function(d){
+    return d?{on:true,blocks:d.map(function(b){return {s:b[0],e:b[1]}})}:{on:false,blocks:[{s:'07:00',e:'12:00'}]};
+  })};
+};
+var defaultCfg=function(){return wk([null,null,null,null,null,null,null],{from:TODAY,to:'',noEnd:true})};
+var SURGEONS=[
+  {id:1,name:'Abraham Ganem Bechara'},
+  {id:2,name:'Amaury Rafael Garcia Burgos'},
+  {id:3,name:'Angel Maria Parra Liñan'},
+  {id:4,name:'Anibal Enrique Badel Rodriguez'},
+  {id:5,name:'Antonio Carlos Miranda Hoyos'},
+  {id:6,name:'Carlos Alberto Vallejo Bertel'},
+  {id:7,name:'Carlos Manuel Pereira Betancourt'},
+  {id:8,name:'Carlos Mauricio Burgos Durango'},
+  {id:9,name:'Cesar Alonso Rios Nieto'},
+  {id:10,name:'Paula Andrea Restrepo Londoño'}
+];
+var nameOf=function(id){return SURGEONS.filter(function(x){return x.id===id})[0].name};
+var open=function(a,b){return [[a,b]]};
+var A={
+  1:{cfg:wk([open('07:00','13:00'),null,open('07:00','13:00'),null,open('07:00','13:00'),null,null],{from:'2026-09-01',to:'',noEnd:true}),exc:[]},
+  2:{cfg:wk([null,open('08:00','16:00'),open('08:00','16:00'),open('08:00','16:00'),null,null,null],{from:'2026-09-01',to:'2026-11-06',noEnd:false}),exc:[]},
+  3:{cfg:null,exc:[]},
+  4:{cfg:{
+    vig:{from:'2026-10-01',to:'',noEnd:true},
+    days:[
+      {on:true,blocks:[{s:'07:00',e:'12:00'},{s:'14:00',e:'18:00'}]},
+      {on:true,blocks:[{s:'07:00',e:'14:00'}]},
+      {on:true,blocks:[{s:'07:00',e:'12:00'},{s:'14:00',e:'17:00'}]},
+      {on:true,blocks:[{s:'07:00',e:'12:00'}]},
+      {on:true,blocks:[{s:'07:00',e:'16:00'}]},
+      {on:false,blocks:[{s:'07:00',e:'12:00'}]},
+      {on:false,blocks:[{s:'07:00',e:'12:00'}]}
+    ]},
+    exc:[
+      {id:1,type:'open',reason:'Jornada adicional',from:'2026-10-17',to:'2026-10-17',allDay:false,start:'08:00',end:'12:00',note:''},
+      {id:2,type:'block',reason:'Congreso o capacitación',from:'2026-11-09',to:'2026-11-11',allDay:true,start:'07:00',end:'19:00',note:'Congreso Nacional de Cirugía Oncológica'}
+    ]},
+  5:{cfg:null,exc:[]},
+  6:{cfg:wk([open('07:00','12:00'),open('07:00','12:00'),open('07:00','12:00'),open('07:00','12:00'),open('07:00','12:00'),null,null],{from:'2026-09-15',to:'',noEnd:true}),
+    exc:[{id:3,type:'block',reason:'Vacaciones',from:'2026-10-20',to:'2026-10-24',allDay:true,start:'07:00',end:'19:00',note:''}]},
+  7:{cfg:wk([open('08:00','14:00'),null,open('08:00','14:00'),null,null,null,null],{from:'2026-06-01',to:'2026-09-30',noEnd:false}),exc:[]},
+  8:{cfg:wk([open('07:00','18:00'),open('07:00','18:00'),open('07:00','18:00'),open('07:00','18:00'),open('07:00','18:00'),null,null],{from:'2026-08-01',to:'',noEnd:true}),exc:[]},
+  9:{cfg:null,exc:[]},
+  10:{cfg:wk([null,null,open('09:00','17:00'),open('09:00','17:00'),open('09:00','17:00'),null,null],{from:'2026-10-01',to:'',noEnd:true}),exc:[]}
+};
+var saved=clone(A[cur].cfg);
+var draft=clone(saved);
+var exceptions=A[cur].exc.slice();
+var nextExcId=100;
+var weekStart=addDays(TODAY,-wd(TODAY));
+var tab='weekly';
+var copyOpen=null;
+var copyTargets=[];
+
+/* ---------- Lógica de disponibilidad ---------- */
+function mergeIv(a){
+  a=a.slice().sort(function(x,y){return x[0]-y[0]});
+  var out=[];
+  a.forEach(function(iv){
+    if(out.length&&iv[0]<=out[out.length-1][1]) out[out.length-1][1]=Math.max(out[out.length-1][1],iv[1]);
+    else out.push([iv[0],iv[1]]);
+  });
+  return out;
+}
+function subIv(a,b){
+  var res=a.map(function(x){return x.slice()});
+  b.forEach(function(bb){
+    var next=[];
+    res.forEach(function(r){
+      if(bb[1]<=r[0]||bb[0]>=r[1]){next.push(r);return}
+      if(bb[0]>r[0]) next.push([r[0],bb[0]]);
+      if(bb[1]<r[1]) next.push([bb[1],r[1]]);
+    });
+    res=next;
+  });
+  return res;
+}
+function covered(av,s,e){return av.some(function(x){return x[0]<=s&&x[1]>=e})}
+
+function excRange(x){return x.allDay?[DAY_S,DAY_E]:[toMin(x.start),toMin(x.end)]}
+
+function dayModel(date,cfg,exc){
+  var vig=cfg.vig;
+  var inVig=date>=vig.from&&(vig.noEnd||!vig.to||date<=vig.to);
+  var d=cfg.days[wd(date)];
+  var base=[];
+  if(inVig&&d.on) base=mergeIv(d.blocks.filter(function(b){return b.e>b.s}).map(function(b){return [toMin(b.s),toMin(b.e)]}));
+  var todays=exc.filter(function(x){return date>=x.from&&date<=x.to});
+  var opens=todays.filter(function(x){return x.type==='open'}).map(function(x){return {iv:excRange(x),x:x}});
+  var blocks=todays.filter(function(x){return x.type==='block'}).map(function(x){return {iv:excRange(x),x:x}});
+  var withOpen=mergeIv(base.concat(opens.map(function(o){return o.iv})));
+  var eff=subIv(withOpen,mergeIv(blocks.map(function(b){return b.iv})));
+  return {base:base,opens:opens,blocks:blocks,eff:eff,inVig:inVig};
+}
+function conflictReason(sg,m){
+  var hit=m.blocks.filter(function(b){return b.iv[0]<sg.e&&b.iv[1]>sg.s})[0];
+  if(hit) return 'Bloqueo: '+hit.x.reason;
+  if(!m.inVig) return 'Fuera de la vigencia de la agenda';
+  return 'Fuera del horario disponible';
+}
+function findConflicts(cfg,exc){
+  var out=[];
+  curSurgeries().forEach(function(s){
+    if((s.status!=='programada'&&s.status!=='urgencia')||s.date<TODAY) return;
+    var m=dayModel(s.date,cfg,exc);
+    if(!covered(m.eff,s.s,s.e)) out.push({s:s,why:conflictReason(s,m)});
+  });
+  return out;
+}
+function newConflicts(beforeCfg,beforeExc,afterCfg,afterExc){
+  var before={};
+  findConflicts(beforeCfg,beforeExc).forEach(function(c){before[c.s.id]=1});
+  return findConflicts(afterCfg,afterExc).filter(function(c){return !before[c.s.id]});
+}
+
+/* ---------- Validación del horario ---------- */
+function dayError(d){
+  if(!d.on) return '';
+  if(!d.blocks.length) return 'Agrega al menos un bloque o desactiva el día.';
+  for(var i=0;i<d.blocks.length;i++){
+    if(d.blocks[i].e<=d.blocks[i].s) return 'La hora de fin debe ser posterior a la de inicio.';
+  }
+  var sorted=d.blocks.slice().sort(function(a,b){return a.s<b.s?-1:1});
+  for(var j=1;j<sorted.length;j++){
+    if(sorted[j].s<sorted[j-1].e) return 'Los bloques de un mismo día no pueden cruzarse.';
+  }
+  return '';
+}
+function vigError(v){
+  if(!v.from) return 'Elige desde qué fecha rige este horario.';
+  if(!v.noEnd){
+    if(!v.to) return 'Elige la fecha final o marca "Sin fecha de fin".';
+    if(v.to<v.from) return 'La fecha final debe ser posterior a la inicial.';
+  }
+  return '';
+}
+function hasErrors(){return !!vigError(draft.vig)||draft.days.some(function(d){return !!dayError(d)})}
+function isDirty(){return JSON.stringify(draft)!==JSON.stringify(saved)}
+
+/* ---------- Foco ---------- */
+function keepFocus(fn){
+  var a=document.activeElement;
+  var k=a&&a.dataset?a.dataset.key:null;
+  fn();
+  if(k){var el=document.querySelector('[data-key="'+k+'"]');if(el)el.focus()}
+}
+
+/* ---------- Render: cabecera ---------- */
+function renderHead(){
+  var dirty=isDirty(), err=hasErrors();
+  var pill=$('#dirty');
+  pill.hidden=!dirty;
+  pill.className='dirty'+(err?' err':'');
+  pill.textContent=err?'Hay errores por corregir':'Horario sin guardar';
+  $('#discard').disabled=!dirty;
+  $('#save').disabled=!dirty||err;
+  $('#save').title=err?'Corrige los errores marcados para guardar':'';
+  $('#excCount').textContent=exceptions.length;
+}
+
+/* ---------- Render: horario semanal ---------- */
+function timeOptions(sel,min,max){
+  var h='';
+  for(var m=min;m<=max;m+=30){var t=fromMin(m);h+='<option value="'+t+'"'+(t===sel?' selected':'')+'>'+t+'</option>'}
+  return h;
+}
+function daySummary(d){
+  var tot=0,parts=[];
+  d.blocks.slice().sort(function(a,b){return a.s<b.s?-1:1}).forEach(function(b){
+    if(b.e>b.s){tot+=toMin(b.e)-toMin(b.s);parts.push(b.s+'–'+b.e)}
+  });
+  return parts.length?parts.join(' · ')+' ('+fmtH(tot)+')':'';
+}
+function renderWeekly(){
+  var v=draft.vig, ve=vigError(v);
+  var h=(A[cur].cfg?'':'<div class="callout info">'+ic('info',18)+'<p>Este cirujano aún no tiene agenda. Activa los días en que opera y guarda el horario para que Programación pueda asignarle cirugías.</p></div>')+'<div class="section">'+
+    '<p class="gtitle">Vigencia <span>Sede Norte</span></p>'+
+    '<div class="row2">'+
+      '<label class="f">Vigente desde<input type="date" data-act="vfrom" data-key="vfrom" value="'+esc(v.from)+'"></label>'+
+      '<label class="f">Hasta<input type="date" data-act="vto" data-key="vto" value="'+esc(v.to)+'"'+(v.noEnd?' disabled':'')+'></label>'+
+    '</div>'+
+    '<label class="check"><input type="checkbox" data-act="noend" data-key="noend"'+(v.noEnd?' checked':'')+'> Sin fecha de fin</label>'+
+    (ve?'<p class="err">'+ic('alert',14)+esc(ve)+'</p>':'<p class="hint">Fuera de este rango, el cirujano no tiene agenda.</p>')+
+  '</div>';
+  h+='<p class="gtitle">Días y horarios <span>Jornada operativa 07:00–19:00</span></p><div>';
+  draft.days.forEach(function(d,i){
+    var err=dayError(d);
+    h+='<div class="day'+(d.on?'':' off')+'">'+
+      '<div class="day-head">'+
+        '<label class="switch"><input type="checkbox" data-act="toggle" data-day="'+i+'" data-key="toggle-'+i+'" aria-label="'+WD_LONG[i]+' disponible"'+(d.on?' checked':'')+'><span class="track"></span></label>'+
+        '<span class="day-name">'+WD_LONG[i]+'</span>'+
+        '<span class="day-sum">'+(d.on?esc(daySummary(d)):'No disponible')+'</span>'+
+      '</div>';
+    if(d.on){
+      h+='<div class="blocks">';
+      d.blocks.forEach(function(b,j){
+        h+='<div class="blk">'+
+          '<select data-act="bs" data-day="'+i+'" data-idx="'+j+'" data-key="bs-'+i+'-'+j+'" aria-label="Inicio del bloque '+(j+1)+', '+WD_LONG[i]+'">'+timeOptions(b.s,DAY_S,DAY_E-30)+'</select>'+
+          '<span class="sep">a</span>'+
+          '<select data-act="be" data-day="'+i+'" data-idx="'+j+'" data-key="be-'+i+'-'+j+'" aria-label="Fin del bloque '+(j+1)+', '+WD_LONG[i]+'">'+timeOptions(b.e,DAY_S+30,DAY_E)+'</select>'+
+          '<button class="icon-btn danger" type="button" data-act="delblock" data-day="'+i+'" data-idx="'+j+'" aria-label="Quitar bloque '+(j+1)+', '+WD_LONG[i]+'">'+ic('trash')+'</button>'+
+        '</div>';
+      });
+      h+='<div class="day-actions">'+
+        '<button class="btn link sm" type="button" data-act="addblock" data-day="'+i+'" data-key="add-'+i+'">'+ic('plus',14)+' Agregar bloque</button>'+
+        '<button class="btn link sm" type="button" data-act="copyopen" data-day="'+i+'" data-key="copy-'+i+'">'+ic('copy',14)+' Copiar a otros días</button>'+
+      '</div></div>';
+      if(copyOpen===i){
+        h+='<div class="copybox"><p>Copiar el horario del '+WD_LONG[i].toLowerCase()+' a:</p><div class="chips">';
+        for(var k=0;k<7;k++){
+          if(k===i) continue;
+          h+='<button class="chipbtn" type="button" data-act="copytoggle" data-day="'+k+'" data-key="ct-'+k+'" aria-pressed="'+(copyTargets.indexOf(k)>-1)+'">'+WD_MID[k]+'</button>';
+        }
+        h+='</div><div class="day-actions">'+
+          '<button class="btn link sm" type="button" data-act="copyweek" data-day="'+i+'">Lun–Vie</button>'+
+          '<button class="btn sm primary" type="button" data-act="copyapply" data-day="'+i+'"'+(copyTargets.length?'':' disabled')+'>Aplicar copia</button>'+
+          '<button class="btn sm" type="button" data-act="copycancel">Cancelar</button>'+
+        '</div></div>';
+      }
+    }
+    if(err) h+='<p class="err">'+ic('alert',14)+esc(err)+'</p>';
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+/* ---------- Render: excepciones ---------- */
+function renderExceptions(){
+  var h='<div class="exc-top"><p>Bloqueos y aperturas puntuales que prevalecen sobre el horario semanal.</p>'+
+    '<button class="btn primary sm" type="button" data-act="addexc" data-key="addexc">'+ic('plus',14)+' Agregar excepción</button></div>';
+  if(!exceptions.length){
+    return h+'<div class="empty">Aún no hay excepciones. Agrega un bloqueo por vacaciones, congreso o permiso, o una apertura extra.</div>';
+  }
+  exceptions.slice().sort(function(a,b){return a.from<b.from?-1:a.from>b.from?1:0}).forEach(function(x){
+    var range=fmtDate(x.from)+(x.to!==x.from?' – '+fmtDate(x.to):'');
+    var time=x.allDay?'Todo el día':x.start+'–'+x.end;
+    h+='<div class="exc '+x.type+(x.to<TODAY?' past':'')+'">'+
+      '<div class="ico">'+ic(x.type==='block'?'ban':'plus',16)+'</div>'+
+      '<div class="body"><div class="t">'+(x.type==='block'?'Bloqueo':'Apertura extra')+' · '+esc(x.reason)+'</div>'+
+      '<div class="s">'+esc(range)+' · '+esc(time)+'</div>'+
+      (x.note?'<div class="n">'+esc(x.note)+'</div>':'')+'</div>'+
+      '<button class="icon-btn danger" type="button" data-act="delexc" data-id="'+x.id+'" aria-label="Eliminar excepción: '+esc(x.reason)+'">'+ic('trash')+'</button>'+
+    '</div>';
+  });
+  return h;
+}
+
+function renderConfig(){
+  $('#tab-weekly').setAttribute('aria-selected',tab==='weekly');
+  $('#tab-exc').setAttribute('aria-selected',tab==='exc');
+  var body=$('#configBody');
+  var st=body.scrollTop;
+  body.innerHTML=tab==='weekly'?renderWeekly():renderExceptions();
+  body.scrollTop=st;
+}
+
+/* ---------- Render: vista previa ---------- */
+function seg(s,e){
+  var a=Math.max(s,DAY_S),b=Math.min(e,DAY_E);
+  if(b<=a) return null;
+  return 'top:'+((a-DAY_S)/60*HOUR_H)+'px;height:'+((b-a)/60*HOUR_H)+'px';
+}
+function renderPreview(){
+  var dates=[];
+  for(var i=0;i<7;i++) dates.push(addDays(weekStart,i));
+  var models=dates.map(function(d){return dayModel(d,draft,exceptions)});
+  var conflicts=findConflicts(draft,exceptions);
+  var cmap={};
+  conflicts.forEach(function(c){cmap[c.s.id]=c.why});
+
+  var visible=[];
+  dates.forEach(function(d,i){
+    var m=models[i];
+    var hasSg=curSurgeries().some(function(s){return s.date===d});
+    if(i<5||m.eff.length||m.opens.length||m.blocks.length||hasSg) visible.push(i);
+  });
+
+  var availMin=0;
+  models.forEach(function(m){m.eff.forEach(function(r){availMin+=Math.max(0,Math.min(r[1],DAY_E)-Math.max(r[0],DAY_S))})});
+  var weekSg=curSurgeries().filter(function(s){return dates.indexOf(s.date)>-1&&s.status!=='cancelada'});
+
+  var d0=parseISO(dates[0]), d6=parseISO(dates[6]);
+  $('#range').textContent=(visible.indexOf(5)>-1||visible.indexOf(6)>-1?'':'')+d0.getDate()+(d0.getMonth()!==d6.getMonth()?' '+MONTHS[d0.getMonth()]:'')+' – '+d6.getDate()+' '+MONTHS[d6.getMonth()]+' '+d6.getFullYear();
+
+  var stats='<div class="stat"><b>'+fmtH(availMin)+'</b><small>Disponibles esta semana</small></div>'+
+    '<div class="stat"><b>'+weekSg.length+'</b><small>Cirugías esta semana</small></div>';
+  if(conflicts.length){
+    stats+='<button class="stat warn" type="button" data-act="showconf"><b>'+conflicts.length+'</b><small>'+(conflicts.length===1?'cirugía fuera de agenda':'cirugías fuera de agenda')+' · Ver</small></button>';
+  }else{
+    stats+='<div class="stat"><b>0</b><small>Cirugías fuera de agenda</small></div>';
+  }
+  $('#stats').innerHTML=stats;
+
+  var hourCol='';
+  for(var h=0;h<(DAY_E-DAY_S)/60;h++){
+    hourCol+='<div class="hl" style="top:'+(h*HOUR_H+3)+'px">'+pad(DAY_S/60+h)+':00</div>';
+  }
+  var heads='',cols='';
+  visible.forEach(function(i){
+    var d=dates[i],m=models[i];
+    heads+='<div class="ch'+(d===TODAY?' today':'')+'"><small>'+WD_SHORT[i]+'</small><b>'+fmtDay(d)+'</b></div>';
+    var c='<div class="daycol" style="height:'+((DAY_E-DAY_S)/60*HOUR_H)+'px">';
+    m.base.forEach(function(r){
+      var p=seg(r[0],r[1]);
+      if(p) c+='<div class="seg avail" style="'+p+'" title="Disponible '+fromMin(r[0])+'–'+fromMin(r[1])+'"></div>';
+    });
+    m.opens.forEach(function(o){
+      var p=seg(o.iv[0],o.iv[1]);
+      if(p) c+='<div class="seg open" style="'+p+'" title="Apertura extra: '+esc(o.x.reason)+'"><span>Apertura extra</span></div>';
+    });
+    c+='<div class="gridlines"></div>';
+    m.blocks.forEach(function(b){
+      var p=seg(b.iv[0],b.iv[1]);
+      if(p) c+='<div class="seg block" style="'+p+'" title="Bloqueo: '+esc(b.x.reason)+'"><span>Bloqueo · '+esc(b.x.reason)+'</span></div>';
+    });
+    curSurgeries().filter(function(s){return s.date===d&&s.status!=='cancelada'}).forEach(function(s){
+      var p=seg(s.s,s.e);
+      if(!p) return;
+      var conf=cmap[s.id];
+      var cls=(d<TODAY||s.status==='realizada')?'info':(s.status==='urgencia'?'urgent':'ok');
+      c+='<div class="sg '+cls+(conf?' conf':'')+'" style="'+p+'" title="'+esc(s.patient)+' · '+esc(s.proc)+(conf?' · '+esc(conf):'')+'">'+
+        '<div class="tm">'+fromMin(s.s)+' – '+fromMin(s.e)+'</div>'+
+        '<div class="nm">'+esc(s.patient)+'</div>'+
+        '<div class="pr">'+esc(s.proc)+'</div>'+
+        (conf?'<span class="al">'+ic('alert',14)+'</span>':'')+
+      '</div>';
+    });
+    c+='</div>';
+    cols+=c;
+  });
+
+  var sc=$('#calScroll');
+  var top=sc.scrollTop;
+  sc.innerHTML='<div class="cal" style="grid-template-columns:56px repeat('+visible.length+',minmax(110px,1fr))">'+
+    '<div class="cal-corner"></div>'+heads+
+    '<div class="hours" style="height:'+((DAY_E-DAY_S)/60*HOUR_H)+'px">'+hourCol+'</div>'+cols+
+  '</div>';
+  sc.scrollTop=top;
+}
+
+function renderAll(){
+  keepFocus(function(){renderHead();renderConfig();renderPreview()});
+}
+
+/* ---------- Modales ---------- */
+var modalRoot=$('#modalRoot');
+var mh={};
+function closeModal(){modalRoot.innerHTML='';mh={}}
+function focusFirst(){
+  var el=modalRoot.querySelector('select,input:not([disabled]),button.btn.primary,button');
+  if(el) el.focus();
+}
+function modalShell(title,body,foot){
+  return '<div class="overlay"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+
+    '<div class="modal-head"><h2 id="mt">'+title+'</h2><button class="icon-btn" type="button" data-m="close" aria-label="Cerrar">'+ic('x')+'</button></div>'+
+    '<div class="modal-body">'+body+'</div>'+
+    '<div class="modal-foot">'+foot+'</div></div></div>';
+}
+modalRoot.addEventListener('click',function(e){
+  if(e.target.classList.contains('overlay')){closeModal();return}
+  var b=e.target.closest('[data-m]');
+  if(!b) return;
+  var fn=mh[b.dataset.m];
+  if(fn) fn(b);
+});
+modalRoot.addEventListener('change',function(e){
+  var f=e.target.closest('[data-f]');
+  if(f&&mh.field) mh.field(f,false);
+});
+modalRoot.addEventListener('input',function(e){
+  var f=e.target.closest('[data-f]');
+  if(f&&f.type==='text'&&mh.field) mh.field(f,true);
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&modalRoot.firstChild) closeModal();
+});
+
+function impactList(items){
+  var h='<ul class="impact">';
+  items.forEach(function(c){
+    var s=c.s;
+    h+='<li><span class="when">'+WD_MID[wd(s.date)]+' '+fmtDay(s.date)+' · '+fromMin(s.s)+'–'+fromMin(s.e)+'</span>'+
+      '<span class="who">'+esc(s.patient)+'</span>'+
+      '<span class="when">'+esc(s.proc)+'</span>'+
+      '<span class="why">'+esc(c.why)+'</span></li>';
+  });
+  return h+'</ul>';
+}
+function openImpact(o){
+  var n=o.items.length;
+  var body='<div class="callout warn">'+ic('alert',18)+'<p>'+o.intro+'</p></div>'+impactList(o.items);
+  var foot='<button class="btn" type="button" data-m="back">'+(o.backLabel||'Volver')+'</button>'+
+    (o.confirmLabel?'<button class="btn primary" type="button" data-m="confirm">'+o.confirmLabel+'</button>':'');
+  modalRoot.innerHTML=modalShell(o.title,body,foot);
+  mh={close:closeModal,back:function(){if(o.onBack)o.onBack();else closeModal()},confirm:function(){if(o.onConfirm)o.onConfirm()}};
+  var btn=modalRoot.querySelector('[data-m="back"]');
+  if(btn) btn.focus();
+}
+var WARN_INTRO='Las cirugías ya programadas no se cancelan ni se reprograman automáticamente. Programación de cirugía deberá gestionarlas.';
+var plural=function(n){return n===1?'cirugía':'cirugías'};
+
+/* Guardar horario semanal */
+function saveWeekly(){
+  var added=newConflicts(saved,exceptions,draft,exceptions);
+  var apply=function(){saved=clone(draft);A[cur].cfg=clone(saved);closeModal();toast('Horario guardado');renderAll()};
+  if(!added.length){apply();return}
+  openImpact({
+    title:'Este horario deja '+added.length+' '+plural(added.length)+' fuera de agenda',
+    intro:WARN_INTRO,
+    items:added,
+    backLabel:'Volver a editar',
+    confirmLabel:'Guardar de todos modos',
+    onConfirm:apply
+  });
+}
+
+/* Excepciones */
+function guardExceptions(newList,o){
+  var added=newConflicts(draft,exceptions,draft,newList);
+  var apply=function(){exceptions=newList;closeModal();toast(o.toast);renderAll()};
+  if(!added.length){apply();return}
+  openImpact({
+    title:'Esto deja '+added.length+' '+plural(added.length)+' fuera de agenda',
+    intro:WARN_INTRO,
+    items:added,
+    backLabel:o.backLabel||'Volver',
+    confirmLabel:o.confirmLabel,
+    onBack:o.onBack,
+    onConfirm:apply
+  });
+}
+
+function excFormHTML(f,err){
+  var reasons=REASONS[f.type].map(function(r){return '<option'+(r===f.reason?' selected':'')+'>'+esc(r)+'</option>'}).join('');
+  var h='<div class="segctl" role="group" aria-label="Tipo de excepción">'+
+    '<button type="button" data-m="type" data-v="block" aria-pressed="'+(f.type==='block')+'">Bloqueo</button>'+
+    '<button type="button" data-m="type" data-v="open" aria-pressed="'+(f.type==='open')+'">Apertura extra</button></div>'+
+    '<p class="hint" style="margin:-4px 0 0">'+(f.type==='block'?'El cirujano no estará disponible, aunque su horario semanal diga lo contrario.':'El cirujano estará disponible además de su horario semanal.')+'</p>'+
+    '<label class="f">Motivo<select data-f="reason" data-key="x-reason">'+reasons+'</select></label>'+
+    '<div class="row2"><label class="f">Desde<input type="date" data-f="from" data-key="x-from" value="'+esc(f.from)+'"></label>'+
+    '<label class="f">Hasta<input type="date" data-f="to" data-key="x-to" value="'+esc(f.to)+'"></label></div>'+
+    '<label class="check" style="margin-top:0"><input type="checkbox" data-f="allDay" data-key="x-all"'+(f.allDay?' checked':'')+'> Todo el día</label>';
+  if(!f.allDay){
+    h+='<div class="row2"><label class="f">Hora de inicio<select data-f="start" data-key="x-start">'+timeOptions(f.start,DAY_S,DAY_E-30)+'</select></label>'+
+       '<label class="f">Hora de fin<select data-f="end" data-key="x-end">'+timeOptions(f.end,DAY_S+30,DAY_E)+'</select></label></div>';
+  }
+  h+='<label class="f">Nota (opcional)<input type="text" data-f="note" data-key="x-note" placeholder="Ej. Congreso en Bogotá" value="'+esc(f.note)+'"></label>';
+  if(err) h+='<p class="err" role="alert">'+ic('alert',14)+esc(err)+'</p>';
+  return h;
+}
+function openExcForm(f,err,first){
+  var a=document.activeElement;
+  var k=a&&a.dataset?a.dataset.key:null;
+  modalRoot.innerHTML=modalShell('Agregar excepción',excFormHTML(f,err||''),
+    '<button class="btn" type="button" data-m="close">Cancelar</button><button class="btn primary" type="button" data-m="save">Guardar excepción</button>');
+  mh={
+    close:closeModal,
+    type:function(b){
+      var t=b.dataset.v;
+      if(t===f.type) return;
+      f.type=t;f.reason=REASONS[t][0];f.allDay=(t==='block');
+      openExcForm(f);
+    },
+    field:function(el,silent){
+      var key=el.dataset.f;
+      f[key]=el.type==='checkbox'?el.checked:el.value;
+      if(!silent&&key==='allDay') openExcForm(f);
+    },
+    save:function(){
+      var msg='';
+      if(!f.from||!f.to) msg='Elige la fecha inicial y la final.';
+      else if(f.to<f.from) msg='La fecha final debe ser igual o posterior a la inicial.';
+      else if(!f.allDay&&f.end<=f.start) msg='La hora de fin debe ser posterior a la de inicio.';
+      if(msg){openExcForm(f,msg);return}
+      var item={id:nextExcId++,type:f.type,reason:f.reason,from:f.from,to:f.to,allDay:f.allDay,start:f.start,end:f.end,note:f.note.trim()};
+      guardExceptions(exceptions.concat([item]),{
+        toast:f.type==='block'?'Bloqueo agregado':'Apertura agregada',
+        confirmLabel:'Guardar de todos modos',
+        backLabel:'Volver a editar',
+        onBack:function(){nextExcId--;openExcForm(f)}
+      });
+    }
+  };
+  if(k){var el=modalRoot.querySelector('[data-key="'+k+'"]');if(el){el.focus();return}}
+  if(first) focusFirst();
+}
+function openNewException(){
+  openExcForm({type:'block',reason:REASONS.block[0],from:TODAY,to:TODAY,allDay:true,start:'07:00',end:'12:00',note:''},'',true);
+}
+
+/* Listado de cirugías fuera de agenda (informativo) */
+function showConflicts(){
+  var items=findConflicts(draft,exceptions);
+  if(!items.length) return;
+  openImpact({
+    title:items.length+' '+plural(items.length)+' fuera de agenda',
+    intro:'Estas cirugías ya programadas quedan fuera de la disponibilidad actual. '+WARN_INTRO,
+    items:items,
+    backLabel:'Cerrar'
+  });
+}
+
+/* ---------- Toast ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=$('#toast');
+  t.textContent=msg;t.hidden=false;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.hidden=true},2600);
+}
+
+/* ---------- Eventos: panel de configuración ---------- */
+var body=$('#configBody');
+body.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');
+  if(!b||b.tagName==='INPUT'||b.tagName==='SELECT') return;
+  var act=b.dataset.act, day=+b.dataset.day, idx=+b.dataset.idx;
+  if(act==='addblock'){
+    var bl=draft.days[day].blocks;
+    var lastEnd=bl.length?Math.max.apply(null,bl.map(function(x){return toMin(x.e)})):DAY_S;
+    var s=Math.min(Math.max(lastEnd,DAY_S),DAY_E-60);
+    var en=Math.min(s+120,DAY_E);
+    bl.push({s:fromMin(s),e:fromMin(en)});
+  }else if(act==='delblock'){
+    draft.days[day].blocks.splice(idx,1);
+  }else if(act==='copyopen'){
+    copyOpen=(copyOpen===day)?null:day;copyTargets=[];
+  }else if(act==='copytoggle'){
+    var p=copyTargets.indexOf(day);
+    if(p>-1) copyTargets.splice(p,1);else copyTargets.push(day);
+  }else if(act==='copyweek'){
+    copyTargets=[0,1,2,3,4].filter(function(k){return k!==day});
+  }else if(act==='copyapply'){
+    copyTargets.forEach(function(k){
+      draft.days[k]={on:true,blocks:clone(draft.days[day].blocks)};
+    });
+    copyOpen=null;copyTargets=[];
+    toast('Horario copiado');
+  }else if(act==='copycancel'){
+    copyOpen=null;copyTargets=[];
+  }else if(act==='addexc'){
+    openNewException();return;
+  }else if(act==='delexc'){
+    var id=+b.dataset.id;
+    var x=exceptions.filter(function(q){return q.id===id})[0];
+    if(!x) return;
+    guardExceptions(exceptions.filter(function(q){return q.id!==id}),{
+      toast:'Excepción eliminada',
+      confirmLabel:'Eliminar de todos modos',
+      backLabel:'Cancelar'
+    });
+    return;
+  }else return;
+  renderAll();
+});
+body.addEventListener('change',function(e){
+  var el=e.target.closest('[data-act]');
+  if(!el) return;
+  var act=el.dataset.act, day=+el.dataset.day, idx=+el.dataset.idx;
+  if(act==='toggle'){
+    var d=draft.days[day];
+    d.on=el.checked;
+    if(d.on&&!d.blocks.length) d.blocks=[{s:'07:00',e:'12:00'}];
+    if(!d.on&&copyOpen===day){copyOpen=null;copyTargets=[]}
+  }else if(act==='bs'){draft.days[day].blocks[idx].s=el.value}
+  else if(act==='be'){draft.days[day].blocks[idx].e=el.value}
+  else if(act==='vfrom'){draft.vig.from=el.value}
+  else if(act==='vto'){draft.vig.to=el.value}
+  else if(act==='noend'){
+    draft.vig.noEnd=el.checked;
+    if(!el.checked&&!draft.vig.to&&draft.vig.from) draft.vig.to=addDays(draft.vig.from,90);
+    if(el.checked) draft.vig.to='';
+  }else return;
+  renderAll();
+});
+
+/* ---------- Eventos: pestañas, cabecera y vista previa ---------- */
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){tab=t.dataset.tab;renderAll()});
+});
+$('#save').addEventListener('click',saveWeekly);
+$('#discard').addEventListener('click',function(){
+  draft=clone(saved);copyOpen=null;copyTargets=[];
+  toast('Cambios descartados');renderAll();
+});
+$('#prevWeek').addEventListener('click',function(){weekStart=addDays(weekStart,-7);renderPreview()});
+$('#nextWeek').addEventListener('click',function(){weekStart=addDays(weekStart,7);renderPreview()});
+$('#today').addEventListener('click',function(){weekStart=addDays(TODAY,-wd(TODAY));renderPreview()});
+$('#stats').addEventListener('click',function(e){
+  if(e.target.closest('[data-act="showconf"]')) showConflicts();
+});
+
+/* ---------- Iconos estáticos ---------- */
+$('#n1').innerHTML=ic('home',20);
+$('#n2').innerHTML=ic('scissors',20);
+$('#n3').innerHTML=ic('users',20);
+$('#n4').innerHTML=ic('folder',20);
+$('#prevWeek').innerHTML=ic('left');
+$('#nextWeek').innerHTML=ic('right');
+$('#back').innerHTML=ic('left',16)+'Agenda de cirujanos';
+
+
+/* ---------- Listado de cirujanos ---------- */
+var listFilter='all', listQuery='';
+var FILTERS=[['all','Todos'],['ok','Configuradas'],['soon','Por vencer'],['expired','Vencidas'],['none','Sin configurar']];
+var norm=function(t){return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')};
+function agendaStatus(id){
+  var a=A[id];
+  if(!a.cfg) return {k:'none',label:'Sin configurar'};
+  var to=(!a.cfg.vig.noEnd&&a.cfg.vig.to)?a.cfg.vig.to:'';
+  if(to&&to<TODAY) return {k:'expired',label:'Vencida'};
+  if(to&&to<=addDays(TODAY,30)) return {k:'soon',label:'Por vencer'};
+  return {k:'ok',label:'Configurada'};
+}
+function weeklyMinutes(cfg){
+  var t=0;
+  cfg.days.forEach(function(d){
+    if(!d.on) return;
+    d.blocks.forEach(function(b){if(b.e>b.s) t+=toMin(b.e)-toMin(b.s)});
+  });
+  return t;
+}
+function vigText(id,st){
+  var v=A[id].cfg.vig;
+  var l1='Desde '+fmtDate(v.from);
+  var l2='Sin fecha de fin';
+  if(!v.noEnd&&v.to){
+    var days=Math.round((parseISO(v.to)-parseISO(TODAY))/86400000);
+    if(st.k==='expired') l2='Venció el '+fmtDate(v.to);
+    else l2='Hasta '+fmtDate(v.to)+(st.k==='soon'?' · vence en '+days+' '+(days===1?'día':'días'):'');
+  }
+  return '<div>'+esc(l1)+'</div><div class="sub">'+esc(l2)+'</div>';
+}
+function nextExcText(id){
+  var list=A[id].exc.filter(function(x){return x.to>=TODAY}).sort(function(a,b){return a.from<b.from?-1:a.from>b.from?1:0});
+  if(!list.length) return '<span class="sub">—</span>';
+  var x=list[0];
+  return '<div>'+(x.type==='block'?'Bloqueo':'Apertura extra')+' · '+esc(x.reason)+'</div><div class="sub">'+esc(fmtDay(x.from)+(x.to!==x.from?' – '+fmtDay(x.to):''))+'</div>';
+}
+function renderList(){
+  var rows=SURGEONS.map(function(x){return {s:x,st:agendaStatus(x.id)}});
+  var counts={all:rows.length,ok:0,soon:0,expired:0,none:0};
+  rows.forEach(function(r){counts[r.st.k]++});
+  $('#filters').innerHTML=FILTERS.map(function(f){
+    return '<button class="fchip" type="button" data-f="'+f[0]+'" data-key="f-'+f[0]+'" aria-pressed="'+(listFilter===f[0])+'">'+f[1]+' <span class="n">'+counts[f[0]]+'</span></button>';
+  }).join('');
+  var q=norm(listQuery.trim());
+  var vis=rows.filter(function(r){return (listFilter==='all'||r.st.k===listFilter)&&norm(r.s.name).indexOf(q)>-1});
+  var h='';
+  vis.forEach(function(r){
+    var a=A[r.s.id], none=r.st.k==='none';
+    h+='<tr data-id="'+r.s.id+'">'+
+      '<td><div class="nm">'+esc(r.s.name)+'</div><div class="sub">Cirujano</div></td>'+
+      '<td>SEDE NORTE</td>'+
+      '<td><span class="pill '+r.st.k+'">'+r.st.label+'</span></td>'+
+      '<td class="num">'+(none?'<span class="sub">—</span>':fmtH(weeklyMinutes(a.cfg)))+'</td>'+
+      '<td>'+(none?'<span class="sub">—</span>':vigText(r.s.id,r.st))+'</td>'+
+      '<td>'+nextExcText(r.s.id)+'</td>'+
+      '<td style="text-align:right"><button class="btn sm'+(none||r.st.k==='expired'?' primary':'')+'" type="button" data-open="'+r.s.id+'" aria-label="'+(none?'Configurar':'Editar')+' agenda de '+esc(r.s.name)+'">'+(none?'Configurar agenda':'Editar agenda')+'</button></td>'+
+    '</tr>';
+  });
+  if(!vis.length) h='<tr><td colspan="7"><div class="tbl-empty">Ningún cirujano coincide con la búsqueda o el filtro.</div></td></tr>';
+  $('#tbody').innerHTML=h;
+  $('#tcount').textContent='Mostrando '+vis.length+' de '+rows.length+' cirujanos';
+}
+function openSurgeon(id){
+  cur=id;
+  var a=A[id];
+  saved=clone(a.cfg||defaultCfg());
+  draft=clone(saved);
+  exceptions=a.exc.slice();
+  tab='weekly';copyOpen=null;copyTargets=[];
+  weekStart=addDays(TODAY,-wd(TODAY));
+  $('#editTitle').textContent='Agenda de '+nameOf(id);
+  $('#listView').hidden=true;
+  $('#editView').hidden=false;
+  $('#editView').scrollTop=0;
+  renderAll();
+  var t=$('#editTitle');t.setAttribute('tabindex','-1');t.focus();
+}
+function goList(force){
+  if(!force&&isDirty()){
+    modalRoot.innerHTML=modalShell('¿Salir sin guardar el horario?',
+      '<p style="margin:0">Los cambios del horario semanal se perderán. Las excepciones que ya guardaste se conservan.</p>',
+      '<button class="btn" type="button" data-m="close">Seguir editando</button><button class="btn primary" type="button" data-m="confirm">Salir sin guardar</button>');
+    mh={close:closeModal,confirm:function(){goList(true)}};
+    var b=modalRoot.querySelector('[data-m="close"]');if(b)b.focus();
+    return;
+  }
+  A[cur].exc=exceptions.slice();
+  closeModal();
+  $('#editView').hidden=true;
+  $('#listView').hidden=false;
+  renderList();
+  var row=document.querySelector('[data-open="'+cur+'"]');
+  if(row) row.focus();
+}
+$('#filters').addEventListener('click',function(e){
+  var b=e.target.closest('[data-f]');
+  if(!b) return;
+  listFilter=b.dataset.f;
+  keepFocus(renderList);
+});
+$('#search').addEventListener('input',function(e){listQuery=e.target.value;renderList()});
+$('#tbody').addEventListener('click',function(e){
+  var btn=e.target.closest('[data-open]');
+  if(btn){openSurgeon(+btn.dataset.open);return}
+  var tr=e.target.closest('tr[data-id]');
+  if(tr) openSurgeon(+tr.dataset.id);
+});
+$('#back').addEventListener('click',function(){goList(false)});
+$('#srchIc').innerHTML=ic('search',16);
+
+renderList();
+})();
+</script>
+</body>
+</html>

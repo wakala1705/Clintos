@@ -13,7 +13,7 @@ import { fechaISO } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 export default function AgendaMes({
   monthLabel, dowLabels, days, cirugias, onSelectDia, onPrevMonth, onNextMonth,
   sedeId, salaId, onSalaChange, estado, onEstadoChange, cirujano = 'todos', cirujanos, onCirujanoChange,
-  vista, onChangeVista,
+  modoAgenda, onModoAgenda, vista, onChangeVista,
 }) {
   function cantidadDelDia(date) {
     const fecha = fechaISO(date);
@@ -42,6 +42,8 @@ export default function AgendaMes({
           cirujano={cirujano}
           cirujanos={cirujanos}
           onCirujanoChange={onCirujanoChange}
+          modoAgenda={modoAgenda}
+          onModoAgenda={onModoAgenda}
           vista={vista}
           onChangeVista={onChangeVista}
         />

@@ -25,18 +25,20 @@ import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gest
 // el estado sigue viviendo en el orquestador. `jornada`/`diasVista` (horas y
 // días visibles) los maneja VistaAgenda -- el mismo menú "Vista" del modal de
 // Programar cirugía; solo aparece si el padre pasa `onJornada` (no en Mes) y
-// los días solo aplican a la vista Semana.
+// los días solo aplican a la vista Semana. `modoAgenda` ('salas' | 'medicos',
+// se cambia en el menú "Vista" vía `onModoAgenda`) decide cuál de los dos
+// selectores se muestra: sala (agenda por salas) o cirujano (agenda de un
+// médico, cruza todas las salas).
 export default function FiltrosBar({
   sedeId, salaId, onSalaChange, estado, onEstadoChange, cirujano = 'todos', cirujanos, onCirujanoChange,
+  modoAgenda = 'salas', onModoAgenda,
   vista, onChangeVista, jornada, onJornada, diasVista, onDiasVista,
 }) {
   const [catalogoOpen, setCatalogoOpen] = useState(false);
   const [cirujanoOpen, setCirujanoOpen] = useState(false);
   const salasDeSede = SALAS.filter((s) => s.sedeId === sedeId);
   const salaActual = salasDeSede.find((s) => s.value === salaId);
-  // Con un cirujano elegido la sala puede ser "Todas las salas" (agenda que cruza salas) o una sola.
-  const porCirujano = cirujano !== 'todos';
-  const todasSalas = salaId === 'todas';
+  const porMedico = modoAgenda === 'medicos';
   // Mismo shape que MEDICOS_CATALOGO para reusar CatalogoMedicosModal; el documento no se conoce acá.
   const cirujanosCatalogo = cirujanos?.map((n) => ({
     idMedico: '—', nombre: n, descripcion: 'Cirujano', sede: 'SEDE NORTE',
@@ -44,20 +46,21 @@ export default function FiltrosBar({
 
   return (
     <div className="fb-bar">
-      <CatalogPickerTrigger
-        id="fb-sala"
-        label={todasSalas ? 'Todas las salas' : salaActual?.label}
-        open={catalogoOpen}
-        onClick={() => setCatalogoOpen(true)}
-        ariaLabel="Sala / Quirófano"
-      />
-      {cirujanosCatalogo && (
+      {porMedico && cirujanosCatalogo ? (
         <CatalogPickerTrigger
           id="fb-cirujano"
-          label={porCirujano ? capitalizarNombre(cirujano) : 'Todos los cirujanos'}
+          label={capitalizarNombre(cirujano)}
           open={cirujanoOpen}
           onClick={() => setCirujanoOpen(true)}
           ariaLabel="Cirujano"
+        />
+      ) : (
+        <CatalogPickerTrigger
+          id="fb-sala"
+          label={salaActual?.label}
+          open={catalogoOpen}
+          onClick={() => setCatalogoOpen(true)}
+          ariaLabel="Sala / Quirófano"
         />
       )}
       <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
@@ -69,6 +72,8 @@ export default function FiltrosBar({
           onJornada={onJornada}
           diasVista={diasVista}
           onDiasVista={onDiasVista}
+          modoAgenda={modoAgenda}
+          onModoAgenda={onModoAgenda}
         />
       )}
 
@@ -77,9 +82,8 @@ export default function FiltrosBar({
           tipo="Cirujano"
           titulo="Cirujanos con agenda"
           medicos={cirujanosCatalogo}
-          value={porCirujano ? cirujano : undefined}
+          value={cirujano}
           onSelect={onCirujanoChange}
-          onClear={() => onCirujanoChange('todos')}
           onClose={() => setCirujanoOpen(false)}
         />
       )}
@@ -88,7 +92,6 @@ export default function FiltrosBar({
           salas={salasDeSede}
           value={salaId}
           onSelect={onSalaChange}
-          onTodas={porCirujano && !todasSalas ? () => onSalaChange('todas') : undefined}
           onClose={() => setCatalogoOpen(false)}
         />
       )}

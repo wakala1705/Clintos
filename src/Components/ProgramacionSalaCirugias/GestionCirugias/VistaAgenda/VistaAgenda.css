@@ -1,5 +1,18 @@
 /* Panel e ítems: apariencia de @/Components/DropdownPanel. Acá solo la posición. */
-.va-panel{position:fixed;z-index:calc(var(--z-modal) + 1);width:280px;display:flex;flex-direction:column;}
-.va-trigger{height:var(--input-md);padding-top:0;padding-bottom:0;}
+.va-panel{position:fixed;z-index:calc(var(--z-modal) + 1);width:max-content;min-width:220px;display:flex;flex-direction:column;}
+
+/* Disparador de solo ícono, mismo patrón que .vpm-trigger (VistaPanelMenu):
+   cuadrado del alto de los demás controles de la barra. */
+.va-trigger{
+  flex-shrink:0;width:var(--input-md);height:var(--input-md);padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:var(--btn-border-width) solid var(--border);border-radius:var(--btn-radius);
+  background:var(--surface);color:var(--ink-700);cursor:pointer;
+  font-family:inherit;transition:var(--btn-transition);
+}
+.va-trigger .icon{width:var(--btn-icon-size);height:var(--btn-icon-size);}
+.va-trigger:hover{background:var(--gray-bg);}
+.va-trigger[aria-expanded="true"]{background:var(--primary-50);color:var(--primary);border-color:var(--primary);}
+.va-trigger:focus-visible{outline:var(--btn-focus-outline) solid var(--primary);outline-offset:var(--btn-focus-offset);}
 
 .va-shortcut{margin-left:auto;font-size:var(--fs-xs);color:var(--ink-400);}

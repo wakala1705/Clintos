@@ -2,24 +2,38 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { LuCheck, LuSettings2 } from 'react-icons/lu';
+import {
+  LuCalendar1, LuCalendarClock, LuCalendarDays, LuCalendarRange, LuCheck, LuClock,
+  LuDoorOpen, LuSettings2, LuStethoscope, LuSunMedium,
+} from 'react-icons/lu';
 import './VistaAgenda.css';
 import panel from '@/Components/DropdownPanel/DropdownPanel.module.css';
-import Button from '@/Components/Button/Button';
 import { JORNADAS, horaFranja } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
 
 // `key`: atajo de teclado global (D = Día, S = Semana completa), solo en la
 // agenda de Programación (cuando hay `onVista`). La vista "Mes" sigue oculta
 // del selector (encargo explícito, 2026-09-29); el resto del feature la conserva.
-const OPCION_DIA = { value: 'dia', label: 'Día', key: 'D' };
+const OPCION_DIA = {
+  value: 'dia', label: 'Día', key: 'D', icon: LuCalendar1,
+};
 const OPCIONES_DIAS = [
-  { value: 'semana', label: 'Semana completa', key: 'S' },
-  { value: 'habil', label: 'Semana hábil (lun–vie)' },
-  { value: 'tres', label: '3 días hábiles (hoy + 2)' },
+  {
+    value: 'semana', label: 'Semana completa', key: 'S', icon: LuCalendarDays,
+  },
+  { value: 'habil', label: 'Semana hábil (lun–vie)', icon: LuCalendarRange },
+  { value: 'tres', label: '3 días hábiles (hoy + 2)', icon: LuCalendarClock },
 ];
+
+const OPCIONES_MODO = [
+  { value: 'salas', label: 'Salas', icon: LuDoorOpen },
+  { value: 'medicos', label: 'Médicos', icon: LuStethoscope },
+];
+
+const ICONOS_JORNADA = { '24h': LuClock, operativa: LuSunMedium };
 
 const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
   value,
+  icon: ICONOS_JORNADA[value],
   label: value === 'operativa' ? `${j.label} (${horaFranja(j.desde).slice(0, 2)}–${horaFranja(j.hasta).slice(0, 2)} h)` : j.label,
 }));
 
@@ -31,8 +45,10 @@ const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
 // "Día" es una opción más de "Días visibles" (junto a semana completa/hábil/3
 // días); elegirla cambia `vista` a 'dia', y elegir otra, a 'semana' + su
 // `diasVista`. Sin `onVista` (modal de Programar cirugía) no hay opción Día.
+// `modoAgenda`/`onModoAgenda`: grupo "Agenda por" (salas | médicos), solo en la
+// agenda de Programación (sin `onModoAgenda` el grupo no se muestra).
 export default function VistaAgenda({
-  jornada, onJornada, diasVista, onDiasVista, vista, onVista,
+  jornada, onJornada, diasVista, onDiasVista, vista, onVista, modoAgenda, onModoAgenda,
 }) {
   const opcionesDias = onVista ? [OPCION_DIA, ...OPCIONES_DIAS] : OPCIONES_DIAS;
   const diasActual = onVista && vista === 'dia' ? 'dia' : diasVista;
@@ -99,19 +115,41 @@ export default function VistaAgenda({
     items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
   }
 
+  // Opción de radio con ícono, check en la activa y (opcional) atajo de teclado.
+  function renderOpcion(o, activa, onElegir) {
+    const Icon = o.icon;
+    return (
+      <button
+        key={o.value}
+        type="button"
+        role="menuitemradio"
+        aria-checked={activa}
+        className={[panel.item, activa && panel.selected].filter(Boolean).join(' ')}
+        onClick={() => onElegir(o.value)}
+      >
+        <Icon className={panel.icon} aria-hidden="true" />
+        {o.label}
+        {activa
+          ? <LuCheck className={panel.check} aria-hidden="true" />
+          : o.key && onVista && <span className="va-shortcut">{o.key}</span>}
+      </button>
+    );
+  }
+
   return (
     <>
-      <Button
+      <button
         ref={triggerRef}
-        variant="outline"
-        icon={LuSettings2}
+        type="button"
         className="va-trigger"
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label="Configuración de vista"
+        title="Configuración de vista"
         onClick={() => (open ? setOpen(false) : abrir())}
       >
-        Vista
-      </Button>
+        <LuSettings2 className="icon" aria-hidden="true" />
+      </button>
       {open && createPortal(
         <div
           ref={panelRef}
@@ -121,37 +159,18 @@ export default function VistaAgenda({
           style={{ top: pos.top, right: pos.right }}
           onKeyDown={onKeyDown}
         >
+          {onModoAgenda && (
+            <>
+              <div className={panel.groupLabel}>Agenda por</div>
+              {OPCIONES_MODO.map((o) => renderOpcion(o, modoAgenda === o.value, onModoAgenda))}
+              <div className={panel.divider} role="separator" />
+            </>
+          )}
           <div className={panel.groupLabel}>Horas visibles</div>
-          {OPCIONES_JORNADA.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              role="menuitemradio"
-              aria-checked={jornada === o.value}
-              className={[panel.item, jornada === o.value && panel.selected].filter(Boolean).join(' ')}
-              onClick={() => onJornada(o.value)}
-            >
-              {o.label}
-              {jornada === o.value && <LuCheck className={panel.check} aria-hidden="true" />}
-            </button>
-          ))}
+          {OPCIONES_JORNADA.map((o) => renderOpcion(o, jornada === o.value, onJornada))}
           <div className={panel.divider} role="separator" />
           <div className={panel.groupLabel}>Días visibles</div>
-          {opcionesDias.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              role="menuitemradio"
-              aria-checked={diasActual === o.value}
-              className={[panel.item, diasActual === o.value && panel.selected].filter(Boolean).join(' ')}
-              onClick={() => elegirDias(o.value)}
-            >
-              {o.label}
-              {diasActual === o.value
-                ? <LuCheck className={panel.check} aria-hidden="true" />
-                : o.key && onVista && <span className="va-shortcut">{o.key}</span>}
-            </button>
-          ))}
+          {opcionesDias.map((o) => renderOpcion(o, diasActual === o.value, elegirDias))}
         </div>,
         document.body,
       )}

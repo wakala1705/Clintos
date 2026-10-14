@@ -32,7 +32,7 @@ export default function AgendaSemana({
   label, days, cirugias, selectedId, onSelect, onPrevWeek, onNextWeek,
   navPrevLabel = 'Semana anterior', navNextLabel = 'Semana siguiente',
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
-  cirujano = 'todos', cirujanos, onCirujanoChange,
+  cirujano = 'todos', cirujanos, onCirujanoChange, modoAgenda, onModoAgenda,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
   vista, onChangeVista, jornada = '24h', onJornada, diasVista, onDiasVista,
 }) {
@@ -48,7 +48,7 @@ export default function AgendaSemana({
   // creación que antes solo vivían en ProgramarCirugiaDropdown (encargo
   // explícito: "Programar cirugía" y "Cirugía de urgencia").
   const [slotMenu, setSlotMenu] = useState(null);
-  // "Todas las salas" (solo con cirujano): las tarjetas muestran su sala en vez del cirujano.
+  // Agenda por médicos (cruza salas): las tarjetas muestran su sala en vez del cirujano.
   const porCirujano = salaId === 'todas';
 
   function closeSlotMenu() { setSlotMenu(null); }
@@ -88,6 +88,8 @@ export default function AgendaSemana({
           cirujano={cirujano}
           cirujanos={cirujanos}
           onCirujanoChange={onCirujanoChange}
+          modoAgenda={modoAgenda}
+          onModoAgenda={onModoAgenda}
           vista={vista}
           onChangeVista={onChangeVista}
           jornada={jornada}
