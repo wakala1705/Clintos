@@ -8,7 +8,7 @@
 .ac-cal-cab small{display:block;font-size:var(--fs-xs);color:var(--ink-500);letter-spacing:.02em;}
 .ac-cal-cab b{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
 .ac-cal-cab.hoy{background:var(--interactive-selected-bg);}
-.ac-cal-cab.hoy small,.ac-cal-cab.hoy b{color:var(--interactive-selected-text);}
+.ac-cal-cab.hoy small,.ac-cal-cab.hoy b{color:var(--link);}
 
 .ac-cal-horas{position:relative;}
 .ac-cal-hora{position:absolute;right:8px;font-size:var(--fs-xs);color:var(--ink-400);}

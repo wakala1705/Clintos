@@ -18,5 +18,5 @@
 
 @media (max-width:1024px){
   .ac-config{overflow:visible;}
-  .ac-config-cuerpo{overflow:visible;}
+  .ac-config-cuerpo{overflow:visible;flex:none;}
 }

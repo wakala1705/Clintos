@@ -43,8 +43,17 @@ export default function ExcepcionModal({ inicial, onGuardar, onCerrar }) {
     onGuardar({ ...form, nota: form.nota.trim() });
   }
 
+  // Escape cierra el modal, salvo que lo reciba un desplegable abierto (FormSelect/DatePicker
+  // viven en document.body y su cierre es de ellos): ahí solo se cierra el desplegable.
+  function manejarTecla(e) {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    if (e.target.closest?.('.form-select-dropdown, .dp-panel')) return;
+    if (document.querySelector('.form-select-dropdown, .dp-panel')) return;
+    onCerrar();
+  }
+
   return (
-    <div className="modal-overlay open" onKeyDown={(e) => { if (e.key === 'Escape') onCerrar(); }}>
+    <div className="modal-overlay open" onKeyDown={manejarTecla}>
       <div
         ref={cardRef}
         className="modal-card ac-exc-modal"

@@ -26,5 +26,5 @@
 
 /* Tablet (--bp-desktop): los dos paneles se apilan y la página scrollea. */
 @media (max-width:1024px){
-  .ac-layout{grid-template-columns:1fr;grid-template-rows:none;overflow-y:auto;}
+  .ac-layout{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:max-content;overflow-y:auto;}
 }
