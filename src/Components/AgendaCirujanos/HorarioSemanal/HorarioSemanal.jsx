@@ -1,36 +1,25 @@
 'use client';
 
-import { LuInfo, LuTriangleAlert } from 'react-icons/lu';
+import { LuTriangleAlert } from 'react-icons/lu';
 import './HorarioSemanal.css';
 import DatePicker from '@/Components/DatePicker/DatePicker';
 import DiaHorario from '../DiaHorario/DiaHorario';
 import {
-  agregarBloque, alternarDia, alternarSinFecha, cambiarBloque, copiarDia, FIN_JORNADA,
-  INICIO_JORNADA, quitarBloque,
+  agregarBloque, alternarDia, alternarSinFecha, cambiarBloque, copiarDia,
+  quitarBloque,
 } from '@/hooks/AgendaCirujanos/horario';
-import { deMinutos } from '@/hooks/AgendaCirujanos/intervalos';
 import { errorDia, errorVigencia } from '@/hooks/AgendaCirujanos/validaciones';
 
 // Pestaña "Horario semanal": vigencia (desde / hasta o sin fecha de fin) y los
 // 7 días con sus bloques. Controlado: cada cambio llama a `onChange` con un
 // horario NUEVO (las operaciones son las funciones puras de horario.js).
 export default function HorarioSemanal({
-  horario, onChange, sinAgenda, sede, onAviso,
+  horario, onChange, sede, onAviso,
 }) {
   const errorDeVigencia = errorVigencia(horario);
 
   return (
     <div>
-      {sinAgenda && (
-        <div className="ac-callout ac-callout-info ac-aviso-sin-agenda">
-          <LuInfo className="icon" aria-hidden="true" />
-          <p>
-            Este cirujano aún no tiene agenda. Activa los días en que opera y guarda el horario
-            para que Programación pueda asignarle cirugías.
-          </p>
-        </div>
-      )}
-
       <section className="ac-seccion" aria-labelledby="ac-vigencia-titulo">
         <h3 id="ac-vigencia-titulo" className="ac-seccion-titulo">Vigencia <span>{sede}</span></h3>
         <div className="ac-grid-2">
@@ -76,9 +65,7 @@ export default function HorarioSemanal({
       </section>
 
       <section aria-labelledby="ac-dias-titulo">
-        <h3 id="ac-dias-titulo" className="ac-seccion-titulo">
-          Días y horarios <span>Jornada operativa {deMinutos(INICIO_JORNADA)}–{deMinutos(FIN_JORNADA)}</span>
-        </h3>
+        <h3 id="ac-dias-titulo" className="ac-seccion-titulo">Días y horarios</h3>
         {horario.dias.map((dia, i) => (
           <DiaHorario
             // El índice ES la identidad del día (lunes…domingo): la lista nunca se reordena.

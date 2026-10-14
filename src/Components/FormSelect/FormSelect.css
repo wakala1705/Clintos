@@ -37,6 +37,9 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
    DOM nunca llega a la opción (tabIndex=-1). */
 .form-select-dropdown{
   position:fixed;width:max-content;max-width:min(320px,calc(100vw - 16px));overflow-y:auto;z-index:calc(var(--z-modal, 50) + 1);
+  /* Muestra 5 opciones (~35px c/u: 8px×2 de padding + línea de 14px×1.35) más el
+     padding del panel; el resto queda en scroll. */
+  max-height:calc(5 * 35px + 2 * var(--dropdown-padding));
 }
 
 /* Opciones con objetivo táctil de 44px cuando el puntero es el dedo (no por
@@ -44,5 +47,6 @@ html[data-theme="dark"]:not([data-required-highlight="off"]) .form-select-trigge
    por role, no por clase (las de DropdownPanel llevan hash). Solo FormSelect:
    el resto de dropdowns que comparten DropdownPanel no cambia. */
 @media (pointer:coarse){
+  .form-select-dropdown{max-height:calc(5 * 44px + 2 * var(--dropdown-padding));}
   .form-select-dropdown [role="option"]{min-height:44px;}
 }

@@ -98,6 +98,16 @@ test('agregarBloque / quitarBloque / cambiarBloque solo tocan el día indicado',
   assert.equal(cambiarBloque(con2, 0, 1, 'inicio', '13:00').dias[1].bloques[0].inicio, '07:00');
 });
 
+test('quitarBloque del único bloque apaga el día; los demás días no cambian', () => {
+  const base = alternarDia(alternarDia(horarioVacio(HOY), 0, true), 1, true);
+  const r = quitarBloque(base, 0, 0);
+  assert.deepEqual(r.dias[0], { activo: false, bloques: [] });
+  assert.deepEqual(r.dias[1], base.dias[1]);
+  assert.equal(base.dias[0].activo, true, 'el original no cambia');
+  // Reactivar propone otra vez el bloque por defecto.
+  assert.deepEqual(alternarDia(r, 0, true).dias[0].bloques, [{ inicio: '07:00', fin: '12:00' }]);
+});
+
 test('alternarSinFecha: desmarcar propone desde + 90 días; marcar vuelve a null', () => {
   const h = horarioVacio(HOY);
   const conFin = alternarSinFecha(h, false);

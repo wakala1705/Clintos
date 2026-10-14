@@ -6,6 +6,7 @@ import './ConfigModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import { LuBell, LuLock, LuLogOut, LuMoon, LuShieldCheck, LuUser } from 'react-icons/lu';
 import { getFieldSelectionMode, setFieldSelectionMode } from '@/hooks/HistoriaClinica/fieldSelectionMode';
+import { restriccionInicioActiva, setRestriccionInicioActiva } from '@/hooks/ProgramacionSalaCirugias/restriccionInicio';
 
 const SECTIONS = [
   { id: 'perfil', label: 'Perfil', icon: LuUser },
@@ -58,6 +59,7 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
   const [notifSound, setNotifSound] = useState(false);
   const [verificacionClinica, setVerificacionClinica] = useState(false);
   const [fieldSelectionMode, setFieldSelectionModeState] = useState('rapida');
+  const [restriccionInicio, setRestriccionInicioState] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -67,6 +69,7 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
     setHighContrastState(document.documentElement.getAttribute('data-contrast') === 'high');
     setVerificacionClinica(isVerificacionClinicaEnabled());
     setFieldSelectionModeState(getFieldSelectionMode());
+    setRestriccionInicioState(restriccionInicioActiva());
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose();
     }
@@ -102,6 +105,11 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
     const mode = useRapida ? 'rapida' : 'select';
     setFieldSelectionMode(mode);
     setFieldSelectionModeState(mode);
+  }
+
+  function handleRestriccionInicio(activa) {
+    setRestriccionInicioActiva(activa);
+    setRestriccionInicioState(activa);
   }
 
   function handleLogoutEverywhere() {
@@ -274,6 +282,24 @@ export default function ConfigModal({ open, onClose, name, role, initials }) {
                       type="checkbox"
                       checked={fieldSelectionMode === 'rapida'}
                       onChange={(e) => handleFieldSelectionModeChange(e.target.checked)}
+                    />
+                    <span className="config-switch-slider"></span>
+                  </label>
+                </div>
+                <div className="config-toggle-row">
+                  <div>
+                    <div className="config-toggle-label">Restringir el inicio de cirugías por hora</div>
+                    <div className="config-toggle-hint">
+                      Una cirugía programada solo se puede iniciar desde 30 minutos antes de su hora
+                      (las de urgencia no tienen este límite). Desactívalo para simular todo el flujo
+                      sin esperar la hora.
+                    </div>
+                  </div>
+                  <label className="config-switch">
+                    <input
+                      type="checkbox"
+                      checked={restriccionInicio}
+                      onChange={(e) => handleRestriccionInicio(e.target.checked)}
                     />
                     <span className="config-switch-slider"></span>
                   </label>

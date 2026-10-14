@@ -1,13 +1,24 @@
 /* .ac-err, .ac-hora: shared/shared.css. .ncw-icon-btn*: shared de la jornada de cirugía. */
-.ac-dia{padding:12px 0;border-top:1px solid var(--border);}
+.ac-dia{padding:10px 0;border-top:1px solid var(--border);}
 .ac-dia:first-of-type{border-top:none;}
-.ac-dia-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;}
-.ac-dia-resumen{font-size:var(--fs-sm);color:var(--ink-500);text-align:right;}
+/* Rejilla: día · rango · acciones (interruptor, agregar, copiar, quitar). Una línea por bloque;
+   los bloques extra solo llevan rango y papelera. */
+.ac-dia-fila{
+  display:grid;grid-template-columns:28px minmax(0,1fr) auto 28px 28px 28px;
+  column-gap:6px;row-gap:8px;align-items:center;
+}
+.ac-dia-nombre{
+  width:28px;flex-shrink:0;line-height:36px;
+  font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);
+}
 /* Día apagado: el nombre baja de énfasis. */
-.ac-dia.off .ts-label{color:var(--ink-500);font-weight:var(--fw-regular);}
+.ac-dia.off .ac-dia-nombre{color:var(--ink-500);font-weight:var(--fw-regular);}
 
-.ac-bloques{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
-.ac-bloque{display:flex;align-items:center;gap:8px;}
+.ac-bloque{display:flex;align-items:center;gap:4px;}
+.ac-bloque .ac-hora{width:88px;}
 .ac-bloque-sep{font-size:var(--fs-sm);color:var(--ink-400);}
 .ac-bloque .icon{width:16px;height:16px;}
-.ac-dia-acciones{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.ac-dia-fila .ts-wrap{height:36px;}
+.ac-copiar{margin-top:10px;}
+/* Leyenda del día apagado (Badge), en el lugar del rango y separada del día. */
+.ac-dia-libre{display:flex;align-items:center;padding-left:10px;}

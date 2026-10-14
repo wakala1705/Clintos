@@ -69,6 +69,10 @@ export default function Topbar({ section, page, user, pickers, children }) {
                   id: p.id, label: p.label, icon: p.icon, onSelect: () => router.push(p.href),
                 }))}
               />
+            ) : crumb.href && crumb.onClick ? (
+              // onClick intercepta la navegación (ej. confirmar antes de descartar cambios);
+              // el href se conserva para el clic medio / copiar enlace.
+              <a href={crumb.href} onClick={(e) => { e.preventDefault(); crumb.onClick(); }}>{crumb.label}</a>
             ) : crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
             <span className="sep">/</span>
           </Fragment>

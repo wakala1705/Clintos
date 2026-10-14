@@ -33,6 +33,7 @@ export default function AgendaCirujanos() {
   const [filas, setFilas] = useState(null); // null = cargando
   const [aviso, setAviso] = useState(null);
   const avisoTimerRef = useRef(null);
+  const salirEditorRef = useRef(null); // lo registra EditorAgenda (confirma si hay cambios sin guardar)
 
   useEffect(() => {
     const limpiarShell = initShellChrome({ startCollapsed: true });
@@ -90,6 +91,7 @@ export default function AgendaCirujanos() {
         hoy={hoy}
         onVolver={irAlListado}
         onAviso={mostrarAviso}
+        salirRef={salirEditorRef}
       />
     );
   }
@@ -100,8 +102,10 @@ export default function AgendaCirujanos() {
 
       <div className="main">
         <Topbar
-          section={['Cirugía', 'Configuración']}
-          page="Agenda de cirujanos"
+          section={idMedico
+            ? ['Configuración', { label: 'Agenda de cirujanos', href: RUTA, onClick: () => (salirEditorRef.current ?? irAlListado)() }]
+            : ['Configuración']}
+          page={idMedico ? 'Programación de agenda' : 'Agenda de cirujanos'}
           user={{ name: 'Camilo Grondona', role: 'Administrador', initials: 'CG' }}
         />
 

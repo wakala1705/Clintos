@@ -163,8 +163,12 @@ export function agregarBloque(horario, indice) {
 export function quitarBloque(horario, indice, posicion) {
   return {
     ...horario,
-    dias: horario.dias.map((d, i) => (
-      i === indice ? { ...d, bloques: d.bloques.filter((_, j) => j !== posicion) } : d)),
+    dias: horario.dias.map((d, i) => {
+      if (i !== indice) return d;
+      const bloques = d.bloques.filter((_, j) => j !== posicion);
+      // Quitar el único bloque equivale a apagar el día (nunca queda activo sin horario).
+      return bloques.length === 0 ? { activo: false, bloques } : { ...d, bloques };
+    }),
   };
 }
 

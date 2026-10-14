@@ -7,6 +7,7 @@
 import { INSUMOS_HOY, INSUMOS_ONCO } from './insumosOncologia.js';
 import { PROCEDIMIENTOS_CANASTA, procedimientosDeComplejidad } from './canastasProcedimientos.js';
 import { ETAPA_IDS, DESTINOS_DERIVACION } from './tablero/etapas.js';
+import { restriccionInicioActiva } from './restriccionInicio.js';
 
 export const SEDES = [
   { value: '02', label: '02 - Sede Norte' },
@@ -2512,7 +2513,8 @@ const HORA_VALIDA = /^\d{2}:\d{2}$/;
 // mismos 5 estados. 'En curso' del panel sale de este sello.
 export const estaIniciada = (c) => Boolean(c.horaInicioReal) && ['programada', 'urgencia'].includes(c.estado);
 
-// Una cirugía programada se habilita para iniciar desde 30 min antes de su hora.
+// Una cirugía programada se habilita para iniciar desde 30 min antes de su hora
+// (salvo que el ajuste del sistema "Restringir el inicio por hora" esté apagado).
 export const MIN_ANTICIPO_INICIO = 30;
 
 // null si se puede iniciar; si no, el motivo (se muestra como tooltip y como
@@ -2522,7 +2524,7 @@ export function motivoNoIniciable(cirugia, ahora, cirugias = []) {
   if (!['programada', 'urgencia'].includes(cirugia.estado)) return 'Solo se puede iniciar una cirugía programada o de urgencia.';
   if (cirugia.fecha !== fechaISO(ahora)) return 'Solo se puede iniciar el día de la cirugía.';
   if (!CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado)) return 'La canasta debe estar recibida para iniciar la cirugía.';
-  if (cirugia.estado === 'programada') {
+  if (cirugia.estado === 'programada' && restriccionInicioActiva()) {
     const [h, m] = cirugia.horaInicio.split(':').map(Number);
     const desde = h * 60 + m - MIN_ANTICIPO_INICIO;
     if (ahora.getHours() * 60 + ahora.getMinutes() < desde) {

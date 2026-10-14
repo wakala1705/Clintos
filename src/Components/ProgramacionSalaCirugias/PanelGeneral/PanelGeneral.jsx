@@ -26,6 +26,7 @@ import PantallaFamiliaresModal from '@/Components/PantallaFamiliares/PantallaFam
 import {
   SALAS, ahoraDemo, fechaISO, fetchAgendaRango, motivoNoIniciable,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { useRestriccionInicioActiva } from '@/hooks/ProgramacionSalaCirugias/restriccionInicio';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import {
   RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, rangoFechas,
@@ -46,6 +47,8 @@ const salaLabel = (salaId) => SALAS_SEDE.find((s) => s.value === salaId)?.descri
 // Crear una cirugía (wizard) vive en Programación.
 export default function PanelGeneral() {
   const router = useRouter();
+  // Re-renderiza al cambiar el ajuste (Configuración → Clínico): motivoNoIniciable lo lee.
+  useRestriccionInicioActiva();
   // Vista del contenido del panel: "Tabla" (por defecto) o "Tablero" (por
   // estado, arrastrable). Vive en la URL (?vista=tablero) para poder abrirla
   // directo o dejarla fija en una pantalla de coordinación. Ambas vistas usan el

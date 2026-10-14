@@ -4,6 +4,7 @@ import {
   canastaPedida, canastaVinculada, conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, rangoFechas, resumenOcupacion,
 } from '../panel.js';
 import { motivoNoIniciable } from '../../mockCirugiaData.js';
+import { setRestriccionInicioActiva } from '../../restriccionInicio.js';
 
 const c = (id, salaId, estado, horaInicio, horaFin, extra = {}) => ({
   id,
@@ -147,6 +148,21 @@ test('resumenOcupacion: la capacidad escala con los días del rango', () => {
 const canasta = (estado) => ({
   nombre: 'C',
   items: [{ nombre: 'Gasas', cantidad: 2, ...(estado === 'recibida' ? { solicitudFarmacia: 'entregado', despachado: 2, recibido: 2 } : {}) }],
+});
+
+test('motivoNoIniciable: con la restricción por hora apagada se puede iniciar antes de la ventana', () => {
+  const ok = c('1', 'a', 'programada', '10:00', '11:00', { canasta: canasta('recibida'), sedeId: '02' });
+  assert.match(motivoNoIniciable(ok, AHORA, []), /Se habilita 30 minutos antes/);
+  setRestriccionInicioActiva(false);
+  try {
+    assert.equal(motivoNoIniciable(ok, AHORA, []), null);
+    // Solo se relaja la hora: canasta, día y sala siguen validándose.
+    assert.match(motivoNoIniciable({ ...ok, canasta: canasta('sin') }, AHORA, []), /canasta debe estar recibida/);
+    assert.match(motivoNoIniciable({ ...ok, fecha: '2026-10-03' }, AHORA, []), /el día de la cirugía/);
+  } finally {
+    setRestriccionInicioActiva(true);
+  }
+  assert.match(motivoNoIniciable(ok, AHORA, []), /Se habilita 30 minutos antes/);
 });
 
 test('motivoNoIniciable: canasta recibida, día, ventana de 30 min y sala libre', () => {

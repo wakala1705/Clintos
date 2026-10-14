@@ -11,3 +11,9 @@
   --ac-block-a:color-mix(in srgb,var(--red) 24%,transparent);
   --ac-block-b:color-mix(in srgb,var(--red) 9%,transparent);
 }
+
+/* Breadcrumb de 4 niveles en el editor: una sola línea; el nombre del cirujano se recorta
+   con elipsis antes de apretar los selectores de sede/área. */
+.topbar .breadcrumb{white-space:nowrap;min-width:0;}
+.topbar .breadcrumb .current{overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.topbar .topbar-right{flex-shrink:0;white-space:nowrap;}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LuChevronLeft } from 'react-icons/lu';
 import './EditorAgenda.css';
 import Button from '@/Components/Button/Button';
 import PanelConfiguracion from '../PanelConfiguracion/PanelConfiguracion';
@@ -14,8 +13,8 @@ import SalirSinGuardarDialog from '../modals/SalirSinGuardarDialog/SalirSinGuard
 import useAgendaEditor from '@/hooks/AgendaCirujanos/useAgendaEditor';
 import { excepcionNueva } from '@/hooks/AgendaCirujanos/excepciones';
 import { cantidadCirugias } from '@/hooks/AgendaCirujanos/formato';
-import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
+const AVISO_SIN_AGENDA = 'Este cirujano aún no tiene agenda. Activa los días en que opera y guarda el horario para que Programación pueda asignarle cirugías.';
 const AVISO_FALLO = 'No se pudo guardar el cambio. Inténtalo de nuevo.';
 const AVISO_SOLO_ADVIERTE = 'Las cirugías ya programadas no se cancelan ni se reprograman automáticamente. Programación de cirugía deberá gestionarlas.';
 
@@ -28,7 +27,7 @@ const AVISO_SOLO_ADVIERTE = 'Las cirugías ya programadas no se cancelan ni se r
 //   { tipo: 'impacto', titulo, intro, items, textoVolver, textoConfirmar?, onVolver?, onConfirmar? }
 //   { tipo: 'salir' }
 export default function EditorAgenda({
-  idMedico, hoy, onVolver, onAviso,
+  idMedico, hoy, onVolver, onAviso, salirRef,
 }) {
   const editor = useAgendaEditor(idMedico, hoy);
   const [pestana, setPestana] = useState('horario');
@@ -48,6 +47,18 @@ export default function EditorAgenda({
     return () => window.removeEventListener('beforeunload', avisar);
   }, [editor.sinGuardar]);
 
+  // Expone al breadcrumb (AgendaCirujanos) cómo salir al listado: con horario sin
+  // guardar abre la confirmación en vez de descartar el borrador.
+  useEffect(() => {
+    if (!salirRef) return undefined;
+    salirRef.current = () => {
+      if (ocupadoRef.current) return;
+      if (editor.sinGuardar) setModal({ tipo: 'salir' });
+      else onVolver();
+    };
+    return () => { salirRef.current = null; };
+  });
+
   // Al terminar de cargar, el foco va al título (como al entrar a una pantalla nueva).
   useEffect(() => {
     if (!editor.cargando) tituloRef.current?.focus();
@@ -65,7 +76,6 @@ export default function EditorAgenda({
     );
   }
 
-  const nombre = capitalizarNombre(editor.cirujano.nombre);
   const cerrarModal = () => setModal(null);
 
   // Ejecuta `operacion` (que devuelve una promesa) ignorando llamadas repetidas
@@ -78,12 +88,6 @@ export default function EditorAgenda({
       ocupadoRef.current = false;
       setOcupado(false);
     });
-  }
-
-  function handleVolver() {
-    if (ocupadoRef.current) return;
-    if (editor.sinGuardar) setModal({ tipo: 'salir' });
-    else onVolver();
   }
 
   function abrirImpacto(items, opciones) {
@@ -169,11 +173,7 @@ export default function EditorAgenda({
     <div className="ac-editor">
       <div className="psc-page-header">
         <div>
-          <button type="button" className="ac-volver" disabled={ocupado} onClick={handleVolver}>
-            <LuChevronLeft className="icon" aria-hidden="true" />
-            Agenda de cirujanos
-          </button>
-          <h1 ref={tituloRef} tabIndex={-1}>Agenda de {nombre}</h1>
+          <h1 ref={tituloRef} tabIndex={-1}>Programación de agenda</h1>
           <p>Define cuándo está disponible para que Programación le asigne cirugías.</p>
         </div>
         <div className="psc-page-header-actions">
@@ -200,12 +200,12 @@ export default function EditorAgenda({
           pestana={pestana}
           onPestana={setPestana}
           cantidadExcepciones={editor.excepciones.length}
+          aviso={editor.tieneAgenda ? null : AVISO_SIN_AGENDA}
         >
           {pestana === 'horario' ? (
             <HorarioSemanal
               horario={editor.borrador}
               onChange={editor.setBorrador}
-              sinAgenda={!editor.tieneAgenda}
               sede={editor.cirujano.sede}
               onAviso={onAviso}
             />

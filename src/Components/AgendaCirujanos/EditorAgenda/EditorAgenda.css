@@ -2,14 +2,6 @@
 .ac-editor{flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;}
 .ac-editor h1:focus{outline:none;}
 
-.ac-volver{
-  display:inline-flex;align-items:center;gap:4px;margin-bottom:6px;padding:0;
-  border:none;background:none;cursor:pointer;
-  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--link);
-}
-.ac-volver:hover{text-decoration:underline;}
-.ac-volver:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
-.ac-volver .icon{width:16px;height:16px;}
 
 .ac-pendiente{
   display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;
@@ -20,7 +12,7 @@
 
 /* La fila única se contrae a la altura disponible: cada panel scrollea por dentro. */
 .ac-layout{
-  display:grid;grid-template-columns:minmax(340px,430px) minmax(0,1fr);grid-template-rows:minmax(0,1fr);
+  display:grid;grid-template-columns:minmax(410px,430px) minmax(0,1fr);grid-template-rows:minmax(0,1fr);
   gap:16px;flex:1;min-height:0;
 }
 
