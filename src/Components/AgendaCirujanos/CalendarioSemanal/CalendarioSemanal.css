@@ -1,0 +1,63 @@
+.ac-cal-scroll{flex:1;min-height:0;overflow:auto;border-top:1px solid var(--border);}
+.ac-cal{display:grid;min-width:640px;}
+
+.ac-cal-esquina,.ac-cal-cab{
+  position:sticky;top:0;z-index:8;background:var(--surface);border-bottom:1px solid var(--border);
+}
+.ac-cal-cab{padding:8px 4px;text-align:center;border-left:1px solid var(--border);}
+.ac-cal-cab small{display:block;font-size:var(--fs-xs);color:var(--ink-500);letter-spacing:.02em;}
+.ac-cal-cab b{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ac-cal-cab.hoy{background:var(--interactive-selected-bg);}
+.ac-cal-cab.hoy small,.ac-cal-cab.hoy b{color:var(--interactive-selected-text);}
+
+.ac-cal-horas{position:relative;}
+.ac-cal-hora{position:absolute;right:8px;font-size:var(--fs-xs);color:var(--ink-400);}
+
+/* Fondo de la columna = fuera de agenda (gris con rayado fino). */
+.ac-cal-col{
+  position:relative;overflow:hidden;border-left:1px solid var(--border);
+  background-color:var(--gray-bg);
+  background-image:repeating-linear-gradient(135deg,var(--ac-hatch) 0 1px,transparent 1px 9px);
+}
+.ac-cal-lineas{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  background-image:linear-gradient(to bottom,var(--ac-grid) 1px,transparent 1px);
+  background-size:100% var(--ac-hora-h);
+}
+
+.ac-seg{position:absolute;left:0;right:0;}
+.ac-seg-base{z-index:1;background:var(--surface);}
+.ac-seg-apertura{z-index:2;background:var(--surface);border:1.5px dashed var(--green);}
+.ac-seg-bloqueo{
+  z-index:4;
+  background-image:repeating-linear-gradient(135deg,var(--ac-block-a) 0 6px,var(--ac-block-b) 6px 12px);
+}
+.ac-seg span{
+  position:absolute;top:4px;left:6px;max-width:calc(100% - 12px);padding:1px 6px;border-radius:4px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:var(--fs-xs);font-weight:var(--fw-semibold);
+}
+.ac-seg-apertura span{background:var(--green-bg);color:#0d7a3d;}
+.ac-seg-bloqueo span{background:var(--red-bg);color:var(--red);}
+
+.ac-cir{
+  position:absolute;left:4px;right:4px;z-index:5;overflow:hidden;
+  padding:4px 7px;border-left:3px solid;border-radius:6px;
+  font-size:var(--fs-xs);line-height:1.3;
+}
+.ac-cir-programada{background:var(--green-bg);border-color:var(--green);}
+.ac-cir-realizada{background:var(--blue-bg);border-color:var(--blue-fg);}
+.ac-cir-urgencia{background:var(--violet-bg);border-color:var(--violet-fg);}
+/* Cirugía fuera de agenda: ámbar con contorno, gana al color de su estado. */
+.ac-cir-conflicto{background:var(--amber-bg);border-color:var(--amber);outline:2px solid var(--amber);outline-offset:-2px;}
+.ac-cir-hora{color:var(--ink-500);}
+.ac-cir-nombre{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.ac-cir-proc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-500);}
+.ac-cir-alerta{position:absolute;top:4px;right:5px;width:14px;height:14px;color:var(--amber-fg);}
+
+@media (max-width:1024px){
+  .ac-cal-scroll{flex:none;height:560px;}
+}
