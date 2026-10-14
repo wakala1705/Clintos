@@ -16,6 +16,7 @@ import { excepcionNueva } from '@/hooks/AgendaCirujanos/excepciones';
 import { cantidadCirugias } from '@/hooks/AgendaCirujanos/formato';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
+const AVISO_FALLO = 'No se pudo guardar el cambio. Inténtalo de nuevo.';
 const AVISO_SOLO_ADVIERTE = 'Las cirugías ya programadas no se cancelan ni se reprograman automáticamente. Programación de cirugía deberá gestionarlas.';
 
 // Editor de la agenda de UN cirujano: panel de configuración (horario semanal /
@@ -76,10 +77,11 @@ export default function EditorAgenda({
   }
 
   function confirmarGuardado() {
-    editor.guardar().then(() => {
+    editor.guardar().then((ok) => {
+      if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso('Horario guardado');
-    });
+    }).catch(() => onAviso(AVISO_FALLO));
   }
 
   function handleGuardar() {
@@ -96,10 +98,11 @@ export default function EditorAgenda({
   }
 
   function handleGuardarExcepcion(datos) {
-    const aplicar = () => editor.anadirExcepcion(datos).then(() => {
+    const aplicar = () => editor.anadirExcepcion(datos).then((ok) => {
+      if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso(datos.tipo === 'bloqueo' ? 'Bloqueo agregado' : 'Apertura agregada');
-    });
+    }).catch(() => onAviso(AVISO_FALLO));
     const nuevos = editor.conflictosAlAgregar(datos);
     if (nuevos.length === 0) {
       aplicar();
@@ -115,10 +118,11 @@ export default function EditorAgenda({
   }
 
   function handleEliminarExcepcion(idExcepcion) {
-    const aplicar = () => editor.quitarExcepcion(idExcepcion).then(() => {
+    const aplicar = () => editor.quitarExcepcion(idExcepcion).then((ok) => {
+      if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso('Excepción eliminada');
-    });
+    }).catch(() => onAviso(AVISO_FALLO));
     const nuevos = editor.conflictosAlEliminar(idExcepcion);
     if (nuevos.length === 0) {
       aplicar();

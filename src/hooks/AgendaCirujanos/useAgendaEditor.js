@@ -50,6 +50,10 @@ export default function useAgendaEditor(idMedico, hoy) {
       setExcepciones(agenda?.excepciones ?? []);
       setCirugias(susCirugias ?? []);
       setCargando(false);
+    }).catch(() => {
+      if (cancelado) return;
+      setCirujano(null);
+      setCargando(false);
     });
     return () => { cancelado = true; };
   }, [idMedico, hoy]);
@@ -94,22 +98,27 @@ export default function useAgendaEditor(idMedico, hoy) {
 
   async function guardar() {
     const agenda = await guardarHorario(idMedico, borrador);
-    if (!agenda?.horario) return;
+    if (!agenda?.horario) return false;
     setGuardado(agenda.horario);
     setBorrador(agenda.horario);
     setTieneAgenda(true);
+    return true;
   }
 
   /** @param {import('./tipos.js').BorradorExcepcion} datos */
   async function anadirExcepcion(datos) {
     const agenda = await agregarExcepcion(idMedico, datos);
-    setExcepciones(agenda?.excepciones ?? []);
+    if (!agenda?.excepciones) return false;
+    setExcepciones(agenda.excepciones);
+    return true;
   }
 
   /** @param {number} idExcepcion */
   async function quitarExcepcion(idExcepcion) {
     const agenda = await eliminarExcepcion(idMedico, idExcepcion);
-    setExcepciones(agenda?.excepciones ?? []);
+    if (!agenda?.excepciones) return false;
+    setExcepciones(agenda.excepciones);
+    return true;
   }
 
   return {
