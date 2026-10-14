@@ -1030,6 +1030,16 @@ solo le asigne cirugías dentro de esa disponibilidad. Código en
   breadcrumb (no hay precedente en el repo). Una urgencia fuera de 07:00–19:00
   siempre cuenta como fuera de agenda (la jornada configurable llega a las
   19:00). Las aperturas extra cuentan aunque el día caiga fuera de la vigencia.
+- **Límites conocidos (revisión final)**: el botón Atrás del navegador
+  (popstate de `?cirujano=` al listado) descarta el borrador sin confirmar,
+  igual que el menú lateral y el breadcrumb. Desde un deep link `?cirujano=`
+  se puede editar un cirujano de otra sede: `puedeEditarAgenda` ignora la sede
+  (todavía no hay sede de usuario). En `agendaCirujanosService`, si la sede del
+  cirujano no se resuelve por nombre en `mockCirugiaData.SEDES` (p. ej. "SEDE
+  CENTRO" vs "Sede Central"), `listarCirugiasDeCirujano` devuelve `[]` (sin
+  conflictos) y solo lee cirugías de la sede del catálogo del cirujano; con
+  backend hay que unificar los ids de sede, fallar en vez de devolver `[]` y
+  traer las cirugías de todas las sedes.
 - **Fuera de alcance (pendiente)**: bloquear en el wizard de programación a un
   cirujano sin agenda vigente (salvo urgencias) y sombrear las zonas fuera de
   agenda en la vista "Médicos" de Programación.
