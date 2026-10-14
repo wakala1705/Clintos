@@ -45,6 +45,10 @@ export default function AgendaCirujanos() {
     let cancelado = false;
     listarCirujanos({ sede: sede.descripcion }).then((items) => {
       if (!cancelado) setFilas(items);
+    }).catch(() => {
+      if (cancelado) return;
+      setFilas([]);
+      mostrarAviso('No se pudieron cargar los cirujanos. Inténtalo de nuevo.');
     });
     return () => { cancelado = true; };
   }, [idMedico, sede.descripcion]);

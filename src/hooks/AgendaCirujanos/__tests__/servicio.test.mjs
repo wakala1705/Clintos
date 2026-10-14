@@ -19,7 +19,7 @@ test('el usuario mock es Programación', () => {
   assert.deepEqual(USUARIO_ACTUAL, { rol: 'programacion' });
 });
 
-test('la semilla cubre los cuatro estados con datos relativos a hoy', () => {
+test('la semilla cubre configurada, por vencer y vencida (sin configurar = los cirujanos sin agenda)', () => {
   const filas = crearSemilla(HOY).map((a) => ({ cirujano: { idMedico: a.idMedico }, agenda: a }));
   const estados = new Set(filas.map((f) => estadoAgenda(f.agenda.horario, HOY)));
   assert.deepEqual([...estados].sort(), ['configurada', 'por-vencer', 'vencida']);

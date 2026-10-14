@@ -24,7 +24,9 @@ const OPCIONES_FIN = opcionesHora(INICIO_JORNADA + 30, FIN_JORNADA);
 // advertencia reabre el formulario con lo que el usuario ya había escrito).
 // Valida con errorExcepcion y, si es válido, entrega el borrador a `onGuardar`;
 // guardar y advertir de conflictos lo resuelve EditorAgenda.
-export default function ExcepcionModal({ inicial, onGuardar, onCerrar }) {
+export default function ExcepcionModal({
+  inicial, onGuardar, onCerrar, ocupado = false,
+}) {
   const cardRef = useRef(null);
   useModalFocusTrap(cardRef);
   const [form, setForm] = useState(inicial);
@@ -35,6 +37,7 @@ export default function ExcepcionModal({ inicial, onGuardar, onCerrar }) {
 
   function enviar(e) {
     e.preventDefault();
+    if (ocupado) return;
     const mensaje = errorExcepcion(form);
     if (mensaje) {
       setError(mensaje);
@@ -170,7 +173,7 @@ export default function ExcepcionModal({ inicial, onGuardar, onCerrar }) {
           </div>
           <div className="modal-footer">
             <Button variant="outline" onClick={onCerrar}>Cancelar</Button>
-            <Button type="submit">Guardar excepción</Button>
+            <Button type="submit" disabled={ocupado}>Guardar excepción</Button>
           </div>
         </form>
       </div>

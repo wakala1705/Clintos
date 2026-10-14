@@ -34,6 +34,11 @@ export default function EditorAgenda({
   const [pestana, setPestana] = useState('horario');
   const [modal, setModal] = useState(null);
   const tituloRef = useRef(null);
+  // Llamada al servicio en vuelo (guardar horario / agregar / eliminar excepción).
+  // El ref corta la reentrada dentro del mismo tick (dos clics antes de re-renderizar);
+  // el estado deshabilita los controles mientras dura.
+  const [ocupado, setOcupado] = useState(false);
+  const ocupadoRef = useRef(false);
 
   // Con horario sin guardar, cerrar o recargar la pestaña pide confirmación.
   useEffect(() => {
@@ -52,7 +57,9 @@ export default function EditorAgenda({
   if (!editor.cirujano) {
     return (
       <div className="ac-card ac-estado" role="alert">
-        <p className="ac-estado-titulo">No se encontró el cirujano</p>
+        <p className="ac-estado-titulo">
+          {editor.errorCarga ? 'No se pudo cargar la agenda' : 'No se encontró el cirujano'}
+        </p>
         <Button variant="outline" onClick={onVolver}>Volver al listado</Button>
       </div>
     );
@@ -61,7 +68,20 @@ export default function EditorAgenda({
   const nombre = capitalizarNombre(editor.cirujano.nombre);
   const cerrarModal = () => setModal(null);
 
+  // Ejecuta `operacion` (que devuelve una promesa) ignorando llamadas repetidas
+  // mientras hay una en vuelo; libera `ocupado` tanto en éxito como en fallo.
+  function ejecutarOcupado(operacion) {
+    if (ocupadoRef.current) return;
+    ocupadoRef.current = true;
+    setOcupado(true);
+    operacion().finally(() => {
+      ocupadoRef.current = false;
+      setOcupado(false);
+    });
+  }
+
   function handleVolver() {
+    if (ocupadoRef.current) return;
     if (editor.sinGuardar) setModal({ tipo: 'salir' });
     else onVolver();
   }
@@ -77,11 +97,11 @@ export default function EditorAgenda({
   }
 
   function confirmarGuardado() {
-    editor.guardar().then((ok) => {
+    ejecutarOcupado(() => editor.guardar().then((ok) => {
       if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso('Horario guardado');
-    }).catch(() => onAviso(AVISO_FALLO));
+    }).catch(() => onAviso(AVISO_FALLO)));
   }
 
   function handleGuardar() {
@@ -98,11 +118,11 @@ export default function EditorAgenda({
   }
 
   function handleGuardarExcepcion(datos) {
-    const aplicar = () => editor.anadirExcepcion(datos).then((ok) => {
+    const aplicar = () => ejecutarOcupado(() => editor.anadirExcepcion(datos).then((ok) => {
       if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso(datos.tipo === 'bloqueo' ? 'Bloqueo agregado' : 'Apertura agregada');
-    }).catch(() => onAviso(AVISO_FALLO));
+    }).catch(() => onAviso(AVISO_FALLO)));
     const nuevos = editor.conflictosAlAgregar(datos);
     if (nuevos.length === 0) {
       aplicar();
@@ -118,11 +138,11 @@ export default function EditorAgenda({
   }
 
   function handleEliminarExcepcion(idExcepcion) {
-    const aplicar = () => editor.quitarExcepcion(idExcepcion).then((ok) => {
+    const aplicar = () => ejecutarOcupado(() => editor.quitarExcepcion(idExcepcion).then((ok) => {
       if (!ok) { onAviso(AVISO_FALLO); return; }
       cerrarModal();
       onAviso('Excepción eliminada');
-    }).catch(() => onAviso(AVISO_FALLO));
+    }).catch(() => onAviso(AVISO_FALLO)));
     const nuevos = editor.conflictosAlEliminar(idExcepcion);
     if (nuevos.length === 0) {
       aplicar();
@@ -149,7 +169,7 @@ export default function EditorAgenda({
     <div className="ac-editor">
       <div className="psc-page-header">
         <div>
-          <button type="button" className="ac-volver" onClick={handleVolver}>
+          <button type="button" className="ac-volver" disabled={ocupado} onClick={handleVolver}>
             <LuChevronLeft className="icon" aria-hidden="true" />
             Agenda de cirujanos
           </button>
@@ -162,11 +182,11 @@ export default function EditorAgenda({
               {editor.hayErrores ? 'Hay errores por corregir' : 'Horario sin guardar'}
             </span>
           )}
-          <Button variant="outline" disabled={!editor.sinGuardar} onClick={editor.descartar}>
+          <Button variant="outline" disabled={!editor.sinGuardar || ocupado} onClick={editor.descartar}>
             Descartar cambios
           </Button>
           <Button
-            disabled={!editor.sinGuardar || editor.hayErrores}
+            disabled={!editor.sinGuardar || editor.hayErrores || ocupado}
             title={editor.hayErrores ? 'Corrige los errores marcados para guardar' : undefined}
             onClick={handleGuardar}
           >
@@ -210,7 +230,7 @@ export default function EditorAgenda({
       </div>
 
       {modal?.tipo === 'excepcion' && (
-        <ExcepcionModal inicial={modal.inicial} onGuardar={handleGuardarExcepcion} onCerrar={cerrarModal} />
+        <ExcepcionModal inicial={modal.inicial} onGuardar={handleGuardarExcepcion} onCerrar={cerrarModal} ocupado={ocupado} />
       )}
       {modal?.tipo === 'impacto' && (
         <ImpactoModal
@@ -221,6 +241,7 @@ export default function EditorAgenda({
           textoConfirmar={modal.textoConfirmar}
           onVolver={modal.onVolver ?? cerrarModal}
           onConfirmar={modal.onConfirmar}
+          ocupado={ocupado}
         />
       )}
       {modal?.tipo === 'salir' && (

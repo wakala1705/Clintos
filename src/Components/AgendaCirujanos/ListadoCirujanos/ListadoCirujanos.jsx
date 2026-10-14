@@ -65,7 +65,7 @@ export default function ListadoCirujanos({
 
         <div className="ac-lista-pie">
           <span>Mostrando {visibles.length} de {propias.length} cirujanos</span>
-          <span>Un cirujano sin agenda vigente no se puede elegir al programar una cirugía, salvo urgencias.</span>
+          <span>Un cirujano sin agenda vigente no podrá elegirse al programar una cirugía, salvo urgencias.</span>
         </div>
       </section>
     </>

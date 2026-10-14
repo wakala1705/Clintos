@@ -34,7 +34,7 @@ export function errorVigencia(horario) {
   if (!horario.desde) return 'Elige desde qué fecha rige este horario.';
   if (horario.hasta !== null) {
     if (!horario.hasta) return 'Elige la fecha final o marca "Sin fecha de fin".';
-    if (horario.hasta < horario.desde) return 'La fecha final debe ser posterior a la inicial.';
+    if (horario.hasta < horario.desde) return 'La fecha final debe ser igual o posterior a la inicial.';
   }
   return '';
 }

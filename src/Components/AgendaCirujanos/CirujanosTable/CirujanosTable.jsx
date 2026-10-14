@@ -61,7 +61,7 @@ export default function CirujanosTable({
             const puede = puedeEditarAgenda(usuario, cirujano.idMedico);
             const proxima = proximaExcepcion(agenda?.excepciones ?? [], hoy);
             const [vigDesde, vigHasta] = horario ? textoVigencia(horario, estado, hoy) : [];
-            const accion = sinAgenda ? 'Configurar agenda' : 'Editar agenda';
+            const accion = sinAgenda || estado === 'vencida' ? 'Configurar agenda' : 'Editar agenda';
             const nombre = capitalizarNombre(cirujano.nombre);
             return (
               <tr

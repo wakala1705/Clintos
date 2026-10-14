@@ -15,7 +15,7 @@ import { textoMotivo } from '@/hooks/AgendaCirujanos/conflictos';
 // agregar/eliminar una excepción y "ver cirugías fuera de agenda"): sin
 // `textoConfirmar` solo se muestra el botón de volver/cerrar.
 export default function ImpactoModal({
-  titulo, intro, items, textoVolver, textoConfirmar, onVolver, onConfirmar,
+  titulo, intro, items, textoVolver, textoConfirmar, onVolver, onConfirmar, ocupado = false,
 }) {
   const cardRef = useRef(null);
   useModalFocusTrap(cardRef);
@@ -56,7 +56,7 @@ export default function ImpactoModal({
         </div>
         <div className="modal-footer">
           <Button variant="outline" onClick={onVolver}>{textoVolver}</Button>
-          {textoConfirmar && <Button onClick={onConfirmar}>{textoConfirmar}</Button>}
+          {textoConfirmar && <Button disabled={ocupado} onClick={onConfirmar}>{textoConfirmar}</Button>}
         </div>
       </div>
     </div>

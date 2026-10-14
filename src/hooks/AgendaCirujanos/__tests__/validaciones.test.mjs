@@ -45,7 +45,7 @@ test('errorVigencia', () => {
   );
   assert.equal(
     errorVigencia({ ...horarioVacio(HOY), hasta: '2026-10-13' }),
-    'La fecha final debe ser posterior a la inicial.',
+    'La fecha final debe ser igual o posterior a la inicial.',
   );
   assert.equal(errorVigencia({ ...horarioVacio(HOY), hasta: HOY }), '', 'un solo día es válido');
   assert.equal(errorVigencia(alternarSinFecha(horarioVacio(HOY), false)), '');

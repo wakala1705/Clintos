@@ -2,7 +2,7 @@
 .ac-cal{display:grid;min-width:640px;}
 
 .ac-cal-esquina,.ac-cal-cab{
-  position:sticky;top:0;z-index:8;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:var(--z-sticky);background:var(--surface);border-bottom:1px solid var(--border);
 }
 .ac-cal-cab{padding:8px 4px;text-align:center;border-left:1px solid var(--border);}
 .ac-cal-cab small{display:block;font-size:var(--fs-xs);color:var(--ink-500);letter-spacing:.02em;}

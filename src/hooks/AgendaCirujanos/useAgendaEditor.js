@@ -32,6 +32,7 @@ export default function useAgendaEditor(idMedico, hoy) {
   const [guardado, setGuardado] = useState(() => horarioVacio(hoy));
   const [borrador, setBorrador] = useState(() => horarioVacio(hoy));
   const [excepciones, setExcepciones] = useState(/** @type {import('./tipos.js').Excepcion[]} */ ([]));
+  const [errorCarga, setErrorCarga] = useState(false);
   const [cirugias, setCirugias] = useState(/** @type {import('./tipos.js').CirugiaAgenda[]} */ ([]));
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function useAgendaEditor(idMedico, hoy) {
     }).catch(() => {
       if (cancelado) return;
       setCirujano(null);
+      setErrorCarga(true);
       setCargando(false);
     });
     return () => { cancelado = true; };
@@ -123,6 +125,7 @@ export default function useAgendaEditor(idMedico, hoy) {
 
   return {
     cargando,
+    errorCarga,
     cirujano,
     tieneAgenda,
     borrador,
