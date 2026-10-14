@@ -1,0 +1,13 @@
+/* .ac-err, .ac-hora: shared/shared.css. .ncw-icon-btn*: shared de la jornada de cirugía. */
+.ac-dia{padding:12px 0;border-top:1px solid var(--border);}
+.ac-dia:first-of-type{border-top:none;}
+.ac-dia-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;}
+.ac-dia-resumen{font-size:var(--fs-sm);color:var(--ink-500);text-align:right;}
+/* Día apagado: el nombre baja de énfasis. */
+.ac-dia.off .ts-label{color:var(--ink-500);font-weight:var(--fw-regular);}
+
+.ac-bloques{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.ac-bloque{display:flex;align-items:center;gap:8px;}
+.ac-bloque-sep{font-size:var(--fs-sm);color:var(--ink-400);}
+.ac-bloque .icon{width:16px;height:16px;}
+.ac-dia-acciones{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}

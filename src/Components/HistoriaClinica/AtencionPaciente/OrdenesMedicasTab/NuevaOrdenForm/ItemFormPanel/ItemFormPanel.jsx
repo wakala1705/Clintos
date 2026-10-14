@@ -4,7 +4,7 @@ import {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import './ItemFormPanel.css';
-import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
+import ToggleSwitch from '@/Components/ToggleSwitch/ToggleSwitch';
 import RecetarioVozModal from '../RecetarioVozModal/RecetarioVozModal';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import Button from '@/Components/Button/Button';
