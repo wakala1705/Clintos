@@ -3,13 +3,16 @@
 import './CirujanosTable.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
+import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { minutosSemanales } from '@/hooks/AgendaCirujanos/disponibilidad';
 import {
   diasParaVencer, ESTADO_AGENDA_LABEL, estadoAgenda, proximaExcepcion,
 } from '@/hooks/AgendaCirujanos/estadoAgenda';
 import { ETIQUETA_TIPO } from '@/hooks/AgendaCirujanos/excepciones';
-import { fechaCorta, fechaLabel, formatoHoras } from '@/hooks/AgendaCirujanos/formato';
+import {
+  fechaCorta, fechaLabel, formatoHoras, inicialesCirujano,
+} from '@/hooks/AgendaCirujanos/formato';
 import { puedeEditarAgenda } from '@/hooks/AgendaCirujanos/permisos';
 
 const TONO_ESTADO = {
@@ -70,8 +73,13 @@ export default function CirujanosTable({
                 onClick={puede ? () => onAbrir(cirujano.idMedico) : undefined}
               >
                 <td>
-                  <div className="ac-nombre">{nombre}</div>
-                  <div className="ac-sub">Cirujano</div>
+                  <div className="ac-cirujano-cell">
+                    <PatientAvatar iniciales={inicialesCirujano(cirujano.nombre)} className="ac-avatar" />
+                    <div>
+                      <div className="ac-nombre">{nombre}</div>
+                      <div className="ac-sub">Cirujano</div>
+                    </div>
+                  </div>
                 </td>
                 <td>{cirujano.sede}</td>
                 <td><Badge tone={TONO_ESTADO[estado]}>{ESTADO_AGENDA_LABEL[estado]}</Badge></td>

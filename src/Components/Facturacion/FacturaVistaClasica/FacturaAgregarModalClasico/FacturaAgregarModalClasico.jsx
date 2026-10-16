@@ -7,7 +7,7 @@ import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CurrencyInput from '@/Components/CurrencyInput/CurrencyInput';
 import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
-import CatalogoTipoTerceroModal from '../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
+import CatalogoTipoTerceroModal from '@/Components/CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
 import CatalogoContratacionModal from '../CatalogoContratacionModal/CatalogoContratacionModal';
 import AdmisionPickerModal from '../AdmisionPickerModal/AdmisionPickerModal';
 import CitaPickerModal from '../CitaPickerModal/CitaPickerModal';
@@ -362,7 +362,7 @@ function SectionHeader({
 // CatalogoAseguradorasModal (ya existe -- encargo explícito:
 // "administradora... me debería abrir el mismo modal de id terceros", cada
 // uno con su propio estado de apertura para no compartir instancia),
-// Régimen reusa ../CatalogoTipoTerceroModal/CatalogoTipoTerceroModal, No
+// Régimen reusa @/Components/CatalogoTipoTerceroModal/CatalogoTipoTerceroModal, No
 // Contrato reusa ../CatalogoContratacionModal/CatalogoContratacionModal y
 // No. Referencia reusa ../AdmisionPickerModal/AdmisionPickerModal (los 3
 // nuevos, ver esos archivos) -- este último trae el dataset mock de

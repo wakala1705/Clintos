@@ -20,6 +20,19 @@ export function formatoHoras(min) {
 }
 
 /**
+ * Primer nombre + primer apellido. Con 4+ palabras se asume 2 nombres + 2
+ * apellidos (el apellido es la 3ª); con 2-3, el apellido es la 2ª.
+ * @param {string} nombre
+ * @returns {string} "Amaury Rafael Garcia Burgos" → "AG"; "Abraham Ganem Bechara" → "AG"
+ */
+export function inicialesCirujano(nombre) {
+  const partes = nombre.trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return '';
+  const apellido = partes.length >= 4 ? partes[2] : partes[1];
+  return `${partes[0][0]}${apellido ? apellido[0] : ''}`.toUpperCase();
+}
+
+/**
  * @param {number} n
  * @returns {string} "1 cirugía", "3 cirugías"
  */

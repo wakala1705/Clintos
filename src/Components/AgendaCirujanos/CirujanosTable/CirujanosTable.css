@@ -16,6 +16,10 @@
 .ac-fila-clicable{cursor:pointer;}
 .ac-fila-clicable:hover{background:var(--bg);}
 
+.ac-cirujano-cell{display:flex;align-items:center;gap:10px;}
+/* Color/forma vienen de .patient-avatar-badge (PatientAvatar.css) — acá solo
+   el tamaño/tipografía propios de esta tabla. */
+.ac-avatar{width:32px;height:32px;font-weight:var(--fw-medium);font-size:var(--fs-sm);}
 .ac-nombre{font-weight:var(--fw-semibold);}
 .ac-sub{font-size:var(--fs-sm);color:var(--ink-500);}
 .ac-num{white-space:nowrap;}

@@ -280,6 +280,7 @@ export default function PanelGeneral() {
           cirugia={lista.find((c) => c.id === modal.cirugia.id) ?? modal.cirugia}
           onConsumoRegistrado={handleConsumoRegistrado}
           onFinalizar={handleFinalizarDesdeHoja}
+          onVerEnCanastas={(c) => router.push(canastasHref(c))}
           onClose={() => setModal(null)}
         />
       )}

@@ -1,9 +1,20 @@
-/* .modal-overlay/.modal/.modal-body/.modal-footer: scaffolding genérico
-   definido en ../../shared/shared.css. Header: ver
-   @/Components/ModalHeader/ModalHeader. Acá solo lo exclusivo de este
-   modal -- catálogo fijo y angosto, sin búsqueda/paginación (a diferencia
-   de @/Components/CatalogoAseguradorasModal). */
-.ctc-modal{width:460px;max-width:95vw;}
+/* Componente app-wide con chrome propio (.ctc-*), ver CatalogoTipoTerceroModal.jsx.
+   Header: @/Components/ModalHeader/ModalHeader. */
+.ctc-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal,50);background:rgba(16,24,39,.5);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.ctc-modal{
+  background:var(--surface-modal,#fff);border-radius:var(--radius-lg,12px);
+  width:460px;max-width:95vw;max-height:90vh;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+}
+.ctc-body{padding:20px 24px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;min-height:0;}
+.ctc-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
 
 .ctc-table{
   border:1px solid var(--border);border-radius:var(--radius);

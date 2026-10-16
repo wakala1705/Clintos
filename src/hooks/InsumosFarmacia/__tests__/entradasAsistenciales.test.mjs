@@ -52,6 +52,12 @@ test('filtrarEntradas: por estado, origen y texto (consecutivo, referencia, paci
   assert.deepEqual(filtrarEntradas(e, { busqueda: 'zzzz' }), []);
 });
 
+test('filtrarEntradas: campoBusqueda acota la búsqueda a ese campo', () => {
+  const e = ENTRADAS_HISTORICAS;
+  assert.deepEqual(filtrarEntradas(e, { busqueda: 'ent-100412', campoBusqueda: 'consecutivo' }).map((x) => x.id), ['ENT-100412']);
+  assert.deepEqual(filtrarEntradas(e, { busqueda: 'ent-100412', campoBusqueda: 'paciente' }), []);
+});
+
 test('conteosEstado y totalesEntradas: las anuladas no cuentan como devueltas', () => {
   const lista = [
     { estado: 'confirmada', items: [{ cantidad: 2 }, { cantidad: 3 }] },

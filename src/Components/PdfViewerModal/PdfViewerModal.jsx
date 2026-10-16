@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import './PdfViewerModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
-import { LuFileText } from 'react-icons/lu';
+import { LuFileText, LuPrinter } from 'react-icons/lu';
 
 // Visor de PDF en un modal (<iframe> nativo): muestra un documento sin sacar
 // al usuario de la pantalla. Usa las clases del modal de la feature donde se
@@ -13,12 +13,23 @@ import { LuFileText } from 'react-icons/lu';
 //
 //   <PdfViewerModal title="Orden médica" subtitle="Claudia ..." src="/mock/x.pdf" onClose={...} />
 //
+// `srcDoc` (opcional, en vez de `src`): documento HTML generado en el momento. Agrega el botón
+// "Imprimir / Guardar PDF", que imprime el contenido del iframe con el diálogo del navegador
+// (ahí mismo se elige "Guardar como PDF"), sin librerías de PDF.
+//
 // Escape cierra solo el visor: el listener va en captura y corta la
 // propagación para no cerrar también el modal de debajo (que escucha Escape en
 // el mismo `document`).
 export default function PdfViewerModal({
-  src, title, subtitle, onClose, closeLabel = 'Cerrar visor',
+  src, srcDoc, title, subtitle, onClose, closeLabel = 'Cerrar visor',
 }) {
+  const frameRef = useRef(null);
+  function imprimir() {
+    const ventana = frameRef.current?.contentWindow;
+    if (!ventana) return;
+    ventana.focus();
+    ventana.print();
+  }
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.key !== 'Escape') return;
@@ -48,11 +59,12 @@ export default function PdfViewerModal({
         />
 
         <div className="pvm-body">
-          <iframe className="pvm-frame" src={src} title={title} />
+          <iframe ref={frameRef} className="pvm-frame" src={src} srcDoc={srcDoc} title={title} />
         </div>
 
         <div className="modal-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>
+          {srcDoc && <Button type="button" icon={LuPrinter} onClick={imprimir}>Imprimir / Guardar PDF</Button>}
         </div>
       </div>
     </div>

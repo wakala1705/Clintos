@@ -22,6 +22,7 @@ import {
   LuFlaskConical,
   LuHeart,
   LuHeartPulse,
+  LuFiles,
   LuHistory,
   LuChevronDown,
   LuLandmark,
@@ -172,17 +173,17 @@ const MODULE_GROUPS = [
         enabled: true,
       },
       {
-        title: 'Panel general',
-        description: 'Estado de las salas y programación quirúrgica del día.',
-        icon: LuLayoutGrid,
-        href: '/cirugia',
-        enabled: true,
-      },
-      {
         title: 'Programación',
         description: 'Agenda y gestiona la ocupación de las salas de cirugía.',
         icon: LuCalendarDays,
         href: '/cirugia/programacion',
+        enabled: true,
+      },
+      {
+        title: 'Panel general',
+        description: 'Estado de las salas y programación quirúrgica del día.',
+        icon: LuLayoutGrid,
+        href: '/cirugia',
         enabled: true,
       },
       {
@@ -200,10 +201,26 @@ const MODULE_GROUPS = [
     module: 'asistencial',
     items: [
       {
-        title: 'Facturación',
+        title: 'Facturas',
         description: 'Consulta, filtra y gestiona las facturas emitidas.',
         icon: LuReceipt,
         href: '/facturas',
+        enabled: true,
+      },
+      {
+        title: 'Facturación masiva',
+        badge: 'Hospitalización',
+        description: 'Genera facturas para varias admisiones hospitalarias a la vez.',
+        icon: LuFiles,
+        href: '/facturacion-masiva/hospitalizacion',
+        enabled: true,
+      },
+      {
+        title: 'Facturación masiva',
+        badge: 'Consulta externa',
+        description: 'Genera facturas para varias atenciones de consulta externa a la vez.',
+        icon: LuFiles,
+        href: '/facturacion-masiva/consulta-externa',
         enabled: true,
       },
       {
@@ -373,9 +390,10 @@ export default function Home() {
                     <div className="module-grid">
                       {group.items.map((item) => (
                         <ModuleCard
-                          key={item.title}
+                          key={item.href ?? item.title}
                           icon={item.icon}
                           title={item.title}
+                          badge={item.badge}
                           description={item.description}
                           href={item.href}
                           enabled={item.enabled}

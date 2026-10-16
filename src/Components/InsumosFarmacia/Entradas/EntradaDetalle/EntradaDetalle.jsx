@@ -1,51 +1,36 @@
 'use client';
 
-import './EntradaDetalle.css';
+// Mismo panel que MovimientoDetalleInline de Salidas: se reusan sus clases
+// .mig-detalle-inline-* (el CSS lo carga este import, igual que Solicitudes.css).
+import '../../Solicitudes/MovimientoDetalleInline/MovimientoDetalleInline.css';
+import EntradaItemsTable from '../EntradaItemsTable/EntradaItemsTable';
 import { unidadesEntrada } from '@/hooks/InsumosFarmacia/entradasAsistenciales';
 
 // Panel de detalle debajo de la grilla: los insumos devueltos por la entrada
-// seleccionada (código, descripción, lote y cantidad). Misma tarjeta .mig-items-card
-// que el detalle de Salidas asistenciales.
-export default function EntradaDetalle({ entrada }) {
+// seleccionada. `fill` (modo "Dividida", montado como `bottom` de SplitPane): ocupa
+// todo el alto que le da el split.
+export default function EntradaDetalle({ entrada, fill = false }) {
+  const className = `mig-detalle-inline${fill ? ' mig-detalle-inline-fill' : ''}`;
+
   if (!entrada) {
     return (
-      <div className="ent-detalle ent-detalle-empty">
+      <div className={`${className} mig-detalle-inline-empty`}>
         Selecciona una entrada en la grilla para ver los insumos devueltos.
       </div>
     );
   }
 
+  const unidades = unidadesEntrada(entrada);
   return (
-    <div className="ent-detalle">
-      <div className="ent-detalle-header">
+    <div className={className}>
+      <div className="mig-detalle-inline-header">
         <h3 className="mig-section-title">Insumos devueltos ({entrada.items.length})</h3>
-        <span className="ent-detalle-meta">
-          {entrada.consecutivo} · {unidadesEntrada(entrada)} {unidadesEntrada(entrada) === 1 ? 'unidad' : 'unidades'}
+        <span className="mig-detalle-inline-consecutivo">
+          {entrada.consecutivo} · {unidades} {unidades === 1 ? 'unidad' : 'unidades'}
         </span>
       </div>
       <div className="mig-items-card">
-        <div className="mig-items-scroll">
-          <table className="mig-grid">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Descripción</th>
-                <th>Lote</th>
-                <th className="mig-num">Cantidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entrada.items.map((i) => (
-                <tr key={`${i.codigo}-${i.noLote ?? ''}`}>
-                  <td className="mig-strong">{i.codigo}</td>
-                  <td>{i.nombre}</td>
-                  <td>{i.manejaLote && i.noLote ? i.noLote : '—'}</td>
-                  <td className="mig-num">{i.cantidad}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <EntradaItemsTable key={entrada.id} items={entrada.items} />
       </div>
     </div>
   );

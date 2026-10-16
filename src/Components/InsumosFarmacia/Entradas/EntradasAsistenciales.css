@@ -1,5 +1,3 @@
 /* Shell (.app/.main/.content), tokens, .mig-page-header, .card, .filter-bar y .mig-search
-   vienen de ../Solicitudes/Solicitudes.css y ../Solicitudes/shared/shared.css. Acá solo
-   lo propio de esta pantalla; cada bloque tiene su CSS en su carpeta. */
-.ent-resumen{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
-.ent-resumen b{color:var(--ink-900);font-weight:var(--fw-semibold);}
+   vienen de ../Solicitudes/Solicitudes.css y ../Solicitudes/shared/shared.css. Esta
+   pantalla no tiene reglas propias; cada bloque tiene su CSS en su carpeta. */

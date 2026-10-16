@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import './AllModulesModal.css';
+import Badge from '@/Components/Badge/Badge';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import PillTabs from '@/Components/Home/PillTabs/PillTabs';
 import { LuLayoutGrid, LuLock } from 'react-icons/lu';
@@ -67,7 +68,7 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
       ...group,
       items: !q || normalizar(group.title).includes(q)
         ? group.items
-        : group.items.filter((item) => normalizar(item.title).includes(q)),
+        : group.items.filter((item) => normalizar(`${item.title} ${item.badge ?? ''}`).includes(q)),
     }))
     .filter((group) => group.items.length > 0);
 
@@ -111,6 +112,7 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
                       <div className="amm-item-body">
                         <div className="amm-item-title-row">
                           <span className="amm-item-title">{item.title}</span>
+                          {item.badge && <Badge tone="info">{item.badge}</Badge>}
                           {!item.enabled && (
                             <span className="module-card-badge"><LuLock className="icon" />Próximamente</span>
                           )}
@@ -121,13 +123,13 @@ export default function AllModulesModal({ groups, initialModule, onClose }) {
                   );
                   if (!item.enabled) {
                     return (
-                      <div key={item.title} className="amm-item disabled" aria-disabled="true">
+                      <div key={item.href ?? item.title} className="amm-item disabled" aria-disabled="true">
                         {content}
                       </div>
                     );
                   }
                   return (
-                    <Link key={item.title} href={item.href} className="amm-item" onClick={onClose}>
+                    <Link key={item.href ?? item.title} href={item.href} className="amm-item" onClick={onClose}>
                       {content}
                     </Link>
                   );

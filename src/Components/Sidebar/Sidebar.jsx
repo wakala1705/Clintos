@@ -24,6 +24,7 @@ import {
   LuHandCoins,
   LuHeart,
   LuHeartPulse,
+  LuFiles,
   LuHistory,
   LuHouse,
   LuLandmark,
@@ -79,7 +80,10 @@ export default function Sidebar() {
   const isHospitalizacion = isGestionEnfermeria || isAdmisiones || isHistoriaClinicaHosp || isInterconsulta || isTriage;
   const isFacturas = pathname === '/facturas';
   const isTrazabilidad = pathname === '/trazabilidad';
-  const isFinanzas = isFacturas || isTrazabilidad;
+  const isFacturacionMasivaHosp = pathname === '/facturacion-masiva/hospitalizacion';
+  const isFacturacionMasivaCE = pathname === '/facturacion-masiva/consulta-externa';
+  const isFacturacion = isFacturas || isTrazabilidad || isFacturacionMasivaHosp || isFacturacionMasivaCE;
+  const isFinanzas = isFacturacion;
   const isSolicitudesInsumosFarmacia = pathname === '/insumos-farmacia/solicitudes';
   const isEntradasInsumosFarmacia = pathname === '/insumos-farmacia/entradas';
   const isInsumosFarmacia = isSolicitudesInsumosFarmacia || isEntradasInsumosFarmacia;
@@ -138,8 +142,8 @@ export default function Sidebar() {
         </div>
         <div className="nav-body">
           <Link href="/cirugia/gestion" className={`nav-subitem${isCirugiaGestion ? ' active' : ''}`}><LuClipboardCheck className="icon" />Gestión de cirugías</Link>
-          <Link href="/cirugia" className={`nav-subitem${isCirugiaPanel ? ' active' : ''}`}><LuLayoutGrid className="icon" />Panel general</Link>
           <Link href="/cirugia/programacion" className={`nav-subitem${isCirugiaProgramacion ? ' active' : ''}`}><LuCalendarDays className="icon" />Programación</Link>
+          <Link href="/cirugia" className={`nav-subitem${isCirugiaPanel ? ' active' : ''}`}><LuLayoutGrid className="icon" />Panel general</Link>
           <Link href="/cirugia/canastas" className={`nav-subitem${isCirugiaCanastas ? ' active' : ''}`}><LuPackage className="icon" />Canastas</Link>
         </div>
       </div>
@@ -160,8 +164,19 @@ export default function Sidebar() {
           <LuChevronDown className="icon chev" />
         </div>
         <div className="nav-body">
-          <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
-          <Link href="/trazabilidad" className={`nav-subitem${isTrazabilidad ? ' active' : ''}`}><LuHistory className="icon" />Trazabilidad</Link>
+          <div className={`nav-group sub${isFacturacion ? ' open' : ''}`}>
+            <div className="nav-head" onClick={(e) => window.toggleNavGroup(e.currentTarget)} tabIndex="0" role="button">
+              <LuReceipt className="icon nav-icon" />
+              <span className="label">Facturación</span>
+              <LuChevronDown className="icon chev" />
+            </div>
+            <div className="nav-body">
+              <Link href="/facturas" className={`nav-subitem${isFacturas ? ' active' : ''}`}><LuReceipt className="icon" />Facturas</Link>
+              <Link href="/facturacion-masiva/hospitalizacion" className={`nav-subitem${isFacturacionMasivaHosp ? ' active' : ''}`}><LuFiles className="icon" />Masiva - QX</Link>
+              <Link href="/facturacion-masiva/consulta-externa" className={`nav-subitem${isFacturacionMasivaCE ? ' active' : ''}`}><LuFiles className="icon" />Masiva - CE</Link>
+              <Link href="/trazabilidad" className={`nav-subitem${isTrazabilidad ? ' active' : ''}`}><LuHistory className="icon" />Trazabilidad</Link>
+            </div>
+          </div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuWallet className="icon" />Cartera</div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuVault className="icon" />Tesorería</div>
           <div className="nav-subitem" tabIndex="0" role="button"><LuShoppingCart className="icon" />Compras</div>

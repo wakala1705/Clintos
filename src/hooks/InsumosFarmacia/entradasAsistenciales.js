@@ -94,14 +94,25 @@ export function ordenarEntradas(entradas) {
   ));
 }
 
-export function filtrarEntradas(entradas, { busqueda = '', estado = 'todos', origen = 'todos' } = {}) {
+// Campos por los que se puede buscar (selector "Buscar por" del SearchField).
+export const BUSQUEDA_ENTRADA_OPTIONS = [
+  { value: 'consecutivo', label: 'Consecutivo' },
+  { value: 'referencia', label: 'Referencia' },
+  { value: 'paciente', label: 'Paciente' },
+  { value: 'documento', label: 'Documento' },
+];
+
+// `campoBusqueda` acota el texto a un campo; sin él, busca en todos.
+export function filtrarEntradas(entradas, {
+  busqueda = '', estado = 'todos', origen = 'todos', campoBusqueda,
+} = {}) {
   const texto = busqueda.trim().toLowerCase();
+  const campos = campoBusqueda ? [campoBusqueda] : BUSQUEDA_ENTRADA_OPTIONS.map((o) => o.value);
   return entradas.filter((e) => {
     if (estado !== 'todos' && e.estado !== estado) return false;
     if (origen !== 'todos' && e.origen !== origen) return false;
     if (!texto) return true;
-    return [e.consecutivo, e.referencia, e.paciente, e.documento]
-      .some((v) => v.toLowerCase().includes(texto));
+    return campos.some((c) => String(e[c] ?? '').toLowerCase().includes(texto));
   });
 }
 

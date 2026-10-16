@@ -94,6 +94,9 @@ html:not([data-theme="dark"]) .theme-icon-moon{display:none;}
   border-radius:3px;background:#7dd4ea;
 }
 .nav-group.sub .nav-subitem.active::before{left:-13px;}
+/* Tercer nivel (Finanzas → Facturación → ítems): --fw-medium para no pesar más
+   que su padre (.nav-head, también --fw-medium). */
+.nav-group .nav-group.sub .nav-subitem{font-weight:var(--fw-medium);}
 .nav-subitem .icon{width:17px;height:17px;flex-shrink:0;}
 
 .sidebar.collapsed .nav-head .label,
