@@ -1,0 +1,115 @@
+/* Overlay/card/footer y tokens: shared/shared.css; tamaño de la card: .hca-card en
+   ../HojaConsumoAltModal.css; barra de contexto: ../ContextoBarra. Acá solo el cuerpo del resumen. */
+.hcr-cuerpo{
+  flex:1;min-height:0;overflow-y:auto;padding:20px 32px;
+  display:flex;flex-direction:column;gap:20px;
+}
+
+/* Franja de estado de la devolución a farmacia: lo primero que se lee. */
+.hcr-estado{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--gray-bg);
+}
+.hcr-estado-icon{
+  width:36px;height:36px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-500);
+}
+.hcr-estado-icon .icon{width:18px;height:18px;}
+.hcr-estado strong{display:block;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.hcr-estado span:not(.hcr-estado-icon){font-size:var(--fs-sm);color:var(--ink-700);}
+.hcr-estado.info{background:var(--status-info-bg);border-color:var(--primary-100);}
+.hcr-estado.info .hcr-estado-icon{color:var(--primary-dark);}
+.hcr-estado.ok{background:var(--green-bg);border-color:transparent;}
+.hcr-estado.ok .hcr-estado-icon{color:#0d7a3d;}
+
+/* Cifras */
+.hcr-cifras{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0;}
+.hcr-cifra{
+  display:flex;align-items:center;gap:12px;min-width:0;
+  padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);
+}
+.hcr-cifra-icon{
+  width:36px;height:36px;border-radius:var(--radius);flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary-dark);
+}
+.hcr-cifra-icon .icon{width:18px;height:18px;}
+.hcr-cifra.warn .hcr-cifra-icon{background:var(--amber-bg);color:var(--amber-fg);}
+.hcr-cifra dt{font-size:var(--fs-xs);color:var(--ink-500);}
+.hcr-cifra dd{margin:2px 0 0;font-size:var(--fs-lg);font-weight:var(--fw-bold);color:var(--ink-900);font-variant-numeric:tabular-nums;}
+.hcr-cifra dd small{display:block;margin-top:1px;font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}
+
+/* Columnas */
+.hcr-columnas{display:grid;grid-template-columns:340px minmax(0,1fr);gap:24px;align-items:start;}
+.hcr-lateral{display:flex;flex-direction:column;gap:20px;}
+.hcr-titulo{margin:0 0 8px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);color:var(--ink-500);text-transform:uppercase;letter-spacing:.04em;}
+.hcr-lista{
+  margin:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+.hcr-lista > div{
+  display:flex;justify-content:space-between;gap:12px;padding:8px 12px;
+  border-bottom:1px solid var(--border);font-size:var(--fs-sm);
+}
+.hcr-lista > div:last-child{border-bottom:0;}
+.hcr-lista dt{color:var(--ink-500);}
+.hcr-equipo > div{flex-direction:column;gap:2px;}
+.hcr-lista.hcr-equipo dd{text-align:left;}
+.hcr-lista dd{margin:0;text-align:right;font-weight:var(--fw-medium);color:var(--ink-900);text-transform:uppercase;font-variant-numeric:tabular-nums;}
+
+/* Tabla de insumos */
+.hcr-tabla-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.hcr-tabla-cab .hcr-titulo{margin:0;}
+.hcr-filtros{display:flex;gap:8px;}
+.hcr-tabla-wrap{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:clip;}
+.hcr-tabla{width:100%;border-collapse:collapse;font-size:var(--fs-base);}
+/* Encabezado fijo mientras scrollea el cuerpo del modal (.hcr-cuerpo); el wrap usa overflow:clip
+   (no crea contenedor de scroll) para conservar el radio sin romper el sticky. */
+.hcr-tabla th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  padding:10px 12px;text-align:left;white-space:nowrap;
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+}
+.hcr-tabla td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--ink-900);}
+.hcr-tabla tbody tr:last-child td{border-bottom:0;}
+.hcr-tabla .hcr-num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.hcr-sin-dato{margin-right:8px;font-size:var(--fs-xs);color:var(--ink-400);}
+.hcr-filtros button:disabled{opacity:.45;cursor:not-allowed;}
+.hcr-tabla tr.hcr-dev td{background:var(--amber-bg);}
+.hcr-tabla tfoot td{font-weight:var(--fw-semibold);background:var(--table-header-bg);border-top:1px solid var(--border);border-bottom:0;}
+.hcr-vacio{padding:20px 12px;text-align:center;color:var(--ink-500);}
+.hcr-nota-dev{display:flex;align-items:flex-start;gap:8px;margin:12px 0 0;font-size:var(--fs-sm);color:var(--ink-700);}
+.hcr-nota-dev .icon{width:16px;height:16px;flex:none;margin-top:1px;color:var(--ink-500);}
+
+@media (max-width:1280px){
+  .hcr-cifras{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:1024px){
+  .hcr-cuerpo{padding:16px 20px;}
+  .hcr-columnas{grid-template-columns:minmax(0,1fr);}
+}
+
+/* Modal aparte: más angosto y alto a contenido (no el 90vw×90vh de la hoja) y con entrada propia,
+   para que se sienta un paso nuevo y no la misma ventana. Selector compuesto sobre .modal-card. */
+.modal-card.hcr-card{
+  width:1120px;max-width:100%;height:auto;max-height:calc(100vh - 48px);overflow:hidden;
+  animation:hcr-entrada .24s ease-out;
+}
+@keyframes hcr-entrada{
+  from{opacity:0;transform:translateY(16px) scale(.97);}
+  to{opacity:1;transform:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .modal-card.hcr-card{animation:none;}
+}
+
+/* Barra de contexto dentro del resumen: el modal tiene ancho fijo, así que procedimiento y diagnóstico
+   siempre van en su propia fila (sin recortar con "…" ni dejar el divisor lateral suelto). */
+.hcr-card .hca-ctx-clinico{
+  flex-basis:100%;padding-left:0;border-left:0;padding-top:10px;border-top:1px solid var(--border);
+}
+
+.hcr-error{
+  margin:0;padding:10px 14px;border-radius:var(--radius);
+  background:var(--red-bg);color:var(--red);font-size:var(--fs-sm);font-weight:var(--fw-medium);
+}

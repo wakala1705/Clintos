@@ -1,0 +1,8 @@
+/* .chip-group: shared de la jornada de cirugía. */
+.ac-copiar{
+  margin-top:10px;padding:12px;border:1px solid var(--border);
+  border-radius:var(--radius-lg);background:var(--bg);
+}
+.ac-copiar p{margin:0 0 8px;font-size:var(--fs-sm);color:var(--ink-500);}
+.ac-copiar .chip-group{margin-bottom:10px;}
+.ac-copiar-acciones{display:flex;flex-wrap:wrap;gap:6px;}

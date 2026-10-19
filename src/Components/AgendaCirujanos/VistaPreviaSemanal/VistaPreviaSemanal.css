@@ -1,0 +1,37 @@
+/* .ac-card: shared/shared.css. .psc-agenda-nav-btn: shared de la jornada de cirugía.
+   Los colores de los segmentos del calendario viven en CalendarioSemanal.css;
+   la leyenda los repite con los mismos tokens. */
+.ac-preview{display:flex;flex-direction:column;overflow:hidden;}
+.ac-preview-cab{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding:14px 18px 10px;
+}
+.ac-preview-cab h2{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ac-preview-cab p{margin:2px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+.ac-semana-nav{display:flex;align-items:center;gap:6px;}
+.ac-semana-rango{
+  min-width:150px;text-align:center;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+
+.ac-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 18px 10px;}
+
+.ac-leyenda{
+  list-style:none;margin:0;padding:0 18px 12px;display:flex;flex-wrap:wrap;gap:6px 14px;
+  font-size:var(--fs-sm);color:var(--ink-500);
+}
+.ac-leyenda li{display:inline-flex;align-items:center;gap:6px;}
+.ac-sw{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid var(--border);}
+.ac-sw-disponible{background:var(--surface);}
+.ac-sw-fuera{background:var(--gray-bg);}
+.ac-sw-bloqueo{background-image:repeating-linear-gradient(135deg,var(--ac-block-a) 0 4px,var(--ac-block-b) 4px 8px);}
+.ac-sw-apertura{background:var(--surface);border:1.5px dashed var(--green);}
+.ac-sw-programada{background:var(--green-bg);border-color:var(--green);}
+.ac-sw-realizada{background:var(--blue-bg);border-color:var(--blue-fg);}
+.ac-sw-urgencia{background:var(--violet-bg);border-color:var(--violet-fg);}
+.ac-sw-conflicto{background:var(--amber-bg);border-color:var(--amber);}
+
+@media (max-width:1024px){
+  .ac-preview{overflow:visible;}
+  .ac-stats{grid-template-columns:1fr;}
+}

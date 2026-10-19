@@ -1,0 +1,9 @@
+/* .ac-grid-2, .ac-check, .ac-err, .ac-hint: shared/shared.css.
+   .form-field: shared de la jornada de cirugía. */
+/* Divisor entre Vigencia y Días y horarios. */
+.ac-seccion{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.ac-seccion-titulo{
+  display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 10px;
+  font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+}
+.ac-seccion-titulo span{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}

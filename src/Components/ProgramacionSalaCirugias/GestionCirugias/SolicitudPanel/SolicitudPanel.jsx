@@ -2,19 +2,31 @@
 
 import { useEffect, useRef } from 'react';
 import {
-  LuCalendarPlus, LuChevronRight, LuCircleAlert, LuEye, LuInfo,
+  LuCalendarPlus, LuChevronRight, LuEye, LuFileText, LuFlaskConical, LuMicroscope, LuScanLine,
+  LuShieldCheck, LuStethoscope,
 } from 'react-icons/lu';
 import './SolicitudPanel.css';
 import Button from '@/Components/Button/Button';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import EstadoChip from '../EstadoChip/EstadoChip';
+import MensajeInfo from './MensajeInfo/MensajeInfo';
 import { ORIGEN_LABEL, listaProcedimientos } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
   accionItem, enmascararDocumento, estadoEstudios, evaluarSolicitud, mensajeFaltantes,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+
+// Ícono de cada requisito, junto a su título.
+const ICONO_ITEM = {
+  orden: LuFileText,
+  estudios: LuMicroscope,
+  laboratorios: LuFlaskConical,
+  imagenes: LuScanLine,
+  valoracion: LuStethoscope,
+  autorizacion: LuShieldCheck,
+};
 
 // Solo se marca lo que se sale de la regla: todo es obligatorio salvo lo que dice "Opcional".
 function Opcional() {
@@ -36,7 +48,7 @@ function EstadoFila({ estado }) {
 //   con texto bajo el detalle, más visible que una consulta.
 // `children` (subfilas) va debajo, a ancho completo.
 function Fila({
-  titulo, estado, obligatorio, detalle, accion, onAccion, sub = false, children,
+  titulo, icono: Icono, estado, obligatorio, detalle, accion, onAccion, sub = false, children,
 }) {
   const esConsulta = accion && estado === 'ok';
   const esTarea = accion && estado !== 'ok';
@@ -44,6 +56,7 @@ function Fila({
     <li className={`sp-fila${sub ? ' sp-fila-sub' : ''}`}>
       <div className="sp-fila-texto">
         <h4 className="sp-fila-titulo">
+          {Icono && <Icono className="icon sp-fila-icono" aria-hidden="true" />}
           {titulo}
           {!obligatorio && <Opcional />}
         </h4>
@@ -86,8 +99,11 @@ export default function SolicitudPanel({
   const ev = evaluarSolicitud(solicitud);
   const { checklist } = solicitud;
   const puedeProgramar = ev.estado === 'lista';
-  // El pie solo da mensaje cuando falta algo (o hay un opcional pendiente).
+  // El mensaje (ícono de info junto al estado de la lista) solo existe cuando falta algo (o hay un opcional pendiente).
   const hayMensajes = !puedeProgramar || ev.opcionalesPendientes.length > 0;
+  const textoMensaje = !puedeProgramar
+    ? mensajeFaltantes(ev)
+    : `${ev.opcionalesPendientes.map((i) => ITEM_LABEL[i.key]).join(', ')}: opcional pendiente, no bloquea la programación.`;
   const estudiosObligatorio = checklist.laboratorios.obligatorio || checklist.imagenes.obligatorio;
 
   // Orden de las filas = orden de las columnas de la tabla.
@@ -98,6 +114,7 @@ export default function SolicitudPanel({
       <Fila
         key={clave}
         titulo={titulo}
+        icono={ICONO_ITEM[clave]}
         estado={item.estado}
         obligatorio={item.obligatorio}
         detalle={item.detalle}
@@ -171,11 +188,28 @@ export default function SolicitudPanel({
           <section className="sp-bloque" aria-labelledby="sp-lista-titulo">
             <div className="sp-seccion-fila">
               <h3 id="sp-lista-titulo" className="sp-seccion">Lista de chequeo</h3>
-              <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>
+              <div className="sp-estado-general">
+                {hayMensajes && !puedeProgramar ? (
+                  <MensajeInfo
+                    tone={ev.estado === 'bloqueada' ? 'bloqueada' : 'pendiente'}
+                    label={ev.estado === 'bloqueada' ? 'Por qué está bloqueada' : 'Por qué está pendiente'}
+                    id="sp-mensaje-card"
+                  >
+                    {textoMensaje}
+                  </MensajeInfo>
+                ) : (
+                  <>
+                    <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>
+                    {hayMensajes && (
+                      <MensajeInfo tone="info" label="Ver detalle" id="sp-mensaje-card">{textoMensaje}</MensajeInfo>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
             <ul className="sp-lista">
               {filaDe('orden', 'Orden médica')}
-              <Fila titulo="Estudios requeridos" estado={estadoEstudios(checklist)} obligatorio={estudiosObligatorio}>
+              <Fila titulo="Estudios requeridos" icono={ICONO_ITEM.estudios} estado={estadoEstudios(checklist)} obligatorio={estudiosObligatorio}>
                 <ul className="sp-sub">
                   {filaDe('laboratorios', 'Laboratorios', true)}
                   {filaDe('imagenes', 'Estudios de imágenes', true)}
@@ -188,27 +222,7 @@ export default function SolicitudPanel({
         </div>
 
         <footer className="sp-pie">
-          {hayMensajes && (
-            <div className="sp-mensajes">
-              {!puedeProgramar && (
-                <p
-                  className={`sp-mensaje ${ev.estado === 'bloqueada' ? 'sp-mensaje-bloqueada' : 'sp-mensaje-pendiente'}`}
-                  id="sp-mensaje"
-                >
-                  <LuCircleAlert className="icon" aria-hidden="true" />
-                  <span>{mensajeFaltantes(ev)}</span>
-                </p>
-              )}
-              {puedeProgramar && ev.opcionalesPendientes.length > 0 && (
-                <p className="sp-mensaje sp-mensaje-info" id="sp-mensaje">
-                  <LuInfo className="icon" aria-hidden="true" />
-                  <span>
-                    {ev.opcionalesPendientes.map((i) => ITEM_LABEL[i.key]).join(', ')}: opcional pendiente, no bloquea la programación.
-                  </span>
-                </p>
-              )}
-            </div>
-          )}
+          {hayMensajes && <span className="sp-sr" id="sp-mensaje">{textoMensaje}</span>}
           <div className="sp-acciones">
             {onSiguiente && (
               <>

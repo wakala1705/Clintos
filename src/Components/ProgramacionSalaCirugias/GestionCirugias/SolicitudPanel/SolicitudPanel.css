@@ -45,6 +45,12 @@
   margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
 }
+/* Ícono del requisito: cuadro con fondo primary-50 e ícono primary (como los de KpiCard). */
+.sp-fila-icono{
+  box-sizing:content-box;width:16px;height:16px;padding:6px;border-radius:8px;flex-shrink:0;
+  background:var(--primary-50);color:var(--primary);
+}
+.sp-sub .sp-fila-icono{width:14px;height:14px;padding:5px;border-radius:7px;}
 /* Estado pegado a la consulta, alineado a la derecha: ✓ discreto o chip. */
 .sp-fila-estado{display:flex;justify-content:flex-end;}
 .sp-fila-consulta{display:flex;justify-content:flex-end;}
@@ -83,17 +89,9 @@
   flex-shrink:0;padding:16px 24px;border-top:1px solid var(--border);background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);
   display:flex;align-items:center;gap:16px;
 }
-.sp-mensajes{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
-.sp-mensaje{
-  margin:0;align-self:flex-start;max-width:100%;display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--radius);
-  font-size:var(--fs-sm);font-weight:var(--fw-medium);line-height:1.45;
-}
-.sp-mensaje .icon{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
-.sp-mensaje-ok{background:var(--clinical-status-complete-bg);color:var(--clinical-status-complete-fg);}
-.sp-mensaje-pendiente{background:var(--clinical-status-pending-bg);color:var(--clinical-status-pending-fg);}
-.sp-mensaje-bloqueada{background:var(--clinical-status-rejected-bg);color:var(--clinical-status-rejected-fg);}
-/* status-info: solo mensajes informativos. */
-.sp-mensaje-info{background:var(--status-info-bg);color:var(--status-info-fg);}
+.sp-estado-general{display:flex;align-items:center;gap:8px;}
+/* Texto solo para lectores de pantalla (descripción de "Programar cirugía"). */
+.sp-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 /* Acciones del pie: [n de total] [Siguiente solicitud] [Programar cirugía], pegadas a la derecha. */
 .sp-acciones{display:flex;align-items:center;gap:12px;margin-left:auto;flex-shrink:0;}
 .sp-posicion{font-size:var(--fs-sm);color:var(--ink-500);white-space:nowrap;}

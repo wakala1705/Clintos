@@ -126,7 +126,7 @@ export function crearSolicitudesMock(hoy = new Date()) {
       ordenNumero: 'OM-2026-08501',
       fechaTentativa: f(9),
       checklist: {
-        orden: pendiente('Falta registrar la orden médica en el sistema.'),
+        orden: ok('Orden emitida el 02/10/2026 por Amaury Rafael Garcia Burgos.'),
         autorizacion: pendiente('Aún no se solicita autorización a Coosalud.'),
         valoracion: pendiente('Sin valoración preanestésica registrada.'),
         laboratorios: pendiente('Gasometría, espirometría y hemograma pendientes de toma.'),

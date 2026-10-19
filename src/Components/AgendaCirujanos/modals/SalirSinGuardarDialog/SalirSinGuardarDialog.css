@@ -1,0 +1,10 @@
+/* .modal-overlay/.modal-card: shared de la jornada de cirugía. */
+.ac-salir-card{width:420px;padding:24px;gap:12px;align-items:center;text-align:center;}
+.ac-salir-icono{
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--amber-bg);color:var(--amber-fg);
+}
+.ac-salir-icono .icon{width:22px;height:22px;}
+.ac-salir-titulo{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ac-salir-texto{margin:0;font-size:var(--fs-base);color:var(--ink-500);}
+.ac-salir-acciones{display:flex;justify-content:center;gap:10px;margin-top:8px;}

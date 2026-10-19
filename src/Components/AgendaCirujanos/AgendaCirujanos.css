@@ -1,0 +1,19 @@
+/* Tokens propios de la feature, derivados de los de color de la jornada de
+   cirugía (ProgramacionSalaCirugias.css) para que hereden el tema oscuro: el
+   rayado de "fuera de agenda", las líneas de la grilla de la vista previa y el
+   rayado rojo de los bloqueos. `--ac-hora-h` es el alto de una hora en esa
+   grilla; CalendarioSemanal.jsx lo fija inline con el mismo valor que usa para
+   posicionar. */
+:root{
+  --ac-hora-h:56px;
+  --ac-hatch:color-mix(in srgb,var(--ink-500) 14%,transparent);
+  --ac-grid:color-mix(in srgb,var(--ink-500) 18%,transparent);
+  --ac-block-a:color-mix(in srgb,var(--red) 24%,transparent);
+  --ac-block-b:color-mix(in srgb,var(--red) 9%,transparent);
+}
+
+/* Breadcrumb de 4 niveles en el editor: una sola línea; el nombre del cirujano se recorta
+   con elipsis antes de apretar los selectores de sede/área. */
+.topbar .breadcrumb{white-space:nowrap;min-width:0;}
+.topbar .breadcrumb .current{overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.topbar .topbar-right{flex-shrink:0;white-space:nowrap;}

@@ -321,6 +321,7 @@ export default function DetalleCirugiaPanel({
           cirugia={cirugia}
           onConsumoRegistrado={onConsumoRegistrado}
           onFinalizar={onFinalizarCirugia}
+          onVerEnCanastas={onVerEnCanastas}
           onClose={() => {
             setHojaGastoAltAbierta(false);
             setHoja(obtenerHojaConsumo(cirugia.id));

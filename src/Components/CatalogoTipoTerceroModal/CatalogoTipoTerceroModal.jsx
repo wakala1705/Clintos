@@ -5,17 +5,15 @@ import './CatalogoTipoTerceroModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 
-// "Catálogo de TERTTEC" (encargo explícito, ver imagen de referencia) --
-// picker fijo (sin búsqueda/paginación, a diferencia de
-// @/Components/CatalogoAseguradorasModal) para el campo "Régimen" de
-// FacturaAgregarModalClasico. Vive en FacturaVistaClasica (no app-wide, ver
-// AGENTS.md "Component organization") porque hoy solo lo dispara ese modal
-// -- si otro modal de Facturación lo llega a necesitar, se reusa desde acá
-// igual que FacturaEditarModalClasico ya reusa CatalogoAseguradorasModal.
-// Reusa el scaffolding .modal-overlay/.modal/.modal-body/.modal-footer de
-// ../../shared/shared.css en vez del propio (.cam-*) de
-// CatalogoAseguradorasModal, porque ese sí necesita ser 100% autocontenido
-// para montarse en cualquier feature del proyecto y este no.
+// "Catálogo de TERTTEC" (tipo de tercero contable) -- picker fijo, sin
+// búsqueda/paginación (a diferencia de @/Components/CatalogoAseguradorasModal),
+// para los campos "Régimen" (FacturaAgregarModalClasico, Facturación masiva).
+// Componente app-wide (ver AGENTS.md "Component organization"): nació en
+// Facturación y se promovió acá al necesitarlo también Facturación masiva.
+// Chrome de modal autocontenido (.ctc-overlay/.ctc-modal/.ctc-body/
+// .ctc-footer, mismo criterio que CatalogoAseguradorasModal/.cam-*) para
+// montarse sin cambios en cualquier feature -- solo consume tokens ya
+// declarados en el :root de cada una.
 const TIPOS_TERCERO_CONTABLE = [
   { tipo: 'EPS', detalle: 'Empresa Promotora de Salud Contributiva' },
   { tipo: 'EPSS', detalle: 'Empresa Promotora de Salud Subsidiada' },
@@ -45,8 +43,8 @@ export default function CatalogoTipoTerceroModal({ onSelect, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal ctc-modal" role="dialog" aria-modal="true" aria-labelledby="ctc-title">
+    <div className="ctc-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="ctc-modal" role="dialog" aria-modal="true" aria-labelledby="ctc-title">
         <ModalHeader
           title="Catálogo de TERTTEC"
           titleId="ctc-title"
@@ -54,7 +52,7 @@ export default function CatalogoTipoTerceroModal({ onSelect, onClose }) {
           closeLabel="Cerrar catálogo"
         />
 
-        <div className="modal-body">
+        <div className="ctc-body">
           <div className="ctc-table">
             <div className="ctc-row ctc-row-head">
               <span>Tipo</span>
@@ -82,7 +80,7 @@ export default function CatalogoTipoTerceroModal({ onSelect, onClose }) {
           </div>
         </div>
 
-        <div className="modal-footer">
+        <div className="ctc-footer">
           <Button variant="secondary" onClick={onClose}>Cancelar</Button>
           <Button variant="primary" onClick={handleElegir} disabled={!seleccion}>Seleccionar</Button>
         </div>

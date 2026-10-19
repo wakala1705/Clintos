@@ -14,6 +14,7 @@ import {
   LuLayoutGrid,
   LuMenu,
   LuReceipt,
+  LuScissors,
   LuSettings,
   LuSquarePlus,
 } from 'react-icons/lu';
@@ -82,6 +83,21 @@ const MEGA_MENU = [
         items: [
           { id: 'gestion-camas', label: 'Gestión de camas', href: '/gestion-camas' },
           { id: 'gestion-turnos', label: 'Gestión de turnos', href: '/gestion-turnos' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'cirugia',
+    label: 'Cirugía',
+    icon: LuScissors,
+    columns: [
+      {
+        id: 'configuracion',
+        label: 'Configuración',
+        icon: LuSettings,
+        items: [
+          { id: 'agenda-cirujanos', label: 'Agenda de cirujanos', href: '/cirugia/configuracion/agenda-cirujanos' },
         ],
       },
     ],

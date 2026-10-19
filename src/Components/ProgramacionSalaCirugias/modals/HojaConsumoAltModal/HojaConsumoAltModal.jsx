@@ -12,6 +12,7 @@ import Badge from '@/Components/Badge/Badge';
 import ContextoBarra from './ContextoBarra/ContextoBarra';
 import ColumnaFormulario from './ColumnaFormulario/ColumnaFormulario';
 import InsumosPanel from './InsumosPanel/InsumosPanel';
+import ResumenHoja from './ResumenHoja/ResumenHoja';
 import FinalizarCirugiaModal from '../FinalizarCirugiaModal/FinalizarCirugiaModal';
 import {
   construirHojaConsumo, guardarHojaConsumo, materialesConExceso, minutosEntreHoras, obtenerHojaConsumo,
@@ -20,6 +21,7 @@ import {
   SALAS, ahoraDemo, estaIniciada, fechaHoraLocalISO, registrarConsumo,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { planRegistroConsumo } from '@/hooks/ProgramacionSalaCirugias/cierre/cierre';
+import { resumenAlRegistrar } from '@/hooks/ProgramacionSalaCirugias/cierre/resumenHoja';
 
 // Sin sesión real en el prototipo: el mismo usuario que ya firma la recepción en Canastas.
 const USUARIO = 'Camilo Grondona';
@@ -30,9 +32,16 @@ const USUARIO = 'Camilo Grondona';
 // al instante la devolución a farmacia de lo no consumido (ver planRegistroConsumo). Se puede usar con
 // consumo parcial; se bloquea si algún insumo excede lo entregado o si la cirugía aún no está realizada
 // con la canasta recibida.
+// Al registrar (y al reabrir una hoja ya registrada) esta hoja se reemplaza por un modal aparte con el
+// resumen de solo lectura (ResumenHoja), con la opción de imprimirlo / guardarlo como PDF.
 export default function HojaConsumoAltModal({
-  cirugia, onClose, onConsumoRegistrado, onFinalizar,
+  cirugia, onClose, onConsumoRegistrado, onFinalizar, onVerEnCanastas,
 }) {
+  // Hoja ya registrada: es lo que muestra el resumen (null = se está llenando el formulario).
+  const [registrada] = useState(() => {
+    const guardada = obtenerHojaConsumo(cirugia.id);
+    return guardada?.estado === 'registrada' ? guardada : null;
+  });
   // Los tiempos reales de inicio/fin de la cirugía (botones Iniciar/Finalizar) se
   // reflejan en "Inicio cirugía"/"Fin cirugía" si la hoja aún no los tiene.
   const [hoja, setHoja] = useState(() => {
@@ -50,6 +59,8 @@ export default function HojaConsumoAltModal({
   const hayExceso = materialesConExceso(hoja.materiales).length > 0;
   const plan = planRegistroConsumo(cirugia, hoja.materiales);
   const [error, setError] = useState('');
+  // Resumen previo a registrar (aún no se registró nada): "Confirmar" es lo que registra.
+  const [revisando, setRevisando] = useState(false);
   const [finalizando, setFinalizando] = useState(false);
   // "Finalizar cirugía" solo si la cirugía está en curso y la pantalla lo soporta (`onFinalizar`).
   const enCurso = estaIniciada(cirugia);
@@ -58,14 +69,18 @@ export default function HojaConsumoAltModal({
   const esTablet = useMediaQuery('(max-width:1024px)');
 
   useEffect(() => {
-    // Con el diálogo de finalizar encima, Escape no cierra la hoja.
+    // Con el diálogo de finalizar encima, Escape no cierra la hoja. Revisando el resumen, Escape vuelve a la hoja.
     if (finalizando) return undefined;
     const onKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key !== 'Escape') return;
+      if (revisando) {
+        setError('');
+        setRevisando(false);
+      } else onClose();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onClose, finalizando]);
+  }, [onClose, finalizando, revisando]);
 
   // Guarda el borrador antes (no se pierde lo digitado) y finaliza; la hoja sigue abierta con la
   // cirugía ya realizada, así "Registrar consumo" queda habilitado sin salir del modal.
@@ -76,7 +91,19 @@ export default function HojaConsumoAltModal({
     if (finalizada) set('tiempos', { ...hoja.tiempos, termOperac: horaFinReal });
   }
 
-  function registrar() {
+  // "Registrar consumo" en la hoja solo abre el resumen para revisar: no registra nada todavía.
+  function revisar() {
+    if (hayExceso || plan.bloqueo) return;
+    setError('');
+    setRevisando(true);
+  }
+  function volverALaHoja() {
+    setError('');
+    setRevisando(false);
+  }
+
+  // "Confirmar" en el resumen: ahora sí registra el consumo, genera la devolución y guarda la hoja.
+  function confirmar() {
     if (hayExceso || plan.bloqueo) return;
     // Primero el consumo de la canasta (puede fallar): si falla no queda la hoja a medias.
     let actualizada = null;
@@ -91,7 +118,13 @@ export default function HojaConsumoAltModal({
         return;
       }
     }
-    guardarHojaConsumo({ ...hoja, estado: 'registrada', registradaEn: fechaHoraLocalISO(ahoraDemo()) });
+    const hojaRegistrada = {
+      ...hoja,
+      estado: 'registrada',
+      registradaEn: fechaHoraLocalISO(ahoraDemo()),
+      resumen: resumenAlRegistrar({ plan, usuario: USUARIO, consecutivo: devolucion?.consecutivo ?? null }),
+    };
+    guardarHojaConsumo(hojaRegistrada);
     if (actualizada) onConsumoRegistrado?.(actualizada, devolucion);
     onClose();
   }
@@ -120,6 +153,27 @@ export default function HojaConsumoAltModal({
       ? ` ${plural(plan.sinDato, 'insumo de la canasta no está', 'insumos de la canasta no están')} en la hoja y se registran como usados.`
       : '';
     mensaje = `Al registrar, ${devolver}${sinDato} La hoja queda disponible para firma de farmacia.`;
+  }
+
+  if (revisando) {
+    const vistaPrevia = { ...hoja, resumen: resumenAlRegistrar({ plan, usuario: USUARIO }) };
+    return (
+      <ResumenHoja
+        key="resumen-previo"
+        pendiente
+        cirugia={cirugia}
+        hoja={vistaPrevia}
+        error={error}
+        onVolver={volverALaHoja}
+        onConfirmar={confirmar}
+      />
+    );
+  }
+
+  if (registrada) {
+    return (
+      <ResumenHoja key="resumen" cirugia={cirugia} hoja={registrada} onClose={onClose} onVerEnCanastas={onVerEnCanastas} />
+    );
   }
 
   return (
@@ -155,7 +209,7 @@ export default function HojaConsumoAltModal({
             <Button variant="outline" onClick={() => guardarHojaConsumo(hoja)}>Guardar borrador</Button>
             {puedeFinalizar && <Button icon={LuCircleCheck} onClick={() => setFinalizando(true)}>Finalizar cirugía</Button>}
             {/* En curso el consumo no se registra todavía: primero se finaliza la cirugía. */}
-            {!enCurso && <Button icon={LuCheck} disabled={hayExceso || plan.bloqueo !== null} onClick={registrar}>Registrar consumo</Button>}
+            {!enCurso && <Button icon={LuCheck} disabled={hayExceso || plan.bloqueo !== null} onClick={revisar}>Registrar consumo</Button>}
           </div>
         </div>
       </div>

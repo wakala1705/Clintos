@@ -1,0 +1,40 @@
+/* Overlay/card/body/footer, .form-field y .field-with-search/.search-btn:
+   ../../shared/shared.css. */
+.fmce-card{width:560px;}
+
+.fmce-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+.fmce-section-title{
+  margin:0 0 8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+}
+
+/* Cards seleccionables (radiogroup) — qué se factura. */
+.fmce-opciones{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fmce-opcion{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  padding:14px 16px;text-align:left;cursor:pointer;font-family:inherit;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  transition:border-color .15s,background .15s;
+}
+.fmce-opcion:hover{border-color:var(--primary);}
+.fmce-opcion:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.fmce-opcion.selected{
+  border-color:var(--primary);background:var(--interactive-selected-bg);
+  box-shadow:inset 0 0 0 1px var(--primary);
+}
+.fmce-opcion-icon{
+  width:36px;height:36px;border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary-dark);
+}
+.fmce-opcion.selected .fmce-opcion-icon{background:var(--surface);}
+.fmce-opcion-icon .icon{width:20px;height:20px;}
+.fmce-opcion-titulo{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.fmce-opcion-desc{font-size:var(--fs-sm);color:var(--ink-500);line-height:1.4;}
+.fmce-opcion-check{
+  position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  background:var(--primary);color:#fff;
+}
+.fmce-opcion.selected .fmce-opcion-check{display:flex;}
+.fmce-opcion-check .icon{width:12px;height:12px;}

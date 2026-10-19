@@ -982,3 +982,64 @@ sala de espera. Código en `@/Components/PantallaFamiliares/` y lógica en
 - **Limitación**: el estado vive en memoria del navegador. Un televisor con su
   propio navegador no ve lo que el personal mueve en otro equipo hasta que haya
   backend; la fuente de datos es lo único que cambiaría.
+
+# Agenda de cirujanos
+
+Configuración independiente (menú hamburguesa → Cirugía → Configuración →
+Agenda de cirujanos, ruta `/cirugia/configuracion/agenda-cirujanos`) que
+define cuándo está disponible cada cirujano para que Programación de cirugía
+solo le asigne cirugías dentro de esa disponibilidad. Código en
+`@/Components/AgendaCirujanos/` y lógica en `@/hooks/AgendaCirujanos/`. Spec:
+`docs/superpowers/specs/2026-10-14-agenda-cirujanos-design.md`.
+
+- **Una sola ruta**: sin parámetro muestra el listado; `?cirujano=<idMedico>`
+  abre el editor de ese cirujano (la página va envuelta en `Suspense` por
+  `useSearchParams`). El `idMedico` es el del `MEDICOS_CATALOGO`.
+- **Lógica pura y tests**: toda la regla (intervalos, disponibilidad efectiva =
+  horario base + aperturas − bloqueos, conflictos, validaciones, estado de
+  agenda) vive en módulos sin React ni `new Date()` y se prueba con
+  `node --test` (`npm test`). Tipada con JSDoc + `// @ts-check`; el repo no
+  tiene TypeScript, así que se verifica con
+  `npx -y -p typescript tsc --allowJs --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --skipLibCheck --lib es2022,dom $(ls src/hooks/AgendaCirujanos/*.js | grep -v useAgendaEditor)`.
+- **Solo advierte**: un cambio de horario o una excepción que deje cirugías
+  `programada`/`urgencia` (desde hoy) fuera de agenda muestra `ImpactoModal`
+  con la lista y el motivo. Nunca cancela ni reprograma nada. El horario se
+  guarda con botón; las excepciones al instante.
+- **Datos**: `agendaCirujanosService.js` es la única puerta de la UI (todo
+  `async`, store en memoria que se reemplaza, nunca se muta). Para conectar la
+  API real basta reimplementar ese archivo. Los datos de ejemplo
+  (`mockAgendaCirujanos.js`) se calculan relativos a `hoy`.
+- **Sede**: `SEDES_CATALOGO` (Topbar) usa `'01'` = Norte y
+  `mockCirugiaData.SEDES` usa `'02'` = Norte. El servicio resuelve la sede por
+  **nombre**, en un solo lugar; no compares ids de sede entre ambos catálogos.
+- **Vínculo con cirugías**: por nombre (`cirugia.cirujano === medico.nombre`),
+  porque las cirugías no guardan id del cirujano. Con backend debe pasar a id.
+- **Roles**: `permisos.js` aísla la regla (Programación edita a todos; un
+  cirujano, solo a sí mismo). Hoy no hay identidad de usuario en la sesión:
+  `USUARIO_ACTUAL` es un mock (`rol: 'programacion'`), sin UI para cambiarlo.
+- **Estilos**: no declara su propio `:root`; `AgendaCirujanos.jsx` importa
+  `ProgramacionSalaCirugias.css` y `shared/shared.css` (tokens, shell, toast,
+  modales, `.filter-bar`) como las demás rutas de `/cirugia`, y solo agrega
+  tokens `--ac-*` derivados (rayado, líneas de la grilla, bloqueos). Las reglas
+  que repiten 2+ componentes van en `AgendaCirujanos/shared/shared.css`,
+  importado una vez desde `page.jsx`.
+- **`ToggleSwitch`** es ahora app-wide (`@/Components/ToggleSwitch/ToggleSwitch`);
+  antes era local a Historia Clínica.
+- **Límites conocidos**: la confirmación de "salir sin guardar" cubre el botón
+  "volver" y `beforeunload`, pero no la navegación por el menú lateral o el
+  breadcrumb (no hay precedente en el repo). Una urgencia fuera de 07:00–19:00
+  siempre cuenta como fuera de agenda (la jornada configurable llega a las
+  19:00). Las aperturas extra cuentan aunque el día caiga fuera de la vigencia.
+- **Límites conocidos (revisión final)**: el botón Atrás del navegador
+  (popstate de `?cirujano=` al listado) descarta el borrador sin confirmar,
+  igual que el menú lateral y el breadcrumb. Desde un deep link `?cirujano=`
+  se puede editar un cirujano de otra sede: `puedeEditarAgenda` ignora la sede
+  (todavía no hay sede de usuario). En `agendaCirujanosService`, si la sede del
+  cirujano no se resuelve por nombre en `mockCirugiaData.SEDES` (p. ej. "SEDE
+  CENTRO" vs "Sede Central"), `listarCirugiasDeCirujano` devuelve `[]` (sin
+  conflictos) y solo lee cirugías de la sede del catálogo del cirujano; con
+  backend hay que unificar los ids de sede, fallar en vez de devolver `[]` y
+  traer las cirugías de todas las sedes.
+- **Fuera de alcance (pendiente)**: bloquear en el wizard de programación a un
+  cirujano sin agenda vigente (salvo urgencias) y sombrear las zonas fuera de
+  agenda en la vista "Médicos" de Programación.

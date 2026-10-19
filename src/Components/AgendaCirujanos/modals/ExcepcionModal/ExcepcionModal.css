@@ -1,0 +1,5 @@
+/* .modal-*, .form-field, .chip-group: shared de la jornada de cirugía.
+   .ac-grid-2, .ac-check, .ac-err, .ac-hint: shared/shared.css. */
+.ac-exc-modal{width:580px;}
+.ac-exc-ayuda{margin:-4px 0 0;}
+.ac-exc-todo-dia{margin-top:0;}

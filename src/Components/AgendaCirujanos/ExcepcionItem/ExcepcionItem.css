@@ -1,0 +1,18 @@
+/* .ncw-icon-btn*: shared de la jornada de cirugía. */
+.ac-exc{
+  display:flex;align-items:flex-start;gap:12px;padding:12px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+}
+.ac-exc-pasada{opacity:.6;}
+.ac-exc-icono{
+  width:32px;height:32px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.ac-exc-icono .icon{width:16px;height:16px;}
+.ac-exc-bloqueo .ac-exc-icono{background:var(--red-bg);color:var(--red);}
+.ac-exc-apertura .ac-exc-icono{background:var(--green-bg);color:#0d7a3d;}
+.ac-exc-cuerpo{flex:1;min-width:0;}
+.ac-exc-titulo{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.ac-exc-rango{margin-top:2px;font-size:var(--fs-sm);color:var(--ink-500);}
+.ac-exc-nota{margin-top:4px;font-size:var(--fs-sm);color:var(--ink-700);}
+.ac-exc .ncw-icon-btn .icon{width:16px;height:16px;}

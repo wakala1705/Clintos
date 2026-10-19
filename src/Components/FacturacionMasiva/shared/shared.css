@@ -1,0 +1,168 @@
+/* Tokens + reset del shell (sidebar + topbar + content wrapper) duplicados
+   aquí siguiendo el mismo criterio que Trazabilidad/shared/shared.css (cada
+   feature de nivel superior es dueña de su propia copia) — ver AGENTS.md
+   "Component organization". Importado una sola vez desde FacturacionMasiva.jsx. */
+:root{
+  --primary:#0065CD;
+  --primary-dark:#004E9E;
+  --primary-50:#eef4ff;
+  --primary-100:#dbe8fe;
+  --sidebar:#0065CD;
+  --sidebar-active:rgba(255,255,255,.20);
+  --accent-teal:#58c2dc;
+  --ink-900:#101827;
+  --ink-700:#374151;
+  --ink-500:#6b7280;
+  --ink-400:#838a99;
+  --border:#e5e8ef;
+  --surface:#ffffff;
+  --surface-modal:#ffffff;
+  --bg:#f4f6fb;
+  --table-header-bg:var(--bg);
+  --gray-fg:#6b7280;
+  --gray-bg:#eef0f4;
+  --radius:8px;
+  --radius-lg:12px;
+
+  --green:#12a150;
+  --green-bg:#e6f8ee;
+  --red:#c02b2b;
+  --red-bg:#fdeceb;
+  --amber:#e08a00;
+  --amber-bg:#fff4e0;
+  --amber-fg:#a45a05;
+  --status-info-bg:var(--primary-50);
+  --status-info-fg:var(--primary-dark);
+
+  --interactive-selected-bg:var(--primary-100);
+  --interactive-selected-border:var(--primary-100);
+  --interactive-selected-text:var(--primary-dark);
+
+  --space-2:8px;
+  --space-3:12px;
+  --z-sticky:10;
+  --z-popover:20;
+  --z-modal:50;
+
+  --input-sm:32px;
+  --input-md:36px;
+  --input-lg:44px;
+}
+html[data-theme="dark"]{
+  --primary-50:rgba(0,101,205,.16);
+  --primary-100:rgba(0,101,205,.30);
+  --ink-900:#f1f4f9;
+  --ink-700:#c6cbd6;
+  --ink-500:#8b93a3;
+  --ink-400:#7b8394;
+  --border:#2a3242;
+  --surface:#161c2b;
+  --surface-modal:#1c2333;
+  --bg:#0c0f17;
+  --gray-fg:#9aa3b2;
+  --gray-bg:#242c3d;
+  --green:#34d399;
+  --green-bg:rgba(52,211,153,.16);
+  --red:#ff8a8a;
+  --red-bg:rgba(192,43,43,.20);
+  --amber:#f5b942;
+  --amber-bg:rgba(224,138,0,.18);
+  --amber-fg:#f5b942;
+}
+
+html[data-contrast="high"]{
+  --border:#cbd3dd;
+  --ink-500:#4b5563;
+  --ink-400:#5b6474;
+}
+html[data-theme="dark"][data-contrast="high"]{
+  --border:#5b6a85;
+  --ink-500:#b7bfcc;
+  --ink-400:#a9b2c1;
+}
+html[data-theme="dark"] body{background:var(--bg);}
+
+/* Scrollbar fina/homologada (mismo criterio de duplicación por feature que
+   el resto de tokens de color -- ver Facturacion/shared/shared.css y
+   GestionEnfermeria/shared/shared.css, mismos valores). Aplica al scroll de
+   .traz-table-wrap y a cualquier otro overflow de la feature. */
+*{scrollbar-width:thin;scrollbar-color:#d7dce6 transparent;}
+*::-webkit-scrollbar{width:5px;height:5px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:#d7dce6;border-radius:10px;}
+*::-webkit-scrollbar-thumb:hover{background:#c3c9d6;}
+html[data-theme="dark"] *{scrollbar-color:#333e54 transparent;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb{background:#333e54;}
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-inter),system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";
+  background:var(--bg);
+  color:var(--ink-900);
+  font-size:var(--fs-base);
+  -webkit-font-smoothing:antialiased;
+}
+.icon{
+  width:20px;height:20px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+  stroke:currentColor;
+}
+
+.app{
+  display:flex;
+  height:100vh;
+  min-width:768px;
+  overflow:hidden;
+}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
+
+/* ---------- MODAL scaffolding ----------
+   Header homologado: @/Components/ModalHeader/ModalHeader (AGENTS.md "Modales"). */
+.modal-overlay{
+  position:fixed;inset:0;z-index:var(--z-modal);background:rgba(16,24,39,.45);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  isolation:isolate;
+}
+.modal-card{
+  background:var(--surface-modal);border-radius:var(--radius-lg);width:640px;max-width:100%;
+  max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+}
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;min-height:0;}
+.modal-footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;
+}
+
+/* Input con botón de búsqueda adentro — mismo patrón que Facturacion/shared.css. */
+.field-with-search{position:relative;}
+.form-field .field-with-search input{padding-right:38px;}
+.search-btn{
+  position:absolute;top:50%;right:4px;transform:translateY(-50%);
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:none;border-radius:var(--radius);
+  background:transparent;color:var(--primary);cursor:pointer;
+}
+.search-btn:hover{background:var(--primary-50);color:var(--primary-dark);}
+.search-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.search-btn .icon{width:16px;height:16px;}
+
+/* ---------- FORM FIELD ---------- */
+.form-field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.form-field label{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-700);}
+.form-field input{
+  border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;height:var(--input-md);
+  font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);background:var(--surface);width:100%;
+}
+.form-field input:focus{outline:2px solid var(--primary);outline-offset:1px;}
+html:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown:not(:disabled){
+  background-color:var(--amber-bg);border-color:#eccb85;
+}
+html[data-theme="dark"]:not([data-required-highlight="off"]) .form-field input:required:placeholder-shown:not(:disabled){
+  background-color:var(--amber-bg);border-color:#6b4a10;
+}

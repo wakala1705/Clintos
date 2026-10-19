@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import './ModuleCard.css';
+import Badge from '@/Components/Badge/Badge';
 import { LuArrowRight, LuLock } from 'react-icons/lu';
 
 export default function ModuleCard({
-  icon: Icon, title, description, href, enabled = true, tone = 'blue',
+  icon: Icon, title, badge, description, href, enabled = true, tone = 'blue',
 }) {
   const inner = (
     <>
@@ -11,6 +12,7 @@ export default function ModuleCard({
       <div className="module-card-body">
         <div className="module-card-title-row">
           <span className="module-card-title">{title}</span>
+          {badge && <Badge tone="info">{badge}</Badge>}
           {!enabled && (
             <span className="module-card-badge"><LuLock className="icon" />Próximamente</span>
           )}

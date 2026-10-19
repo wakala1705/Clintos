@@ -1,0 +1,44 @@
+/* Reglas compartidas por 2+ componentes de "Agenda de cirujanos" (ver AGENTS.md
+   "Component organization"). Se importa una sola vez desde la ruta (page.jsx).
+   Los tokens de color, el shell (.app/.main/.content/.psc-page-header), el
+   toast (.psc-toast), el scaffolding de modales (.modal-overlay/.modal-card/
+   .modal-body/.modal-footer/.form-field), los chips (.chip-group) y la barra de
+   filtros (.filter-bar/.filter-spacer) vienen de ProgramacionSalaCirugias.css y
+   shared/shared.css de esa feature: AgendaCirujanos.jsx los importa antes. */
+
+.ac-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);min-height:0;
+}
+
+/* Mensajes de carga / vacío / sin permiso. */
+.ac-estado{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:40px 24px;text-align:center;color:var(--ink-500);font-size:var(--fs-base);
+}
+.ac-estado p{margin:0;}
+.ac-estado-titulo{font-size:var(--fs-xl);font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+.ac-err{
+  display:flex;align-items:flex-start;gap:6px;margin:8px 0 0;
+  font-size:var(--fs-sm);color:var(--red);
+}
+.ac-err .icon{width:14px;height:14px;flex-shrink:0;margin-top:1px;}
+.ac-hint{margin:8px 0 0;font-size:var(--fs-sm);color:var(--ink-500);}
+
+.ac-callout{
+  display:flex;gap:10px;padding:12px;border-radius:var(--radius);
+  font-size:var(--fs-sm);line-height:1.4;
+}
+.ac-callout p{margin:0;}
+.ac-callout .icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;}
+.ac-callout-info{background:var(--status-info-bg);color:var(--status-info-fg);}
+.ac-callout-warn{background:var(--amber-bg);color:var(--amber-fg);}
+
+.ac-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ac-check{
+  display:flex;align-items:center;gap:8px;margin-top:10px;
+  font-size:var(--fs-base);color:var(--ink-900);cursor:pointer;
+}
+.ac-check input{width:16px;height:16px;accent-color:var(--primary);margin:0;}
+/* Ancho de un selector de hora ("07:00"). */
+.ac-hora{width:104px;flex-shrink:0;}

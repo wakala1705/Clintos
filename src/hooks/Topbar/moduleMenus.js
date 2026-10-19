@@ -1,6 +1,6 @@
 import {
   LuActivity, LuCalendarDays, LuCalendarPlus, LuClipboardCheck, LuFileInput, LuFileText,
-  LuHeartPulse, LuHistory, LuLayoutGrid, LuMessagesSquare, LuPackage, LuReceipt,
+  LuFiles, LuHeartPulse, LuHistory, LuLayoutGrid, LuMessagesSquare, LuPackage, LuReceipt,
   LuSyringe, LuUsers,
 } from 'react-icons/lu';
 
@@ -26,12 +26,14 @@ export const MODULE_MENUS = {
   ],
   'Cirugía': [
     { id: 'gestion', label: 'Gestión de cirugías', href: '/cirugia/gestion', icon: LuClipboardCheck },
-    { id: 'panel', label: 'Panel general', href: '/cirugia', icon: LuLayoutGrid },
     { id: 'programacion', label: 'Programación', href: '/cirugia/programacion', icon: LuCalendarDays },
+    { id: 'panel', label: 'Panel general', href: '/cirugia', icon: LuLayoutGrid },
     { id: 'canastas', label: 'Canastas', href: '/cirugia/canastas', icon: LuPackage },
   ],
   'Finanzas': [
     { id: 'facturas', label: 'Facturas', href: '/facturas', icon: LuReceipt },
+    { id: 'facturacion-masiva-hospitalizacion', label: 'Facturación masiva · Hospitalización', href: '/facturacion-masiva/hospitalizacion', icon: LuFiles },
+    { id: 'facturacion-masiva-consulta-externa', label: 'Facturación masiva · Consulta externa', href: '/facturacion-masiva/consulta-externa', icon: LuFiles },
     { id: 'trazabilidad', label: 'Trazabilidad', href: '/trazabilidad', icon: LuHistory },
   ],
   'Inventario': [
