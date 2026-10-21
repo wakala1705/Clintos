@@ -95,7 +95,7 @@ export default function CatalogoContratacionModal({
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal ccm-modal" role="dialog" aria-modal="true" aria-labelledby="ccm-title">
         <ModalHeader
           icon={LuTriangleAlert}

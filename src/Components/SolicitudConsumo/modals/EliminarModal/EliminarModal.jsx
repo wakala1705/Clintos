@@ -19,7 +19,7 @@ export default function EliminarModal({ open, repId, onCancel, onConfirm }) {
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
+    <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
       <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="eliminar-modal-title">
         <ModalHeader title="Eliminar solicitud" titleId="eliminar-modal-title" onClose={onCancel} />
         <div className="modal-body-plain" style={{ padding: '16px 24px 8px' }}>

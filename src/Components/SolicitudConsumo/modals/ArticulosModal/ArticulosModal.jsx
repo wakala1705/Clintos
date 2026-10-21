@@ -123,7 +123,7 @@ export default function ArticulosModal({ mode, rep, tipoArticuloNuevo, onBack, o
 
   return (
     <>
-      <div className="modal-overlay">
+      <div className="modal-overlay open">
         <div className="modal modal-xl" role="dialog" aria-modal="true" aria-labelledby="articulos-modal-title">
           <ModalHeader
             icon={LuBoxes}

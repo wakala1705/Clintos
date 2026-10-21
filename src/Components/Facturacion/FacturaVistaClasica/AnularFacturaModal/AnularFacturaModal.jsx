@@ -49,7 +49,7 @@ export default function AnularFacturaModal({ factura, onClose, onConfirm }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation">
+    <div className="modal-overlay open" role="presentation">
       <div
         className="fvc-discard-modal"
         role="alertdialog"

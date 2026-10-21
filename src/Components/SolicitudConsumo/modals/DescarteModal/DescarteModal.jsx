@@ -26,7 +26,7 @@ export default function DescarteModal({ open, mode, onKeepEditing, onConfirm }) 
     : 'Tienes artículos en el carrito que no se guardarán. Si descartás, la solicitud no quedará registrada.';
 
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onKeepEditing(); }}>
+    <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onKeepEditing(); }}>
       <div className="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="descarte-modal-title">
         <ModalHeader title={title} titleId="descarte-modal-title" onClose={onKeepEditing} />
         <div className="modal-body-plain" style={{ padding: '16px 24px 8px' }}>

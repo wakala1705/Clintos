@@ -61,7 +61,7 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
 
   return (
     <>
-      <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
         <div className="modal-card fmce-card" role="dialog" aria-modal="true" aria-labelledby="fmce-title">
           <ModalHeader
             title="Facturación masiva · Consulta externa"

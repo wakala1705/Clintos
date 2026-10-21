@@ -182,7 +182,7 @@ export default function Vacunacion() {
       </div>
 
       {esquemaPaciente && (
-        <div className="modal-overlay vac-esquema-overlay" role="presentation" onClick={() => setEsquemaPaciente(null)}>
+        <div className="modal-overlay open vac-esquema-overlay" role="presentation" onClick={() => setEsquemaPaciente(null)}>
           <div
             className="modal-card vac-esquema-modal"
             role="dialog"

@@ -330,7 +330,7 @@ export default function AgregarItemModal({
   );
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal aim-modal" role="dialog" aria-modal="true" aria-labelledby="aim-title">
         <ModalHeader
           icon={item ? LuPencil : LuPlus}

@@ -110,7 +110,7 @@ export default function FacturaDetalleModalClasico({ factura, onClose, onFactura
   if (!factura) return null;
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}>
       <div className="modal fvcd-modal" role="dialog" aria-modal="true" aria-labelledby="fvcd-title">
         <ModalHeader
           title="Detalle de factura"

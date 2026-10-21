@@ -27,26 +27,29 @@ import { setBodegaSeleccionada, useBodegaSeleccionada } from '@/hooks/Bodega/bod
 // Solicitudes.jsx (destino de la card "Salidas asistenciales", el único
 // ítem del grupo "Inventario"/módulo contable).
 //
-// Pregunta en cada entrada a la pantalla, no solo la primera vez global
-// (encargo explícito "quiero que cada vez que entre al módulo de salidas
-// asistenciales, me pregunte"): la selección persiste en localStorage entre
-// sesiones (ver hooks/Bodega/bodega.js), así que `!bodega` por sí solo deja
-// de preguntar apenas se elige una vez. `preguntadoEsteMontaje` arranca en
-// false y pasa a true en cuanto el usuario cierra o elige (una sola vez por
-// montaje de este componente) -- como Solicitudes.jsx desmonta este botón al
-// salir de la pantalla, cada entrada real vuelve a montarlo con el flag en
-// false y el modal se auto-abre de nuevo, ya con la última bodega elegida
-// pre-seleccionada. Si nunca hubo bodega elegida (primer uso real), `!bodega`
-// sigue forzando `abierto=true` sin importar este flag -- mismo gate
-// infranqueable de siempre.
+// Pregunta solo la primera vez que se entra a una pantalla con este botón
+// (encargo explícito "se pida solo la primera vez que se entra a esta página
+// hasta que recarguemos nuevamente", 2026-10-21; antes preguntaba en cada
+// entrada): la selección persiste en localStorage entre sesiones (ver
+// hooks/Bodega/bodega.js), así que `!bodega` por sí solo deja de preguntar
+// apenas se elige una vez. `preguntadoEnSesion` vive a nivel de módulo, no en
+// el estado del componente: sobrevive al desmontaje al navegar entre
+// pantallas (Entradas ↔ Salidas ↔ otras rutas) y solo se reinicia al
+// recargar la página. Tras cerrar o elegir una vez, la bodega solo se vuelve
+// a pedir con el botón del Topbar. Si nunca hubo bodega elegida (primer uso
+// real), `!bodega` sigue forzando `abierto=true` sin importar este flag --
+// mismo gate infranqueable de siempre.
+let preguntadoEnSesion = false;
+
 export default function BodegaPickerButton() {
   const bodega = useBodegaSeleccionada();
   const [abiertoManual, setAbiertoManual] = useState(false);
-  const [preguntadoEsteMontaje, setPreguntadoEsteMontaje] = useState(false);
-  const abierto = !bodega || !preguntadoEsteMontaje || abiertoManual;
+  const [preguntado, setPreguntado] = useState(preguntadoEnSesion);
+  const abierto = !bodega || !preguntado || abiertoManual;
 
   function cerrar() {
-    setPreguntadoEsteMontaje(true);
+    preguntadoEnSesion = true;
+    setPreguntado(true);
     setAbiertoManual(false);
   }
 

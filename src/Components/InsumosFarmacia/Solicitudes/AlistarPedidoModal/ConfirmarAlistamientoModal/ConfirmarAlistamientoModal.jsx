@@ -30,7 +30,7 @@ export default function ConfirmarAlistamientoModal({
   const totalUnidades = resumenItems.reduce((acc, it) => acc + it.alistada, 0);
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal mig-confirmar-modal" role="dialog" aria-modal="true" aria-labelledby="mig-confirmar-title">
         <ModalHeader
           icon={LuClipboardCheck}

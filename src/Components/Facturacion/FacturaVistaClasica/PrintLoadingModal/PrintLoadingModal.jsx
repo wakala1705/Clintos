@@ -10,7 +10,7 @@ import { LuLoaderCircle } from 'react-icons/lu';
 // real (mockFacturasData.js: "solo pinta el front"), el delay es artificial.
 export default function PrintLoadingModal({ numero }) {
   return (
-    <div className="modal-overlay" role="presentation">
+    <div className="modal-overlay open" role="presentation">
       <div
         className="modal fvc-print-loading-modal"
         role="alertdialog"

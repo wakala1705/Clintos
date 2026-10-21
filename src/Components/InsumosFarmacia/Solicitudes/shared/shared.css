@@ -150,6 +150,10 @@ html[data-theme="dark"] .mig-grid-scroll::-webkit-scrollbar-thumb:hover{backgrou
 }
 
 /* ---------- MODAL (scaffolding genérico) ---------- */
+/* Los overlays de este módulo llevan `.open` aunque acá no haga nada: Programación de cirugía define
+   `.modal-overlay{display:none;opacity:0}` global y, tras navegar de ahí a Inventario sin recargar,
+   esa regla sigue cargada y deja el modal invisible (y bloqueando clics). `.modal-overlay.open` de
+   esa hoja es más específica y lo vuelve a mostrar. */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(16,24,39,.5);
   display:flex;align-items:center;justify-content:center;z-index:var(--z-modal);padding:24px;

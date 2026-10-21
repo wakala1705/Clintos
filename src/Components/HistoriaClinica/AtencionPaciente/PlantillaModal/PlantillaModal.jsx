@@ -85,7 +85,7 @@ export default function PlantillaModal({ open, onClose, onElegir, plantillas = P
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={handleClose}>
+    <div className="modal-overlay open" role="presentation" onClick={handleClose}>
       <div
         className="modal-card pm-card"
         role="dialog"

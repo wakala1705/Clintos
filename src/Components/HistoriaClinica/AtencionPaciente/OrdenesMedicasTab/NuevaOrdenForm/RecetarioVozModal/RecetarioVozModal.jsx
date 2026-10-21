@@ -137,7 +137,7 @@ export default function RecetarioVozModal({ onClose, onConfirmar }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={onClose}>
+    <div className="modal-overlay open" role="presentation" onClick={onClose}>
       <div
         className={`modal-card rvm-card${estado === 'revision' ? ' rvm-card--revision' : ''}`}
         role="dialog"

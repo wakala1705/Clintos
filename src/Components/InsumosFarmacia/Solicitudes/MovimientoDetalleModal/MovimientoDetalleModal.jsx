@@ -50,7 +50,7 @@ export default function MovimientoDetalleModal({ movimiento, onClose }) {
   if (!movimiento) return null;
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal mig-detalle-modal" role="dialog" aria-modal="true" aria-labelledby="mig-detalle-title">
         <ModalHeader
           title={`Detalle del movimiento ${movimiento.consecutivo}`}

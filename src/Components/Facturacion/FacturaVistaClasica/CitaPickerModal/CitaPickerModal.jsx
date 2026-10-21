@@ -147,7 +147,7 @@ export default function CitaPickerModal({ onSelect, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal cip-modal" role="dialog" aria-modal="true" aria-labelledby="cip-title">
         <ModalHeader
           title="Seleccionar cita"

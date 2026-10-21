@@ -99,7 +99,7 @@ export default function RegistrarVacunacionModal({ pacienteInicial, onClose, onV
     : 'Registrar vacunación';
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={onClose}>
+    <div className="modal-overlay open" role="presentation" onClick={onClose}>
       <div
         className="modal-card rv-modal"
         role="dialog"

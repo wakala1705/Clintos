@@ -22,7 +22,7 @@ import { LuLoaderCircle } from 'react-icons/lu';
 // HistoriaClinicaTab.jsx; `descripcion` es la línea secundaria.
 export default function CreandoPlantillaModal({ descripcion, texto = 'Creando plantilla...' }) {
   return (
-    <div className="modal-overlay" role="presentation">
+    <div className="modal-overlay open" role="presentation">
       <div
         className="modal-card cpm-card"
         role="alertdialog"

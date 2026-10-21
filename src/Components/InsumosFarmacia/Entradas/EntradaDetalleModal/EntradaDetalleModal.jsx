@@ -38,7 +38,7 @@ export default function EntradaDetalleModal({ entrada, onClose }) {
   if (!entrada) return null;
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal ent-detalle-modal" role="dialog" aria-modal="true" aria-labelledby="ent-detalle-title">
         <ModalHeader
           title={`Detalle de la entrada ${entrada.consecutivo}`}

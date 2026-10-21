@@ -95,7 +95,7 @@ const RecomendacionesStep = forwardRef(function RecomendacionesStep({ hidden }, 
       </div>
 
       {pendingUncheckId && (
-        <div className="modal-overlay" role="presentation" onClick={() => setPendingUncheckId(null)}>
+        <div className="modal-overlay open" role="presentation" onClick={() => setPendingUncheckId(null)}>
           <div
             className="modal-card"
             role="alertdialog"

@@ -21,7 +21,7 @@ export default function FacturaPdfViewerModal({ numero, onClose }) {
   }, [onClose]);
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal fvc-pdf-viewer-modal" role="dialog" aria-modal="true" aria-labelledby="fvc-pdf-viewer-title">
         <ModalHeader
           icon={LuPrinter}

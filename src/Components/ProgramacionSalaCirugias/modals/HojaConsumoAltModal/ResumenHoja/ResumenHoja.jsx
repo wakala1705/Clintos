@@ -2,13 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import {
-  LuArrowLeft, LuCheck, LuCircleCheck, LuClipboardCheck, LuClock, LuFileQuestion, LuPackageCheck, LuPackageMinus, LuPrinter, LuTruck,
+  LuArrowLeft, LuCheck, LuChevronDown, LuCircleCheck, LuClipboardCheck, LuClock, LuFileQuestion, LuPackageCheck, LuPackage, LuPackageMinus, LuPrinter, LuTimer, LuTruck, LuUsers,
 } from 'react-icons/lu';
 import './ResumenHoja.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import Badge from '@/Components/Badge/Badge';
-import ChipFilter from '@/Components/ChipFilter/ChipFilter';
 import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import ContextoBarra from '../ContextoBarra/ContextoBarra';
 import { construirResumenHoja, documentoResumenHtml } from '@/hooks/ProgramacionSalaCirugias/cierre/resumenHoja';
@@ -28,15 +27,14 @@ export default function ResumenHoja({
 }) {
   const vm = useMemo(() => construirResumenHoja(cirugia, hoja, { pendiente }), [cirugia, hoja, pendiente]);
   const salir = pendiente ? onVolver : onClose;
-  const [filtro, setFiltro] = useState('todos');
   const [verPdf, setVerPdf] = useState(false);
+  const [estadoAbierto, setEstadoAbierto] = useState(false);
   const srcDoc = useMemo(() => (verPdf ? documentoResumenHtml(vm) : ''), [verPdf, vm]);
 
-  const conDevolucion = vm.filas.filter((f) => f.conDevolucion);
-  const filas = filtro === 'devolucion' ? conDevolucion : vm.filas;
   const c = vm.cifras;
 
-  const cifras = [
+  // Las 3 primeras viven dentro de la franja de estado (acordeón); el tiempo quirúrgico, en el bloque de Tiempos.
+  const cifrasEstado = [
     {
       icon: LuPackageCheck, label: 'Insumos usados', valor: c.usadas, extra: `de ${c.entregadas} entregados`,
     },
@@ -46,10 +44,25 @@ export default function ResumenHoja({
     {
       icon: LuFileQuestion, label: 'Sin consumo digitado', valor: c.sinDato, extra: c.sinDato > 0 ? 'contados como usados' : 'todos informados', warn: c.sinDato > 0,
     },
+  ];
+  const cifrasTiempo = [
     {
       icon: LuClock, label: 'Tiempo quirúrgico', valor: c.tiempoReal, extra: `estimado ${c.tiempoEstimado}`,
     },
   ];
+  const renderCifras = (lista) => (
+    <dl className="hcr-cifras">
+      {lista.map((x) => (
+        <div key={x.label} className={`hcr-cifra${x.warn ? ' warn' : ''}`}>
+          <span className="hcr-cifra-icon"><x.icon className="icon" aria-hidden="true" /></span>
+          <div>
+            <dt>{x.label}</dt>
+            <dd>{x.valor} <small>{x.extra}</small></dd>
+          </div>
+        </div>
+      ))}
+    </dl>
+  );
 
   return (
     <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) salir(); }}>
@@ -72,32 +85,73 @@ export default function ResumenHoja({
 
       <div className="hcr-cuerpo">
         {error && <p className="hcr-error" role="alert">{error}</p>}
-        <div className={`hcr-estado ${vm.devolucion.tono}`} role="status">
-          <span className="hcr-estado-icon">
-            {vm.devolucion.tono === 'info' ? <LuTruck className="icon" aria-hidden="true" /> : <LuCircleCheck className="icon" aria-hidden="true" />}
-          </span>
-          <div>
-            <strong>{vm.devolucion.titulo}</strong>
-            <span>{vm.devolucion.detalle}</span>
+        <div className={`hcr-estado ${vm.devolucion.tono}`}>
+          <button
+            type="button"
+            className="hcr-estado-cab"
+            aria-expanded={estadoAbierto}
+            aria-controls="hcr-estado-cuerpo"
+            onClick={() => setEstadoAbierto((v) => !v)}
+          >
+            <span className="hcr-estado-icon">
+              {vm.devolucion.tono === 'info' ? <LuTruck className="icon" aria-hidden="true" /> : <LuCircleCheck className="icon" aria-hidden="true" />}
+            </span>
+            <span className="hcr-estado-texto" role="status">
+              <strong>{vm.devolucion.titulo}</strong>
+              <span className="hcr-estado-sub">{vm.devolucion.detalle}</span>
+            </span>
+            <LuChevronDown className="icon hcr-estado-chev" aria-hidden="true" />
+          </button>
+          <div id="hcr-estado-cuerpo" className="hcr-estado-cuerpo" hidden={!estadoAbierto}>
+            {renderCifras(cifrasEstado)}
           </div>
         </div>
 
-        <dl className="hcr-cifras">
-          {cifras.map((x) => (
-            <div key={x.label} className={`hcr-cifra${x.warn ? ' warn' : ''}`}>
-              <span className="hcr-cifra-icon"><x.icon className="icon" aria-hidden="true" /></span>
-              <div>
-                <dt>{x.label}</dt>
-                <dd>{x.valor} <small>{x.extra}</small></dd>
-              </div>
-            </div>
-          ))}
-        </dl>
-
         <div className="hcr-columnas">
-          <div className="hcr-lateral">
+          <section aria-labelledby="hcr-insumos" className="hcr-bloque hcr-insumos">
+            <div className="hcr-sec-cab">
+              <span className="hcr-sec-icon"><LuPackage className="icon" aria-hidden="true" /></span>
+              <h4 id="hcr-insumos" className="hcr-titulo">Insumos</h4>
+            </div>
+            <table className="hcr-tabla">
+              <thead>
+                <tr>
+                  <th scope="col">Material</th>
+                  <th scope="col" className="hcr-num">Entregado</th>
+                  <th scope="col" className="hcr-num">Usado</th>
+                  <th scope="col" className="hcr-num">Devuelto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vm.filas.map((f) => (
+                  <tr key={f.nombre} className={f.conDevolucion ? 'hcr-dev' : undefined}>
+                    <td>{f.nombre}</td>
+                    <td className="hcr-num">{f.entregado}</td>
+                    <td className="hcr-num">
+                      {f.sinDato && <span className="hcr-sin-dato">sin dato</span>}
+                      {f.usado}
+                    </td>
+                    <td className="hcr-num">{f.devuelto || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total · {plural(vm.totalItems, 'ítem', 'ítems')}</td>
+                  <td className="hcr-num">{vm.totalEntregado}</td>
+                  <td className="hcr-num">{c.usadas}</td>
+                  <td className="hcr-num">{c.devueltas}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </section>
+
+          <div className="hcr-lateral hcr-bloque">
             <section aria-labelledby="hcr-equipo">
-              <h4 id="hcr-equipo" className="hcr-titulo">Equipo quirúrgico</h4>
+              <div className="hcr-sec-cab">
+                <span className="hcr-sec-icon"><LuUsers className="icon" aria-hidden="true" /></span>
+                <h4 id="hcr-equipo" className="hcr-titulo">Equipo quirúrgico</h4>
+              </div>
               <dl className="hcr-lista hcr-equipo">
                 {vm.equipo.map((e) => (
                   <div key={e.rol}><dt>{e.rol}</dt><dd>{e.nombre}</dd></div>
@@ -105,60 +159,18 @@ export default function ResumenHoja({
               </dl>
             </section>
             <section aria-labelledby="hcr-tiempos">
-              <h4 id="hcr-tiempos" className="hcr-titulo">Tiempos</h4>
+              <div className="hcr-sec-cab">
+                <span className="hcr-sec-icon"><LuTimer className="icon" aria-hidden="true" /></span>
+                <h4 id="hcr-tiempos" className="hcr-titulo">Tiempos</h4>
+              </div>
               <dl className="hcr-lista">
                 {vm.tiempos.map((t) => (
                   <div key={t.etiqueta}><dt>{t.etiqueta}</dt><dd>{t.valor}</dd></div>
                 ))}
               </dl>
+              {renderCifras(cifrasTiempo)}
             </section>
           </div>
-
-          <section aria-labelledby="hcr-insumos">
-            <div className="hcr-tabla-cab">
-              <h4 id="hcr-insumos" className="hcr-titulo">Insumos</h4>
-              <div className="hcr-filtros" role="group" aria-label="Filtrar insumos">
-                <ChipFilter size="sm" active={filtro === 'todos'} aria-pressed={filtro === 'todos'} count={vm.filas.length} onClick={() => setFiltro('todos')}>Todos</ChipFilter>
-                <ChipFilter size="sm" active={filtro === 'devolucion'} aria-pressed={filtro === 'devolucion'} count={conDevolucion.length} disabled={conDevolucion.length === 0} onClick={() => setFiltro('devolucion')}>Con devolución</ChipFilter>
-              </div>
-            </div>
-            <div className="hcr-tabla-wrap">
-              <table className="hcr-tabla">
-                <thead>
-                  <tr>
-                    <th scope="col">Material</th>
-                    <th scope="col" className="hcr-num">Entregado</th>
-                    <th scope="col" className="hcr-num">Usado</th>
-                    <th scope="col" className="hcr-num">Devuelto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filas.length === 0 && (
-                    <tr><td colSpan={4} className="hcr-vacio">Ningún insumo tiene devolución.</td></tr>
-                  )}
-                  {filas.map((f) => (
-                    <tr key={f.nombre} className={f.conDevolucion ? 'hcr-dev' : undefined}>
-                      <td>{f.nombre}</td>
-                      <td className="hcr-num">{f.entregado}</td>
-                      <td className="hcr-num">
-                        {f.sinDato && <span className="hcr-sin-dato">sin dato</span>}
-                        {f.usado}
-                      </td>
-                      <td className="hcr-num">{f.devuelto || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td>Total · {plural(vm.totalItems, 'ítem', 'ítems')}</td>
-                    <td className="hcr-num">{vm.totalEntregado}</td>
-                    <td className="hcr-num">{c.usadas}</td>
-                    <td className="hcr-num">{c.devueltas}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </section>
         </div>
       </div>
 

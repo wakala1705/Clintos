@@ -112,7 +112,7 @@ export default function GrowthChartModal({
   const ticksY = [0, 0.25, 0.5, 0.75, 1].map((f) => dominioY[0] + f * (dominioY[1] - dominioY[0]));
 
   return (
-    <div className="modal-overlay gcm-overlay" role="presentation" onClick={onClose}>
+    <div className="modal-overlay open gcm-overlay" role="presentation" onClick={onClose}>
       <div
         className="modal-card gcm-modal"
         role="dialog"

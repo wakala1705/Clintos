@@ -104,7 +104,7 @@ export default function CatalogoServiciosAreaModal({
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal csam-modal" role="dialog" aria-modal="true" aria-labelledby="csam-title">
         <ModalHeader
           title="Servicios contratados por área"

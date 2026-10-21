@@ -60,7 +60,7 @@ export default function EditarLoteModal({ lote, itemLabel, onClose, onSave }) {
   const pendiente = Math.max(0, lote.esperada - lote.cantidad);
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal mig-editar-lote-modal" role="dialog" aria-modal="true" aria-labelledby="mig-editar-lote-title">
         <ModalHeader
           icon={LuPackage}

@@ -829,7 +829,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) attemptClose(); }}>
       <div className="modal fam-modal" role="dialog" aria-modal="true" aria-labelledby="fam-title">
         {/* 2 columnas, riel izquierdo a toda la altura del modal (encargo
             explícito: "el modal debería estar compuesto de dos columnas: 1
@@ -1613,7 +1613,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
           de header. Mismo efecto que "Mantener tercero actual"/Escape --
           cerrar sin aplicar el cambio, nunca sin decisión implícita. */}
       {confirmandoTerceroAdmision && (
-        <div className="modal-overlay" role="presentation">
+        <div className="modal-overlay open" role="presentation">
           <div className="fvc-discard-modal fam-tercero-modal" role="alertdialog" aria-modal="true" aria-labelledby="fam-tercero-title" aria-describedby="fam-tercero-desc">
             <button
               type="button"
@@ -1644,7 +1644,7 @@ export default function FacturaAgregarModalClasico({ factura, onClose }) {
       )}
 
       {confirmingClose && (
-        <div className="modal-overlay" role="presentation">
+        <div className="modal-overlay open" role="presentation">
           <div className="fvc-discard-modal" role="alertdialog" aria-modal="true" aria-labelledby="fam-discard-title" aria-describedby="fam-discard-desc">
             <div className="fvc-discard-icon"><LuTriangleAlert className="icon" aria-hidden="true" /></div>
             <h3 id="fam-discard-title">¿Descartar los cambios?</h3>

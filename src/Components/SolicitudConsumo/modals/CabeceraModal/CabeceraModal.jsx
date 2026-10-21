@@ -27,7 +27,7 @@ export default function CabeceraModal({ open, tipoArticulo, onChangeTipoArticulo
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
+    <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
       <div className="modal modal-md" role="dialog" aria-modal="true" aria-labelledby="cabecera-modal-title">
         <ModalHeader title="Nueva solicitud de consumo" titleId="cabecera-modal-title" onClose={onCancel} />
 

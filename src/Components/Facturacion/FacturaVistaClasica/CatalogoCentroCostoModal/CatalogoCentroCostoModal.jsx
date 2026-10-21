@@ -102,7 +102,7 @@ export default function CatalogoCentroCostoModal({ onSelect, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay open" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal cco-modal" role="dialog" aria-modal="true" aria-labelledby="cco-title">
         <ModalHeader
           title="Seleccionar Centro de Costo (CEN)"

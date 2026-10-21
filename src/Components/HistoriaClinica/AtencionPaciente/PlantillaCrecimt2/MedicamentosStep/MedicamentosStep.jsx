@@ -106,7 +106,7 @@ const MedicamentosStep = forwardRef(function MedicamentosStep({ hidden }, ref) {
       </button>
 
       {infoOpen && (
-        <div className="modal-overlay" role="presentation" onClick={() => setInfoOpen(false)}>
+        <div className="modal-overlay open" role="presentation" onClick={() => setInfoOpen(false)}>
           <div
             className="modal-card"
             role="dialog"
