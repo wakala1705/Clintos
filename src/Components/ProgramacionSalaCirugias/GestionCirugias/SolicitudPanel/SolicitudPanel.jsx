@@ -11,12 +11,17 @@ import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import MensajeInfo from './MensajeInfo/MensajeInfo';
+import PrioridadTag from '../PrioridadTag/PrioridadTag';
+import DiagnosticoTag from '../DiagnosticoTag/DiagnosticoTag';
 import { ORIGEN_LABEL, listaProcedimientos } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
   accionItem, enmascararDocumento, estadoEstudios, evaluarSolicitud, mensajeFaltantes,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+
+// Oculto por ahora el botón "Programar cirugía" del pie; poner en true para volver a mostrarlo.
+const MOSTRAR_PROGRAMAR = false;
 
 // Ícono de cada requisito, junto a su título.
 const ICONO_ITEM = {
@@ -174,6 +179,13 @@ export default function SolicitudPanel({
                   ))}
                   <span className="sp-dato-sub">{solicitud.especialidad}</span>
                 </Dato>
+                <Dato label="Prioridad">
+                  <PrioridadTag prioritaria={solicitud.prioritaria} />
+                </Dato>
+                <Dato label="Diagnóstico">
+                  <DiagnosticoTag primeraVez={solicitud.primeraVez} />
+                  {solicitud.dxOrden && <span className="sp-dato-sub">{solicitud.dxOrden}</span>}
+                </Dato>
               </dl>
               <dl className="sp-grupo sp-grupo-terceros">
                 <Dato label="Terceros">
@@ -237,15 +249,17 @@ export default function SolicitudPanel({
                 </Button>
               </>
             )}
-            <Button
-              icon={LuCalendarPlus}
-              className="sp-programar"
-              disabled={!puedeProgramar}
-              aria-describedby={hayMensajes ? 'sp-mensaje' : undefined}
-              onClick={() => onProgramar(solicitud)}
-            >
-              Programar cirugía
-            </Button>
+            {MOSTRAR_PROGRAMAR && (
+              <Button
+                icon={LuCalendarPlus}
+                className="sp-programar"
+                disabled={!puedeProgramar}
+                aria-describedby={hayMensajes ? 'sp-mensaje' : undefined}
+                onClick={() => onProgramar(solicitud)}
+              >
+                Programar cirugía
+              </Button>
+            )}
           </div>
         </footer>
       </div>

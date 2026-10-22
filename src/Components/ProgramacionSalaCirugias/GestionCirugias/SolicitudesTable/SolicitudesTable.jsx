@@ -1,6 +1,4 @@
-import { LuChevronRight } from 'react-icons/lu';
 import './SolicitudesTable.css';
-import Button from '@/Components/Button/Button';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import OrigenTag from '../OrigenTag/OrigenTag';
 import PrioridadTag from '../PrioridadTag/PrioridadTag';
@@ -37,9 +35,8 @@ function renderPaso(solicitud, clave) {
   );
 }
 
-// Tabla de solicitudes. Cada fila es clicable con el mouse; para teclado y
-// lectores de pantalla el control real es el botón "Gestionar" de la última
-// columna (un solo tab stop por fila).
+// Tabla de solicitudes. Cada fila es el control: clic, Enter o Espacio abren
+// la gestión (un solo tab stop por fila).
 export default function SolicitudesTable({
   solicitudes, selectedId, onSelect, mostrarPasos = true,
 }) {
@@ -50,7 +47,8 @@ export default function SolicitudesTable({
         <thead>
           <tr>
             <th scope="col" className="sct-sticky">Paciente</th>
-            <th scope="col">Procedimiento (CUPS)</th>
+            <th scope="col" className="sct-proc">Procedimiento</th>
+            <th scope="col" className="sct-terceros">ID terceros</th>
             <th scope="col" className="sct-origen">Prioridad</th>
             <th scope="col" className="sct-origen">Diagnóstico</th>
             <th scope="col" className="sct-origen">Origen</th>
@@ -63,7 +61,6 @@ export default function SolicitudesTable({
               </>
             )}
             <th scope="col">Estado del chequeo</th>
-            <th scope="col"><span className="sct-sr">Acciones</span></th>
           </tr>
         </thead>
         <tbody>
@@ -74,19 +71,24 @@ export default function SolicitudesTable({
               <tr
                 key={s.id}
                 className={seleccionada ? 'selected' : undefined}
+                tabIndex={0}
+                aria-label={`Gestionar solicitud de ${s.paciente.nombre}`}
+                aria-selected={seleccionada}
                 onClick={() => onSelect(s.id)}
+                onKeyDown={(e) => {
+                  if (e.target !== e.currentTarget) return;
+                  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(s.id); }
+                }}
               >
                 <td className="sct-sticky">
-                  <span className="sct-main">{s.paciente.nombre}</span>
+                  <span className="sct-main sct-paciente">{s.paciente.nombre}</span>
                   <span className="sct-sub">
                     {enmascararDocumento(s.paciente.tipoDocumento, s.paciente.numeroDocumento)} · {s.paciente.edad} años
                   </span>
-                  <span className="sct-sub">{s.eps}</span>
                 </td>
-                <td>
-                  <span className="sct-main">{s.procedimiento}</span>
-                  <span className="sct-sub">{s.cups} · {s.especialidad}</span>
-                </td>
+                <td className="sct-proc">
+                  <span className="sct-main sct-procedimiento">{s.procedimiento}</span>                </td>
+                <td className="sct-terceros">{s.eps}</td>
                 <td className="sct-origen"><PrioridadTag prioritaria={s.prioritaria} /></td>
                 <td className="sct-origen"><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                 <td className="sct-origen"><OrigenTag origen={s.origen} /></td>
@@ -105,19 +107,8 @@ export default function SolicitudesTable({
                 <td>
                   <div className="sct-chequeo">
                     <EstadoChip tone={TONO_GENERAL[ev.estado]}>{ESTADO_GENERAL_LABEL[ev.estado]}</EstadoChip>
-                    <ProgresoChequeo evaluacion={ev} />
+                    <ProgresoChequeo evaluacion={ev} compacto />
                   </div>
-                </td>
-                <td className="sct-accion">
-                  <Button
-                    variant="outline"
-                    icon={LuChevronRight}
-                    aria-label={`Gestionar solicitud de ${s.paciente.nombre}`}
-                    aria-pressed={seleccionada}
-                    onClick={(e) => { e.stopPropagation(); onSelect(s.id); }}
-                  >
-                    Gestionar
-                  </Button>
                 </td>
               </tr>
             );

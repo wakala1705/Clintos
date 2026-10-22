@@ -21,14 +21,23 @@
 .sct-table .sct-sticky{position:sticky;left:0;border-right:1px solid var(--border);min-width:170px;}
 .sct-table th.sct-sticky{z-index:calc(var(--z-sticky) + 1);}
 .sct-table td.sct-sticky{z-index:1;}
+/* Paciente: ancho ajustado al nombre en mayúsculas más largo (sobra con auto). */
+.sct-table th.sct-sticky,.sct-table td.sct-sticky{width:280px;max-width:280px;}
 
 .sct-main{display:block;font-weight:var(--fw-semibold);}
+.sct-main.sct-paciente{font-weight:var(--fw-medium);text-transform:uppercase;}
+.sct-main.sct-procedimiento{font-weight:var(--fw-regular);text-transform:uppercase;}
+.sct-table td.sct-terceros{font-weight:var(--fw-regular);text-transform:uppercase;}
 .sct-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .sct-table th.sct-paso,.sct-table td.sct-paso{width:1%;white-space:nowrap;text-align:center;}
 .sct-estudios{justify-content:center;}
 .sct-estudios{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .sct-chequeo{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
-.sct-accion{width:1%;text-align:right;}
+/* Aseguradora: hay razones sociales largas; ancho fijo mínimo y salto de línea. */
+.sct-table th.sct-terceros,.sct-table td.sct-terceros{min-width:300px;width:300px;}
+/* Procedimiento: ancho para que los nombres largos entren en 2 líneas. */
+.sct-table th.sct-proc,.sct-table td.sct-proc{min-width:320px;width:320px;max-width:320px;}
+.sct-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 /* Área táctil mínima de 44px (el tamaño sm del Button es más bajo). */
 .sct-sr{
   position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;

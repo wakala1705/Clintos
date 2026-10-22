@@ -68,7 +68,7 @@ export default function GestionCirugias() {
   const [visorPdf, setVisorPdf] = useState(null);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   // Muestra/oculta las 4 columnas de validaciones (Orden, Estudios, Valoración, Autorización).
-  const [mostrarValidaciones, setMostrarValidaciones] = useState(true);
+  const [mostrarValidaciones, setMostrarValidaciones] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);

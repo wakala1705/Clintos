@@ -140,9 +140,122 @@ const EVAPRE_REGISTRO_CLAUDIA = {
     + 'orotraqueal, relajante de acción corta, suspender losartán 24 h antes y profilaxis de NVPO. Apta para el procedimiento.',
 };
 
+// Rosa Elena Quintero Vargas (solicitud de lobectomía pulmonar por toracoscopia
+// en Gestión de cirugías): ASA III (EPOC leve, HTA), apta con condiciones. Trae
+// los laboratorios y las imágenes (TAC de tórax) que "Vincular resultados" de su
+// chequeo toma de esta EVAPRE, y el ASA que usa "Vincular valoración".
+const EVAPRE_ROSA_ELENA = {
+  valores: {
+    procedimiento:
+      'LOBECTOMIA PULMONAR POR TORACOSCOPIA (VATS).\n'
+      + 'INDICACION: NEOPLASIA MALIGNA DE BRONQUIO Y PULMON, NODULO EN LOBULO SUPERIOR DERECHO.\n'
+      + 'CIRUJANO: DR. AMAURY RAFAEL GARCIA BURGOS. SERVICIO: CIRUGIA DE TORAX.',
+
+    patologicos:
+      'EPOC LEVE (GOLD 1) DESDE 2019. HIPERTENSION ARTERIAL DESDE 2012, CONTROLADA. SIN DIABETES NI CARDIOPATIA ISQUEMICA CONOCIDA.',
+    quirurgicos: 'COLECISTECTOMIA (2008) SIN COMPLICACIONES.',
+    anestesicos: 'ANESTESIA GENERAL PARA COLECISTECTOMIA (2008), SIN COMPLICACIONES. SIN ANTECEDENTE DE HIPERTERMIA MALIGNA.',
+    toxicos: 'EXFUMADORA (30 PAQUETES/AÑO), SUSPENDIO HACE 3 AÑOS. NIEGA ALCOHOL.',
+    alergicos: 'NIEGA ALERGIAS A MEDICAMENTOS, LATEX Y ALIMENTOS.',
+    farmacologicos: 'ENALAPRIL 10 MG C/12 H (SUSPENDER LA MAÑANA DE LA CIRUGIA). SALBUTAMOL INHALADO A DEMANDA.',
+    transfusional: 'NIEGA TRANSFUSIONES PREVIAS.',
+
+    hb: '12,9 g/dL',
+    hcto: '39 %',
+    plaquetas: '245.000 /mm³',
+    leucocitos: '8.100 /mm³',
+    tp: '12,4 s (CONTROL 12,0)',
+    ptt: '31 s (CONTROL 30)',
+    inr: '1,0',
+    glicemia: '97 mg/dL',
+    hba1c: '5,7 %',
+    bun: '16 mg/dL',
+    creatinina: '0,9 mg/dL (TFG 78 mL/min)',
+    ionograma: 'Na 139, K 4,4, Cl 102',
+    albumina: '3,9 g/dL',
+    parcialOrina: 'SIN ALTERACIONES.',
+    gasesArteriales: 'PH 7,40, PCO2 41, PO2 78, HCO3 25, SATURACION 95 % AL AIRE AMBIENTE.',
+    otrosQuimica: 'ESPIROMETRIA: VEF1 78 % DEL PREDICHO, VEF1/CVF 0,68 (OBSTRUCCION LEVE). VEF1 POSTOPERATORIO PREDICHO 58 %.',
+    ekg: 'RITMO SINUSAL A 78 LPM, EJE NORMAL, SIN ISQUEMIA NI BLOQUEO DE RAMA. QTc 420 ms.',
+    rxTorax: 'HIPERTRANSPARENCIA LEVE BASAL BILATERAL. NODULO EN LOBULO SUPERIOR DERECHO. SIN DERRAME. SILUETA CARDIACA NORMAL.',
+    otrosImagenes:
+      'TAC DE TORAX CON CONTRASTE: NODULO ESPICULADO DE 2,8 CM EN LOBULO SUPERIOR DERECHO, SIN ADENOPATIAS MEDIASTINALES NI DERRAME PLEURAL.\n'
+      + 'PET-CT: CAPTACION LIMITADA AL NODULO, SIN LESIONES A DISTANCIA.',
+
+    sensorio: 'ALERTA, ORIENTADA, GLASGOW 15/15',
+    ta: '132/80',
+    fc: '78',
+    fr: '18',
+    temperatura: '36,5',
+    peso: '64',
+    imc: '25,6',
+    talla: '158',
+    cabezaOrganos: 'PUPILAS ISOCORICAS, NORMOREACTIVAS. MUCOSAS ROSADAS, HUMEDAS. DENTADURA NATURAL, SIN PIEZAS FLOJAS.',
+    protesisDental: 'no',
+    tipoProtesis: '',
+    lentes: 'no',
+    aperturaOral: '>=3',
+    dtm: '6-6.5',
+    distanciaExternomentoniana: '>=12',
+    circunferenciaCuello: '<40',
+    testMordida: 'I',
+    distanciaInterincisivos: '>4',
+    mallampaty: 'II',
+    cuelloCabeza: 'CUELLO MOVIL, SIN MASAS NI ADENOPATIAS. EXTENSION CERVICAL CONSERVADA. TRAQUEA CENTRAL.',
+    cardiotoracico: 'RUIDOS CARDIACOS RITMICOS, SIN SOPLOS.\nMURMULLO VESICULAR DISMINUIDO EN BASES, SIN RUIDOS SOBREAGREGADOS',
+    abdomen: 'BLANDO, NO DOLOROSO A LA PALPACION, SIN MASAS NI MEGALIAS.',
+    gu: 'SIN ALTERACIONES.',
+    extremidades: 'PULSOS DISTALES SIMETRICOS ++. LLENADO CAPILAR < 2 SEGUNDOS. SIN EDEMAS',
+    neurologico: 'GLASGOW 15/15. SIN DEFICIT MOTOR NI SENSITIVO.',
+    karnofsky: '90',
+    estadoFisicoAsa: 'III',
+    nyha: 'I',
+    leeThrciFactores: [],
+    leeThrciPuntos: '0',
+    leeRevisadoFactores: [],
+    leeRevisadoClase: 'I',
+    capacidadFuncional: 'moderada',
+    hemoderivados: 'RESERVA DE 2 UNIDADES DE GLOBULOS ROJOS. GRUPO Y RH EN HISTORIA: O POSITIVO.',
+    uciPostquirurgica: 'si',
+    tipoAnestesia: 'general',
+    opinionRecomendaciones:
+      '1. AYUNO 8 HORAS SOLIDOS, 6 HORAS LIQUIDOS CLAROS\n'
+      + '2. SE EXPLICAN RIESGOS Y BENEFICIOS DE LA ANESTESIA GENERAL CON VENTILACION UNIPULMONAR, SE RESUELVEN DUDAS Y SE FIRMA CONSENTIMIENTO INFORMADO\n'
+      + '3. SUSPENDER ENALAPRIL LA MAÑANA DE LA CIRUGIA; CONTINUAR BRONCODILATADOR HASTA EL DIA DE LA CIRUGIA\n'
+      + '4. FISIOTERAPIA RESPIRATORIA PREOPERATORIA Y ESPIROMETRIA INCENTIVA\n'
+      + '5. ANALGESIA REGIONAL (BLOQUEO PARAVERTEBRAL O ERECTOR DE LA ESPINA) PARA MINIMIZAR OPIOIDES\n'
+      + '6. VIGILANCIA POSTOPERATORIA EN UCI/CUIDADO INTERMEDIO\n\n'
+      + 'ANALISIS: PACIENTE FEMENINA DE 71 AÑOS, ASA III (EPOC LEVE, HTA CONTROLADA), PROGRAMADA PARA LOBECTOMIA PULMONAR POR TORACOSCOPIA. '
+      + 'RIESGO CARDIOVASCULAR BAJO (LEE REVISADO CLASE I, NYHA I). RESERVA PULMONAR ADECUADA (VEF1 POSTOPERATORIO PREDICHO 58 %). VIA AEREA SIN '
+      + 'PREDICTORES DE DIFICULTAD. SE PLANEA ANESTESIA GENERAL BALANCEADA CON TUBO DE DOBLE LUMEN Y MONITORIA ESTANDAR ASA CON CAPNOGRAFIA. '
+      + 'APTA PARA EL PROCEDIMIENTO CON LAS RECOMENDACIONES ANTERIORES.',
+  },
+  signosVitales: {
+    estatura: '158', peso: '64', temperatura: '36.5', frecuenciaCardiaca: '78', frecuenciaRespiratoria: '18', sistolica: '132', diastolica: '80',
+  },
+  diagnosticos: {
+    cie10: 'C349 - TUMOR MALIGNO DE LOS BRONQUIOS O DEL PULMON, PARTE NO ESPECIFICADA',
+    cie11: '',
+    tipoDx: 'confirmado-nuevo',
+  },
+};
+
+const EVAPRE_REGISTRO_ROSA_ELENA = {
+  id: 'evapre-rosa-elena', fecha: '08.OCT.2026', hora: '10:15 AM', numero: '0201295745', tituloNota: 'EVALUACIÓN PREANESTESICA',
+  autor: 'VARGAS LOZANO JUAN PABLO', rol: 'Médico', especialidad: 'ANESTESIOLOGÍA', ambito: 'QX', plantilla: 'EVAPRE',
+  contenido: EVAPRE_ROSA_ELENA,
+  resumen:
+    'Paciente femenina de 71 años, ASA III (EPOC leve, HTA controlada), exfumadora, sin alergias, programada para lobectomía '
+    + 'pulmonar por toracoscopia. Sin predictores de vía aérea difícil. Riesgo cardiovascular bajo (Lee revisado clase I, NYHA I). '
+    + 'Hemograma, coagulación, glicemia y creatinina normales; espirometría con obstrucción leve (VEF1 postoperatorio predicho 58 %). '
+    + 'TAC de tórax con nódulo de 2,8 cm en lóbulo superior derecho. Plan: anestesia general balanceada con tubo de doble lumen y '
+    + 'analgesia regional. Apta con las recomendaciones indicadas.',
+};
+
 const EVAPRE_POR_DOCUMENTO = {
   1048291: [EVAPRE_REGISTRO_MARIA_FERNANDA],
   31902576: [EVAPRE_REGISTRO_CLAUDIA],
+  41667230: [EVAPRE_REGISTRO_ROSA_ELENA],
 };
 
 // Registros EVAPRE de un paciente (más reciente primero), por número de

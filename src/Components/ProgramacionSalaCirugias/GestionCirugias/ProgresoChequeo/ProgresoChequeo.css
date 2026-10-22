@@ -5,4 +5,8 @@
 .pc-pending{color:var(--clinical-status-pending-fg);}
 .pc-rejected{color:var(--clinical-status-rejected-fg);}
 .pc-count{font-size:var(--fs-sm);color:var(--ink-500);max-width:130px;}
+.pc-compacto{flex-direction:row;align-items:center;gap:8px;}
+.pc-compacto .pc-bar{flex:1;min-width:70px;}
+.pc-compacto .pc-count{max-width:none;white-space:nowrap;}
+.pc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 .pc-count strong{color:var(--ink-900);font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;}
