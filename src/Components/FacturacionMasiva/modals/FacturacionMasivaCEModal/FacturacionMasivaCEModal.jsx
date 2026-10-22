@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import './FacturacionMasivaCEModal.css';
 import ModalHeader from '@/Components/ModalHeader/ModalHeader';
 import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DatePicker from '@/Components/DatePicker/DatePicker';
 import CatalogoAseguradorasModal from '@/Components/CatalogoAseguradorasModal/CatalogoAseguradorasModal';
-import CatalogoTipoTerceroModal from '@/Components/CatalogoTipoTerceroModal/CatalogoTipoTerceroModal';
+import CatalogoContratosTerceroModal from '@/Components/CatalogoContratosTerceroModal/CatalogoContratosTerceroModal';
 import {
   LuCalendarCheck, LuCheck, LuClipboardCheck, LuSearch,
 } from 'react-icons/lu';
@@ -39,12 +40,18 @@ const OPCIONES = [
 
 // Ventana de Facturación masiva · Consulta externa: filtros comunes + dos
 // opciones (órdenes médicas / citas) + "Continuar". Id. Tercero reusa
-// CatalogoAseguradorasModal y Régimen el catálogo TERTTEC
-// (CatalogoTipoTerceroModal), los mismos pickers de los demás flujos.
-// El paso siguiente a "Continuar" todavía no existe: avisa vía onNotify.
-export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
-  const [filtros, setFiltros] = useState(FILTROS_INICIALES);
-  const [opcion, setOpcion] = useState('ordenes');
+// CatalogoAseguradorasModal y Régimen ID el Catálogo de contratos
+// (CatalogoContratosTerceroModal).
+// "Continuar" con Órdenes médicas abre Facturación de autorizaciones
+// (/facturacion/autorizaciones); con Citas todavía avisa vía onNotify.
+// Con `filtrosIniciales` (los de la query de /facturacion/autorizaciones) abre en
+// modo edición: sin las cards de "qué facturar", y "Aplicar" recarga esa misma
+// pantalla con los filtros nuevos.
+export default function FacturacionMasivaCEModal({ onClose, onNotify, filtrosIniciales }) {
+  const editando = filtrosIniciales !== undefined;
+  const router = useRouter();
+  const [filtros, setFiltros] = useState({ ...FILTROS_INICIALES, ...filtrosIniciales });
+  const [opcion, setOpcion] = useState(null);
   const [picker, setPicker] = useState(null); // null | 'tercero' | 'regimen'
   const set = (patch) => setFiltros((f) => ({ ...f, ...patch }));
 
@@ -59,12 +66,33 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
 
   const elegida = OPCIONES.find((o) => o.id === opcion);
 
+  // Los filtros viajan por query para que la pantalla los muestre (fa-datos).
+  function irAAutorizaciones() {
+    const params = new URLSearchParams();
+    Object.entries(filtros).forEach(([k, v]) => { if (v) params.set(k, v); });
+    router.push(`/facturacion/autorizaciones?${params.toString()}`);
+  }
+
+  function handleContinuar() {
+    if (editando) {
+      irAAutorizaciones();
+      onClose();
+      return;
+    }
+    if (!elegida) return;
+    if (opcion === 'ordenes') {
+      irAAutorizaciones();
+      return;
+    }
+    onNotify(`Continuar con ${elegida.label.toLowerCase()}: en desarrollo.`);
+  }
+
   return (
     <>
       <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
         <div className="modal-card fmce-card" role="dialog" aria-modal="true" aria-labelledby="fmce-title">
           <ModalHeader
-            title="Facturación masiva · Consulta externa"
+            title={editando ? 'Editar datos de facturación' : 'Facturación masiva · Consulta externa'}
             titleId="fmce-title"
             onClose={onClose}
           />
@@ -94,18 +122,6 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
                 </div>
               </div>
               <div className="form-field">
-                <label htmlFor="fmce-contrato">ID. Contrato</label>
-                <input
-                  id="fmce-contrato"
-                  type="text"
-                  required
-                  placeholder="Id. del contrato"
-                  value={filtros.contrato}
-                  onChange={(e) => set({ contrato: e.target.value })}
-                />
-              </div>
-
-              <div className="form-field">
                 <label htmlFor="fmce-regimen">Régimen ID</label>
                 <div className="field-with-search">
                   <input
@@ -125,6 +141,18 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
                   </button>
                 </div>
               </div>
+              <div className="form-field">
+                <label htmlFor="fmce-contrato">ID. Contrato</label>
+                <input
+                  id="fmce-contrato"
+                  type="text"
+                  required
+                  placeholder="Id. del contrato"
+                  value={filtros.contrato}
+                  onChange={(e) => set({ contrato: e.target.value })}
+                />
+              </div>
+
               <div className="form-field">
                 <label htmlFor="fmce-pyp">P y P</label>
                 <FormSelect
@@ -159,6 +187,7 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
               </div>
             </div>
 
+            {!editando && (
             <div>
               <h4 className="fmce-section-title" id="fmce-que-facturar">¿Qué quieres facturar?</h4>
               <div className="fmce-opciones" role="radiogroup" aria-labelledby="fmce-que-facturar">
@@ -182,12 +211,13 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
                 })}
               </div>
             </div>
+            )}
           </div>
 
           <div className="modal-footer">
-            <Button variant="secondary" onClick={onClose}>Cerrar</Button>
-            <Button onClick={() => onNotify(`Continuar con ${elegida.label.toLowerCase()}: en desarrollo.`)}>
-              Continuar
+            <Button variant="secondary" onClick={onClose}>{editando ? 'Cancelar' : 'Cerrar'}</Button>
+            <Button onClick={handleContinuar} disabled={!editando && !opcion}>
+              {editando ? 'Aplicar' : 'Continuar'}
             </Button>
           </div>
         </div>
@@ -197,7 +227,10 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify }) {
         <CatalogoAseguradorasModal onSelect={(v) => set({ tercero: v })} onClose={() => setPicker(null)} />
       )}
       {picker === 'regimen' && (
-        <CatalogoTipoTerceroModal onSelect={(v) => set({ regimen: v })} onClose={() => setPicker(null)} />
+        <CatalogoContratosTerceroModal
+          onSelect={(c) => set({ regimen: `${c.id} - ${c.regimen}`, contrato: c.noContrato })}
+          onClose={() => setPicker(null)}
+        />
       )}
     </>
   );

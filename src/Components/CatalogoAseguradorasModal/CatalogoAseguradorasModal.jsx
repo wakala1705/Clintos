@@ -217,7 +217,7 @@ export default function CatalogoAseguradorasModal({ onSelect, onClose, selectFie
         </div>
         <div className="cam-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
-          <Button type="button" variant="primary" onClick={handleConfirm} disabled={!seleccion}>Seleccionar</Button>
+          <Button type="button" variant="primary" onClick={() => handleConfirm()} disabled={!seleccion}>Seleccionar</Button>
         </div>
       </div>
     </div>

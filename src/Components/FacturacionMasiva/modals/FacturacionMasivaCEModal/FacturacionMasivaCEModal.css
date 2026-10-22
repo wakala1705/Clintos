@@ -1,6 +1,13 @@
 /* Overlay/card/body/footer, .form-field y .field-with-search/.search-btn:
    ../../shared/shared.css. */
-.fmce-card{width:560px;}
+/* Card completa acá (no depende de .modal-card de FacturacionMasiva/shared.css):
+   el modal también se monta desde /facturacion/autorizaciones (modo edición). */
+.fmce-card{
+  width:560px;max-width:100%;max-height:calc(100vh - 48px);
+  display:flex;flex-direction:column;
+  background:var(--surface-modal);border-radius:var(--radius-lg);
+  box-shadow:0 24px 64px rgba(16,24,39,.32);
+}
 
 .fmce-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 

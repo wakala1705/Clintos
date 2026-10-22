@@ -1,0 +1,66 @@
+/* .card/.form-field/.app/.content: ../Facturacion/shared/shared.css */
+.fa-page-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px 32px;flex-shrink:0;}
+.fa-page-header h1{font-size:var(--fs-3xl);font-weight:var(--fw-semibold);color:var(--ink-900);letter-spacing:-.01em;}
+.fa-page-header p{font-size:var(--fs-base);color:var(--ink-500);margin-top:2px;}
+
+.fa-shell{display:flex;flex-direction:column;overflow:hidden;}
+
+/* Campo obligatorio/editable (el amarillo de la pantalla legacy) */
+.form-field input.fa-required{background:var(--amber-bg);}
+
+/* Barra de búsqueda y estado (en tablet envuelve) */
+.fa-filters{
+  display:flex;align-items:center;gap:12px 32px;
+  padding:16px;border-bottom:1px solid var(--border);
+}
+.fa-filters > .fa-search{flex-shrink:0;}
+.fa-dato{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-sm);color:var(--ink-700);white-space:nowrap;}
+.fa-dato b{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+/* Datos de la facturación + Editar, al extremo derecho del header de página */
+.fa-datos{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;gap:12px 32px;}
+/* Botón solo ícono: cuadrado (el padding base de Button es horizontal) */
+.fa-datos .fa-editar-btn{padding:8px;}
+.fa-search{width:360px;}
+.fa-estado{flex-shrink:0;min-width:220px;margin-left:auto;}
+
+/* Grillas */
+.fa-grid{overflow:auto;border-bottom:1px solid var(--border);}
+/* La grilla superior absorbe el alto sobrante de la tarjeta (que llena .content) */
+.fa-grid-top{flex:1;min-height:160px;}
+.fa-grid-bottom{height:150px;flex-shrink:0;}
+.fa-grid table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
+.fa-grid th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  padding:8px 12px;text-align:left;white-space:nowrap;
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
+}
+.fa-grid th.fa-num{text-align:right;}
+
+/* Selección + observación */
+.fa-bottom{
+  flex-shrink:0;
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;
+  padding:16px;border-bottom:1px solid var(--border);
+}
+.fa-bottom-left{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.fa-select-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.fa-resp-row{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.fa-resp-row .form-field{min-width:200px;}
+.fa-resp-field{flex:1;}
+.fa-resp-hint{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--ink-500);margin:0;}
+.fa-resp-hint .icon{width:16px;height:16px;color:var(--primary);}
+.fa-obs textarea{min-height:96px;}
+
+/* Barra de acciones */
+.fa-actions{
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 16px;background:var(--bg);
+}
+.fa-actions-main{display:flex;flex-wrap:wrap;gap:8px;}
+
+@media (max-width:1024px){
+  .fa-filters{flex-wrap:wrap;}
+  .fa-bottom{grid-template-columns:1fr;}
+}

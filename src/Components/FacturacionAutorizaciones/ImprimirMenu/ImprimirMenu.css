@@ -1,0 +1,8 @@
+.fa-imprimir{position:relative;}
+.fa-imprimir-chev{width:var(--btn-icon-size-sm);height:var(--btn-icon-size-sm);transition:transform .15s ease;}
+.fa-imprimir [aria-expanded="true"] .fa-imprimir-chev{transform:rotate(180deg);}
+
+/* Panel y opciones: apariencia de @/Components/DropdownPanel (ver AGENTS.md
+   "Dropdowns"). Acá solo la posición: hacia arriba, el footer no tiene
+   espacio debajo. */
+.fa-imprimir-menu{position:absolute;bottom:calc(100% + 6px);left:0;z-index:var(--z-popover);}
