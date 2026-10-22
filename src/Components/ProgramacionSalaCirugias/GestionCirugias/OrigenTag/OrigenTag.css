@@ -6,3 +6,7 @@
   background:var(--violet-bg);color:var(--violet-fg);
   border-color:color-mix(in srgb, var(--violet-fg) 45%, transparent);
 }
+.ot-celeste.ot-celeste{
+  background:var(--blue-bg);color:var(--blue-fg);
+  border-color:color-mix(in srgb, var(--blue-fg) 45%, transparent);
+}

@@ -6,8 +6,8 @@ import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 // significan completo/pendiente/bloqueado) y el gris (se leía como
 // deshabilitado). `className` pinta el violeta/celeste en OrigenTag.css, que
 // <Badge> no trae como tono.
-const TONOS = { 'consulta-externa': 'neutral', internacion: 'info' };
-const CLASES = { 'consulta-externa': 'ot-violeta', internacion: '' };
+const TONOS = { 'consulta-externa': 'neutral', internacion: 'info', 'orden-externa': 'neutral' };
+const CLASES = { 'consulta-externa': 'ot-violeta', internacion: '', 'orden-externa': 'ot-celeste' };
 
 // Etiqueta del origen de la orden: solo texto; el color es apoyo.
 export default function OrigenTag({ origen }) {

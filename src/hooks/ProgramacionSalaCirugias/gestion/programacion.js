@@ -33,7 +33,7 @@ export function pacienteDeSolicitud(solicitud, hoy) {
 
 // Origen de la solicitud -> "Clase" del wizard (CLASE_CIRUGIA_CATALOGO): consulta externa -> CE;
 // internación no tiene una clase propia en el catálogo, la cirugía es de Quirófano.
-const CLASE_WIZARD = { 'consulta-externa': 'CE', internacion: 'Quirófano' };
+const CLASE_WIZARD = { 'consulta-externa': 'CE', internacion: 'Quirófano', 'orden-externa': 'CE' };
 
 // ASA (romano, como lo registra la EVAPRE) -> opción de "Asa" del wizard (ASA_CATALOGO).
 const ASA_WIZARD = {

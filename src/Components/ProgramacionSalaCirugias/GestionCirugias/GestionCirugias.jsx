@@ -187,7 +187,7 @@ export default function GestionCirugias() {
           <div className="psc-page-header">
             <div>
               <h1>Gestión de cirugías</h1>
-              <p>Las órdenes de Consulta externa e Internación llegan automáticamente. Verifica la lista de chequeo previa antes de programar.</p>
+              <p>Las órdenes de Consulta externa, Internación y Orden externa llegan automáticamente. Verifica la lista de chequeo previa antes de programar.</p>
             </div>
             <div className="psc-page-header-actions">
               <Button icon={LuPlus} onClick={() => router.push('/cirugia/gestion/registrar-orden')}>

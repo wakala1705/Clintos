@@ -104,7 +104,7 @@ export default function RegistrarOrdenExterna() {
     const id = siguienteId();
     agregarSolicitud({
       id,
-      origen: 'consulta-externa',
+      origen: 'orden-externa',
       paciente: {
         nombre: paciente.nombre,
         tipoDocumento: paciente.tipoDocumento,
