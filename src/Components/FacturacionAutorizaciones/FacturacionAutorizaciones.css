@@ -27,7 +27,7 @@
 .fa-grid{overflow:auto;border-bottom:1px solid var(--border);}
 /* La grilla superior absorbe el alto sobrante de la tarjeta (que llena .content) */
 .fa-grid-top{flex:1;min-height:160px;}
-.fa-grid-bottom{height:150px;flex-shrink:0;}
+.fa-grid-bottom{flex:1;min-height:0;}
 .fa-grid table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-base);}
 .fa-grid th{
   position:sticky;top:0;z-index:var(--z-sticky);
@@ -36,6 +36,20 @@
   font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);
 }
 .fa-grid th.fa-num{text-align:right;}
+.fa-grid td{
+  padding:8px 12px;white-space:nowrap;border-bottom:1px solid var(--bg);
+  font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);
+}
+.fa-grid td.fa-num{text-align:right;font-variant-numeric:tabular-nums;}
+.fa-grid-top tbody tr{cursor:pointer;}
+.fa-grid-top tbody tr:hover{background:var(--bg);}
+.fa-grid-top tbody tr.fa-selected{background:var(--interactive-selected-bg);}
+.fa-grid-top tbody tr.fa-facturada td{color:var(--ink-500);}
+.fa-grid th input[type="checkbox"],
+.fa-grid td input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+.fa-grid th input[type="checkbox"]:disabled,
+.fa-grid td input[type="checkbox"]:disabled{cursor:not-allowed;}
+.fa-grid td.fa-empty{padding:32px 12px;text-align:center;color:var(--ink-500);}
 
 /* Selección + observación */
 .fa-bottom{

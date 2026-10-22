@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './FacturacionMasiva.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -26,13 +26,6 @@ export default function FacturacionMasiva({ proceso }) {
   // Consulta externa abre su ventana de filtros apenas se entra a la ruta.
   const tieneVentana = proceso === 'consulta-externa';
   const [ventanaAbierta, setVentanaAbierta] = useState(tieneVentana);
-  const [toast, setToast] = useState(null);
-  const toastTimerRef = useRef(null);
-  function showToast(message) {
-    setToast(message);
-    window.clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = window.setTimeout(() => setToast(null), 2600);
-  }
   const cerrarVentana = useCallback(() => setVentanaAbierta(false), []);
 
   useEffect(() => {
@@ -69,13 +62,8 @@ export default function FacturacionMasiva({ proceso }) {
       </div>
 
       {tieneVentana && ventanaAbierta && (
-        <FacturacionMasivaCEModal onClose={cerrarVentana} onNotify={showToast} />
+        <FacturacionMasivaCEModal onClose={cerrarVentana} />
       )}
-
-      <div className={`fm-toast${toast ? ' show' : ''}`} role="status">
-        <span className="fm-toast-dot"></span>
-        <span>{toast}</span>
-      </div>
     </div>
   );
 }

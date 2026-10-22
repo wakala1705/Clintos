@@ -29,12 +29,14 @@ const OPCIONES = [
     label: 'Órdenes médicas',
     desc: 'Facturar a partir de las órdenes médicas del período.',
     icon: LuClipboardCheck,
+    ruta: '/facturacion/autorizaciones',
   },
   {
     id: 'citas',
     label: 'Citas',
     desc: 'Facturar a partir de las citas atendidas del período.',
     icon: LuCalendarCheck,
+    ruta: '/facturacion/citas',
   },
 ];
 
@@ -42,12 +44,12 @@ const OPCIONES = [
 // opciones (órdenes médicas / citas) + "Continuar". Id. Tercero reusa
 // CatalogoAseguradorasModal y Régimen ID el Catálogo de contratos
 // (CatalogoContratosTerceroModal).
-// "Continuar" con Órdenes médicas abre Facturación de autorizaciones
-// (/facturacion/autorizaciones); con Citas todavía avisa vía onNotify.
-// Con `filtrosIniciales` (los de la query de /facturacion/autorizaciones) abre en
-// modo edición: sin las cards de "qué facturar", y "Aplicar" recarga esa misma
-// pantalla con los filtros nuevos.
-export default function FacturacionMasivaCEModal({ onClose, onNotify, filtrosIniciales }) {
+// "Continuar" abre Facturación de autorizaciones (órdenes médicas) o Facturación
+// de citas, según la card elegida (`ruta` de OPCIONES).
+// Con `filtrosIniciales` (los de la query de esas pantallas) abre en modo edición:
+// sin las cards de "qué facturar", y "Aplicar" recarga `rutaEdicion` (la pantalla
+// desde la que se abrió) con los filtros nuevos.
+export default function FacturacionMasivaCEModal({ onClose, filtrosIniciales, rutaEdicion }) {
   const editando = filtrosIniciales !== undefined;
   const router = useRouter();
   const [filtros, setFiltros] = useState({ ...FILTROS_INICIALES, ...filtrosIniciales });
@@ -67,24 +69,19 @@ export default function FacturacionMasivaCEModal({ onClose, onNotify, filtrosIni
   const elegida = OPCIONES.find((o) => o.id === opcion);
 
   // Los filtros viajan por query para que la pantalla los muestre (fa-datos).
-  function irAAutorizaciones() {
+  function irA(ruta) {
     const params = new URLSearchParams();
     Object.entries(filtros).forEach(([k, v]) => { if (v) params.set(k, v); });
-    router.push(`/facturacion/autorizaciones?${params.toString()}`);
+    router.push(`${ruta}?${params.toString()}`);
   }
 
   function handleContinuar() {
     if (editando) {
-      irAAutorizaciones();
+      irA(rutaEdicion);
       onClose();
       return;
     }
-    if (!elegida) return;
-    if (opcion === 'ordenes') {
-      irAAutorizaciones();
-      return;
-    }
-    onNotify(`Continuar con ${elegida.label.toLowerCase()}: en desarrollo.`);
+    if (elegida) irA(elegida.ruta);
   }
 
   return (
