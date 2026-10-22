@@ -27,7 +27,7 @@
 .sct-main{display:block;font-weight:var(--fw-semibold);}
 .sct-main.sct-paciente{font-weight:var(--fw-medium);text-transform:uppercase;}
 .sct-main.sct-procedimiento{font-weight:var(--fw-regular);text-transform:uppercase;}
-.sct-table td.sct-terceros{font-weight:var(--fw-regular);text-transform:uppercase;}
+.sct-table td.sct-terceros{font-weight:var(--fw-regular);text-transform:uppercase;color:var(--ink-700);}
 .sct-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);margin-top:2px;}
 .sct-table th.sct-paso,.sct-table td.sct-paso{width:1%;white-space:nowrap;text-align:center;}
 .sct-estudios{justify-content:center;}

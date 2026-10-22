@@ -48,7 +48,7 @@ export default function SolicitudesTable({
           <tr>
             <th scope="col" className="sct-sticky">Paciente</th>
             <th scope="col" className="sct-proc">Procedimiento</th>
-            <th scope="col" className="sct-terceros">ID terceros</th>
+            <th scope="col" className="sct-terceros">Aseguradora</th>
             <th scope="col" className="sct-origen">Prioridad</th>
             <th scope="col" className="sct-origen">Diagnóstico</th>
             <th scope="col" className="sct-origen">Origen</th>

@@ -188,7 +188,7 @@ export default function SolicitudPanel({
                 </Dato>
               </dl>
               <dl className="sp-grupo sp-grupo-terceros">
-                <Dato label="Terceros">
+                <Dato label="Aseguradora">
                   {solicitud.eps}
                   <span className="sp-dato-sub">Entidad pagadora · {solicitud.regimen}</span>
                   <span className="sp-dato-sub">Contrato {solicitud.contrato}</span>
