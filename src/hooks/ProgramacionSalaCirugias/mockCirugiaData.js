@@ -711,8 +711,13 @@ export function grillaMes(date = new Date()) {
 const MESES_LARGOS_ABR = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
 // "30.SEP.2026 - 09:30 – 11:00": fecha larga del proyecto + hora de inicio y de fin.
 export function fechaHoraRangoLabel(fechaISOStr, horaInicio, horaFin) {
+  return `${fechaCortaMesLabel(fechaISOStr)} - ${horaInicio}${horaFin ? ` – ${horaFin}` : ''}`;
+}
+
+// "30.SEP.2026": la parte de fecha de fechaHoraRangoLabel, para mostrarla sola.
+export function fechaCortaMesLabel(fechaISOStr) {
   const [y, m, d] = fechaISOStr.split('-').map(Number);
-  return `${pad2(d)}.${MESES_LARGOS_ABR[m - 1]}.${y} - ${horaInicio}${horaFin ? ` – ${horaFin}` : ''}`;
+  return `${pad2(d)}.${MESES_LARGOS_ABR[m - 1]}.${y}`;
 }
 
 export function fechaLabel(fechaISOStr) {

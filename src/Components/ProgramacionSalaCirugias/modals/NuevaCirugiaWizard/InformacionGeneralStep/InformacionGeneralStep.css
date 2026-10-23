@@ -1,23 +1,27 @@
 .igs-step{display:flex;flex-direction:column;gap:4px;}
 
-.igs-section-title{
-  margin:20px 0 4px;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);
+/* Título de bloque: ícono en contenedor (mismo lenguaje que .modal-header-icon de ModalHeader) + h4. */
+.igs-section-head{display:flex;align-items:center;gap:10px;margin:20px 0 4px;}
+.igs-section-icon{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-50);color:var(--primary);
 }
-.igs-step > .igs-section-title:first-child{margin-top:0;}
+.igs-section-icon .icon{width:17px;height:17px;}
+.igs-section-title{margin:0;font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.igs-step > .igs-section-head:first-child{margin-top:0;}
 
-.igs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;margin-top:12px;}
-/* Duraciones (Dur. estimada/postquirúrgica/recuperación, encargo explícito):
-   única grilla de 3 columnas del paso, resto del formulario es 2 columnas --
-   selector compuesto (no solo `.igs-grid-3`) para pesar más que `.igs-grid`
-   sin importar el orden en la hoja. */
-.igs-grid.igs-grid-3{grid-template-columns:repeat(3,1fr);}
+.igs-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 16px;margin-top:12px;}
+/* Checkboxes (Reserva habitación / Se vence autorización): 2 columnas, cada una con los campos que activa debajo. */
+.igs-checks{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 16px;align-items:start;}
+.igs-check-col{display:flex;flex-direction:column;gap:14px;}
 
 /* Separador entre "Datos de la cirugía" y "Datos de admisión y
    contratación" (encargo explícito) -- el `+` resetea el margin-top del
    heading que sigue para no duplicar espacio con el propio margin-bottom
    del divider. */
 .igs-divider{height:1px;background:var(--border);margin:20px 0;}
-.igs-divider + .igs-section-title{margin-top:0;}
+.igs-divider + .igs-section-head{margin-top:0;}
 
 .igs-checkbox{
   display:flex;align-items:center;gap:8px;height:var(--input-md);
@@ -31,7 +35,7 @@
    AgregarProcedimientoModal, ver AGENTS.md "Component organization"). */
 
 @media (max-width:768px){
-  .igs-grid, .igs-grid.igs-grid-3{grid-template-columns:1fr;}
+  .igs-grid, .igs-checks{grid-template-columns:1fr;}
 }
 
 .igs-field-error{font-size:var(--fs-sm);color:var(--red);}

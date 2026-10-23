@@ -1,0 +1,37 @@
+.at-wrap{
+  display:flex;flex-direction:column;flex:1;min-height:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+
+/* Fila de navegación + filtros: .psc-agenda-nav vive en shared.css. */
+
+.at-scroll{overflow:auto;min-height:0;flex:1;}
+.at-table{width:100%;border-collapse:collapse;min-width:900px;}
+.at-table th{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  text-align:left;padding:12px 16px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
+  font-size:var(--th-fs);font-weight:var(--th-fw);color:var(--th-color);white-space:nowrap;
+}
+.at-table td{
+  padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle;
+  font-size:var(--fs-base);color:var(--ink-900);
+}
+.at-table tbody tr{cursor:pointer;}
+.at-table tbody tr:hover{background:var(--bg);}
+.at-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.at-table tbody tr.selected{background:var(--interactive-selected-bg);}
+/* Cirugía realizada: texto atenuado + franja fina del tono del badge "Realizada"
+   (inset shadow en la 1ª celda: el borde de <tr> no se pinta con border-collapse). */
+.at-table tbody tr.finalizada td{color:var(--ink-500);}
+.at-table tbody tr.finalizada td:first-child{box-shadow:inset 2px 0 0 var(--blue-fg);}
+.at-table .at-num{text-align:right;white-space:nowrap;}
+.at-table tbody tr.at-empty{cursor:default;}
+.at-table tbody tr.at-empty:hover{background:none;}
+.at-empty td{text-align:center;color:var(--ink-500);padding:48px 16px;}
+.at-table td.at-fecha{font-weight:var(--fw-semibold);white-space:nowrap;}
+.at-table td.at-hora{font-weight:var(--fw-regular);color:var(--ink-500);white-space:nowrap;}
+.at-main{display:block;font-weight:var(--fw-medium);text-transform:uppercase;}
+.at-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.at-actions{width:1%;text-align:right;}
+.at-menu{display:inline-flex;align-items:center;gap:8px;}
+.at-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}

@@ -3,12 +3,18 @@
 import { useState } from 'react';
 import './FiltrosBar.css';
 import FormSelect from '@/Components/FormSelect/FormSelect';
+import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import CatalogPickerTrigger from '../CatalogPickerTrigger/CatalogPickerTrigger';
 import CatalogoSalasModal from '../modals/CatalogoSalasModal/CatalogoSalasModal';
 import CatalogoMedicosModal from '../modals/CatalogoMedicosModal/CatalogoMedicosModal';
 import VistaAgenda from '../GestionCirugias/VistaAgenda/VistaAgenda';
 import { ESTADO_FILTRO_OPTIONS, SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+
+const OPCIONES_FORMATO = [
+  { value: 'calendario', label: 'Calendario' },
+  { value: 'tabla', label: 'Tabla' },
+];
 
 // Vive embebido en .as-week-nav (ver AgendaSemana.jsx), junto a la
 // navegación de semana propia de la agenda — por eso no tiene campo "Fecha"
@@ -32,7 +38,8 @@ import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gest
 export default function FiltrosBar({
   sedeId, salaId, onSalaChange, estado, onEstadoChange, cirujano = 'todos', cirujanos, onCirujanoChange,
   modoAgenda = 'salas', onModoAgenda,
-  vista, onChangeVista, jornada, onJornada, diasVista, onDiasVista,
+  vista, onChangeVista, jornada, onJornada, diasVista, onDiasVista, ocultarJornada,
+  formato, onFormato,
 }) {
   const [catalogoOpen, setCatalogoOpen] = useState(false);
   const [cirujanoOpen, setCirujanoOpen] = useState(false);
@@ -64,8 +71,12 @@ export default function FiltrosBar({
         />
       )}
       <FormSelect id="fb-estado" ariaLabel="Estado" value={estado} onChange={onEstadoChange} options={ESTADO_FILTRO_OPTIONS} />
+      {onFormato && (
+        <SegmentedFilterBar options={OPCIONES_FORMATO} value={formato} onChange={onFormato} ariaLabel="Formato de la agenda" />
+      )}
       {onJornada && (
         <VistaAgenda
+          ocultarJornada={ocultarJornada}
           vista={vista}
           onVista={onChangeVista}
           jornada={jornada}

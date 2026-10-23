@@ -44,11 +44,8 @@ function camposFaltantesPaso1(datos) {
   const faltantes = [];
   if (vacio(datos.fechaInicio)) faltantes.push('Fecha de programación');
   if (vacio(datos.telefonosAviso)) faltantes.push('Teléfonos aviso');
-  if (vacio(datos.fechaSolicitud)) faltantes.push('Fecha solicitud');
-  if (vacio(datos.horaSolicitud)) faltantes.push('Hora solicitud');
+  if (vacio(datos.fechaSolicitud) || vacio(datos.horaSolicitud)) faltantes.push('Fecha y hora de solicitud');
   if (vacio(datos.duracionEstimada)) faltantes.push('Dur. estimada');
-  if (vacio(datos.duracionPostquirurgica)) faltantes.push('Dur. postquirúrgica');
-  if (vacio(datos.duracionRecuperacion)) faltantes.push('Dur. recuperación');
   if (vacio(datos.clase)) faltantes.push('Clase');
   if (vacio(datos.tipoAnestesia)) faltantes.push('Tipo anestesia');
   if (vacio(datos.complejidad)) faltantes.push('Complejidad');
@@ -59,8 +56,7 @@ function camposFaltantesPaso1(datos) {
   if (vacio(datos.quienAutoriza)) faltantes.push('Quién autoriza');
   if (datos.reservaHabitacion && vacio(datos.diasCama)) faltantes.push('Días cama');
   if (datos.seVenceAutorizacion) {
-    if (vacio(datos.fechaVence)) faltantes.push('Fecha vence');
-    if (vacio(datos.horaVence)) faltantes.push('Hora vence');
+    if (vacio(datos.fechaVence) || vacio(datos.horaVence)) faltantes.push('Fecha y hora de vencimiento');
   }
   return faltantes;
 }
@@ -207,7 +203,7 @@ export default function NuevaCirugiaWizard({
   // exige que todos los pasos anteriores estén completos.
   const faltantesPaso1 = camposFaltantesPaso1(datos);
   const estadoPaciente = patient?.estado === 'inactivo' ? 'inactivo' : 'activo';
-  // Paso 2: cirujano y anestesiólogo son obligatorios (ver ROLES_PERSONAL).
+  // Paso 2: roles obligatorios según ROLES_PERSONAL (hoy ninguno).
   const rolesFaltantesPaso2 = rolesObligatoriosFaltantes(datos.personal ?? []);
   const pasoCompleto = {
     1: faltantesPaso1.length === 0 && !fechaInicioPasada,

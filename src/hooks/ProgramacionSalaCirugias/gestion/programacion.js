@@ -24,7 +24,7 @@ export function pacienteDeSolicitud(solicitud, hoy) {
   return {
     nombre: paciente.nombre,
     documento: paciente.numeroDocumento,
-    telefono: '',
+    telefono: paciente.telefono ?? '',
     sexo: '',
     eps: solicitud.eps,
     fechaNacimiento: `${hoy.getFullYear() - paciente.edad}-01-01`,

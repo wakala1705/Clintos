@@ -13,7 +13,7 @@ import {
   DURACIONES_CIRUGIA_CATALOGO,
   TIPOS_ANESTESIA_CATALOGO,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { LuSearch } from 'react-icons/lu';
+import { LuFileText, LuScissors, LuSearch } from 'react-icons/lu';
 
 function toOptions(values) {
   return values.map((v) => ({ value: v, label: v }));
@@ -83,7 +83,10 @@ export default function InformacionGeneralStep({
 
   return (
     <div className="igs-step">
-      <h4 className="igs-section-title">Datos de la cirugía</h4>
+      <div className="igs-section-head">
+        <span className="igs-section-icon" aria-hidden="true"><LuScissors className="icon" /></span>
+        <h4 className="igs-section-title">Datos de la cirugía</h4>
+      </div>
       <div className="igs-grid">
         <div className="form-field">
           <label htmlFor="igs-fecha-inicio">Fecha de programación</label>
@@ -103,6 +106,22 @@ export default function InformacionGeneralStep({
             </span>
           )}
         </div>
+        {/* Un solo datetime-local; en `datos` siguen separados (fechaSolicitud + horaSolicitud). */}
+        <div className="form-field">
+          <label htmlFor="igs-fecha-solicitud">Fecha y hora de solicitud</label>
+          <input
+            id="igs-fecha-solicitud"
+            type="datetime-local"
+            required
+            value={datos.fechaSolicitud && datos.horaSolicitud ? `${datos.fechaSolicitud}T${datos.horaSolicitud}` : ''}
+            onChange={(e) => {
+              const [fecha = '', hora = ''] = e.target.value.split('T');
+              onChange('fechaSolicitud', fecha);
+              onChange('horaSolicitud', hora);
+            }}
+          />
+        </div>
+
         <div className="form-field">
           <label htmlFor="igs-telefonos-aviso">Teléfonos aviso</label>
           <input
@@ -114,57 +133,12 @@ export default function InformacionGeneralStep({
             onChange={(e) => onChange('telefonosAviso', e.target.value)}
           />
         </div>
-
-        <div className="form-field">
-          <label htmlFor="igs-fecha-solicitud">Fecha solicitud</label>
-          <input
-            id="igs-fecha-solicitud"
-            type="date"
-            required
-            value={datos.fechaSolicitud}
-            onChange={(e) => onChange('fechaSolicitud', e.target.value)}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="igs-hora-solicitud">Hora solicitud</label>
-          <input
-            id="igs-hora-solicitud"
-            type="time"
-            required
-            value={datos.horaSolicitud}
-            onChange={(e) => onChange('horaSolicitud', e.target.value)}
-          />
-        </div>
-
-      </div>
-
-      <div className="igs-grid igs-grid-3">
         <div className="form-field">
           <label htmlFor="igs-dur-estimada">Dur. estimada</label>
           <DuracionInput
             id="igs-dur-estimada"
             value={datos.duracionEstimada}
             onChange={(v) => onChange('duracionEstimada', v)}
-            options={DURACIONES_CIRUGIA_CATALOGO}
-            required
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="igs-dur-postquirurgica">Dur. postquirúrgica</label>
-          <DuracionInput
-            id="igs-dur-postquirurgica"
-            value={datos.duracionPostquirurgica}
-            onChange={(v) => onChange('duracionPostquirurgica', v)}
-            options={DURACIONES_CIRUGIA_CATALOGO}
-            required
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="igs-dur-recuperacion">Dur. recuperación</label>
-          <DuracionInput
-            id="igs-dur-recuperacion"
-            value={datos.duracionRecuperacion}
-            onChange={(v) => onChange('duracionRecuperacion', v)}
             options={DURACIONES_CIRUGIA_CATALOGO}
             required
           />
@@ -205,7 +179,10 @@ export default function InformacionGeneralStep({
 
       <div className="igs-divider" />
 
-      <h4 className="igs-section-title">Datos de admisión y contratación</h4>
+      <div className="igs-section-head">
+        <span className="igs-section-icon" aria-hidden="true"><LuFileText className="icon" /></span>
+        <h4 className="igs-section-title">Datos de admisión y contratación</h4>
+      </div>
       <div className="igs-grid">
         <div className="form-field full">
           <label htmlFor="igs-dx-ingreso">Dx. ingreso</label>
@@ -276,65 +253,61 @@ export default function InformacionGeneralStep({
           />
         </div>
 
-        <div className="form-field full">
-          <label className="igs-checkbox">
-            <input
-              type="checkbox"
-              checked={datos.reservaHabitacion}
-              onChange={(e) => onChange('reservaHabitacion', e.target.checked)}
-            />
-            Reserva habitación
-          </label>
-        </div>
-        {datos.reservaHabitacion && (
-          <div className="form-field">
-            <label htmlFor="igs-dias-cama">Días cama</label>
-            <input
-              id="igs-dias-cama"
-              type="number"
-              min="0"
-              required
-              placeholder="0"
-              value={datos.diasCama}
-              onChange={(e) => onChange('diasCama', e.target.value)}
-            />
+        {/* Cada checkbox arma su propia columna con los campos que activa. */}
+        <div className="igs-checks">
+          <div className="igs-check-col">
+            <label className="igs-checkbox">
+              <input
+                type="checkbox"
+                checked={datos.reservaHabitacion}
+                onChange={(e) => onChange('reservaHabitacion', e.target.checked)}
+              />
+              Reserva habitación
+            </label>
+            {datos.reservaHabitacion && (
+              <div className="form-field">
+                <label htmlFor="igs-dias-cama">Días cama</label>
+                <input
+                  id="igs-dias-cama"
+                  type="number"
+                  min="0"
+                  required
+                  placeholder="0"
+                  value={datos.diasCama}
+                  onChange={(e) => onChange('diasCama', e.target.value)}
+                />
+              </div>
+            )}
           </div>
-        )}
 
-        <div className="form-field full">
-          <label className="igs-checkbox">
-            <input
-              type="checkbox"
-              checked={datos.seVenceAutorizacion}
-              onChange={(e) => onChange('seVenceAutorizacion', e.target.checked)}
-            />
-            Se vence autorización
-          </label>
+          <div className="igs-check-col">
+            <label className="igs-checkbox">
+              <input
+                type="checkbox"
+                checked={datos.seVenceAutorizacion}
+                onChange={(e) => onChange('seVenceAutorizacion', e.target.checked)}
+              />
+              Se vence autorización
+            </label>
+            {datos.seVenceAutorizacion && (
+              // Un solo datetime-local; en `datos` siguen separados (fechaVence + horaVence).
+              <div className="form-field">
+                <label htmlFor="igs-fecha-vence">Fecha y hora de vencimiento</label>
+                <input
+                  id="igs-fecha-vence"
+                  type="datetime-local"
+                  required
+                  value={datos.fechaVence && datos.horaVence ? `${datos.fechaVence}T${datos.horaVence}` : ''}
+                  onChange={(e) => {
+                    const [fecha = '', hora = ''] = e.target.value.split('T');
+                    onChange('fechaVence', fecha);
+                    onChange('horaVence', hora);
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
-        {datos.seVenceAutorizacion && (
-          <>
-            <div className="form-field">
-              <label htmlFor="igs-fecha-vence">Fecha vence</label>
-              <input
-                id="igs-fecha-vence"
-                type="date"
-                required
-                value={datos.fechaVence}
-                onChange={(e) => onChange('fechaVence', e.target.value)}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="igs-hora-vence">Hora vence</label>
-              <input
-                id="igs-hora-vence"
-                type="time"
-                required
-                value={datos.horaVence}
-                onChange={(e) => onChange('horaVence', e.target.value)}
-              />
-            </div>
-          </>
-        )}
 
         <div className="form-field full">
           <label htmlFor="igs-observaciones">Observaciones</label>

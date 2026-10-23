@@ -48,7 +48,7 @@ const OPCIONES_JORNADA = Object.entries(JORNADAS).map(([value, j]) => ({
 // `modoAgenda`/`onModoAgenda`: grupo "Agenda por" (salas | médicos), solo en la
 // agenda de Programación (sin `onModoAgenda` el grupo no se muestra).
 export default function VistaAgenda({
-  jornada, onJornada, diasVista, onDiasVista, vista, onVista, modoAgenda, onModoAgenda,
+  jornada, onJornada, diasVista, onDiasVista, vista, onVista, modoAgenda, onModoAgenda, ocultarJornada,
 }) {
   const opcionesDias = onVista ? [OPCION_DIA, ...OPCIONES_DIAS] : OPCIONES_DIAS;
   const diasActual = onVista && vista === 'dia' ? 'dia' : diasVista;
@@ -93,7 +93,7 @@ export default function VistaAgenda({
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const el = document.activeElement;
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(el?.tagName) || el?.isContentEditable) return;
-      const match = [OPCION_DIA, ...OPCIONES_DIAS].find((o) => o.key.toLowerCase() === e.key.toLowerCase());
+      const match = [OPCION_DIA, ...OPCIONES_DIAS].find((o) => o.key?.toLowerCase() === e.key.toLowerCase());
       if (match) elegirDias(match.value);
     }
     document.addEventListener('keydown', onShortcut);
@@ -166,9 +166,13 @@ export default function VistaAgenda({
               <div className={panel.divider} role="separator" />
             </>
           )}
-          <div className={panel.groupLabel}>Horas visibles</div>
-          {OPCIONES_JORNADA.map((o) => renderOpcion(o, jornada === o.value, onJornada))}
-          <div className={panel.divider} role="separator" />
+          {!ocultarJornada && (
+            <>
+              <div className={panel.groupLabel}>Horas visibles</div>
+              {OPCIONES_JORNADA.map((o) => renderOpcion(o, jornada === o.value, onJornada))}
+              <div className={panel.divider} role="separator" />
+            </>
+          )}
           <div className={panel.groupLabel}>Días visibles</div>
           {opcionesDias.map((o) => renderOpcion(o, diasActual === o.value, elegirDias))}
         </div>,

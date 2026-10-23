@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import './ProcedimientosStep.css';
-import Button from '@/Components/Button/Button';
 import ProcedimientoCard from '../ProcedimientoCard/ProcedimientoCard';
 import CatalogoMedicosModal from '../../CatalogoMedicosModal/CatalogoMedicosModal';
 import { soloNombre, capitalizar } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -126,8 +125,8 @@ export default function ProcedimientosStep({
       <h4 className="ncw-section-title">Personal que participa</h4>
 
       {/* Una fila por rol (siempre visibles): con personas, sus nombres + "Agregar otro";
-          sin nadie, el botón de agregar en la propia fila. Cirujano y anestesiólogo son
-          obligatorios para continuar. */}
+          sin nadie, el botón de agregar en la propia fila. Un rol marcado `obligatorio`
+          en ROLES_PERSONAL (hoy ninguno) bloquea el avance hasta tener a alguien. */}
       <ul className="pcs-roles">
         {ROLES_PERSONAL.map(({ rol, obligatorio }) => {
           const delRol = personal
@@ -136,40 +135,41 @@ export default function ProcedimientosStep({
           const falta = obligatorio && delRol.length === 0;
           return (
             <li className={`pcs-rol${falta ? ' pcs-rol-falta' : ''}`} key={rol}>
+              {/* Línea 1: etiqueta (con Requerido/Opcional si nadie está asignado) y botón de agregar.
+                  Línea 2 (solo con personas): sus nombres a todo el ancho, con "quitar" al borde derecho. */}
               <div className="pcs-rol-label">
                 <span className="pcs-card-label">{rol}</span>
-                <span className={`pcs-rol-req${falta ? ' pcs-rol-req-falta' : ''}`}>{obligatorio ? 'Requerido' : 'Opcional'}</span>
-              </div>
-              <div className="pcs-rol-contenido">
-                {delRol.length > 0 && (
-                  <ul className="pcs-rol-personas">
-                    {delRol.map(({ per, index }) => (
-                      <li className="pcs-persona" key={per.nombre}>
-                        <span className="pcs-personal-nombre">{capitalizarNombre(per.nombre)}</span>
-                        <button
-                          type="button"
-                          className="ncw-icon-btn pcs-quitar"
-                          onClick={() => handleRemovePersonal(index)}
-                          aria-label={`Quitar ${rol} ${capitalizarNombre(per.nombre)}`}
-                          title="Quitar"
-                        >
-                          <LuX className="icon" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {delRol.length === 0 ? (
-                  <Button type="button" variant="outline" size="sm" icon={LuPlus} onClick={() => setRolAbierto(rol)}>
-                    Agregar {rol.toLowerCase()}
-                  </Button>
-                ) : (
-                  <button type="button" className="pcs-agregar-otro" onClick={() => setRolAbierto(rol)}>
-                    <LuPlus className="icon" aria-hidden="true" />
-                    Agregar otro {rol.toLowerCase()}
-                  </button>
+                {delRol.length === 0 && (
+                  <span className={`pcs-rol-req${falta ? ' pcs-rol-req-falta' : ''}`}>{obligatorio ? 'Requerido' : 'Opcional'}</span>
                 )}
               </div>
+              {delRol.length > 0 && (
+                <ul className="pcs-rol-personas">
+                  {delRol.map(({ per, index }) => (
+                    <li className="pcs-persona" key={per.nombre}>
+                      <span className="pcs-personal-nombre">{capitalizarNombre(per.nombre)}</span>
+                      <button
+                        type="button"
+                        className="ncw-icon-btn pcs-quitar"
+                        onClick={() => handleRemovePersonal(index)}
+                        aria-label={`Quitar ${rol} ${capitalizarNombre(per.nombre)}`}
+                        title="Quitar"
+                      >
+                        <LuX className="icon" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <button
+                type="button"
+                className="ncw-icon-btn ncw-icon-btn-primary pcs-agregar"
+                onClick={() => setRolAbierto(rol)}
+                aria-label={delRol.length === 0 ? `Agregar ${rol.toLowerCase()}` : `Agregar otro ${rol.toLowerCase()}`}
+                title={delRol.length === 0 ? `Agregar ${rol.toLowerCase()}` : `Agregar otro ${rol.toLowerCase()}`}
+              >
+                <LuPlus className="icon" aria-hidden="true" />
+              </button>
             </li>
           );
         })}

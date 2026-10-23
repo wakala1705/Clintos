@@ -46,10 +46,11 @@
   .pcs-card-bottom{grid-template-columns:1fr;}
 }
 
-/* Personal: una fila por rol (etiqueta + Requerido/Opcional | personas + agregar). */
+/* Personal: una fila por rol. Línea 1: etiqueta (+ Requerido/Opcional sin personas) | botón agregar.
+   Línea 2 (con personas): nombres a todo el ancho (fila completa) con "quitar" al borde derecho. */
 .pcs-roles{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .pcs-rol{
-  display:grid;grid-template-columns:150px minmax(0,1fr);align-items:start;gap:10px 16px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px 16px;
   padding:10px 12px;border-bottom:1px solid var(--bg);
 }
 .pcs-rol:last-child{border-bottom:none;}
@@ -57,23 +58,15 @@
 .pcs-rol-label{display:flex;flex-direction:column;gap:2px;padding-top:6px;}
 .pcs-rol-req{font-size:var(--fs-xs);color:var(--ink-500);}
 .pcs-rol-req-falta{font-weight:var(--fw-semibold);color:var(--amber-fg);}
-.pcs-rol-contenido{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;}
-.pcs-rol-personas{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;}
+.pcs-rol-personas{grid-column:1 / -1;grid-row:2;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
 .pcs-persona{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;}
-.pcs-personal-nombre{font-size:var(--fs-sm);color:var(--ink-700);}
+.pcs-personal-nombre{font-size:var(--fs-base);color:var(--ink-700);text-transform:uppercase;overflow-wrap:anywhere;}
 /* Quitar: neutro; rojo solo al pasar el mouse / enfocar. */
 .pcs-quitar:hover,.pcs-quitar:focus-visible{background:var(--red-bg);color:var(--red);}
 @media (pointer:coarse),(max-width:1024px){.pcs-quitar{width:44px;height:44px;}}
-/* "Agregar otro": acción discreta bajo las personas ya agregadas. */
-.pcs-agregar-otro{
-  display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 4px;margin-left:-4px;
-  border:none;border-radius:6px;background:none;cursor:pointer;
-  font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--primary);
-}
-.pcs-agregar-otro:hover{background:var(--primary-50);}
-.pcs-agregar-otro:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
-.pcs-agregar-otro .icon{width:14px;height:14px;}
-@media (pointer:coarse){.pcs-agregar-otro{min-height:44px;}}
+/* Agregar (rol vacío o "otro"): botón de ícono con borde, al extremo derecho; base en .ncw-icon-btn (shared). */
+.pcs-agregar{grid-column:2;grid-row:1;border:1px solid var(--primary);}
+@media (pointer:coarse),(max-width:1024px){.pcs-agregar{width:44px;height:44px;}}
 /* Aviso de "Quitaste…" con Deshacer. */
 .pcs-deshacer{
   margin:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -85,4 +78,3 @@
   font-weight:var(--fw-semibold);color:var(--primary);text-decoration:underline;text-underline-offset:3px;
 }
 .pcs-deshacer-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
-@media (max-width:768px){.pcs-rol{grid-template-columns:minmax(0,1fr);}.pcs-rol-label{padding-top:0;flex-direction:row;gap:8px;align-items:baseline;}}

@@ -22,19 +22,19 @@ export default function FranjaPaciente({ solicitud }) {
       <EstadoChip tone="complete">Lista de chequeo completa · {ev.completos}/{ev.total}</EstadoChip>
       <dl className="fp-datos">
         <Dato label="Paciente">
-          <span className="fp-valor">{paciente.nombre}</span>
+          <span className="fp-valor fp-paciente">{paciente.nombre}</span>
           <span className="fp-sub">
             {enmascararDocumento(paciente.tipoDocumento, paciente.numeroDocumento)} · {paciente.edad} años
           </span>
         </Dato>
         <Dato label="Procedimiento">
           {listaProcedimientos(solicitud).map((p) => (
-            <span key={p.nombre} className="fp-valor">{p.nombre}</span>
+            <span key={p.nombre} className="fp-valor fp-procedimiento">{p.nombre}</span>
           ))}
           <span className="fp-sub">{solicitud.cups} · {solicitud.especialidad}</span>
         </Dato>
         <Dato label="Terceros · Entidad">
-          <span className="fp-valor">{solicitud.eps}</span>
+          <span className="fp-valor fp-tercero">{solicitud.eps}</span>
           <span className="fp-sub">{solicitud.regimen} · Contrato {solicitud.contrato}</span>
         </Dato>
         <Dato label="Origen">

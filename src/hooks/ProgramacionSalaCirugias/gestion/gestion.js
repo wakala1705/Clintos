@@ -74,6 +74,16 @@ export function capitalizarNombre(texto) {
     .join(' ');
 }
 
+// Iniciales para <PatientAvatar>: primer nombre + primer apellido ("María
+// Fernanda Ríos Duarte" -> "MR"; con 4+ palabras se asume 2 nombres + 2
+// apellidos, como en el resto del proyecto).
+export function inicialesPaciente(nombre) {
+  const partes = String(nombre ?? '').trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return '';
+  const apellido = partes.length >= 4 ? partes[2] : partes[1];
+  return `${partes[0][0]}${apellido ? apellido[0] : ''}`.toLocaleUpperCase('es');
+}
+
 // ("CC", "1.020.345.817") -> "CC ••••5817": solo se ve el final del documento.
 export function enmascararDocumento(tipo, numero) {
   const digitos = String(numero).replace(/\D/g, '');

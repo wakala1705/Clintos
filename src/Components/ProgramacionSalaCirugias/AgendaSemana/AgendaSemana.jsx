@@ -35,6 +35,7 @@ export default function AgendaSemana({
   cirujano = 'todos', cirujanos, onCirujanoChange, modoAgenda, onModoAgenda,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
   vista, onChangeVista, jornada = '24h', onJornada, diasVista, onDiasVista,
+  formato, onFormato,
 }) {
   const ventana = JORNADAS[jornada] ?? JORNADAS['24h'];
   const SLOTS = ventana.hasta - ventana.desde;
@@ -96,6 +97,8 @@ export default function AgendaSemana({
           onJornada={onJornada}
           diasVista={diasVista}
           onDiasVista={onDiasVista}
+          formato={formato}
+          onFormato={onFormato}
         />
       </div>
 

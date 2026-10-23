@@ -23,8 +23,8 @@ const SALAS_MODAL = SALAS.filter((s) => s.sedeId === SEDE_ID && s.value.startsWi
 
 // Modal "Programar cirugía" de Gestión de cirugías: agenda semanal de una sala
 // (una columna por día, con las cirugías reales ya programadas), día/hora de esta cirugía
-// y sus tiempos postquirúrgico y de recuperación (personal y equipos se eligen
-// después, en el wizard). Con `cirujano` (filtro de la agenda) la grilla suma, como ocupado, lo que ese
+// y su duración estimada (personal y equipos se eligen después, en el wizard;
+// los tiempos postquirúrgico y de recuperación ya no se capturan). Con `cirujano` (filtro de la agenda) la grilla suma, como ocupado, lo que ese
 // cirujano ya tiene en otras salas: una franja solo está libre si la sala y el cirujano lo están. No navega: al continuar avisa al
 // padre (`onElegir`), que abre el wizard "Nueva cirugía" con todo esto
 // precargado para completar los datos administrativos y los insumos.
@@ -50,9 +50,6 @@ export default function SeleccionarHuecoModal({
   const [seleccion, setSeleccion] = useState(null);
   // Fecha de hoy, tomada una sola vez, para marcarla en la agenda.
   const [hoy] = useState(() => fechaISO(new Date()));
-  // Tiempos fuera de quirófano (min): se capturan aquí y viajan al wizard.
-  const [durPost, setDurPost] = useState(30);
-  const [durRecup, setDurRecup] = useState(60);
   const [aviso, setAviso] = useState(null);
   // Horas visibles (jornada operativa por defecto o 24 h). Es solo de
   // visualización: no cambia los datos ni las franjas.
@@ -213,8 +210,6 @@ export default function SeleccionarHuecoModal({
       fecha: seleccion.colId,
       hora: horaFranja(seleccion.inicio),
       duracionMin: duracion * MINUTOS_FRANJA,
-      duracionPostquirurgicaMin: durPost,
-      duracionRecuperacionMin: durRecup,
     });
   }
 
@@ -239,10 +234,6 @@ export default function SeleccionarHuecoModal({
             <TiemposCirugia
               duracion={duracion}
               onDuracion={handleDuracion}
-              post={durPost}
-              onPost={setDurPost}
-              recuperacion={durRecup}
-              onRecuperacion={setDurRecup}
               aviso={aviso}
             />
           </aside>
@@ -260,8 +251,8 @@ export default function SeleccionarHuecoModal({
             diasVista={vistaDias}
             onDiasVista={handleDiasVista}
             hoy={hoy}
-            postFranjas={durPost / MINUTOS_FRANJA}
-            recupFranjas={durRecup / MINUTOS_FRANJA}
+            postFranjas={0}
+            recupFranjas={0}
             seleccion={seleccion}
             duracion={duracion}
             onElegir={handleElegir}

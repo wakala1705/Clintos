@@ -11,7 +11,10 @@ import OrigenTag from '../GestionCirugias/OrigenTag/OrigenTag';
 import PrioridadTag from '../GestionCirugias/PrioridadTag/PrioridadTag';
 import DiagnosticoTag from '../GestionCirugias/DiagnosticoTag/DiagnosticoTag';
 import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTrap';
-import { capitalizarNombre, enmascararDocumento, filtrarSolicitudes } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
+import {
+  capitalizarNombre, filtrarSolicitudes, inicialesPaciente,
+} from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { ORIGEN_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 
 import SearchField from '@/Components/SearchField/SearchField';
@@ -41,6 +44,10 @@ export default function SeleccionarSolicitudModal({
     [solicitudes, busqueda],
   );
   const visibles = origen ? listas.filter((s) => s.origen === origen) : listas;
+  // Solicitud marcada en la tabla; si un filtro la saca de la lista visible,
+  // deja de contar como selección (y "Programar" vuelve a deshabilitarse).
+  const [seleccionId, setSeleccionId] = useState(null);
+  const seleccionada = visibles.find((s) => s.id === seleccionId) ?? null;
   const opciones = OPCIONES_ORIGEN.map((o) => ({
     ...o,
     count: o.value ? listas.filter((s) => s.origen === o.value).length : listas.length,
@@ -106,36 +113,41 @@ export default function SeleccionarSolicitudModal({
                 <tr>
                   <th scope="col">Paciente</th>
                   <th scope="col">Procedimiento</th>
+                  <th scope="col">Tercero</th>
                   <th scope="col">Prioridad</th>
                   <th scope="col">Diagnóstico</th>
                   <th scope="col">Origen</th>
-                  <th scope="col"><span className="sso-sr">Acciones</span></th>
                 </tr>
               </thead>
               <tbody>
                 {visibles.map((s) => (
-                  <tr key={s.id} onClick={() => onElegir(s)}>
+                  <tr
+                    key={s.id}
+                    className={s.id === seleccionId ? 'selected' : undefined}
+                    tabIndex={0}
+                    aria-selected={s.id === seleccionId}
+                    onClick={() => setSeleccionId(s.id)}
+                    onDoubleClick={() => onElegir(s)}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter' || e.target !== e.currentTarget) return;
+                      // Enter marca la fila; sobre la ya marcada equivale al doble clic.
+                      if (s.id === seleccionId) onElegir(s);
+                      else setSeleccionId(s.id);
+                    }}
+                  >
                     <td>
-                      <span className="sso-main">{s.paciente.nombre}</span>
-                      <span className="sso-sub">
-                        {enmascararDocumento(s.paciente.tipoDocumento, s.paciente.numeroDocumento)}
-                      </span>
+                      <div className="sso-paciente-cell">
+                        <PatientAvatar iniciales={inicialesPaciente(s.paciente.nombre)} className="sso-avatar" />
+                        <span className="sso-main sso-paciente">{s.paciente.nombre}</span>
+                      </div>
                     </td>
                     <td>
-                      <span className="sso-main">{s.procedimiento}</span>
-                      <span className="sso-sub">{s.especialidad}</span>
+                      <span className="sso-main sso-procedimiento">{s.procedimiento}</span>
                     </td>
+                    <td className="sso-tercero">{s.eps || '—'}</td>
                     <td><PrioridadTag prioritaria={s.prioritaria} /></td>
                     <td><DiagnosticoTag primeraVez={s.primeraVez} /></td>
                     <td><OrigenTag origen={s.origen} /></td>
-                    <td className="sso-accion">
-                      <Button
-                        aria-label={`Programar cirugía de ${s.paciente.nombre}`}
-                        onClick={(e) => { e.stopPropagation(); onElegir(s); }}
-                      >
-                        Programar
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -144,14 +156,14 @@ export default function SeleccionarSolicitudModal({
         )}
 
         <div className="sso-pie">
-          <p className="sso-resumen" aria-live="polite">
-            {visibles.length} de {totalListas} {totalListas === 1 ? 'solicitud lista' : 'solicitudes listas'} para programar
-          </p>
           {onOtroPaciente && (
-            <Button variant="outline" icon={LuUserPlus} onClick={onOtroPaciente}>
+            <Button variant="secondary-accent" icon={LuUserPlus} onClick={onOtroPaciente}>
               Programar otro paciente
             </Button>
           )}
+          <Button className="sso-programar" disabled={!seleccionada} onClick={() => onElegir(seleccionada)}>
+            Programar
+          </Button>
         </div>
       </div>
     </div>

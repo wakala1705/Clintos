@@ -4,7 +4,7 @@ import {
   useEffect, useRef, useState,
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LuHistory, LuPackage } from 'react-icons/lu';
+import { LuHistory } from 'react-icons/lu';
 import './ProgramacionSalaCirugias.css';
 import './shared/shared.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
@@ -16,6 +16,7 @@ import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import MiniCalendarCirugias from './MiniCalendarCirugias/MiniCalendarCirugias';
 import AgendaSemana from './AgendaSemana/AgendaSemana';
 import AgendaMes from './AgendaMes/AgendaMes';
+import AgendaTabla from './AgendaTabla/AgendaTabla';
 import DetalleCirugiaPanel from './DetalleCirugiaPanel/DetalleCirugiaPanel';
 import ReprogramarCirugiaModal from './modals/ReprogramarCirugiaModal/ReprogramarCirugiaModal';
 import CancelarCirugiaModal from './modals/CancelarCirugiaModal/CancelarCirugiaModal';
@@ -78,6 +79,9 @@ export default function ProgramacionSalaCirugias() {
   const [cirujano, setCirujano] = useState('todos');
   const salaEfectiva = modoAgenda === 'medicos' ? 'todas' : salaId;
   const [vista, setVista] = useState('semana');
+  // Formato de la agenda: grilla de calendario o tabla (mismas cirugías del
+  // rango activo, una por fila -- ver AgendaTabla.jsx). Solo en sesión.
+  const [formato, setFormato] = useState('calendario');
   // Configuración "Vista" de la agenda (mismo menú que el modal de Programar
   // cirugía, ver VistaAgenda.jsx): horas visibles ('24h' | 'operativa') y días
   // visibles en la vista Semana ('semana' | 'habil' | 'tres'). Solo cambia lo
@@ -449,17 +453,9 @@ export default function ProgramacionSalaCirugias() {
               >
                 Historial de cirugías
               </Button>
-              {/* "Canastas de cirugía" (encargo explícito, 2026-09-29): navega
-                  a /cirugia/canastas -- por ahora una
-                  página en blanco (ver CanastasCirugia.jsx), el contenido
-                  real se construye en un paso aparte. */}
-              <Button
-                variant="secondary-accent"
-                icon={LuPackage}
-                onClick={() => router.push('/cirugia/canastas')}
-              >
-                Canastas de cirugía
-              </Button>
+              {/* Botón "Canastas de cirugía" oculto (encargo explícito): la ruta
+                  /cirugia/canastas sigue accesible desde el menú y desde
+                  "Ver en Canastas" del detalle de la cirugía. */}
             </div>
           </div>
 
@@ -477,7 +473,39 @@ export default function ProgramacionSalaCirugias() {
             </div>
 
             <div className="psc-main-col">
-              {vista === 'mes' ? (
+              {formato === 'tabla' ? (
+                <AgendaTabla
+                  label={vista === 'dia' ? diaLabel(fechaAncla) : (vista === 'mes' ? mesLabel(fechaAncla) : (tresDias ? rangoFechasLabel(tresDias[0], tresDias[2]) : rangoSemanaLabel(inicioSemana)))}
+                  cirugias={cirugias}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  onPrev={handlePrev}
+                  onNext={handleNext}
+                  navPrevLabel={vista === 'dia' ? 'Día anterior' : (vista === 'mes' ? 'Mes anterior' : (tresDias ? 'Días anteriores' : 'Semana anterior'))}
+                  navNextLabel={vista === 'dia' ? 'Día siguiente' : (vista === 'mes' ? 'Mes siguiente' : (tresDias ? 'Días siguientes' : 'Semana siguiente'))}
+                  sedeId={sedeId}
+                  salaId={salaEfectiva}
+                  onSalaChange={handleSalaChange}
+                  estado={estado}
+                  onEstadoChange={handleEstadoChange}
+                  modoAgenda={modoAgenda}
+                  onModoAgenda={handleModoAgendaChange}
+                  cirujano={cirujano}
+                  cirujanos={cirujanosDeSede(sedeId)}
+                  onCirujanoChange={handleCirujanoChange}
+                  vista={vista}
+                  onChangeVista={handleChangeVista}
+                  diasVista={diasVista}
+                  onDiasVista={setDiasVista}
+                  formato={formato}
+                  onFormato={setFormato}
+                  onEditarCirugia={handleEditarCirugia}
+                  onReprogramarCirugia={handleReprogramarCirugia}
+                  onMarcarRealizada={handleMarcarRealizada}
+                  onMarcarIncumplida={handleMarcarIncumplida}
+                  onCancelarCirugia={handleCancelarCirugia}
+                />
+              ) : vista === 'mes' ? (
                 <AgendaMes
                   monthLabel={mesLabel(fechaAncla)}
                   dowLabels={grillaMesActual.dowLabels}
@@ -532,6 +560,8 @@ export default function ProgramacionSalaCirugias() {
                   onJornada={setJornada}
                   diasVista={diasVista}
                   onDiasVista={setDiasVista}
+                  formato={formato}
+                  onFormato={setFormato}
                 />
               )}
             </div>
