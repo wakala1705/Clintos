@@ -8,7 +8,7 @@ import CirugiaCardMenu from '../../CirugiaCardMenu/CirugiaCardMenu';
 import EstadoDiaBadge from '../EstadoDiaBadge/EstadoDiaBadge';
 import { canastaPedida, canastaVinculada, estadoVisual } from '@/hooks/ProgramacionSalaCirugias/panel/panel';
 import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
-import { diaCortoLabel, estaIniciada } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { estaIniciada, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
@@ -17,7 +17,7 @@ import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gest
 // incumplida) sin seleccionarla -- `.cdt-menu` corta la propagación, igual
 // que `.cc-menu-wrap` en CirugiaCard.
 export default function CirugiasDiaTable({
-  filas, ahora, salaLabel, mostrarFecha = false, selectedId, onSelect,
+  filas, ahora, salaLabel, selectedId, onSelect,
   onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
   motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar,
 }) {
@@ -26,10 +26,10 @@ export default function CirugiasDiaTable({
       <table className="cdt-table">
         <thead>
           <tr>
-            <th scope="col">Hora</th>
-            <th scope="col">Sala</th>
+            <th scope="col">Fecha y hora</th>
             <th scope="col">Paciente</th>
             <th scope="col">Procedimiento</th>
+            <th scope="col">Sala</th>
             <th scope="col" className="cdt-num">Duración</th>
             <th scope="col">Canasta vinculada</th>
             <th scope="col">Canasta pedida</th>
@@ -56,11 +56,7 @@ export default function CirugiasDiaTable({
                 if (e.key === 'Enter' && e.target === e.currentTarget) onSelect(c.id === selectedId ? null : c.id);
               }}
             >
-              <td className="cdt-hora">
-                {c.horaInicio}
-                {mostrarFecha ? <span className="cdt-sub">{diaCortoLabel(c.fecha).replace(/ d{4}$/, '')}</span> : null}
-              </td>
-              <td>{salaLabel(c.salaId)}</td>
+              <td className="cdt-hora">{fechaHoraRangoLabel(c.fecha, c.horaInicio)}</td>
               <td>
                 <span className="cdt-main">{c.paciente.nombre}</span>
                 <span className="cdt-sub">{c.paciente.documento}</span>
@@ -72,6 +68,7 @@ export default function CirugiasDiaTable({
                 </span>
                 <span className="cdt-sub">{capitalizarNombre(c.cirujano)}</span>
               </td>
+              <td>{salaLabel(c.salaId)}</td>
               <td className="cdt-num">{minutosCirugia(c)} min</td>
               <td>
                 <Badge tone={vinculada ? 'success' : 'neutral'}>{vinculada ? 'Vinculada' : 'No vinculada'}</Badge>

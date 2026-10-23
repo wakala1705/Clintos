@@ -15,7 +15,7 @@
 .cdt-table tbody tr.selected{background:var(--interactive-selected-bg);}
 .cdt-table .cdt-num{text-align:right;white-space:nowrap;}
 .cdt-hora{font-weight:var(--fw-semibold);white-space:nowrap;}
-.cdt-main{display:block;font-weight:var(--fw-semibold);}
+.cdt-main{display:block;font-weight:var(--fw-medium);text-transform:uppercase;}
 .cdt-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);}
 .cdt-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .cdt-actions{width:1%;text-align:right;}

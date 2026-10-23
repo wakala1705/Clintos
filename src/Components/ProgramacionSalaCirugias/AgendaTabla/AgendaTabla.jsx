@@ -29,6 +29,9 @@ export default function AgendaTabla({
   // Con una sala elegida en el filtro la columna sería redundante; solo en la
   // agenda por médicos (cruza salas, `salaId === 'todas'`) aporta información.
   const mostrarSala = salaId === 'todas';
+  // En la agenda por médico el filtro ya fija al cirujano: la columna sería redundante.
+  const mostrarMedico = modoAgenda !== 'medicos';
+  const columnas = 7 + (mostrarSala ? 1 : 0) + (mostrarMedico ? 1 : 0);
 
   return (
     <div className="at-wrap">
@@ -75,7 +78,7 @@ export default function AgendaTabla({
               {mostrarSala && <th scope="col">Sala</th>}
               <th scope="col">Paciente</th>
               <th scope="col">Procedimiento</th>
-              <th scope="col">Médico</th>
+              {mostrarMedico && <th scope="col">Médico</th>}
               <th scope="col" className="at-num">Duración</th>
               <th scope="col">Estado</th>
               <th scope="col"><span className="at-sr">Acciones</span></th>
@@ -84,7 +87,7 @@ export default function AgendaTabla({
           <tbody>
             {filas.length === 0 && (
               <tr className="at-empty">
-                <td colSpan={mostrarSala ? 9 : 8}>Sin cirugías en este rango</td>
+                <td colSpan={columnas}>Sin cirugías en este rango</td>
               </tr>
             )}
             {filas.map((c) => (
@@ -99,7 +102,7 @@ export default function AgendaTabla({
                 }}
               >
                 <td className="at-fecha">{fechaCortaMesLabel(c.fecha)}</td>
-                <td className="at-hora">{c.horaInicio} – {c.horaFin}</td>
+                <td className="at-hora">{c.horaInicio}</td>
                 {mostrarSala && <td>{salaLabel(c.salaId)}</td>}
                 <td>
                   <span className="at-main">{c.paciente.nombre}</span>
@@ -110,7 +113,7 @@ export default function AgendaTabla({
                     {c.estado === 'urgencia' && <Badge tone="warn">Urgencia</Badge>}
                   </span>
                 </td>
-                <td>{capitalizarNombre(c.cirujano)}</td>
+                {mostrarMedico && <td>{capitalizarNombre(c.cirujano)}</td>}
                 <td className="at-num">{minutosCirugia(c)} min</td>
                 <td><EstadoCirugiaBadge estado={c.estado} /></td>
                 <td className="at-actions">

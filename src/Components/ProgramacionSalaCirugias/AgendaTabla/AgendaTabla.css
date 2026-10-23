@@ -28,7 +28,7 @@
 .at-table tbody tr.at-empty{cursor:default;}
 .at-table tbody tr.at-empty:hover{background:none;}
 .at-empty td{text-align:center;color:var(--ink-500);padding:48px 16px;}
-.at-table td.at-fecha{font-weight:var(--fw-semibold);white-space:nowrap;}
+.at-table td.at-fecha{font-weight:var(--fw-medium);white-space:nowrap;}
 .at-table td.at-hora{font-weight:var(--fw-regular);color:var(--ink-500);white-space:nowrap;}
 .at-main{display:block;font-weight:var(--fw-medium);text-transform:uppercase;}
 .at-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}

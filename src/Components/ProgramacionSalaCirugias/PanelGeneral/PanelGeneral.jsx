@@ -29,13 +29,20 @@ import {
 import { useRestriccionInicioActiva } from '@/hooks/ProgramacionSalaCirugias/restriccionInicio';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import {
-  RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, rangoFechas,
+  ESTADO_VISUAL_LABEL, RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, rangoFechas,
 } from '@/hooks/ProgramacionSalaCirugias/panel/panel';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import VistaPanelMenu from './VistaPanelMenu/VistaPanelMenu';
 import SearchField from '@/Components/SearchField/SearchField';
+import FormSelect from '@/Components/FormSelect/FormSelect';
+import MasFiltrosCirugiasPopover from './MasFiltrosCirugiasPopover/MasFiltrosCirugiasPopover';
+
+const ESTADO_OPTIONS = [
+  { value: 'todos', label: 'Todos los estados' },
+  ...Object.entries(ESTADO_VISUAL_LABEL).map(([value, label]) => ({ value, label })),
+];
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx).
 const SEDE_ID = '02';
 const SALAS_SEDE = SALAS.filter((s) => s.sedeId === SEDE_ID);
@@ -64,6 +71,9 @@ export default function PanelGeneral() {
   const [filtro, setFiltro] = useState('todas');
   const [rango, setRango] = useState('hoy');
   const [busqueda, setBusqueda] = useState('');
+  const [estado, setEstado] = useState('todos');
+  const [vinculada, setVinculada] = useState([]);
+  const [pedida, setPedida] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   // Demo de la pantalla de familiares (televisor de la sala de espera) en un modal.
   const [familiaresAbierto, setFamiliaresAbierto] = useState(false);
@@ -122,9 +132,12 @@ export default function PanelGeneral() {
   } = useCirugiasAcciones({ applyUpdated });
 
   const lista = cirugias ?? [];
-  const filas = filtrarFilas(lista, ahora, { filtro, busqueda });
+  const filas = filtrarFilas(lista, ahora, {
+    filtro, busqueda, estado, vinculada, pedida,
+  });
   const selectedCirugia = lista.find((c) => c.id === selectedId) ?? null;
-  const hayFiltros = filtro !== 'todas' || busqueda.trim() !== '';
+  const hayFiltros = filtro !== 'todas' || busqueda.trim() !== '' || estado !== 'todos'
+    || vinculada.length > 0 || pedida.length > 0;
 
   // Exporta lo que muestra la tabla (con los filtros aplicados).
   function handleExportar() {
@@ -140,6 +153,9 @@ export default function PanelGeneral() {
   function limpiarFiltros() {
     setFiltro('todas');
     setBusqueda('');
+    setEstado('todos');
+    setVinculada([]);
+    setPedida([]);
   }
 
   let listado;
@@ -174,7 +190,6 @@ export default function PanelGeneral() {
         filas={filas}
         ahora={ahora}
         salaLabel={salaLabel}
-        mostrarFecha={rango !== 'hoy'}
         selectedId={selectedId}
         onSelect={setSelectedId}
         onReprogramar={handleReprogramarCirugia}
@@ -240,6 +255,20 @@ export default function PanelGeneral() {
                 value={rango}
                 onChange={setRango}
                 ariaLabel="Filtrar cirugías por fecha"
+              />
+              <div className="pg-cir-estado-select">
+                <FormSelect
+                  id="pg-cir-estado"
+                  ariaLabel="Estado"
+                  value={estado}
+                  onChange={setEstado}
+                  options={ESTADO_OPTIONS}
+                />
+              </div>
+              <MasFiltrosCirugiasPopover
+                vinculada={vinculada}
+                pedida={pedida}
+                onAplicar={(f) => { setVinculada(f.vinculada); setPedida(f.pedida); }}
               />
               <VistaPanelMenu
                 vista={vista}

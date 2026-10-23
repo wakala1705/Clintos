@@ -1,0 +1,24 @@
+.mfc-wrap{position:relative;}
+/* El contador no debe agrandar el botón (36px = --input-md, como el resto de la barra). */
+.mfc-wrap > button{height:var(--input-md);}
+.mfc-wrap .mfc-count{padding:0 7px;line-height:18px;}
+.mfc-popover{
+  position:absolute;top:calc(100% + 6px);right:0;z-index:var(--z-popover,20);width:300px;
+  display:flex;flex-direction:column;gap:16px;padding:16px;
+  background:var(--surface-modal,var(--surface));border:1px solid var(--border);
+  border-radius:var(--dropdown-radius);box-shadow:var(--dropdown-shadow);
+}
+.mfc-section{margin:0;padding:0;border:0;min-width:0;}
+.mfc-title{
+  padding:0;margin-bottom:8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+}
+.mfc-options{display:flex;flex-direction:column;gap:2px;}
+.mfc-check{
+  display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--dropdown-item-radius);
+  font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);cursor:pointer;
+}
+.mfc-check:hover{background:var(--bg);}
+.mfc-check input{width:16px;height:16px;margin:0;accent-color:var(--primary);cursor:pointer;}
+.mfc-actions{
+  display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--border);
+}

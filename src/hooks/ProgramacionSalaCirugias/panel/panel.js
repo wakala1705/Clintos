@@ -75,13 +75,21 @@ export function conteosFiltros(cirugias, ahora) {
   };
 }
 
-// Filas de la tabla: por hora de inicio, filtradas por pestaña y por texto
+// Filas de la tabla: por hora de inicio, filtradas por pestaña, por estado
+// puntual (`estado`, un estadoVisual o 'todos'), por canasta vinculada
+// (`vinculada`: 'vinculada' / 'no-vinculada') y canasta pedida (`pedida`: estados
+// de CANASTA_PEDIDA_LABEL) -- ambas listas vacías = sin filtro -- y por texto
 // (paciente, documento, procedimiento o cirujano).
-export function filtrarFilas(cirugias, ahora, { filtro = 'todas', busqueda = '' } = {}) {
+export function filtrarFilas(cirugias, ahora, {
+  filtro = 'todas', busqueda = '', estado = 'todos', vinculada = [], pedida = [],
+} = {}) {
   const estados = FILTROS_PANEL[filtro] ?? null;
   const texto = busqueda.trim().toLowerCase();
   return cirugias
     .filter((c) => !estados || estados.includes(estadoVisual(c, ahora)))
+    .filter((c) => estado === 'todos' || estadoVisual(c, ahora) === estado)
+    .filter((c) => vinculada.length === 0 || vinculada.includes(canastaVinculada(c) ? 'vinculada' : 'no-vinculada'))
+    .filter((c) => pedida.length === 0 || pedida.includes(canastaPedida(c)?.estado))
     .filter((c) => {
       if (!texto) return true;
       return [c.paciente.nombre, c.paciente.documento, c.procedimientoPrincipal, c.cirujano]

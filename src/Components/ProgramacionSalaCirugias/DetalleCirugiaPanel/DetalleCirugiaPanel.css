@@ -39,7 +39,7 @@
 .dcp-info-chevron:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
 .dcp-info-chevron .dcp-info-toggle-icon{width:18px;height:18px;}
 /* Programación en una sola línea: ícono - Programación - fecha. */
-.dcp-info-group-prog .dcp-info-group-title{margin-bottom:0;}
+.dcp-info-group-prog .dcp-info-group-title{margin-bottom:0;font-size:var(--fs-base);}
 .dcp-info-group-prog .dcp-info-grid{margin-top:10px;}
 .dcp-prog-fecha{margin-left:auto;font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);}
 .dcp-info-group-prog{border-bottom:1px solid var(--border);flex-shrink:0;}
