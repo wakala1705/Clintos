@@ -17,7 +17,9 @@
 .cdt-hora{font-weight:var(--fw-semibold);white-space:nowrap;}
 .cdt-main{display:block;font-weight:var(--fw-medium);text-transform:uppercase;}
 .cdt-sub{display:block;font-size:var(--fs-sm);color:var(--ink-500);}
-.cdt-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.cdt-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;text-transform:uppercase;}
+/* El badge de Urgencia conserva su texto tal cual. */
+.cdt-proc > *{text-transform:none;}
 .cdt-actions{width:1%;text-align:right;}
 .cdt-menu{display:inline-flex;align-items:center;gap:8px;}
 .cdt-iniciar{display:inline-flex;}

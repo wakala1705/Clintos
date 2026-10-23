@@ -10,9 +10,8 @@ import { canastaPedida, canastaVinculada, estadoVisual } from '@/hooks/Programac
 import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import { estaIniciada, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
-import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
-// Tabla de las cirugías de hoy (el cirujano va bajo el procedimiento). Clic (o Enter) en una fila abre el detalle;
+// Tabla de las cirugías de hoy. Clic (o Enter) en una fila abre el detalle;
 // el "⋯" actúa sobre esa cirugía (reprogramar, cancelar, marcar realizada/
 // incumplida) sin seleccionarla -- `.cdt-menu` corta la propagación, igual
 // que `.cc-menu-wrap` en CirugiaCard.
@@ -59,14 +58,12 @@ export default function CirugiasDiaTable({
               <td className="cdt-hora">{fechaHoraRangoLabel(c.fecha, c.horaInicio)}</td>
               <td>
                 <span className="cdt-main">{c.paciente.nombre}</span>
-                <span className="cdt-sub">{c.paciente.documento}</span>
               </td>
               <td>
                 <span className="cdt-proc">
                   {c.procedimientoPrincipal}
                   {c.estado === 'urgencia' && <Badge tone="warn">Urgencia</Badge>}
                 </span>
-                <span className="cdt-sub">{capitalizarNombre(c.cirujano)}</span>
               </td>
               <td>{salaLabel(c.salaId)}</td>
               <td className="cdt-num">{minutosCirugia(c)} min</td>
