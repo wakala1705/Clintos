@@ -1,0 +1,14 @@
+/* Ocupa todo el alto del panel de tabs y centra el vacío con su acción. */
+.sv-tab{display:flex;flex-direction:column;height:100%;min-height:0;}
+.sv-vacio{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:32px 24px;text-align:center;
+}
+.sv-icon{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--amber-bg);color:var(--amber-fg);
+}
+.sv-icon .icon{width:22px;height:22px;}
+.sv-title{margin:0;font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
+.sv-text{margin:0 0 8px;font-size:var(--fs-base);color:var(--ink-500);max-width:320px;}

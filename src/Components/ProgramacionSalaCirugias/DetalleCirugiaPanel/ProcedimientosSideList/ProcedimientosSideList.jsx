@@ -45,11 +45,6 @@ export default function ProcedimientosSideList({ procedimientos, selectedId, onS
           ))}
         </tbody>
       </table>
-      <div className="dcp-proc-resumen">
-        <strong>{procedimientos.length}</strong> {procedimientos.length === 1 ? 'procedimiento' : 'procedimientos'}
-        {' · '}
-        <strong>{procedimientos.reduce((t, p) => t + p.duracionMin, 0)}</strong> min en total
-      </div>
     </div>
   );
 }

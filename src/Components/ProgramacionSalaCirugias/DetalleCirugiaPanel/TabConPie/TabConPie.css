@@ -1,0 +1,10 @@
+/* Ocupa todo el alto del panel de tabs: solo el contenido scrollea, el pie queda abajo. */
+.tcp-tab{display:flex;flex-direction:column;height:100%;min-height:0;}
+.tcp-body{flex:1;min-height:0;overflow-y:auto;}
+/* Misma línea suave que el pie de Insumos (sin border-top: el pie del modal queda justo debajo). */
+.tcp-footer{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 16px;background:var(--surface);box-shadow:0 -1px 0 var(--gray-bg);
+}
+.tcp-resumen{font-size:var(--fs-sm);color:var(--ink-500);}
+.tcp-resumen strong{font-weight:var(--fw-semibold);color:var(--ink-900);}

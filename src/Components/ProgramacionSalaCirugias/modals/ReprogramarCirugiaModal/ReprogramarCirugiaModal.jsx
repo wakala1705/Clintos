@@ -12,7 +12,6 @@ import {
   SALAS, CAUSALES_REPROGRAMACION_CIRUGIA, fechaLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { LuCalendarClock, LuSearch } from 'react-icons/lu';
-import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Redisñado a partir de un formulario legacy de referencia ("Reprogramación
 // de cirugía", captura adjunta) -- adaptado al design system del proyecto en
@@ -40,6 +39,14 @@ import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gest
 // (encargo explícito, ver capturas de "Causales de anulación (CAU)") -- ya
 // no un FormSelect con un recorte inventado de motivos: la referencia trae
 // un catálogo cerrado real con id+descripción que hay que calcar.
+// Hora fin = nueva hora de inicio + la duración que ya tenía la cirugía.
+function horaFinDesde(horaInicio, cirugia) {
+  const aMin = (h) => { const [hh, mm] = h.split(':').map(Number); return hh * 60 + mm; };
+  const total = aMin(horaInicio) + (aMin(cirugia.horaFin) - aMin(cirugia.horaInicio));
+  const t = ((total % 1440) + 1440) % 1440;
+  return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
 export default function ReprogramarCirugiaModal({
   cirugia, onClose, onSubmit, fechaMinima,
 }) {
@@ -50,24 +57,17 @@ export default function ReprogramarCirugiaModal({
     fechaMinima && cirugia.fecha < fechaMinima ? '' : cirugia.fecha,
   );
   const [horaInicio, setHoraInicio] = useState(cirugia.horaInicio);
-  const [horaFin, setHoraFin] = useState(cirugia.horaFin);
   const [salaId, setSalaId] = useState(cirugia.salaId);
   const [cirujano, setCirujano] = useState(cirugia.cirujano ?? '');
   const [causal, setCausal] = useState('');
-  const [duracionEstimadaMin, setDuracionEstimadaMin] = useState(
-    cirugia.duracionEstimadaMin ?? cirugia.procedimientos?.[0]?.duracionMin ?? '',
-  );
-  const [duracionPostquirurgicaMin, setDuracionPostquirurgicaMin] = useState(cirugia.duracionPostquirurgicaMin ?? '');
-  const [duracionRecuperacionMin, setDuracionRecuperacionMin] = useState(cirugia.duracionRecuperacionMin ?? '');
   const [catalogoAbierto, setCatalogoAbierto] = useState(null);
 
-  const salaActual = SALAS.find((s) => s.value === cirugia.salaId);
   const salaSeleccionada = SALAS.find((s) => s.value === salaId);
   const causalSeleccionada = CAUSALES_REPROGRAMACION_CIRUGIA.find((c) => c.idCausal === causal);
 
   const fechaInvalida = Boolean(fechaMinima) && fecha !== '' && fecha < fechaMinima;
   const puedeEnviar = causal !== '' && salaId !== '' && cirujano.trim() !== ''
-    && fecha !== '' && horaInicio !== '' && horaFin !== '' && !fechaInvalida;
+    && fecha !== '' && horaInicio !== '' && !fechaInvalida;
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -75,13 +75,15 @@ export default function ReprogramarCirugiaModal({
     onSubmit({
       fecha,
       horaInicio,
-      horaFin,
+      horaFin: horaFinDesde(horaInicio, cirugia),
       salaId,
       cirujano: cirujano.trim(),
       causal,
-      duracionEstimadaMin: duracionEstimadaMin === '' ? '' : Number(duracionEstimadaMin),
-      duracionPostquirurgicaMin: duracionPostquirurgicaMin === '' ? '' : Number(duracionPostquirurgicaMin),
-      duracionRecuperacionMin: duracionRecuperacionMin === '' ? '' : Number(duracionRecuperacionMin),
+      // Las duraciones ya no se editan aquí: se conservan y la hora fin se recalcula
+      // desde la nueva hora de inicio.
+      duracionEstimadaMin: cirugia.duracionEstimadaMin ?? '',
+      duracionPostquirurgicaMin: cirugia.duracionPostquirurgicaMin ?? '',
+      duracionRecuperacionMin: cirugia.duracionRecuperacionMin ?? '',
     });
   }
 
@@ -100,23 +102,7 @@ export default function ReprogramarCirugiaModal({
             <div className="rcm-info-box">
               <div className="rcm-info-item">
                 <span className="rcm-info-label">Paciente</span>
-                <span className="rcm-info-value">{cirugia.paciente.nombre}</span>
-              </div>
-              <div className="rcm-info-item">
-                <span className="rcm-info-label">Nro. cirugía</span>
-                <span className="rcm-info-value">{cirugia.id}</span>
-              </div>
-              <div className="rcm-info-item">
-                <span className="rcm-info-label">Servicio</span>
-                <span className="rcm-info-value">{cirugia.servicio || '—'}</span>
-              </div>
-              <div className="rcm-info-item">
-                <span className="rcm-info-label">Cirujano actual</span>
-                <span className="rcm-info-value">{capitalizarNombre(cirugia.cirujano) || '—'}</span>
-              </div>
-              <div className="rcm-info-item">
-                <span className="rcm-info-label">Sala actual</span>
-                <span className="rcm-info-value">{salaActual?.label ?? '—'}</span>
+                <span className="rcm-info-value">{cirugia.paciente.nombre.toUpperCase()}</span>
               </div>
               <div className="rcm-info-item">
                 <span className="rcm-info-label">Fecha y hora actual</span>
@@ -138,6 +124,26 @@ export default function ReprogramarCirugiaModal({
                   onClick={() => setCatalogoAbierto('causal')}
                   required
                 />
+              </div>
+              <div className="form-field">
+                <label htmlFor="rcm-fecha">Nueva fecha</label>
+                <input
+                  id="rcm-fecha"
+                  type="date"
+                  value={fecha}
+                  min={fechaMinima}
+                  onChange={(e) => setFecha(e.target.value)}
+                  aria-invalid={fechaInvalida || undefined}
+                  aria-describedby={fechaInvalida ? 'rcm-fecha-error' : undefined}
+                  required
+                />
+                {fechaInvalida && (
+                  <span id="rcm-fecha-error" className="rcm-field-error">La nueva fecha debe ser posterior a hoy.</span>
+                )}
+              </div>
+              <div className="form-field">
+                <label htmlFor="rcm-hora-inicio">Nueva hora inicio</label>
+                <input id="rcm-hora-inicio" type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} required />
               </div>
               <div className="form-field">
                 <label htmlFor="rcm-sala">Nueva sala</label>
@@ -169,60 +175,6 @@ export default function ReprogramarCirugiaModal({
                     <LuSearch className="icon" />
                   </button>
                 </div>
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-fecha">Nueva fecha</label>
-                <input
-                  id="rcm-fecha"
-                  type="date"
-                  value={fecha}
-                  min={fechaMinima}
-                  onChange={(e) => setFecha(e.target.value)}
-                  aria-invalid={fechaInvalida || undefined}
-                  aria-describedby={fechaInvalida ? 'rcm-fecha-error' : undefined}
-                  required
-                />
-                {fechaInvalida && (
-                  <span id="rcm-fecha-error" className="rcm-field-error">La nueva fecha debe ser posterior a hoy.</span>
-                )}
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-hora-inicio">Nueva hora inicio</label>
-                <input id="rcm-hora-inicio" type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-hora-fin">Nueva hora fin</label>
-                <input id="rcm-hora-fin" type="time" value={horaFin} onChange={(e) => setHoraFin(e.target.value)} required />
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-dur-estimada">Dur. estimada (min)</label>
-                <input
-                  id="rcm-dur-estimada"
-                  type="number"
-                  min="0"
-                  value={duracionEstimadaMin}
-                  onChange={(e) => setDuracionEstimadaMin(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-dur-postquirurgica">Dur. postquirúrgica (min)</label>
-                <input
-                  id="rcm-dur-postquirurgica"
-                  type="number"
-                  min="0"
-                  value={duracionPostquirurgicaMin}
-                  onChange={(e) => setDuracionPostquirurgicaMin(e.target.value)}
-                />
-              </div>
-              <div className="form-field">
-                <label htmlFor="rcm-dur-recuperacion">Dur. recuperación (min)</label>
-                <input
-                  id="rcm-dur-recuperacion"
-                  type="number"
-                  min="0"
-                  value={duracionRecuperacionMin}
-                  onChange={(e) => setDuracionRecuperacionMin(e.target.value)}
-                />
               </div>
             </div>
           </div>

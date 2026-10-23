@@ -6,6 +6,7 @@ const VARIANT_CLASS = {
   primary: styles.primary,
   secondary: styles.secondary,
   'secondary-accent': styles.secondaryAccent,
+  'secondary-danger': styles.secondaryDanger,
   outline: styles.outline,
   tinted: styles.tinted,
   'warning-outline': styles.warningOutline,

@@ -2630,6 +2630,50 @@ export function vincularCanastaCirugia(id, { nombre, items }) {
   });
 }
 
+// "Vincular personal" (tab Personal clínico del detalle): solo para una cirugía
+// que aún no tiene a nadie asignado -- como la canasta, no se reemplaza.
+export function vincularPersonalCirugia(id, personal) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  if (actual.personal?.length) throw new Error('La cirugía ya tiene personal vinculado.');
+  if (!personal?.length) throw new Error('Agrega al menos una persona.');
+  return actualizarCirugia(id, { personal: personal.map(({ rol, nombre }) => ({ rol, nombre })) });
+}
+
+// "Vincular equipos" (tab Equipos del detalle): misma regla que el personal.
+// Todo equipo vinculado arranca 'disponible', igual que en el paso 4 del wizard.
+export function vincularEquiposCirugia(id, equipos) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  if (actual.equipos?.length) throw new Error('La cirugía ya tiene equipos vinculados.');
+  if (!equipos?.length) throw new Error('Agrega al menos un equipo.');
+  return actualizarCirugia(id, {
+    equipos: equipos.map(({ nombre, tipo, identificacion }) => ({
+      nombre, tipo, identificacion, estado: 'disponible',
+    })),
+  });
+}
+
+// "Editar personal" / "Editar equipos" (pie de las tabs del detalle): reemplazan
+// la lista completa por la que quedó en el modal, que puede quedar vacía (la tab
+// vuelve a ofrecer "Vincular"). De los equipos que ya estaban se conserva su
+// estado (p. ej. 'en-uso'); los nuevos arrancan 'disponible'.
+export function actualizarPersonalCirugia(id, personal) {
+  if (!CIRUGIAS.some((c) => c.id === id)) throw new Error('No se encontró la cirugía.');
+  return actualizarCirugia(id, { personal: personal.map(({ rol, nombre }) => ({ rol, nombre })) });
+}
+
+export function actualizarEquiposCirugia(id, equipos) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual) throw new Error('No se encontró la cirugía.');
+  const estadoPrevio = new Map((actual.equipos ?? []).map((e) => [e.identificacion, e.estado]));
+  return actualizarCirugia(id, {
+    equipos: equipos.map(({ nombre, tipo, identificacion }) => ({
+      nombre, tipo, identificacion, estado: estadoPrevio.get(identificacion) ?? 'disponible',
+    })),
+  });
+}
+
 // "Cancelar solicitud": deshace el pedido mientras farmacia no haya
 // entregado -- los solicitados vuelven a "Sin solicitar". La causal de
 // anulación y la observación (ventana "Causal de Cancelación de

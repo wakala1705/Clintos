@@ -1,0 +1,25 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer y .ncw-icon-btn* viven en shared/shared.css. */
+.modal-card.vpm-modal-card{width:560px;}
+.vpm-body{padding:20px 24px;}
+
+/* Una fila por rol: etiqueta | botón agregar; con personas, sus nombres debajo a todo el ancho
+   (mismo esquema que "Personal que participa" del paso 2 del wizard). */
+.vpm-roles{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.vpm-rol{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px 16px;
+  padding:10px 12px;border-bottom:1px solid var(--bg);
+}
+.vpm-rol:last-child{border-bottom:none;}
+.vpm-rol-label{display:flex;flex-direction:column;gap:2px;padding-top:2px;}
+.vpm-rol-nombre{
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);
+  text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+.vpm-rol-sub{font-size:var(--fs-xs);color:var(--ink-500);}
+.vpm-agregar{grid-column:2;grid-row:1;border:1px solid var(--primary);}
+.vpm-personas{grid-column:1 / -1;grid-row:2;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+.vpm-persona{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;}
+.vpm-persona-nombre{font-size:var(--fs-base);color:var(--ink-700);text-transform:uppercase;overflow-wrap:anywhere;}
+/* Quitar: neutro; rojo solo al pasar el mouse / enfocar. */
+.vpm-quitar:hover,.vpm-quitar:focus-visible{background:var(--red-bg);color:var(--red);}
+@media (pointer:coarse),(max-width:1024px){.vpm-quitar,.vpm-agregar{width:44px;height:44px;}}

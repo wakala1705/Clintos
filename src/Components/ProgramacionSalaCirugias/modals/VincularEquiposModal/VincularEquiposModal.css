@@ -1,0 +1,17 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer y .ncw-icon-btn* viven en shared/shared.css. */
+.modal-card.vem-modal-card{width:560px;}
+.vem-body{padding:20px 24px;}
+.vem-cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.vem-contador{font-size:var(--fs-base);color:var(--ink-500);}
+.vem-lista{list-style:none;margin:0;padding:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.vem-equipo{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;border-bottom:1px solid var(--bg);
+}
+.vem-equipo:last-child{border-bottom:none;}
+.vem-equipo-texto{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.vem-equipo-nombre{font-size:var(--fs-base);color:var(--ink-700);text-transform:uppercase;overflow-wrap:anywhere;}
+.vem-equipo-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+/* Quitar: neutro; rojo solo al pasar el mouse / enfocar. */
+.vem-quitar:hover,.vem-quitar:focus-visible{background:var(--red-bg);color:var(--red);}
+@media (pointer:coarse),(max-width:1024px){.vem-quitar{width:44px;height:44px;}}

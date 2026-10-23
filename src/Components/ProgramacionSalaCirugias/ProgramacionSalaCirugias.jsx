@@ -124,7 +124,9 @@ export default function ProgramacionSalaCirugias() {
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
     handleMarcarRealizada, handleMarcarIncumplida,
-    handlePedirInsumos, handleVincularCanasta, handleCancelarSolicitud, handleConsumoRegistrado,
+    handlePedirInsumos, handleVincularCanasta, handleVincularPersonal, handleVincularEquipos,
+    handleActualizarPersonal, handleActualizarEquipos,
+    handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
 
   // Mismo flujo compartido de búsqueda/alta de pacientes que Asignación de
@@ -579,6 +581,10 @@ export default function ProgramacionSalaCirugias() {
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
         onVincularCanasta={handleVincularCanasta}
+        onVincularPersonal={handleVincularPersonal}
+        onVincularEquipos={handleVincularEquipos}
+        onActualizarPersonal={handleActualizarPersonal}
+        onActualizarEquipos={handleActualizarEquipos}
         onCancelarSolicitud={handleCancelarSolicitud}
         onConsumoRegistrado={handleConsumoRegistrado}
         onVerEnCanastas={handleVerEnCanastas}

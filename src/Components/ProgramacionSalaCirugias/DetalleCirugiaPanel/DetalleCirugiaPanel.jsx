@@ -15,12 +15,15 @@ import InsumosTab from './tabs/InsumosTab/InsumosTab';
 import CancelarSolicitudInsumosModal from '../modals/CancelarSolicitudInsumosModal/CancelarSolicitudInsumosModal';
 import HojaConsumoAltModal from '../modals/HojaConsumoAltModal/HojaConsumoAltModal';
 import VincularCanastaModal from '../modals/VincularCanastaModal/VincularCanastaModal';
-import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import VincularPersonalModal from '../modals/VincularPersonalModal/VincularPersonalModal';
+import VincularEquiposModal from '../modals/VincularEquiposModal/VincularEquiposModal';
+import PatientAvatar from '@/Components/PatientAvatar/PatientAvatar';
+import { capitalizarNombre, inicialesPaciente } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
-  ESTADOS_TERMINALES_CIRUGIA, SALAS, ahoraDemo, cirugiaYaInicio, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel, resumenCanasta, CANASTA_ESTADOS_RECIBIDOS,
+  ESTADOS_TERMINALES_CIRUGIA, edadDetalleLabel, estaIniciada, fechaHoraRangoLabel,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import {
-  LuBan, LuCalendarClock, LuCalendarX, LuCheckCheck, LuChevronDown, LuPencil, LuUser,
+  LuBan, LuCalendarClock, LuChevronDown, LuPencil,
 } from 'react-icons/lu';
 
 // Tabs del panel derecho del split (ver .dcp-split más abajo).
@@ -50,7 +53,8 @@ function InfoItem({ label, value, wide = false }) {
 // explícito). `onClose` deselecciona y cierra el modal.
 export default function DetalleCirugiaPanel({
   cirugia, onClose, onEditar, onReprogramar, onCancelar,
-  onMarcarRealizada, onMarcarIncumplida, onPedirInsumos, onVincularCanasta,
+  onPedirInsumos, onVincularCanasta,
+  onVincularPersonal, onVincularEquipos, onActualizarPersonal, onActualizarEquipos,
   onCancelarSolicitud, onVerEnCanastas, onConsumoRegistrado, onFinalizarCirugia,
 }) {
   const [activeDetailTab, setActiveDetailTab] = useState('insumos');
@@ -58,17 +62,20 @@ export default function DetalleCirugiaPanel({
   // detrás de un solo "Ver más datos" para que la franja de arriba no le quite espacio a lo importante.
   const [datosExpandidos, setDatosExpandidos] = useState(false);
   // "Ahora" tomado al montar (render puro): decide si la cirugía ya pasó de hora.
-  const [ahora] = useState(() => ahoraDemo());
   // Ventana "Causal de Cancelación de Programación" (se abre desde
   // "Cancelar solicitud" de la tab Insumos), también encima de este modal.
   const [cancelarSolicitudAbierto, setCancelarSolicitudAbierto] = useState(false);
   const [hojaGastoAltAbierta, setHojaGastoAltAbierta] = useState(false);
   // "Vincular canasta" (tab Insumos, cirugía programada sin canasta).
   const [vincularCanastaAbierto, setVincularCanastaAbierto] = useState(false);
+  // "Vincular personal" / "Vincular equipos" (tabs Personal clínico y Equipos, cirugía sin nada vinculado).
+  const [vincularPersonalAbierto, setVincularPersonalAbierto] = useState(false);
+  const [vincularEquiposAbierto, setVincularEquiposAbierto] = useState(false);
   // Hoja de consumo guardada de la cirugía: vive en un almacén fuera de React, así que se
   // relee en eventos (al cambiar de cirugía y al cerrar su modal), no en el render.
   const [hoja, setHoja] = useState(() => (cirugia ? obtenerHojaConsumo(cirugia.id) : null));
-  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAltAbierta || vincularCanastaAbierto;
+  const subventanaAbierta = cancelarSolicitudAbierto || hojaGastoAltAbierta || vincularCanastaAbierto
+    || vincularPersonalAbierto || vincularEquiposAbierto;
   // Resetear la tab de detalle activa a "insumos" al cambiar de cirugía sin
   // un useEffect (evita el cascading-render que marca
   // react-hooks/set-state-in-effect): mismo patrón "ajustar estado durante
@@ -87,6 +94,8 @@ export default function DetalleCirugiaPanel({
     setDatosExpandidos(false);
     setCancelarSolicitudAbierto(false);
     setHojaGastoAltAbierta(false);
+    setVincularPersonalAbierto(false);
+    setVincularEquiposAbierto(false);
     setHoja(cirugia ? obtenerHojaConsumo(cirugia.id) : null);
     setSelectedProcedimientoId(cirugia?.procedimientos[0]?.nombre ?? null);
   }
@@ -114,17 +123,8 @@ export default function DetalleCirugiaPanel({
 
   if (!cirugia) return null;
 
-  const puedeMarcarRealizada = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado);
-  // En curso (iniciada) ya no se edita, reprograma, cancela ni incumple: solo se cierra.
-  const puedeAccionar = puedeMarcarRealizada && !estaIniciada(cirugia);
-  // Incumplida solo aplica cuando la hora de inicio ya pasó.
-  const puedeMarcarIncumplida = puedeAccionar && cirugia.estado === 'programada' && cirugiaYaInicio(cirugia, ahora);
-  // Una cirugía programada solo se cierra como realizada cuando ya empezó (igual que incumplida);
-  // una urgencia se resuelve en el momento.
-  // Una sola acción principal por vista, la que sigue en el flujo: pedir insumos -> recibir la
-  // canasta (Ver en Canastas, en la pestaña Insumos) -> marcar como realizada. Solo con la canasta
-  // ya recibida y la cirugía en condiciones de cerrarse, "Marcar como realizada" es la azul.
-  const realizadaEsPrincipal = puedeMarcarRealizada && CANASTA_ESTADOS_RECIBIDOS.includes(resumenCanasta(cirugia).estado);
+  // En curso (iniciada) o en estado terminal ya no se edita, reprograma ni cancela.
+  const puedeAccionar = !ESTADOS_TERMINALES_CIRUGIA.includes(cirugia.estado) && !estaIniciada(cirugia);
 
   const bodyAbierta = (
     <>
@@ -140,62 +140,39 @@ export default function DetalleCirugiaPanel({
           2 bloques: Programación (lo que identifica la cirugía, destacado,
           con el estado como un campo más de su grilla) y Paciente (datos de contexto). */}
       <div className="dcp-info">
-        <section className="dcp-info-group dcp-info-group-prog" aria-label="Programación">
-          <div className="dcp-info-group-title">
-            <LuCalendarClock className="dcp-info-group-icon" aria-hidden="true" />
-            Programación
-            <span className="dcp-info-group-num" title="No. de programación">{cirugia.id}</span>
-          </div>
-          <div className="dcp-info-grid">
-            <InfoItem label="Fecha" value={fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)} wide />
-            <InfoItem label="Sala" value={SALAS.find((s) => s.value === cirugia.salaId)?.descripcion ?? '—'} />
-            <InfoItem label="Cirujano" value={capitalizarNombre(cirugia.cirujano) || '—'} />
-            {datosExpandidos && cirugia.solicitud && (
-              <>
-                <InfoItem
-                  label={`Orden · ${ORIGEN_LABEL[cirugia.solicitud.origen]}`}
-                  value={`${cirugia.solicitud.ordenNumero} · ${capitalizarNombre(cirugia.solicitud.medicoOrdena)}`}
-                  wide
-                />
-                <InfoItem
-                  label="Admisión"
-                  value={cirugia.solicitud.ambulatorio ? 'Creada con la programación' : 'Internación (admisión existente)'}
-                  wide
-                />
-              </>
-            )}
-          </div>
-        </section>
         <section className="dcp-info-group dcp-info-group-pac" aria-label="Paciente">
-          <div className="dcp-info-group-title">
-            <LuUser className="dcp-info-group-icon" aria-hidden="true" />
-            Paciente
-            <button
-              type="button"
-              className="dcp-info-toggle"
-              aria-expanded={datosExpandidos}
-              aria-label={datosExpandidos ? 'Ver menos datos de la programación y del paciente' : 'Ver más datos de la programación y del paciente'}
-              onClick={() => setDatosExpandidos((v) => !v)}
-            >
-              {datosExpandidos ? 'Ver menos' : 'Ver más datos'}
-              <LuChevronDown className={`dcp-info-toggle-icon${datosExpandidos ? ' open' : ''}`} aria-hidden="true" />
-            </button>
-          </div>
           <div className="dcp-info-grid">
-            <InfoItem label="Nombre" value={cirugia.paciente.nombre} />
-            <InfoItem label="Doc. Id" value={cirugia.paciente.documento} />
+            <div className="dcp-info-item">
+              <div className="dcp-paciente-nombre">
+                <PatientAvatar iniciales={inicialesPaciente(cirugia.paciente.nombre)} className="dcp-avatar" />
+                <div className="dcp-paciente-texto">
+                  <div className="dcp-info-value">{cirugia.paciente.nombre.toUpperCase()}</div>
+                  <div className="dcp-paciente-doc">{cirugia.paciente.documento}</div>
+                </div>
+              </div>
+            </div>
             <InfoItem label="Edad" value={edadDetalleLabel(cirugia.paciente)} />
             {cirugia.paciente.sexo && <InfoItem label="Sexo" value={cirugia.paciente.sexo} />}
             <InfoItem label="Aseguradora" value={cirugia.paciente.aseguradora} />
+            {cirugia.paciente.telAviso && <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso} />}
             {datosExpandidos && (
               <>
-                {cirugia.paciente.telAviso && <InfoItem label="Tel. Aviso" value={cirugia.paciente.telAviso} />}
                 {cirugia.paciente.nivel && <InfoItem label="Nivel" value={cirugia.paciente.nivel} />}
                 {cirugia.paciente.tipoAfiliado && <InfoItem label="Tipo Afiliado" value={cirugia.paciente.tipoAfiliado} />}
                 {cirugia.paciente.direccion && <InfoItem label="Dirección" value={cirugia.paciente.direccion} wide />}
               </>
             )}
           </div>
+          <button
+            type="button"
+            className="dcp-info-chevron"
+            aria-expanded={datosExpandidos}
+            aria-label={datosExpandidos ? 'Ver menos datos de la programación y del paciente' : 'Ver más datos de la programación y del paciente'}
+            title={datosExpandidos ? 'Ver menos datos' : 'Ver más datos'}
+            onClick={() => setDatosExpandidos((v) => !v)}
+          >
+            <LuChevronDown className={`dcp-info-toggle-icon${datosExpandidos ? ' open' : ''}`} aria-hidden="true" />
+          </button>
         </section>
       </div>
 
@@ -210,14 +187,41 @@ export default function DetalleCirugiaPanel({
       <div className="dcp-tab-body">
         <div className="dcp-split">
           <section className="dcp-split-left">
-            <div className="dcp-tabs-bar">
-              <span className="dcp-tab active">Procedimientos</span>
+            {/* Programación va arriba de la lista de procedimientos, dentro del mismo bloque. */}
+            <div className="dcp-info-group dcp-info-group-prog" aria-label="Programación">
+              <div className="dcp-info-group-title">
+                <LuCalendarClock className="dcp-info-group-icon" aria-hidden="true" />
+                Programación
+                <span className="dcp-prog-fecha">{fechaHoraRangoLabel(cirugia.fecha, cirugia.horaInicio, cirugia.horaFin)}</span>
+              </div>
+              {/* Sala, Cirujano y Admisión no se muestran (encargo explícito): el cirujano
+                  aún no se conoce al programar, y la sala y la admisión no aportan aquí. */}
+              {datosExpandidos && cirugia.solicitud && (
+                <div className="dcp-info-grid">
+                  <InfoItem
+                    label={`Orden · ${ORIGEN_LABEL[cirugia.solicitud.origen]}`}
+                    value={`${cirugia.solicitud.ordenNumero} · ${capitalizarNombre(cirugia.solicitud.medicoOrdena)}`}
+                    wide
+                  />
+                </div>
+              )}
             </div>
-            <ProcedimientosSideList
-              procedimientos={cirugia.procedimientos}
-              selectedId={selectedProcedimientoId}
-              onSelect={setSelectedProcedimientoId}
-            />
+            <div className="dcp-split-left-body">
+              <ProcedimientosSideList
+                procedimientos={cirugia.procedimientos}
+                selectedId={selectedProcedimientoId}
+                onSelect={setSelectedProcedimientoId}
+              />
+            </div>
+            {/* Editar, Reprogramar y Cancelar como pie del bloque (mismas reglas de
+                disabled que CirugiaCardMenu.jsx).
+                La acción principal ("Pedir insumos a farmacia") vive en el pie de la
+                tabla de Insumos (ver InsumosTab.jsx). */}
+            <div className="dcp-split-left-footer">
+              <Button variant="secondary-danger" icon={LuBan} disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
+              <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
+              {onEditar && <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>}
+            </div>
           </section>
 
           <section className="dcp-split-right">
@@ -248,28 +252,25 @@ export default function DetalleCirugiaPanel({
                   onVerEnCanastas={onVerEnCanastas}
                 />
               )}
-              {activeDetailTab === 'personal' && <PersonalTab cirugia={cirugia} />}
-              {activeDetailTab === 'equipos' && <EquiposTab cirugia={cirugia} />}
+              {activeDetailTab === 'personal' && (
+                <PersonalTab
+                  cirugia={cirugia}
+                  puedeAccionar={puedeAccionar}
+                  onVincular={() => setVincularPersonalAbierto(true)}
+                />
+              )}
+              {activeDetailTab === 'equipos' && (
+                <EquiposTab
+                  cirugia={cirugia}
+                  puedeAccionar={puedeAccionar}
+                  onVincular={() => setVincularEquiposAbierto(true)}
+                />
+              )}
             </div>
           </section>
         </div>
       </div>
 
-      {/* Cancelar cirugía (destructiva) aislada en el extremo izquierdo, neutra en
-          reposo y roja solo en hover; a la derecha, modificar (Editar/Reprogramar)
-          y resolver (incumplida/realizada) --
-          mismas reglas de disabled que CirugiaCardMenu.jsx. La acción
-          principal ("Pedir insumos a farmacia") vive en el pie de la tabla
-          de Insumos (ver InsumosTab.jsx). */}
-      <div className="dcp-actions">
-        <Button variant="secondary-accent" icon={LuBan} className="dcp-cancelar-btn" disabled={!puedeAccionar} onClick={() => onCancelar(cirugia)}>Cancelar cirugía</Button>
-        <div className="dcp-actions-estado">
-          {onEditar && <Button variant="secondary-accent" icon={LuPencil} disabled={!puedeAccionar} onClick={() => onEditar(cirugia)}>Editar</Button>}
-          <Button variant="secondary-accent" icon={LuCalendarClock} disabled={!puedeAccionar} onClick={() => onReprogramar(cirugia)}>Reprogramar</Button>
-          <Button variant="secondary-accent" icon={LuCalendarX} disabled={!puedeMarcarIncumplida} title={puedeMarcarIncumplida ? undefined : 'Disponible cuando pase la hora de inicio'} onClick={() => onMarcarIncumplida(cirugia)}>Marcar como incumplida</Button>
-          <Button variant={realizadaEsPrincipal ? 'primary' : 'secondary-accent'} icon={LuCheckCheck} disabled={!puedeMarcarRealizada} onClick={() => onMarcarRealizada(cirugia)}>Marcar como realizada</Button>
-        </div>
-      </div>
     </>
   );
 
@@ -314,6 +315,20 @@ export default function DetalleCirugiaPanel({
           procedimientosSugeridos={cirugia.procedimientos.map((p) => p.nombre)}
           onSelect={(canasta) => onVincularCanasta(cirugia, canasta)}
           onClose={() => setVincularCanastaAbierto(false)}
+        />
+      )}
+      {vincularPersonalAbierto && (
+        <VincularPersonalModal
+          inicial={cirugia.personal.length > 0 ? cirugia.personal : undefined}
+          onConfirmar={(personal) => (cirugia.personal.length > 0 ? onActualizarPersonal : onVincularPersonal)(cirugia, personal)}
+          onClose={() => setVincularPersonalAbierto(false)}
+        />
+      )}
+      {vincularEquiposAbierto && (
+        <VincularEquiposModal
+          inicial={cirugia.equipos.length > 0 ? cirugia.equipos : undefined}
+          onConfirmar={(equipos) => (cirugia.equipos.length > 0 ? onActualizarEquipos : onVincularEquipos)(cirugia, equipos)}
+          onClose={() => setVincularEquiposAbierto(false)}
         />
       )}
       {hojaGastoAltAbierta && (

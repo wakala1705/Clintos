@@ -116,7 +116,9 @@ export default function PanelGeneral() {
     handleIniciarCirugia, handleAbrirHoja, handleSubmitIniciar, handleFinalizarCirugia, handleSubmitFinalizar, handleFinalizarDesdeHoja,
     handleMarcarRealizada, handleMarcarIncumplida,
     handleMoverEtapa, handleSubmitDerivacion,
-    handlePedirInsumos, handleVincularCanasta, handleCancelarSolicitud, handleConsumoRegistrado,
+    handlePedirInsumos, handleVincularCanasta, handleVincularPersonal, handleVincularEquipos,
+    handleActualizarPersonal, handleActualizarEquipos,
+    handleCancelarSolicitud, handleConsumoRegistrado,
   } = useCirugiasAcciones({ applyUpdated });
 
   const lista = cirugias ?? [];
@@ -260,6 +262,10 @@ export default function PanelGeneral() {
         onMarcarIncumplida={handleMarcarIncumplida}
         onPedirInsumos={handlePedirInsumos}
         onVincularCanasta={handleVincularCanasta}
+        onVincularPersonal={handleVincularPersonal}
+        onVincularEquipos={handleVincularEquipos}
+        onActualizarPersonal={handleActualizarPersonal}
+        onActualizarEquipos={handleActualizarEquipos}
         onCancelarSolicitud={handleCancelarSolicitud}
         onConsumoRegistrado={handleConsumoRegistrado}
         onFinalizarCirugia={handleFinalizarDesdeHoja}

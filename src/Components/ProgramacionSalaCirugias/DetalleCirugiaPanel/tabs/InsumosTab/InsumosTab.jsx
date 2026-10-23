@@ -6,6 +6,7 @@ import {
 import './InsumosTab.css';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
+import SinVincular from '../../SinVincular/SinVincular';
 import {
   SOLICITUD_FARMACIA_LABEL, cantidadDevuelta, estadoInsumo, resumenCanasta,
 } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
@@ -71,18 +72,15 @@ export default function InsumosTab({
   // que pedir a farmacia hasta vincular una.
   if (canasta.items.length === 0) {
     return (
-      <div className="ist-tab">
-        <div className="ist-sin-vincular">
-          <span className="ist-sin-vincular-icon" aria-hidden="true"><LuPackage className="icon" /></span>
-          <p className="ist-sin-vincular-title">Canasta sin vincular</p>
-          <p className="ist-sin-vincular-text">
-            Vincula una canasta para poder pedir los insumos a farmacia.
-          </p>
-          <Button icon={LuLink} disabled={!puedeAccionar} onClick={onVincularCanasta}>
-            Vincular canasta
-          </Button>
-        </div>
-      </div>
+      <SinVincular
+        icon={LuPackage}
+        title="Canasta sin vincular"
+        text="Vincula una canasta para poder pedir los insumos a farmacia."
+      >
+        <Button icon={LuLink} disabled={!puedeAccionar} onClick={onVincularCanasta}>
+          Vincular canasta
+        </Button>
+      </SinVincular>
     );
   }
   const total = canasta.items.length;

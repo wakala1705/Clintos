@@ -78,6 +78,21 @@
   color: var(--primary);
 }
 
+/* Igual que .secondaryAccent pero con el ícono en --red: acciones destructivas
+   (cancelar, anular) que no deben pesar como un botón danger sólido. */
+.secondaryDanger {
+  background: var(--surface);
+  color: var(--ink-700);
+  border-color: var(--border);
+}
+.secondaryDanger:hover {
+  background: var(--bg);
+  border-color: var(--ink-400);
+}
+.secondaryDanger .icon {
+  color: var(--red);
+}
+
 .outline {
   background: transparent;
   color: var(--primary);

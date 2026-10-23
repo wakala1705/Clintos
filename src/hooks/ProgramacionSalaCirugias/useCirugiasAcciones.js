@@ -6,6 +6,7 @@ import { ETAPA_LABEL, resolverMovimiento } from './tablero/etapas';
 import {
   actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, finalizarCirugia, iniciarCirugia, reprogramarCirugia,
   moverEtapaCirugia, resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
+  vincularEquiposCirugia, vincularPersonalCirugia, actualizarEquiposCirugia, actualizarPersonalCirugia,
 } from './mockCirugiaData';
 
 // Acciones sobre una cirugía puntual (reprogramar, cancelar, marcar realizada/
@@ -144,6 +145,22 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     applyUpdated(vincularCanastaCirugia(cirugia.id, canasta));
     showToast('Canasta vinculada a la cirugía.');
   }
+  function handleVincularPersonal(cirugia, personal) {
+    applyUpdated(vincularPersonalCirugia(cirugia.id, personal));
+    showToast('Personal vinculado a la cirugía.');
+  }
+  function handleVincularEquipos(cirugia, equipos) {
+    applyUpdated(vincularEquiposCirugia(cirugia.id, equipos));
+    showToast('Equipos vinculados a la cirugía.');
+  }
+  function handleActualizarPersonal(cirugia, personal) {
+    applyUpdated(actualizarPersonalCirugia(cirugia.id, personal));
+    showToast('Personal actualizado.');
+  }
+  function handleActualizarEquipos(cirugia, equipos) {
+    applyUpdated(actualizarEquiposCirugia(cirugia.id, equipos));
+    showToast('Equipos actualizados.');
+  }
   function handleCancelarSolicitud(cirugia, { causal, observacion }) {
     applyUpdated(cancelarSolicitudInsumos(cirugia.id, { causal, observacion }));
     showToast('Solicitud de insumos cancelada.');
@@ -182,6 +199,10 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleSubmitDerivacion,
     handlePedirInsumos,
     handleVincularCanasta,
+    handleVincularPersonal,
+    handleVincularEquipos,
+    handleActualizarPersonal,
+    handleActualizarEquipos,
     handleCancelarSolicitud,
     handleConsumoRegistrado,
   };

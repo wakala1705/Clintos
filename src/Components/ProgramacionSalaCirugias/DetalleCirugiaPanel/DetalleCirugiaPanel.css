@@ -18,12 +18,31 @@
    identifica la cirugía, a la izquierda y con el valor más marcado) y
    Paciente (datos de contexto), separados por un divisor vertical. */
 .dcp-info{
-  display:grid;grid-template-columns:minmax(0,2fr) minmax(0,5fr);
+  display:grid;grid-template-columns:minmax(0,1fr);
   margin:16px 24px 0;background:var(--bg);border:1px solid var(--border);
   border-radius:var(--radius-lg);flex-shrink:0;
 }
 .dcp-info-group{padding:12px 20px;min-width:0;}
-.dcp-info-group-prog{border-right:1px solid var(--border);}
+/* Programación vive arriba del bloque de procedimientos (.dcp-split-left), con fondo de caja de datos. */
+/* Paciente: grilla de datos + chevron al final de la tarjeta que expande los datos extra. */
+.dcp-info-group-pac{display:flex;align-items:flex-start;gap:12px;}
+.dcp-info-group-pac .dcp-info-grid{flex:1;min-width:0;}
+.dcp-paciente-nombre{display:flex;align-items:center;gap:8px;min-width:0;}
+.dcp-paciente-texto{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.dcp-paciente-doc{font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-700);}
+.dcp-avatar{width:28px;height:28px;font-size:var(--fs-xs);font-weight:var(--fw-semibold);flex-shrink:0;}
+.dcp-info-chevron{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:30px;height:30px;
+  border:none;border-radius:8px;background:none;color:var(--ink-500);cursor:pointer;
+}
+.dcp-info-chevron:hover{background:var(--gray-bg);color:var(--ink-900);}
+.dcp-info-chevron:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+.dcp-info-chevron .dcp-info-toggle-icon{width:18px;height:18px;}
+/* Programación en una sola línea: ícono - Programación - fecha. */
+.dcp-info-group-prog .dcp-info-group-title{margin-bottom:0;}
+.dcp-info-group-prog .dcp-info-grid{margin-top:10px;}
+.dcp-prog-fecha{margin-left:auto;font-size:var(--fs-base);font-weight:var(--fw-regular);color:var(--ink-900);}
+.dcp-info-group-prog{border-bottom:1px solid var(--border);flex-shrink:0;}
 .dcp-info-group-title{
   display:flex;align-items:center;gap:6px;min-height:24px;
   font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);margin-bottom:10px;
@@ -43,6 +62,10 @@
   overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;
 }
 .dcp-tabs-bar::-webkit-scrollbar{display:none;height:0;}
+/* Misma altura que la línea de Programación (12 + 24 + 12 de padding + 1 de borde = 49px),
+   para que ambos encabezados queden alineados; las tabs se estiran para que el subrayado toque el borde. */
+.dcp-split-right .dcp-tabs-bar{height:49px;box-sizing:border-box;}
+.dcp-split-right .dcp-tab{align-self:stretch;padding-top:0;padding-bottom:0;}
 .dcp-tab{
   display:flex;align-items:center;gap:6px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-500);
   cursor:pointer;padding:11px 0;position:relative;white-space:nowrap;transition:color .15s;line-height:1;
@@ -67,22 +90,16 @@
    propios, no comparten box con el otro) para que quede clara la separación
    entre "lista fija" y "detalle que cambia de tab". */
 .dcp-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:24px;flex:1;min-height:0;}
-.dcp-split-left{align-self:start;max-height:100%;}
+.dcp-split-left{max-height:100%;}
 .dcp-split-left,.dcp-split-right{
   display:flex;flex-direction:column;min-width:0;min-height:0;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
 }
 .dcp-split-right{width:100%;}
-/* El label "Procedimientos" reusa .dcp-tabs-bar/.dcp-tab (activo, no
-   clickeable) para alinear su altura con la barra de tabs real de la
-   derecha -- mismo criterio que .hqd-split-left .hq-tab en HistorialQuirurgico,
-   ver comentario ahí. */
-.dcp-split-left .dcp-tab{cursor:default;}
 .dcp-split-right-body{flex:1;min-height:0;overflow-y:auto;}
 
 /* Editar/Reprogramar + botones de estado (realizada/incumplida/cancelar)
    -- ver comentario en DetalleCirugiaPanel.jsx. */
-.dcp-info-group-num{margin-left:auto;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-500);}
 .dcp-info-toggle{
   display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:0;
   border:none;background:none;font:inherit;font-size:var(--fs-sm);font-weight:var(--fw-semibold);
@@ -91,11 +108,13 @@
 .dcp-info-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px;}
 .dcp-info-toggle-icon{width:14px;height:14px;transition:transform .15s;}
 .dcp-info-toggle-icon.open{transform:rotate(180deg);}
-/* Cancelar cirugía: destructiva, aislada a la izquierda; neutra en reposo y roja solo en hover/foco. */
-.dcp-actions .dcp-cancelar-btn{border-color:transparent;background:transparent;color:var(--ink-700);}
-.dcp-actions .dcp-cancelar-btn svg{color:var(--ink-500);}
-.dcp-actions .dcp-cancelar-btn:hover:not([disabled]),.dcp-actions .dcp-cancelar-btn:focus-visible{background:var(--red-bg);color:var(--red);}
-.dcp-actions .dcp-cancelar-btn:hover:not([disabled]) svg,.dcp-actions .dcp-cancelar-btn:focus-visible svg{color:var(--red);}
+/* Cancelar cirugía: secondary-accent con el ícono en rojo. */
+/* Acciones de la cirugía como pie del bloque izquierdo: el bloque se estira y el pie queda abajo. */
+.dcp-split-left-body{flex:1;min-height:0;overflow-y:auto;}
+.dcp-split-left-footer{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px;
+  padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;
+}
 .dcp-actions-estado{display:flex;align-items:center;gap:10px;margin-left:auto;}
 .dcp-actions{
   display:flex;align-items:center;justify-content:flex-start;gap:10px;
