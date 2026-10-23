@@ -10,7 +10,7 @@
 }
 .mfc-section{margin:0;padding:0;border:0;min-width:0;}
 .mfc-title{
-  padding:0;margin-bottom:8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+  display:block;padding:0;margin-bottom:8px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
 }
 .mfc-options{display:flex;flex-direction:column;gap:2px;}
 .mfc-check{

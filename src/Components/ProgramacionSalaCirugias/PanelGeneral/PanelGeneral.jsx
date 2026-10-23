@@ -46,6 +46,7 @@ const ESTADO_OPTIONS = [
 // Sede fija '02' en todo el módulo (ver CanastasCirugia.jsx).
 const SEDE_ID = '02';
 const SALAS_SEDE = SALAS.filter((s) => s.sedeId === SEDE_ID);
+const SALA_OPTIONS = [{ value: 'todas', label: 'Todas las salas' }, ...SALAS_SEDE.map((s) => ({ value: s.value, label: s.descripcion }))];
 const salaLabel = (salaId) => SALAS_SEDE.find((s) => s.value === salaId)?.descripcion ?? salaId;
 
 // "Panel general" de Cirugía: portada del módulo. Resume el día de hoy (KPIs)
@@ -72,8 +73,9 @@ export default function PanelGeneral() {
   const [rango, setRango] = useState('hoy');
   const [busqueda, setBusqueda] = useState('');
   const [estado, setEstado] = useState('todos');
+  const [sala, setSala] = useState('todas');
   const [vinculada, setVinculada] = useState([]);
-  const [pedida, setPedida] = useState([]);
+  const [pedida, setPedida] = useState('todas');
   const [selectedId, setSelectedId] = useState(null);
   // Demo de la pantalla de familiares (televisor de la sala de espera) en un modal.
   const [familiaresAbierto, setFamiliaresAbierto] = useState(false);
@@ -133,11 +135,11 @@ export default function PanelGeneral() {
 
   const lista = cirugias ?? [];
   const filas = filtrarFilas(lista, ahora, {
-    filtro, busqueda, estado, vinculada, pedida,
+    filtro, busqueda, estado, sala, vinculada, pedida,
   });
   const selectedCirugia = lista.find((c) => c.id === selectedId) ?? null;
   const hayFiltros = filtro !== 'todas' || busqueda.trim() !== '' || estado !== 'todos'
-    || vinculada.length > 0 || pedida.length > 0;
+    || sala !== 'todas' || vinculada.length > 0 || pedida !== 'todas';
 
   // Exporta lo que muestra la tabla (con los filtros aplicados).
   function handleExportar() {
@@ -154,8 +156,9 @@ export default function PanelGeneral() {
     setFiltro('todas');
     setBusqueda('');
     setEstado('todos');
+    setSala('todas');
     setVinculada([]);
-    setPedida([]);
+    setPedida('todas');
   }
 
   let listado;
@@ -266,9 +269,11 @@ export default function PanelGeneral() {
                 />
               </div>
               <MasFiltrosCirugiasPopover
+                salaOptions={SALA_OPTIONS}
+                sala={sala}
                 vinculada={vinculada}
                 pedida={pedida}
-                onAplicar={(f) => { setVinculada(f.vinculada); setPedida(f.pedida); }}
+                onAplicar={(f) => { setSala(f.sala); setVinculada(f.vinculada); setPedida(f.pedida); }}
               />
               <VistaPanelMenu
                 vista={vista}

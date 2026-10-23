@@ -76,20 +76,22 @@ export function conteosFiltros(cirugias, ahora) {
 }
 
 // Filas de la tabla: por hora de inicio, filtradas por pestaña, por estado
-// puntual (`estado`, un estadoVisual o 'todos'), por canasta vinculada
-// (`vinculada`: 'vinculada' / 'no-vinculada') y canasta pedida (`pedida`: estados
-// de CANASTA_PEDIDA_LABEL) -- ambas listas vacías = sin filtro -- y por texto
-// (paciente, documento, procedimiento o cirujano).
+// puntual (`estado`, un estadoVisual o 'todos'), por sala (`sala`, id o
+// 'todas'), por canasta vinculada (`vinculada`: lista de 'vinculada' /
+// 'no-vinculada', vacía = sin filtro), por canasta pedida (`pedida`: un estado
+// de CANASTA_PEDIDA_LABEL o 'todas') y por texto (paciente, documento,
+// procedimiento o cirujano).
 export function filtrarFilas(cirugias, ahora, {
-  filtro = 'todas', busqueda = '', estado = 'todos', vinculada = [], pedida = [],
+  filtro = 'todas', busqueda = '', estado = 'todos', sala = 'todas', vinculada = [], pedida = 'todas',
 } = {}) {
   const estados = FILTROS_PANEL[filtro] ?? null;
   const texto = busqueda.trim().toLowerCase();
   return cirugias
     .filter((c) => !estados || estados.includes(estadoVisual(c, ahora)))
     .filter((c) => estado === 'todos' || estadoVisual(c, ahora) === estado)
+    .filter((c) => sala === 'todas' || c.salaId === sala)
     .filter((c) => vinculada.length === 0 || vinculada.includes(canastaVinculada(c) ? 'vinculada' : 'no-vinculada'))
-    .filter((c) => pedida.length === 0 || pedida.includes(canastaPedida(c)?.estado))
+    .filter((c) => pedida === 'todas' || canastaPedida(c)?.estado === pedida)
     .filter((c) => {
       if (!texto) return true;
       return [c.paciente.nombre, c.paciente.documento, c.procedimientoPrincipal, c.cirujano]
