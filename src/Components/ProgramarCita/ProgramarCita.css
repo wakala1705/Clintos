@@ -138,7 +138,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover{background:#454e60;}
    src/Components/Topbar/Topbar.css — see AGENTS.md (topbar homologada). */
 
 .content{
-  padding:20px 24px;
+  padding:16px;
   display:flex;flex-direction:column;gap:16px;
   flex:1;min-height:0;
   overflow:hidden;

@@ -1,29 +1,53 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LuSearch } from 'react-icons/lu';
+import { LuSearch, LuSlidersHorizontal } from 'react-icons/lu';
+import Button from '@/Components/Button/Button';
 import SearchField from '@/Components/SearchField/SearchField';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import CirugiaCard from '../CirugiaCard/CirugiaCard';
 import { ESTADO_FILTRO_OPTIONS, agruparCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import './CanastasLista.css';
 
-// Panel izquierdo: una sola fila de filtros -- selector de sala, filtro de
-// estado e ícono de buscar (este último despliega el campo de búsqueda bajo la
-// fila) -- y las cirugías del día agrupadas por prioridad (y por hora dentro de
-// cada grupo). `filtradas` es lo que se lista; `subtitulo` ya trae el total del
-// día. El selector de sala vive acá (no en el header de la página) y este panel
-// se monta también con el día vacío, para poder cambiar de sala.
+// Panel izquierdo: el navegador de fecha (`fechaNav`, en lugar del título), una fila de dos íconos -- buscar (despliega el campo de
+// búsqueda bajo la fila) y filtros (popover con quirófano y estado) -- y las
+// cirugías del día agrupadas por prioridad (y por hora dentro de cada grupo).
+// `filtradas` es lo que se lista; `subtitulo` ya trae el total del día. El
+// selector de sala vive acá (no en el header de la página) y este panel se
+// monta también con el día vacío, para poder cambiar de sala.
 export default function CanastasLista({
-  titulo, subtitulo, filtradas, seleccionId, ahora, filtros, onFiltrosChange, onSelect,
+  fechaNav, filtradas, seleccionId, ahora, filtros, onFiltrosChange, onSelect,
   salaId, salaOptions, onSalaChange, mensajeVacio = 'Ninguna cirugía coincide con los filtros.',
 }) {
   const [buscando, setBuscando] = useState(Boolean(filtros.busqueda));
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const inputRef = useRef(null);
+  const filtrosRef = useRef(null);
+  const estadoActivo = filtros.estado !== 'todos';
 
   useEffect(() => {
     if (buscando) inputRef.current?.focus();
   }, [buscando]);
+
+  // Cierre por click afuera / Escape. Las listas de FormSelect viven en
+  // document.body: hay que tratarlas como "adentro" o el popover se cierra antes
+  // de que la opción dispare onChange.
+  useEffect(() => {
+    if (!filtrosAbiertos) return;
+    function handleMouseDown(e) {
+      if (e.target.closest('.form-select-dropdown')) return;
+      if (filtrosRef.current && !filtrosRef.current.contains(e.target)) setFiltrosAbiertos(false);
+    }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') setFiltrosAbiertos(false);
+    }
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [filtrosAbiertos]);
 
   // Cerrar el buscador también limpia el texto: un filtro activo no puede quedar oculto.
   function alternarBusqueda() {
@@ -34,23 +58,8 @@ export default function CanastasLista({
   return (
     <section className="cnc-panel cnc-lista" aria-label="Cirugías del día">
       <div className="cnc-lista-header">
-        <div className="cnc-lista-titulo">
-          <h2>{titulo}</h2>
-          <span className="cnc-lista-sub">{subtitulo}</span>
-        </div>
+        {fechaNav}
         <div className="filter-bar cnc-lista-filtros">
-          <div className="cnc-lista-sala">
-            <FormSelect id="cnc-sala" ariaLabel="Sala" value={salaId} onChange={onSalaChange} options={salaOptions} />
-          </div>
-          <div className="cnc-lista-estado">
-            <FormSelect
-              id="cnc-estado"
-              ariaLabel="Estado de la canasta"
-              value={filtros.estado}
-              onChange={(estado) => onFiltrosChange({ estado })}
-              options={ESTADO_FILTRO_OPTIONS}
-            />
-          </div>
           <button
             type="button"
             className={`cnc-lista-buscar${buscando ? ' activo' : ''}`}
@@ -61,6 +70,41 @@ export default function CanastasLista({
           >
             <LuSearch className="icon" aria-hidden="true" />
           </button>
+          <div className="cnc-lista-filtros-wrap" ref={filtrosRef}>
+            <button
+              type="button"
+              className={`cnc-lista-buscar${filtrosAbiertos || estadoActivo ? ' activo' : ''}`}
+              aria-label="Filtros: sala y estado"
+              aria-haspopup="dialog"
+              aria-expanded={filtrosAbiertos}
+              onClick={() => setFiltrosAbiertos((v) => !v)}
+            >
+              <LuSlidersHorizontal className="icon" aria-hidden="true" />
+              {estadoActivo && <span className="cnc-lista-filtros-dot" aria-hidden="true" />}
+            </button>
+            {filtrosAbiertos && (
+              <div className="cnc-lista-popover" role="dialog" aria-label="Filtros de la lista">
+                <div className="form-field">
+                  <label htmlFor="cnc-sala" className="cnc-lista-label">Quirófano</label>
+                  <FormSelect id="cnc-sala" value={salaId} onChange={onSalaChange} options={salaOptions} />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="cnc-estado" className="cnc-lista-label">Estado de la canasta</label>
+                  <FormSelect
+                    id="cnc-estado"
+                    value={filtros.estado}
+                    onChange={(estado) => onFiltrosChange({ estado })}
+                    options={ESTADO_FILTRO_OPTIONS}
+                  />
+                </div>
+                {estadoActivo && (
+                  <Button variant="secondary" size="sm" onClick={() => onFiltrosChange({ estado: 'todos' })}>
+                    Limpiar estado
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         {buscando && (
           <SearchField

@@ -29,6 +29,7 @@ export const MODULE_MENUS = {
     { id: 'programacion', label: 'Programación', href: '/cirugia/programacion', icon: LuCalendarDays },
     { id: 'panel', label: 'Panel general', href: '/cirugia', icon: LuLayoutGrid },
     { id: 'canastas', label: 'Canastas', href: '/cirugia/canastas', icon: LuPackage },
+    { id: 'historia-clinica', label: 'Historia clínica', href: '/cirugia/historia-clinica', icon: LuFileText },
   ],
   'Finanzas': [
     { id: 'facturas', label: 'Facturas', href: '/facturas', icon: LuReceipt },

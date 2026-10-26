@@ -1,14 +1,27 @@
 /* .cnc-panel, .filter-bar y .psc-search vienen de ../../shared/shared.css. */
 .cnc-lista{width:460px;flex-shrink:0;}
-.cnc-lista-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
-.cnc-lista-titulo{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
-.cnc-lista-titulo h2{font-size:var(--fs-lg);font-weight:var(--fw-semibold);color:var(--ink-900);}
-.cnc-lista-sub{font-size:var(--fs-sm);color:var(--ink-500);}
+.cnc-lista-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;}
+/* Fecha a la izquierda y botones (buscar, filtros) a la derecha en una sola fila; el buscador desplegado baja a la suya. */
 /* Panel angosto: la fila de filtros no lleva el padding ni el borde propios
-   de .filter-bar (el header ya los aporta) y no envuelve. Sala y estado se
-   reparten el ancho; el ícono de buscar es un botón cuadrado. */
-.filter-bar.cnc-lista-filtros{padding:0;border-bottom:none;flex-wrap:nowrap;gap:8px;}
-.cnc-lista-sala,.cnc-lista-estado{flex:1;min-width:0;}
+   de .filter-bar (el header ya los aporta) y no envuelve. Son dos botones
+   cuadrados (buscar, filtros) alineados a la derecha. */
+.filter-bar.cnc-lista-filtros{padding:0;border-bottom:none;flex-wrap:nowrap;gap:8px;justify-content:flex-end;}
+.cnc-lista-filtros-wrap{position:relative;}
+.cnc-lista-filtros-wrap .cnc-lista-buscar{position:relative;}
+.cnc-lista-filtros-dot{
+  position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;
+  background:var(--primary);border:2px solid var(--surface);box-sizing:content-box;
+}
+.cnc-lista-popover{
+  position:absolute;top:calc(100% + 6px);right:0;z-index:var(--z-popover);width:300px;
+  display:flex;flex-direction:column;gap:12px;padding:14px;
+  background:var(--surface-modal, var(--surface));border:1px solid var(--border);
+  border-radius:var(--dropdown-radius);box-shadow:var(--dropdown-shadow);
+}
+.cnc-lista-popover .btn,.cnc-lista-popover > button{align-self:flex-end;}
+.cnc-lista-label{
+  display:block;margin-bottom:6px;font-size:var(--fs-sm);font-weight:var(--fw-semibold);color:var(--ink-700);
+}
 .cnc-lista-buscar{
   width:var(--input-md);height:var(--input-md);flex-shrink:0;padding:0;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -33,5 +46,4 @@
 @media (max-width:1024px), (pointer:coarse){
   .cnc-lista-busqueda{height:44px;}
   .cnc-lista-buscar{width:44px;height:44px;}
-  .cnc-lista-sala .form-select-trigger,.cnc-lista-estado .form-select-trigger{min-height:44px;}
 }

@@ -1,0 +1,7 @@
+/* .modal-overlay/.modal-card/.modal-footer y .cnc-panel vienen de ../../shared/shared.css. */
+/* Selector compuesto: gana a .modal-card (520px) de shared.css sin depender del orden de carga
+   de las hojas al llegar por navegación del lado del cliente (mismo caso que .content). */
+.modal-card.cdm-card{width:1040px;height:calc(100vh - 48px);}
+/* El detalle ocupa todo el alto del cuerpo y scrollea por dentro (su propia tabla). */
+.cdm-body{flex:1;min-height:0;display:flex;padding:16px 24px;}
+.cdm-body .cnc-detalle{flex:1;}

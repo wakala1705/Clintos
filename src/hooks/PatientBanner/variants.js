@@ -59,6 +59,17 @@ export const PATIENT_BANNER_VARIANTS = {
       { key: 'procedimientoPrincipal', label: 'Procedimiento principal', group: 'Diagnóstico y procedimiento', strong: true },
     ],
   },
+  // HC de Cirugía (/cirugia/historia-clinica/[id]): la cirugía ya finalizada.
+  'cirugia-hc': {
+    defaultCollapsed: true,
+    fields: [
+      { key: 'fechaHoraCirugia', label: 'Fecha y hora de la cirugía' },
+      { key: 'sala', label: 'Sala' },
+      { key: 'procedimientoPrincipal', label: 'Procedimiento' },
+      { key: 'cirujano', label: 'Cirujano' },
+      { key: 'diagnostico', label: 'Diagnóstico' },
+    ],
+  },
   // Cargos de una admisión (CargosModal, Admisiones).
   cargos: {
     defaultCollapsed: false,

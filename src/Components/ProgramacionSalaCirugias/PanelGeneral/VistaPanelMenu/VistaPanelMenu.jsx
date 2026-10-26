@@ -22,7 +22,8 @@ const TIPO_OPCIONES = [
 // línea, la tarjeta gana alto) o Expandido (antes un botón expandir/contraer
 // aparte en la barra). Mismo patrón que
 // VistaModoMenu.jsx (Facturación): trigger de ícono + dropdown con check en la
-// opción activa. Vive en la barra de ambas vistas.
+// opción activa. Vive en la barra de ambas vistas. Sin `onChange` (HC de Cirugía,
+// que no tiene Tabla/Tablero) solo ofrece el tipo de vista.
 export default function VistaPanelMenu({
   vista, onChange, tipo, onChangeTipo,
 }) {
@@ -70,22 +71,26 @@ export default function VistaPanelMenu({
 
       {open && (
         <div className={`vpm-dropdown ${panel.panel}`} role="menu">
-          <div className={panel.groupLabel}>Vista</div>
-          {VISTA_OPCIONES.map(({ value, label, icon: Icon }) => (
-            <button
-              type="button"
-              key={value}
-              className={[panel.item, vista === value && panel.selected].filter(Boolean).join(' ')}
-              role="menuitemradio"
-              aria-checked={vista === value}
-              onClick={() => handleSelect(value)}
-            >
-              <Icon className={panel.icon} aria-hidden="true" />
-              {label}
-              {vista === value && <LuCheck className={panel.check} aria-hidden="true" />}
-            </button>
-          ))}
-          <div className={panel.divider} role="separator" />
+          {onChange && (
+            <>
+              <div className={panel.groupLabel}>Vista</div>
+              {VISTA_OPCIONES.map(({ value, label, icon: Icon }) => (
+                <button
+                  type="button"
+                  key={value}
+                  className={[panel.item, vista === value && panel.selected].filter(Boolean).join(' ')}
+                  role="menuitemradio"
+                  aria-checked={vista === value}
+                  onClick={() => handleSelect(value)}
+                >
+                  <Icon className={panel.icon} aria-hidden="true" />
+                  {label}
+                  {vista === value && <LuCheck className={panel.check} aria-hidden="true" />}
+                </button>
+              ))}
+              <div className={panel.divider} role="separator" />
+            </>
+          )}
           <div className={panel.groupLabel}>Tipo de vista</div>
           {TIPO_OPCIONES.map(({ value, label, icon: Icon }) => (
             <button

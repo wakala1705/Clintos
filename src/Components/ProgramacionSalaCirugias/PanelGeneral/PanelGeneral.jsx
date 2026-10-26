@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  LuDownload, LuPlus, LuTv,
+  LuDownload, LuTv,
 } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
@@ -203,6 +203,8 @@ export default function PanelGeneral() {
         onIniciar={handleIniciarCirugia}
         onAbrirHoja={handleAbrirHoja}
         onFinalizar={handleFinalizarCirugia}
+        soloHora={rango === 'hoy'}
+        onCrearHc={(c) => router.push(`/cirugia/historia-clinica/${c.id}`)}
       />
     );
   }
@@ -233,9 +235,6 @@ export default function PanelGeneral() {
                   Exportar
                 </Button>
               )}
-              <Button icon={LuPlus} onClick={() => router.push('/cirugia/programacion')}>
-                Programar cirugía
-              </Button>
             </div>
           </div>
 

@@ -193,6 +193,13 @@ const MODULE_GROUPS = [
         href: '/cirugia/canastas',
         enabled: true,
       },
+      {
+        title: 'Historia clínica',
+        description: 'Documenta el informe quirúrgico de las cirugías ya finalizadas.',
+        icon: LuFileText,
+        href: '/cirugia/historia-clinica',
+        enabled: true,
+      },
     ],
   },
   {

@@ -1,7 +1,7 @@
 'use client';
 
 import './CirugiasDiaTable.css';
-import { LuCircleCheck, LuClipboardList, LuPlay } from 'react-icons/lu';
+import { LuCircleCheck, LuClipboardList, LuFilePlus, LuPlay } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import CirugiaCardMenu from '../../CirugiaCardMenu/CirugiaCardMenu';
@@ -11,21 +11,23 @@ import { CANASTA_META, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canas
 import { estaIniciada, fechaHoraRangoLabel } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero';
 
-// Tabla de las cirugías de hoy. Clic (o Enter) en una fila abre el detalle;
+// Tabla de las cirugías del rango elegido. Con `soloHora` (rango "Hoy") la
+// fecha sería redundante: la columna muestra solo la hora.
+// Clic (o Enter) en una fila abre el detalle;
 // el "⋯" actúa sobre esa cirugía (reprogramar, cancelar, marcar realizada/
 // incumplida) sin seleccionarla -- `.cdt-menu` corta la propagación, igual
 // que `.cc-menu-wrap` en CirugiaCard.
 export default function CirugiasDiaTable({
   filas, ahora, salaLabel, selectedId, onSelect,
   onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
-  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar,
+  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar, onCrearHc, soloHora = false,
 }) {
   return (
     <div className="cdt-scroll">
       <table className="cdt-table">
         <thead>
           <tr>
-            <th scope="col">Fecha y hora</th>
+            <th scope="col">{soloHora ? 'Hora' : 'Fecha y hora'}</th>
             <th scope="col">Paciente</th>
             <th scope="col">Procedimiento</th>
             <th scope="col">Sala</th>
@@ -55,7 +57,7 @@ export default function CirugiasDiaTable({
                 if (e.key === 'Enter' && e.target === e.currentTarget) onSelect(c.id === selectedId ? null : c.id);
               }}
             >
-              <td className="cdt-hora">{fechaHoraRangoLabel(c.fecha, c.horaInicio)}</td>
+              <td className="cdt-hora">{soloHora ? c.horaInicio : fechaHoraRangoLabel(c.fecha, c.horaInicio)}</td>
               <td>
                 <span className="cdt-main">{c.paciente.nombre}</span>
               </td>
@@ -90,6 +92,9 @@ export default function CirugiasDiaTable({
                       <Button size="sm" variant="outline" icon={LuClipboardList} onClick={() => onAbrirHoja(c)}>Hoja de gasto</Button>
                       <Button size="sm" icon={LuCircleCheck} onClick={() => onFinalizar(c)}>Finalizar</Button>
                     </>
+                  )}
+                  {c.estado === 'realizada' && !iniciada && (
+                    <Button size="sm" variant="outline" icon={LuFilePlus} onClick={() => onCrearHc(c)}>Crear HC</Button>
                   )}
                   {puedeIniciar && (
                     <span className="cdt-iniciar" title={motivoIniciar ?? undefined}>

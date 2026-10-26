@@ -17,6 +17,9 @@ import CanastasFechaNav from '../canastas/CanastasFechaNav/CanastasFechaNav';
 import CanastasKpis from '../canastas/CanastasKpis/CanastasKpis';
 import CanastasLista from '../canastas/CanastasLista/CanastasLista';
 import CanastaDetalle from '../canastas/CanastaDetalle/CanastaDetalle';
+import CanastasTabla from '../canastas/CanastasTabla/CanastasTabla';
+import CanastaDetalleModal from '../canastas/CanastaDetalleModal/CanastaDetalleModal';
+import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
 import {
   HORA_DEMO, SALAS, ahoraDemo, deshacerResolucion, despacharCanasta, fechaISO, fetchCanastasDia,
   cerrarConFaltante, reabrirSolicitud, registrarConsumo, registrarRecepcion, resumenCanasta,
@@ -26,6 +29,8 @@ import { filtrarCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresent
 // Sede fija '02' en todo el módulo (ver VencidasFiltrosBar.jsx).
 const SALA_OPTIONS = SALAS.filter((s) => s.sedeId === '02').map((s) => ({ value: s.value, label: s.descripcion }));
 const USUARIO = 'Camilo Grondona';
+const SALA_TABLA_OPTIONS = [{ value: 'todas', label: 'Todas las salas' }, ...SALA_OPTIONS];
+const VISTA_OPTIONS = [{ value: 'tabla', label: 'Tabla' }, { value: 'detalle', label: 'Detalle' }];
 
 // "Canastas de cirugía" (maestro-detalle, diseño 2026-09-30): las cirugías de
 // UNA sala a la izquierda; a la derecha la canasta de la seleccionada, con
@@ -44,7 +49,14 @@ export default function CanastasCirugia() {
   const [salaId, setSalaId] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'qx-1'));
   const [fecha, setFecha] = useState(() => (/^d{4}-d{2}-d{2}$/.test(fechaParam ?? '') ? fechaParam : fechaISO(new Date())));
   const [filtros, setFiltros] = useState({ busqueda: '', estado: 'todas' });
-  const [cirugias, setCirugias] = useState(null); // null = cargando
+  // Vista "Tabla" (por defecto: solicitudes de todas las salas, detalle en modal)
+  // o "Detalle" (maestro-detalle de UNA sala). Vive en la URL (?vista=detalle).
+  const vista = params.get('vista') === 'detalle' ? 'detalle' : 'tabla';
+  const [salaTabla, setSalaTabla] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'todas'));
+  // Solicitud abierta en el modal de la vista Tabla (un deep link ?cirugia= la abre directo).
+  const [modalId, setModalId] = useState(() => params.get('cirugia'));
+  // Cirugías del día de TODAS las salas de la sede; cada vista filtra la suya.
+  const [delDia, setDelDia] = useState(null); // null = cargando
   const [seleccionId, setSeleccionId] = useState(() => params.get('cirugia'));
   const [drafts, setDrafts] = useState({});
   const [error, setError] = useState(null);
@@ -62,11 +74,11 @@ export default function CanastasCirugia() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchCanastasDia({ fecha, salaId }).then((items) => {
-      if (!cancelled) setCirugias(items);
+    Promise.all(SALA_OPTIONS.map((s) => fetchCanastasDia({ fecha, salaId: s.value }))).then((porSala) => {
+      if (!cancelled) setDelDia(porSala.flat().sort((a, b) => a.horaInicio.localeCompare(b.horaInicio)));
     });
     return () => { cancelled = true; };
-  }, [fecha, salaId]);
+  }, [fecha]);
 
   // Con hora fija no hay nada que refrescar.
   useEffect(() => {
@@ -77,8 +89,11 @@ export default function CanastasCirugia() {
 
   useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
 
+  const salaActiva = vista === 'tabla' ? salaTabla : salaId;
+  const cirugias = delDia === null ? null : delDia.filter((c) => salaActiva === 'todas' || c.salaId === salaActiva);
   const lista = cirugias ?? [];
   const filtradas = filtrarCanastas(lista, filtros);
+  const modalCirugia = vista === 'tabla' ? lista.find((c) => c.id === modalId) ?? null : null;
   // La selección sale de la lista completa (no de `filtradas`) para que un
   // filtro no deje el detalle en blanco; sin selección explícita, la primera
   // despachada por recibir (lo accionable) o la primera cirugía.
@@ -108,7 +123,7 @@ export default function CanastasCirugia() {
   function aplicar(cirugia, accion, mensaje) {
     try {
       const actualizada = accion();
-      setCirugias((prev) => (prev ?? []).map((c) => (c.id === actualizada.id ? actualizada : c)));
+      setDelDia((prev) => (prev ?? []).map((c) => (c.id === actualizada.id ? actualizada : c)));
       setDrafts((d) => {
         const resto = { ...d };
         delete resto[cirugia.id];
@@ -179,21 +194,17 @@ export default function CanastasCirugia() {
     const snapshot = toast?.snapshot;
     if (!snapshot) return;
     deshacerResolucion(snapshot);
-    setCirugias((prev) => (prev ?? []).map((c) => (c.id === snapshot[0].id ? snapshot[0] : c)));
+    setDelDia((prev) => (prev ?? []).map((c) => (c.id === snapshot[0].id ? snapshot[0] : c)));
     window.clearTimeout(toastTimerRef.current);
     setToast(null);
   }
 
-  const esHoy = fecha === fechaISO(ahora);
-  const salaLabel = SALA_OPTIONS.find((o) => o.value === salaId)?.label ?? salaId;
-
-  // La fecha (header) y la sala (panel de la lista) se muestran siempre, aun sin
+  // La fecha y la sala (panel de la lista) se muestran siempre, aun sin
   // resultados -- si se ocultaran junto con el estado vacío, un día sin cirugías
   // dejaría al usuario sin forma de cambiar de sala/fecha.
   const panelLista = (props) => (
     <CanastasLista
-      titulo={esHoy ? 'Cirugías de hoy' : 'Cirugías del día'}
-      subtitulo={`${lista.length} en ${salaLabel} · por prioridad`}
+      fechaNav={<CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />}
       ahora={ahora}
       filtros={filtros}
       onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
@@ -204,9 +215,32 @@ export default function CanastasCirugia() {
       {...props}
     />
   );
+  function handleVista(v) {
+    router.replace(v === 'detalle' ? '/cirugia/canastas?vista=detalle' : '/cirugia/canastas', { scroll: false });
+  }
+
   let cuerpo;
   if (cirugias === null) {
     cuerpo = <div className="cnc-estado" role="status">Cargando canastas…</div>;
+  } else if (vista === 'tabla') {
+    cuerpo = (
+      <>
+        <div className="cnc-resumen">
+          <CanastasKpis cirugias={lista} filtro={filtros.estado} onFiltrar={(estado) => setFiltros((f) => ({ ...f, estado }))} />
+        </div>
+        <CanastasTabla
+          cirugias={filtradas}
+          fechaNav={<CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />}
+          filtros={filtros}
+          onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
+          salaFiltro={salaTabla}
+          salaOptions={SALA_TABLA_OPTIONS}
+          onSalaChange={setSalaTabla}
+          salaLabel={(id) => SALA_OPTIONS.find((o) => o.value === id)?.label ?? id}
+          onAbrir={(id) => { setModalId(id); setError(null); }}
+        />
+      </>
+    );
   } else if (lista.length === 0) {
     cuerpo = (
       <div className="cnc-workspace">
@@ -258,10 +292,10 @@ export default function CanastasCirugia() {
           <div className="psc-page-header">
             <div>
               <h1>Canastas de cirugía</h1>
-              <p>Verifica, recibe y legaliza los insumos de las cirugías de tu sala.</p>
+              <p>Verifica, recibe y legaliza los insumos de las cirugías del día.</p>
             </div>
             <div className="psc-page-header-actions">
-              <CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />
+              <SegmentedFilterBar options={VISTA_OPTIONS} value={vista} onChange={handleVista} ariaLabel="Vista de las canastas" />
               <button
                 type="button"
                 className="cnc-historial-btn"
@@ -280,6 +314,21 @@ export default function CanastasCirugia() {
           {cuerpo}
         </div>
       </div>
+
+      {modalCirugia && (
+        <CanastaDetalleModal
+          cirugia={modalCirugia}
+          draft={drafts[modalCirugia.id] ?? {}}
+          error={error}
+          onDraftChange={(patch) => handleDraftChange(modalCirugia.id, patch)}
+          onRecibir={(recibidos, novedad) => handleRecibir(modalCirugia, recibidos, novedad)}
+          onCerrarConFaltante={(novedad) => handleCerrarConFaltante(modalCirugia, novedad)}
+          onReabrir={() => handleReabrir(modalCirugia)}
+          onRegistrarConsumo={(usados) => handleRegistrarConsumo(modalCirugia, usados)}
+          onDespachar={(opciones) => handleDespachar(modalCirugia, opciones)}
+          onClose={() => setModalId(null)}
+        />
+      )}
 
       <div className={`psc-toast cnc-toast${toast ? ' show' : ''}`} role="status">
         <span className="psc-toast-dot" />

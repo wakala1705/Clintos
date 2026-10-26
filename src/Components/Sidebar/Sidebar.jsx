@@ -72,8 +72,9 @@ export default function Sidebar() {
   const isCirugiaCanastas = pathname.startsWith('/cirugia/canastas');
   const isCirugiaGestion = pathname.startsWith('/cirugia/gestion');
   const isCirugiaConfiguracion = pathname.startsWith('/cirugia/configuracion');
+  const isCirugiaHc = pathname.startsWith('/cirugia/historia-clinica');
   const isCirugiaProgramacion = pathname.startsWith('/cirugia/programacion') || pathname.startsWith('/cirugia/historial-quirurgico');
-  const isCirugia = isCirugiaPanel || isCirugiaProgramacion || isCirugiaCanastas || isCirugiaGestion || isCirugiaConfiguracion;
+  const isCirugia = isCirugiaPanel || isCirugiaProgramacion || isCirugiaCanastas || isCirugiaGestion || isCirugiaConfiguracion || isCirugiaHc;
   const isHistoriaClinicaHosp = pathname.startsWith('/hospitalizacion/historia-clinica');
   const isInterconsulta = pathname.startsWith('/hospitalizacion/interconsulta');
   const isTriage = pathname.startsWith('/hospitalizacion/triage');
@@ -145,6 +146,7 @@ export default function Sidebar() {
           <Link href="/cirugia/programacion" className={`nav-subitem${isCirugiaProgramacion ? ' active' : ''}`}><LuCalendarDays className="icon" />Programación</Link>
           <Link href="/cirugia" className={`nav-subitem${isCirugiaPanel ? ' active' : ''}`}><LuLayoutGrid className="icon" />Panel general</Link>
           <Link href="/cirugia/canastas" className={`nav-subitem${isCirugiaCanastas ? ' active' : ''}`}><LuPackage className="icon" />Canastas</Link>
+          <Link href="/cirugia/historia-clinica" className={`nav-subitem${isCirugiaHc ? ' active' : ''}`}><LuFileText className="icon" />Historia clínica</Link>
         </div>
       </div>
 

@@ -1,0 +1,3 @@
+/* Titlebar, body, content, footer y campos son los de PlantillaIngresoHospitalizacion
+   (.pih-*, .form-field). Lo único propio: el mensaje de campo obligatorio. */
+.iq-error{font-size:var(--fs-sm);color:var(--red);}

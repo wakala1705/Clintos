@@ -20,11 +20,13 @@ import CreandoPlantillaModal from './CreandoPlantillaModal/CreandoPlantillaModal
 import PlantillaCrecimt2 from './PlantillaCrecimt2/PlantillaCrecimt2';
 import PlantillaIngresoHospitalizacion from './PlantillaIngresoHospitalizacion/PlantillaIngresoHospitalizacion';
 import PlantillaEvaluacionPreanestesica from './PlantillaEvaluacionPreanestesica/PlantillaEvaluacionPreanestesica';
+import PlantillaInformeQuirurgico from './PlantillaInformeQuirurgico/PlantillaInformeQuirurgico';
 import { DOCTOR, getAtencionData } from '@/hooks/HistoriaClinica/mockAgendaData';
 import { getRegistrosGrupos, getRegistrosGruposHospitalizacion } from '@/hooks/HistoriaClinica/mockHistoriaClinicaRecords';
 import { getOrdenesMedicas } from '@/hooks/HistoriaClinica/mockOrdenesMedicas';
 import { PLANTILLAS, PLANTILLAS_HOSPITALIZACION } from '@/hooks/HistoriaClinica/mockPlantillas';
 import { getHospitalizadoData, getPacienteHospitalizado } from '@/hooks/HistoriaClinicaHospitalizacion/mockHospitalizadosData';
+import { getCirugiaHcData, getRegistrosGruposCirugia, guardarInformeQuirurgico } from '@/hooks/HistoriaClinicaCirugia/mockHcCirugia';
 import {
   LuCalendarOff,
   LuCircleAlert,
@@ -41,7 +43,14 @@ import {
 const CREAR_PLANTILLA_DELAY_MS = 1200;
 
 // Códigos del catálogo que ya tienen formulario -> valor de `plantillaActiva`.
-const PLANTILLA_ACTIVA_POR_CODIGO = { CRECIMT2: 'crecimt2', INGHOSP: 'inghosp', EVAPRE: 'evapre' };
+const PLANTILLA_ACTIVA_POR_CODIGO = {
+  CRECIMT2: 'crecimt2', INGHOSP: 'inghosp', EVAPRE: 'evapre', INFOQX: 'infoqx',
+};
+
+// Catálogo de la HC de Cirugía: solo el informe quirúrgico (nota operatoria).
+const PLANTILLAS_CIRUGIA = [
+  { codigo: 'INFOQX', descripcion: 'INFORME QUIRÚRGICO', sexo: 'Ambos' },
+];
 
 // Pestañas de la atención — "Historia clínica" y "Órdenes médicas" tienen
 // contenido hoy; el resto queda deshabilitada con "Próximamente", mismo patrón que Monitoreo/
@@ -100,6 +109,23 @@ const VARIANTES = {
     // Mismo banner que Atención de enfermería: todos los campos de la
     // variante ya vienen en `patient` (getHospitalizadoData), sin context.
     bannerVariant: 'hospitalizacion',
+    bannerContext: () => undefined,
+  },
+  // HC de una cirugía ya finalizada (/cirugia/historia-clinica/[id]): el
+  // informe quirúrgico de esa cirugía (ver mockHcCirugia.js).
+  cirugia: {
+    fetchData: getCirugiaHcData,
+    getRegistros: getRegistrosGruposCirugia,
+    plantillas: PLANTILLAS_CIRUGIA,
+    plantillasConSexo: false,
+    section: ['Cirugía', { label: 'Historia clínica', href: '/cirugia/historia-clinica' }],
+    volverHref: '/cirugia/historia-clinica',
+    volverLabel: 'Volver a cirugías finalizadas',
+    notFound: {
+      title: 'No encontramos esta cirugía',
+      subtitle: 'Puede que el enlace esté vencido o la cirugía todavía no esté finalizada.',
+    },
+    bannerVariant: 'cirugia-hc',
     bannerContext: () => undefined,
   },
 };
@@ -168,9 +194,18 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   // que acepte contenido guardado (INGHOSP y EVAPRE).
   function handleEditarRegistro(registro) {
     const activa = PLANTILLA_ACTIVA_POR_CODIGO[registro.plantilla];
-    if (activa !== 'inghosp' && activa !== 'evapre') return;
+    if (activa !== 'inghosp' && activa !== 'evapre' && !(activa === 'infoqx' && data?.cirugia)) return;
     setRegistroAbierto(registro);
     setPlantillaActiva(activa);
+  }
+
+  // Guarda el informe quirúrgico de la cirugía abierta y refresca la lista de
+  // registros (la cirugía pasa a "HC realizada" en la bandeja).
+  function handleGuardarInformeQuirurgico(contenido) {
+    const registro = guardarInformeQuirurgico(data?.cirugia, contenido, DOCTOR.nombre.toUpperCase());
+    setData((prev) => ({ ...prev, hc: registro }));
+    window.ncToast?.('Informe quirúrgico guardado.');
+    handleSalirPlantilla();
   }
 
   // Sin backend real (mock: "solo pinta el front"), crear la plantilla
@@ -184,7 +219,8 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
   // catálogo.
   function handleElegirPlantilla(plantilla) {
     const activa = PLANTILLA_ACTIVA_POR_CODIGO[plantilla.codigo];
-    if (!activa) {
+    // El informe quirúrgico solo existe dentro de una cirugía (HC de Cirugía).
+    if (!activa || (activa === 'infoqx' && !data?.cirugia)) {
       window.ncToast?.(`Plantilla "${plantilla.descripcion}" seleccionada (flujo de nueva atención en desarrollo).`);
       return;
     }
@@ -373,6 +409,15 @@ export default function AtencionPaciente({ id, variante = 'consulta-externa', in
                     <PlantillaIngresoHospitalizacion
                       onSalir={handleSalirPlantilla}
                       registro={registroAbierto}
+                      maximizada={plantillaMaximizada}
+                      onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
+                    />
+                  ) : plantillaActiva === 'infoqx' && data?.cirugia ? (
+                    <PlantillaInformeQuirurgico
+                      cirugia={data?.cirugia}
+                      registro={registroAbierto ?? data?.hc}
+                      onSalir={handleSalirPlantilla}
+                      onGuardar={handleGuardarInformeQuirurgico}
                       maximizada={plantillaMaximizada}
                       onToggleMaximizar={() => setPlantillaMaximizada((v) => !v)}
                     />

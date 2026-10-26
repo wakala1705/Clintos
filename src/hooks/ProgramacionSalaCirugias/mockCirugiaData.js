@@ -1700,7 +1700,7 @@ const SEMANA_ONCOLOGIA = [
     id: '12405', dia: 0, salaId: 'proc-menores', horaInicio: '08:00', horaFin: '09:00', nombre: 'Jairo Alberto Pinzón', documento: 'CC 80.223.457', edad: 58, sexo: 'Masculino',
     aseguradora: 'Sanitas EPS', procedimiento: 'Inserción de catéter venoso central tipo reservorio (Port-a-Cath)', dx: 'Z511 - SESION DE QUIMIOTERAPIA PARA TUMOR',
     cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', anestesiologo: 'ANA ISABEL TABOADA HOYOS', tipoAnestesia: 'Local asistida', complejidad: 'Baja', equipos: [EQ_ARCO, EQ_MONITOR],
-    
+    insumos: [], // sin canasta vinculada (ejemplo de "No vinculada" en el Panel general)
   }),
   // ----- Martes -----
   cirugiaOnco({
@@ -1814,7 +1814,57 @@ const SEMANA_ONCOLOGIA = [
   }),
 ].filter((c) => !(c.fecha === HOY_ISO && ['qx-1', 'qx-2'].includes(c.salaId)));
 
-CIRUGIAS = [...CIRUGIAS, ...VENCIDAS_LEGACY.map(vencidaLegacy), ...SEMANA_ONCOLOGIA];
+// Cirugías de hoy sin canasta vinculada (Panel general: "No vinculada" / "No pedida").
+// Van en salas distintas de qx-1/qx-2 porque las semillas de esas dos las fijan los tests.
+const SIN_CANASTA = { nombre: 'Sin canasta asignada', items: [] };
+const CIRUGIAS_HOY_SIN_CANASTA = [
+  cirugiaHoy({
+    id: '12430', salaId: 'proc-menores', nombre: 'Marcela Inés Obando Reyes', documento: 'CC 52.118.904', edad: 49, sexo: 'Femenino',
+    procedimiento: 'Biopsia excisional de lesión de piel', dx: 'C44 - OTROS TUMORES MALIGNOS DE LA PIEL', servicio: 'Cabeza y cuello',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', tipoAnestesia: 'Local', complejidad: 'Baja', horaInicio: '10:00', horaFin: '11:00',
+    canasta: { ...SIN_CANASTA, items: [] }, farmacia: null,
+  }),
+  cirugiaHoy({
+    id: '12431', salaId: 'proc-menores', nombre: 'Pedro Pablo Vargas Lozano', documento: 'CC 14.226.780', edad: 66, sexo: 'Masculino',
+    procedimiento: 'Retiro de reservorio venoso (Port-a-Cath)', dx: 'Z452 - AJUSTE Y MANEJO DE DISPOSITIVO DE ACCESO VASCULAR', servicio: 'Oncología quirúrgica',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', tipoAnestesia: 'Local asistida', complejidad: 'Baja', horaInicio: '14:00', horaFin: '15:00',
+    canasta: { ...SIN_CANASTA, items: [] }, farmacia: null,
+  }),
+  cirugiaHoy({
+    id: '12432', salaId: 'gastroenterologia', nombre: 'Rosalba Henao Giraldo', documento: 'CC 29.884.115', edad: 57, sexo: 'Femenino',
+    procedimiento: 'Colonoscopia total con biopsias', dx: 'K921 - MELENA', servicio: 'Gastroenterología',
+    cirujano: 'ANTONIO CARLOS MIRANDA HOYOS', tipoAnestesia: 'General IV', complejidad: 'Baja', horaInicio: '09:30', horaFin: '10:30',
+    canasta: { ...SIN_CANASTA, items: [] }, farmacia: null,
+  }),
+  cirugiaHoy({
+    id: '12433', salaId: 'hemodinamia', nombre: 'Octavio Mesa Cardona', documento: 'CC 8.301.552', edad: 70, sexo: 'Masculino',
+    procedimiento: 'Quimioembolización arterial hepática (TACE)', dx: 'C220 - CARCINOMA DE CELULAS HEPATICAS', servicio: 'Oncología intervencionista',
+    cirujano: 'AMAURY RAFAEL GARCIA BURGOS', tipoAnestesia: 'Local asistida', asa: 'Clase 3', complejidad: 'Alta', horaInicio: '11:00', horaFin: '13:00',
+    canasta: { ...SIN_CANASTA, items: [] }, farmacia: null,
+  }),
+];
+
+// Semana pasada: cirugías ya finalizadas que alimentan "Historia clínica" de
+// Cirugía -- HC pendiente / realizada (ver @/hooks/HistoriaClinicaCirugia/mockHcCirugia.js).
+const SEMANA_PASADA = [
+  cirugiaOnco({
+    id: '12440', dia: -4, horaInicio: '07:30', horaFin: '10:00', nombre: 'Patricia Elena Gaviria', documento: 'CC 43.552.901', edad: 55, sexo: 'Femenino',
+    procedimiento: 'Mastectomía radical modificada', dx: 'C509 - TUMOR MALIGNO DE LA MAMA, PARTE NO ESPECIFICADA', servicio: 'Mastología',
+    cirujano: 'CARLOS MAURICIO BURGOS DURANGO', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', equipos: [EQ_CAUTERIO, EQ_MONITOR], canastaRecibida: true,
+  }),
+  cirugiaOnco({
+    id: '12441', dia: -3, salaId: 'qx-2', horaInicio: '08:00', horaFin: '11:30', nombre: 'Héctor Manuel Rueda', documento: 'CC 12.774.330', edad: 62, sexo: 'Masculino',
+    procedimiento: 'Gastrectomía subtotal con linfadenectomía D2', dx: 'C169 - TUMOR MALIGNO DEL ESTOMAGO, PARTE NO ESPECIFICADA',
+    cirujano: 'ABRAHAM GANEM BECHARA', ayudante: 'FELIPE ANDRES ORTIZ MEJIA', anestesiologo: 'JUAN CARLOS GOMEZ DOMINGUEZ', asa: 'Clase 3', equipos: [EQ_CAUTERIO, EQ_MONITOR], canastaRecibida: true,
+  }),
+  cirugiaOnco({
+    id: '12442', dia: -2, horaInicio: '13:00', horaFin: '15:00', nombre: 'Liliana Marcela Ospina', documento: 'CC 52.118.077', edad: 44, sexo: 'Femenino',
+    procedimiento: 'Tiroidectomía total con vaciamiento central', dx: 'C73 - TUMOR MALIGNO DE LA GLANDULA TIROIDES', servicio: 'Cabeza y cuello',
+    cirujano: 'ANIBAL ENRIQUE BADEL RODRIGUEZ', asa: 'Clase 2', equipos: [EQ_CAUTERIO, EQ_MONITOR], canastaRecibida: true,
+  }),
+];
+
+CIRUGIAS = [...CIRUGIAS, ...VENCIDAS_LEGACY.map(vencidaLegacy), ...SEMANA_ONCOLOGIA, ...CIRUGIAS_HOY_SIN_CANASTA, ...SEMANA_PASADA];
 
 // Parte del id numérico más alto ya sembrado (antes era un literal y chocaba
 // con las semillas de "hoy": una cirugía nueva salía con un id repetido).
