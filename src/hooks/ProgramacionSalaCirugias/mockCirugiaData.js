@@ -2654,15 +2654,20 @@ function avanzarCanasta(id, desde, hasta) {
 }
 
 // "Pedir insumos a farmacia": los insumos sin solicitar pasan a solicitados.
-// Una cirugía creada desde el wizard nace con farmacia.numeroPedido '—': al
-// pedir los insumos se le asigna el siguiente número de solicitud (el que
-// muestra Canastas de cirugía).
+// Una cirugía creada desde el wizard nace con farmacia.numeroPedido '—' (o con
+// farmacia null si se programó sin canasta y se vinculó después): al pedir los
+// insumos se le asigna el siguiente número de solicitud (el que muestra
+// Canastas de cirugía).
 export function solicitarInsumosFarmacia(id) {
   const actualizada = avanzarCanasta(id, 'sin-solicitar', 'solicitado');
-  if (actualizada.farmacia?.numeroPedido !== '—') return actualizada;
+  const numero = actualizada.farmacia?.numeroPedido;
+  if (numero && numero !== '—') return actualizada;
   const mayor = Math.max(0, ...CIRUGIAS.map((c) => Number(c.farmacia?.numeroPedido) || 0));
   return actualizarCirugia(id, {
-    farmacia: { ...actualizada.farmacia, numeroPedido: String(mayor + 1), fechaSolicitud: fechaHoraLocalISO(new Date()) },
+    farmacia: {
+      estado: 'en-preparacion', medicamentos: [], ...actualizada.farmacia,
+      numeroPedido: String(mayor + 1), fechaSolicitud: fechaHoraLocalISO(new Date()),
+    },
   });
 }
 

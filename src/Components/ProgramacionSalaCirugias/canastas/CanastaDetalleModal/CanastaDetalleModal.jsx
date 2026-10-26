@@ -13,7 +13,9 @@ import CanastaDetalle from '../CanastaDetalle/CanastaDetalle';
 // CanastasCirugia.jsx). Monta el mismo <CanastaDetalle> del maestro-detalle con
 // sus mismas props: las acciones y los borradores los lleva el orquestador, así
 // que recepción, cierre con faltante, consumo y deshacer funcionan igual. Queda
-// abierto tras confirmar (se ve el resultado); lo cierra el usuario.
+// abierto tras confirmar (se ve el resultado); lo cierra el usuario. Solo cubre
+// la recepción: el consumo y la devolución se registran desde la hoja quirúrgica
+// (`sinConsumo` oculta esa pestaña).
 export default function CanastaDetalleModal({ cirugia, onClose, ...detalleProps }) {
   const cardRef = useRef(null);
   useModalFocusTrap(cardRef);
@@ -31,7 +33,7 @@ export default function CanastaDetalleModal({ cirugia, onClose, ...detalleProps 
           autoFocusClose
         />
         <div className="cdm-body">
-          <CanastaDetalle cirugia={cirugia} {...detalleProps} />
+          <CanastaDetalle cirugia={cirugia} sinConsumo {...detalleProps} />
         </div>
         <div className="modal-footer">
           <Button type="button" variant="secondary" onClick={onClose}>Cerrar</Button>

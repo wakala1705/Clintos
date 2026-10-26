@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   actualizarCirugia, cancelarSolicitudInsumos, cantidadDevuelta, cerrarConFaltante, despacharCanasta, reabrirSolicitud,
   registrarConsumo, registrarRecepcion, resumenCanasta, solicitarInsumosFarmacia,
-  fetchCanastasDia, fechaISO,
+  fetchCanastasDia, fechaISO, vincularCanastaCirugia,
 } from '../mockCirugiaData.js';
 
 const HOY = fechaISO(new Date());
@@ -142,4 +142,12 @@ test('despacho parcial (demo) y luego el saldo: se cierra recibiendo y no se pue
   assert.equal(resumenCanasta(c).estado, 'recibida');
   assert.equal(c.canasta.items.every((i) => i.recibido === i.cantidad), true);
   assert.equal(c.canasta.recepciones.length, 2);
+});
+
+test('vincular canasta y pedir insumos en una cirugía sin farmacia asigna número de solicitud', async () => {
+  assert.equal((await cirugia('12430', 'proc-menores')).farmacia, null);
+  vincularCanastaCirugia('12430', { nombre: 'Canasta de prueba', items: [{ nombre: 'Gasas', cantidad: 2 }] });
+  const c = solicitarInsumosFarmacia('12430');
+  assert.match(c.farmacia.numeroPedido, /^\d+$/);
+  assert.equal(resumenCanasta(c).estado, 'en-preparacion');
 });

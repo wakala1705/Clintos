@@ -27,9 +27,10 @@ import {
 import { filtrarCanastas } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
 // Sede fija '02' en todo el módulo (ver VencidasFiltrosBar.jsx).
-const SALA_OPTIONS = SALAS.filter((s) => s.sedeId === '02').map((s) => ({ value: s.value, label: s.descripcion }));
+const SALA_BASE_OPTIONS = SALAS.filter((s) => s.sedeId === '02').map((s) => ({ value: s.value, label: s.descripcion }));
+// 'Todas las salas' es el valor por defecto en ambas vistas (tabla y detalle).
+const SALA_OPTIONS = [{ value: 'todas', label: 'Todas las salas' }, ...SALA_BASE_OPTIONS];
 const USUARIO = 'Camilo Grondona';
-const SALA_TABLA_OPTIONS = [{ value: 'todas', label: 'Todas las salas' }, ...SALA_OPTIONS];
 const VISTA_OPTIONS = [{ value: 'tabla', label: 'Tabla' }, { value: 'detalle', label: 'Detalle' }];
 
 // "Canastas de cirugía" (maestro-detalle, diseño 2026-09-30): las cirugías de
@@ -46,13 +47,12 @@ export default function CanastasCirugia() {
   const params = useSearchParams();
   const salaParam = params.get('sala');
   const fechaParam = params.get('fecha');
-  const [salaId, setSalaId] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'qx-1'));
-  const [fecha, setFecha] = useState(() => (/^d{4}-d{2}-d{2}$/.test(fechaParam ?? '') ? fechaParam : fechaISO(new Date())));
+  const [salaId, setSalaId] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'todas'));
+  const [fecha, setFecha] = useState(() => (/^\d{4}-\d{2}-\d{2}$/.test(fechaParam ?? '') ? fechaParam : fechaISO(new Date())));
   const [filtros, setFiltros] = useState({ busqueda: '', estado: 'todas' });
   // Vista "Tabla" (por defecto: solicitudes de todas las salas, detalle en modal)
   // o "Detalle" (maestro-detalle de UNA sala). Vive en la URL (?vista=detalle).
   const vista = params.get('vista') === 'detalle' ? 'detalle' : 'tabla';
-  const [salaTabla, setSalaTabla] = useState(() => (SALA_OPTIONS.some((o) => o.value === salaParam) ? salaParam : 'todas'));
   // Solicitud abierta en el modal de la vista Tabla (un deep link ?cirugia= la abre directo).
   const [modalId, setModalId] = useState(() => params.get('cirugia'));
   // Cirugías del día de TODAS las salas de la sede; cada vista filtra la suya.
@@ -74,7 +74,7 @@ export default function CanastasCirugia() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all(SALA_OPTIONS.map((s) => fetchCanastasDia({ fecha, salaId: s.value }))).then((porSala) => {
+    Promise.all(SALA_BASE_OPTIONS.map((s) => fetchCanastasDia({ fecha, salaId: s.value }))).then((porSala) => {
       if (!cancelled) setDelDia(porSala.flat().sort((a, b) => a.horaInicio.localeCompare(b.horaInicio)));
     });
     return () => { cancelled = true; };
@@ -89,8 +89,7 @@ export default function CanastasCirugia() {
 
   useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
 
-  const salaActiva = vista === 'tabla' ? salaTabla : salaId;
-  const cirugias = delDia === null ? null : delDia.filter((c) => salaActiva === 'todas' || c.salaId === salaActiva);
+  const cirugias = delDia === null ? null : delDia.filter((c) => salaId === 'todas' || c.salaId === salaId);
   const lista = cirugias ?? [];
   const filtradas = filtrarCanastas(lista, filtros);
   const modalCirugia = vista === 'tabla' ? lista.find((c) => c.id === modalId) ?? null : null;
@@ -233,9 +232,9 @@ export default function CanastasCirugia() {
           fechaNav={<CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />}
           filtros={filtros}
           onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
-          salaFiltro={salaTabla}
-          salaOptions={SALA_TABLA_OPTIONS}
-          onSalaChange={setSalaTabla}
+          salaFiltro={salaId}
+          salaOptions={SALA_OPTIONS}
+          onSalaChange={setSalaId}
           salaLabel={(id) => SALA_OPTIONS.find((o) => o.value === id)?.label ?? id}
           onAbrir={(id) => { setModalId(id); setError(null); }}
         />

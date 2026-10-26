@@ -21,10 +21,15 @@ const oracion = (t = '') => (t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerC
 // `draft` (lo guarda el orquestador por cirugía); esta capa no tiene estado.
 export default function CanastaDetalle({
   cirugia, draft, error, onDraftChange, onRecibir, onCerrarConFaltante, onReabrir, onRegistrarConsumo, onDespachar,
+  sinConsumo = false,
 }) {
   const { estado } = resumenCanasta(cirugia);
-  const banner = bannerCanasta(cirugia);
-  const consumoDisponible = cirugia.estado === 'realizada';
+  // Con `sinConsumo` (modal de la vista Tabla) el consumo y la devolución se
+  // registran desde la hoja quirúrgica: no hay pestaña ni se muestran los avisos
+  // que mandan a registrarlos (el de saldo pendiente de farmacia sí se conserva).
+  const bannerBase = bannerCanasta(cirugia);
+  const banner = sinConsumo && cirugia.estado === 'realizada' && bannerBase?.tone !== 'warn' ? null : bannerBase;
+  const consumoDisponible = !sinConsumo && cirugia.estado === 'realizada';
   // Cabecera colapsada por defecto (más alto para la tabla); vive en el draft como la pestaña.
   const detalleAbierto = Boolean(draft.detalleAbierto);
   const tab = consumoDisponible ? (draft.tab ?? 'consumo') : 'recepcion';
@@ -69,6 +74,7 @@ export default function CanastaDetalle({
       )}
       {error && <p className="cnc-error" role="alert">{error}</p>}
 
+      {!sinConsumo && (
       <div className="cnc-tabs" role="tablist" aria-label="Secciones de la canasta">
         <button
           type="button"
@@ -97,6 +103,7 @@ export default function CanastaDetalle({
           {!consumoDisponible && <span className="cnc-sr"> (se habilita al marcar la cirugía como realizada)</span>}
         </button>
       </div>
+      )}
 
       <div className="cnc-tabpanel" role="tabpanel" id={`cnc-panel-${tab}`} aria-labelledby={`cnc-tab-${tab}`}>
         {tab === 'recepcion' ? (
