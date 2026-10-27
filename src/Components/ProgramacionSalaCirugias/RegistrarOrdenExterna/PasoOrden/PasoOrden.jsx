@@ -1,23 +1,34 @@
-import { useRef } from 'react';
-import { LuEye, LuFileText, LuPaperclip, LuRefreshCw } from 'react-icons/lu';
+import { useRef, useState } from 'react';
+import {
+  LuEye, LuFileText, LuPaperclip, LuRefreshCw, LuShieldCheck, LuTrash2,
+} from 'react-icons/lu';
 import './PasoOrden.css';
 import Button from '@/Components/Button/Button';
-import FormSelect from '@/Components/FormSelect/FormSelect';
+import CatalogPickerTrigger from '../../CatalogPickerTrigger/CatalogPickerTrigger';
+import CatalogoInstitucionesModal from '../CatalogoInstitucionesModal/CatalogoInstitucionesModal';
+import CatalogoDiagnosticosModal from '@/Components/CatalogoDiagnosticosModal/CatalogoDiagnosticosModal';
 import DatePicker from '@/Components/DatePicker/DatePicker';
-import { DIAGNOSTICOS, INSTITUCIONES } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
+import RegistrarAutorizacionModal from '../../GestionCirugias/RegistrarAutorizacionModal/RegistrarAutorizacionModal';
+import { INSTITUCIONES } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
 
 const Obligatorio = () => <span className="gc-req" aria-hidden="true"> *</span>;
 
-// Paso 2: datos de la orden externa. El documento adjunto es obligatorio y es
-// el soporte del requisito "Orden médica" del checklist.
+// Paso 2: datos de la orden externa. El documento adjunto es opcional (si falta,
+// "Orden médica" queda pendiente en el checklist). La autorización de la EPS es
+// obligatoria: se registra con el mismo modal de Gestión de cirugías
+// (RegistrarAutorizacionModal) y deja el requisito "Autorización" al día.
 export default function PasoOrden({
-  orden, onChange, hoy, onVerAdjunto,
+  orden, onChange, hoy, onVerAdjunto, onVerAutorizacion, paciente, usuario,
 }) {
   const archivoRef = useRef(null);
+  const [catalogoAbierto, setCatalogoAbierto] = useState(null); // 'institucion' | 'dx' | 'autorizacion' | null
 
   function handleArchivo(e) {
     const archivo = e.target.files?.[0];
-    if (archivo) onChange({ adjunto: archivo.name });
+    if (archivo) {
+      if (orden.adjuntoUrl) URL.revokeObjectURL(orden.adjuntoUrl);
+      onChange({ adjunto: archivo.name, adjuntoUrl: URL.createObjectURL(archivo) });
+    }
     e.target.value = '';
   }
 
@@ -31,12 +42,14 @@ export default function PasoOrden({
       <div className="gc-grid-2">
         <div className="form-field">
           <label htmlFor="ro-institucion">Institución que remite<Obligatorio /></label>
-          <FormSelect
+          <CatalogPickerTrigger
             id="ro-institucion"
-            value={orden.institucion}
-            onChange={(institucion) => onChange({ institucion })}
-            options={INSTITUCIONES}
+            label={INSTITUCIONES.find((i) => i.value === orden.institucion)?.label}
             placeholder="Selecciona una institución"
+            open={catalogoAbierto === 'institucion'}
+            onClick={() => setCatalogoAbierto('institucion')}
+            ariaLabel="Institución que remite"
+            required
           />
         </div>
         <div className="form-field">
@@ -63,18 +76,20 @@ export default function PasoOrden({
         </div>
         <div className="form-field">
           <label htmlFor="ro-dx">Diagnóstico (CIE-10)<Obligatorio /></label>
-          <FormSelect
+          <CatalogPickerTrigger
             id="ro-dx"
-            value={orden.dx}
-            onChange={(dx) => onChange({ dx })}
-            options={DIAGNOSTICOS}
+            label={orden.dx || undefined}
             placeholder="Selecciona un diagnóstico"
+            open={catalogoAbierto === 'dx'}
+            onClick={() => setCatalogoAbierto('dx')}
+            ariaLabel="Diagnóstico (CIE-10)"
+            required
           />
         </div>
       </div>
 
       <div className="po-adjunto">
-        <span className="gc-label" id="ro-adjunto-label">Documento de la orden<Obligatorio /></span>
+        <span className="gc-label" id="ro-adjunto-label">Documento de la orden <span className="po-opcional">(opcional)</span></span>
         <input
           ref={archivoRef}
           type="file"
@@ -95,13 +110,65 @@ export default function PasoOrden({
           </div>
         ) : (
           <div className="po-vacio">
-            <p>Adjunta el PDF o una foto de la orden. Es el soporte del requisito “Orden médica”.</p>
+            <p>Adjunta el PDF o una foto de la orden. Si no la adjuntas ahora, “Orden médica” quedará pendiente en la lista de chequeo.</p>
             <Button variant="outline" icon={LuPaperclip} className="po-btn" onClick={() => archivoRef.current?.click()}>
               Adjuntar documento
             </Button>
           </div>
         )}
       </div>
+
+      <div className="po-adjunto">
+        <span className="gc-label">Autorización de la EPS<Obligatorio /></span>
+        {orden.autorizacion ? (
+          <div className="po-archivo">
+            <LuShieldCheck className="po-archivo-icono" aria-hidden="true" />
+            <span className="po-archivo-nombre">
+              Autorización N° {orden.autorizacion.numero}
+              {orden.autorizacion.archivo && <span className="po-archivo-sub"> · {orden.autorizacion.archivo.nombre}</span>}
+            </span>
+            {orden.autorizacion.archivo?.url && (
+              <Button variant="secondary" size="sm" icon={LuEye} className="po-btn" onClick={onVerAutorizacion}>Ver</Button>
+            )}
+            <Button variant="secondary" size="sm" icon={LuRefreshCw} className="po-btn" onClick={() => setCatalogoAbierto('autorizacion')}>
+              Reemplazar
+            </Button>
+            <Button variant="secondary" size="sm" icon={LuTrash2} className="po-btn" onClick={() => onChange({ autorizacion: null })}>
+              Quitar
+            </Button>
+          </div>
+        ) : (
+          <div className="po-vacio">
+            <p>Registra el N° de autorización que emitió {paciente?.eps ?? 'la EPS'} y, si lo tienes, su soporte.</p>
+            <Button variant="outline" icon={LuShieldCheck} className="po-btn" onClick={() => setCatalogoAbierto('autorizacion')}>
+              Registrar autorización
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {catalogoAbierto === 'autorizacion' && (
+        <RegistrarAutorizacionModal
+          solicitud={{ paciente, eps: paciente?.eps }}
+          usuario={usuario}
+          onClose={() => setCatalogoAbierto(null)}
+          onRegistrar={(autorizacion) => { onChange({ autorizacion }); setCatalogoAbierto(null); }}
+        />
+      )}
+      {catalogoAbierto === 'institucion' && (
+        <CatalogoInstitucionesModal
+          instituciones={INSTITUCIONES}
+          value={orden.institucion}
+          onSelect={(institucion) => onChange({ institucion })}
+          onClose={() => setCatalogoAbierto(null)}
+        />
+      )}
+      {catalogoAbierto === 'dx' && (
+        <CatalogoDiagnosticosModal
+          onSelect={(dx) => onChange({ dx })}
+          onClose={() => setCatalogoAbierto(null)}
+        />
+      )}
     </div>
   );
 }

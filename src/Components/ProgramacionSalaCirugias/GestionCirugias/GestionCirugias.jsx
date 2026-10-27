@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { LuCircleAlert, LuCircleCheck, LuClipboardList, LuClock, LuPlus } from 'react-icons/lu';
 import '../ProgramacionSalaCirugias.css';
 import '../shared/shared.css';
 import './GestionCirugias.css';
 import { initShellChrome } from '@/hooks/Shell/legacy-shell-chrome';
+import { initNuevaCita } from '@/hooks/NuevaCita/legacy-nueva-cita';
+import NuevaCitaFlow from '@/Components/NuevaCita/NuevaCitaFlow';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
@@ -24,6 +25,7 @@ import RegistrarAutorizacionModal from './RegistrarAutorizacionModal/RegistrarAu
 import VincularOrdenModal from './VincularOrdenModal/VincularOrdenModal';
 import PdfViewerModal from '@/Components/PdfViewerModal/PdfViewerModal';
 import NuevaCirugiaWizard from '../modals/NuevaCirugiaWizard/NuevaCirugiaWizard';
+import RegistrarOrdenExterna from '../RegistrarOrdenExterna/RegistrarOrdenExterna';
 import {
   consumirAviso, getSolicitudes, marcarProgramada, registrarValoracion, registrarAutorizacion, vincularOrden, vincularResultados,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/store';
@@ -52,8 +54,11 @@ const DIAGNOSTICO_OPCIONES = [
 // de ejemplo (mockSolicitudes, vía store); la lógica de estados vive en
 // @/hooks/ProgramacionSalaCirugias/gestion/gestion.
 export default function GestionCirugias() {
-  const router = useRouter();
   const [solicitudes, setSolicitudes] = useState(() => getSolicitudes());
+  // Modal "Registrar orden externa" (asistente por pasos).
+  const [registrandoOrden, setRegistrandoOrden] = useState(false);
+  // Afiliado elegido en el buscador compartido (#ps-overlay) para esa orden.
+  const [afiliado, setAfiliado] = useState(null);
   // Programar una solicitud: 1) modal con la agenda para elegir sala/fecha/hora
   // (`programando`), 2) wizard "Nueva cirugía" precargado (`hueco` elegido).
   // Ambos son modales sobre esta pantalla; no se navega a Programación.
@@ -75,7 +80,15 @@ export default function GestionCirugias() {
 
   useEffect(() => {
     const cleanupChrome = initShellChrome({ startCollapsed: true });
-    return () => cleanupChrome?.();
+    // Mismo buscador de afiliados de Programar cita: elegir uno no agenda una
+    // cita, abre el asistente de Registrar orden externa.
+    const cleanupNuevaCita = initNuevaCita({
+      onPatientConfirmed: (elegido) => { setAfiliado(elegido); setRegistrandoOrden(true); },
+    });
+    return () => {
+      cleanupChrome?.();
+      cleanupNuevaCita?.();
+    };
   }, []);
   useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
   // Aviso de otra pantalla del flujo (orden registrada / cirugía programada).
@@ -110,6 +123,20 @@ export default function GestionCirugias() {
   }
 
   function cerrarPanel() { setSelectedId(null); }
+
+  // El primer paso de "Registrar orden externa" es el buscador de afiliados
+  // (#ps-overlay): el asistente solo se abre cuando se elige uno, y arranca en
+  // el paso 2. Cerrar el buscador sin elegir no abre nada.
+  function abrirBuscadorAfiliados() { window.openPatientSearch?.(); }
+  function handleRegistrarOrden() {
+    setAfiliado(null);
+    setRegistrandoOrden(false);
+    abrirBuscadorAfiliados();
+  }
+  function cerrarRegistroOrden() {
+    setRegistrandoOrden(false);
+    setAfiliado(null);
+  }
 
   // Acciones del chequeo: "Ver orden" abre el PDF de la orden (`archivoUrl`) en un visor,
   // "Vincular valoración" abre el modal que vincula una EVAPRE y "Vincular
@@ -190,7 +217,7 @@ export default function GestionCirugias() {
               <p>Las órdenes de Consulta externa, Internación y Orden externa llegan automáticamente. Verifica la lista de chequeo previa antes de programar.</p>
             </div>
             <div className="psc-page-header-actions">
-              <Button icon={LuPlus} onClick={() => router.push('/cirugia/gestion/registrar-orden')}>
+              <Button icon={LuPlus} onClick={handleRegistrarOrden}>
                 Registrar orden externa
               </Button>
             </div>
@@ -298,6 +325,20 @@ export default function GestionCirugias() {
         </div>
       </div>
 
+      {registrandoOrden && afiliado && (
+        <RegistrarOrdenExterna
+          afiliado={afiliado}
+          usuario={USUARIO}
+          onBuscarAfiliado={abrirBuscadorAfiliados}
+          onClose={cerrarRegistroOrden}
+          onAviso={showToast}
+          onRegistrada={(aviso) => {
+            setSolicitudes(getSolicitudes());
+            cerrarRegistroOrden();
+            showToast(aviso);
+          }}
+        />
+      )}
       {valorando && (
         <VincularEvapreModal
           solicitud={valorando}
@@ -346,6 +387,9 @@ export default function GestionCirugias() {
           onClose={() => setHueco(null)}
         />
       )}
+
+      {/* Buscador de afiliados compartido; va después de los modales para quedar encima. */}
+      <NuevaCitaFlow />
 
       <div className={`psc-toast${toast ? ' show' : ''}`} role="status">
         <span className="psc-toast-dot" />

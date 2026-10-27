@@ -15,3 +15,7 @@
 .pv-detalle{margin:0;font-size:var(--fs-sm);color:var(--ink-700);line-height:1.45;}
 .pv-fila .gc-link{align-self:flex-start;margin-left:-4px;}
 .pv-banner-icono{width:20px;height:20px;flex-shrink:0;}
+
+.pv-adjunto{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.pv-adjunto-icono{width:18px;height:18px;color:var(--ink-500);flex-shrink:0;}
+.pv-adjunto-nombre{font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}

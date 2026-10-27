@@ -11,3 +11,5 @@
 .po-archivo-icono{width:20px;height:20px;color:var(--ink-500);flex-shrink:0;}
 .po-archivo-nombre{flex:1;min-width:120px;font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--ink-900);overflow-wrap:anywhere;}
 .po-btn{min-height:44px;}
+.po-opcional{font-weight:var(--fw-regular);color:var(--ink-500);}
+.po-archivo-sub{font-weight:var(--fw-regular);color:var(--ink-500);}

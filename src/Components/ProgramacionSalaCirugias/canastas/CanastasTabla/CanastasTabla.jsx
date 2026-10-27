@@ -1,13 +1,13 @@
 'use client';
 
 import './CanastasTabla.css';
-import { LuEye, LuPackageSearch } from 'react-icons/lu';
+import { LuClock, LuEye, LuPackageSearch, LuTriangleAlert } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import SearchField from '@/Components/SearchField/SearchField';
 import EstadoCirugiaBadge from '../../EstadoCirugiaBadge/EstadoCirugiaBadge';
 import { CANASTA_ESTADO_LABEL, resumenCanasta } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
-import { CANASTA_META, ESTADO_FILTRO_OPTIONS, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
+import { CANASTA_META, ESTADO_FILTRO_OPTIONS, alertaTiempoCanasta, badgeProps } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 
 // Vista "Tabla" de Canastas de cirugía: las solicitudes del día de todas las
 // salas (o de una) en una sola tabla; el detalle (recepción / consumo) se abre
@@ -16,7 +16,7 @@ import { CANASTA_META, ESTADO_FILTRO_OPTIONS, badgeProps } from '@/hooks/Program
 // en el header); sala y estado a la derecha. Los datos y las acciones viven en el
 // orquestador (CanastasCirugia.jsx): esta capa no tiene estado propio.
 export default function CanastasTabla({
-  cirugias, fechaNav, filtros, onFiltrosChange, salaFiltro, salaOptions, onSalaChange, salaLabel, onAbrir,
+  cirugias, ahora, fechaNav, filtros, onFiltrosChange, salaFiltro, salaOptions, onSalaChange, salaLabel, onAbrir,
 }) {
   return (
     <section className="cnt-panel" aria-label="Solicitudes de canastas del día">
@@ -54,19 +54,20 @@ export default function CanastasTabla({
           <table className="cnt-table">
             <thead>
               <tr>
-                <th scope="col">Solicitud</th>
-                <th scope="col" className="cnt-num">Recibidos</th>
-                <th scope="col">Estado de la canasta</th>
-                <th scope="col">Paciente</th>
+                <th scope="col" className="cnt-fit">Hora</th>
+                <th scope="col" className="cnt-fit cnt-col-alerta">Alerta de tiempo</th>
+                <th scope="col" className="cnt-fit">Paciente</th>
                 <th scope="col">Procedimiento</th>
-                <th scope="col">Hora de procedimiento</th>
-                <th scope="col">Sala</th>
-                <th scope="col"><span className="cnt-sr">Acciones</span></th>
+                <th scope="col" className="cnt-fit">Sala</th>
+                <th scope="col" className="cnt-fit">Estado de la canasta</th>
+                <th scope="col" className="cnt-fit cnt-num">Recibidos</th>
+                <th scope="col" className="cnt-fit"><span className="cnt-sr">Acciones</span></th>
               </tr>
             </thead>
             <tbody>
               {cirugias.map((c) => {
                 const r = resumenCanasta(c);
+                const alerta = alertaTiempoCanasta(c, ahora);
                 return (
                   <tr
                     key={c.id}
@@ -74,19 +75,28 @@ export default function CanastasTabla({
                     onClick={() => onAbrir(c.id)}
                     onKeyDown={(e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onAbrir(c.id); }}
                   >
-                    <td className="cnt-solicitud">{c.farmacia?.numeroPedido ?? '—'}</td>
-                    <td className="cnt-num">{r.total === 0 ? '—' : `${r.recibidos}/${r.total}`}</td>
-                    <td><Badge {...badgeProps(CANASTA_META[r.estado])}>{CANASTA_ESTADO_LABEL[r.estado]}</Badge></td>
-                    <td><span className="cnt-main">{c.paciente.nombre}</span></td>
+                    <td className="cnt-fit cnt-hora">{c.horaInicio}</td>
+                    <td className="cnt-fit">
+                      {alerta && (
+                        <Badge tone={alerta.tone} className="cnt-hora-alerta" role="status">
+                          {alerta.tone === 'danger'
+                            ? <LuTriangleAlert className="icon" aria-hidden="true" />
+                            : <LuClock className="icon" aria-hidden="true" />}
+                          {alerta.texto}
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="cnt-fit"><span className="cnt-main">{c.paciente.nombre}</span></td>
                     <td>
                       <span className="cnt-proc">
                         {c.procedimientoPrincipal}
                         {c.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
                       </span>
                     </td>
-                    <td className="cnt-hora">{c.horaInicio}</td>
-                    <td>{salaLabel(c.salaId)}</td>
-                    <td className="cnt-actions">
+                    <td className="cnt-fit">{salaLabel(c.salaId)}</td>
+                    <td className="cnt-fit"><Badge {...badgeProps(CANASTA_META[r.estado])}>{CANASTA_ESTADO_LABEL[r.estado]}</Badge></td>
+                    <td className="cnt-fit cnt-num">{r.total === 0 ? '—' : `${r.recibidos}/${r.total}`}</td>
+                    <td className="cnt-fit cnt-actions">
                       <button
                         type="button"
                         className="cnt-ver"

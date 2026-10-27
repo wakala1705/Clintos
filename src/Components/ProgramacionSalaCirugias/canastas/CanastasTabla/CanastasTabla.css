@@ -7,7 +7,13 @@
 .cnt-select{width:190px;}
 
 .cnt-scroll{overflow:auto;min-height:0;flex:1;}
-.cnt-table{width:100%;border-collapse:collapse;min-width:960px;}
+.cnt-table{width:100%;border-collapse:collapse;min-width:1200px;}
+/* Solo "Procedimiento" se estira: las demás columnas miden lo que su contenido, así
+   el ojo de acciones queda pegado a "Recibidos" aunque la tabla sea ancha. */
+.cnt-table .cnt-fit{width:1%;white-space:nowrap;}
+/* Alerta de tiempo: ancho mínimo para que el badge más largo ("Faltan 2 h 15 min ·
+   saldo pendiente") no se parta ni mueva la tabla cuando aparece. */
+.cnt-table .cnt-col-alerta{min-width:270px;}
 .cnt-table th{
   position:sticky;top:0;z-index:var(--z-sticky);
   text-align:left;padding:12px 16px;background:var(--table-header-bg);border-bottom:1px solid var(--border);
@@ -21,12 +27,14 @@
 .cnt-table tbody tr:hover{background:var(--bg);}
 .cnt-table tbody tr:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
 .cnt-table .cnt-num{text-align:right;white-space:nowrap;}
-.cnt-table td.cnt-solicitud{color:var(--primary);font-weight:var(--fw-semibold);white-space:nowrap;}
 .cnt-hora{font-weight:var(--fw-semibold);white-space:nowrap;}
+/* Columna "Alerta de tiempo" (alertaTiempoCanasta). */
+.cnt-table .cnt-hora-alerta{display:inline-flex;align-items:center;gap:4px;}
+.cnt-hora-alerta .icon{width:12px;height:12px;flex-shrink:0;}
 .cnt-main{display:block;font-weight:var(--fw-medium);text-transform:uppercase;}
 .cnt-proc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;text-transform:uppercase;}
 .cnt-proc > *{text-transform:none;}
-.cnt-actions{width:1%;text-align:right;white-space:nowrap;}
+.cnt-actions{text-align:right;}
 /* Ícono "ver detalle": sin borde en reposo para no cargar visualmente cada fila. */
 .cnt-ver{
   width:var(--dropdown-trigger-size);height:var(--dropdown-trigger-size);padding:0;

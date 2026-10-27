@@ -23,11 +23,12 @@ export const LATERALIDAD_LABEL = {
 };
 
 // Checklist que arma el asistente a partir de la historia clínica del
-// paciente (`historia`), los procedimientos elegidos y el adjunto de la orden.
+// paciente (`historia`), los procedimientos elegidos y el adjunto de la orden
+// (`ordenArchivo`: `{ nombre, url }` del documento adjunto, si lo hay).
 // Los pasos 1-3 son siempre obligatorios; Laboratorios siempre se pide;
 // Imágenes solo si algún procedimiento lo requiere.
 export function armarChecklist({
-  historia = {}, procedimientos, ordenAdjunta, eps,
+  historia = {}, procedimientos, ordenAdjunta, ordenArchivo, eps,
 }) {
   const item = (estado, detalle, obligatorio = true) => ({ estado, obligatorio, detalle });
   const estadoHc = (v) => (v === 'ok' ? 'ok' : 'pendiente');
@@ -43,7 +44,7 @@ export function armarChecklist({
 
   return {
     orden: ordenAdjunta
-      ? item('ok', 'Orden externa adjunta como soporte.')
+      ? { ...item('ok', 'Orden externa adjunta como soporte.'), archivoNombre: ordenArchivo?.nombre, archivoUrl: ordenArchivo?.url }
       : item('pendiente', 'Falta adjuntar el documento de la orden.'),
     autorizacion,
     valoracion: historia.valoracion === 'ok'

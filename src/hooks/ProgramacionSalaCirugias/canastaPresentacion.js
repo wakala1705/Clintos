@@ -6,8 +6,8 @@
 // Esta pantalla solo RECIBE la canasta y registra consumo y devolución: no
 // decide si una cirugía puede iniciar (esa lógica se quitó, 2026-09-30).
 import {
-  CANASTA_ESTADOS_RECIBIDOS, MOTIVOS_NOVEDAD, cantidadRecibida, fechaHoraTrazaLabel, resumenCanasta,
-  unidadesPorRecibir, unidadesSaldo,
+  CANASTA_ESTADOS_RECIBIDOS, MOTIVOS_NOVEDAD, cantidadRecibida, estaIniciada, fechaHoraTrazaLabel, fechaISO,
+  resumenCanasta, unidadesPorRecibir, unidadesSaldo,
 } from './mockCirugiaData.js';
 
 // `violet: true` -> <Badge> no trae tono violeta; se agrega la clase global
@@ -24,6 +24,47 @@ export const CANASTA_META = {
 
 export function badgeProps(meta) {
   return { tone: meta.tone, className: meta.violet ? 'cnc-badge-violet' : '' };
+}
+
+// Umbrales (min) del indicador de tiempo en la columna "Hora de procedimiento".
+export const MIN_AVISO_CANASTA = 180;
+export const MIN_ALERTA_CANASTA = 60;
+
+const PENDIENTE_LABEL = {
+  'sin-solicitar': 'sin solicitar',
+  'en-preparacion': 'en preparación',
+  'despacho-parcial': 'saldo pendiente',
+  despachada: 'por recibir',
+};
+
+function duracionLabel(minutos) {
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  if (h === 0) return `${m} min`;
+  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+}
+
+// Indicador de urgencia según la hora de la cirugía y el estado de la canasta:
+// { tone: 'warn' | 'danger', texto } o null si no hay nada que avisar. Solo para
+// cirugías abiertas (programada/urgencia, sin iniciar) del día de `ahora` cuya
+// canasta aún no se recibió. Pasada la hora queda "Atrasada" hasta que el
+// usuario la resuelva (reciba la canasta o cierre la cirugía).
+export function alertaTiempoCanasta(cirugia, ahora) {
+  if (!['programada', 'urgencia'].includes(cirugia.estado) || estaIniciada(cirugia)) return null;
+  if (cirugia.fecha !== fechaISO(ahora)) return null;
+  const { estado } = resumenCanasta(cirugia);
+  if (CANASTA_ESTADOS_RECIBIDOS.includes(estado)) return null;
+  const [y, mo, d] = cirugia.fecha.split('-').map(Number);
+  const [h, m] = cirugia.horaInicio.split(':').map(Number);
+  const minutos = Math.round((new Date(y, mo - 1, d, h, m) - ahora) / 60000);
+  if (minutos <= 0) return { tone: 'danger', texto: `Atrasada ${duracionLabel(-minutos)}` };
+  const detalle = PENDIENTE_LABEL[estado];
+  const texto = `Faltan ${duracionLabel(minutos)} · ${detalle}`;
+  // Ya despachada: solo falta recibirla, avisa cuando queda menos de 1 h.
+  if (estado === 'despachada') return minutos < MIN_ALERTA_CANASTA ? { tone: 'warn', texto } : null;
+  if (minutos < MIN_ALERTA_CANASTA) return { tone: 'danger', texto };
+  if (minutos < MIN_AVISO_CANASTA) return { tone: 'warn', texto };
+  return null;
 }
 
 export const ESTADO_FILTRO_OPTIONS = [

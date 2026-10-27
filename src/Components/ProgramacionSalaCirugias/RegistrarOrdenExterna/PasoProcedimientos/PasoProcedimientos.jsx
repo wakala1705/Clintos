@@ -1,13 +1,13 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { LuPlus, LuTrash2 } from 'react-icons/lu';
 import './PasoProcedimientos.css';
+import Button from '@/Components/Button/Button';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import DatePicker from '@/Components/DatePicker/DatePicker';
 import EstadoChip from '../../GestionCirugias/EstadoChip/EstadoChip';
-import { CATALOGO_CUPS, COBERTURA_LABEL, TONO_COBERTURA } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
-import { LATERALIDAD_LABEL } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
+import CatalogoCupsModal from '../CatalogoCupsModal/CatalogoCupsModal';
+import { COBERTURA_LABEL, TONO_COBERTURA } from '@/hooks/ProgramacionSalaCirugias/gestion/catalogos';
 
-import SearchField from '@/Components/SearchField/SearchField';
 const tiempoLabel = (min) => {
   const h = Math.floor(min / 60);
   const m = min % 60;
@@ -19,62 +19,54 @@ const TIEMPOS = Array.from({ length: 8 }, (_, i) => {
   return { value: String(min), label: tiempoLabel(min) };
 });
 
-const norm = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
-
-// Paso 3: procedimientos CUPS. Por cada uno: especialidad, lateralidad,
-// tiempo estimado, fecha tentativa e indicador de cobertura del contrato.
+// Paso 3: procedimientos CUPS, elegidos desde el catálogo (ventana). Por cada
+// uno: tiempo estimado, fecha tentativa y, junto
+// al nombre, la cobertura del contrato. La fecha que se elige se copia a los
+// procedimientos que aún no tienen una (cada uno sigue siendo editable).
 export default function PasoProcedimientos({
   procedimientos, onAgregar, onCambiar, onQuitar, desde,
 }) {
-  const [busqueda, setBusqueda] = useState('');
-  const buscadorRef = useRef(null);
-  const q = norm(busqueda.trim());
-  const usados = new Set(procedimientos.map((p) => p.id));
-  const resultados = q
-    ? CATALOGO_CUPS.filter((c) => !usados.has(c.id) && norm(`${c.cups} ${c.nombre} ${c.especialidad}`).includes(q))
-    : [];
+  const [catalogoAbierto, setCatalogoAbierto] = useState(false);
 
-  function elegir(c) {
-    onAgregar(c);
-    setBusqueda('');
+  function handleFecha(p, fecha) {
+    onCambiar(p.id, { fecha });
+    procedimientos.forEach((otro) => {
+      if (otro.id !== p.id && !otro.fecha) onCambiar(otro.id, { fecha });
+    });
   }
+
+  const agregar = (
+    <Button variant="outline" icon={LuPlus} onClick={() => setCatalogoAbierto(true)}>Agregar procedimientos</Button>
+  );
 
   return (
     <div className="pr-wrap gc-form">
-      <div>
-        <h2 className="gc-card-titulo">Procedimientos CUPS</h2>
-        <p className="gc-card-sub">Agrega los procedimientos de la orden. La cobertura se valida contra el contrato del paciente.</p>
-      </div>
-
-      <div className="form-field">
-        <label htmlFor="ro-cups">Buscar por código o nombre</label>
-        <SearchField className="psc-search pr-buscador" value={busqueda} onChange={(v) => setBusqueda(v)} id="ro-cups" ref={buscadorRef} placeholder="Ej. colecistectomía" autoComplete="off" />
-        {q && (
-          <ul className="pr-resultados" aria-label="Resultados de la búsqueda">
-            {resultados.length === 0 && <li className="pr-sin">Sin resultados para “{busqueda}”.</li>}
-            {resultados.map((c) => (
-              <li key={c.id}>
-                <button type="button" className="pr-opcion" onClick={() => elegir(c)}>
-                  <span className="pr-opcion-nombre">{c.nombre}</span>
-                  <span className="pr-opcion-meta">{c.cups} · {c.especialidad}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="pr-encabezado">
+        <div>
+          <h2 className="gc-card-titulo">Procedimientos CUPS</h2>
+          <p className="gc-card-sub">
+            Agrega los procedimientos de la orden. La cobertura se valida contra el contrato del paciente.
+            {procedimientos.length > 1 && ' La fecha que elijas se copia a los procedimientos que aún no tienen una.'}
+          </p>
+        </div>
+        {procedimientos.length > 0 && agregar}
       </div>
 
       {procedimientos.length === 0 && (
-        <p className="pr-vacio">Aún no agregas procedimientos. Busca uno arriba para continuar.</p>
+        <div className="pr-vacio">
+          <p>Aún no agregas procedimientos.</p>
+          {agregar}
+        </div>
       )}
 
       {procedimientos.map((p, i) => (
         <section key={p.id} className="pr-card" aria-label={`Procedimiento ${i + 1}: ${p.nombre}`}>
           <header className="pr-card-head">
-            <div>
+            <div className="pr-titulo">
               <h3 className="pr-nombre">{p.nombre}</h3>
-              <p className="pr-meta">{p.cups} · {p.especialidad}</p>
+              <p className="pr-meta">{p.cups}</p>
             </div>
+            <EstadoChip tone={TONO_COBERTURA[p.cobertura]}>{COBERTURA_LABEL[p.cobertura]}</EstadoChip>
             <button
               type="button"
               className="pr-quitar"
@@ -86,23 +78,6 @@ export default function PasoProcedimientos({
           </header>
 
           <div className="pr-campos">
-            <fieldset className="pr-lateralidad">
-              <legend className="gc-label">Lateralidad</legend>
-              <div className="pr-segmentos">
-                {Object.entries(LATERALIDAD_LABEL).map(([valor, label]) => (
-                  <label key={valor} className={`pr-seg${p.lateralidad === valor ? ' selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name={`lat-${p.id}`}
-                      checked={p.lateralidad === valor}
-                      onChange={() => onCambiar(p.id, { lateralidad: valor })}
-                    />
-                    {label}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
             <div className="form-field">
               <label htmlFor={`ro-tiempo-${p.id}`}>Tiempo estimado</label>
               <FormSelect
@@ -118,26 +93,23 @@ export default function PasoProcedimientos({
               <DatePicker
                 id={`ro-fecha-${p.id}`}
                 value={p.fecha}
-                onChange={(fecha) => onCambiar(p.id, { fecha })}
+                onChange={(fecha) => handleFecha(p, fecha)}
                 min={desde}
+                required
                 ariaLabel={`Fecha tentativa de ${p.nombre}`}
                 triggerClassName="pr-fecha"
               />
-            </div>
-
-            <div className="pr-cobertura">
-              <span className="gc-label">Cobertura del contrato</span>
-              <EstadoChip tone={TONO_COBERTURA[p.cobertura]}>{COBERTURA_LABEL[p.cobertura]}</EstadoChip>
             </div>
           </div>
         </section>
       ))}
 
-      {procedimientos.length > 0 && (
-        <button type="button" className="gc-link pr-agregar" onClick={() => buscadorRef.current?.focus()}>
-          <LuPlus className="icon" aria-hidden="true" />
-          Agregar otro procedimiento
-        </button>
+      {catalogoAbierto && (
+        <CatalogoCupsModal
+          agregados={procedimientos.map((p) => p.id)}
+          onAgregar={(elegidos) => elegidos.forEach(onAgregar)}
+          onClose={() => setCatalogoAbierto(false)}
+        />
       )}
     </div>
   );

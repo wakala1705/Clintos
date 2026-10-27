@@ -1,4 +1,6 @@
-import { LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
+import {
+  LuCircleCheck, LuCircleX, LuClock, LuEye, LuFileText,
+} from 'react-icons/lu';
 import './PasoRevision.css';
 import EstadoChip from '../../GestionCirugias/EstadoChip/EstadoChip';
 import {
@@ -9,7 +11,9 @@ const ICONO_BANNER = { complete: LuCircleCheck, pending: LuClock, rejected: LuCi
 
 // Paso 4: vista previa de la lista de chequeo armada a partir de la historia
 // clínica. `checklist` y `evaluacion` los calcula el orquestador.
-export default function PasoRevision({ checklist, evaluacion, onAccion }) {
+export default function PasoRevision({
+  checklist, evaluacion, onAccion, onVerDocumento,
+}) {
   const tono = TONO_GENERAL[evaluacion.estado];
   const IconoBanner = ICONO_BANNER[tono];
   return (
@@ -30,6 +34,9 @@ export default function PasoRevision({ checklist, evaluacion, onAccion }) {
         {ITEMS.map((key) => {
           const item = checklist[key];
           const accion = accionItem(key, item.estado);
+          // Orden y autorización con archivo ya cargado: se ve el documento en vez del aviso.
+          const archivoNombre = item.archivoNombre ?? item.registro?.archivo?.nombre;
+          const conDocumento = (key === 'orden' || key === 'autorizacion') && Boolean(item.archivoUrl);
           const obligatorio = item.obligatorio && item.estado !== 'no-requerido';
           return (
             <li key={key} className="pv-fila">
@@ -41,7 +48,17 @@ export default function PasoRevision({ checklist, evaluacion, onAccion }) {
                 </span>
               </div>
               <p className="pv-detalle">{item.detalle}</p>
-              {accion && (
+              {conDocumento && (
+                <div className="pv-adjunto">
+                  <LuFileText className="pv-adjunto-icono" aria-hidden="true" />
+                  <span className="pv-adjunto-nombre">{archivoNombre}</span>
+                  <button type="button" className="gc-link" onClick={() => onVerDocumento(key)}>
+                    <LuEye className="icon" aria-hidden="true" />
+                    {accion}
+                  </button>
+                </div>
+              )}
+              {accion && !conDocumento && (
                 <button type="button" className="gc-link" onClick={() => onAccion(accion, ITEM_LABEL[key])}>
                   {accion}
                 </button>

@@ -1,0 +1,25 @@
+/* .modal-overlay/.modal-card/.modal-body/.modal-footer: ver ../../shared/shared.css.
+   Mismo look que CatalogoSalasModal (.csm-*), con una sola columna. */
+.cim-modal-card{width:520px;}
+.cim-modal-card > .modal-body{overflow:hidden;}
+.cim-body{padding:16px 24px 20px;gap:12px;flex:1;min-height:0;}
+
+.cim-table{
+  border:1px solid var(--border);border-radius:var(--radius);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.cim-row{display:block;padding:10px 14px;}
+.cim-row-head{
+  background:var(--table-header-bg);border-bottom:1px solid var(--border);flex-shrink:0;
+  font-size:var(--th-secondary-fs);font-weight:var(--th-secondary-fw);color:var(--th-secondary-color);text-transform:var(--th-secondary-tt);letter-spacing:var(--th-secondary-ls);
+}
+.cim-list{flex:1;min-height:0;overflow-y:auto;}
+.cim-option{
+  width:100%;border:none;background:transparent;border-bottom:1px solid var(--bg);
+  text-align:left;cursor:pointer;font-family:inherit;font-size:var(--fs-base);color:var(--ink-900);
+}
+.cim-option:last-child{border-bottom:none;}
+.cim-option:hover{background:var(--bg);}
+.cim-option:focus-visible{outline:2px solid var(--primary);outline-offset:-2px;}
+.cim-option.active{background:var(--interactive-selected-bg);box-shadow:inset 3px 0 0 var(--primary);}
+.cim-empty{padding:28px 14px;text-align:center;font-size:var(--fs-base);color:var(--ink-500);}

@@ -229,6 +229,7 @@ export default function CanastasCirugia() {
         </div>
         <CanastasTabla
           cirugias={filtradas}
+          ahora={ahora}
           fechaNav={<CanastasFechaNav fecha={fecha} onFechaChange={setFecha} />}
           filtros={filtros}
           onFiltrosChange={(cambios) => setFiltros((f) => ({ ...f, ...cambios }))}
