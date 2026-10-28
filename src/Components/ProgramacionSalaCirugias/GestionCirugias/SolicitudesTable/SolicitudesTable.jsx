@@ -6,7 +6,7 @@ import DiagnosticoTag from '../DiagnosticoTag/DiagnosticoTag';
 import ProgresoChequeo from '../ProgresoChequeo/ProgresoChequeo';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
-  enmascararDocumento, evaluarSolicitud,
+  evaluarSolicitud,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Orden de las columnas del chequeo: Orden, Estudios, Valoración, Autorización.
@@ -82,9 +82,6 @@ export default function SolicitudesTable({
               >
                 <td className="sct-sticky">
                   <span className="sct-main sct-paciente">{s.paciente.nombre}</span>
-                  <span className="sct-sub">
-                    {enmascararDocumento(s.paciente.tipoDocumento, s.paciente.numeroDocumento)} · {s.paciente.edad} años
-                  </span>
                 </td>
                 <td className="sct-proc">
                   <span className="sct-main sct-procedimiento">{s.procedimiento}</span>                </td>

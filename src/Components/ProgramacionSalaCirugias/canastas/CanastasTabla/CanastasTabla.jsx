@@ -55,10 +55,10 @@ export default function CanastasTabla({
             <thead>
               <tr>
                 <th scope="col" className="cnt-fit">Hora</th>
+                <th scope="col" className="cnt-fit">Sala</th>
                 <th scope="col" className="cnt-fit cnt-col-alerta">Alerta de tiempo</th>
                 <th scope="col" className="cnt-fit">Paciente</th>
                 <th scope="col">Procedimiento</th>
-                <th scope="col" className="cnt-fit">Sala</th>
                 <th scope="col" className="cnt-fit">Estado de la canasta</th>
                 <th scope="col" className="cnt-fit cnt-num">Recibidos</th>
                 <th scope="col" className="cnt-fit"><span className="cnt-sr">Acciones</span></th>
@@ -76,6 +76,7 @@ export default function CanastasTabla({
                     onKeyDown={(e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onAbrir(c.id); }}
                   >
                     <td className="cnt-fit cnt-hora">{c.horaInicio}</td>
+                    <td className="cnt-fit">{salaLabel(c.salaId)}</td>
                     <td className="cnt-fit">
                       {alerta && (
                         <Badge tone={alerta.tone} className="cnt-hora-alerta" role="status">
@@ -93,7 +94,6 @@ export default function CanastasTabla({
                         {c.estado === 'urgencia' && <EstadoCirugiaBadge estado="urgencia" size="sm" />}
                       </span>
                     </td>
-                    <td className="cnt-fit">{salaLabel(c.salaId)}</td>
                     <td className="cnt-fit"><Badge {...badgeProps(CANASTA_META[r.estado])}>{CANASTA_ESTADO_LABEL[r.estado]}</Badge></td>
                     <td className="cnt-fit cnt-num">{r.total === 0 ? '—' : `${r.recibidos}/${r.total}`}</td>
                     <td className="cnt-fit cnt-actions">

@@ -29,7 +29,7 @@ import {
 import { useRestriccionInicioActiva } from '@/hooks/ProgramacionSalaCirugias/restriccionInicio';
 import { canastasHref } from '@/hooks/ProgramacionSalaCirugias/canastaPresentacion';
 import {
-  ESTADO_VISUAL_LABEL, RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, rangoFechas,
+  ESTADO_VISUAL_LABEL, FILAS_POR_VISTA, FILAS_POR_VISTA_DEFECTO, RANGOS_PANEL, filasACsv, filtrarFilas, kpisPanel, paginarFilas, rangoFechas,
 } from '@/hooks/ProgramacionSalaCirugias/panel/panel';
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
@@ -38,6 +38,7 @@ import VistaPanelMenu from './VistaPanelMenu/VistaPanelMenu';
 import SearchField from '@/Components/SearchField/SearchField';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import MasFiltrosCirugiasPopover from './MasFiltrosCirugiasPopover/MasFiltrosCirugiasPopover';
+import TablePagination from '@/Components/TablePagination/TablePagination';
 
 const ESTADO_OPTIONS = [
   { value: 'todos', label: 'Todos los estados' },
@@ -137,6 +138,15 @@ export default function PanelGeneral() {
   const filas = filtrarFilas(lista, ahora, {
     filtro, busqueda, estado, sala, vinculada, pedida,
   });
+  // Paginación de la tabla (20 filas por vista por defecto). Cambiar cualquier
+  // filtro o el rango vuelve a la página 1: la página guarda la "firma" de los
+  // filtros con que se eligió y, si ya no coincide, se ignora (sin setState en
+  // un efecto). Exportar sigue llevando todas las `filas`, no solo la página.
+  const [porPagina, setPorPagina] = useState(FILAS_POR_VISTA_DEFECTO);
+  const [paginado, setPaginado] = useState({ firma: '', pagina: 1 });
+  const firmaFiltros = JSON.stringify([rango, filtro, busqueda, estado, sala, vinculada, pedida]);
+  const paginaPedida = paginado.firma === firmaFiltros ? paginado.pagina : 1;
+  const { items: filasPagina, pagina } = paginarFilas(filas, paginaPedida, porPagina);
   const selectedCirugia = lista.find((c) => c.id === selectedId) ?? null;
   const hayFiltros = filtro !== 'todas' || busqueda.trim() !== '' || estado !== 'todos'
     || sala !== 'todas' || vinculada.length > 0 || pedida !== 'todas';
@@ -190,7 +200,7 @@ export default function PanelGeneral() {
   } else {
     listado = (
       <CirugiasDiaTable
-        filas={filas}
+        filas={filasPagina}
         ahora={ahora}
         salaLabel={salaLabel}
         selectedId={selectedId}
@@ -204,7 +214,7 @@ export default function PanelGeneral() {
         onAbrirHoja={handleAbrirHoja}
         onFinalizar={handleFinalizarCirugia}
         soloHora={rango === 'hoy'}
-        onCrearHc={(c) => router.push(`/cirugia/historia-clinica/${c.id}`)}
+        onIrAHc={() => router.push('/cirugia/historia-clinica')}
       />
     );
   }
@@ -282,6 +292,17 @@ export default function PanelGeneral() {
               />
             </div>
             {listado}
+            {vista === 'tabla' && cirugias !== null && (
+              <TablePagination
+                page={pagina}
+                pageSize={porPagina}
+                total={filas.length}
+                itemLabel="cirugías"
+                pageSizeOptions={FILAS_POR_VISTA}
+                onChangePage={(p) => setPaginado({ firma: firmaFiltros, pagina: p })}
+                onChangePageSize={(n) => { setPorPagina(n); setPaginado({ firma: firmaFiltros, pagina: 1 }); }}
+              />
+            )}
           </section>
         </div>
       </div>

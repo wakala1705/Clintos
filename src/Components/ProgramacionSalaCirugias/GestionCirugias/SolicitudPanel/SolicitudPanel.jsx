@@ -17,7 +17,7 @@ import { ORIGEN_LABEL, listaProcedimientos } from '@/hooks/ProgramacionSalaCirug
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import {
   ESTADO_GENERAL_LABEL, ESTADO_ITEM_LABEL, ITEM_LABEL, TONO_GENERAL, TONO_ITEM,
-  accionItem, enmascararDocumento, estadoEstudios, evaluarSolicitud, mensajeFaltantes,
+  accionItem, estadoEstudios, evaluarSolicitud, mensajeFaltantes,
 } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 
 // Oculto por ahora el botón "Programar cirugía" del pie; poner en true para volver a mostrarlo.
@@ -162,9 +162,6 @@ export default function SolicitudPanel({
               <dl className="sp-grupo">
                 <Dato label="Paciente">
                   {solicitud.paciente.nombre}
-                  <span className="sp-dato-sub">
-                    {enmascararDocumento(solicitud.paciente.tipoDocumento, solicitud.paciente.numeroDocumento)} · {solicitud.paciente.edad} años
-                  </span>
                 </Dato>
               </dl>
               <dl className="sp-grupo">

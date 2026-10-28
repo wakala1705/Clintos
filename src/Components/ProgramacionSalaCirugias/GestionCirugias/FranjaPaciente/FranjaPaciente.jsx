@@ -1,7 +1,7 @@
 import './FranjaPaciente.css';
 import EstadoChip from '../EstadoChip/EstadoChip';
 import OrigenTag from '../OrigenTag/OrigenTag';
-import { enmascararDocumento, evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import { evaluarSolicitud } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
 import { listaProcedimientos } from '@/hooks/ProgramacionSalaCirugias/gestion/ordenes';
 
 function Dato({ label, children }) {
@@ -23,9 +23,6 @@ export default function FranjaPaciente({ solicitud }) {
       <dl className="fp-datos">
         <Dato label="Paciente">
           <span className="fp-valor fp-paciente">{paciente.nombre}</span>
-          <span className="fp-sub">
-            {enmascararDocumento(paciente.tipoDocumento, paciente.numeroDocumento)} · {paciente.edad} años
-          </span>
         </Dato>
         <Dato label="Procedimiento">
           {listaProcedimientos(solicitud).map((p) => (

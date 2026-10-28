@@ -1,7 +1,7 @@
 'use client';
 
 import './CirugiasDiaTable.css';
-import { LuCircleCheck, LuClipboardList, LuFilePlus, LuPlay } from 'react-icons/lu';
+import { LuCircleCheck, LuClipboardList, LuFileText, LuPlay } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import CirugiaCardMenu from '../../CirugiaCardMenu/CirugiaCardMenu';
@@ -20,7 +20,7 @@ import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero
 export default function CirugiasDiaTable({
   filas, ahora, salaLabel, selectedId, onSelect,
   onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
-  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar, onCrearHc, soloHora = false,
+  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar, onIrAHc, soloHora = false,
 }) {
   return (
     <div className="cdt-scroll">
@@ -28,10 +28,10 @@ export default function CirugiasDiaTable({
         <thead>
           <tr>
             <th scope="col">{soloHora ? 'Hora' : 'Fecha y hora'}</th>
-            <th scope="col">Paciente</th>
-            <th scope="col">Procedimiento</th>
             <th scope="col">Sala</th>
             <th scope="col" className="cdt-num">Duración</th>
+            <th scope="col">Paciente</th>
+            <th scope="col">Procedimiento</th>
             <th scope="col">Canasta vinculada</th>
             <th scope="col">Canasta pedida</th>
             <th scope="col">Estado</th>
@@ -58,6 +58,8 @@ export default function CirugiasDiaTable({
               }}
             >
               <td className="cdt-hora">{soloHora ? c.horaInicio : fechaHoraRangoLabel(c.fecha, c.horaInicio)}</td>
+              <td>{salaLabel(c.salaId)}</td>
+              <td className="cdt-num">{minutosCirugia(c)} min</td>
               <td>
                 <span className="cdt-main">{c.paciente.nombre}</span>
               </td>
@@ -67,8 +69,6 @@ export default function CirugiasDiaTable({
                   {c.estado === 'urgencia' && <Badge tone="warn">Urgencia</Badge>}
                 </span>
               </td>
-              <td>{salaLabel(c.salaId)}</td>
-              <td className="cdt-num">{minutosCirugia(c)} min</td>
               <td>
                 <Badge tone={vinculada ? 'success' : 'neutral'}>{vinculada ? 'Vinculada' : 'No vinculada'}</Badge>
               </td>
@@ -94,7 +94,7 @@ export default function CirugiasDiaTable({
                     </>
                   )}
                   {c.estado === 'realizada' && !iniciada && (
-                    <Button size="sm" variant="outline" icon={LuFilePlus} onClick={() => onCrearHc(c)}>Crear HC</Button>
+                    <Button size="sm" variant="outline" icon={LuFileText} onClick={() => onIrAHc(c)}>Ir a HC</Button>
                   )}
                   {puedeIniciar && (
                     <span className="cdt-iniciar" title={motivoIniciar ?? undefined}>

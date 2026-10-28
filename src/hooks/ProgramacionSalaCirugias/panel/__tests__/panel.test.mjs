@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  canastaPedida, canastaVinculada, conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, rangoFechas, resumenOcupacion,
+  canastaPedida, canastaVinculada, conteosFiltros, estadoVisual, filasACsv, filtrarFilas, kpisPanel, paginarFilas, rangoFechas, resumenOcupacion,
 } from '../panel.js';
 import { motivoNoIniciable } from '../../mockCirugiaData.js';
 import { setRestriccionInicioActiva } from '../../restriccionInicio.js';
@@ -177,4 +177,18 @@ test('motivoNoIniciable: canasta recibida, día, ventana de 30 min y sala libre'
   const enCurso = c('9', 'a', 'programada', '07:00', '09:00', { horaInicioReal: '07:10', sedeId: '02' });
   assert.match(motivoNoIniciable(ok, AHORA, [enCurso]), /sala ya tiene una cirugía en curso/);
   assert.match(motivoNoIniciable(enCurso, AHORA, lista), /ya está en curso/);
+});
+
+test('paginarFilas: corta por página y acota la página a [1, total]', () => {
+  const filas = Array.from({ length: 45 }, (_, i) => i + 1);
+  const p1 = paginarFilas(filas, 1, 20);
+  assert.equal(p1.items.length, 20);
+  assert.equal(p1.totalPaginas, 3);
+  assert.deepEqual(paginarFilas(filas, 3, 20).items, [41, 42, 43, 44, 45]);
+  // Fuera de rango (p. ej. tras filtrar): vuelve a la última / primera válida.
+  assert.equal(paginarFilas(filas, 9, 20).pagina, 3);
+  assert.equal(paginarFilas(filas, 0, 20).pagina, 1);
+  // Más filas por vista que filas: una sola página.
+  assert.deepEqual(paginarFilas(filas.slice(0, 5), 4, 50), { items: [1, 2, 3, 4, 5], pagina: 1, totalPaginas: 1 });
+  assert.deepEqual(paginarFilas([], 1, 20), { items: [], pagina: 1, totalPaginas: 1 });
 });

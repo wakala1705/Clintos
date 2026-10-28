@@ -1,0 +1,47 @@
+/* Consume los tokens de la feature donde se monta (--border, --surface,
+   --gray-bg, --ink-*, --primary, --interactive-selected-*, --input-sm). */
+.tpg{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);
+}
+.tpg-label{font-size:var(--fs-sm);color:var(--ink-500);}
+.tpg-label b{font-weight:var(--fw-semibold);color:var(--ink-900);}
+
+/* Extremo derecho, en este orden: selector de filas por vista, paginación. */
+.tpg-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-left:auto;}
+.tpg-controls{display:flex;align-items:center;gap:4px;}
+.tpg-nav-btn{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--surface);color:var(--ink-700);cursor:pointer;
+}
+.tpg-nav-btn .icon{width:15px;height:15px;}
+.tpg-nav-btn:hover{background:var(--gray-bg);}
+.tpg-nav-btn:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.tpg-nav-btn[disabled]{opacity:.4;cursor:not-allowed;}
+.tpg-nav-btn[disabled]:hover{background:var(--surface);}
+
+.tpg-page{
+  min-width:28px;height:28px;padding:0 6px;border-radius:var(--radius);border:1px solid transparent;
+  background:none;font-family:inherit;font-size:var(--fs-sm);font-weight:var(--fw-medium);color:var(--ink-700);cursor:pointer;
+}
+.tpg-page:hover{background:var(--gray-bg);}
+.tpg-page:focus-visible{outline:2px solid var(--primary);outline-offset:1px;}
+.tpg-page.active{background:var(--interactive-selected-bg);color:var(--interactive-selected-text);font-weight:var(--fw-semibold);}
+.tpg-ellipsis{color:var(--ink-400);padding:0 4px;font-size:var(--fs-sm);}
+
+/* appearance:none + chevron propio: sin el arrow nativo junto a los demás
+   controles (mismo patrón que .cba-pagination-size en CamasPagination). */
+.tpg-size select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  height:var(--input-sm);border:1px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:var(--fs-sm);color:var(--ink-700);background:var(--surface);padding:0 28px 0 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+.tpg-size select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+@media (max-width:768px){
+  .tpg{justify-content:center;text-align:center;}
+  .tpg-right{margin-left:0;justify-content:center;}
+}

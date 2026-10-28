@@ -100,6 +100,22 @@ export function filtrarFilas(cirugias, ahora, {
     .sort((a, b) => (a.fecha ?? '').localeCompare(b.fecha ?? '') || a.horaInicio.localeCompare(b.horaInicio));
 }
 
+// Filas por vista de la tabla (footer de paginación): 20 por defecto.
+export const FILAS_POR_VISTA = [10, 20, 50];
+export const FILAS_POR_VISTA_DEFECTO = 20;
+
+// Corta `filas` en la página pedida. La página se acota a [1, totalPaginas]:
+// al filtrar o subir las filas por vista puede quedar fuera de rango.
+export function paginarFilas(filas, pagina, porPagina) {
+  const totalPaginas = Math.max(1, Math.ceil(filas.length / porPagina));
+  const actual = Math.min(Math.max(1, pagina), totalPaginas);
+  return {
+    items: filas.slice((actual - 1) * porPagina, actual * porPagina),
+    pagina: actual,
+    totalPaginas,
+  };
+}
+
 // `salas` = las salas de la sede; solo las activas cuentan para el
 // denominador (una sala en mantenimiento no ofrece horas). Las canceladas e
 // incumplidas no ocupan quirófano.
