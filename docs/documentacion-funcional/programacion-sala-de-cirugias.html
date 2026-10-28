@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programación sala de cirugías — Documentación funcional · Clintos</title>
+<style>
+:root{
+  --bg:#f6f8fb;--surface:#ffffff;--ink-900:#16202e;--ink-700:#3b4757;--ink-500:#667385;
+  --border:#dde3ec;--primary:#0b63ce;--primary-50:#eaf2fd;--code-bg:#eef1f6;--th-bg:#f0f3f8;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f141b;--surface:#161d27;--ink-900:#e8edf4;--ink-700:#c0c9d6;--ink-500:#8b97a8;
+    --border:#283241;--primary:#6aa8ff;--primary-50:#17263b;--code-bg:#1d2733;--th-bg:#1b2431;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:24px;}
+body{
+  margin:0;background:var(--bg);color:var(--ink-700);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.6;
+}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;max-width:1240px;margin:0 auto;padding:32px 24px 64px;}
+nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding-right:8px;}
+nav.toc .label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);margin:0 0 10px;}
+nav.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink-700);text-decoration:none;font-size:13.5px;}
+nav.toc a:hover{background:var(--primary-50);color:var(--primary);}
+nav.toc a.toc-2{font-weight:600;color:var(--ink-900);margin-top:10px;}
+nav.toc a.toc-3{padding-left:20px;}
+main{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;min-width:0;}
+header.doc{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+header.doc .eyebrow{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--primary);margin:0 0 6px;}
+header.doc h1{margin:0;font-size:28px;line-height:1.2;color:var(--ink-900);font-weight:600;}
+h2{font-size:22px;font-weight:600;color:var(--ink-900);margin:40px 0 12px;line-height:1.3;}
+h3{font-size:17px;font-weight:600;color:var(--ink-900);margin:32px 0 10px;padding-top:20px;border-top:1px solid var(--border);line-height:1.35;}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:4px 0;}
+li > ul{margin:4px 0 6px;}
+strong{color:var(--ink-900);font-weight:600;}
+code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;}
+pre:not(.mermaid){background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.55;}
+pre:not(.mermaid) code{background:none;padding:0;font-size:inherit;}
+pre.mermaid{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;text-align:center;font-family:inherit;font-size:13px;white-space:pre;}
+pre.mermaid[data-processed]{white-space:normal;}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0;}
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px 16px 48px;}
+  nav.toc{position:static;max-height:none;}
+  main{padding:24px 20px;}
+}
+@media print{
+  body{background:#fff;color:#222;}
+  .layout{display:block;padding:0;max-width:none;}
+  nav.toc{display:none;}
+  main{border:none;padding:0;}
+  h3{break-after:avoid;}
+  pre.mermaid{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contenido">
+<p class="label">Contenido</p>
+<a class="toc-2" href="#programacion-sala-de-cirugias">Programación sala de cirugías</a>
+<a class="toc-3" href="#flujo-para-programar-una-cirugia">Flujo para programar una cirugía</a>
+<a class="toc-3" href="#ver-la-agenda">Ver la agenda</a>
+<a class="toc-3" href="#ver-la-agenda-en-formato-tabla">Ver la agenda en formato tabla</a>
+<a class="toc-3" href="#navegar-y-filtrar-la-agenda">Navegar y filtrar la agenda</a>
+<a class="toc-3" href="#ver-el-resumen-de-agenda">Ver el resumen de agenda</a>
+<a class="toc-3" href="#elegir-una-solicitud-lista-y-programarla-desde-la-agenda">Elegir una solicitud lista y programarla desde la agenda</a>
+<a class="toc-3" href="#programar-la-cirugia-de-un-paciente-wizard-nueva-cirugia">Programar la cirugía de un paciente (wizard &quot;Nueva cirugía&quot;)</a>
+<a class="toc-3" href="#registrar-una-cirugia-de-urgencia">Registrar una cirugía de urgencia</a>
+<a class="toc-3" href="#ver-el-detalle-de-una-cirugia">Ver el detalle de una cirugía</a>
+<a class="toc-3" href="#editar-una-cirugia">Editar una cirugía</a>
+<a class="toc-3" href="#reprogramar-una-cirugia">Reprogramar una cirugía</a>
+<a class="toc-3" href="#ajustar-la-duracion-arrastrando-la-tarjeta">Ajustar la duración arrastrando la tarjeta</a>
+<a class="toc-3" href="#cancelar-una-cirugia">Cancelar una cirugía</a>
+<a class="toc-3" href="#marcar-una-cirugia-como-realizada-o-incumplida">Marcar una cirugía como realizada o incumplida</a>
+<a class="toc-3" href="#gestionar-los-insumos-de-una-cirugia">Gestionar los insumos de una cirugía</a>
+<a class="toc-3" href="#vincular-personal-y-equipos">Vincular personal y equipos</a>
+<a class="toc-3" href="#revisar-las-programaciones-vencidas">Revisar las programaciones vencidas</a>
+<a class="toc-3" href="#consultar-el-historial-de-cirugias-de-un-paciente">Consultar el historial de cirugías de un paciente</a>
+<a class="toc-2" href="#notas-generales-y-limites-conocidos">Notas generales y límites conocidos</a>
+</nav>
+<main>
+<header class="doc">
+<p class="eyebrow">Documentación funcional</p>
+<h1>Clintos</h1>
+</header>
+<h2 id="programacion-sala-de-cirugias">Programación sala de cirugías</h2>
+<p><strong>Propósito:</strong> agendar y gestionar la ocupación de las salas de cirugía: ver qué cirugías hay en cada sala (o por cirujano), programar nuevas cirugías (desde una solicitud lista de Gestión de cirugías, de un paciente cualquiera o de urgencia), ajustarlas (editar, reprogramar, cambiar su duración, cancelar), cerrarlas (realizada o incumplida) y dejar preparados su personal, equipos e insumos. Existe para el equipo de <strong>Programación de cirugía</strong>.</p>
+<p><strong>Ruta:</strong> <code>/cirugia/programacion</code> (menú Cirugía → Programación). Con <code>?solicitud=&lt;id&gt;</code> abre directamente el wizard de una solicitud lista (así llega desde Gestión de cirugías).</p>
+<p><strong>Roles:</strong> todas las funcionalidades de este submódulo las ejecuta el rol <strong>Programación de cirugía</strong> (confirmado). Igual que en Gestión de cirugías, hoy el sistema no aplica permisos por rol.</p>
+<p><strong>Estados de una cirugía</strong> (la leyenda del panel lateral los muestra):</p>
+<table>
+<thead>
+<tr>
+<th>Estado</th>
+<th>Qué significa</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Programada</td>
+<td>Cirugía agendada con fecha, hora y sala. Es el estado de toda cirugía creada con el wizard.</td>
+</tr>
+<tr>
+<td>Urgencia</td>
+<td>Cirugía creada con el flujo corto de urgencia.</td>
+</tr>
+<tr>
+<td>Realizada</td>
+<td>Cirugía cerrada como realizada. Es un estado final.</td>
+</tr>
+<tr>
+<td>Cancelada</td>
+<td>Cirugía dada de baja con un motivo. Es un estado final y deja de ocupar la sala.</td>
+</tr>
+<tr>
+<td>Incumplida</td>
+<td>Cirugía programada cuya hora pasó sin realizarse. Es un estado final y deja de ocupar la sala.</td>
+</tr>
+</tbody></table>
+<p>Una cirugía <strong>en curso</strong> no es un estado aparte: es una programada o de urgencia con hora real de inicio registrada (la inicia el Panel general, no esta pantalla). Una cirugía <strong>vencida</strong> es una programada cuya fecha ya pasó sin cerrarse.</p>
+<p><strong>Qué se puede hacer según el estado:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Acción</th>
+<th>Programada / Urgencia</th>
+<th>En curso</th>
+<th>Realizada, Cancelada, Incumplida</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Editar, Reprogramar, Cancelar</td>
+<td>Sí</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Ajustar la duración (arrastrar)</td>
+<td>Sí</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Marcar como realizada</td>
+<td>Sí</td>
+<td>Sí</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Marcar como incumplida</td>
+<td>Solo Programada, y si su hora de inicio ya pasó</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Vincular canasta, personal y equipos; pedir insumos</td>
+<td>Sí</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="flujo-para-programar-una-cirugia">Flujo para programar una cirugía</h3>
+<p>Hay cuatro puertas de entrada. Todas terminan en el mismo wizard &quot;Nueva cirugía&quot;, salvo la urgencia, que tiene su propio formulario corto.</p>
+<pre class="mermaid">
+flowchart TD
+    G["Gestión de cirugías&lt;br/&gt;(solicitud lista, ?solicitud=id)"] --&gt; W
+    B["Botón Programar cirugía&lt;br/&gt;(panel lateral)"] --&gt; SS["Elegir una solicitud lista"]
+    C["Clic en una celda vacía&lt;br/&gt;de la agenda"] --&gt; M{"¿Qué programar?"}
+    M -- "Programar cirugía" --&gt; SS
+    M -- "Cirugía de urgencia" --&gt; BU
+    SS --&gt; O{"¿La solicitud está&lt;br/&gt;en la lista?"}
+    O -- "Sí, la elijo" --&gt; H{"¿Entró por una celda?"}
+    O -- "No: programar otro paciente" --&gt; BP["Buscar afiliado"]
+    H -- "Sí" --&gt; W
+    H -- "No (botón)" --&gt; HU["Elegir sala, día y hora&lt;br/&gt;en la agenda"]
+    HU --&gt; W
+    BP --&gt; W
+    W["Wizard Nueva cirugía&lt;br/&gt;5 pasos"] --&gt; GU["Guardar cirugía"]
+    GU --&gt; R["Cirugía Programada en la agenda&lt;br/&gt;(si venía de una solicitud, esta sale de Gestión)"]
+    UR["Botón Nueva urgencia&lt;br/&gt;(panel lateral)"] --&gt; BU["Buscar afiliado"]
+    BU --&gt; FU["Formulario Cirugía de urgencia"]
+    FU --&gt; VA["Validar"]
+    VA --&gt; RU["Cirugía en estado Urgencia en la agenda"]
+</pre>
+<h3 id="ver-la-agenda">Ver la agenda</h3>
+<ul>
+<li><strong>Qué hace:</strong> muestra las cirugías de una sala (o de un cirujano) en una grilla de calendario con franjas de 30 minutos. Cada cirugía es una tarjeta ubicada en su día, hora y duración, con el nombre del paciente, el procedimiento y el cirujano (si la tarjeta es de una hora o menos, solo el nombre del paciente). Arranca en la semana de hoy, en la sala Quirófano #1.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Días visibles:</strong> Día, Semana completa, Semana hábil (lunes a viernes, por defecto) o 3 días hábiles (hoy más los 2 siguientes). La vista Mes existe pero no se ofrece en el selector.</li>
+<li><strong>Horas visibles:</strong> jornada operativa (07:00–19:00, por defecto) o 24 horas. Es solo de visualización: una cirugía fuera de la ventana visible no se dibuja, pero sigue existiendo y cuenta en los totales.</li>
+<li>Se opera siempre sobre la Sede Norte; no hay selector de sede.</li>
+<li>Una sala en mantenimiento aparece en el catálogo de salas pero no tiene cirugías.</li>
+<li>Clic en una tarjeta la selecciona y abre su detalle. Los atajos de teclado D (Día) y S (Semana completa) cambian la vista.</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-la-agenda-en-formato-tabla">Ver la agenda en formato tabla</h3>
+<ul>
+<li><strong>Qué hace:</strong> muestra las mismas cirugías del rango activo en una tabla, una por fila, con fecha, hora, sala (cuando se ven todas las salas), paciente, procedimiento, médico (en la agenda por médicos), duración y estado, más un menú &quot;⋯&quot; de acciones.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>El selector &quot;Calendario / Tabla&quot; está en la barra de filtros. Los filtros, la navegación y el rango son los mismos que en el calendario.</li>
+<li>El menú de acciones de cada fila aplica las mismas reglas de la tabla &quot;Qué se puede hacer según el estado&quot;.</li>
+</ul>
+</li>
+</ul>
+<h3 id="navegar-y-filtrar-la-agenda">Navegar y filtrar la agenda</h3>
+<ul>
+<li><strong>Qué hace:</strong> cambia qué cirugías se ven: por sala o por cirujano, por estado y por fecha.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Agenda por Salas o por Médicos</strong> (menú &quot;Vista&quot;): en Salas se elige una sala del catálogo (solo las de la Sede Norte); en Médicos se elige un cirujano y la agenda cruza todas las salas, mostrando la sala en cada tarjeta. En Médicos siempre hay un cirujano elegido (arranca en el primero de la sede). Al volver a Salas se recupera la última sala.</li>
+<li><strong>Estado:</strong> Todos, Programada, Urgencia, Realizada, Cancelada o Incumplida.</li>
+<li><strong>Fecha:</strong> las flechas avanzan o retroceden un día, una semana, tres días hábiles o un mes según la vista; el mini-calendario del panel lateral salta a la semana (o al día) que contiene la fecha elegida.</li>
+<li>Cambiar sala, cirujano, estado, fecha o vista deselecciona la cirugía abierta.</li>
+<li>Si se crea o modifica una cirugía que no pertenece a los filtros actuales, deja de verse en la agenda (no se vuelve a cargar todo).</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-el-resumen-de-agenda">Ver el resumen de agenda</h3>
+<ul>
+<li><strong>Qué hace:</strong> el panel lateral resume lo que muestra la agenda en este momento: cirugías programadas, horas ocupadas, salas ocupadas (sobre las salas activas de la sede) y porcentaje de ocupación. Debajo muestra la leyenda de estados y, si las hay, el aviso de programaciones vencidas.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Las canceladas no cuentan en ningún indicador.</li>
+<li>Cirugías, horas y ocupación se calculan sobre la sala (o el cirujano) y el rango que se ven; &quot;Salas ocupadas&quot; cuenta todas las salas activas de la sede (con un cirujano elegido, las salas distintas donde opera).</li>
+<li>La ocupación se calcula sobre una jornada fija de 12 horas por día y por sala (07:00–19:00).</li>
+<li>El mini-calendario se puede plegar.</li>
+</ul>
+</li>
+</ul>
+<h3 id="elegir-una-solicitud-lista-y-programarla-desde-la-agenda">Elegir una solicitud lista y programarla desde la agenda</h3>
+<ul>
+<li><strong>Qué hace:</strong> desde el botón &quot;Programar cirugía&quot; del panel lateral (o desde una celda vacía de la agenda), se elige una solicitud de Gestión de cirugías que ya tiene el chequeo completo, y se abre el wizard &quot;Nueva cirugía&quot; con el paciente, los procedimientos, la aseguradora, el diagnóstico, la autorización y la duración precargados.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>La lista solo muestra solicitudes en estado &quot;Lista para programar&quot;. Se busca por paciente, documento o procedimiento y se filtra por origen (Todos, Consulta externa, Internación, Orden externa) con el conteo de cada uno.</li>
+<li>Elegir = clic en la fila y &quot;Programar&quot;; doble clic, o Enter sobre la fila ya marcada, la elige directamente. Escape cierra.</li>
+<li>Si no hay solicitudes listas, el aviso remite a completar el chequeo en Gestión de cirugías.</li>
+<li><strong>Desde el botón:</strong> antes del wizard se elige el hueco (sala, día y hora) en una agenda semanal que muestra lo ya ocupado; la agenda parte de la fecha tentativa de la solicitud. <strong>Desde una celda vacía:</strong> va directo al wizard con la sala, el día y la hora de esa celda.</li>
+<li>Con un cirujano elegido en la agenda, ese cirujano queda como cirujano de la cirugía y el hueco tiene en cuenta que no esté ocupado en otra sala.</li>
+<li>Al guardar, la solicitud sale de Gestión de cirugías, la agenda salta a la sala y al día de la cirugía creada y se avisa que la canasta se solicitó a farmacia (y que se creó la admisión, si no es de Internación).</li>
+<li>Si se llegó desde Gestión de cirugías (<code>?solicitud=</code>): cancelar el wizard vuelve a Gestión; guardarlo deja al usuario en la agenda. Si la solicitud ya no está lista, el wizard no se abre.</li>
+<li>&quot;Programar otro paciente&quot; abre el buscador de afiliados para agendar a alguien que no está en la lista (ver siguiente funcionalidad).</li>
+</ul>
+</li>
+</ul>
+<h3 id="programar-la-cirugia-de-un-paciente-wizard-nueva-cirugia">Programar la cirugía de un paciente (wizard &quot;Nueva cirugía&quot;)</h3>
+<ul>
+<li><strong>Qué hace:</strong> asistente de 5 pasos en modal para crear una cirugía programada: Información general, Personal y procedimientos, Insumos, Equipos y Confirmación.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Entrada sin solicitud:</strong> se elige el paciente en el buscador de afiliados compartido (&quot;Programar otro paciente&quot;). La sala se elige en el riel del wizard (parte de la sala actual).</li>
+<li><strong>Paso 1 · Información general:</strong> son obligatorios fecha y hora de programación, teléfonos de aviso, fecha y hora de solicitud, duración estimada, clase, tipo de anestesia, complejidad, ASA, diagnóstico de ingreso, aseguradora, número de autorización y quién autoriza. &quot;Reserva de habitación&quot; exige además los días cama; &quot;Se vence la autorización&quot; exige fecha y hora de vencimiento. Solo las observaciones son opcionales.</li>
+<li><strong>La fecha y hora de programación no puede ser pasada</strong> (se compara con la hora del sistema al abrir el wizard).</li>
+<li><strong>Paso 2 · Personal y procedimientos:</strong> se necesita al menos un procedimiento. Cada procedimiento lleva su cirujano y su anestesiólogo; además se puede sumar personal (Cirujano, Anestesiólogo, Ayudante, Instrumentadora, Circulante, varios por rol). Hoy ningún rol es obligatorio. Quitar a alguien se puede deshacer durante 8 segundos.</li>
+<li><strong>Paso 3 · Insumos:</strong> no es obligatorio. Se vincula una canasta (según complejidad y procedimiento oncológico); sus insumos se pueden ajustar (cantidad, quitar, agregar del catálogo). Una cirugía lleva una sola canasta. Sin canasta, se guarda &quot;sin vincular&quot; y no se pide nada a farmacia.</li>
+<li><strong>Paso 4 · Equipos:</strong> no es obligatorio. Se agregan o quitan equipos del catálogo; todos nacen &quot;Disponible&quot;.</li>
+<li><strong>Paso 5 · Confirmación:</strong> resume procedimientos, insumos, equipos y personal. &quot;Guardar cirugía&quot; solo se habilita con los pasos 1 y 2 completos; si falta algo, el pie lo indica.</li>
+<li>Siempre se puede volver a un paso ya visitado; saltar hacia adelante exige completar los anteriores.</li>
+<li>Cerrar con progreso cargado pide confirmar el descarte.</li>
+<li>La cirugía nace en estado Programada. La hora de fin es la de inicio más la duración estimada.</li>
+<li><strong>Límite:</strong> el wizard no valida que la sala esté libre en esa franja (solo el paso previo de elegir hueco muestra lo ocupado).</li>
+</ul>
+</li>
+</ul>
+<h3 id="registrar-una-cirugia-de-urgencia">Registrar una cirugía de urgencia</h3>
+<ul>
+<li><strong>Qué hace:</strong> crea de inmediato una cirugía en estado Urgencia con un formulario corto de una sola pantalla, para completar después sus procedimientos, personal, equipos e insumos desde el detalle.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Se llega por &quot;Nueva urgencia&quot; del panel lateral, o por &quot;Cirugía de urgencia&quot; al hacer clic en una celda vacía (precarga la fecha y hora de la celda); en ambos casos primero se elige el afiliado en el buscador.</li>
+<li>Son obligatorios: aseguradora (catálogo), tipo de tercero, contrato (catálogo), fecha, hora y duración estimada. &quot;Finaliza&quot; se calcula solo.</li>
+<li>Fecha y hora arrancan en el momento actual (o en el de la celda) y se pueden cambiar. A diferencia del wizard, no impide fechas pasadas.</li>
+<li>&quot;Validar&quot; guarda al instante; no se piden procedimientos ni cirujano, por eso la tarjeta aparece sin procedimiento.</li>
+<li>El estado Urgencia no pasa por ninguna validación de sala libre.</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-el-detalle-de-una-cirugia">Ver el detalle de una cirugía</h3>
+<ul>
+<li><strong>Qué hace:</strong> al hacer clic en una tarjeta (o fila de la tabla) se abre el modal &quot;Detalle de la cirugía&quot; con el paciente (nombre, documento, edad, sexo, aseguradora, teléfono de aviso; &quot;Ver más&quot; suma nivel, tipo de afiliado y dirección), la programación (fecha y horario, y la orden de origen si viene de una solicitud), la lista de procedimientos y tres pestañas: Insumos, Personal clínico y Equipos.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Abajo a la izquierda están Cancelar cirugía, Reprogramar y Editar; se deshabilitan si la cirugía está en curso o en un estado final.</li>
+<li>Una cirugía <strong>realizada</strong> muestra otra vista: su resultado y cierre, con acceso a la hoja de consumo.</li>
+<li>Aquí el documento y la edad del paciente sí se muestran (a diferencia de Gestión de cirugías).</li>
+<li>Escape cierra el modal; con una ventana abierta encima (vincular, anular solicitud, hoja de consumo), Escape cierra solo esa ventana.</li>
+<li>Las pestañas se recorren con las flechas izquierda y derecha.</li>
+</ul>
+</li>
+</ul>
+<h3 id="editar-una-cirugia">Editar una cirugía</h3>
+<ul>
+<li><strong>Qué hace:</strong> reabre el wizard &quot;Nueva cirugía&quot; con los datos de la cirugía cargados, para corregir sala (no se cambia), fecha y hora, procedimientos, personal, insumos, equipos y datos administrativos.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Solo si la cirugía no está en curso ni en un estado final.</li>
+<li>Mismas validaciones del wizard. Si la fecha original ya pasó, se tolera dejarla igual; cambiarla a otra fecha pasada no se permite.</li>
+<li>Los datos que no se editan en el wizard (paciente, estado, pedido a farmacia, causal de reprogramación, motivo de cancelación) se conservan. Solo el teléfono de aviso se sincroniza con el paciente.</li>
+<li>Las cirugías creadas por urgencia o precargadas sin snapshot reabren con los campos administrativos del paso 1 vacíos (nunca se guardaron).</li>
+<li>La duración se recalcula: la hora de fin es la de inicio más la duración del paso 1.</li>
+</ul>
+</li>
+</ul>
+<h3 id="reprogramar-una-cirugia">Reprogramar una cirugía</h3>
+<ul>
+<li><strong>Qué hace:</strong> cambia la fecha, la hora de inicio, la sala y el cirujano de una cirugía, dejando registrada la causal.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Solo si la cirugía no está en curso ni en un estado final.</li>
+<li>Son obligatorios la causal (catálogo de causales de reprogramación), la nueva fecha, la nueva hora de inicio, la nueva sala (solo salas de la misma sede) y el cirujano.</li>
+<li>La hora de fin se recalcula: nueva hora de inicio más la duración que ya tenía.</li>
+<li>Se guarda la causal en la cirugía. Las duraciones se conservan.</li>
+<li><strong>Límite:</strong> el formulario no valida que la nueva franja esté libre ni que la fecha sea futura (esa regla solo aplica cuando se reprograma desde la revisión de vencidas).</li>
+</ul>
+</li>
+</ul>
+<h3 id="ajustar-la-duracion-arrastrando-la-tarjeta">Ajustar la duración arrastrando la tarjeta</h3>
+<ul>
+<li><strong>Qué hace:</strong> en el calendario, arrastrar el borde inferior de una tarjeta le da más o menos tiempo a la cirugía; solo cambia la hora de fin.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Solo programadas y de urgencia que no estén en curso, y cuyo borde inferior sea visible (no recortado por la jornada).</li>
+<li>El ajuste salta de 30 en 30 minutos; el mínimo es una franja de 30 minutos y el máximo es el inicio de la siguiente cirugía activa de la misma sala y día, o las 23:30. Las canceladas e incumplidas no bloquean.</li>
+<li>Si choca con otra cirugía, <strong>se bloquea</strong>: la tarjeta no pasa de ese tope.</li>
+<li>Si la cirugía ya se cruzaba con la siguiente, no se puede estirar más pero sí acortar.</li>
+<li>El tope se calcula contra todas las cirugías de la sala, aunque el filtro oculte a las vecinas; el servicio lo vuelve a validar al guardar.</li>
+<li>No se puede redimensionar una cirugía que cruza la medianoche.</li>
+<li>Escape cancela el arrastre; si no cambió, no se guarda. Al guardar se avisa el nuevo horario.</li>
+<li>Solo cambia la hora de fin: la duración estimada del wizard no se actualiza. No hay autodesplazamiento de la pantalla ni ajuste con el teclado.</li>
+</ul>
+</li>
+</ul>
+<h3 id="cancelar-una-cirugia">Cancelar una cirugía</h3>
+<ul>
+<li><strong>Qué hace:</strong> da de baja una cirugía programada o de urgencia.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Solo si no está en curso ni en un estado final.</li>
+<li>El <strong>motivo de cancelación es obligatorio</strong>.</li>
+<li>La cirugía pasa a Cancelada, deja de ocupar la sala y, si ya tenía un pedido a farmacia, sus insumos quedan marcados para devolución.</li>
+</ul>
+</li>
+</ul>
+<h3 id="marcar-una-cirugia-como-realizada-o-incumplida">Marcar una cirugía como realizada o incumplida</h3>
+<ul>
+<li><strong>Qué hace:</strong> cierra una cirugía desde el menú &quot;⋯&quot; de la tarjeta o de la fila.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Realizada:</strong> disponible en cualquier cirugía que no esté en un estado final (incluso en curso). Si no había avanzado de etapa, pasa a &quot;Finalizado&quot;. Si farmacia tiene un saldo pendiente de la canasta, se avisa que la solicitud de insumos sigue abierta (solo advierte, no bloquea).</li>
+<li><strong>Incumplida:</strong> solo para una cirugía <strong>Programada</strong> (no de urgencia), que no esté en curso y cuya hora de inicio ya pasó.</li>
+<li>Ambas acciones son directas: no piden causal ni confirmación en esta pantalla.</li>
+<li>Iniciar y finalizar la cirugía con sus horas reales se hace desde el Panel general, no desde esta pantalla.</li>
+</ul>
+</li>
+</ul>
+<h3 id="gestionar-los-insumos-de-una-cirugia">Gestionar los insumos de una cirugía</h3>
+<ul>
+<li><strong>Qué hace:</strong> en la pestaña Insumos del detalle se vincula la canasta y se sigue su camino hasta farmacia: sin solicitar → solicitado → entregado → devuelto.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Sin canasta:</strong> la pestaña ofrece &quot;Vincular canasta&quot;. Una cirugía lleva una sola canasta; no se puede vincular otra.</li>
+<li><strong>Pedir insumos a farmacia:</strong> pasa los insumos sin solicitar a solicitados y le asigna a la cirugía su número de solicitud (el que muestra Canastas de cirugía). Se deshabilita con la cirugía cerrada.</li>
+<li><strong>Anular solicitud:</strong> mientras farmacia no entregue, pide la causal y vuelve los insumos a &quot;sin solicitar&quot;. No se puede si ya se recibieron insumos.</li>
+<li><strong>Ver en Canastas:</strong> la recepción de lo que despacha farmacia no se registra aquí sino en Canastas de cirugía, que se abre con esta cirugía seleccionada.</li>
+<li><strong>Registrar consumo y devolución:</strong> con todo entregado, también lleva a Canastas de cirugía. Lo no usado se puede devolver aunque la cirugía ya esté realizada o cancelada.</li>
+<li>Cada fila muestra su estado; la columna &quot;Devuelto&quot; aparece solo si algún insumo tiene devolución.</li>
+</ul>
+</li>
+</ul>
+<h3 id="vincular-personal-y-equipos">Vincular personal y equipos</h3>
+<ul>
+<li><strong>Qué hace:</strong> en las pestañas Personal clínico y Equipos del detalle se asigna el personal y los equipos de una cirugía que se programó sin ellos, y luego se pueden editar.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Con la pestaña vacía se ofrece &quot;Vincular personal&quot; o &quot;Vincular equipos&quot;; con datos, &quot;Editar personal&quot; o el equivalente de equipos.</li>
+<li>Se exige al menos una persona o un equipo; no se puede vincular de nuevo si ya hay (se edita).</li>
+<li>Roles de personal: Cirujano, Anestesiólogo, Ayudante, Instrumentadora, Circulante. Hoy ninguno es obligatorio.</li>
+<li>Se deshabilita con la cirugía cerrada o en curso.</li>
+</ul>
+</li>
+</ul>
+<h3 id="revisar-las-programaciones-vencidas">Revisar las programaciones vencidas</h3>
+<ul>
+<li><strong>Qué hace:</strong> cuando hay programadas cuya fecha ya pasó sin cerrarse, el resumen del panel lateral muestra el aviso &quot;N programaciones vencidas&quot;; al pulsarlo se abre el &quot;Listado de programaciones – Revisión&quot;, donde se elige una fila y se le cambia el estado.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Se cuenta como vencida una cirugía en estado Programada con fecha anterior a hoy. El conteo se calcula al abrir la pantalla.</li>
+<li>El listado es una réplica visual de la ventana del sistema anterior; &quot;Cambiar estado&quot; exige una fila seleccionada y, al validar, la fila sale del listado y se avisa el nuevo estado. Hoy el cambio solo avisa: no modifica la cirugía en la agenda.</li>
+<li>Existe además una página de revisión en lote (<code>/cirugia/programacion/revision</code>: marcar varias como realizadas o incumplidas con causal, reprogramar, cancelar y deshacer), pero hoy está oculta y no tiene acceso desde la pantalla.</li>
+</ul>
+</li>
+</ul>
+<h3 id="consultar-el-historial-de-cirugias-de-un-paciente">Consultar el historial de cirugías de un paciente</h3>
+<ul>
+<li><strong>Qué hace:</strong> el botón &quot;Historial de cirugías&quot; del encabezado abre el buscador de afiliados y, al elegir uno, lleva a su Historial quirúrgico.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Solo navega; no crea ni modifica nada.</li>
+<li>El buscador es el mismo que usan &quot;Programar otro paciente&quot; y &quot;Nueva urgencia&quot;; cada botón fija su propia intención para que un clic anterior no reabra el flujo equivocado.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="notas-generales-y-limites-conocidos">Notas generales y límites conocidos</h2>
+<ul>
+<li><strong>Prototipo con datos en memoria:</strong> las cirugías y todo lo que se programa, edita o cierra viven en el navegador y se pierden al recargar la página. Los catálogos (salas, médicos, procedimientos, equipos, canastas, causales) son datos de ejemplo.</li>
+<li><strong>Permisos:</strong> no existe control de acceso por rol; el rol documentado (Programación de cirugía) es el definido para el producto, no uno que el sistema verifique hoy.</li>
+<li><strong>Hora del sistema en la demo:</strong> las reglas que dependen de &quot;ahora&quot; en Programación (no programar en el pasado, cuándo una cirugía ya pasó de hora para marcarla incumplida) usan una hora fija de demostración (08:45 del día actual), no el reloj real.</li>
+<li><strong>Sede única en Programación:</strong> la agenda opera siempre sobre la Sede Norte; no hay selector de sede.</li>
+<li><strong>Sin validación de cruces al guardar:</strong> el wizard, la urgencia y el reprogramar no impiden dejar dos cirugías en la misma franja y sala; solo el ajuste de duración por arrastre y la elección de hueco lo controlan.</li>
+</ul>
+
+</main>
+</div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.esm.min.mjs';
+const oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: oscuro ? 'dark' : 'default', flowchart: { htmlLabels: true, curve: 'basis' } });
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Documentación funcional — Clintos</title>
+<title>Gestión de cirugías — Documentación funcional · Clintos</title>
 <style>
 :root{
   --bg:#f6f8fb;--surface:#ffffff;--ink-900:#16202e;--ink-700:#3b4757;--ink-500:#667385;
@@ -41,6 +41,10 @@ li{margin:4px 0;}
 li > ul{margin:4px 0 6px;}
 strong{color:var(--ink-900);font-weight:600;}
 code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;}
+pre:not(.mermaid){background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.55;}
+pre:not(.mermaid) code{background:none;padding:0;font-size:inherit;}
+pre.mermaid{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;text-align:center;font-family:inherit;font-size:13px;white-space:pre;}
+pre.mermaid[data-processed]{white-space:normal;}
 hr{border:none;border-top:1px solid var(--border);margin:36px 0;}
 table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
 th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
@@ -56,6 +60,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
   nav.toc{display:none;}
   main{border:none;padding:0;}
   h3{break-after:avoid;}
+  pre.mermaid{break-inside:avoid;}
 }
 </style>
 </head>
@@ -64,9 +69,10 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <nav class="toc" aria-label="Contenido">
 <p class="label">Contenido</p>
 <a class="toc-2" href="#gestion-de-cirugias">Gestión de cirugías</a>
+<a class="toc-3" href="#flujo-general-de-una-solicitud">Flujo general de una solicitud</a>
 <a class="toc-3" href="#ver-el-listado-de-solicitudes">Ver el listado de solicitudes</a>
 <a class="toc-3" href="#buscar-y-filtrar-solicitudes">Buscar y filtrar solicitudes</a>
-<a class="toc-3" href="#configurar-columnas-de-validaciones">Configurar columnas de validaciones</a>
+<a class="toc-3" href="#configurar-la-vista">Configurar la vista</a>
 <a class="toc-3" href="#revisar-el-chequeo-prequirurgico-de-una-solicitud">Revisar el chequeo prequirúrgico de una solicitud</a>
 <a class="toc-3" href="#registrar-orden-externa">Registrar orden externa</a>
 <a class="toc-3" href="#vincular-orden-medica">Vincular orden médica</a>
@@ -94,8 +100,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <th>Cuándo aplica</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>Lista para programar</td>
 <td>Todos los requisitos <strong>obligatorios</strong> están completos.</td>
 </tr>
@@ -107,18 +112,36 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <td>Bloqueada</td>
 <td>Algún requisito está <strong>rechazado</strong> o <strong>vencido</strong>. Prima sobre los demás estados.</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p><strong>Requisitos del chequeo:</strong> Orden médica · Autorización de la EPS · Valoración preanestésica · Estudios requeridos (Laboratorios + Estudios de imágenes). Cada requisito puede estar <em>Completo</em>, <em>Pendiente</em>, <em>Rechazada</em>, <em>Vencida</em> o <em>No requerido</em>. Un requisito <em>No requerido</em> o marcado opcional nunca bloquea ni cuenta como faltante.</p>
-<hr />
+<hr>
+<h3 id="flujo-general-de-una-solicitud">Flujo general de una solicitud</h3>
+<p>Recorrido completo de una solicitud, desde que llega hasta que se programa. Los estados se recalculan solos después de cada acción sobre un requisito.</p>
+<pre class="mermaid">
+flowchart TD
+    A["Llega la solicitud&lt;br/&gt;(Consulta externa o Internación)"] --&gt; L
+    B["Registrar orden externa&lt;br/&gt;(asistente de 4 pasos)"] --&gt; L
+    L["Listado de solicitudes&lt;br/&gt;(prioritarias y primera vez primero)"] --&gt; R["Abrir el chequeo prequirúrgico&lt;br/&gt;(clic en la fila)"]
+    R --&gt; Q{"¿Algún requisito&lt;br/&gt;rechazado o vencido?"}
+    Q -- Sí --&gt; BL["Estado: Bloqueada"]
+    Q -- No --&gt; P{"¿Falta algún&lt;br/&gt;requisito obligatorio?"}
+    P -- Sí --&gt; PE["Estado: Con pendientes"]
+    P -- No --&gt; LI["Estado: Lista para programar"]
+    BL --&gt; ACC
+    PE --&gt; ACC
+    ACC["Ejecutar la acción del requisito:&lt;br/&gt;vincular orden médica · registrar autorización&lt;br/&gt;vincular valoración · vincular resultados"] --&gt; R
+    LI --&gt; AG["Elegir sala, día y hora&lt;br/&gt;en la agenda de quirófanos"]
+    AG --&gt; W["Wizard Nueva cirugía&lt;br/&gt;(datos precargados)"]
+    W --&gt; G["Guardar la cirugía"]
+    G --&gt; S["La solicitud sale del listado&lt;br/&gt;Admisión si es ambulatoria&lt;br/&gt;Canasta solicitada a farmacia"]
+</pre>
 <h3 id="ver-el-listado-de-solicitudes">Ver el listado de solicitudes</h3>
 <ul>
-<li><strong>Qué hace:</strong> muestra una tabla con las solicitudes pendientes de programar: paciente (documento enmascarado, edad), procedimiento, aseguradora, prioridad, diagnóstico (primera vez / recurrente), origen y estado del chequeo con su avance (ej. 4/5). Arriba, cuatro indicadores con el conteo: Todas las solicitudes, Listas para programar, Con pendientes y Bloqueadas.</li>
+<li><strong>Qué hace:</strong> muestra una tabla con las solicitudes pendientes de programar: paciente (solo el nombre), procedimiento, aseguradora, prioridad, diagnóstico (primera vez / recurrente), origen y estado del chequeo con su avance (ej. 4/5). Arriba, cuatro indicadores con el conteo: Todas las solicitudes, Listas para programar, Con pendientes y Bloqueadas. Los indicadores se muestran en una línea (vista compacta, por defecto) o en tarjeta completa (vista expandida); ver &quot;Configurar la vista&quot;.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>Orden fijo: primero las <strong>prioritarias</strong>; dentro de cada grupo, las de diagnóstico de <strong>primera vez</strong> primero.</li>
-<li>El documento del paciente se muestra enmascarado (solo los últimos 4 dígitos).</li>
+<li>El <strong>documento y la edad del paciente no se muestran</strong> en la tabla, en el modal de chequeo ni en la franja del paciente al elegir el hueco de agenda. La búsqueda sí sigue aceptando el número de documento. Los modales de vincular orden, resultados, valoración y autorización todavía muestran el documento enmascarado (últimos 4 dígitos) junto al nombre.</li>
 <li>Las solicitudes de Consulta externa e Internación llegan automáticamente; las de Orden externa las crea esta pantalla (ver más abajo).</li>
 <li>Una solicitud ya programada sale de la lista.</li>
 <li>El pie de la tabla indica cuántas solicitudes se ven del total.</li>
@@ -129,8 +152,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> acota el listado por texto, origen, diagnóstico y estado del chequeo.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li><strong>Búsqueda:</strong> por nombre del paciente, número de documento o procedimiento; ignora tildes y mayúsculas.</li>
 <li><strong>Origen:</strong> Consulta externa, Internación u Orden externa.</li>
 <li><strong>Diagnóstico:</strong> Primera vez o Recurrente.</li>
@@ -140,14 +162,15 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 </ul>
 </li>
 </ul>
-<h3 id="configurar-columnas-de-validaciones">Configurar columnas de validaciones</h3>
+<h3 id="configurar-la-vista">Configurar la vista</h3>
 <ul>
-<li><strong>Qué hace:</strong> muestra u oculta en bloque las columnas de validaciones del chequeo (Orden, Estudios, Valoración y Autorización) en la tabla.</li>
+<li><strong>Qué hace:</strong> el botón &quot;Configuración de vista&quot; (ícono de ajustes, al final de la barra de filtros; el mismo menú del Panel general de cirugía) controla cómo se ve la pantalla: el <strong>tipo de vista</strong> de los indicadores y las columnas de validaciones de la tabla.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
+<li><strong>Tipo de vista:</strong> <em>Compacto</em> (por defecto) muestra cada indicador en una línea; <em>Expandido</em> los muestra como tarjeta completa. Cambiarlo no cierra el menú, así se ve el efecto al instante. No hay vista de tablero en esta pantalla.</li>
+<li><strong>Mostrar validaciones:</strong> muestra u oculta en bloque las columnas del chequeo (Orden, Estudios, Valoración y Autorización) en la tabla. Por defecto están ocultas.</li>
 <li>&quot;Estado del chequeo&quot; siempre queda visible como resumen, aunque las columnas estén ocultas.</li>
-<li>Por defecto las columnas están ocultas.</li>
+<li>Las preferencias valen solo mientras la pantalla está abierta; al recargar vuelven a los valores por defecto.</li>
 </ul>
 </li>
 </ul>
@@ -155,8 +178,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> al hacer clic (o Enter/Espacio) en una fila se abre el modal &quot;Chequeo prequirúrgico&quot; con los datos de la solicitud (paciente, orden, CUPS y procedimientos, prioridad, diagnóstico, aseguradora, régimen y contrato) y la lista de chequeo con el estado y el detalle de cada requisito. Desde ahí se ejecutan las acciones de cada requisito (secciones siguientes).</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>Cada requisito ofrece una acción según su estado: <em>Vincular orden médica</em>, <em>Registrar autorización</em> (o <em>Registrar renovación</em> si está rechazada/vencida), <em>Vincular valoración</em>, <em>Vincular resultados</em>; si ya está completo, la acción pasa a ser de consulta (<em>Ver orden</em>, <em>Ver autorización</em>, <em>Ver valoración</em>, <em>Ver resultados</em>).</li>
 <li>Si la solicitud no está lista, el panel explica por qué (&quot;Para programar falta: …&quot;). Si faltan todos los obligatorios y todos están pendientes, lo resume en una línea.</li>
 <li>Un requisito opcional pendiente se avisa como informativo y <strong>no bloquea</strong> la programación.</li>
@@ -169,8 +191,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> abre un asistente de 4 pasos en modal para registrar una solicitud de un paciente que llega con una orden emitida por <strong>otra institución</strong>. Al terminar, la orden entra al listado con su lista de chequeo ya armada.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li><strong>Paso 1 · Paciente:</strong> se elige en el buscador de afiliados compartido (&quot;Buscar afiliado&quot;, el mismo de Programar cita). El asistente solo se abre cuando se elige un afiliado; si se cierra el buscador sin elegir, no pasa nada. El asistente arranca en el paso 2 y el paso 1 queda para revisar o cambiar el paciente. Se precarga la entidad pagadora (EPS, régimen, contrato) y se avisa cuántas órdenes activas tiene el paciente.</li>
 <li><strong>Paso 2 · Orden externa:</strong> son obligatorios la institución que remite (catálogo), el médico que ordena, la fecha de la orden (no puede ser futura), el diagnóstico CIE-10 (catálogo de diagnósticos) y la <strong>autorización de la EPS</strong>. El documento de la orden es <strong>opcional</strong>; si no se adjunta, el requisito &quot;Orden médica&quot; queda pendiente en el chequeo.</li>
 <li><strong>Autorización de la EPS (paso 2):</strong> se registra con el mismo modal de &quot;Registrar autorización&quot; (ver más abajo): N° obligatorio, documento de soporte opcional. Deja el requisito &quot;Autorización&quot; como completo.</li>
@@ -183,12 +204,32 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 </ul>
 </li>
 </ul>
+<pre class="mermaid">
+flowchart TD
+    I["Pulsar Registrar orden externa"] --&gt; BA["Buscar afiliado&lt;br/&gt;(buscador compartido)"]
+    BA --&gt; E{"¿Eligió un afiliado?"}
+    E -- No --&gt; X["No pasa nada&lt;br/&gt;(no se abre el asistente)"]
+    E -- Sí --&gt; P2["Paso 2 · Orden externa&lt;br/&gt;institución, médico, fecha, CIE-10&lt;br/&gt;y autorización de la EPS"]
+    P2 --&gt; V2{"¿Datos obligatorios&lt;br/&gt;completos?"}
+    V2 -- No --&gt; P2
+    V2 -- Sí --&gt; P3["Paso 3 · Procedimientos CUPS&lt;br/&gt;tiempo estimado y fecha tentativa"]
+    P3 --&gt; V3{"¿Al menos un procedimiento&lt;br/&gt;con fecha?"}
+    V3 -- No --&gt; P3
+    V3 -- Sí --&gt; P4["Paso 4 · Revisión&lt;br/&gt;lista de chequeo y documentos"]
+    P4 --&gt; RO["Registrar orden"]
+    RO --&gt; OK["Solicitud OE-2026-NNNN en el listado&lt;br/&gt;con su estado (ej. Con pendientes)"]
+    P2 -. "Cerrar con datos cargados" .-&gt; D{"¿Confirma el descarte?"}
+    P3 -. "Cerrar con datos cargados" .-&gt; D
+    P4 -. "Cerrar con datos cargados" .-&gt; D
+    D -- Sí --&gt; X
+    D -- No --&gt; P2
+    P2 -. "Volver al paso 1" .-&gt; BA
+</pre>
 <h3 id="vincular-orden-medica">Vincular orden médica</h3>
 <ul>
 <li><strong>Qué hace:</strong> completa el requisito &quot;Orden médica&quot; tomando una orden que el paciente ya tiene en el submódulo Órdenes médicas de Historia clínica (no se escribe a mano).</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>Se listan las órdenes de Historia clínica del paciente; al elegir una fila se previsualizan sus servicios (cirugía, medicamento, consulta, laboratorio).</li>
 <li>Elegir = clic en la fila; doble clic o Enter sobre la ya elegida la vincula.</li>
 <li>Al vincular, el requisito pasa a Completo y su detalle registra el N° de orden, la fecha y quién la emitió.</li>
@@ -199,8 +240,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> completa el requisito &quot;Autorización de la EPS&quot; registrando el N° que emitió la aseguradora y, opcionalmente, su documento de soporte. También se usa para <strong>renovar</strong> una autorización rechazada o vencida.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>El <strong>N° de autorización es obligatorio</strong>; el documento (PDF o imagen) es opcional.</li>
 <li>Queda registrado el usuario que la registró y la fecha con hora (formato <code>13.OCT.2026 - 14:05</code>).</li>
 <li>Solo si el soporte es un PDF queda disponible &quot;Ver autorización&quot;; con una imagen se guarda el nombre pero no se puede abrir en el visor.</li>
@@ -213,8 +253,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> completa el requisito &quot;Valoración preanestésica&quot; vinculando una evaluación preanestésica (EVAPRE) ya registrada en Historia clínica.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía (la EVAPRE la genera previamente Anestesiología en Historia clínica).</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>Se elige una EVAPRE del paciente; no se diligencia un formulario. Solo se pueden vincular las que tienen clasificación ASA.</li>
 <li>El concepto se <strong>deriva del ASA</strong>: I–II → Apto; III–IV → Apto con condiciones (las recomendaciones de la EVAPRE son las condiciones); V–VI → <strong>No apto</strong>.</li>
 <li>Apto o apto con condiciones: el requisito queda Completo. <strong>No apto: el requisito queda Rechazado y la solicitud se bloquea.</strong></li>
@@ -222,12 +261,23 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 </ul>
 </li>
 </ul>
+<pre class="mermaid">
+flowchart TD
+    EV["Elegir una EVAPRE del paciente"] --&gt; T{"¿Tiene clasificación ASA?"}
+    T -- No --&gt; NV["No se puede vincular"]
+    T -- Sí --&gt; A{"Clasificación ASA"}
+    A -- "I–II" --&gt; AP["Apto"]
+    A -- "III–IV" --&gt; AC["Apto con condiciones&lt;br/&gt;(recomendaciones de la EVAPRE)"]
+    A -- "V–VI" --&gt; NA["No apto"]
+    AP --&gt; C["Requisito Completo"]
+    AC --&gt; C
+    NA --&gt; RE["Requisito Rechazado&lt;br/&gt;La solicitud queda Bloqueada"]
+</pre>
 <h3 id="vincular-resultados-de-laboratorios-y-estudios-de-imagenes">Vincular resultados de laboratorios y estudios de imágenes</h3>
 <ul>
 <li><strong>Qué hace:</strong> completa el requisito &quot;Estudios requeridos&quot; vinculando los resultados registrados en la sección de Laboratorios de una EVAPRE del paciente (no se cargan a mano).</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li><strong>Laboratorios</strong> se piden siempre; <strong>Estudios de imágenes</strong> solo si algún procedimiento de la solicitud lo requiere (si no, quedan &quot;No requerido&quot;).</li>
 <li>Al elegir una EVAPRE se previsualizan sus resultados; solo se puede elegir una que tenga al menos un resultado.</li>
 <li>El estado del requisito &quot;Estudios requeridos&quot; resume sus dos partes: un rechazo o vencimiento prima, luego pendiente, luego completo.</li>
@@ -238,8 +288,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> abre en un visor (sin salir de la pantalla) los documentos de soporte: la orden médica y la autorización de la EPS.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li>Solo disponible cuando el requisito está completo y tiene un archivo cargado (PDF).</li>
 <li>Escape cierra únicamente el visor, no el modal de debajo.</li>
 </ul>
@@ -249,8 +298,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 <ul>
 <li><strong>Qué hace:</strong> desde una solicitud lista, elegir sala, día y hora en la agenda semanal de quirófanos y continuar al wizard &quot;Nueva cirugía&quot;, que se abre con paciente, procedimientos, aseguradora, diagnóstico, autorización y duración precargados.</li>
 <li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
-<li><strong>Reglas de negocio:</strong>
-<ul>
+<li><strong>Reglas de negocio:</strong><ul>
 <li><strong>Solo se puede programar una solicitud en estado &quot;Lista para programar&quot;</strong> (todos los obligatorios completos).</li>
 <li>La agenda muestra las cirugías ya programadas de la sala; una franja solo está libre si la sala (y el cirujano, si hay filtro por cirujano) lo están. Se puede ver jornada operativa (07:00–19:00) o 24 horas, y semana hábil, completa o 3 días.</li>
 <li>La duración estimada sale de la suma de los tiempos de los procedimientos, ajustada a la menor duración del catálogo que la cubre (120 min por defecto si un procedimiento no trae tiempo).</li>
@@ -260,7 +308,7 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 </ul>
 </li>
 </ul>
-<hr />
+<hr>
 <h2 id="notas-generales-y-limites-conocidos">Notas generales y límites conocidos</h2>
 <ul>
 <li><strong>Prototipo con datos en memoria:</strong> las solicitudes, órdenes registradas y documentos adjuntos viven en el navegador y se pierden al recargar la página. Los catálogos (instituciones, diagnósticos, CUPS, pacientes) son datos de ejemplo.</li>
@@ -271,5 +319,10 @@ th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
 
 </main>
 </div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.esm.min.mjs';
+const oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: oscuro ? 'dark' : 'default', flowchart: { htmlLabels: true, curve: 'basis' } });
+</script>
 </body>
 </html>

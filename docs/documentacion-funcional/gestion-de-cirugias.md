@@ -20,13 +20,36 @@
 
 ---
 
+### Flujo general de una solicitud
+
+Recorrido completo de una solicitud, desde que llega hasta que se programa. Los estados se recalculan solos después de cada acción sobre un requisito.
+
+```mermaid
+flowchart TD
+    A["Llega la solicitud<br/>(Consulta externa o Internación)"] --> L
+    B["Registrar orden externa<br/>(asistente de 4 pasos)"] --> L
+    L["Listado de solicitudes<br/>(prioritarias y primera vez primero)"] --> R["Abrir el chequeo prequirúrgico<br/>(clic en la fila)"]
+    R --> Q{"¿Algún requisito<br/>rechazado o vencido?"}
+    Q -- Sí --> BL["Estado: Bloqueada"]
+    Q -- No --> P{"¿Falta algún<br/>requisito obligatorio?"}
+    P -- Sí --> PE["Estado: Con pendientes"]
+    P -- No --> LI["Estado: Lista para programar"]
+    BL --> ACC
+    PE --> ACC
+    ACC["Ejecutar la acción del requisito:<br/>vincular orden médica · registrar autorización<br/>vincular valoración · vincular resultados"] --> R
+    LI --> AG["Elegir sala, día y hora<br/>en la agenda de quirófanos"]
+    AG --> W["Wizard Nueva cirugía<br/>(datos precargados)"]
+    W --> G["Guardar la cirugía"]
+    G --> S["La solicitud sale del listado<br/>Admisión si es ambulatoria<br/>Canasta solicitada a farmacia"]
+```
+
 ### Ver el listado de solicitudes
 
-- **Qué hace:** muestra una tabla con las solicitudes pendientes de programar: paciente (documento enmascarado, edad), procedimiento, aseguradora, prioridad, diagnóstico (primera vez / recurrente), origen y estado del chequeo con su avance (ej. 4/5). Arriba, cuatro indicadores con el conteo: Todas las solicitudes, Listas para programar, Con pendientes y Bloqueadas.
+- **Qué hace:** muestra una tabla con las solicitudes pendientes de programar: paciente (solo el nombre), procedimiento, aseguradora, prioridad, diagnóstico (primera vez / recurrente), origen y estado del chequeo con su avance (ej. 4/5). Arriba, cuatro indicadores con el conteo: Todas las solicitudes, Listas para programar, Con pendientes y Bloqueadas. Los indicadores se muestran en una línea (vista compacta, por defecto) o en tarjeta completa (vista expandida); ver "Configurar la vista".
 - **Roles con acceso:** Programación de cirugía.
 - **Reglas de negocio:**
   - Orden fijo: primero las **prioritarias**; dentro de cada grupo, las de diagnóstico de **primera vez** primero.
-  - El documento del paciente se muestra enmascarado (solo los últimos 4 dígitos).
+  - El **documento y la edad del paciente no se muestran** en la tabla, en el modal de chequeo ni en la franja del paciente al elegir el hueco de agenda. La búsqueda sí sigue aceptando el número de documento. Los modales de vincular orden, resultados, valoración y autorización todavía muestran el documento enmascarado (últimos 4 dígitos) junto al nombre.
   - Las solicitudes de Consulta externa e Internación llegan automáticamente; las de Orden externa las crea esta pantalla (ver más abajo).
   - Una solicitud ya programada sale de la lista.
   - El pie de la tabla indica cuántas solicitudes se ven del total.
@@ -43,13 +66,15 @@
   - Los números de los indicadores se calculan sobre lo que dejan pasar los demás filtros, para que coincidan con las filas que aparecen al pulsarlos.
   - "Limpiar filtros" solo aparece cuando hay algún filtro activo.
 
-### Configurar columnas de validaciones
+### Configurar la vista
 
-- **Qué hace:** muestra u oculta en bloque las columnas de validaciones del chequeo (Orden, Estudios, Valoración y Autorización) en la tabla.
+- **Qué hace:** el botón "Configuración de vista" (ícono de ajustes, al final de la barra de filtros; el mismo menú del Panel general de cirugía) controla cómo se ve la pantalla: el **tipo de vista** de los indicadores y las columnas de validaciones de la tabla.
 - **Roles con acceso:** Programación de cirugía.
 - **Reglas de negocio:**
+  - **Tipo de vista:** *Compacto* (por defecto) muestra cada indicador en una línea; *Expandido* los muestra como tarjeta completa. Cambiarlo no cierra el menú, así se ve el efecto al instante. No hay vista de tablero en esta pantalla.
+  - **Mostrar validaciones:** muestra u oculta en bloque las columnas del chequeo (Orden, Estudios, Valoración y Autorización) en la tabla. Por defecto están ocultas.
   - "Estado del chequeo" siempre queda visible como resumen, aunque las columnas estén ocultas.
-  - Por defecto las columnas están ocultas.
+  - Las preferencias valen solo mientras la pantalla está abierta; al recargar vuelven a los valores por defecto.
 
 ### Revisar el chequeo prequirúrgico de una solicitud
 
@@ -76,6 +101,28 @@
   - Cerrar con datos de la orden ya cargados pide confirmar el descarte.
   - La solicitud queda con origen "Orden externa" y número `OE-2026-NNNN`. Las solicitudes de este origen se consideran ambulatorias.
   - Los datos de régimen, contrato e historia clínica del paciente salen de un directorio de ejemplo cuando el documento coincide; si no, quedan por defecto (Contributivo, sin estudios en la historia), por lo que los estudios aparecerán pendientes.
+
+```mermaid
+flowchart TD
+    I["Pulsar Registrar orden externa"] --> BA["Buscar afiliado<br/>(buscador compartido)"]
+    BA --> E{"¿Eligió un afiliado?"}
+    E -- No --> X["No pasa nada<br/>(no se abre el asistente)"]
+    E -- Sí --> P2["Paso 2 · Orden externa<br/>institución, médico, fecha, CIE-10<br/>y autorización de la EPS"]
+    P2 --> V2{"¿Datos obligatorios<br/>completos?"}
+    V2 -- No --> P2
+    V2 -- Sí --> P3["Paso 3 · Procedimientos CUPS<br/>tiempo estimado y fecha tentativa"]
+    P3 --> V3{"¿Al menos un procedimiento<br/>con fecha?"}
+    V3 -- No --> P3
+    V3 -- Sí --> P4["Paso 4 · Revisión<br/>lista de chequeo y documentos"]
+    P4 --> RO["Registrar orden"]
+    RO --> OK["Solicitud OE-2026-NNNN en el listado<br/>con su estado (ej. Con pendientes)"]
+    P2 -. "Cerrar con datos cargados" .-> D{"¿Confirma el descarte?"}
+    P3 -. "Cerrar con datos cargados" .-> D
+    P4 -. "Cerrar con datos cargados" .-> D
+    D -- Sí --> X
+    D -- No --> P2
+    P2 -. "Volver al paso 1" .-> BA
+```
 
 ### Vincular orden médica
 
@@ -106,6 +153,19 @@
   - El concepto se **deriva del ASA**: I–II → Apto; III–IV → Apto con condiciones (las recomendaciones de la EVAPRE son las condiciones); V–VI → **No apto**.
   - Apto o apto con condiciones: el requisito queda Completo. **No apto: el requisito queda Rechazado y la solicitud se bloquea.**
   - Se precargan Asa y tipo de anestesia en el wizard "Nueva cirugía".
+
+```mermaid
+flowchart TD
+    EV["Elegir una EVAPRE del paciente"] --> T{"¿Tiene clasificación ASA?"}
+    T -- No --> NV["No se puede vincular"]
+    T -- Sí --> A{"Clasificación ASA"}
+    A -- "I–II" --> AP["Apto"]
+    A -- "III–IV" --> AC["Apto con condiciones<br/>(recomendaciones de la EVAPRE)"]
+    A -- "V–VI" --> NA["No apto"]
+    AP --> C["Requisito Completo"]
+    AC --> C
+    NA --> RE["Requisito Rechazado<br/>La solicitud queda Bloqueada"]
+```
 
 ### Vincular resultados de laboratorios y estudios de imágenes
 
