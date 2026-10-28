@@ -34,7 +34,7 @@ import {
 import useCirugiasAcciones from '@/hooks/ProgramacionSalaCirugias/useCirugiasAcciones';
 
 import SegmentedFilterBar from '@/Components/SegmentedFilterBar/SegmentedFilterBar';
-import VistaPanelMenu from './VistaPanelMenu/VistaPanelMenu';
+import VistaPanelMenu from '../VistaPanelMenu/VistaPanelMenu';
 import SearchField from '@/Components/SearchField/SearchField';
 import FormSelect from '@/Components/FormSelect/FormSelect';
 import MasFiltrosCirugiasPopover from './MasFiltrosCirugiasPopover/MasFiltrosCirugiasPopover';

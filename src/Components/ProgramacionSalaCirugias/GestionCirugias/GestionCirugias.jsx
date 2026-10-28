@@ -13,7 +13,7 @@ import Topbar from '@/Components/Topbar/Topbar';
 import Button from '@/Components/Button/Button';
 import KpiCard from '@/Components/KpiCard/KpiCard';
 import FormSelect from '@/Components/FormSelect/FormSelect';
-import ColumnasMenu from './ColumnasMenu/ColumnasMenu';
+import VistaPanelMenu from '../VistaPanelMenu/VistaPanelMenu';
 import SolicitudesTable from './SolicitudesTable/SolicitudesTable';
 import SolicitudPanel from './SolicitudPanel/SolicitudPanel';
 import SeleccionarHuecoModal from './SeleccionarHuecoModal/SeleccionarHuecoModal';
@@ -74,6 +74,9 @@ export default function GestionCirugias() {
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
   // Muestra/oculta las 4 columnas de validaciones (Orden, Estudios, Valoración, Autorización).
   const [mostrarValidaciones, setMostrarValidaciones] = useState(false);
+  // Tipo de vista (mismo menú que el Panel general): compacto (KPIs de una línea) o expandido.
+  const [tipoVista, setTipoVista] = useState('compacto');
+  const kpisCompactos = tipoVista === 'compacto';
   const [selectedId, setSelectedId] = useState(null);
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
@@ -229,7 +232,7 @@ export default function GestionCirugias() {
               label="Todas las solicitudes"
               value={conteo.todas}
               variant="neutral"
-              compact
+              compact={kpisCompactos}
               active={filtros.estado === 'todas'}
               onClick={() => setFiltro({ estado: 'todas' })}
             />
@@ -238,7 +241,7 @@ export default function GestionCirugias() {
               label="Listas para programar"
               value={conteo.lista}
               variant="success"
-              compact
+              compact={kpisCompactos}
               active={filtros.estado === 'lista'}
               onClick={() => alternarEstado('lista')}
             />
@@ -247,7 +250,7 @@ export default function GestionCirugias() {
               label="Con pendientes"
               value={conteo.pendientes}
               variant="warning"
-              compact
+              compact={kpisCompactos}
               active={filtros.estado === 'pendientes'}
               onClick={() => alternarEstado('pendientes')}
             />
@@ -256,7 +259,7 @@ export default function GestionCirugias() {
               label="Bloqueadas"
               value={conteo.bloqueada}
               variant="danger"
-              compact
+              compact={kpisCompactos}
               active={filtros.estado === 'bloqueada'}
               onClick={() => alternarEstado('bloqueada')}
             />
@@ -292,7 +295,9 @@ export default function GestionCirugias() {
                     Limpiar filtros
                   </Button>
                 )}
-                <ColumnasMenu
+                <VistaPanelMenu
+                  tipo={tipoVista}
+                  onChangeTipo={setTipoVista}
                   mostrarValidaciones={mostrarValidaciones}
                   onToggleValidaciones={() => setMostrarValidaciones((v) => !v)}
                 />

@@ -16,3 +16,8 @@
 /* Panel y opciones: apariencia de @/Components/DropdownPanel (ver
    AGENTS.md "Dropdowns") -- acá solo la posición. */
 .vpm-dropdown{position:absolute;top:calc(100% + 6px);right:0;z-index:var(--z-popover);width:220px;min-width:0;}
+/* Opción con casilla + descripción (Gestión de cirugías → "Mostrar validaciones"). */
+.vpm-dropdown:has(.vpm-item-check){width:280px;}
+.vpm-item-check{align-items:flex-start;}
+.vpm-item-text{display:flex;flex-direction:column;gap:2px;text-align:left;flex:1;min-width:0;white-space:normal;}
+.vpm-item-hint{font-size:var(--fs-sm);font-weight:var(--fw-regular);color:var(--ink-500);}

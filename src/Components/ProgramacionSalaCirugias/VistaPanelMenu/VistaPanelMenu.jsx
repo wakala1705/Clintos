@@ -25,7 +25,7 @@ const TIPO_OPCIONES = [
 // opción activa. Vive en la barra de ambas vistas. Sin `onChange` (HC de Cirugía,
 // que no tiene Tabla/Tablero) solo ofrece el tipo de vista.
 export default function VistaPanelMenu({
-  vista, onChange, tipo, onChangeTipo,
+  vista, onChange, tipo, onChangeTipo, mostrarValidaciones, onToggleValidaciones,
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
@@ -106,6 +106,25 @@ export default function VistaPanelMenu({
               {tipo === value && <LuCheck className={panel.check} aria-hidden="true" />}
             </button>
           ))}
+          {onToggleValidaciones && (
+            <>
+              <div className={panel.divider} role="separator" />
+              <div className={panel.groupLabel}>Columnas</div>
+              <button
+                type="button"
+                className={[panel.item, 'vpm-item-check', mostrarValidaciones && panel.selected].filter(Boolean).join(' ')}
+                role="menuitemcheckbox"
+                aria-checked={!!mostrarValidaciones}
+                onClick={onToggleValidaciones}
+              >
+                <span className="vpm-item-text">
+                  Mostrar validaciones
+                  <span className="vpm-item-hint">Orden, estudios, valoración y autorización</span>
+                </span>
+                {mostrarValidaciones && <LuCheck className={panel.check} aria-hidden="true" />}
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>
