@@ -3,6 +3,8 @@
 import './CirugiaCard.css';
 import CirugiaCardMenu from '../CirugiaCardMenu/CirugiaCardMenu';
 import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gestion';
+import { horaFranja } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
+import useResizeCirugia from '@/hooks/ProgramacionSalaCirugias/useResizeCirugia';
 
 // Jerarquía fija horario→paciente→procedimiento→cirujano (spec sección
 // "Tarjeta de cirugía"; el estado se comunica solo con el color de la card,
@@ -25,11 +27,24 @@ import { capitalizarNombre } from '@/hooks/ProgramacionSalaCirugias/gestion/gest
 // `<button>` real trae gratis, y `.cc-menu-wrap` corta la propagación del
 // clic/teclado del menú para que abrirlo no seleccione/deseleccione la
 // card por accidente.
+//
+// Redimensionar (solo si la pantalla pasa `onRedimensionar`, hoy la agenda
+// semanal): el tirador `.cc-resize-handle` del borde inferior estira o acorta la
+// cirugía en franjas de 30 min (ver useResizeCirugia.js). Mientras se arrastra
+// la card crece en vivo: como no sabe de slots, AgendaSemana le pasa
+// `startRow`/`spanSlots` (su posición en la grilla) para recalcular el
+// `gridRow` y `compactMaxSlots` para decidir cuándo deja de ser compacta.
 export default function CirugiaCard({
   cirugia, selected, onClick, style, compact = false, salaLabel,
   onEditar, onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
   etapaActual, onMoverEtapa,
+  onRedimensionar, resizable = false, startRow, spanSlots, compactMaxSlots = 2, alturaFranja = 30,
 }) {
+  const { vivo, handleProps } = useResizeCirugia({ cirugia, alturaFranja, onResize: onRedimensionar });
+  const spanVivo = vivo ? spanSlots + vivo.fin - vivo.original : spanSlots;
+  const esCompact = vivo ? spanVivo <= compactMaxSlots : compact;
+  const horaFin = vivo ? horaFranja(vivo.fin) : cirugia.horaFin;
+
   function handleKeyDown(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -42,8 +57,8 @@ export default function CirugiaCard({
       role="button"
       tabIndex={0}
       aria-pressed={selected || undefined}
-      className={`cc-card cc-${cirugia.estado}${selected ? ' selected' : ''}${compact ? ' compact' : ''}`}
-      style={style}
+      className={`cc-card cc-${cirugia.estado}${selected ? ' selected' : ''}${esCompact ? ' compact' : ''}${vivo ? ' resizing' : ''}`}
+      style={vivo ? { ...style, gridRow: `${startRow} / span ${spanVivo}` } : style}
       title={`${cirugia.paciente.nombre}\n${cirugia.horaInicio} – ${cirugia.horaFin}\n${cirugia.procedimientoPrincipal}\n${capitalizarNombre(cirugia.cirujano)}${salaLabel ? `\n${salaLabel}` : ''}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
@@ -66,16 +81,26 @@ export default function CirugiaCard({
         />
       </div>
 
-      {compact ? (
+      {esCompact ? (
         <span className="cc-paciente">{cirugia.paciente.nombre}</span>
       ) : (
         <>
-          <span className="cc-horario">{cirugia.horaInicio} – {cirugia.horaFin}</span>
+          <span className="cc-horario">{cirugia.horaInicio} – {horaFin}</span>
           <span className="cc-paciente">{cirugia.paciente.nombre}</span>
           <span className="cc-procedimiento">{cirugia.procedimientoPrincipal}</span>
           {/* En la agenda de un cirujano (varias salas) la línea del cirujano es redundante: va la sala. */}
           <span className="cc-cirujano">{salaLabel ?? capitalizarNombre(cirugia.cirujano)}</span>
         </>
+      )}
+
+      {vivo && <span className="cc-resize-tip" aria-hidden="true">{cirugia.horaInicio} – {horaFin}</span>}
+      {resizable && (
+        <div
+          className="cc-resize-handle"
+          aria-hidden="true"
+          title="Arrastra para cambiar la duración"
+          {...handleProps}
+        />
       )}
     </div>
   );

@@ -67,6 +67,31 @@ export function bloquesDeSala(cirugias, salaEnMantenimiento = false) {
     .filter((b) => b.dur > 0);
 }
 
+// ---------- Redimensionar una cirugía en la agenda ----------
+// Rango de fin (índice de franja exclusivo: 20 = 10:00) al que puede estirarse
+// o acortarse una cirugía arrastrando su borde inferior. Mínimo: una franja.
+// Máximo: donde empieza la siguiente cirugía activa de la misma sala y día (las
+// canceladas e incumplidas no bloquean), o 23:30 (la hora "24:00" no es válida).
+// Si ya se cruzaba con la siguiente, no se puede estirar más pero sí acortar.
+// null si cruza la medianoche (su fin no es posterior al inicio: no se redimensiona).
+export const FIN_MAXIMO = FRANJAS - 1;
+
+export function rangoFinCirugia(cirugia, todas) {
+  const inicio = Math.floor(franjaDeHora(cirugia.horaInicio));
+  const fin = Math.ceil(franjaDeHora(cirugia.horaFin));
+  if (fin <= inicio) return null;
+  let max = FIN_MAXIMO;
+  todas.forEach((o) => {
+    if (o.id === cirugia.id || o.salaId !== cirugia.salaId || o.fecha !== cirugia.fecha) return;
+    if (ESTADOS_QUE_LIBERAN.includes(o.estado)) return;
+    const oInicio = Math.floor(franjaDeHora(o.horaInicio));
+    if (oInicio > inicio) max = Math.min(max, oInicio);
+  });
+  return { inicio, fin, min: inicio + 1, max: Math.max(max, fin) };
+}
+
+export const acotarFin = (finFranja, rango) => Math.min(rango.max, Math.max(rango.min, finFranja));
+
 export function mapaOcupado(bloques) {
   const mapa = Array(FRANJAS).fill(false);
   bloques.forEach((b) => {

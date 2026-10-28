@@ -5,7 +5,7 @@ import { registrarTiempoEnHoja } from './hojaConsumo/hojaConsumo';
 import { ETAPA_LABEL, resolverMovimiento } from './tablero/etapas';
 import {
   actualizarEstadoCirugia, cancelarCirugia, cancelarSolicitudInsumos, finalizarCirugia, iniciarCirugia, reprogramarCirugia,
-  moverEtapaCirugia, resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
+  moverEtapaCirugia, redimensionarCirugia, resumenCanasta, solicitarInsumosFarmacia, vincularCanastaCirugia,
   vincularEquiposCirugia, vincularPersonalCirugia, actualizarEquiposCirugia, actualizarPersonalCirugia,
 } from './mockCirugiaData';
 
@@ -126,6 +126,17 @@ export default function useCirugiasAcciones({ applyUpdated }) {
   function handleCancelarCirugia(cirugia) {
     setModal({ type: 'cancelar', cirugia });
   }
+  // Arrastrar el borde inferior de la card (ver useResizeCirugia.js): `finFranja`
+  // ya viene acotado, pero el servicio lo revalida contra la sala completa.
+  function handleRedimensionarCirugia(cirugia, finFranja) {
+    try {
+      const actualizada = redimensionarCirugia(cirugia.id, finFranja);
+      applyUpdated(actualizada);
+      showToast(`Duración actualizada: ${actualizada.horaInicio} – ${actualizada.horaFin}.`);
+    } catch (e) {
+      showToast(e.message);
+    }
+  }
   function handleMarcarRealizada(cirugia) {
     applyUpdated(actualizarEstadoCirugia(cirugia.id, 'realizada'));
     // Solo advierte (no bloquea): con saldo pendiente en farmacia la solicitud sigue abierta.
@@ -195,6 +206,7 @@ export default function useCirugiasAcciones({ applyUpdated }) {
     handleFinalizarDesdeHoja,
     handleMarcarRealizada,
     handleMarcarIncumplida,
+    handleRedimensionarCirugia,
     handleMoverEtapa,
     handleSubmitDerivacion,
     handlePedirInsumos,

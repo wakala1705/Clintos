@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentación funcional — Clintos</title>
+<style>
+:root{
+  --bg:#f6f8fb;--surface:#ffffff;--ink-900:#16202e;--ink-700:#3b4757;--ink-500:#667385;
+  --border:#dde3ec;--primary:#0b63ce;--primary-50:#eaf2fd;--code-bg:#eef1f6;--th-bg:#f0f3f8;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f141b;--surface:#161d27;--ink-900:#e8edf4;--ink-700:#c0c9d6;--ink-500:#8b97a8;
+    --border:#283241;--primary:#6aa8ff;--primary-50:#17263b;--code-bg:#1d2733;--th-bg:#1b2431;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:24px;}
+body{
+  margin:0;background:var(--bg);color:var(--ink-700);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.6;
+}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;max-width:1240px;margin:0 auto;padding:32px 24px 64px;}
+nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding-right:8px;}
+nav.toc .label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);margin:0 0 10px;}
+nav.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink-700);text-decoration:none;font-size:13.5px;}
+nav.toc a:hover{background:var(--primary-50);color:var(--primary);}
+nav.toc a.toc-2{font-weight:600;color:var(--ink-900);margin-top:10px;}
+nav.toc a.toc-3{padding-left:20px;}
+main{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;min-width:0;}
+header.doc{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+header.doc .eyebrow{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--primary);margin:0 0 6px;}
+header.doc h1{margin:0;font-size:28px;line-height:1.2;color:var(--ink-900);font-weight:600;}
+h2{font-size:22px;font-weight:600;color:var(--ink-900);margin:40px 0 12px;line-height:1.3;}
+h3{font-size:17px;font-weight:600;color:var(--ink-900);margin:32px 0 10px;padding-top:20px;border-top:1px solid var(--border);line-height:1.35;}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:4px 0;}
+li > ul{margin:4px 0 6px;}
+strong{color:var(--ink-900);font-weight:600;}
+code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0;}
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px 16px 48px;}
+  nav.toc{position:static;max-height:none;}
+  main{padding:24px 20px;}
+}
+@media print{
+  body{background:#fff;color:#222;}
+  .layout{display:block;padding:0;max-width:none;}
+  nav.toc{display:none;}
+  main{border:none;padding:0;}
+  h3{break-after:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contenido">
+<p class="label">Contenido</p>
+<a class="toc-2" href="#gestion-de-cirugias">Gestión de cirugías</a>
+<a class="toc-3" href="#ver-el-listado-de-solicitudes">Ver el listado de solicitudes</a>
+<a class="toc-3" href="#buscar-y-filtrar-solicitudes">Buscar y filtrar solicitudes</a>
+<a class="toc-3" href="#configurar-columnas-de-validaciones">Configurar columnas de validaciones</a>
+<a class="toc-3" href="#revisar-el-chequeo-prequirurgico-de-una-solicitud">Revisar el chequeo prequirúrgico de una solicitud</a>
+<a class="toc-3" href="#registrar-orden-externa">Registrar orden externa</a>
+<a class="toc-3" href="#vincular-orden-medica">Vincular orden médica</a>
+<a class="toc-3" href="#registrar-autorizacion-de-la-eps">Registrar autorización de la EPS</a>
+<a class="toc-3" href="#vincular-valoracion-preanestesica-evapre">Vincular valoración preanestésica (EVAPRE)</a>
+<a class="toc-3" href="#vincular-resultados-de-laboratorios-y-estudios-de-imagenes">Vincular resultados de laboratorios y estudios de imágenes</a>
+<a class="toc-3" href="#ver-documentos-del-chequeo">Ver documentos del chequeo</a>
+<a class="toc-3" href="#programar-cirugia-desde-una-solicitud">Programar cirugía desde una solicitud</a>
+<a class="toc-2" href="#notas-generales-y-limites-conocidos">Notas generales y límites conocidos</a>
+</nav>
+<main>
+<header class="doc">
+<p class="eyebrow">Documentación funcional</p>
+<h1>Clintos</h1>
+</header>
+<h2 id="gestion-de-cirugias">Gestión de cirugías</h2>
+<p><strong>Propósito:</strong> concentrar las solicitudes de cirugía que llegan al hospital (desde Consulta externa, Internación u Orden externa) y verificar, antes de programarlas, que cada una tenga completa su lista de chequeo prequirúrgico (orden médica, autorización de la EPS, valoración preanestésica y estudios). Existe para el equipo de <strong>Programación de cirugía</strong>, que decide cuáles solicitudes ya se pueden pasar a la agenda de salas.</p>
+<p><strong>Ruta:</strong> <code>/cirugia/gestion</code> (menú Cirugía → Gestión de cirugías).</p>
+<p><strong>Roles:</strong> todas las funcionalidades de este submódulo las ejecuta el rol <strong>Programación de cirugía</strong> (confirmado). Hoy el sistema no aplica permisos por rol: la sesión es un usuario de ejemplo (&quot;Administrador&quot;) y todo lo que registra queda a su nombre.</p>
+<p><strong>Estados de una solicitud</strong> (se calculan solos a partir del chequeo; no se editan a mano):</p>
+<table>
+<thead>
+<tr>
+<th>Estado</th>
+<th>Cuándo aplica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lista para programar</td>
+<td>Todos los requisitos <strong>obligatorios</strong> están completos.</td>
+</tr>
+<tr>
+<td>Con pendientes</td>
+<td>Falta al menos un requisito obligatorio.</td>
+</tr>
+<tr>
+<td>Bloqueada</td>
+<td>Algún requisito está <strong>rechazado</strong> o <strong>vencido</strong>. Prima sobre los demás estados.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Requisitos del chequeo:</strong> Orden médica · Autorización de la EPS · Valoración preanestésica · Estudios requeridos (Laboratorios + Estudios de imágenes). Cada requisito puede estar <em>Completo</em>, <em>Pendiente</em>, <em>Rechazada</em>, <em>Vencida</em> o <em>No requerido</em>. Un requisito <em>No requerido</em> o marcado opcional nunca bloquea ni cuenta como faltante.</p>
+<hr />
+<h3 id="ver-el-listado-de-solicitudes">Ver el listado de solicitudes</h3>
+<ul>
+<li><strong>Qué hace:</strong> muestra una tabla con las solicitudes pendientes de programar: paciente (documento enmascarado, edad), procedimiento, aseguradora, prioridad, diagnóstico (primera vez / recurrente), origen y estado del chequeo con su avance (ej. 4/5). Arriba, cuatro indicadores con el conteo: Todas las solicitudes, Listas para programar, Con pendientes y Bloqueadas.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>Orden fijo: primero las <strong>prioritarias</strong>; dentro de cada grupo, las de diagnóstico de <strong>primera vez</strong> primero.</li>
+<li>El documento del paciente se muestra enmascarado (solo los últimos 4 dígitos).</li>
+<li>Las solicitudes de Consulta externa e Internación llegan automáticamente; las de Orden externa las crea esta pantalla (ver más abajo).</li>
+<li>Una solicitud ya programada sale de la lista.</li>
+<li>El pie de la tabla indica cuántas solicitudes se ven del total.</li>
+</ul>
+</li>
+</ul>
+<h3 id="buscar-y-filtrar-solicitudes">Buscar y filtrar solicitudes</h3>
+<ul>
+<li><strong>Qué hace:</strong> acota el listado por texto, origen, diagnóstico y estado del chequeo.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li><strong>Búsqueda:</strong> por nombre del paciente, número de documento o procedimiento; ignora tildes y mayúsculas.</li>
+<li><strong>Origen:</strong> Consulta externa, Internación u Orden externa.</li>
+<li><strong>Diagnóstico:</strong> Primera vez o Recurrente.</li>
+<li><strong>Estado:</strong> al pulsar un indicador (Listas, Con pendientes, Bloqueadas) se filtra por ese estado; pulsarlo de nuevo lo quita.</li>
+<li>Los números de los indicadores se calculan sobre lo que dejan pasar los demás filtros, para que coincidan con las filas que aparecen al pulsarlos.</li>
+<li>&quot;Limpiar filtros&quot; solo aparece cuando hay algún filtro activo.</li>
+</ul>
+</li>
+</ul>
+<h3 id="configurar-columnas-de-validaciones">Configurar columnas de validaciones</h3>
+<ul>
+<li><strong>Qué hace:</strong> muestra u oculta en bloque las columnas de validaciones del chequeo (Orden, Estudios, Valoración y Autorización) en la tabla.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>&quot;Estado del chequeo&quot; siempre queda visible como resumen, aunque las columnas estén ocultas.</li>
+<li>Por defecto las columnas están ocultas.</li>
+</ul>
+</li>
+</ul>
+<h3 id="revisar-el-chequeo-prequirurgico-de-una-solicitud">Revisar el chequeo prequirúrgico de una solicitud</h3>
+<ul>
+<li><strong>Qué hace:</strong> al hacer clic (o Enter/Espacio) en una fila se abre el modal &quot;Chequeo prequirúrgico&quot; con los datos de la solicitud (paciente, orden, CUPS y procedimientos, prioridad, diagnóstico, aseguradora, régimen y contrato) y la lista de chequeo con el estado y el detalle de cada requisito. Desde ahí se ejecutan las acciones de cada requisito (secciones siguientes).</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>Cada requisito ofrece una acción según su estado: <em>Vincular orden médica</em>, <em>Registrar autorización</em> (o <em>Registrar renovación</em> si está rechazada/vencida), <em>Vincular valoración</em>, <em>Vincular resultados</em>; si ya está completo, la acción pasa a ser de consulta (<em>Ver orden</em>, <em>Ver autorización</em>, <em>Ver valoración</em>, <em>Ver resultados</em>).</li>
+<li>Si la solicitud no está lista, el panel explica por qué (&quot;Para programar falta: …&quot;). Si faltan todos los obligatorios y todos están pendientes, lo resume en una línea.</li>
+<li>Un requisito opcional pendiente se avisa como informativo y <strong>no bloquea</strong> la programación.</li>
+<li>&quot;Siguiente solicitud&quot; pasa a la siguiente fila del listado (con el orden y filtros actuales) sin cerrar el modal y muestra la posición (ej. 2 de 10).</li>
+<li>Escape cierra el modal.</li>
+</ul>
+</li>
+</ul>
+<h3 id="registrar-orden-externa">Registrar orden externa</h3>
+<ul>
+<li><strong>Qué hace:</strong> abre un asistente de 4 pasos en modal para registrar una solicitud de un paciente que llega con una orden emitida por <strong>otra institución</strong>. Al terminar, la orden entra al listado con su lista de chequeo ya armada.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li><strong>Paso 1 · Paciente:</strong> se elige en el buscador de afiliados compartido (&quot;Buscar afiliado&quot;, el mismo de Programar cita). El asistente solo se abre cuando se elige un afiliado; si se cierra el buscador sin elegir, no pasa nada. El asistente arranca en el paso 2 y el paso 1 queda para revisar o cambiar el paciente. Se precarga la entidad pagadora (EPS, régimen, contrato) y se avisa cuántas órdenes activas tiene el paciente.</li>
+<li><strong>Paso 2 · Orden externa:</strong> son obligatorios la institución que remite (catálogo), el médico que ordena, la fecha de la orden (no puede ser futura), el diagnóstico CIE-10 (catálogo de diagnósticos) y la <strong>autorización de la EPS</strong>. El documento de la orden es <strong>opcional</strong>; si no se adjunta, el requisito &quot;Orden médica&quot; queda pendiente en el chequeo.</li>
+<li><strong>Autorización de la EPS (paso 2):</strong> se registra con el mismo modal de &quot;Registrar autorización&quot; (ver más abajo): N° obligatorio, documento de soporte opcional. Deja el requisito &quot;Autorización&quot; como completo.</li>
+<li><strong>Paso 3 · Procedimientos CUPS:</strong> se eligen del catálogo CUPS en una ventana (selección múltiple; los ya agregados salen deshabilitados). Por procedimiento: tiempo estimado (de 30 min a 4 h, precargado desde el catálogo) y <strong>fecha tentativa obligatoria</strong> (no anterior a hoy). La fecha elegida se copia a los procedimientos que aún no tienen una. Se muestra la cobertura del contrato (Cubierto, Requiere autorización, No cubierto). Se necesita al menos un procedimiento.</li>
+<li><strong>Paso 4 · Revisión:</strong> muestra la lista de chequeo tal como quedará, con el estado general y los documentos adjuntos (orden y autorización) con acceso para verlos. &quot;Registrar orden&quot; crea la solicitud, la agrega al listado y avisa con su estado (ej. &quot;Orden registrada para … · Con pendientes&quot;).</li>
+<li>El asistente no deja avanzar si falta algo del paso actual (el aviso azul del fondo lista qué falta) y los pasos siguientes están bloqueados hasta completar los anteriores; siempre se puede volver a un paso ya visitado.</li>
+<li>Cerrar con datos de la orden ya cargados pide confirmar el descarte.</li>
+<li>La solicitud queda con origen &quot;Orden externa&quot; y número <code>OE-2026-NNNN</code>. Las solicitudes de este origen se consideran ambulatorias.</li>
+<li>Los datos de régimen, contrato e historia clínica del paciente salen de un directorio de ejemplo cuando el documento coincide; si no, quedan por defecto (Contributivo, sin estudios en la historia), por lo que los estudios aparecerán pendientes.</li>
+</ul>
+</li>
+</ul>
+<h3 id="vincular-orden-medica">Vincular orden médica</h3>
+<ul>
+<li><strong>Qué hace:</strong> completa el requisito &quot;Orden médica&quot; tomando una orden que el paciente ya tiene en el submódulo Órdenes médicas de Historia clínica (no se escribe a mano).</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>Se listan las órdenes de Historia clínica del paciente; al elegir una fila se previsualizan sus servicios (cirugía, medicamento, consulta, laboratorio).</li>
+<li>Elegir = clic en la fila; doble clic o Enter sobre la ya elegida la vincula.</li>
+<li>Al vincular, el requisito pasa a Completo y su detalle registra el N° de orden, la fecha y quién la emitió.</li>
+</ul>
+</li>
+</ul>
+<h3 id="registrar-autorizacion-de-la-eps">Registrar autorización de la EPS</h3>
+<ul>
+<li><strong>Qué hace:</strong> completa el requisito &quot;Autorización de la EPS&quot; registrando el N° que emitió la aseguradora y, opcionalmente, su documento de soporte. También se usa para <strong>renovar</strong> una autorización rechazada o vencida.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>El <strong>N° de autorización es obligatorio</strong>; el documento (PDF o imagen) es opcional.</li>
+<li>Queda registrado el usuario que la registró y la fecha con hora (formato <code>13.OCT.2026 - 14:05</code>).</li>
+<li>Solo si el soporte es un PDF queda disponible &quot;Ver autorización&quot;; con una imagen se guarda el nombre pero no se puede abrir en el visor.</li>
+<li>Si un procedimiento no está cubierto por el contrato, el requisito aparece pendiente indicando que requiere autorización especial de la EPS.</li>
+<li>El N° y quién autoriza se precargan después en el paso 1 del wizard &quot;Nueva cirugía&quot;.</li>
+</ul>
+</li>
+</ul>
+<h3 id="vincular-valoracion-preanestesica-evapre">Vincular valoración preanestésica (EVAPRE)</h3>
+<ul>
+<li><strong>Qué hace:</strong> completa el requisito &quot;Valoración preanestésica&quot; vinculando una evaluación preanestésica (EVAPRE) ya registrada en Historia clínica.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía (la EVAPRE la genera previamente Anestesiología en Historia clínica).</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>Se elige una EVAPRE del paciente; no se diligencia un formulario. Solo se pueden vincular las que tienen clasificación ASA.</li>
+<li>El concepto se <strong>deriva del ASA</strong>: I–II → Apto; III–IV → Apto con condiciones (las recomendaciones de la EVAPRE son las condiciones); V–VI → <strong>No apto</strong>.</li>
+<li>Apto o apto con condiciones: el requisito queda Completo. <strong>No apto: el requisito queda Rechazado y la solicitud se bloquea.</strong></li>
+<li>Se precargan Asa y tipo de anestesia en el wizard &quot;Nueva cirugía&quot;.</li>
+</ul>
+</li>
+</ul>
+<h3 id="vincular-resultados-de-laboratorios-y-estudios-de-imagenes">Vincular resultados de laboratorios y estudios de imágenes</h3>
+<ul>
+<li><strong>Qué hace:</strong> completa el requisito &quot;Estudios requeridos&quot; vinculando los resultados registrados en la sección de Laboratorios de una EVAPRE del paciente (no se cargan a mano).</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li><strong>Laboratorios</strong> se piden siempre; <strong>Estudios de imágenes</strong> solo si algún procedimiento de la solicitud lo requiere (si no, quedan &quot;No requerido&quot;).</li>
+<li>Al elegir una EVAPRE se previsualizan sus resultados; solo se puede elegir una que tenga al menos un resultado.</li>
+<li>El estado del requisito &quot;Estudios requeridos&quot; resume sus dos partes: un rechazo o vencimiento prima, luego pendiente, luego completo.</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-documentos-del-chequeo">Ver documentos del chequeo</h3>
+<ul>
+<li><strong>Qué hace:</strong> abre en un visor (sin salir de la pantalla) los documentos de soporte: la orden médica y la autorización de la EPS.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li>Solo disponible cuando el requisito está completo y tiene un archivo cargado (PDF).</li>
+<li>Escape cierra únicamente el visor, no el modal de debajo.</li>
+</ul>
+</li>
+</ul>
+<h3 id="programar-cirugia-desde-una-solicitud">Programar cirugía desde una solicitud</h3>
+<ul>
+<li><strong>Qué hace:</strong> desde una solicitud lista, elegir sala, día y hora en la agenda semanal de quirófanos y continuar al wizard &quot;Nueva cirugía&quot;, que se abre con paciente, procedimientos, aseguradora, diagnóstico, autorización y duración precargados.</li>
+<li><strong>Roles con acceso:</strong> Programación de cirugía.</li>
+<li><strong>Reglas de negocio:</strong>
+<ul>
+<li><strong>Solo se puede programar una solicitud en estado &quot;Lista para programar&quot;</strong> (todos los obligatorios completos).</li>
+<li>La agenda muestra las cirugías ya programadas de la sala; una franja solo está libre si la sala (y el cirujano, si hay filtro por cirujano) lo están. Se puede ver jornada operativa (07:00–19:00) o 24 horas, y semana hábil, completa o 3 días.</li>
+<li>La duración estimada sale de la suma de los tiempos de los procedimientos, ajustada a la menor duración del catálogo que la cubre (120 min por defecto si un procedimiento no trae tiempo).</li>
+<li>Personal y equipos se eligen después, en el wizard.</li>
+<li>Al guardar la cirugía, la solicitud sale del listado; si es ambulatoria (cualquier origen distinto de Internación) se crea la admisión, y se solicita la canasta a farmacia.</li>
+<li><strong>Nota de estado actual:</strong> el botón &quot;Programar cirugía&quot; del pie del chequeo está <strong>oculto</strong> por una bandera (<code>MOSTRAR_PROGRAMAR = false</code> en <code>SolicitudPanel.jsx</code>); el flujo está construido pero hoy se llega a él desde Programación de cirugía, no desde este modal.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="notas-generales-y-limites-conocidos">Notas generales y límites conocidos</h2>
+<ul>
+<li><strong>Prototipo con datos en memoria:</strong> las solicitudes, órdenes registradas y documentos adjuntos viven en el navegador y se pierden al recargar la página. Los catálogos (instituciones, diagnósticos, CUPS, pacientes) son datos de ejemplo.</li>
+<li><strong>Permisos:</strong> no existe control de acceso por rol; el rol documentado (Programación de cirugía) es el definido para el producto, no uno que el sistema verifique hoy.</li>
+<li><strong>Documentos adjuntos:</strong> solo los PDF se pueden abrir en el visor; con imágenes se guarda el nombre pero no el enlace.</li>
+<li><strong>Pendiente de definir:</strong> si &quot;Orden médica&quot; debe seguir siendo obligatoria en el chequeo cuando la orden externa se registra sin documento (hoy lo es: la solicitud queda con pendientes hasta vincularla).</li>
+</ul>
+
+</main>
+</div>
+</body>
+</html>

@@ -7,7 +7,7 @@ import FiltrosBar from '../FiltrosBar/FiltrosBar';
 import SlotAccionesMenu from '../SlotAccionesMenu/SlotAccionesMenu';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { JORNADAS } from '@/hooks/ProgramacionSalaCirugias/gestion/agenda';
-import { SALAS } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
+import { SALAS, estaIniciada } from '@/hooks/ProgramacionSalaCirugias/mockCirugiaData';
 
 // Franjas de 30 min (mismas que gestion/agenda.js: índice 0 = 00:00). La
 // "jornada" (horas visibles) es solo una ventana sobre ellas, así que cambiarla
@@ -34,6 +34,7 @@ export default function AgendaSemana({
   sedeId, salaId, onSalaChange, estado, onEstadoChange, onSlotClick,
   cirujano = 'todos', cirujanos, onCirujanoChange, modoAgenda, onModoAgenda,
   onEditarCirugia, onReprogramarCirugia, onMarcarRealizada, onMarcarIncumplida, onCancelarCirugia,
+  onRedimensionarCirugia,
   vista, onChangeVista, jornada = '24h', onJornada, diasVista, onDiasVista,
   formato, onFormato,
 }) {
@@ -155,6 +156,12 @@ export default function AgendaSemana({
             if (hasta <= desde) return null;
             const startSlot = desde - ventana.desde;
             const spanSlots = hasta - desde;
+            // Redimensionable (arrastrar el borde inferior): programada/urgencia
+            // sin iniciar, cuyo borde inferior se ve de verdad (no recortado por
+            // la jornada) y que no cruza la medianoche.
+            const resizable = Boolean(onRedimensionarCirugia)
+              && ['programada', 'urgencia'].includes(c.estado) && !estaIniciada(c)
+              && horaASlotAbs(c.horaFin) > inicioAbs && hasta === finAbs;
             return (
               <CirugiaCard
                 key={c.id}
@@ -170,6 +177,11 @@ export default function AgendaSemana({
                 // DetalleCirugiaPanel al seleccionarla, más el tooltip
                 // nativo de CirugiaCard con el resumen completo).
                 compact={spanSlots <= SLOTS_POR_HORA}
+                compactMaxSlots={SLOTS_POR_HORA}
+                resizable={resizable}
+                onRedimensionar={onRedimensionarCirugia}
+                startRow={startSlot + 2}
+                spanSlots={spanSlots}
                 salaLabel={porCirujano ? (SALAS.find((x) => x.value === c.salaId)?.descripcion ?? c.salaId) : undefined}
                 style={{
                   gridColumn: dayIdx + 2,

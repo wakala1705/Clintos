@@ -8,6 +8,7 @@ import { INSUMOS_HOY, INSUMOS_ONCO } from './insumosOncologia.js';
 import { PROCEDIMIENTOS_CANASTA, procedimientosDeComplejidad } from './canastasProcedimientos.js';
 import { ETAPA_IDS, DESTINOS_DERIVACION } from './tablero/etapas.js';
 import { restriccionInicioActiva } from './restriccionInicio.js';
+import { rangoFinCirugia, horaFranja } from './gestion/agenda.js';
 
 export const SEDES = [
   { value: '02', label: '02 - Sede Norte' },
@@ -2360,6 +2361,30 @@ export function reprogramarCirugia(id, {
     duracionPostquirurgicaMin,
     duracionRecuperacionMin,
   });
+}
+
+// Redimensionar desde la agenda (arrastrar el borde inferior de la card): solo
+// cambia `horaFin`. El rango permitido se calcula contra TODAS las cirugías de
+// la sala, no contra la lista filtrada de la vista, que puede ocultar vecinas.
+// Solo las programadas y de urgencia son redimensionables (las realizadas,
+// canceladas, incumplidas y en curso ya no se reprograman).
+function esRedimensionable(c) {
+  return ['programada', 'urgencia'].includes(c.estado) && !estaIniciada(c);
+}
+
+export function rangoRedimensionCirugia(id) {
+  const actual = CIRUGIAS.find((c) => c.id === id);
+  if (!actual || !esRedimensionable(actual)) return null;
+  return rangoFinCirugia(actual, CIRUGIAS);
+}
+
+export function redimensionarCirugia(id, finFranja) {
+  const rango = rangoRedimensionCirugia(id);
+  if (!rango) throw new Error('Esta cirugía no se puede redimensionar.');
+  if (!Number.isInteger(finFranja) || finFranja < rango.min || finFranja > rango.max) {
+    throw new Error('La nueva hora de fin no es válida: se cruza con otra cirugía de la sala o excede el día.');
+  }
+  return actualizarCirugia(id, { horaFin: horaFranja(finFranja) });
 }
 
 // ---------- Flujo de insumos: solicitud -> entrega -> devolución ----------

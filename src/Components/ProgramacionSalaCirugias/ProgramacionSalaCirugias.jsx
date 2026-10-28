@@ -123,7 +123,7 @@ export default function ProgramacionSalaCirugias() {
     modal, setModal, toast, showToast,
     handleSubmitReprogramar, handleSubmitCancelar,
     handleReprogramarCirugia, handleCancelarCirugia,
-    handleMarcarRealizada, handleMarcarIncumplida,
+    handleMarcarRealizada, handleMarcarIncumplida, handleRedimensionarCirugia,
     handlePedirInsumos, handleVincularCanasta, handleVincularPersonal, handleVincularEquipos,
     handleActualizarPersonal, handleActualizarEquipos,
     handleCancelarSolicitud, handleConsumoRegistrado,
@@ -556,6 +556,7 @@ export default function ProgramacionSalaCirugias() {
                   onMarcarRealizada={handleMarcarRealizada}
                   onMarcarIncumplida={handleMarcarIncumplida}
                   onCancelarCirugia={handleCancelarCirugia}
+                  onRedimensionarCirugia={handleRedimensionarCirugia}
                   vista={vista}
                   onChangeVista={handleChangeVista}
                   jornada={jornada}

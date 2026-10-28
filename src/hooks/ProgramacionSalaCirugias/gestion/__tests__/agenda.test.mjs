@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   JORNADAS, desplazarHabiles, fechasDeVista, rangoFechasLabel, tresDiasHabiles, bloquesDeSala, cabe, disponibilidad, franjaDeHora, horaFranja, mapaOcupado, primeraLibre, reubicar,
-  ubicarEnPrimeraLibre,
+  ubicarEnPrimeraLibre, rangoFinCirugia, acotarFin, FIN_MAXIMO,
 } from '../agenda.js';
 
 const cir = (horaInicio, horaFin, extra = {}) => ({
@@ -76,4 +76,49 @@ test('fechasDeVista y rango', () => {
   assert.equal(fechasDeVista(false, '2026-10-11')[6], '2026-10-11');
   assert.equal(rangoFechasLabel('2026-10-06', '2026-10-08'), '6 - 8 Oct 2026');
   assert.equal(rangoFechasLabel('2026-10-29', '2026-11-02'), '29 Oct - 2 Nov 2026');
+});
+
+const en = (id, horaInicio, horaFin, extra = {}) => cir(horaInicio, horaFin, {
+  id, salaId: 's1', fecha: '2026-10-28', ...extra,
+});
+
+test('rangoFinCirugia: mínimo una franja, máximo donde empieza la siguiente', () => {
+  const a = en('a', '07:00', '09:00');
+  const b = en('b', '11:00', '12:00');
+  const r = rangoFinCirugia(a, [a, b]);
+  assert.deepEqual(r, { inicio: 14, fin: 18, min: 15, max: 22 });
+  assert.equal(acotarFin(30, r), 22);
+  assert.equal(acotarFin(3, r), 15);
+  assert.equal(acotarFin(20, r), 20);
+});
+
+test('rangoFinCirugia: ignora otra sala, otro día, canceladas e incumplidas', () => {
+  const a = en('a', '07:00', '09:00');
+  const otras = [
+    en('b', '10:00', '11:00', { salaId: 's2' }),
+    en('c', '10:00', '11:00', { fecha: '2026-10-29' }),
+    en('d', '10:00', '11:00', { estado: 'cancelada' }),
+    en('e', '10:00', '11:00', { estado: 'incumplida' }),
+  ];
+  assert.equal(rangoFinCirugia(a, [a, ...otras]).max, FIN_MAXIMO);
+});
+
+test('rangoFinCirugia: sí bloquean las de urgencia y las realizadas', () => {
+  const a = en('a', '07:00', '09:00');
+  assert.equal(rangoFinCirugia(a, [a, en('b', '10:00', '11:00', { estado: 'urgencia' })]).max, 20);
+  assert.equal(rangoFinCirugia(a, [a, en('c', '09:30', '10:00', { estado: 'realizada' })]).max, 19);
+});
+
+test('rangoFinCirugia: una cirugía que ya se cruzaba no puede estirarse pero sí acortarse', () => {
+  const a = en('a', '07:00', '10:00');
+  const b = en('b', '09:00', '10:00');
+  const r = rangoFinCirugia(a, [a, b]);
+  assert.equal(r.max, r.fin);
+  assert.equal(r.min, 15);
+});
+
+test('rangoFinCirugia: cruza la medianoche -> null; contigua no se puede estirar', () => {
+  assert.equal(rangoFinCirugia(en('a', '23:00', '02:00'), []), null);
+  const a = en('a', '07:00', '09:00');
+  assert.equal(rangoFinCirugia(a, [a, en('b', '09:00', '10:00')]).max, 18);
 });
