@@ -8,7 +8,7 @@ import useModalFocusTrap from '@/hooks/ProgramacionSalaCirugias/useModalFocusTra
 // "Pantalla de familiares" dentro de un modal de 95% x 95% del viewport, en su
 // versión clara: es la forma de mostrarla en la demo desde el Panel general
 // (en el televisor real se abre la ruta /pantalla-familiares, a pantalla
-// completa). Mantiene la clave de acceso. Escape o la X cierran el modal.
+// completa). Escape o la X cierran el modal.
 // .modal-overlay/.modal-card vienen de la feature que lo monta
 // (ProgramacionSalaCirugias/shared/shared.css).
 export default function PantallaFamiliaresModal({ onClose }) {

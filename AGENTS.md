@@ -968,9 +968,9 @@ sala de espera. Código en `@/Components/PantallaFamiliares/` y lógica en
 - **Estado**: sale de la `etapa` de la cirugía (la misma del Tablero del Panel
   general), así que mover una tarjeta ahí actualiza la pantalla. Se relee cada 5 s
   y rota de página cada 10 s si hay más de 7 filas.
-- **Acceso (DEMO)**: pide una clave en el cliente (`acceso.js`, hoy
-  `clintos2026`) que solo evita abrirla por accidente; no protege datos. Con
-  backend, validar en el servidor.
+- **Acceso**: sin clave, la ruta abre la lista directamente (se eliminó la
+  clave DEMO `clintos2026` y su componente `AccesoClave`). La ruta es pública:
+  con backend, decidir si necesita autenticación en el servidor.
 - **Excepción a "Tipografía"**: usa una escala propia `--pf-fs-*` (clamp + vw)
   y un tema propio en `.pf-screen`, porque los `--fs-*` (máx. 28px) no se
   leen a varios metros. Familia y pesos siguen siendo los del proyecto.
