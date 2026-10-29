@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Historia clínica - Hospitalización v2 — Documentación funcional · Clintos</title>
+<style>
+:root{
+  --bg:#f6f8fb;--surface:#ffffff;--ink-900:#16202e;--ink-700:#3b4757;--ink-500:#667385;
+  --border:#dde3ec;--primary:#0b63ce;--primary-50:#eaf2fd;--code-bg:#eef1f6;--th-bg:#f0f3f8;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f141b;--surface:#161d27;--ink-900:#e8edf4;--ink-700:#c0c9d6;--ink-500:#8b97a8;
+    --border:#283241;--primary:#6aa8ff;--primary-50:#17263b;--code-bg:#1d2733;--th-bg:#1b2431;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:24px;}
+body{
+  margin:0;background:var(--bg);color:var(--ink-700);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.6;
+}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;max-width:1240px;margin:0 auto;padding:32px 24px 64px;}
+nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding-right:8px;}
+nav.toc .label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);margin:0 0 10px;}
+nav.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink-700);text-decoration:none;font-size:13.5px;}
+nav.toc a:hover{background:var(--primary-50);color:var(--primary);}
+nav.toc a.toc-2{font-weight:600;color:var(--ink-900);margin-top:10px;}
+nav.toc a.toc-3{padding-left:20px;}
+main{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;min-width:0;}
+header.doc{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+header.doc .eyebrow{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--primary);margin:0 0 6px;}
+header.doc h1{margin:0;font-size:28px;line-height:1.2;color:var(--ink-900);font-weight:600;}
+h2{font-size:22px;font-weight:600;color:var(--ink-900);margin:40px 0 12px;line-height:1.3;}
+h3{font-size:17px;font-weight:600;color:var(--ink-900);margin:32px 0 10px;padding-top:20px;border-top:1px solid var(--border);line-height:1.35;}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:4px 0;}
+li > ul{margin:4px 0 6px;}
+strong{color:var(--ink-900);font-weight:600;}
+code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;}
+pre:not(.mermaid){background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.55;}
+pre:not(.mermaid) code{background:none;padding:0;font-size:inherit;}
+pre.mermaid{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;text-align:center;font-family:inherit;font-size:13px;white-space:pre;}
+pre.mermaid[data-processed]{white-space:normal;}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0;}
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px 16px 48px;}
+  nav.toc{position:static;max-height:none;}
+  main{padding:24px 20px;}
+}
+@media print{
+  body{background:#fff;color:#222;}
+  .layout{display:block;padding:0;max-width:none;}
+  nav.toc{display:none;}
+  main{border:none;padding:0;}
+  h3{break-after:avoid;}
+  pre.mermaid{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contenido">
+<p class="label">Contenido</p>
+<a class="toc-2" href="#historia-clinica-hospitalizacion-v2-sin-kora">Historia clínica - Hospitalización (v2, sin Kora)</a>
+<a class="toc-3" href="#que-ve-el-medico-y-como-se-relacionan-los-datos">Qué ve el médico y cómo se relacionan los datos</a>
+<a class="toc-3" href="#ver-los-indicadores-del-tablero">Ver los indicadores del tablero</a>
+<a class="toc-3" href="#buscar-y-filtrar-la-lista-de-pacientes">Buscar y filtrar la lista de pacientes</a>
+<a class="toc-3" href="#ver-la-tabla-de-pacientes">Ver la tabla de pacientes</a>
+<a class="toc-3" href="#abrir-la-atencion-del-paciente-boton-historia-doble-clic-ver-historia-clinica-ver-ordenes-medicas">Abrir la atención del paciente (botón &quot;Historia&quot;, doble clic, &quot;Ver historia clínica&quot;, &quot;Ver órdenes médicas&quot;)</a>
+<a class="toc-3" href="#ver-el-detalle-de-la-admision-menu-ver-detalle">Ver el detalle de la admisión (menú &quot;⋯&quot; → &quot;Ver detalle&quot;)</a>
+<a class="toc-3" href="#expandir-o-contraer-la-tabla">Expandir o contraer la tabla</a>
+<a class="toc-3" href="#actualizar-la-lista">Actualizar la lista</a>
+<a class="toc-2" href="#notas-generales-y-limites-conocidos">Notas generales y límites conocidos</a>
+<a class="toc-2" href="#prompt-para-crear-el-front-de-esta-pantalla">Prompt para crear el front de esta pantalla</a>
+</nav>
+<main>
+<header class="doc">
+<p class="eyebrow">Documentación funcional</p>
+<h1>Clintos</h1>
+</header>
+<h2 id="historia-clinica-hospitalizacion-v2-sin-kora">Historia clínica - Hospitalización (v2, sin Kora)</h2>
+<p><strong>Propósito:</strong> darle al <strong>médico tratante</strong> un tablero con sus pacientes hospitalizados para ver, de un vistazo, a quién le falta la evolución del día, quién tiene resultados nuevos o críticos y quién podría salir de alta, y desde ahí abrir la historia clínica de cada paciente. Es el equivalente médico del Panel general de Enfermería (que mira medicación y dosis): mismas camas y pacientes, distinto foco clínico.</p>
+<p><strong>Rutas:</strong></p>
+<ul>
+<li><code>/hospitalizacion/historia-clinica</code> (menú Hospitalización → Historia Clínica): tablero &quot;Mis pacientes hospitalizados&quot;. Es el alcance principal de este documento.</li>
+<li><code>/hospitalizacion/historia-clinica/[id]</code> (con <code>?tab=&lt;pestaña&gt;</code> para abrir directo en una pestaña): atención del paciente hospitalizado. Es la misma pantalla de atención de Consulta externa y de Cirugía, con su variante de Hospitalización. Aquí solo se documenta cómo se llega a ella y qué trae de propio la variante (resumen en la sección &quot;Abrir la atención del paciente&quot;); el detalle del formulario del informe quirúrgico y de las órdenes está en el documento de <a href="../modulo-cirugias/historia-clinica-cirugia.html">Historia clínica de Cirugía</a>.</li>
+</ul>
+<p><strong>Roles</strong> (el rol principal lo indicó el usuario; el resto de roles no se preguntó y se deja sin asumir; hoy el sistema no aplica permisos por rol: la sesión es un usuario de ejemplo, &quot;Administrador&quot;):</p>
+<table>
+<thead>
+<tr>
+<th>Grupo de acciones</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ver el tablero, filtrar, abrir la historia clínica y las órdenes médicas, ver el detalle de la admisión</td>
+<td><strong>Médico</strong> (rol principal)</td>
+</tr>
+<tr>
+<td>Registrar evolución, ingreso a hospitalización y demás plantillas en la atención</td>
+<td>Médico</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Pendiente de confirmar: si otros roles (médico interconsultante, jefe de piso, enfermería) pueden entrar a este tablero y con qué permisos.</p>
+</blockquote>
+<p><strong>Datos que muestra cada paciente:</strong> cama, nombre completo, documento (CC), edad, diagnóstico, estado de la evolución, fecha de ingreso con la estancia. Son los mismos pacientes, camas y diagnósticos que ve Enfermería en su Panel general.</p>
+<p><strong>Estados y marcas:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Marca</th>
+<th>Dónde</th>
+<th>Cuándo aplica</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Evolución <strong>Pendiente</strong> (etiqueta ámbar con punto)</td>
+<td>Columna Evolución</td>
+<td>El paciente tiene una evolución del día sin registrar.</td>
+</tr>
+<tr>
+<td>Evolución <strong>Al día</strong> (etiqueta verde con punto)</td>
+<td>Columna Evolución</td>
+<td>No tiene evolución pendiente.</td>
+</tr>
+<tr>
+<td><strong>Nuevo ingreso</strong> (etiqueta azul)</td>
+<td>Fecha de ingreso</td>
+<td>Ingresó hace menos de 24 horas. No se muestra la hora: la etiqueta ya dice que entró hoy.</td>
+</tr>
+<tr>
+<td><strong>N días</strong> con reloj de arena (etiqueta ámbar)</td>
+<td>Fecha de ingreso</td>
+<td>Estancia prolongada (marca curada por paciente, no calculada).</td>
+</tr>
+<tr>
+<td>Estancia en texto (&quot;8 días&quot;)</td>
+<td>Fecha de ingreso</td>
+<td>Cualquier otro caso.</td>
+</tr>
+<tr>
+<td><strong>Alta probable</strong></td>
+<td>Filtro y KPI</td>
+<td>El médico marcó al paciente para egreso hoy o mañana.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="que-ve-el-medico-y-como-se-relacionan-los-datos">Qué ve el médico y cómo se relacionan los datos</h3>
+<p>Todo lo que muestra el tablero (KPIs, tabla, contadores de filtro, pie) sale de la <strong>misma lista de pacientes ya recortada por el selector de área</strong>. Nunca hay un número que no cuadre con las filas visibles.</p>
+<pre class="mermaid">
+flowchart TD
+    A["Pacientes hospitalizados&lt;br/&gt;(los del piso)"] --&gt; B{"Selector de área&lt;br/&gt;Todo el área / Sector norte / Sector sur"}
+    B --&gt; C["Pacientes del área"]
+    C --&gt; D["KPIs&lt;br/&gt;(siempre sobre el área, no sobre el filtro rápido)"]
+    C --&gt; E{"Filtro rápido&lt;br/&gt;Todos / Prolongados / Alta probable"}
+    E --&gt; F{"Búsqueda&lt;br/&gt;paciente, cama, historia, diagnóstico"}
+    F --&gt; G["Tabla de pacientes&lt;br/&gt;+ pie 'Mostrando X de Y'"]
+    G --&gt; H{"Acción sobre una fila"}
+    H -- "Clic" --&gt; I["Selecciona (resalta) la fila"]
+    H -- "Doble clic o botón Historia" --&gt; J["Abre la atención&lt;br/&gt;/hospitalizacion/historia-clinica/id"]
+    H -- "Menú ⋯" --&gt; L["Ver detalle / Ver historia /&lt;br/&gt;Ver órdenes"]
+</pre>
+<hr>
+<h3 id="ver-los-indicadores-del-tablero">Ver los indicadores del tablero</h3>
+<ul>
+<li><strong>Qué hace:</strong> muestra 4 tarjetas con lo que el médico debe atender hoy, calculadas sobre los pacientes del área elegida.<ul>
+<li><strong>Mis pacientes</strong> (neutro): total de pacientes; descripción &quot;En piso&quot;.</li>
+<li><strong>Evolución pendiente</strong> (ámbar): pacientes sin nota del día; descripción &quot;Sin nota del día&quot;.</li>
+<li><strong>Resultados nuevos</strong> (azul): resultados sin revisar; la descripción dice &quot;N críticos&quot; (y la tarjeta pasa a rojo) o &quot;Sin críticos&quot;.</li>
+<li><strong>Altas probables</strong> (verde): pacientes marcados para egreso hoy o mañana; descripción &quot;Egreso hoy o mañana&quot;.</li>
+</ul>
+</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Son solo informativas (no filtran la tabla al hacer clic).</li>
+<li>Cambian con el selector de área, no con el filtro rápido ni con la búsqueda.</li>
+<li>Dos densidades: expandida (con descripción) y compacta (una sola línea: ícono y etiqueta a la izquierda, valor a la derecha). Ver &quot;Expandir o contraer la tabla&quot;.</li>
+<li>Con menos de 1281 px de ancho pasan de 4 columnas a 2.</li>
+<li>&quot;Órdenes por firmar&quot; se quitó como KPI por decisión explícita; las órdenes siguen disponibles por paciente (menú &quot;⋯&quot; → &quot;Ver órdenes médicas&quot;).</li>
+</ul>
+</li>
+</ul>
+<h3 id="buscar-y-filtrar-la-lista-de-pacientes">Buscar y filtrar la lista de pacientes</h3>
+<ul>
+<li><strong>Qué hace:</strong> acota la lista con tres controles en una sola fila de herramientas.<ul>
+<li><strong>Búsqueda</strong> (&quot;Buscar paciente, cama, diagnóstico...&quot;): coincide con nombre, cama, número de historia (HC-xxxxx) y diagnóstico; ignora mayúsculas; tiene botón para limpiar.</li>
+<li><strong>Filtro rápido</strong> (selector segmentado con contador): <strong>Todos</strong>, <strong>Prolongados</strong>, <strong>Alta probable</strong>.</li>
+<li><strong>Selector de área:</strong> <strong>Todo el área</strong> (por defecto), <strong>Sector norte</strong> (habitaciones 101 a 104) y <strong>Sector sur</strong> (105 a 107). El sector se deduce del número de la cama.</li>
+</ul>
+</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Los tres se combinan (área, luego filtro rápido, luego búsqueda).</li>
+<li>El contador de cada chip del filtro rápido se calcula sobre el área elegida, antes de la búsqueda.</li>
+<li>Si el filtro deja la lista vacía: &quot;No hay pacientes para mostrar. Prueba con otro filtro, otra área o una búsqueda distinta.&quot;</li>
+<li>Si el paciente seleccionado queda fuera del área elegida, la selección se descarta sola.</li>
+<li>El filtro <strong>&quot;Con pendientes&quot;</strong> existe en el código pero está <strong>oculto</strong> (la columna Pendientes también) hasta definir de qué son esos pendientes.</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-la-tabla-de-pacientes">Ver la tabla de pacientes</h3>
+<ul>
+<li><strong>Qué hace:</strong> una fila por paciente con: <strong>Cama</strong>, <strong>Paciente</strong> (nombre en mayúsculas y debajo &quot;CC documento · edad&quot;), <strong>Diagnóstico</strong>, <strong>Evolución</strong> (Pendiente / Al día), <strong>Fecha de ingreso</strong> (con &quot;Nuevo ingreso&quot;, estancia prolongada o &quot;- N días&quot;) y <strong>Acciones</strong> (botón &quot;Historia&quot; y menú &quot;⋯&quot;).</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Fecha en formato <code>DD.MES.AAAA</code> (20.OCT.2026).</li>
+<li>Encabezado fijo; la tabla scrollea por dentro de su tarjeta.</li>
+<li><strong>Clic</strong> en la fila la selecciona (resalta); clic de nuevo sobre la seleccionada la deselecciona. <strong>Doble clic</strong> abre la historia. Con teclado: Enter o espacio selecciona; Enter sobre la fila ya seleccionada la abre.</li>
+<li>Los clics dentro de la columna Acciones no seleccionan ni abren la fila.</li>
+<li>Por debajo de 769 px la tabla se reemplaza por <strong>tarjetas</strong> (una por paciente) con los mismos datos y acciones.</li>
+<li>Sin paginación: se ven todos los pacientes del área.</li>
+</ul>
+</li>
+</ul>
+<h3 id="abrir-la-atencion-del-paciente-boton-historia-doble-clic-ver-historia-clinica-ver-ordenes-medicas">Abrir la atención del paciente (botón &quot;Historia&quot;, doble clic, &quot;Ver historia clínica&quot;, &quot;Ver órdenes médicas&quot;)</h3>
+<ul>
+<li><strong>Qué hace:</strong> lleva a <code>/hospitalizacion/historia-clinica/[id]</code>. &quot;Ver órdenes médicas&quot; la abre directo en la pestaña de Órdenes médicas (<code>?tab=ordenes-medicas</code>); las demás vías, en la pestaña Historia clínica.</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Banner del paciente (variante hospitalización, contraído por defecto): N° de admisión, fecha de ingreso con estancia, cama, médico tratante, diagnóstico; chip de <strong>alergias</strong> si las tiene.</li>
+<li>Pestañas habilitadas hoy: <strong>Historia clínica</strong> y <strong>Órdenes médicas</strong>. Incapacidades, Consentimiento informado, Resultados, Alergias, Alertas y Archivos aparecen deshabilitadas (no construidas).</li>
+<li><strong>Nueva atención</strong> abre el catálogo de plantillas de Hospitalización (52 plantillas, con columna &quot;Sexo&quot; a quién aplica). Hoy solo tienen formulario construido <strong>Ingreso a hospitalización</strong>, <strong>Evaluación preanestésica</strong> e <strong>Informe quirúrgico</strong>. Elegir otra muestra un aviso de que su formulario todavía no está construido. El botón &quot;+&quot; de un grupo de registros abre directo la plantilla que coincide con ese tipo; si no hay una asociada, avisa.</li>
+<li>Si el paciente no existe o ya no está hospitalizado: &quot;No encontramos este paciente&quot; y botón &quot;Volver a mis pacientes&quot;.</li>
+<li>Los registros de la pestaña Historia clínica son de ejemplo y son los mismos para todos los pacientes hospitalizados.</li>
+</ul>
+</li>
+</ul>
+<h3 id="ver-el-detalle-de-la-admision-menu-ver-detalle">Ver el detalle de la admisión (menú &quot;⋯&quot; → &quot;Ver detalle&quot;)</h3>
+<ul>
+<li><strong>Qué hace:</strong> abre un modal de solo lectura con la admisión del paciente.<ul>
+<li>Franja de identidad: avatar, nombre, documento, edad detallada (&quot;52 años 3 meses 10 días&quot;), sexo, fecha y hora de ingreso, estancia, cama; N° de admisión e historia en el subtítulo.</li>
+<li>4 secciones: <strong>Admisión</strong> (área funcional de ingreso y actual, habitación/cama, médico tratante, diagnóstico de ingreso), <strong>Contratación</strong> (contratante, tipo de contrato, régimen), <strong>Acompañante</strong> (nombre, vínculo, teléfono, dirección) y <strong>Trazabilidad</strong> (médico de ingreso, usuario que ingresa, usuario que da alta).</li>
+</ul>
+</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong><ul>
+<li>Un dato sin valor se muestra como &quot;—&quot;, nunca una fila vacía.</li>
+<li>&quot;Usuario que da alta&quot; queda vacío: el paciente sigue hospitalizado.</li>
+<li>Botón &quot;Ver historia clínica&quot; abre la atención; Escape o &quot;Cerrar&quot; cierra el modal.</li>
+<li>Es el mismo modal que usan Admisiones y Enfermería → Pacientes.</li>
+</ul>
+</li>
+</ul>
+<h3 id="expandir-o-contraer-la-tabla">Expandir o contraer la tabla</h3>
+<ul>
+<li><strong>Qué hace:</strong> el botón de solo ícono al extremo derecho de la barra (flechas hacia afuera / hacia adentro) compacta los 4 KPIs a una línea y le cede ese alto a la tabla.</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong> no se recuerda entre visitas (siempre arranca expandido); tiene estado pulsado accesible.</li>
+</ul>
+<h3 id="actualizar-la-lista">Actualizar la lista</h3>
+<ul>
+<li><strong>Qué hace:</strong> el pie de la tarjeta muestra &quot;Mostrando X de Y pacientes · Actualizado a las HH:mm&quot; y el enlace &quot;Actualizar&quot;.</li>
+<li><strong>Roles con acceso:</strong> Médico.</li>
+<li><strong>Reglas de negocio:</strong> X cambia con filtro y búsqueda; Y es el total del área. Hoy &quot;Actualizar&quot; solo renueva la hora (los datos son fijos); con backend volvería a pedir la lista.</li>
+</ul>
+<hr>
+<h2 id="notas-generales-y-limites-conocidos">Notas generales y límites conocidos</h2>
+<ul>
+<li><strong>Datos de ejemplo:</strong> los pacientes son los del piso de Enfermería (mismas camas, diagnósticos y estancias). Los pendientes clínicos (evolución, órdenes, resultados, resultados críticos) y las altas probables son valores fijos de ejemplo; con backend deben salir del registro de evoluciones, de las órdenes y del laboratorio.</li>
+<li><strong>Ocultos por decisión:</strong> el panel lateral &quot;Pendientes clínicos&quot; (top 5 por prioridad: crítico &gt; evolución &gt; orden &gt; resultado normal), la columna &quot;Pendientes&quot; y el filtro &quot;Con pendientes&quot;. El código sigue y se reactiva con una constante; hoy &quot;Resultados nuevos&quot; y &quot;Evolución pendiente&quot; son la única señal de pendientes.</li>
+<li><strong>Sin ordenación manual:</strong> las filas salen en el orden de las camas; las columnas no se ordenan por clic.</li>
+<li><strong>Sin selección múltiple ni acciones masivas.</strong></li>
+<li><strong>Documento ficticio:</strong> el CC que se muestra se deriva del número de historia; no es un documento real.</li>
+<li><strong>Sede:</strong> el tablero no lleva selector de sede propio; usa la de la barra superior.</li>
+<li><strong>Fuera de alcance:</strong> formularios de plantillas (Ingreso, Evaluación preanestésica, Informe quirúrgico) y pestaña de Órdenes médicas, que son de la pantalla de atención.</li>
+</ul>
+<hr>
+<h2 id="prompt-para-crear-el-front-de-esta-pantalla">Prompt para crear el front de esta pantalla</h2>
+<p>Brief para un diseñador o desarrollador que deba construir (o reconstruir) el tablero desde cero. Es autocontenido: no depende del código existente.</p>
+<pre><code>Necesito diseñar y construir el tablero "Historia Clínica - Hospitalización" de un sistema clínico hospitalario (producto Clintos). Es la pantalla con la que un médico revisa sus pacientes hospitalizados y entra a la historia clínica de cada uno. Todo el texto de la interfaz va en español.
+
+OBJETIVO
+Que el médico, en una mirada, sepa a cuántos pacientes tiene a cargo, a quiénes les falta la nota de evolución del día, cuántos resultados nuevos (y cuántos críticos) tiene sin revisar y quiénes podrían salir de alta hoy o mañana; y que llegue a la historia de cualquier paciente en un clic.
+
+USUARIO
+Médico tratante. Un solo rol en esta pantalla; no hay acciones que cambien datos (es un tablero de consulta y entrada).
+
+ESTADOS (siempre con texto, nunca solo color)
+- Evolución "Pendiente": etiqueta ámbar con punto de color.
+- Evolución "Al día": etiqueta verde con punto de color.
+- "Nuevo ingreso": etiqueta azul junto a la fecha (menos de 24 h; sin hora).
+- Estancia prolongada: etiqueta ámbar con ícono de reloj de arena y los días ("22 días").
+
+PANTALLA (escritorio, 1025 px o más)
+Dentro del marco de la aplicación (barra lateral azul colapsada, y barra superior con migas "Hospitalización > Historia Clínica", selector de sede y de área y menú de usuario):
+1) Encabezado: título "Historia Clínica - Hospitalización" (24 px, seminegrita) y debajo "Mis pacientes hospitalizados". Sin botones de acción.
+2) Fila de 4 indicadores en cuadrícula de 4 columnas con 16 px de separación (tarjetas con ícono en cuadro de color suave, etiqueta en mayúsculas pequeñas, valor grande en negrita y descripción gris): "Mis pacientes" (neutro, "En piso"), "Evolución pendiente" (ámbar, "Sin nota del día"), "Resultados nuevos" (azul; descripción "N críticos" y tarjeta roja si hay críticos, "Sin críticos" si no) y "Altas probables" (verde, "Egreso hoy o mañana"). Solo informativos. Dos densidades: expandida y compacta (una sola línea: ícono y etiqueta a la izquierda, valor a la derecha, sin descripción).
+3) Tarjeta principal blanca (borde fino, esquinas de 12 px) que ocupa todo el alto restante y scrollea por dentro:
+   a) Barra de herramientas en UNA sola fila, de izquierda a derecha: buscador con lupa y placeholder "Buscar paciente, cama, diagnóstico..." (con botón para limpiar); espacio flexible; selector segmentado "Todos (15) | Prolongados (3) | Alta probable (3)" con contador entre paréntesis en cada opción; selector desplegable de área con ícono de ubicación ("Todo el área", "Sector norte", "Sector sur"); botón cuadrado de solo ícono "Expandir tabla / Contraer tabla" (flechas hacia afuera / hacia adentro; con estado pulsado) que compacta los indicadores. Todos los controles miden 36 px de alto.
+   b) Tabla con columnas: Cama · Paciente (nombre en mayúsculas y seminegrita; debajo, en gris pequeño, "CC 1048291 · 67 años") · Diagnóstico · Evolución (etiqueta Pendiente / Al día) · Fecha de ingreso ("20.OCT.2026 - 8 días"; con etiqueta "Nuevo ingreso" o con la etiqueta de estancia prolongada cuando aplique) · Acciones (botón secundario pequeño con ícono de documento y texto "Historia", y un menú "⋯"). Encabezado fijo al hacer scroll, texto de 12 px en seminegrita, sin mayúsculas, fondo gris muy claro. Fila clicable y enfocable: clic la selecciona (fondo azul suave y una barra azul de 3 px a la izquierda), clic de nuevo la deselecciona, doble clic abre la historia; Enter/espacio selecciona y Enter sobre la seleccionada la abre. Los clics en la columna Acciones no activan la fila. Sin paginación.
+   c) Menú "⋯" (se abre sobre la fila, hacia arriba si no hay espacio): "Ver detalle" (ícono de tarjeta de identidad), "Ver historia clínica" (documento), "Ver órdenes médicas" (portapapeles; abre la historia directo en esa pestaña).
+   d) Pie de la tarjeta: "Mostrando 15 de 15 pacientes · Actualizado a las 04:26 p. m." y enlace con ícono "Actualizar".
+4) Modal "Detalle de admisión" (ancho medio, cabecera con título, subtítulo "Admisión N.º · Historia HC-xxxxx" y botón cerrar; pie con "Cerrar" y "Ver historia clínica"): franja con avatar de iniciales, nombre, documento, edad detallada y sexo, más ingreso, estancia y cama; y cuatro secciones de pares etiqueta/valor — Admisión, Contratación, Acompañante, Trazabilidad. Dato sin valor = "—".
+
+TABLET (768 a 1024 px)
+Barra lateral colapsada. Los KPIs pasan a 2 columnas por debajo de 1281 px. La tabla se mantiene.
+
+MÓVIL (menos de 769 px)
+La tabla se reemplaza por tarjetas apiladas (una por paciente): arriba nombre y "Cama 101-A · CC …" con la etiqueta de evolución a la derecha; debajo diagnóstico y edad, e ingreso; abajo, alineados a la derecha, el botón "Historia" y el menú "⋯". Misma selección y doble toque abre.
+
+ESTADOS DE LA INTERFAZ
+- Vacío (filtro o búsqueda sin resultados): mensaje centrado "No hay pacientes para mostrar" y debajo "Prueba con otro filtro, otra área o una búsqueda distinta."
+- Si el paciente seleccionado queda fuera del área elegida, se deselecciona solo.
+- Los indicadores cambian con el área, no con el filtro rápido ni con la búsqueda; el contador de cada opción del filtro rápido también se calcula solo con el área.
+
+ESTILO
+Sistema de diseño sobrio y clínico. Azul primario para acciones y selección; ámbar, verde, azul y rojo solo como estados, siempre acompañados de texto. Tipografía del sistema (system-ui). Escala: 11, 12, 14, 16, 18, 20, 24 y 28 px; títulos en seminegrita (600), cifras de los indicadores en negrita (700). Fechas con formato DD.MES.AAAA (20.OCT.2026). Íconos de línea (estilo Lucide). Foco visible de 2 px en todos los controles; respeta el tema claro y oscuro.
+
+ACCESIBILIDAD
+Tabla con encabezados reales y fila seleccionada anunciada (aria-selected). Columna de acciones con encabezado oculto "Acciones". Contador del pie con anuncio educado (aria-live). Menú "⋯" con etiqueta "Más acciones para <paciente>", navegable con flechas, Inicio/Fin y Escape (devuelve el foco al botón). Botón expandir con aria-pressed y etiqueta cambiante.
+
+DATOS DE EJEMPLO PARA EL PROTOTIPO
+15 pacientes en camas 101-A a 107-B. Ejemplo: 101-A María Fernanda González Restrepo, CC 1048291, 67 años, "Neumonía adquirida en comunidad", evolución Pendiente, ingreso 20.OCT.2026 - 8 días. 102-B Jorge Iván Ramírez Ospina, 48 años, "Colecistitis aguda", Al día, 28.OCT.2026 con "Nuevo ingreso". 103-A Patricia Elena López Cardona, 71 años, "EPOC exacerbado", Pendiente, 06.OCT.2026 con estancia prolongada "22 días". KPIs de ejemplo: 15 pacientes, 5 evoluciones pendientes, 5 resultados nuevos (2 críticos), 3 altas probables.
+
+FUERA DE ALCANCE
+La pantalla de atención del paciente (banner, pestañas Historia clínica y Órdenes médicas, formularios de plantillas): solo hay que enlazarla desde el botón "Historia" y las opciones del menú.</code></pre>
+
+</main>
+</div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.esm.min.mjs';
+const oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: oscuro ? 'dark' : 'default', flowchart: { htmlLabels: true, curve: 'basis' } });
+</script>
+</body>
+</html>
