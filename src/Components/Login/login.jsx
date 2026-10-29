@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LuChevronDown, LuEye, LuEyeOff, LuBuilding2, LuMapPin,
@@ -11,6 +11,7 @@ import AreaFuncionalPickerModal from '@/Components/AreaFuncionalPickerModal/Area
 import { setActiveModule } from '@/hooks/Session/session';
 import { setAreaFuncionalSeleccionada } from '@/hooks/AreaFuncional/areaFuncional';
 import ModuleCard from './ModuleCard/ModuleCard';
+import PantallaIngreso from './PantallaIngreso/PantallaIngreso';
 import styles from './login.module.css';
 
 const COMPANY_OPTIONS = [
@@ -59,6 +60,24 @@ const ADMIN_MODULE = {
 // carga este tiempo antes de abrir el picker de área funcional / navegar.
 const LOGIN_DELAY_MS = 1200;
 
+// Tiempo mínimo que se ve la pantalla de ingreso aunque el backend responda
+// rápido, para que el saludo alcance a leerse sin un parpadeo.
+const INGRESO_MIN_MS = 4000;
+
+const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Punto de enganche del llamado al backend previo al home (hoy no hay uno: los
+// datos son mock). Cuando exista, devolver acá su promesa -- la pantalla de
+// ingreso espera a que resuelva (y al mínimo de arriba) antes de navegar.
+const cargarDatosIniciales = () => Promise.resolve();
+
+const SEDE_LABELS = { sede1: 'Sede 1', sede2: 'Sede 2' };
+
+const nombrePila = (name) => {
+  const primero = name.trim().split(/\s+/)[0] ?? '';
+  return primero.charAt(0).toUpperCase() + primero.slice(1);
+};
+
 export default function Login() {
   const router = useRouter();
   const [step, setStep] = useState('module');
@@ -73,6 +92,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [areaPickerAbierto, setAreaPickerAbierto] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [areaIngreso, setAreaIngreso] = useState('');
   const loginTimerRef = useRef(null);
 
   useEffect(() => () => clearTimeout(loginTimerRef.current), []);
@@ -141,15 +161,31 @@ export default function Login() {
         setLoading(false);
         setAreaPickerAbierto(true);
       } else {
-        // Se mantiene el estado de carga hasta que la ruta nueva desmonte login.
-        router.push(selectedModule?.route ?? '/home');
+        iniciarIngreso();
       }
     }, LOGIN_DELAY_MS);
   };
 
+  // Muestra PantallaIngreso y navega al home cuando pasó el mínimo de tiempo y
+  // el backend respondió. Con startTransition la pantalla sigue visible hasta
+  // que la ruta nueva esté lista, en vez de dejar el login congelado.
+  const iniciarIngreso = async () => {
+    setStep('ingresando');
+    try {
+      await Promise.all([esperar(INGRESO_MIN_MS), cargarDatosIniciales()]);
+      startTransition(() => router.push(selectedModule?.route ?? '/home'));
+    } catch {
+      setLoading(false);
+      setStep('login');
+      setError('No pudimos cargar tu sesión. Intenta de nuevo.');
+    }
+  };
+
   const handleAreaSeleccionada = (area) => {
     setAreaFuncionalSeleccionada(area.id);
-    router.push(selectedModule?.route ?? '/home');
+    setAreaIngreso(area.descripcion?.toLowerCase() ?? '');
+    setAreaPickerAbierto(false);
+    iniciarIngreso();
   };
 
   return (
@@ -303,6 +339,15 @@ export default function Login() {
           )}
         </div>
       </div>
+
+      {step === 'ingresando' && (
+        <PantallaIngreso
+          nombre={nombrePila(form.name)}
+          rol={selectedModule?.label ?? 'Asistencial HIS'}
+          area={areaIngreso}
+          sede={SEDE_LABELS[form.area] ?? 'Sede 1'}
+        />
+      )}
 
       {areaPickerAbierto && (
         <AreaFuncionalPickerModal

@@ -1,0 +1,171 @@
+/* Overlay a pantalla completa sobre el login. Los tokens (--fs-*, --fw-*) vienen
+   de globals.css; los colores van locales porque Login no declara todos los
+   tokens de color de la feature. */
+.pi-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f7f9fd;
+  animation: pi-fade-in .25s ease-out;
+}
+
+.pi-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.pi-check-halo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #d9ece3;
+  margin-bottom: 28px;
+  animation: pi-pop .45s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+
+.pi-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #1f9d55;
+}
+
+.pi-check-icon {
+  width: 36px;
+  height: 36px;
+  color: #fff;
+}
+
+.pi-title {
+  margin: 0 0 12px;
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-semibold);
+  color: #101827;
+}
+
+.pi-context {
+  width: 100%;
+  margin-top: 40px;
+  padding: 16px 20px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #e5e8ef;
+  border-radius: 12px;
+}
+
+.pi-context-eyebrow {
+  margin: 0 0 10px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.pi-context-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pi-context-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #0065cd;
+}
+
+.pi-context-main {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: #101827;
+  text-transform: capitalize;
+}
+
+.pi-context-sub {
+  margin: 2px 0 0;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  color: #48546e;
+}
+
+.pi-progress-block {
+  width: 100%;
+  margin-top: 40px;
+}
+
+.pi-progress-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: var(--fs-base);
+  color: #48546e;
+}
+
+.pi-spinner {
+  width: 16px;
+  height: 16px;
+  color: #0065cd;
+  animation: pi-spin .8s linear infinite;
+}
+
+.pi-progress-track {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e5e8ef;
+}
+
+/* Sin porcentaje real (no sabemos cuánto tarda el backend): avanza rápido y se
+   frena cerca del final hasta que la ruta nueva desmonte esta pantalla. */
+.pi-progress-bar {
+  width: 92%;
+  height: 100%;
+  border-radius: 4px;
+  background: #0065cd;
+  transform-origin: left;
+  animation: pi-progress 4s cubic-bezier(.1, .7, .2, 1) both;
+}
+
+@keyframes pi-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes pi-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pi-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pi-pop {
+  from { opacity: 0; transform: scale(.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pi-screen,
+  .pi-check-halo { animation: none; }
+  .pi-spinner { animation-duration: 2s; }
+  .pi-progress-bar { animation-duration: 8s; }
+}

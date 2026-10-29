@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceso - Pantalla de ingreso — Documentación funcional · Clintos</title>
+<style>
+:root{
+  --bg:#f6f8fb;--surface:#ffffff;--ink-900:#16202e;--ink-700:#3b4757;--ink-500:#667385;
+  --border:#dde3ec;--primary:#0b63ce;--primary-50:#eaf2fd;--code-bg:#eef1f6;--th-bg:#f0f3f8;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f141b;--surface:#161d27;--ink-900:#e8edf4;--ink-700:#c0c9d6;--ink-500:#8b97a8;
+    --border:#283241;--primary:#6aa8ff;--primary-50:#17263b;--code-bg:#1d2733;--th-bg:#1b2431;
+  }
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:24px;}
+body{
+  margin:0;background:var(--bg);color:var(--ink-700);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.6;
+}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;max-width:1240px;margin:0 auto;padding:32px 24px 64px;}
+nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding-right:8px;}
+nav.toc .label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);margin:0 0 10px;}
+nav.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink-700);text-decoration:none;font-size:13.5px;}
+nav.toc a:hover{background:var(--primary-50);color:var(--primary);}
+nav.toc a.toc-2{font-weight:600;color:var(--ink-900);margin-top:10px;}
+nav.toc a.toc-3{padding-left:20px;}
+main{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;min-width:0;}
+header.doc{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+header.doc .eyebrow{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--primary);margin:0 0 6px;}
+header.doc h1{margin:0;font-size:28px;line-height:1.2;color:var(--ink-900);font-weight:600;}
+h2{font-size:22px;font-weight:600;color:var(--ink-900);margin:40px 0 12px;line-height:1.3;}
+h3{font-size:17px;font-weight:600;color:var(--ink-900);margin:32px 0 10px;padding-top:20px;border-top:1px solid var(--border);line-height:1.35;}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:4px 0;}
+li > ul{margin:4px 0 6px;}
+strong{color:var(--ink-900);font-weight:600;}
+code{background:var(--code-bg);padding:1px 6px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;}
+pre:not(.mermaid){background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.55;}
+pre:not(.mermaid) code{background:none;padding:0;font-size:inherit;}
+pre.mermaid{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin:14px 0 20px;overflow-x:auto;text-align:center;font-family:inherit;font-size:13px;white-space:pre;}
+pre.mermaid[data-processed]{white-space:normal;}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0;}
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{background:var(--th-bg);color:var(--ink-900);font-weight:600;font-size:13px;}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px 16px 48px;}
+  nav.toc{position:static;max-height:none;}
+  main{padding:24px 20px;}
+}
+@media print{
+  body{background:#fff;color:#222;}
+  .layout{display:block;padding:0;max-width:none;}
+  nav.toc{display:none;}
+  main{border:none;padding:0;}
+  h3{break-after:avoid;}
+  pre.mermaid{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contenido">
+<p class="label">Contenido</p>
+<a class="toc-2" href="#acceso-pantalla-de-ingreso-estado-de-carga-al-iniciar-sesion">Acceso - Pantalla de ingreso (estado de carga al iniciar sesión)</a>
+<a class="toc-3" href="#regla-principal-tiempo-minimo-de-4-segundos">Regla principal: tiempo mínimo de 4 segundos</a>
+<a class="toc-3" href="#cuando-se-dispara">Cuándo se dispara</a>
+<a class="toc-3" href="#contenido-de-la-pantalla">Contenido de la pantalla</a>
+<a class="toc-3" href="#animaciones">Animaciones</a>
+<a class="toc-3" href="#estados-y-errores">Estados y errores</a>
+<a class="toc-3" href="#accesibilidad">Accesibilidad</a>
+<a class="toc-3" href="#estilos-y-tokens">Estilos y tokens</a>
+<a class="toc-3" href="#como-conectar-el-backend-real">Cómo conectar el backend real</a>
+<a class="toc-3" href="#limites-conocidos">Límites conocidos</a>
+<a class="toc-2" href="#prompt-para-crear-el-front-de-esta-pantalla">Prompt para crear el front de esta pantalla</a>
+</nav>
+<main>
+<header class="doc">
+<p class="eyebrow">Documentación funcional</p>
+<h1>Clintos</h1>
+</header>
+<h2 id="acceso-pantalla-de-ingreso-estado-de-carga-al-iniciar-sesion">Acceso - Pantalla de ingreso (estado de carga al iniciar sesión)</h2>
+<p><strong>Propósito:</strong> cubrir el tiempo que el sistema tarda en cargar el home después del login. Hoy, al elegir el área funcional, el backend tarda entre 3 y 4 segundos en dejar listo el home y el usuario veía el login congelado, sin saber si algo estaba pasando. La <strong>pantalla de ingreso</strong> le confirma que su sesión fue aceptada (&quot;Hola, Camilo&quot;), le dice dónde va a quedar parado (área funcional y sede) y le muestra que el sistema está cargando.</p>
+<p><strong>Dónde vive:</strong> no es una ruta. Es una pantalla a pantalla completa que se monta <strong>encima del login</strong> (<code>/Login</code>) cuando el usuario termina de autenticarse y se desmonta sola cuando el home está listo. Código de referencia: <code>src/Components/Login/PantallaIngreso/</code> (presentación) y <code>src/Components/Login/login.jsx</code> (lógica de tiempos y navegación).</p>
+<p><strong>Alcance:</strong> escritorio (diseño centrado, probado a 1440×900). Teléfono no está en alcance todavía, igual que el resto del login.</p>
+<hr />
+<h3 id="regla-principal-tiempo-minimo-de-4-segundos">Regla principal: tiempo mínimo de 4 segundos</h3>
+<p>La pantalla se muestra <strong>como mínimo 4 segundos, aunque el backend responda en 300 ms</strong>. El motivo es doble: que el saludo y el contexto alcancen a leerse, y evitar un parpadeo (pantalla que aparece y desaparece al instante).</p>
+<p>La navegación al home ocurre cuando se cumplen <strong>las dos condiciones a la vez</strong>:</p>
+<ol>
+<li>pasaron al menos 4 000 ms desde que apareció la pantalla, <strong>y</strong></li>
+<li>la carga inicial del backend terminó.</li>
+</ol>
+<p>Lo que ocurra más tarde manda:</p>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th>Tiempo que se ve la pantalla</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend responde en 300 ms</td>
+<td><strong>4 s</strong> (se espera el mínimo)</td>
+</tr>
+<tr>
+<td>Backend responde en 3 s</td>
+<td><strong>4 s</strong> (el backend llegó antes del mínimo)</td>
+</tr>
+<tr>
+<td>Backend responde en 6 s</td>
+<td><strong>6 s</strong> (se espera al backend)</td>
+</tr>
+<tr>
+<td>Backend falla (a cualquier segundo)</td>
+<td>Se sale de inmediato, sin esperar el mínimo: vuelve al login con un mensaje de error</td>
+</tr>
+</tbody>
+</table>
+<p>Tras iniciar la navegación, la pantalla <strong>sigue visible hasta que la ruta del home esté lista</strong> (no se tapa el login y se deja ver la transición). El tiempo real puede sumar un poco más por el render del home.</p>
+<p>La implementación de referencia es esta (en <code>login.jsx</code>):</p>
+<pre><code class="language-js">const INGRESO_MIN_MS = 4000;
+const esperar = (ms) =&gt; new Promise((resolve) =&gt; setTimeout(resolve, ms));
+
+// Punto de enganche del backend: devolver acá la promesa real.
+const cargarDatosIniciales = () =&gt; Promise.resolve();
+
+const iniciarIngreso = async () =&gt; {
+  setStep('ingresando');                       // monta la pantalla
+  try {
+    await Promise.all([esperar(INGRESO_MIN_MS), cargarDatosIniciales()]);
+    startTransition(() =&gt; router.push(route)); // la pantalla sigue hasta que el home esté listo
+  } catch {
+    setStep('login');
+    setError('No pudimos cargar tu sesión. Intenta de nuevo.');
+  }
+};
+</code></pre>
+<p><code>Promise.all</code> rechaza apenas una de las dos promesas falla, por eso un error del backend no espera los 4 segundos.</p>
+<hr />
+<h3 id="cuando-se-dispara">Cuándo se dispara</h3>
+<table>
+<thead>
+<tr>
+<th>Módulo elegido</th>
+<th>Flujo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Asistencial HIS</td>
+<td>Login → picker de área funcional → el usuario elige el área y pulsa &quot;Seleccionar&quot; → <strong>pantalla de ingreso</strong> → home</td>
+</tr>
+<tr>
+<td>Contable</td>
+<td>Login (botón con spinner 1,2 s) → <strong>pantalla de ingreso</strong> (sin fila de área) → home</td>
+</tr>
+<tr>
+<td>Administrador</td>
+<td>Igual que Contable</td>
+</tr>
+</tbody>
+</table>
+<p>Al elegir el área se cierra el picker, se guarda el área funcional seleccionada y se monta la pantalla en el mismo instante.</p>
+<hr />
+<h3 id="contenido-de-la-pantalla">Contenido de la pantalla</h3>
+<p>De arriba hacia abajo, centrado en el viewport, ancho máximo del contenido <strong>480 px</strong>:</p>
+<ol>
+<li><strong>Check de éxito:</strong> círculo verde de 72 px con un check blanco de 36 px, dentro de un halo verde claro de 112 px.</li>
+<li><strong>Saludo:</strong> &quot;Hola, {nombre}&quot; en <code>--fs-4xl</code> / <code>--fw-semibold</code>.</li>
+<li><strong>Rol:</strong> <code>Badge</code> con <code>tone=&quot;info&quot;</code> (azul claro).</li>
+<li><strong>Tarjeta &quot;Iniciando en&quot;:</strong> etiqueta &quot;INICIANDO EN&quot; en mayúsculas (<code>--fs-xs</code>), ícono de ubicación azul, <strong>área funcional</strong> como título (<code>--fs-lg</code> / <code>--fw-semibold</code>) y <strong>sede</strong> como subtítulo (<code>--fs-base</code>).</li>
+<li><strong>Progreso:</strong> texto &quot;Redirigiendo automáticamente…&quot; con spinner, y una barra de 4 px debajo.</li>
+</ol>
+<p><strong>Datos que recibe el componente</strong> (props de <code>PantallaIngreso</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Qué es</th>
+<th>De dónde sale hoy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nombre</code></td>
+<td>Nombre de pila del usuario</td>
+<td>Primera palabra del campo &quot;Nombre&quot; del login, con la primera letra en mayúscula (<code>camilo</code> → <code>Camilo</code>)</td>
+</tr>
+<tr>
+<td><code>rol</code></td>
+<td>Texto del badge</td>
+<td>Etiqueta del módulo elegido: &quot;Asistencial HIS&quot;, &quot;Contable&quot; o &quot;Administrador&quot;</td>
+</tr>
+<tr>
+<td><code>area</code></td>
+<td>Área funcional</td>
+<td>Descripción del área elegida en el picker, en minúsculas (el CSS la muestra con la primera letra de cada palabra en mayúscula: <code>URGENCIAS</code> → &quot;Urgencias&quot;). <strong>Vacía</strong> en Contable y Administrador: la tarjeta muestra solo la sede, como título</td>
+</tr>
+<tr>
+<td><code>sede</code></td>
+<td>Sede</td>
+<td><code>Sede 1</code> o <code>Sede 2</code> según el selector del login. Si no coincide, &quot;Sede 1&quot;</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Con backend, <code>nombre</code>, <code>rol</code> y <code>sede</code> deberían venir de la respuesta de autenticación (nombre real del usuario, rol real, nombre de la sede), no del formulario.</p>
+</blockquote>
+<hr />
+<h3 id="animaciones">Animaciones</h3>
+<table>
+<thead>
+<tr>
+<th>Elemento</th>
+<th>Animación</th>
+<th>Duración</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pantalla completa</td>
+<td>Aparece con fundido (<code>opacity</code> 0 → 1)</td>
+<td>0,25 s</td>
+</tr>
+<tr>
+<td>Círculo del check</td>
+<td>Aparece con un pequeño &quot;pop&quot; (escala .8 → 1 con leve rebote)</td>
+<td>0,45 s</td>
+</tr>
+<tr>
+<td>Spinner</td>
+<td>Giro continuo</td>
+<td>0,8 s por vuelta, en bucle</td>
+</tr>
+<tr>
+<td>Barra de progreso</td>
+<td>Avanza de 0 a 92 % de ancho con curva de frenado</td>
+<td>4 s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>La barra de progreso no es un porcentaje real.</strong> No sabemos cuánto tarda el backend, así que no se muestra un avance falso proporcional: avanza rápido al principio y se frena en 92 %, quedándose ahí si el backend tarda más de 4 s. La duración de la barra (4 s) coincide con el mínimo, así que en el caso normal termina de llenarse justo cuando se navega.</p>
+<p><strong>Movimiento reducido:</strong> con <code>prefers-reduced-motion: reduce</code> se quitan el fundido y el &quot;pop&quot;, el spinner pasa a 2 s por vuelta y la barra a 8 s.</p>
+<hr />
+<h3 id="estados-y-errores">Estados y errores</h3>
+<table>
+<thead>
+<tr>
+<th>Situación</th>
+<th>Qué pasa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal</td>
+<td>Pantalla visible ≥ 4 s, luego navegación al home</td>
+</tr>
+<tr>
+<td>Backend lento (&gt; 4 s)</td>
+<td>La pantalla se mantiene; la barra queda en 92 % y el spinner sigue girando</td>
+</tr>
+<tr>
+<td>Backend falla</td>
+<td>Vuelve al login (paso &quot;Inicio de sesión&quot;) con el mensaje <strong>&quot;No pudimos cargar tu sesión. Intenta de nuevo.&quot;</strong></td>
+</tr>
+</tbody>
+</table>
+<p>La pantalla <strong>no tiene botones</strong>: el usuario no puede cancelar ni retroceder mientras carga.</p>
+<hr />
+<h3 id="accesibilidad">Accesibilidad</h3>
+<ul>
+<li>El contenedor tiene <code>role=&quot;status&quot;</code> y <code>aria-live=&quot;polite&quot;</code>, para que un lector de pantalla anuncie &quot;Hola, Camilo … Iniciando en … Redirigiendo automáticamente…&quot;.</li>
+<li>El halo, el check y la barra son decorativos (<code>aria-hidden=&quot;true&quot;</code>); la información está en el texto.</li>
+<li>Contraste: texto principal <code>#101827</code> sobre <code>#f7f9fd</code>; texto secundario <code>#48546e</code>.</li>
+</ul>
+<hr />
+<h3 id="estilos-y-tokens">Estilos y tokens</h3>
+<ul>
+<li>Overlay: <code>position: fixed; inset: 0; z-index: 1000</code>, fondo <code>#f7f9fd</code>.</li>
+<li>Tipografía y pesos: solo tokens del proyecto (<code>--fs-*</code>, <code>--fw-*</code>), sin tamaños sueltos.</li>
+<li>Colores de la pantalla (locales, no son tokens): verde del check <code>#1f9d55</code>, halo <code>#d9ece3</code>, azul <code>#0065cd</code>, tarjeta con fondo <code>#fff</code> y borde <code>#e5e8ef</code>, radio 12 px, pista de la barra <code>#e5e8ef</code>.</li>
+<li>Dependencia de tokens: el <code>Badge</code> con <code>tone=&quot;info&quot;</code> necesita <code>--status-info-bg</code> y <code>--status-info-fg</code> en el <code>:root</code> de la feature. Login los declara en <code>login.module.css</code> (<code>#dbe8fe</code> / <code>#0050a3</code>).</li>
+<li>Íconos: Lucide vía <code>react-icons/lu</code> (<code>LuCheck</code>, <code>LuMapPin</code>, <code>LuLoaderCircle</code>).</li>
+</ul>
+<hr />
+<h3 id="como-conectar-el-backend-real">Cómo conectar el backend real</h3>
+<p>Hoy no hay llamado real: <code>cargarDatosIniciales()</code> devuelve <code>Promise.resolve()</code>, así que la pantalla dura exactamente los 4 s. Para conectarlo:</p>
+<ol>
+<li>Reemplazar <code>cargarDatosIniciales</code> por la llamada (o llamadas) que dejan el home listo, devolviendo <strong>una promesa que rechace si falla</strong>.</li>
+<li>No tocar <code>INGRESO_MIN_MS</code>: el mínimo de 4 s ya se combina solo con la promesa.</li>
+<li>Si la respuesta trae nombre, rol y sede del usuario, pasarlos a <code>PantallaIngreso</code> en lugar de los valores del formulario.</li>
+</ol>
+<hr />
+<h3 id="limites-conocidos">Límites conocidos</h3>
+<ul>
+<li><strong>Atrás del navegador:</strong> si el usuario pulsa &quot;Atrás&quot; mientras la pantalla está visible, no se cancela la carga (no hay manejo especial).</li>
+<li><strong>Sin foco atrapado:</strong> la pantalla no gestiona el foco del teclado; el login queda montado de fondo.</li>
+<li><strong>Sede y rol salen del formulario</strong>, no de una sesión real (hay un mock).</li>
+<li><strong>Sin botón &quot;Reintentar&quot;:</strong> ante un error se vuelve al login y el usuario vuelve a iniciar sesión.</li>
+<li><strong>Teléfono:</strong> no hay adaptación móvil; el diseño es de escritorio.</li>
+<li><strong>Colores locales:</strong> los colores de la pantalla son valores fijos, no tokens, y no tienen variante de tema oscuro.</li>
+</ul>
+<hr />
+<h2 id="prompt-para-crear-el-front-de-esta-pantalla">Prompt para crear el front de esta pantalla</h2>
+<p>Copiar y pegar a quien implemente el front:</p>
+<pre><code class="language-text">Implementá la &quot;pantalla de ingreso&quot;: una pantalla de carga a pantalla completa
+(escritorio) que se muestra después del login y antes del home, mientras el
+backend prepara la sesión.
+
+CONTEXTO
+Tras autenticarse (y, en el módulo Asistencial, elegir el área funcional) el
+backend tarda ~3-4 s en dejar listo el home. Hoy el usuario ve el login
+congelado. Esta pantalla confirma que el ingreso fue exitoso, muestra dónde va
+a quedar parado y comunica que se está cargando.
+
+NO ES UNA RUTA
+Es un overlay (position: fixed; inset: 0; z-index: 1000; fondo #f7f9fd) que se
+monta encima del login y se desmonta solo cuando el home está listo.
+
+REGLA DE TIEMPO (lo más importante)
+- Tiempo mínimo visible: 4000 ms, aunque el backend responda en 300 ms.
+  (Que se lea el saludo y no haya parpadeo.)
+- Navegar al home cuando se cumplan las dos cosas: pasaron 4000 ms Y terminó
+  la carga del backend. Manda lo que ocurra más tarde:
+    backend 300 ms -&gt; 4 s | backend 3 s -&gt; 4 s | backend 6 s -&gt; 6 s
+- Implementación: Promise.all([esperar(4000), cargarDatosIniciales()]) y luego
+  navegar. En React/Next, navegar dentro de startTransition para que la
+  pantalla siga visible hasta que la ruta nueva esté lista.
+- Si la carga falla: salir de inmediato (sin esperar los 4 s), volver al paso
+  &quot;Inicio de sesión&quot; y mostrar &quot;No pudimos cargar tu sesión. Intenta de nuevo.&quot;
+  (Promise.all ya rechaza apenas una promesa falla.)
+- La pantalla no tiene botones: no se puede cancelar.
+
+CUÁNDO SE DISPARA
+- Asistencial: al pulsar &quot;Seleccionar&quot; en el picker de área funcional.
+- Contable / Administrador (no piden área): al terminar el login. En estos
+  casos se omite el área y la tarjeta muestra solo la sede.
+
+CONTENIDO (de arriba hacia abajo, centrado, ancho máx. 480 px)
+1. Check de éxito: círculo verde #1f9d55 de 72 px con check blanco de 36 px,
+   dentro de un halo #d9ece3 de 112 px. Margen inferior 28 px.
+2. Título &quot;Hola, {nombre}&quot;: --fs-4xl (28 px), --fw-semibold, color #101827.
+3. Badge de rol (tone=&quot;info&quot;: fondo #dbe8fe, texto #0050a3).
+4. Tarjeta &quot;Iniciando en&quot; (margen superior 40 px; fondo #fff; borde 1 px
+   #e5e8ef; radio 12 px; padding 16x20; alineada a la izquierda):
+   - &quot;INICIANDO EN&quot;: --fs-xs, --fw-medium, mayúsculas, letter-spacing .04em,
+     color #6b7280.
+   - Fila con ícono de ubicación (LuMapPin, 20 px, #0065cd) + área funcional
+     (--fs-lg, --fw-semibold, #101827, capitalizada) + debajo la sede
+     (--fs-base, #48546e). Sin área: la sede pasa a ser el título.
+5. Bloque de progreso (margen superior 40 px):
+   - Texto &quot;Redirigiendo automáticamente…&quot; (--fs-base, #48546e) + spinner
+     (LuLoaderCircle 16 px, #0065cd) al lado.
+   - Barra: pista de 4 px #e5e8ef, relleno #0065cd con bordes redondeados.
+
+DATOS
+- nombre: nombre de pila del usuario, primera letra en mayúscula.
+- rol: &quot;Asistencial HIS&quot; | &quot;Contable&quot; | &quot;Administrador&quot;.
+- area: descripción del área funcional (opcional).
+- sede: nombre de la sede.
+Idealmente vienen de la respuesta de autenticación.
+
+ANIMACIONES
+- Pantalla: fundido 0,25 s.
+- Círculo del check: &quot;pop&quot; (scale .8 -&gt; 1 con rebote, cubic-bezier(.2,.9,.3,1.2))
+  0,45 s.
+- Spinner: giro lineal 0,8 s en bucle.
+- Barra: 0 -&gt; 92 % de ancho en 4 s con cubic-bezier(.1,.7,.2,1). NO es un
+  porcentaje real (no sabemos cuánto tarda el backend): se frena en 92 % y se
+  queda ahí si el backend tarda más.
+- prefers-reduced-motion: sin fundido ni &quot;pop&quot;; spinner 2 s por vuelta;
+  barra 8 s.
+
+ACCESIBILIDAD
+- Contenedor con role=&quot;status&quot; y aria-live=&quot;polite&quot;.
+- Halo, check y barra decorativos: aria-hidden=&quot;true&quot;.
+
+REGLAS DEL PROYECTO
+- Íconos de Lucide (react-icons/lu), nunca SVG a mano.
+- Tipografía solo con tokens --fs-* / --fw-* (sin px sueltos ni pesos
+  numéricos). Familia: system-ui stack del proyecto.
+- Un componente = una carpeta con su .jsx y su .css
+  (src/Components/Login/PantallaIngreso/).
+- Badge desde @/Components/Badge/Badge; requiere --status-info-bg y
+  --status-info-fg declarados en el :root de la feature.
+
+CRITERIOS DE ACEPTACIÓN
+- Con backend de 300 ms la pantalla se ve 4 s, no menos.
+- Con backend de 6 s se ve 6 s y la barra queda en 92 %.
+- Con backend en error vuelve al login con el mensaje, sin esperar 4 s.
+- Sin errores de consola; funciona a 1440x900.
+</code></pre>
+
+</main>
+</div>
+</body>
+</html>

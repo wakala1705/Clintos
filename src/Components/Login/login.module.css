@@ -7,6 +7,9 @@
     --gray-fg: #6b7280;
     --primary: #0065CD;
     --primary-dark: #0050a3;
+    /* Requeridos por <Badge tone="info"> de PantallaIngreso (rol del usuario). */
+    --status-info-bg: #dbe8fe;
+    --status-info-fg: #0050a3;
 
     /* Requeridos por @/Components/BodegaPickerModal (catálogo de bodega
        disparado al iniciar sesión, ver login.jsx) -- mismos valores que
