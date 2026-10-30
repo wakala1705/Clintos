@@ -212,7 +212,6 @@ export default function PanelGeneral() {
         motivoNoIniciable={(c) => motivoNoIniciable(c, ahora, lista)}
         onIniciar={handleIniciarCirugia}
         onAbrirHoja={handleAbrirHoja}
-        onFinalizar={handleFinalizarCirugia}
         soloHora={rango === 'hoy'}
         onIrAHc={() => router.push('/cirugia/historia-clinica')}
       />

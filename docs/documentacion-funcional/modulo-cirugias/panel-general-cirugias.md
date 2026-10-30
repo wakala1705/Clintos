@@ -34,7 +34,7 @@
 
 ### Flujo de una cirugía durante el día
 
-Recorrido de una cirugía en el panel, con las acciones que dispara cada paso. En la tabla, el botón "Iniciar" e "Finalizar" cumplen el mismo papel que mover la tarjeta a "En quirófano" o "Finalizado" en el tablero.
+Recorrido de una cirugía en el panel, con las acciones que dispara cada paso. En la tabla, el botón "Iniciar" cumple el mismo papel que mover la tarjeta a "En quirófano" en el tablero. Para finalizar, la fila solo ofrece "Hoja de gasto": el botón "Finalizar cirugía" está dentro de la hoja (también se puede mover la tarjeta a "Finalizado").
 
 ```mermaid
 flowchart TD
@@ -42,7 +42,7 @@ flowchart TD
     EP --> EQ{"Mover a En quirófano<br/>o pulsar Iniciar"}
     EQ --> IN["Iniciar cirugía<br/>hora de anestesia y de cirugía"]
     IN --> HO["Se abre la hoja de gasto<br/>Estado: En curso"]
-    HO --> FI{"Mover a Finalizado<br/>o pulsar Finalizar"}
+    HO --> FI{"Mover a Finalizado<br/>o Finalizar cirugía en la hoja"}
     FI --> FF["Finalizar cirugía<br/>hora real de fin"]
     FF --> RE["Cirugía realizada<br/>Estado: Finalizada<br/>Se abre la hoja de gasto"]
     RE --> RC["En recuperación<br/>(cambio directo)"]
@@ -91,7 +91,7 @@ flowchart TD
   - Una cirugía de urgencia lleva una etiqueta "Urgencia" junto al procedimiento.
   - **Canasta vinculada:** "Vinculada" si la cirugía tiene insumos asignados, "No vinculada" si no.
   - **Canasta pedida:** sin canasta vinculada muestra "—"; con canasta muestra el punto en que va el pedido a farmacia: No pedida, En preparación, Despachada, Despacho parcial, Recibida, Con novedades o Consumo registrado.
-  - **Acciones por fila:** abierta y sin iniciar → "Iniciar" y el menú "⋯"; en curso → "Hoja de gasto", "Finalizar" y el menú "⋯"; realizada → "Ir a HC" y el menú "⋯"; canceladas e incumplidas solo tienen el menú "⋯" (con todo deshabilitado).
+  - **Acciones por fila:** abierta y sin iniciar → "Iniciar" y el menú "⋯"; en curso → "Hoja de gasto" y el menú "⋯" (ya no hay botón "Finalizar" en la fila: se finaliza desde la hoja de gasto); realizada → "Ir a HC" y el menú "⋯"; canceladas e incumplidas solo tienen el menú "⋯" (con todo deshabilitado).
   - Si no hay cirugías en el rango se avisa "No hay cirugías programadas hoy" (o "esta semana" / "este mes"); si hay pero los filtros no dejan ninguna, "Ninguna cirugía coincide con los filtros" con el botón "Limpiar filtros".
   - Mientras se cargan los datos se muestra "Cargando cirugías…".
 
@@ -187,7 +187,7 @@ flowchart TD
 
 ### Finalizar una cirugía
 
-- **Qué hace:** registra el fin real de una cirugía en curso. Se abre desde el botón "Finalizar" de la fila, al mover la tarjeta a "Finalizado" o desde la propia hoja de gasto. Pide la hora real de fin (se propone la hora actual). Al confirmar, la cirugía queda realizada, el fin se registra en la hoja y esta se abre para registrar el consumo.
+- **Qué hace:** registra el fin real de una cirugía en curso. Se abre desde el botón "Finalizar cirugía" de la hoja de gasto (a la que se llega con "Hoja de gasto" en la fila) o al mover la tarjeta a "Finalizado" en el tablero. La fila de la tabla ya no tiene botón "Finalizar". Pide la hora real de fin (se propone la hora actual). Al confirmar, la cirugía queda realizada, el fin se registra en la hoja y esta se abre para registrar el consumo.
 - **Roles con acceso:** Circulante y Enfermería quirúrgica.
 - **Reglas de negocio:**
   - La hora de fin es obligatoria y no puede ser anterior al inicio real.
@@ -230,7 +230,7 @@ flowchart TD
   - Reprogramar, Editar y Cancelar se deshabilitan con la cirugía en curso o en un estado final.
   - Marcar como realizada está disponible hasta en una cirugía en curso y, si aún no avanzó, la lleva a la etapa "Finalizado". Si farmacia tiene un saldo pendiente de la canasta, se avisa que la solicitud sigue abierta (solo advierte).
   - Cuando una cirugía se reprograma o se cancela y queda fuera del rango del panel, sale de la lista sin volver a cargarla.
-  - Marcar como realizada no registra la hora real ni la hoja de gasto: para eso existe "Finalizar".
+  - Marcar como realizada no registra la hora real ni la hoja de gasto: para eso existe "Finalizar cirugía" en la hoja de gasto.
 
 ### Ir a la Historia clínica de cirugía
 
@@ -323,7 +323,7 @@ Columnas: Hora (o "Fecha y hora" si el rango no es Hoy) · Sala · Duración (al
 - Estado: etiqueta con ícono y texto (nunca solo color): Pendiente (gris, reloj), En curso (azul, pulso cardíaco), Retrasada (ámbar, cronómetro), Finalizada (verde, check), Cancelada (rojo, X), Incumplida (gris, calendario tachado).
 - Acciones (alineadas a la derecha, sin que el clic seleccione la fila): según la cirugía, uno de estos grupos y siempre al final el menú "⋯" de 28 px:
   · Abierta y sin iniciar: botón pequeño primario "Iniciar" (ícono de play). Si no se puede iniciar, se ve deshabilitado y el motivo aparece en un aviso al pasar el cursor.
-  · En curso: botón pequeño de contorno "Hoja de gasto" (ícono de portapapeles) y botón pequeño primario "Finalizar" (ícono de check).
+  · En curso: botón pequeño de contorno "Hoja de gasto" (ícono de portapapeles); no hay botón "Finalizar": se finaliza desde la hoja.
   · Realizada: botón pequeño de contorno "Ir a HC" (ícono de documento).
   · Cancelada o incumplida: solo el menú, con todo deshabilitado.
 - Menú "⋯" (se despliega sobre todo, sin que lo recorte el scroll de la tabla): Reprogramar · Marcar como realizada · Marcar como incumplida · Cancelar (en rojo, con separadores entre grupos). Cada ítem lleva ícono y se deshabilita según el estado de la cirugía.

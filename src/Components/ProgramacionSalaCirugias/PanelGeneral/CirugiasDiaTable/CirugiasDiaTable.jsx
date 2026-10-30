@@ -1,7 +1,7 @@
 'use client';
 
 import './CirugiasDiaTable.css';
-import { LuCircleCheck, LuClipboardList, LuFileText, LuPlay } from 'react-icons/lu';
+import { LuClipboardList, LuFileText, LuPlay } from 'react-icons/lu';
 import Badge from '@/Components/Badge/Badge';
 import Button from '@/Components/Button/Button';
 import CirugiaCardMenu from '../../CirugiaCardMenu/CirugiaCardMenu';
@@ -20,7 +20,7 @@ import { minutosCirugia } from '@/hooks/ProgramacionSalaCirugias/tablero/tablero
 export default function CirugiasDiaTable({
   filas, ahora, salaLabel, selectedId, onSelect,
   onReprogramar, onMarcarRealizada, onMarcarIncumplida, onCancelar,
-  motivoNoIniciable, onIniciar, onAbrirHoja, onFinalizar, onIrAHc, soloHora = false,
+  motivoNoIniciable, onIniciar, onAbrirHoja, onIrAHc, soloHora = false,
 }) {
   return (
     <div className="cdt-scroll">
@@ -90,7 +90,6 @@ export default function CirugiasDiaTable({
                   {iniciada && (
                     <>
                       <Button size="sm" variant="outline" icon={LuClipboardList} onClick={() => onAbrirHoja(c)}>Hoja de gasto</Button>
-                      <Button size="sm" icon={LuCircleCheck} onClick={() => onFinalizar(c)}>Finalizar</Button>
                     </>
                   )}
                   {c.estado === 'realizada' && !iniciada && (
